@@ -1,0 +1,1441 @@
+\newcommand{\wikipediaWarning}{
+{\Large 
+  \textbf{Atenção:} Nas perguntas que se seguem existem excertos de
+  texto que foram obtidos directamente de fontes disponíveis na
+  Internet (como a Wikipedia, por exemplo), sem alteração da
+  terminologia usada para a adaptar à usada na cadeira.  Por isso,
+  \textbf{pode acontecer que a terminologia usada nesses excertos de
+    texto seja diferente da usada na cadeira.  Por exemplo, o uso de
+    \emph{component} para referir outro tipo de elemento de software.
+    Tenha isso em linha de conta nas suas respostas.}
+
+}
+}
+
+\newcommand{\wikipediaWarningINGLES}{
+{\Large 
+  \textbf {Warning:} In the questions that follow there are pieces of
+  text that were obtained directly from available sources in the
+  Internet (such as Wikipedia, for example), without changing the
+  terminology used to adapt it to that used in this course. Therefore,
+  \textbf {it may happen that the terminology used in those pieces of
+    text is different from that used in the course. For example, the
+    use of \emph{component} to refer to other types of software
+    elements.  Please take this into account in your responses.}
+}
+}
+
+
+
+
+\newcommand{\ghc}{Glasgow Haskell Compiler}
+
+%1
+\newcommand{\qGHCStakeholders}{
+  \begin{ClosedQuestion}
+    Dois dos \emph{stakeholders} identificados para o \ghc{} foram o
+    governo do Reino Unido e os investigadores que pretendem fazer
+    investigação em linguagens de programação funcionais.  Qual destes
+    \emph{stakeholders} teve uma maior influência na arquitectura de
+    software do sistema?
+
+    \optionA{O governo do Reino Unido, porque foi quem financiou o
+      projecto}
+    \optionB{Os investigadores, porque foram eles que inventaram a
+      linguagem de programação Haskell}
+    \optionC{O governo do Reino Unido, porque pretendia que o sistema
+      pudesse ser usado para desenvolver a indústria de software Britânica}
+    \optionD{Os investigadores, porque pretendiam usar o sistema para
+      validar as suas invenções} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGHCStakeholdersINGLES}{
+  \begin{ClosedQuestion}
+    Two of the \emph{stakeholders} for the \ghc{} were the UK
+    government and the researchers that want to do research on
+    functional programming languages.  Which of these
+    \emph{stakeholders} had a more significant influence in the
+    software architecture of the system?
+
+    \optionA{The UK government, because it funded the project}
+    \optionB{The researchers, because they invented the Haskell
+      programming language}
+    \optionC{The UK government, because it intended that the system
+      could be used to develop the British software industry}
+    \optionD{The researchers, because they wanted to use the system to
+      validate their research} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+
+%2
+\newcommand{\qGHCChunks}{
+  \begin{ClosedQuestion}
+    No documento que descreve o \ghc{} pode ler-se o seguinte:
+    \begin{quote}
+      At the highest level, GHC can be divided into three distinct
+      chunks:
+      \begin{itemize}
+      \item The compiler itself.
+      \item The Boot Libraries.
+      \item The Runtime System (RTS). 
+      \end{itemize}
+    \end{quote}
+    Qual a forma mais correcta de caracterizar arquitecturalmente os
+    três \emph{chunks} a que este texto se refere?
+
+     \optionA{Como módulos do sistema}
+     \optionB{Como componentes do sistema}
+     \optionC{O compilador e o RTS como componentes e as \emph{boot
+         libraries} como módulo}
+     \optionD{O compilador como componente e os outros dois como módulos}
+
+     \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qGHCChunksINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes the \ghc{}:
+    \begin{quote}
+      At the highest level, GHC can be divided into three distinct
+      chunks:
+      \begin{itemize}
+      \item The compiler itself.
+      \item The Boot Libraries.
+      \item The Runtime System (RTS). 
+      \end{itemize}
+    \end{quote}
+    What is the most architecturally correct way of classifying the
+    three \emph{chunks} that this text refers to?
+
+     \optionA{As modules of the system}
+     \optionB{As components of the system}
+     \optionC{The compiler and the RTS as components and the boot
+         libraries as a module}
+     \optionD{The compiler as a component and the other two as modules}
+
+     \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+%3
+\newcommand{\qGHCDesugaring}{
+  \begin{ClosedQuestion}
+    Uma das decisões importantes no desenvolvimento do \ghc{} foi a de
+    se fazer a verificação de tipos antes da transformação de um
+    programa em Haskell para um programa na linguagem Core
+    (\emph{type-check-before-desugar}).  Esta decisão de desenho
+
+    \optionA{Tornou a verificação de tipos muito mais simples}
+    \optionB{Permitiu satisfazer requisitos de desempenho do sistema}
+    \optionC{Tornou a transformação para a linguagem Core mais simples}
+    \optionD{Permitiu satisfazer requisitos de usabilidade do sistema}
+    \putOptions
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qGHCDesugaringINGLES}{
+  \begin{ClosedQuestion}
+    One of the most important decisions during the development of the
+    \ghc{} was to perform the type-checking before the desugaring of
+    an Haskell program into a program in the Core language
+    (\emph{type-check-before-desugar}).  This design decision
+
+    \optionA{Made the type-checking much simpler}
+    \optionB{Satisfied performance requirements of the system}
+    \optionC{Made the desugaring simpler}
+    \optionD{Satisfied usability requirements of the system}
+    \putOptions
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+%4
+\newcommand{\qGHCRTS}{
+  \begin{ClosedQuestion}
+    No documento que descreve o \ghc{} pode ler-se o seguinte:
+    \begin{quote}
+      The Runtime System is a library of mostly C code that is linked
+      into every Haskell program. It provides the support
+      infrastructure needed for running the compiled Haskell code,
+      including the following main components:
+      \begin{itemize}
+      \item Memory management, including a parallel, generational, garbage collector;
+      \item Thread management and scheduling;
+      \item The primitive operations provided by GHC;
+      \item A bytecode interpreter and dynamic linker for GHCi.
+      \end{itemize}
+    \end{quote}
+    Que qualidades do sistema são melhoradas pela decisão de criar
+    o \emph{Runtime System} indicado acima?
+
+    \optionA{O desempenho do compilador, porque o RTS está escrito de
+      forma muito eficiente em C}
+    \optionB{O desempenho dos programas compilados, porque o RTS está
+      escrito de forma muito eficiente em C}
+    \optionC{A portabilidade, porque o RTS cria uma camada de
+      abstracção que esconde alguns detalhes do sistema operativo}
+    \optionD{A modificabilidade dos programas compilados, porque se
+      pode alterar o seu comportamento alterando apenas o RTS}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qGHCRTSINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes the \ghc{}:
+    \begin{quote}
+      The Runtime System is a library of mostly C code that is linked
+      into every Haskell program. It provides the support
+      infrastructure needed for running the compiled Haskell code,
+      including the following main components:
+      \begin{itemize}
+      \item Memory management, including a parallel, generational, garbage collector;
+      \item Thread management and scheduling;
+      \item The primitive operations provided by GHC;
+      \item A bytecode interpreter and dynamic linker for GHCi.
+      \end{itemize}
+    \end{quote}
+    Which system qualities are improved by the design decision of
+    creating the Runtime System, described above?
+
+    \optionA{The performance of the compiler, because the RTS is
+      written as very efficient C code}
+    \optionB{The performance of the compiled programs, because the RTS
+      is written as very efficient C code}
+    \optionC{The portability, because the RTS creates an abstraction
+      layer that hides some of the details of the operating system}
+    \optionD{The modifiability of the compiled programs, because we
+      may change their behavior by changing only the RTS}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+
+%5
+\newcommand{\qGHCPipeAndFilter}{
+  \begin{ClosedQuestion}
+    Tal como muitos outros compiladores, a compilação de um programa
+    Haskell com o \ghc{} utiliza o estilo \emph{pipe-and-filter},
+    criando um \emph{pipeline} composto por várias fases de
+    compilação.  A utilização deste estilo arquitectural no GHC tem
+    como objectivo
+
+    \optionA{Permitir a execução em paralelo das várias fases de
+      compilação, melhorando assim o desempenho do compilador}
+    \optionB{Permitir a compilação de programas muito grandes, porque
+      cada fase pode executar de forma incremental sem ser necessário
+      ter o programa todo em memória ao mesmo tempo}
+    \optionC{Permitir a fácil alteração das fases de compilação que se
+      usam no processo de compilação, tornando assim o compilador mais
+      modificável}
+    \optionD{Todas as outras opções}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qGHCPipeAndFilterINGLES}{
+  \begin{ClosedQuestion}
+    Like many other compilers, the compilation of an Haskell program
+    with the \ghc{} uses the Pipe-and-Filter style, creating a
+    \emph{pipeline} composed of several compilation phases.  The goal
+    of using this architectural style in GHC is
+
+    \optionA{To allow the parallel execution of the several
+      compilation phases, thereby improving the compiler performance}
+    \optionB{To allow the compilation of very large programs, because
+      wach phase may execute incrementally without loading the entire
+      program into memory at once}
+    \optionC{To facilitate changing the phases used in the compilation
+      process, thereby making the compiler more modifiable}
+    \optionD{All other options}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+
+
+
+
+%6
+\newcommand{\qnginxFirstAD}{
+  \begin{ClosedQuestion}
+    O principal \emph{architectural driver} para o sistema nginx foi
+
+    \optionA{Ter um \emph{throughput} maior do que o Apache}
+    \optionB{Ter uma latência no processamento de um pedido
+      inferior à do Apache}
+    \optionC{Ser mais facilmente modificável do que o Apache}
+    \optionD{Permitir um número simultâneo de ligações maior do que o
+      Apache}
+    \putOptions
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qnginxFirstADINGLES}{
+  \begin{ClosedQuestion}
+    The main architectural driver for the nginx system was
+
+    \optionA{To have better throughput than Apache}
+    \optionB{To have a lower latency in the processing of a request
+      than Apache} 
+    \optionC{To be more modifiable than Apache}
+    \optionD{To allow more simultaneous connections than Apache}
+    \putOptions
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+%7
+\newcommand{\qnginxModuleTypes}{
+  \begin{ClosedQuestion}
+    No documento que descreve o nginx pode ler-se o seguinte:
+    \begin{quote}
+      nginx's modular architecture generally allows developers to
+      extend the set of web server features without modifying the
+      nginx core.  nginx modules come in slightly different
+      incarnations, namely core modules, event modules, phase
+      handlers, protocols, variable handlers, filters, upstreams and
+      load balancers.  [...]  Event modules provide a particular
+      OS-dependent event notification mechanism like kqueue or epoll.
+      Protocol modules allow nginx to communicate through HTTPS,
+      TLS/SSL, SMTP, POP3 and IMAP.
+    \end{quote}
+    Que estilo arquitectural é mais adequado para representar a
+    informação acima?
+
+    \optionA{O estilo Generalização}
+    \optionB{O estilo Utilização}
+    \optionC{O estilo Camadas}
+    \optionD{O estilo Aspectos}
+    \putOptions
+    % Resposta: A
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qnginxModuleTypesINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes nginx:
+    \begin{quote}
+      nginx's modular architecture generally allows developers to
+      extend the set of web server features without modifying the
+      nginx core.  nginx modules come in slightly different
+      incarnations, namely core modules, event modules, phase
+      handlers, protocols, variable handlers, filters, upstreams and
+      load balancers.  [...]  Event modules provide a particular
+      OS-dependent event notification mechanism like kqueue or epoll.
+      Protocol modules allow nginx to communicate through HTTPS,
+      TLS/SSL, SMTP, POP3 and IMAP.
+    \end{quote}
+    Which architectural style is more adequate to represent the
+    information presented above?
+
+    \optionA{The Generalization style}
+    \optionB{The Uses style}
+    \optionC{The Layers style}
+    \optionD{The Aspects style}
+    \putOptions
+    % Resposta: A
+  \end{ClosedQuestion}
+}
+
+%8
+\newcommand{\qnginxEventDriven}{
+  \begin{ClosedQuestion}
+    No documento que descreve o nginx pode ler-se o seguinte:
+    \begin{quote}
+      Traditional process- or thread-based models of handling
+      concurrent connections involve handling each connection with a
+      separate process or thread, and blocking on network or
+      input/output operations.  nginx followed a different model.  It
+      was actually inspired by the ongoing development of advanced
+      event-based mechanisms in a variety of operating systems.  What
+      resulted is a modular, event-driven, asynchronous,
+      single-threaded, non-blocking architecture which became the
+      foundation of nginx code.
+    \end{quote}
+    A decisão de fazer o nginx como um sistema \emph{event-driven},
+    \emph{asynchronous}, \emph{single-threaded}, e \emph{non-blocking}
+    foi porque
+
+    \optionA{O código é mais fácil de desenvolver por não ser concorrente}
+    \optionB{Se pretendia fazer um uso mais eficiente dos recursos
+      computacionais existentes}
+    \optionC{Os programas \emph{event-driven} são mais fáceis de
+      modificar}
+    \optionD{Num sistema \emph{event-driven} cada componente pode
+      funcionar independentemente dos restantes}
+    \putOptions
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qnginxEventDrivenINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes nginx:
+    \begin{quote}
+      Traditional process- or thread-based models of handling
+      concurrent connections involve handling each connection with a
+      separate process or thread, and blocking on network or
+      input/output operations.  nginx followed a different model.  It
+      was actually inspired by the ongoing development of advanced
+      event-based mechanisms in a variety of operating systems.  What
+      resulted is a modular, event-driven, asynchronous,
+      single-threaded, non-blocking architecture which became the
+      foundation of nginx code.
+    \end{quote}
+    The decision of turning nginx into an \emph{event-driven},
+    \emph{asynchronous}, \emph{single-threaded}, and
+    \emph{non-blocking} system was made because
+
+    \optionA{The code is easier to develop because it is not concurrent}
+    \optionB{They wanted to have a more efficient use of the
+      computational resources}
+    \optionC{Event-driven programs are easier to change}
+    \optionD{In an event-driven system each component may function
+      independently of the others}
+    \putOptions
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+%9
+\newcommand{\qnginxOSOptimizations}{
+  \begin{ClosedQuestion}
+    No documento que descreve o nginx pode ler-se o seguinte:
+    \begin{quote}
+      While handling a variety of actions associated with accepting,
+      processing and managing network connections and content
+      retrieval, nginx uses event notification mechanisms and a number
+      of disk I/O performance enhancements in Linux, Solaris and
+      BSD-based operating systems, like kqueue, epoll, and event
+      ports.  The goal is to provide as many hints to the operating
+      system as possible, in regards to obtaining timely asynchronous
+      feedback for inbound and outbound traffic, disk operations,
+      reading from or writing to sockets, timeouts and so on.
+    \end{quote}
+    Esta abordagem usada no desenvolvimento do nginx tem como objectivo
+
+    \optionA{Tornar o sistema mais facilmente modificável}
+    \optionB{Tornar o sistema mais portável para diferentes sistemas operativos}
+    \optionC{Tornar o sistema mais rápido}
+    \optionD{Tornar o sistema mais tolerante a faltas}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qnginxOSOptimizationsINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes nginx:
+    \begin{quote}
+      While handling a variety of actions associated with accepting,
+      processing and managing network connections and content
+      retrieval, nginx uses event notification mechanisms and a number
+      of disk I/O performance enhancements in Linux, Solaris and
+      BSD-based operating systems, like kqueue, epoll, and event
+      ports.  The goal is to provide as many hints to the operating
+      system as possible, in regards to obtaining timely asynchronous
+      feedback for inbound and outbound traffic, disk operations,
+      reading from or writing to sockets, timeouts and so on.
+    \end{quote}
+    The goal of this approach used in the development of nginx was
+
+    \optionA{To make the system more modifiable}
+    \optionB{To make the system more portable to different operating systems}
+    \optionC{To make the system faster}
+    \optionD{To make the system more fault tolerant}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%10
+\newcommand{\qnginxProcessThread}{
+  \begin{ClosedQuestion}
+    No documento que descreve o nginx pode ler-se o seguinte:
+    \begin{quote}
+      Traditional process- or thread-based models of handling
+      concurrent connections involve handling each connection with a
+      separate process or thread, and blocking on network or
+      input/output operations.
+    \end{quote}
+    O estilo arquitectural que melhor descreve o modelo descrito acima
+    para o processamento de pedidos é
+	
+    \optionA{O estilo Dados Partilhados (\emph{Shared data})}
+    \optionB{O estilo Processos Comunicantes (\emph{Communicating Processes})}
+    \optionC{O estilo Par-a-Par (\emph{Peer-to-Peer})}
+    \optionD{O estilo Cliente-Servidor (\emph{Client-Server})}
+    \putOptions
+    % Resposta: B
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qnginxProcessThreadINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes nginx:
+    \begin{quote}
+      Traditional process- or thread-based models of handling
+      concurrent connections involve handling each connection with a
+      separate process or thread, and blocking on network or
+      input/output operations.
+    \end{quote}
+    The architectural style that better describes the model presented
+    above for processing requests is
+	
+    \optionA{The Shared-data style}
+    \optionB{The Communicating Processes style}
+    \optionC{The Peer-to-Peer style}
+    \optionD{The Client-Server style}
+    \putOptions
+    % Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+%11
+\newcommand{\qZeroMQApps}{
+  \begin{ClosedQuestion}
+    Qual das seguintes frases melhor caracteriza o sistema ZeroMQ
+    
+    \optionA{É um sistema com uma arquitectura Par-a-Par}
+    \optionB{É um sistema com uma arquitectura Cliente-Servidor}
+    \optionC{Permite a implementação de sistemas com uma arquitectura Par-a-Par}
+    \optionD{Permite a implementação de sistemas com arquitecturas
+      Par-a-Par, Cliente-Servidor, ou Publicação-Subscrição}
+  \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qZeroMQAppsINGLES}{
+  \begin{ClosedQuestion}
+    Which of the following sentences better describes the ZeroMQ system?
+    
+    \optionA{It is a system with a Peer-to-Peer architecture}
+    \optionB{It is a system with a Client-Server architecture}
+    \optionC{It allows the development of systems with a Peer-to-Peer architecture}
+    \optionD{It allows the development of systems with Peer-to-Peer,
+      Client-Server, or Publish-Subscribe architectures}
+  \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+%12
+\newcommand{\qZeroMQWorkersPerCore}{
+  \begin{ClosedQuestion}
+    No documento que descreve o ZeroMQ pode ler-se o seguinte:
+    \begin{quote}
+      The idea was to launch one worker thread per CPU core---having
+      two threads sharing the same core would only mean a lot of
+      context switching for no particular advantage.
+    \end{quote}
+    Qual é o estilo arquitectural mais adequado para representar esta
+    decisão de desenho?
+
+    \optionA{O estilo Tiers}
+    \optionB{O estilo Processos Comunicantes (\emph{Communicating Processes})}
+    \optionC{O estilo Instalação (\emph{Deployment})}
+    \optionD{O estilo Atribuição de Trabalho (\emph{Work Assignment})}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qZeroMQWorkersPerCoreINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes ZeroMQ:
+    \begin{quote}
+      The idea was to launch one worker thread per CPU core---having
+      two threads sharing the same core would only mean a lot of
+      context switching for no particular advantage.
+    \end{quote}
+    Which architectural style is more adequate to represent the
+    information presented above?
+
+    \optionA{The Tiers style}
+    \optionB{The Communicating Processes style}
+    \optionC{The Deployment style}
+    \optionD{The Work Assignment style}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%13
+\newcommand{\qZeroMQMessagingPatterns}{
+  \begin{ClosedQuestion}
+    No documento que descreve o ZeroMQ pode ler-se o seguinte:
+    \begin{quote}
+      Messaging patterns form a layer (the so-called "scalability
+      layer") on top of the transport layer (TCP and friends).
+      Individual messaging patterns are implementations of this layer.
+    \end{quote}
+    Qual é a principal vantagem da adopção desta arquitectura de
+    camadas pelo ZeroMQ?
+
+    \optionA{Aumenta a portabilidade para outros sistemas operativos}
+    \optionB{Facilita a adição de novos messaging patterns}
+    \optionC{Torna o sistema mais escalável}
+    \optionD{Facilita a reutilização dos messaging patterns}
+    \putOptions
+
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qZeroMQMessagingPatternsINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes ZeroMQ:
+    \begin{quote}
+      Messaging patterns form a layer (the so-called "scalability
+      layer") on top of the transport layer (TCP and friends).
+      Individual messaging patterns are implementations of this layer.
+    \end{quote}
+    What is the main advantage of this layered architecture adopted by
+    ZeroMQ?
+
+    \optionA{Increases the portability of the system for other
+      operating systems}
+    \optionB{Facilitates the addition of new messaging patterns}
+    \optionC{Makes the system more scalable}
+    \optionD{Facilitates the reuse of the messaging patterns}
+    \putOptions
+
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+%14
+\newcommand{\qZeroMQLockFree}{
+  \begin{ClosedQuestion}
+    No documento que descreve o ZeroMQ pode ler-se o seguinte:
+    \begin{quote}
+      ØMQ uses a lock-free queue in pipe objects to pass messages
+      between the user's threads and ØMQ's worker threads.  There are
+      two interesting aspects to how ØMQ uses the lock-free queue.
+      First, each queue has exactly one writer thread and exactly one
+      reader thread.  If there's a need for 1-to-N communication,
+      multiple queues are created.  Given that this way the queue
+      doesn't have to take care of synchronising the writers (there's
+      only one writer) or readers (there's only one reader) it can be
+      implemented in an extra-efficient way.
+    \end{quote}
+    O estilo arquitectural que melhor representa o padrão de
+    interacção descrito acima é
+
+    \optionA{O estilo Canais-e-Filtros (\emph{Pipe-and-Filter})}
+    \optionB{O estilo Dados Partilhados (\emph{Shared data})}
+    \optionC{O estilo Processos Comunicantes (\emph{Communicating Processes})}
+    \optionD{O estilo Cliente-Servidor (\emph{Client-Server})}
+   \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qZeroMQLockFreeINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes ZeroMQ:
+    \begin{quote}
+      ØMQ uses a lock-free queue in pipe objects to pass messages
+      between the user's threads and ØMQ's worker threads.  There are
+      two interesting aspects to how ØMQ uses the lock-free queue.
+      First, each queue has exactly one writer thread and exactly one
+      reader thread.  If there's a need for 1-to-N communication,
+      multiple queues are created.  Given that this way the queue
+      doesn't have to take care of synchronising the writers (there's
+      only one writer) or readers (there's only one reader) it can be
+      implemented in an extra-efficient way.
+    \end{quote}
+    The architectural style that better represents the interaction
+    pattern described above is
+
+    \optionA{The Pipe-and-Filter style}
+    \optionB{The Shared data style}
+    \optionC{The Communicating Processes style}
+    \optionD{The Client-Server style}
+   \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%15
+\newcommand{\qZeroMQBatching}{
+  \begin{ClosedQuestion}
+    O ZeroMQ usa \emph{batching} dinâmico para controlar o desempenho
+    do sistema.  A utilização desta abordagem tem como objectivo
+
+    \optionA{Diminuir a latência do envio de uma mensagem quando o
+      sistema está sobrecarregado}
+    \optionB{Aumentar o \emph{throughput} do sistema quando este está
+      sobrecarregado}
+    \optionC{Diminuir a quantidade de memória necessária para o envio
+      de um elevado número de mensagens}
+    \optionD{Reduzir a utilização do processador quando o sistema tem
+      poucas mensagens para enviar}
+    \putOptions
+
+% Resposta: B 
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qZeroMQBatchingINGLES}{
+  \begin{ClosedQuestion}
+    ZeroMQ uses dynamic batching to control the performance of the
+    system.  The goal of this approach is
+
+    \optionA{To reduce the latency of sending a message when the
+      system is overloaded}
+    \optionB{To increase the throughput of the system when it is overloaded}
+    \optionC{To reduce the amount of memory needed to send a large
+      number of messages}
+    \optionD{To reduce the CPU usage when the system has just a few
+      messages to send}
+    \putOptions
+
+% Resposta: B 
+ \end{ClosedQuestion}
+}
+
+
+
+%16
+\newcommand{\qWebPartioning}{
+  \begin{ClosedQuestion}
+    No documento que descreve a arquitectura de um serviço web (em
+    anexo), uma das abordagens introduzidas na Secção~1.2 é a de
+    \emph{partitioning}, ilustrada na Figura~1.4.  A utilização de
+    \emph{partitioning} faz com que
+
+    \optionA{A disponibilidade aumente}
+    \optionB{A capacidade aumente}
+    \optionC{A capacidade aumente mas a disponibilidade diminua}
+    \optionD{A disponibilidade e a capacidade aumentem}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qWebPartioningINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes the architecture of web
+    services (attached at the end of this document), one of the
+    approaches introduced in Section~1.2 is \emph{partitioning}, shown
+    in Figure~1.4.  The use of \emph{partitioning}
+
+    \optionA{Increases the availability}
+    \optionB{Increases the capacity}
+    \optionC{Increases the capacity but decreases the availability}
+    \optionD{Increases both the availability and the capacity}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+%17
+\newcommand{\qWebPartitioningDois}{
+  \begin{ClosedQuestion}
+    Considerando ainda o caso da pergunta anterior, compare as
+    arquitecturas esboçadas nas Figura~1.3 e Figura~1.4.  A diferença
+    entre as duas arquitecturas manifesta-se
+
+    \optionA{Apenas na vista de Instalação (\emph{Deployment}), porque
+      apenas se altera o número de máquinas que vão conter as imagens} 
+    \optionB{Na vista de Utilização (\emph{Uses}), porque cada
+      \emph{Image Write/Retrieval Service} vai usar um \emph{Image
+        File Storage} diferente}
+    \optionC{Na vista de Componente-e-Conector, porque é preciso
+      alterar os componentes e os conectores do sistema}
+    \optionD{Na vista de Decomposição, porque precisamos de mais
+      módulos para representar a divisão das imagens por diferentes
+      elementos da arquitectura}
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qWebPartitioningDoisINGLES}{
+  \begin{ClosedQuestion}
+    Considering again the case of the previous question, compare the
+    architectures sketched in Figure~1.3 and Figure~1.4.  The
+    difference between the two shows
+
+    \optionA{Only in the Deployment view, because only the number of
+      machines storing images was changed} 
+    \optionB{In the Uses view, because each \emph{Image
+        Write/Retrieval Service} is going to use a different
+      \emph{Image File Storage}}
+    \optionC{In the Component-and-Connector view, because components
+      and connectors need to be changed}
+    \optionD{In the Decomposition view, because we need more modules
+      to represent the split of images by different elements of the
+      architecture}
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+%18
+\newcommand{\qWebRedundancy}{
+  \begin{ClosedQuestion}
+    Considere a arquitectura apresentada na Figura~1.3 do caso das
+    perguntas anteriores, em que se introduziu redundância no sistema.
+    Neste caso particular, a introdução de redundância na arquitectura
+    tem como objectivo
+
+    \optionA{Aumentar o desempenho da operação de \emph{Upload} de uma
+    imagem}
+    \optionB{Aumentar o desempenho da operação de pesquisa de uma imagem}
+    \optionC{Aumentar a escalabilidade do sistema}
+    \optionD{Aumentar a tolerância a faltas do sistema}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qWebRedundancyINGLES}{
+  \begin{ClosedQuestion}
+    Consider again the architecture shown in Figure~1.3, where
+    redundancy was introduced into the system.  In this particular
+    case, introducing redundancy into the architecture has the goal of
+
+    \optionA{Increasing the performance of the \emph{Upload} operation}
+    \optionB{Increasing the performance of the \emph{Retrieval} operation}
+    \optionC{Increasing the scalability of the system}
+    \optionD{Increasing the fault tolerance of the system}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%19
+\newcommand{\qWebLoadBalancer}{
+  \begin{ClosedQuestion}
+    No documento que descreve a arquitectura de serviços web pode
+    ler-se o seguinte:
+    \begin{quote}
+      Another critical piece of any distributed system is a load
+      balancer.  Load balancers are a principal part of any
+      architecture, as their role is to distribute load across a set
+      of nodes responsible for servicing requests.  This allows
+      multiple nodes to transparently service the same function in a
+      system.  Their main purpose is to handle a lot of simultaneous
+      connections and route those connections to one of the request
+      nodes, allowing the system to scale to service more requests by
+      just adding nodes.
+    \end{quote}
+    Com base na descrição acima, qual lhe parece ser a melhor forma de
+    representar a arquitectura de um sistema que esteja a usar um
+    \emph{load balancer}?
+
+    \optionA{Com uma vista de componente-e-conector, em que o
+      \emph{load balancer} é um dos componentes do sistema}
+    \optionB{Com uma vista de Instalação (\emph{Deployment}), em que o
+      \emph{load balancer} faz parte da infra-estrutura de comunicação
+      usada para executar o sistema}
+    \optionC{Com uma vista de Utilização (\emph{Uses}), representando
+      as dependências existentes entre o \emph{load balancer} e os
+      serviços que ele usa}
+    \optionD{Com uma vista de Camadas (\emph{Layers}), em que o
+      \emph{load balancer} cria uma camada de abstracção entre quem
+      efectua o pedido e quem providencia o serviço}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qWebLoadBalancerINGLES}{
+  \begin{ClosedQuestion}
+    According to the document that describes the architecture of web
+    services:
+    \begin{quote}
+      Another critical piece of any distributed system is a load
+      balancer.  Load balancers are a principal part of any
+      architecture, as their role is to distribute load across a set
+      of nodes responsible for servicing requests.  This allows
+      multiple nodes to transparently service the same function in a
+      system.  Their main purpose is to handle a lot of simultaneous
+      connections and route those connections to one of the request
+      nodes, allowing the system to scale to service more requests by
+      just adding nodes.
+    \end{quote}
+    Based on this description, what is the best way to represent the
+    architecture of a system that is using a \emph{load balancer}?
+
+    \optionA{With a component-and-connector view, where the 
+      \emph{load balancer} is a component of the system}
+    \optionB{With a Deployment view, where the \emph{load balancer} is
+      part of the communication infra-structure used to execute the
+      system}
+    \optionC{With a Uses view, representing the existing dependencies
+      between the \emph{load balancer} and the services that it uses}
+    \optionD{With a Layers view, where the \emph{load balancer}
+      creates an abstraction layer between who makes the request and
+      who provides the service}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+%20
+\newcommand{\qThreeVsFourTiers}{
+  \begin{ClosedQuestion}
+    A arquitectura de software típica de uma aplicação empresarial é
+    composta por três \emph{tiers} e por três camadas.  No entanto,
+    podemos ter variações a esta arquitectura.  Por exemplo, separando
+    o \emph{tier} do meio em dois \emph{tiers}.  Neste caso, que
+    alterações é que existem ao nível da arquitectura de camadas?
+
+    \optionA{Passamos a ter quatro camadas, em que cada camada é
+      executada no \emph{tier} correspondente, como anteriormente}
+    \optionB{Cada um dos dois \emph{tiers} do meio executa as três
+      camadas já existentes anteriormente, não sendo necessário
+      alterar a vista de camadas}
+    \optionC{Não existe qualquer relação entre os \emph{tiers} e as
+      camadas, pelo que a arquitectura de camadas não é alterada}
+    \optionD{A execução das camadas anteriormente existente é separada
+      entre os dois novos \emph{tiers}, podendo aparecer novas camadas
+      pelo meio}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qThreeVsFourTiersINGLES}{
+  \begin{ClosedQuestion}
+    The typical software architecture of an enterprise application is
+    composed of three tiers and three layers.  Yet, we may have
+    variations of this architecture.  For instance, by separating the
+    middle tier in two tiers.  In this case, which other changes exist
+    on the architecture that are related with the layers?
+
+    \optionA{We now have four layers, where each layer is executed in
+      the corresponding tier, as before}
+    \optionB{Each one of the two middle tiers executes the previously
+      existing three layers, and no change is needed on the layers
+      view}
+    \optionC{There is no relation between the tiers and the layers, so
+      the layers architecture is not changed}
+    \optionD{The execution of the previously existing layers is split
+      between the two new tiers, and new intermediate layers may be
+      needed}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%21
+\newcommand{\qDomainLogicFenix}{
+  \begin{ClosedQuestion}
+    A primeira arquitectura do sistema Fénix, correspondendo aos seus
+    primeiros anos de desenvolvimento, podia ser descrita como uma
+    arquitectura de três camadas, típica de uma aplicação empresarial.
+    Uma dessas camadas era a camada de lógica de domínio (\emph{Domain
+      Logic}).  Qual das seguintes afirmações melhor caracteriza a
+    arquitectura do Fénix no que diz respeito a essa camada?
+    
+    \optionA{A camada de lógica de domínio era implementada seguindo
+      a abordagem do padrão Domain Model}
+    \optionB{A camada de lógica de domínio era implementada seguindo
+      a abordagem do padrão Transaction Script}
+    \optionC{A camada de lógica de domínio era implementada seguindo
+      a abordagem do padrão Service Layer}
+    \optionD{A camada de lógica de domínio era implementada como um
+      modelo de domínio rico, em cima do qual existia uma camada de
+      serviços fina}
+    \putOptions
+
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qDomainLogicFenixINGLES}{
+  \begin{ClosedQuestion}
+    The first architecture of the Fénix system, corresponding to its
+    first years of development, could be described as a three-layered
+    architecture, typical of an enterprise application.  One of those
+    layers was the \emph{domain logic} layer.  Which of the following
+    sentences best describes the Fénix architecture in what concerns
+    that layer?
+    
+    \optionA{The domain logic layer was implemented with the Domain
+      Model pattern}
+    \optionB{The domain logic layer was implemented with the
+      Transaction Script pattern}
+    \optionC{The domain logic layer was implemented with the Service
+      Layer pattern}
+    \optionD{The domain logic layer was implemented with a rich domain
+      model, on top of which there was a thin service layer}
+    \putOptions
+
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+
+%22
+\newcommand{\qIncrementalReleases}{
+  \begin{ClosedQuestion}
+    Para colocar um produto mais rapidamente no mercado, as empresas
+    de desenvolvimento de software estão cada vez mais a usar uma
+    estratégia incremental de desenvolvimento, lançando periodicamente
+    novas versões do produto com novas funcionalidades.  Qual dos
+    estilos arquitecturais é melhor para analizar se a arquitectura de
+    software do sistema é adequada para o lançamento incremental das
+    várias versões?
+
+    \optionA{O estilo Decomposição}
+    \optionB{O estilo Generalização}
+    \optionC{O estilo Utilização}
+    \optionD{O estilo SOA}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qIncrementalReleasesINGLES}{
+  \begin{ClosedQuestion}
+    To achieve a faster time-to-market, software companies are
+    increasingly using a strategy of incremental releases of their
+    software, where each new release has a set of new features.  Which
+    architectural style is better to analyse whether the system's
+    software architecture is adequate for the planned incremental
+    releases?
+   
+    \optionA{The Decomposition style}
+    \optionB{The Generalization style}
+    \optionC{The Uses style}
+    \optionD{The SOA style}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+
+%23
+\newcommand{\qScalability}{
+  \begin{ClosedQuestion}
+    Vários dos casos estudados na cadeira tinham requisitos de
+    escalabilidade.  Isso significa que os sistemas em causa
+    devem ser construídos de forma a
+
+    \optionA{Ter um elevado \emph{throughput}}
+    \optionB{Ter uma latência baixa}
+    \optionC{Ter a capacidade de suportar muitos utilizadores em simultâneo}
+    \optionD{Poderem ser facilmente alterados para aumentar o seu desempenho}
+
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qScalabilityINGLES}{
+  \begin{ClosedQuestion}
+    Several of the cases studied in this course had scalability
+    requirements.  That means that those systems should be designed in
+    such a way that they
+
+    \optionA{Have high throughput}
+    \optionB{Have low latency}
+    \optionC{Allow many simultaneous users}
+    \optionD{May be easily changed to increase their performance}
+
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+%24
+\newcommand{\qSOA}{
+  \begin{ClosedQuestion}
+    No estilo arquitectural \emph{Service Oriented Architecture} é
+    comum a existência de um componente especializado, designado por
+    \emph{Enterprise Service Bus} (ESB).  A utilização de um ESB num
+    sistema tem como objectivo
+
+    \optionA{Facilitar a interacção entre componentes heterogéneos que
+      utilizam protocolos de comunicação distintos}
+    \optionB{Promover a utilização de um protocolo de comunicação
+      comum para todos os restantes componentes do sistema}
+    \optionC{Aumentar o desempenho na interacção entre componentes do
+      sistema}
+    \optionD{Criar uma ligação forte entre os vários serviços
+      disponibilizados na organização}
+
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qSOAINGLES}{
+  \begin{ClosedQuestion}
+    In the Service Oriented Architecture style it is common to have a
+    specialized component, named \emph{Enterprise Service Bus} (ESB).
+    The goal of using of an ESB in a system is
+
+    \optionA{To facilitate the interaction among heterogeneous
+      components that use distinct communication protocols}
+    \optionB{To promote the use of a common communication protocol for
+      all the remaining components of the system}
+    \optionC{To increase the performance of the interaction between
+      the components of the system}
+    \optionD{To create a strong coupling between the various services
+      provided by the organization}
+
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+
+%25
+\newcommand{\qAvailability}{
+  \begin{ClosedQuestion}
+    Para satisfazer requisitos de disponibilidade existem diferentes
+    tácticas, que podem ser aplicadas dependendo do tipo concreto de
+    requisito que pretendemos satisfazer.  Supondo que pretende
+    detectar faltas do tipo \emph{resposta} no seu sistema, que
+    táctica é mais adequada?
+
+    \optionA{A táctica \emph{Ping/Echo}}
+    \optionB{A táctica \emph{Heartbeat}}
+    \optionC{A táctica de \emph{Voting}}
+    \optionD{A táctica de \emph{Removal from Service}}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qAvailabilityINGLES}{
+  \begin{ClosedQuestion}
+    There are several tactics to satisfy availability requirements,
+    which may be applied depending on the concrete requirement that we
+    want to satisfy.  Assuming that you want to detect faults of type
+    \emph{response} in your system, which tactic is more adequate?
+
+    \optionA{The Ping/Echo tactic}
+    \optionB{The Heartbeat tactic}
+    \optionC{The Voting tactic}
+    \optionD{The Removal from Service tactic}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+
+%26
+\newcommand{\qSecurity}{
+  \begin{ClosedQuestion}
+    Suponha que para satisfazer um requisito de segurança relacionado
+    com a possibilidade de ataques por parte de utilizadores que
+    acedem ao seu sistema pela Internet, pretende utilizar a táctica
+    designada por \emph{Limit Exposure}.  Como é que a utilização
+    dessa táctica se manifesta nas vistas da arquitectura do seu
+    sistema?
+
+    \optionA{Na vista de Instalação}
+    \optionB{Na vista de Decomposição}
+    \optionC{Numa vista de componente-e-conector}
+    \optionD{Na vista de Aspectos}
+
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qSecurityINGLES}{
+  \begin{ClosedQuestion}
+    Suppose that, to satisfy a security requirement related with
+    possible attacks coming from users that access your system through
+    the Internet, you want to use the tactic named \emph{Limit
+      Exposure}.  How does the use of that tactic manifests in the
+    architectural views of your system?
+
+    \optionA{In the Deployment view}
+    \optionB{In the Decomposition view}
+    \optionC{In a view of the component-and-connector type}
+    \optionD{In the Aspects view}
+
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+%27
+\newcommand{\qSkeletonSystem}{
+  \begin{ClosedQuestion}
+    Uma das boas práticas na concepção de uma arquitectura de software
+    é a criação de um sistema esqueleto.  Qual o seu objectivo?
+
+    \optionA{Criar uma camada de abstracção entre a arquitectura do
+      sistema e as suas funcionalidades, de modo a poder-se alterar a
+      arquitectura mais tarde sem afectar as funcionalidades}
+    \optionB{Criar um artefacto que pode ser usado para explicar a
+      arquitectura de software do sistema aos vários \emph{stakeholders}}
+    \optionC{Permitir testar e validar a arquitectura de software numa
+      fase inicial do desenvolvimento}
+    \optionD{Facilitar a atribuição de trabalho aos membros da equipa
+      de desenvolvimento que vão implementar as funcionalidades do sistema}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qSkeletonSystemINGLES}{
+  \begin{ClosedQuestion}
+    One of the best practices in the design of a software architecture
+    is to create a skeleton system.  What is its purpose?
+
+    \optionA{To create an abstraction layer between the architecture
+      of the system and its functionalities, so that the architecture
+      may be changed later without affecting the functionalities}
+    \optionB{To create an artifact that may be used to explain the
+      system's software architecture to the various stakeholders}
+    \optionC{To allow testing and validating the software architecture
+      in the early development stages}
+    \optionD{To facilitate the work assignment to the members of the
+      development team that will implement the system's functionalities}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+
+%28
+\newcommand{\qChromiumDecomposition}{
+  \begin{ClosedQuestion}
+    A página que descreve a arquitectura do Chromium OS (um projecto
+    \emph{open source} para a implementação de um novo sistema
+    operativo) começa da seguinte forma:
+    \begin{quote}
+      Chromium OS consists of three major components: 
+      \begin{itemize}
+      \item The Chromium-based browser and the window manager
+      \item System-level software and user-land services: the kernel, drivers, connection manager, and so on
+      \item Firmware 
+      \end{itemize}
+    \end{quote}
+
+    Tendo em conta esta breve descrição da arquitectura de software do
+    Chromium OS, que estilo arquitectural lhe parece mais adequado
+    para a representar?
+
+    \optionA{O estilo Processos Comunicantes (\emph{Communicating Processes})}
+    \optionB{O estilo Cliente-Servidor (\emph{Client-Server})}
+    \optionC{Um estilo qualquer do tipo de vista componente-e-conector}
+    \optionD{O estilo Decomposição (\emph{Decomposition})}
+
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qChromiumDecompositionINGLES}{
+  \begin{ClosedQuestion}
+    The web page that describes the architecture of Chromium OS (an
+    open source project to implement a new operating system) starts
+    like this:
+    \begin{quote}
+      Chromium OS consists of three major components: 
+      \begin{itemize}
+      \item The Chromium-based browser and the window manager
+      \item System-level software and user-land services: the kernel, drivers, connection manager, and so on
+      \item Firmware 
+      \end{itemize}
+    \end{quote}
+    Considering this brief description of the software architecture of
+    Chromium OS, which architectural style is more adequate to
+    represent it?
+
+    \optionA{The Communicating Processes style}
+    \optionB{The Client-Server style}
+    \optionC{Any style of the component-and-connector viewtype}
+    \optionD{The Decomposition style}
+
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+%29
+\newcommand{\qArqEmailMTAIMAP}{
+  \begin{ClosedQuestion}
+    O sistema de email é composto por vários tipos de componentes que
+    desempenham diferentes funções.  Por exemplo, para enviar um
+    email, um utilizador usa um \emph{mail user agent} (MUA), para
+    compor a sua mensagem e enviá-la.  Para enviar a mensagem,
+    tipicamente o MUA liga-se a um \emph{mail transfer agent} (MTA),
+    que recebe a mensagem, analisa os cabeçalhos da mesma para
+    determinar os vários destinatários e, após consulta do sistema DNS
+    para determinar quais os MTA responsáveis por cada um dos
+    destinatários, liga-se aos MTAs responsáveis pelos endereços de
+    destino para entregar a mensagem.  Cada um desses MTAs recebe a
+    mensagem e armazena-a localmente ou reenvia-a para outros MTAs até
+    que a mensagem chegue ao MTA do destino.  O utilizador
+    destinatário da mensagem irá depois usar o seu MUA para ver as
+    mensagens que lhe foram enviadas.  Para isso o MUA liga-se a um
+    servidor IMAP ou POP para obter as mensagens que lhe foram
+    destinadas.  Esses servidores IMAP e POP obtêm as mensagens de um
+    utilizador consultando as mensagens armazenadas pelo MTA.
+
+    Tendo em conta esta descrição simplificada do funcionamento do
+    sistema de email, qual dos estilos arquitecturais lhe parece mais
+    adequada para representar o padrão de interacção existente entre o
+    MTA e os servidores de IMAP e POP?
+
+    \optionA{O estilo arquitectural Par-a-Par (\emph{Peer-to-Peer})}
+    \optionB{O estilo arquitectural Cliente-Servidor (\emph{Client-Server})}
+    \optionC{O estilo arquitectural Dados-Partilhados \emph{Shared-Data}}
+    \optionD{O estilo arquitectural Publicação-Subscrição (\emph{Publish-subscribe})}
+
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qArqEmailMTAIMAPINGLES}{
+  \begin{ClosedQuestion}
+    The email system is composed of various types of components
+    playing different roles.  For example, to send an email, a user
+    uses a \emph{mail user agent} (MUA), to compose his message and
+    send it.  To send the message, the MUA typically connects to a
+    \emph{mail transfer agent} (MTA) that receives the message,
+    analyzes the message's headers to determine the recipients and,
+    after querying the DNS system to determine the MTA responsible for
+    each recipient, it connects to the MTAs responsible for the
+    destination addresses to deliver the message.  Each of these MTAs
+    receives the message and stores it locally or forwards it to
+    others MTAs until the message reaches its destination MTA.
+    The recipient user of the message will then use his MUA to see the
+    messages that were sent to him.  To do it, the MUA connects to an
+    IMAP or POP server to obtain the user's messages.  Those IMAP and
+    POP servers obtain the messages for a user by reading the messages
+    stored by the MTA.
+
+    Given this simplified description of the operation of the email
+    system, which of the following architectural styles is more
+    appropriate to represent the pattern of interaction between the
+    MTA and the servers IMAP and POP?
+
+    \optionA{The Peer-to-Peer style}
+    \optionB{The Client-Server style}
+    \optionC{The Shared-Data style}
+    \optionD{The Publish-subscribe style}
+
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+
+%30
+\newcommand{\qAspects}{
+  \begin{ClosedQuestion}
+    O estilo arquitectural Aspectos (\emph{Aspects}) foi mais
+    recentemente introduzido como um estilo do tipo de vista módulo.
+    A utilização deste estilo na arquitectura de software de um sistema
+
+    \optionA{Não altera os módulos existentes no sistema, visto que
+      isso é determinado pela Decomposição do sistema, que não sofre
+      alterações}
+    \optionB{Cria restrições às relações de dependência existentes
+      entre módulos e representadas noutros estilos, tal como o estilo
+      camadas}
+    \optionC{Tipicamente dá origem à criação de mais módulos do que os
+      que existiriam se este estilo não fosse usado}
+    \optionD{Apenas introduz um novo tipo de relação entre os módulos
+      já existentes no sistema, que resultam da aplicação dos outros
+      estilos do tipo de vista módulo}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qAspectsINGLES}{
+  \begin{ClosedQuestion}
+    The Aspects style was introduced recently as a new style of the
+    module viewtype.  Using this style in the software architecture of
+    a system
+
+    \optionA{Does not change the existing modules of the system,
+      because they are determined by the system's Decomposition, which
+      is not changed}
+    \optionB{Adds restrictions to the dependency relationships that
+      exist between modules and that are represented using other
+      styles, as with the layers style}
+    \optionC{Typically gives rise to more modules than what we would
+      have if not using this style}
+    \optionD{Introduces only a new type of relation among the existing
+      modules of the system, which resulted from other styles of the
+      module viewtype}
+
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+
+
+

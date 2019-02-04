@@ -1,0 +1,47 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top
+  button.navbar-toggler( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+    
+  .collapse.navbar-collapse(id="navbarSupportedContent")
+    .form-inline.mr-auto
+      if data.previous[0] != null
+        button.btn.btn-sm.btn-light.mr-1(type="button" id="previous") Previous
+        script.
+          $("#previous").click(function () { window.location = "/editQuestion/#{data.previous[0].id}" ;});
+      else
+        button.btn.btn-sm.btn-light.mr-1.disabled(type="button" id="previous") Previous
+      
+      if data.next[0] != null
+        button.btn.btn-sm.btn-light.mr-1(type="button" id="next") Next
+        script.
+          $("#next").click(function () { window.location = "/editQuestion/#{data.next[0].id}" ;});
+      else
+        button.btn.btn-sm.btn-light.mr-1.disabled(type="button" id="next") Next
+  
+    .form-inline
+      button.btn.btn-sm.btn-light.mx-1(type="button" id="saveQuestion") Save
+      script.
+        $("#" + "saveQuestion").click(function () {
+          
+          //alert(JSON.stringify(questionInterface.getQuestionData()));
+          
+          var data = questionInterface.getQuestionData();
+          
+          console.log(JSON.stringify(data));
+          
+          $.ajax({
+            url: "/api/updatequestion/" + data.question.id,
+            type: 'PUT',
+            success: function () {
+              /* alert("Question Content Updated"); */
+              window.location = "/listQuestions" ;
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json"
+          });
+        });
+        
+      button.btn.btn-sm.btn-light.mx-1(type="button" id="cancelEditQuestion") Cancel
+      script.
+        $("#cancelEditQuestion").click(function () { window.location = "/listQuestions" ;});
+        // #question-card-#{data.question.id}

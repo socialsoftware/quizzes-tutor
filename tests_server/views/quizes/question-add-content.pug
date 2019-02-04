@@ -1,0 +1,95 @@
+.Main.p-4.bg-light
+  #question-list.card
+    // card start
+    .card-header
+      // card-header start
+      h5 Add Question to Quiz #{data.quiz.id}
+    // card-header end
+    
+    if data.questions.length == 0
+      .card-body No questions exist in the database that are not in this quiz
+    
+    for question in data.questions
+      - var questionId = "question-" + question.id;
+      - var questionContentId = "questionContent-" + question.id;
+      - var addQuestionId = "addQuestion-" + question.id;
+      - var removeQuestionId = "removeQuestion-" + question.id;
+      - var toggleButtonId = "toggle-answers-question-" + question.id
+      - var questionAnswersId = "question-" + question.id + "-answers"
+      .card-body.border-top(id=questionId)
+        // Start Edit Question Form
+        .form-group
+          // Start Text Edit Form
+          label.row
+            .col-md-10.col-sm-7.text-secondary.font-weight-bold(for="questionContentId") Question #{question.id}
+            .col-md-2.col-sm-5.text-right
+              button.btn.btn-sm.btn-outline-secondary(type="button" id=toggleButtonId data-toggle="button" aria-pressed="false" autocomplete="off")
+                i.fa.fa-caret-down
+                
+              script.
+                $("##{toggleButtonId}").click(function() {
+                  $("##{questionAnswersId}").slideToggle("slow", function() {})});
+          .row
+            .col-12
+              textarea.form-control-plaintext(rows="3" id=questionContentId disabled="true")
+                | #{question.content}
+          
+          if question.image.length == 1      
+            .row
+              .col-md-12.text-center
+                img.img-fluid(src=question.image[0].url id="question-image")
+                
+        div(id=questionAnswersId style="display: none;")
+          for answer in question.answers
+            - var answerId = questionId + "-answer-" + answer.id
+            - var answerText = answerId + "-text"
+            - var isAnswerCorrect = false;
+            
+            for correct in question.correctAnswers
+              if correct.answerid == answer.id
+                - isAnswerCorrect = true;
+                - break
+            
+            .form-group(id=answerId)
+              label.row
+                .col-md-10.col-sm-7.text-secondary.float-left
+                  | Answer #{answer.id}
+                .col-md-2.col-sm-5
+                  if isAnswerCorrect
+                    i.fa.fa-check.text-success.float-right
+                  else
+                    i.fa.fa-times.text-danger.float-right
+                    
+              .row
+                .col-12
+                  textarea.form-control-plaintext(id=answerText rows="3" disabled="true")
+                    | #{answer.content}
+        .row
+          .col-12
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=addQuestionId) Add Question #{question.id}
+              script.
+                $("##{addQuestionId}").click(function () { 
+                  
+                  var postData = {
+                    questionid: #{question.id},
+                    quizid: #{data.quiz.id}
+                  }
+                  
+                  console.log(JSON.stringify(postData))
+                  
+                  $.ajax({
+                    url: "/api/copyQuestionIntoQuiz",
+                    type: 'POST',
+                    success: function (data) {
+                      /* alert("Quiz Updated - #{data.quiz.id}"); */
+                      // get the quiz id from the response
+                      // change this to /createQuizQuestion/:quizId
+                      window.location = "/editQuiz/#{data.quiz.id}";
+                    },
+                    data: JSON.stringify(postData),
+                    contentType: "application/json"
+                  });
+                  //window.location = "/editQuiz/#{data.quiz.id}";
+                  
+                });

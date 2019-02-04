@@ -1,0 +1,815 @@
+
+
+\newcommand{\wikipediaWarning}{
+{\Large 
+  \textbf{Atenção:} Nas perguntas que se seguem existem excertos de
+  texto que foram obtidos directamente de fontes disponíveis na
+  Internet (como a Wikipedia, por exemplo), sem alteração da
+  terminologia usada para a adaptar à usada na cadeira.  Por isso,
+  \textbf{pode acontecer que a terminologia usada nesses excertos de
+    texto seja diferente da usada na cadeira.  Por exemplo, o uso de
+    \emph{component} para referir outro tipo de elemento de software.
+    Tenha isso em linha de conta nas suas respostas.}
+
+}
+}
+
+\newcommand{\wikipediaWarningINGLES}{
+{\Large 
+  \textbf {Warning:} In the questions that follow there are pieces of
+  text that were obtained directly from available sources in the
+  Internet (such as Wikipedia, for example), without changing the
+  terminology used to adapt it to that used in this course. Therefore,
+  \textbf {it may happen that the terminology used in those pieces of
+    text is different from that used in the course. For example, the
+    use of \emph{component} to refer to other types of software
+    elements.  Please take this into account in your responses.}
+}
+}
+
+
+
+%1
+\newcommand{\qHadoopStakeholdersEuros}{
+  \begin{ClosedQuestion}
+    Para os \emph{stakeholders} do sistema Hadoop a solução de
+    construir um \emph{cluster} de servidores usando muitas máquinas
+    de baixo custo foi:
+
+    \optionA{Determinante para garantir a escalabilidade do sistema}
+    \optionB{Determinante para que os custos de falha de um elemento de hardware sejam reduzidos}
+    \optionC{Determinante para garantir a portabilidade do sistema}
+    \optionD{Determinante para permitir a integração com sistemas legados}
+
+    \putOptions
+% Resposta: B
+\end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopStakeholdersEurosINGLES}{
+  \begin{ClosedQuestion}
+    From the stakeholders perspective the use of low cost servers to build the clusters is:
+
+    \optionA{Essential to ensure the system scalability}
+    \optionB{Essential to reduce costs whenever there is a fault in a hardware element}
+    \optionC{Essential to ensure the system portability}
+    \optionD{Essential to facilitate the integration with legacy systems}
+
+    \putOptions
+% Resposta: B
+\end{ClosedQuestion}
+}
+
+
+%2
+\newcommand{\qHadoopCheckpointBackupNode}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop a utilização de um \emph{BackupNode} em vez de
+    um \emph{CheckpointNode}:
+
+    \optionA{Permite a criação de \emph{checkpoints} mas tem que pedir toda a informação de uma vez só ao \emph{NameNode}}
+    \optionB{Não permite a criação de \emph{checkpoints}}
+    \optionC{Permite a criação de \emph{checkpoints} com a informação que recebe gradualmente do \emph{NameNode}}
+    \optionD{Permite a criação de \emph{checkpoints} sem necessitar de informação do \emph{NameNode}}
+
+    \putOptions
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopCheckpointBackupNodeINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system the use of a \emph{BackupNode} instead of a \emph{CheckpointNode}:
+
+    \optionA{Allows the creation of checkpoints but it is necessary to request all the information from the \emph{NameNode} whenever a new checkpoint creation begins}
+    \optionB{Does not allow the creation of checkpoints}
+    \optionC{Allows the creation of checkpoints using the information that it gradually receives from the \emph{NameNode}}
+    \optionD{Allows the creation of checkpoints without requiring any kind of information from the \emph{NameNode}}
+
+    \putOptions
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+%3
+\newcommand{\qHadoopCheckpoint}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop o \emph{CheckpointNode}, quando executa num nó
+    diferente do nó onde executa o \emph{NameNode}, suporta:
+
+    \optionA{As qualidades de desempenho e disponibilidade}
+    \optionB{Apenas a qualidade de desempenho}
+    \optionC{Apenas a qualidade de disponibilidade}
+    \optionD{As qualidades de desempenho e segurança}
+
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopCheckpointINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system when the \emph{CheckpointNode} and the \emph{NameNode} are deployed in different nodes, the \emph{CheckpointNode} provides:
+    \optionA{Performance and availability qualities}
+    \optionB{Performance qualities only}
+    \optionC{Availability qualities only}
+    \optionD{Performance and security qualities}
+
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+%4
+\newcommand{\qHadoopPoliticaLocalizacaoReplicas}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop a possibilidade de ter várias políticas de localização de réplicas:
+
+    \optionA{Aumenta a facilidade de modificação do sistema sempre que se pretenda mudar de política de localização}
+    \optionB{Permite que os \emph{DataNodes} decidam que réplicas possuem}
+    \optionC{Aumenta a facilidade de modificação do sistema sempre que se altera a estrutura de instalação}
+    \optionD{Permite que as várias réplicas sejam colocadas em diferentes \emph{DataNodes}}
+
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopPoliticaLocalizacaoReplicasINGLES}{
+  \begin{ClosedQuestion}
+    The Hadoop system support of different block placement policies:
+
+    \optionA{Increases the system modifiability whenever it is necessary to change the placement policy}
+    \optionB{Allows \emph{DataNodes} to decide which replicas they have}
+    \optionC{Increases the system modifiability whenever it is necessary to change the the deployment structure}
+    \optionD{Allow several replicas to be located in different \emph{DataNodes}}
+
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+%5
+\newcommand{\qHadoopPing}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop, durante a operação normal, o \emph{NameNode}
+    poderia usar a táctica de \emph{ping} para saber se os \emph{DataNodes} estão disponíveis
+
+    \optionA{Porque esta táctica é aquela que não sobrecarrega o \emph{NameNode}}
+    \optionB{Mas levaria a um maior \emph{overhead} no \emph{NameNode}}
+    \optionC{Mas também poderia usar a táctica de excepções}
+    \optionD{Para informar os restantes \emph{DataNodes} que estão disponíveis}
+    \putOptions
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopPingINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system, during normal operation, \emph{NameNode}
+    could use a ping tactic to know whether \emph{DataNodes} are available
+
+    \optionA{Because this tactic does not overload the \emph{NameNode}}
+    \optionB{But it would imply an \emph{overhead} in the \emph{NameNode}}
+    \optionC{But an exceptions tactic could be used as well}
+    \optionD{To notify other \emph{DataNodes} that they are available}
+    \putOptions
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+%6
+\newcommand{\qHadoopInstalacao}{
+  \begin{ClosedQuestion}
+    O conhecimento da estrutura de instalação no sistema Hadoop é
+    relevante para o funcionamento eficaz do sistema.  Para isso o
+    administrador pode configurar, para cada instalação do sistema, um
+    \emph{script} que retorna a identificação do \emph{rack} onde se
+    encontra um nó (ver secção 8.3.2).
+
+    \optionA{Este \emph{script} pertence ao módulo de instalação do sistema}
+    \optionB{Este \emph{script} é um módulo do sistema e implementa uma táctica de segurança}
+    \optionC{Este \emph{script} é um módulo do sistema e implementa uma táctica de facilidade de modificação}
+    \optionD{Este \emph{script} não pode ser considerado como um módulo do sistema pois é apenas un \emph{script}}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopInstalacaoINGLES}{
+  \begin{ClosedQuestion}
+    Knowing the deployment structure in the Hadoop system is critical
+    to the effective system operation. Therefore, for each deployment,
+    the administrator can configure a script that returns a node's
+    rack identification given a node's address (see section 8.3.2).
+
+    \optionA{This script is part of the system deployment module}
+    \optionB{This script is a module that implements a security tactic}
+    \optionC{This script is a module that implements a modifiability tactic}
+    \optionD{This script cannot be considered a module because it is only a script}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+%7
+\newcommand{\qTacticaCheckpointRollback}{
+  \begin{ClosedQuestion}
+    A táctica de \emph{Checkpoint/rollback} é uma táctica de
+
+    \optionA{Disponibilidade, segurança, e desempenho}
+    \optionB{Apenas de disponibilidade}
+    \optionC{Disponibilidade e desempenho}
+    \optionD{Disponibilidade e segurança}
+    \putOptions
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qTacticaCheckpointRollbackINGLES}{
+  \begin{ClosedQuestion}
+    The \emph{Checkpoint/rollback} tactic is a tactic for
+
+    \optionA{Availability, security, and performance}
+    \optionB{Availability only}
+    \optionC{Availability and performance}
+    \optionD{Availability and security}
+    \putOptions
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+%8
+\newcommand{\qTiposVistaDesempenho}{
+  \begin{ClosedQuestion}
+    Para analisar o desempenho de um sistema
+
+    \optionA{Apenas são necessárias vistas do tipo componente-conector}
+    \optionB{Todos os tipos vista podem ser necessários}
+    \optionC{Apenas são necessárias vistas do tipo componente-conector e do tipo afectação}
+    \optionD{Os tipos de vista módulo não são de certeza necessários}
+    \putOptions
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qTiposVistaDesempenhoINGLES}{
+  \begin{ClosedQuestion}
+    To analyse the performance of a system
+
+    \optionA{Only views of the component-and-connector viewtype are needed}
+    \optionB{All viewtypes may be necessary}
+    \optionC{Only views of the component-and-connector viewtype and allocation viewtype are needed}
+    \optionD{Views of the module viewtype are not needed}
+    \putOptions
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+%9
+\newcommand{\qUsaCircular}{
+  \begin{ClosedQuestion}
+    Uma vista onde seja utilizado o estilo Utilização e que possua uma
+    circularidade entre relações usa
+
+    \optionA{Indica que pode haver problemas para desenvolver testes incrementais}
+    \optionB{Indica que se pode seguir um processo de desenvolvimento incremental dos módulos}
+    \optionC{Indica que a os módulos que têm dependências circulares entre eles devem ser os primeiros a ser implementados}
+    \optionD{Sugere que as relações de usa devem ser substituídas por relações do tipo é-um}
+    \putOptions
+% Resposta: A
+\end{ClosedQuestion}
+}
+
+\newcommand{\qUsaCircularINGLES}{
+  \begin{ClosedQuestion}
+    A view of the \emph{Uses} style that contains a loop in the uses relationships
+
+    \optionA{Means that it may be difficult to design incremental testing}
+    \optionB{Means that it is possible to implement the system according to an incremental development process}
+    \optionC{Means that the modules that are part of the loop should be implemented first}
+    \optionD{Gives a hint to replace the uses relations by is-a relations}
+    \putOptions
+% Resposta: A
+\end{ClosedQuestion}
+}
+
+%10
+\newcommand{\qUsaPodeUsar}{
+  \begin{ClosedQuestion}
+    A diferença entre a relação \emph{usa} do estilo Utilização e a
+    relação \emph{pode usar} do estilo Camadas
+
+    \optionA{É que a relação \emph{pode usar} define uma restrição para as possíveis relações \emph{usa} entre módulos pertencentes a camadas diferentes}
+    \optionB{É que a relação \emph{usa} apenas pode ocorrer entre módulos pertencentes à mesma camada}
+    \optionC{É que a relação \emph{pode usar} não indica que o correcto funcionamento da camada acima depende da correcta implementação da camada abaixo}
+    \optionD{É que a relação \emph{pode usar} é de facto uma relação \emph{usa} entre camadas}
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qUsaPodeUsarINGLES}{
+  \begin{ClosedQuestion}
+    The main difference between the \emph{Uses} relation of the Uses
+    style and the \emph{Allowed to Use} relation of the Layers style
+ 
+    \optionA{Is that the \emph{Allowed to Use} relation defines a restriction for the possible \emph{Uses} relations between modules belonging to different layers}
+    \optionB{Is that the \emph{Uses} relation can happen only among modules belonging to the same layer}
+    \optionC{Is that the \emph{Allowed to Use} relation does not imply that the correctness of the upper layer depends on the correct implementation of its nearest lower layer}
+    \optionD{Is that the \emph{Allowed to Use} relation is a \emph{Uses} relation between layers}
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+
+
+%11
+\newcommand{\qHadoopFileWriteBuffered}{
+  \begin{ClosedQuestion}
+    No terceiro parágrafo da secção 8.3.1 descreve-se o mecanismo de
+    \emph{buffering} usado pelo cliente de um sistema HDFS durante a
+    escrita de um ficheiro.  Suponha que quer descrever este mecanismo
+    recorrendo a uma vista arquitectural.  Como é que o faria?
+    
+    \optionA{Não faz sentido usar uma vista arquitectural para isso,
+      visto que é um pormenor de implementação do sistema que não
+      afecta as suas qualidades}
+    \optionB{Usava uma vista do tipo módulo que mostrasse as
+      interfaces providenciadas para o cliente efectuar a escrita}
+    \optionC{Usava uma vista do tipo componente-e-conector}
+    \optionD{Usava uma vista do estilo arquitectural Instalação (\emph{Deployment})}
+  \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopFileWriteBufferedINGLES}{
+  \begin{ClosedQuestion}
+    The third paragraph of section 8.3.1 describes the buffering
+    mechanism used by an HDFS client when it is writing to a file.
+    How would you describe this mechanism using an architectural view?
+   
+    \optionA{It does not make sense to use an architectural view for
+      this, because this is an implementation detail that does affect
+      the system's qualities}
+    \optionB{Using a view of the module viewtype that shows the
+      interfaces available for the client to do the write}
+    \optionC{Using a view of the component-and-connector viewtype}
+    \optionD{Using a view of the architectural style Deployment}
+  \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+
+%12
+\newcommand{\qHadoopDisponibilidadeDados}{
+  \begin{ClosedQuestion}
+    Um dos principais requisitos para o sistema HDFS é a garantia de
+    disponibilidade dos dados armazenados no sistema, mesmo na
+    presença de vários tipos de falhas (não simultâneas) no
+    \emph{hardware} em que o sistema executa.  Para mostrar que o
+    sistema satisfaz este requisito
+
+    \optionA{É necessário recorrer a vários tipos de vistas
+      diferentes, dos tipos de vista componente-e-conector e afectação}
+    \optionB{Basta mostrar, através de vistas do tipo
+      componente-e-conector, que o sistema mantém réplicas dos dados
+      em diferentes componentes}
+    \optionC{Basta mostrar, através de vistas do estilo Instalação,
+      que o componente \emph{DataNode} executa em mais do que uma
+      máquina do \emph{cluster}}
+    \optionD{Basta mostrar, através de vistas do estilo Decomposição,
+      que existem módulos responsáveis por fazer a replicação dos
+      blocos de um ficheiro}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+\newcommand{\qHadoopDisponibilidadeDadosINGLES}{
+  \begin{ClosedQuestion}
+    One of the key requirements for the HDFS system is that the data
+    stored in the system remains available, even in the presence of
+    various types of failures (non simultaneous) in the hardware in
+    which the system executes.  To show that the system satisfies this
+    requirement
+
+    \optionA{We must use various different views, both of the
+      component-and-connector and the allocation viewtypes}
+    \optionB{We just have to show, through component-and-connector
+      views, that the system maintains replicas of the data in
+      different components}
+    \optionC{We just have to show, through Deployment views,
+      that the \emph{DataNode} component executes in more than one
+      machine of the cluster}
+    \optionD{We just have to show, through Decomposition views, that
+      there are modules responsible for the replication of file blocks}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+
+%13
+\newcommand{\qHadoopMapReduce}{
+  \begin{ClosedQuestion}
+    Considere o seguinte excerto do tutorial sobre o Hadoop MapReduce:
+
+    \begin{quote}
+      Hadoop MapReduce is a software framework for easily writing
+      applications which process vast amounts of data (multi-terabyte
+      data-sets) in-parallel on large clusters (thousands of nodes) of
+      commodity hardware in a reliable, fault-tolerant manner.
+
+      A MapReduce job usually splits the input data-set into
+      independent chunks which are processed by the map tasks in a
+      completely parallel manner.  The framework sorts the outputs of
+      the maps, which are then input to the reduce tasks. Typically
+      both the input and the output of the job are stored in a
+      file-system.  The framework takes care of scheduling tasks,
+      monitoring them and re-executes the failed tasks.
+    \end{quote}
+
+    Que estilo arquitectural do tipo de vista componente-e-conector
+    lhe parece mais adequado para descrever o funcionamento do
+    MapReduce, tendo em conta as suas principais vantagens na
+    resolução de um problema?
+
+    \optionA{O estilo Dados Partilhados (\emph{Shared data})}
+    \optionB{O estilo Canais-e-filtros (\emph{Pipes-and-filters})}
+    \optionC{O estilo Par-a-Par (\emph{Peer-to-Peer})}
+    \optionD{O estilo Processos Comunicantes (\emph{Communicating Processes})}
+   \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopMapReduceINGLES}{
+  \begin{ClosedQuestion}
+    Consider the following excerpt from the tutorial on the Hadoop
+    MapReduce:
+
+    \begin{quote}
+      Hadoop MapReduce is a software framework for easily writing
+      applications which process vast amounts of data (multi-terabyte
+      data-sets) in-parallel on large clusters (thousands of nodes) of
+      commodity hardware in a reliable, fault-tolerant manner.
+
+      A MapReduce job usually splits the input data-set into
+      independent chunks which are processed by the map tasks in a
+      completely parallel manner.  The framework sorts the outputs of
+      the maps, which are then input to the reduce tasks. Typically
+      both the input and the output of the job are stored in a
+      file-system.  The framework takes care of scheduling tasks,
+      monitoring them and re-executes the failed tasks.
+    \end{quote}
+
+    Which architectural style of the component-and-connector viewtype
+    is more adequate to describe how the MapReduce works, taking into
+    account its main advantages in solving a problem?
+
+    \optionA{The Shared data style}
+    \optionB{The Pipes-and-filters style}
+    \optionC{The Peer-to-Peer style}
+    \optionD{The Communicating Processes style}
+   \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%14
+\newcommand{\qHadoopComoDatabase}{
+  \begin{ClosedQuestion}
+    Suponha que está a implementar uma aplicação web e que decidiu
+    usar um sistema HDFS para armazenar os dados da sua aplicação.  Ou
+    seja, a sua aplicação web irá ser um cliente do sistema HDFS.
+    Como é que esta decisão afecta a arquitectura da sua aplicação web?
+
+    \optionA{A vista de componente-e-conector da aplicação tem
+      necessariamente que passar a incluir os componentes \emph{NameNode} e
+      \emph{DataNode} com os quais a aplicação web tem que interagir
+      para aceder aos seus dados}
+    \optionB{A vista de camadas da aplicação web passa a
+      incluir uma camada que corresponde à \emph{framework} Hadoop
+      MapReduce}
+    \optionC{A aplicação continua a ter uma arquitectura de três
+      \emph{tiers}, em que um deles é o sistema HDFS}
+    \optionD{A vista de Instalação do sistema tem que ser alterada
+      para passar a incluir os \emph{racks} necessários para o
+      funcionamento do HDFS}
+   \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopComoDatabaseINGLES}{
+  \begin{ClosedQuestion}
+    Suppose that you are implementing a web application and that you
+    decided to use an HDFS system to store the data of your
+    application---that is, your web application will be a client of
+    the HDFS system.  How does this decision affects the architecture
+    of your web application?
+
+    \optionA{The component-and-connector view must, necessarily, be
+      changed to include the components \emph{NameNode} and
+      \emph{DataNode}, with which the web application has to interact
+      to access its data}
+    \optionB{The layered view of the web application will have to
+      include a new layer corresponding to the Hadoop MapReduce
+      framework}
+    \optionC{The application continues to have a three-tiered
+      architecture, where one of the tiers is now the HDFS system}
+    \optionD{The Deployment view must be changed to include the racks
+      needed to run the HDFS system}
+   \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+
+%15
+\newcommand{\qHadoopCheckpointNode}{
+  \begin{ClosedQuestion}
+    Tendo em conta a descrição do \emph{CheckpointNode} feita na
+    secção 8.2.5, qual é o estilo arquitectural que melhor representa
+    a interacção existente entre os componentes \emph{CheckpointNode}
+    e \emph{NameNode}?
+
+    \optionA{O estilo Canais-e-Filtros (\emph{Pipes-and-filters})}
+    \optionB{O estilo Publicação-Subscrição (\emph{Publish-Subscribe})}
+    \optionC{O estilo Par-a-Par (\emph{Peer-to-Peer})}
+    \optionD{O estilo Cliente-Servidor (\emph{Client Server})}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopCheckpointNodeINGLES}{
+  \begin{ClosedQuestion}
+    Considering the description of the \emph{CheckpointNode} made in
+    Section~8.2.5, which architectural style best represents the
+    interaction between the \emph{CheckpointNode} and the
+    \emph{NameNode} components?
+
+    \optionA{The Pipes-and-filters style}
+    \optionB{The Publish-Subscribe style}
+    \optionC{The Peer-to-Peer style}
+    \optionD{The Client Server style}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+%16
+\newcommand{\qDomainModel}{
+  \begin{ClosedQuestion}
+    Dois dos padrões existentes para implementar a camada de lógica de
+    domínio de uma aplicação empresarial são o Domain Model e o
+    Transaction Script.  A escolha de um ou outro
+    
+    \optionA{Apenas afecta a camada de lógica de domínio}
+    \optionB{Pode afectar a camada de acesso a dados porque cada
+      padrão coloca requisitos diferentes na interface dessa camada}
+    \optionC{Não afecta a camada de lógica de apresentação porque não
+      a pode usar}
+    \optionD{Não afecta a camada de acesso a dados porque a camada de
+      acesso a dados não usa a camada de lógica de domínio}
+    \putOptions
+
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qDomainModelINGLES}{
+  \begin{ClosedQuestion}
+    \emph{Domain Model} and \emph{Transaction Script} are two of the
+    existing patterns to implement the domain logic layer of an
+    enterprise application.  Choosing one or the other
+   
+    \optionA{Affects only the domain logic layer}
+    \optionB{May affect the data access layer because each pattern
+      puts different requirements on the interface of that layer}
+    \optionC{Does not affect the presentation logic layer because it
+      cannot use it}
+    \optionD{Does not affect the data access layer because the data
+      access layer does not use the domain logic layer}
+    \putOptions
+
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+
+%17
+\newcommand{\qRelacaoComponentesMaquinas}{
+  \begin{ClosedQuestion}
+    Qual das seguintes frases captura melhor as restrições existentes
+    relativamente a que componentes podem executar em que máquinas no
+    estilo Instalação?
+
+    \optionA{Uma máquina pode executar apenas um componente, mas um
+      componente pode executar em mais do que uma máquina}
+    \optionB{Um componente pode executar apenas numa máquina, mas uma
+      máquina pode executar mais do que um componente}
+    \optionC{Cada componente executa numa única máquina e cada máquina
+      executa apenas um componente}
+    \optionD{Todos os componentes podem executar em todas as máquinas}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qRelacaoComponentesMaquinasINGLES}{
+  \begin{ClosedQuestion}
+    Which of the following sentences best captures the restrictions
+    regarding which components may execute in which machines in the
+    Deployment style?
+
+    \optionA{A machine may execute only one component, but a component
+      may execute in more than one machine}
+    \optionB{A component may execute in only one machine, but a
+      machine may execute more than one component}
+    \optionC{Each component executes in only one machine and each
+      machine executes only one component}
+    \optionD{All components may execute in all machines}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+%18
+\newcommand{\qWebDois}{
+  \begin{ClosedQuestion}
+    Com a evolução das tecnologias para o desenvolvimento de
+    aplicações web, passou a ser possível desenvolver aplicações web
+    com uma interface com o utilizador muito mais parecida com a das
+    tradicionais aplicações de \emph{desktop}.  No entanto, para isto
+    acontecer, foi necessário que parte do código que executava no
+    servidor web passasse a ser agora executado no browser.  Como é
+    que esta mudança se manifesta ao nível da arquitectura do sistema?
+
+    \optionA{Na vista de Instalação, visto que o componente
+      de apresentação passa a executar-se noutro sítio}
+    \optionB{Na vista de componente-e-conector, porque o
+      conector que liga o cliente web ao servidor web tem que mudar}
+    \optionC{Na vista de camadas, porque a ordem das camadas passa a
+      ser outra}
+    \optionD{Na correspondência entre as camadas do sistema e os
+      componentes onde elas executam}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qWebDoisINGLES}{
+  \begin{ClosedQuestion}
+    With the evolution of the web application technologies, it is now
+    possible to develop web applications with a user interface similar
+    to the interface of desktop applications.  Yet, for this to
+    happen, part of the code that was executing in the web server is
+    now executing in the web browser.  How does this change manifests
+    in the software architecture of the system?
+
+    \optionA{In the Deployment view, because the presentation
+      component is now executing in a different place}
+    \optionB{In the component-and-connector view, because the
+      connector between the web client and the web server has to change}
+    \optionC{In the Layer view, because the order of the layers will
+      have to change}
+    \optionD{In the mapping between layers of the system and the
+      components where they execute}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%19
+\newcommand{\qMashups}{
+  \begin{ClosedQuestion}
+    Uma das evoluções no desenvolvimento de aplicações web foi a
+    criação de \emph{mashups}, que são descritas na Wikipedia da
+    seguinte forma:
+
+    \begin{quote}
+      In web development, a mashup is a web page or application that
+      uses and combines data, presentation or functionality from two
+      or more sources to create new services.
+    \end{quote}
+
+    Sabendo que as fontes usadas pelos \emph{mashups} não têm
+    conhecimento da existência dos \emph{mashups} e mudam com
+    frequência, obrigando a alterações nos \emph{mashups} para
+    acomodar essas mudanças, qual é a melhor arquitectura para
+    minimizar o efeito dessas alterações?
+ 
+    \optionA{Uma arquitectura de \emph{web services}}
+    \optionB{Uma arquitectura Cliente-Servidor, em que o \emph{mashup}
+      é o cliente e as várias fontes são os servidores}
+    \optionC{Uma arquitectura de Camadas, em que o acesso às fontes
+      é a responsabilidade da camada mais abaixo}
+    \optionD{Uma arquitectura Publicação-Subscrição, em que as várias
+      fontes publicam eventos com as alterações efectuadas e o
+      \emph{mashup} subscreve esses eventos}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qMashupsINGLES}{
+  \begin{ClosedQuestion}
+    One of the evolutions in the development of web applications was
+    the appearance of \emph{mashups}, which are described in Wikipedia
+    as follows:
+
+    \begin{quote}
+      In web development, a mashup is a web page or application that
+      uses and combines data, presentation or functionality from two
+      or more sources to create new services.
+    \end{quote}
+
+    Knowing that the sources used by \emph{mashups} do not know about
+    the existence of the \emph{mashups} and that they change
+    frequently, forcing the adaptation of the \emph{mashups} to
+    accomodate those changes, what is the best architecture to
+    minimize the effects of those changes?
+ 
+    \optionA{A \emph{web services} architecture}
+    \optionB{A Client-Server architecture, where the \emph{mashup}
+      is the client and the various sources are the servers}
+    \optionC{A layered architecture, where the access to the various
+      sources is the responsibility of the bottommost layer}
+    \optionD{A Publish-Subscribe architecture, where the various
+      sources publish events with the changes made and the
+      \emph{mashup} subscribes those events}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%20
+\newcommand{\qSeguranca}{
+  \begin{ClosedQuestion}
+    Suponha que está a desenhar a arquitectura de software para uma
+    aplicação empresarial que tem requisitos de segurança sobre a
+    confidencialidade de parte dos seus dados.  Para mostrar aos
+    \emph{stakeholders} que o seu sistema satisfaz os requisitos de
+    segurança terá de usar que vistas arquitecturais?
+
+    \optionA{Apenas são necessárias vistas do tipo componente-e-conector}
+    \optionB{Apenas são necessárias vistas do estilo Instalação}
+    \optionC{Podem ser necessárias vistas do tipo componente-e-conector e do estilo Instalação}
+    \optionD{São sempre necessárias vistas do tipo componente-e-conector e do estilo Implementação}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qSegurancaINGLES}{
+  \begin{ClosedQuestion}
+    Suppose that you are designing the software architecture for an
+    enterprise application that has security requirements about the
+    confidentiality of some of its data.  To show to the stakeholders
+    that your system satisfies the security requirements you have to
+    use views of which architectural style?
+
+    \optionA{Only views of the component-and-connector viewtype are needed}
+    \optionB{Only views of the Deployment style are needed}
+    \optionC{We may need views of the component-and-connector viewtype
+      and of the Deployment style}
+    \optionD{We always need views of the component-and-connector viewtype
+      and of the Deployment style}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}

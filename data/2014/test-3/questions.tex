@@ -1,0 +1,311 @@
+% Fénix-From-Problem-To-Tactics
+
+%1
+\newcommand{\qFenixBusinessCase}{
+\begin{ClosedQuestion}
+	In the context of the FenixEdu case study, the business case was to
+
+    \optionA{Incorporate in the organization's core business the goals of a software house.}
+    \optionB{Do in-house development.}
+    \optionC{Integrate the development of the software system with the organization's business goals.}
+    \optionD{Reimplement all the information systems of the organization}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%2
+\newcommand{\qBusinessScenarioOne}{
+\begin{ClosedQuestion}
+	In the context of the FenixEdu case study the following scenario was identified.
+	
+	\begin{quote}
+		The school management pretends that all the members of the school, students, administrative staff, faculty and management should be able to use the system to perform their activities efficiently without requiring the installation of any client software or a long learning process.
+	\end{quote}
+	
+	This is a 
+
+    \optionA{Business scenario.}
+    \optionB{Availability scenario.}
+    \optionC{Modifiability scenario.}
+    \optionD{Usability scenario.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%3
+\newcommand{\qBusinessScenarioTwo}{
+\begin{ClosedQuestion}
+	In the context of the FenixEdu case study the following scenario was identified.
+	
+	\begin{quote}
+		The management intends that the system should be available to all users, even after offices close and classes finish because students may need courses material to study 24X7 and faculty and administrative staff may want to work from home.
+	\end{quote}
+	
+	This is a 
+
+    \optionA{Business scenario.}
+    \optionB{Availability scenario.}
+    \optionC{Modifiability scenario.}
+    \optionD{Usability scenario.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%4
+\newcommand{\qUtilityTree}{
+\begin{ClosedQuestion}
+	A utility tree
+
+    \optionA{Only contains business qualities.}
+    \optionB{Cannot be defined for the security quality.}
+    \optionC{Contains the architectural tactics associated with architecturally significant requirements.}
+    \optionD{Contains the business value and the architectural impact of architecturally significant requirements.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+
+% Designing-an-Architecture
+
+%5
+\newcommand{\qIterativeDesign}{
+\begin{ClosedQuestion}
+	Designing an architecture
+
+    \optionA{Is driven by functional requirements.}
+    \optionB{Is done in a single step, after all the tactics were identified.}
+    \optionC{Is a top-down process where a initial decomposition is chosen and it is successively decomposed without changing the initial decisions.}
+    \optionD{Is an iterative process where architectural designs are proposed as hypothesis and tested.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%6
+\newcommand{\qLowArchitecturalImpact}{
+\begin{ClosedQuestion}
+	Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value
+
+    \optionA{This ASR can easily be supported by the architecture because it has little effect in the architecture.}
+    \optionB{This ASR requires a specific architectural design because it profoundly affects the architecture.}
+    \optionC{The cost of meeting the ASR after development starts is too high.}
+    \optionD{Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%7
+\newcommand{\qHighBusinessValue}{
+\begin{ClosedQuestion}
+	Consider an architecturally significant requirement (ASR) that has a high impact on the architecture but a low business value
+
+    \optionA{This ASR can easily be supported by the architecture.}
+    \optionB{This ASR should be supported by the architecture because of its high impact.}
+    \optionC{The architect have to decide on the cost/benefit of designing an architecture that supports this ASR.}
+    \optionD{The architect should support this ASR after designing an architecture that supports all the ASRs with high business value.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%8
+\newcommand{\qFenixADD}{
+\begin{ClosedQuestion}
+	When applying Attribute-Driven Design (ADD) to the FenixEdu system the creation of a view where there are redundant web servers, load balancers and database servers 
+
+    \optionA{Results from a utility tree for performance.}
+    \optionB{Results from a single availability scenario.}
+    \optionC{Results from the application of a single ADD iteration.}
+    \optionD{Results from the application of several ADD iterations.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+% SocialCal
+
+%9
+\newcommand{\qSocialCalcMaintainTaskModel}{
+\begin{ClosedQuestion}
+	In the description of the SocialCalc case study can be read:
+	
+	\begin{quote}
+		Therefore, on browsers with support for CSS3, we use the box-shadow property to represent multiple peer cursors in the same cell.
+	\end{quote} 
+	
+	This corresponds to the application of
+
+    \optionA{Maintain system model tactic.}
+    \optionB{Support user initiative tactic.}
+    \optionC{Maintain multiple copies of data tactic.}
+    \optionD{Conflict detection tactic.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%10
+\newcommand{\qSocialCalcUsability}{
+\begin{ClosedQuestion}
+	In the description of the SocialCalc case study can be read:
+	
+	\begin{quote}
+		Even with race conditions resolved, it is still suboptimal to accidentally overwrite the cell another user is currently editing. A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.
+	\end{quote} 
+	
+	From this fragment can be identified a scenario for
+
+    \optionA{Testability.}
+    \optionB{Reliability.}
+    \optionC{Availability.}
+    \optionD{Usability.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%11
+\newcommand{\qSocialCalcAvailability}{
+\begin{ClosedQuestion}
+	In the description of the SocialCalc case study can be read:
+	
+	\begin{quote}
+		If users A and B simultaneously perform an operation affecting the same cells, then receive and execute commands broadcast from the other user, they will end up in different states.
+	\end{quote} 
+	
+	From this fragment can be identified a scenario for
+
+    \optionA{Performance.}
+    \optionB{Reliability.}
+    \optionC{Availability.}
+    \optionD{Usability.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%12
+\newcommand{\qSocialCalcModifiability}{
+\begin{ClosedQuestion}
+	In the description of the SocialCalc case study can be read:
+	
+	\begin{quote}
+		To make this work across browsers and operating systems, we use the Web::Hippie4 framework, a high-level abstraction of JSON-over-WebSocket with convenient jQuery bindings.
+	\end{quote} 
+	
+	From this fragment can be identified a scenario for
+
+    \optionA{Performance.}
+    \optionB{Modifiability.}
+    \optionC{Availability.}
+    \optionD{Usability.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+
+% Thounsand Parsec
+
+%13
+\newcommand{\qThounsandParsecAvailability}{
+\begin{ClosedQuestion}
+	In the description of the Thousand Parsec case study can be read:
+	
+	\begin{quote}
+		Turns also have a time limit imposed by the server, so that slow or unresponsive players cannot hold up a game.
+	\end{quote} 
+	
+	From this fragment can be identified a scenario for
+
+    \optionA{Performance.}
+    \optionB{Interoperability.}
+    \optionC{Availability.}
+    \optionD{Usability.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%14
+\newcommand{\qThounsandParsecInteroperability}{
+\begin{ClosedQuestion}
+	In the description of the Thousand Parsec case study can be read:
+	
+	\begin{quote}
+		Finding a public Thousand Parsec server to play on is much like locating a lone stealth scout in deep space - a daunting prospect if one doesn't know where to look. Fortunately, public servers can announce themselves to a metaserver, whose location, as a central hub, should ideally be well-known to players.
+	\end{quote} 
+	
+	From this fragment can be identified a scenario for
+
+    \optionA{Interoperability.}
+    \optionB{Performance.}
+    \optionC{Availability.}
+    \optionD{Usability.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%15
+\newcommand{\qThounsandParsecRollback}{
+\begin{ClosedQuestion}
+	In the description of the Thousand Parsec case study can be read:
+	
+	\begin{quote}
+		Besides often running far longer than the circadian rhythms of the players' species, during this extended period the server process might be prematurely terminated for any number of reasons. To allow players to pick up a game where they left off, Thousand Parsec servers provide persistence by storing the entire state of the universe (or even multiple universes) in a database.
+	\end{quote} 
+	
+	The tactic referred in the fragments is
+
+    \optionA{Rollback.}
+    \optionB{Persistence.}
+    \optionC{Retry.}
+    \optionD{Passive redundancy.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%16
+\newcommand{\qThounsandParsecSystemInitiative}{
+\begin{ClosedQuestion}
+	In the description of the Thousand Parsec case study can be read:
+	
+	\begin{quote}
+		Next, the player is prompted to configure options for the ruleset and server, with sane defaults pulled from the metadata. Finally, if any compatible AI clients are installed, the player is prompted to configure one or more of them to play against.
+	\end{quote} 
+	
+	The tactic referred in the fragments is
+
+    \optionA{Change default settings.}
+    \optionB{Limit access.}
+    \optionC{Support user initiative.}
+    \optionD{Support system initiative.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+% Module Viewtype
+
+%17
+\newcommand{\qDecomposition}{
+\begin{ClosedQuestion}
+	The Decomposition architectural style of the Module viewtype 
+	
+
+    \optionA{Is applied only once at the beginning of the architectural design process.}
+    \optionB{Is applied at the begin of the architectural design process but may be necessary to redo it later.}
+    \optionC{Is mostly driven by the security attribute quality.}
+    \optionD{Follows a bottom-up decomposition process of the system.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+%18
+\newcommand{\qDecompositionBuilvsBuy}{
+\begin{ClosedQuestion}
+	A criteria for the the application of the Decomposition architectural style of the Module viewtype is Build-vs-Buy decisions. The application of the criteria
+	
+
+    \optionA{Results in a similar decomposition as if the criteria was not applied but some modules are identified to be outsourced.}
+    \optionB{Results in a decomposition where each module may be implemented by a single developer.}
+    \optionC{Allows to increase the overall calendar development time of the project because there is a communication overhead with external teams.}
+    \optionD{Allows to identify modules for which the development team does not have the required implementation competences.}
+ \putOptions
+\end{ClosedQuestion}
+}
+
+
+
+

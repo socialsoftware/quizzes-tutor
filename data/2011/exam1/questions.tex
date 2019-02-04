@@ -1,0 +1,834 @@
+
+
+\newcommand{\wikipediaWarning}{
+{\Large 
+  \textbf{Atenção:} Nas perguntas que se seguem existem excertos de
+  texto que foram obtidos directamente de fontes disponíveis na
+  Internet (como a Wikipedia, por exemplo), sem alteração da
+  terminologia usada para a adaptar à usada na cadeira.  Por isso,
+  \textbf{pode acontecer que a terminologia usada nesses excertos de
+    texto seja diferente da usada na cadeira.  Por exemplo, o uso de
+    \emph{component} para referir outro tipo de elemento de software.
+    Tenha isso em linha de conta nas suas respostas.}
+
+}
+}
+
+\newcommand{\wikipediaWarningINGLES}{
+{\Large 
+  \textbf {Warning:} In the questions that follow there are pieces of
+  text that were obtained directly from available sources in the
+  Internet (such as Wikipedia, for example), without changing the
+  terminology used to adapt it to that used in this course. Therefore,
+  \textbf {it may happen that the terminology used in those pieces of
+    text is different from that used in the course. For example, the
+    use of \emph{component} to refer to other types of software
+    elements.  Please take this into account in your responses.}
+}
+}
+
+%1
+\newcommand{\qHadoopEscalabilidadePossivel}{
+  \begin{ClosedQuestion}
+    A qualidade de escalabilidade do sistema Hadoop apenas é possível
+    porque?
+
+    \optionA{Os \emph{stakeholders} requerem um sistema onde os
+      problemas de desempenho não sejam considerados como os mais
+      relevantes}
+    \optionB{Os \emph{stakeholders} mais importantes são uma pequena
+      equipa de desenvolvimento que tem elevadas competências
+      técnicas}
+    \optionC{Os \emph{stakeholders} aceitam que duas leituras
+      simultâneas do mesmo ficheiro, efectuadas por aplicações
+      diferentes, possam retornar resultados diferentes}
+    \optionD{O sistema foi desenvolvido usando complexos algoritmos
+      distribuídos que garantem a escalabilidade}
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%1
+\newcommand{\qHadoopEscalabilidadePossivelINGLES}{
+  \begin{ClosedQuestion}
+    The scalability quality is achieved in the Hadoop system only because
+
+    \optionA{Stakeholders requirements do not emphasize performance as the most important issue}
+
+    \optionB{The Hadoop small development team is highly competent and skilled}
+
+    \optionC{Stakeholders do not mind if two simultaneous reads on the same file by two different applications may return different values}
+
+    \optionD{The Hadoop system implementation uses complex distributed algorithms for scalability}
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+
+%2
+\newcommand{\qHadoopDisponibilidadeDesempenho}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop:
+
+     \optionA{As qualidades de disponibilidade e de desempenho são
+       conflituosas}
+     \optionB{A qualidade de disponibilidade é a mais relevante, pelo
+       que o desempenho é tratado a posteriori e em função das
+       tácticas escolhidas para a disponibilidade}
+     \optionC{As qualidades de disponibilidade e de desempenho não são
+       conflituosas}
+     \optionD{É ao nível da instalação que se garantem as qualidades
+       de disponibilidade e desempenho}
+
+     \putOptions
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+
+%2
+\newcommand{\qHadoopDisponibilidadeDesempenhoINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system:
+
+     \optionA{There is a conflict between availability and performance qualities}
+     \optionB{The availability quality is more important, thus performance is addressed afterwards and depends on the tactics used for availability}
+     \optionC{There is no conflict between availability and performance qualities}
+     \optionD{Availability and performance qualities are ensured at deployment time only}
+
+     \putOptions
+% Resposta: B
+ \end{ClosedQuestion}
+}
+
+
+%3
+\newcommand{\qHadoopTacticasRecuperacaoFaltas}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop as tácticas de recuperação de faltas usadas são:
+
+    \optionA{Replicação activa e replicação passiva}
+    \optionB{Replicação activa, replicação passiva e \emph{spare}}
+    \optionC{Replicação passiva e \emph{spare}}
+    \optionD{Quorum, replicação activa e replicação passiva}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%3
+\newcommand{\qHadoopTacticasRecuperacaoFaltasINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system the fault recovery tactics are:
+
+    \optionA{Active replication and passive replication}
+    \optionB{Active replication, passive replication, and spare}
+    \optionC{Passive replication and spare}
+    \optionD{Quorum, active replication, and passive replication}
+    \putOptions
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+
+%4
+\newcommand{\qHadoopTacticasRecuperacaoFaltasDois}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop quando um \emph{DataNode} que falhou é
+    reintroduzido são usadas as seguintes tácticas:
+
+    \optionA{\emph{Shadow operation}}
+    \optionB{Resincronização de estado}
+    \optionC{\emph{Checkpoint/Rollback}}
+    \optionD{Todas as anteriores}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+%4
+\newcommand{\qHadoopTacticasRecuperacaoFaltasDoisINGLES}{
+  \begin{ClosedQuestion}
+    In the Hadoop system the tactics used to reintroduce a DataNode after its failure are:
+
+    \optionA{Shadow operation}
+    \optionB{State Resynchronization}
+    \optionC{Checkpoint/Rollback}
+    \optionD{All of the above}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+%5
+\newcommand{\qHadoopTacticasSeguranca}{
+  \begin{ClosedQuestion}
+    No sistema Hadoop instalado no Yahoo! as tácticas de segurança
+    utilizadas são:
+
+    \optionA{Autenticar utilizadores e autorizar utilizadores}
+    \optionB{Autenticar utilizadores, autorizar utilizadores e limitar exposição}
+    \optionC{Autenticar utilizadores, autorizar utilizadores e limitar o acesso}
+    \optionD{Autenticar utilizadores, autorizar utilizadores, limitar o acesso e manter integridade}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+%5
+\newcommand{\qHadoopTacticasSegurancaINGLES}{
+  \begin{ClosedQuestion}
+    The security tactics used in The Hadoop system deployed at Yahoo! are:
+
+    \optionA{Authenticate users and authorize users}
+    \optionB{Authenticate users, authorize users, and limit exposure}
+    \optionC{Authenticate users, authorize users, and limit access}
+    \optionD{Authenticate users, authorize users, limit access, and maintain integrity}
+    \putOptions
+  \end{ClosedQuestion}
+}
+
+
+%6
+\newcommand{\qHadoopHeartbeat}{
+  \begin{ClosedQuestion}
+    Durante a operação normal os \emph{DataNodes} usam a táctica de
+    \emph{heartbeat}
+
+    \optionA{Porque esta táctica é aquela que não sobrecarrega o \emph{NameNode}}
+    \optionB{Mas também poderiam usar a táctica de \emph{ping} pois o
+      \emph{overhead} desta táctica no \emph{NameNode} seria idêntico}
+    \optionC{Mas também poderiam usar a táctica de excepções}
+    \optionD{Para informarem os restantes \emph{DataNodes} que estão disponíveis}
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+%6
+\newcommand{\qHadoopHeartbeatINGLES}{
+  \begin{ClosedQuestion}
+    During normal operation DataNodes use the heartbeat tactic
+
+    \optionA{Because this tactic does not overload the NameNode}
+    \optionB{But they could have used the ping tactic instead, because it has the same overhead for the NameNode}
+    \optionC{But the exceptions tactic could have been used as well}
+    \optionD{To inform other DataNodes about their availability}
+    \putOptions
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+
+%7
+\newcommand{\qModulosCamadas}{
+  \begin{ClosedQuestion}
+    Uma camada, do estilo arquitectural camadas, é um módulo:
+
+    \optionA{Pois possui uma interface bem definida}
+    \optionB{Que agrega módulos de acordo com relações de utilização}
+    \optionC{Pois possui uma interface bem definida e esconde um comportamento interno}
+    \optionD{Que fornece um conjunto de serviços completo e coeso}
+    \putOptions
+    % Resposta: D
+  \end{ClosedQuestion}
+}
+
+%7
+\newcommand{\qModulosCamadasINGLES}{
+  \begin{ClosedQuestion}
+    A layer, in the layers architectural style, is a module:
+
+    \optionA{Because it has a well-defined interface}
+    \optionB{That aggregates modules according to the uses relationship}
+    \optionC{Because it has a well-defined interface and hides the internal behaviour}
+    \optionD{That provides a set of complete and cohesive services}
+    \putOptions
+    % Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+
+%8
+\newcommand{\qUtilizacaoImpactoAlteracoes}{
+  \begin{ClosedQuestion}
+    O estilo arquitectural Utilização permite aferir do impacto de
+    alterações aos módulos
+
+    \optionA{Pois é uma extensão natural dos casos de uso}
+    \optionB{Mas necessita de informação sobre a estrutura interna dos módulos}
+    \optionC{Mas necessita de ser complementado, para cada relação de
+      utiliza, com informação sobre o nível de ligação associado}
+    \optionD{E fornece toda a informação suficiente para medir o impacto}
+    \putOptions
+% Resposta: C  (também não é nada simples...)
+  \end{ClosedQuestion}
+}
+
+%8
+\newcommand{\qUtilizacaoImpactoAlteracoesINGLES}{
+  \begin{ClosedQuestion}
+    The uses architectural style allows to assess the impact of changes in modules
+
+    \optionA{Because it is a natural extension of the use cases concept}
+    \optionB{But it requires additional information on the modules internal structure}
+    \optionC{But it needs to be complemented, for each uses relationship, with the level of coupling}
+    \optionD{And contains all the information required to assess effectively the impact}
+    \putOptions
+% Resposta: C  (também não é nada simples...)
+  \end{ClosedQuestion}
+}
+
+
+%9
+\newcommand{\qUtilizacaoNotifica}{
+  \begin{ClosedQuestion}
+    No estilo arquitectural Utilização diz-se que uma invocação entre
+    dois módulos não implica uma relação de utilização pois:
+
+    \optionA{O sucesso da invocação pode não ter impacto no correcto funcionamento do módulo invocador}
+    \optionB{O sucesso da invocação pode não ter impacto no correcto funcionamento do módulo invocado}
+    \optionC{A invocação pode não passar dados entre os módulos}
+    \optionD{A relação de utilização requer que as invocações devolvam o controlo ao módulo invocador}
+    \putOptions
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+%9
+\newcommand{\qUtilizacaoNotificaINGLES}{
+  \begin{ClosedQuestion}
+    In the uses architectural style a call does not necessarily
+    correspond to a uses relationship because:
+	
+    \optionA{The call's results may not have impact on the correct execution of the caller module}
+    \optionB{The call's results may not have impact on the correct execution of the callee module}
+    \optionC{The call may not transfer data between the modules}
+    \optionD{The uses relationship requires calls to return control to the caller module}
+    \putOptions
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+%10
+\newcommand{\qUtilizacaoNotificaDois}{
+  \begin{ClosedQuestion}
+    De acordo com as técnicas de desenho orientadas aos atributos, uma
+    arquitectura de software deve ser desenhada com base numa lista de
+    requisitos, chamados de \emph{architectural drivers}. Estes
+    \emph{architectural drivers} devem ser ordenados de acordo com a
+    sua importância para os \emph{stakeholders} pois
+	
+    \optionA{Devemos satisfazer primeiro os requisitos dos
+      \emph{stakeholders} mais importantes, como por exemplo o
+      cliente}
+    \optionB{Se eles não fossem ordenados não saberíamos onde começar
+      o processo de desenho}
+    \optionC{Se um dos \emph{stakeholders} se queixar que o seu
+      requisito não foi satisfeito, podemos explicar-lhe que há
+      outros mais importantes}
+    \optionD{Quando não é possível satisfazer todos os requisitos de
+      forma óptima, é importante conhecer a sua importância relativa
+      para que se procure uma solução que corresponda a um
+      compromisso satisfatório} 
+    \putOptions
+    % Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%10
+\newcommand{\qUtilizacaoNotificaDoisINGLES}{
+  \begin{ClosedQuestion}
+    According to the attribute-driven design process, we should design
+    the software architecture for a system based on a selected list of
+    requirements, which are called the \textit{architectural drivers}.
+    These architectural drivers should be sorted according to their
+    importance for the system's stakeholders because
+	
+    \optionA{We should always satisfy in the first place the requirements
+      of more important stakeholders (such as the client)}
+    \optionB{If no order was established among them, we would not know
+      from where should we start the design process}
+    \optionC{If one of the stakeholders complains that his requirement
+      is not satisfied, we may explain to him that there were other more
+      important requirements first}
+    \optionD{When it is not possible to satisfy all of the requirements
+      optimally, we should be aware of their relative importance so that
+      we may find a solution that corresponds to a satisfactory trade-off}
+    \putOptions
+
+% Resposta: D
+ \end{ClosedQuestion}
+}
+
+
+
+%11
+\newcommand{\qHadoopInteraccaoDataNodes}{
+  \begin{ClosedQuestion}
+    No sistema HDFS o componente \emph{DataNode} tem como principal
+    responsabilidade guardar os blocos de dados correspondentes aos
+    ficheiros dos clientes, existindo tipicamente várias instâncias
+    deste componente num sistema.  O estilo arquitectural que melhor
+    descreve o padrão de interacção existente entre as várias
+    instâncias de \emph{DataNode} é
+    
+    \optionA{O estilo Dados Partilhados (\emph{Shared data})}
+    \optionB{O estilo Canais-e-filtros (\emph{Pipes-and-filters})}
+    \optionC{O estilo Par-a-Par (\emph{Peer-to-Peer})}
+    \optionD{O estilo Cliente-Servidor (\emph{Client-Server})}
+  \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+\newcommand{\qHadoopInteraccaoDataNodesINGLES}{
+  \begin{ClosedQuestion}
+    In the HDFS system, the main responsibility of the DataNode
+    component is to store the data blocks corresponding to the
+    client's files, and usually there are several instances of this
+    component on each system.  The architectural style that best
+    describes the interaction pattern among the various instances of
+    DataNode is
+    
+    \optionA{The Shared data style}
+    \optionB{The Pipes-and-filters style}
+    \optionC{The Peer-to-Peer style}
+    \optionD{The Client-Server style}
+  \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%12
+\newcommand{\qHadoopInteraccaoNameNodeDataNodes}{
+  \begin{ClosedQuestion}
+    Conforme descrito na secção 8.2.3., o componente \emph{NameNode}
+    dá comandos aos \emph{DataNodes} para que eles procedam a algumas
+    operações sobre os seus blocos, ao passo que os \emph{DataNodes}
+    têm que enviar relatórios regulares para o \emph{NameNode}.  A
+    arquitectura que melhor descreve a forma como no sistema HDFS
+    estes dois tipos de componentes interagem é como
+
+    \optionA{Uma arquitectura Cliente-Servidor, em que o
+      \emph{DataNode} é o Cliente e o \emph{NameNode} é o Servidor}
+    \optionB{Uma arquitectura Cliente-Servidor, em que o
+      \emph{NameNode} é o Cliente e o \emph{DataNode} é o Servidor}
+    \optionC{Uma arquitectura Par-a-Par}
+    \optionD{Uma arquitectura Processos Comunicantes}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopInteraccaoNameNodeDataNodesINGLES}{
+  \begin{ClosedQuestion}
+    According to Section 8.2.3, the NameNode component issues commands
+    to the DataNodes so that they execute some operations on their
+    blocks, whereas DataNodes have to send reports regularly to the
+    NameNode.  The architecture that best describes how these two
+    types of components interact in the HDFS system is
+
+    \optionA{A Client-Server architecture, where the DataNode is the
+      Client and the NameNode is the Server}
+    \optionB{A Client-Server architecture, where the NameNode is the
+      Client and the DataNode is the Server}
+    \optionC{A Peer-to-Peer architecture}
+    \optionD{A Communicating Processes architecture}
+    \putOptions
+
+% Resposta: A
+  \end{ClosedQuestion}
+}
+
+
+%13
+\newcommand{\qHadoopNameNodeComoConector}{
+  \begin{ClosedQuestion}
+    Suponha que pretende descrever como é que um cliente lê um
+    ficheiro de um sistema HDFS suportando falhas esporádicas no
+    hardware de alguns \emph{DataNodes}, sem que isso afecte a
+    disponibilidade do sistema.  Para isso pretende usar uma vista do
+    tipo componente-e-conector, mas em que os únicos componentes são o
+    \emph{HDFS Client} e o \emph{DataNode}.
+
+    \optionA{Essa vista estará sempre incompleta sem o
+      \emph{NameNode}, visto que o \emph{HDFS Client} precisa de
+      interagir com ele} 
+    \optionB{Essa vista estará sempre incompleta sem o
+      \emph{NameNode}, visto que o \emph{DataNode} precisa de
+      interagir com ele} 
+    \optionC{A vista não precisa de incluir o \emph{NameNode}, mas
+      nesse caso não será possível raciocinar sobre a disponibilidade
+      do sistema}
+    \optionD{A garantia de disponibilidade pode ser dada pela
+      utilização de um conector adequado entre o \emph{HDFS Client} e os
+      \emph{DataNodes}} 
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+\newcommand{\qHadoopNameNodeComoConectorINGLES}{
+  \begin{ClosedQuestion}
+    Imagine that you intend to describe how a client reads a file from
+    an HDFS system while supporting sporadic failures in the hardware
+    of some DataNodes, but without affecting the availability of the
+    system.  To accomplish that, you want to use a
+    component-and-connector view containing only two types of
+    components: the HDFS Client, and the DataNode.
+
+    \optionA{That view will always be incomplete without the NameNode,
+      because the HDFS Client needs to interact with it} 
+    \optionB{That view will always be incomplete without the NameNode,
+      because the DataNode needs to interact with it} 
+    \optionC{The view does not need to include the NameNode, but in
+      that case it will not be possible to reason about the
+      availability of the system}
+    \optionD{The availability guarantee may be given by the usage of
+      an adequate connector between the HDFS Client and the DataNodes} 
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+
+%14
+\newcommand{\qHadoopNameNodeThreads}{
+  \begin{ClosedQuestion}
+    No último parágrafo da secção 8.2.2 descreve-se qual foi a solução
+    adoptada pelo \emph{NameNode} para obter um determinado nível de
+    desempenho na escrita para disco.  Que estilo arquitectural é mais
+    adequado para representar a solução adoptada?
+
+    \optionA{O estilo Dados Partilhados}
+    \optionB{O estilo Processos Comunicantes}
+    \optionC{O estilo Instalação (\emph{Deployment})}
+    \optionD{O estilo Par-a-Par}
+   \putOptions
+
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+\newcommand{\qHadoopNameNodeThreadsINGLES}{
+  \begin{ClosedQuestion}
+    The last paragraph of Section 8.2.2 describes the solution used by
+    the NameNode to obtain a certain level of performance while
+    writing to disk.  Which architectural style is more adequate to
+    represent the solution used?
+
+    \optionA{The Shared Data style}
+    \optionB{The Communicating Processes style}
+    \optionC{The Deployment style}
+    \optionD{The Peer-to-Peer style}
+   \putOptions
+
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+%15
+\newcommand{\qHadoopReplicarNameNode}{
+  \begin{ClosedQuestion}
+    A arquitectura do sistema HDFS apenas prevê a existência de um
+    \emph{NameNode}.  Tendo em conta as responsabilidades deste
+    componente e a actual arquitectura do HDFS, quais seriam as
+    consequências de adicionarmos a possibilidade de termos réplicas
+    de \emph{NameNode} no sistema?
+
+    \optionA{O sistema passava a responder em menos tempo a todos os
+      pedidos dos clientes}
+    \optionB{O desempenho do sistema não seria alterado}
+    \optionC{O sistema passava a poder responder em menos tempo a
+      pedidos de localizações de ficheiros}
+    \optionD{O sistema passava a poder responder em menos tempo aos
+      pedidos de actualização dos metadados feitos pelos \emph{DataNodes}}
+    \putOptions
+
+% Resposta: C   
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qHadoopReplicarNameNodeINGLES}{
+  \begin{ClosedQuestion}
+    The architecture of the HDFS system only allows the existence of
+    one NameNode.  Given the responsibilities of this component and
+    the current architecture of HDFS, what would be the consequences
+    of adding the possibility of having replicas of the NameNode in
+    the system?
+
+    \optionA{The system would respond faster to all of the
+      clients' requests}
+    \optionB{The performance of the system would not change}
+    \optionC{The system would respond faster to requests about
+      file locations}
+    \optionD{The system would respond faster to requests made by
+      DataNodes to update the metadata}
+    \putOptions
+
+% Resposta: C   
+ \end{ClosedQuestion}
+}
+
+
+%16
+\newcommand{\qServiceLayer}{
+  \begin{ClosedQuestion}
+    Quando se utiliza o padrão Domain Model na implementação da camada
+    de lógica de domínio de uma aplicação empresarial, é comum
+    utilizar-se também o padrão Service Layer.  O padrão Service Layer
+    é usado nestes casos para
+    
+    \optionA{Controlar e reduzir a interface exposta pela camada de
+      lógica de domínio, aumentando assim a modificabilidade dessa
+      camada}
+    \optionB{Permitir a existência de mais do que uma interface para a
+      camada de lógica de domínio (para providenciar, por exemplo, uma
+      interface de \emph{web services})}
+    \optionC{Permitir a existência de diferentes camadas de lógica de apresentação}
+    \optionD{Facilitar a utilização da camada de acesso a dados por
+      parte da camada de lógica de apresentação}
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+
+\newcommand{\qServiceLayerINGLES}{
+  \begin{ClosedQuestion}
+    When someone uses the Domain Model pattern to implement the domain
+    logic layer of an enterprise application, it is common to use also
+    the Service Layer pattern. The Service Layer pattern is used in
+    these cases
+   
+    \optionA{To control and to reduce the interface exposed by the
+      domain logic layer, thereby increasing the modifiability of that
+      layer}
+    \optionB{To allow the existence of more than one interface to the
+      domain logic layer (to provide, for example, an interface to web
+      services)}
+    \optionC{To allow the existence of different presentation logic layers} 
+    \optionD{To facilitate the use of the data access layer by the
+      presentation logic layer}
+
+    \putOptions
+
+% Resposta: A
+ \end{ClosedQuestion}
+}
+
+
+
+%17
+\newcommand{\qSharedDataAccessorsDirect}{
+  \begin{ClosedQuestion}
+    Suponha que está a desenvolver uma vista arquitectural onde
+    utiliza o estilo de Dados Partilhados (\emph{Shared Data}) e que
+    um dos membros da sua equipa propõe que dois dos componentes com o
+    papel de \emph{data accessors} comuniquem directamente entre si.
+    Na sua opinião
+
+    \optionA{Isso não deve ser permitido porque todas as interacções
+      entre componentes devem ser feitas através do \emph{Repositório}} 
+    \optionB{É uma solução aceitável se pretendermos reduzir as
+      dependências entre os vários componentes do sistema}
+    \optionC{Essa é a solução recomendada se existir um fluxo de
+      controlo que envolva a coreografia dos dois componentes}
+    \optionD{Essa interacção não pode ser representada nesta vista,
+      mas sim numa outra vista da arquitectura do sistema}
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+\newcommand{\qSharedDataAccessorsDirectINGLES}{
+  \begin{ClosedQuestion}
+    Imagine that you are developing an architectural view where you
+    are using the Shared Data style and that a member of your team
+    proposes that two of Data Accessors communicate directly between
+    them.  In your opinion
+
+    \optionA{That should not be allowed because all interactions among
+      components must be made through the Repository} 
+    \optionB{That is an acceptable solution if we want to reduce the
+      dependencies among the various components of the system}
+    \optionC{That is the recommended solution if there is a control
+      flow that involves the choreography of both components}
+    \optionD{That interaction cannot be represented in this view, but
+      it may in another view of the system's architecture}
+    \putOptions
+
+% Resposta: C
+ \end{ClosedQuestion}
+}
+
+
+%18
+\newcommand{\qWhiteBoxTesting}{
+  \begin{ClosedQuestion}
+    Considere o seguinte excerto da página da Wikipedia sobre testes
+    de caixa branca (\emph{white-box testing}):
+    \begin{quote}
+      White-box testing is a method of testing software that tests
+      internal structures or workings of an application, as opposed to
+      its functionality. In white-box testing an internal perspective
+      of the system (including the module's code), as well as
+      programming skills, are required and used to design test
+      cases. The tester chooses inputs to exercise paths through the
+      code and determine the appropriate outputs.
+    \end{quote}
+  
+    Supondo que pertence à equipa de testes de um sistema complexo e
+    que é responsável por efectuar testes de caixa branca sobre o
+    sistema, quais das seguintes vistas da arquitectura de software do
+    sistema lhe seriam mais úteis?
+
+    \optionA{Vistas de Atribuição de Trabalho (\emph{Work Assignment})}
+    \optionB{Vistas de Generalização (\emph{Generalization})}
+    \optionC{Vistas de Instalação (\emph{Deployment})}
+    \optionD{Vistas de Implementação (\emph{Implementation})}
+    \putOptions
+
+% Resposta: D (creio que falámos o ano passado sobre esta def pois white-box testing de um módulo é feito conhecendo o seu código interno, acima é vago a diferença entre internal perspective of the system vs internal perspective of the module)
+% NOTA: Ver esta com o Rito
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qWhiteBoxTestingINGLES}{
+  \begin{ClosedQuestion}
+    Consider the following excerpt from the Wikipedia page on
+    \emph{white-box testing}:
+    \begin{quote}
+      White-box testing is a method of testing software that tests
+      internal structures or workings of an application, as opposed to
+      its functionality. In white-box testing an internal perspective
+      of the system (including the module's code), as well as
+      programming skills, are required and used to design test
+      cases. The tester chooses inputs to exercise paths through the
+      code and determine the appropriate outputs.
+    \end{quote}
+  
+    Assuming that you belong to the team testing a complex system and
+    that you are responsible for performing white box tests on the
+    system, which of the following architectural views of the system
+    would be most useful to you?
+
+    \optionA{Work Assignment views}
+    \optionB{Generalization views}
+    \optionC{Deployment views}
+    \optionD{Implementation views}
+    \putOptions
+
+% Resposta: D (creio que falámos o ano passado sobre esta def pois white-box testing de um módulo é feito conhecendo o seu código interno, acima é vago a diferença entre internal perspective of the system vs internal perspective of the module)
+% NOTA: Ver esta com o Rito
+  \end{ClosedQuestion}
+}
+
+
+
+
+%19
+\newcommand{\qTresTiers}{
+  \begin{ClosedQuestion}
+    Actualmente, a arquitectura mais popular para uma aplicação
+    empresarial é constituída por 3 \emph{tiers}.  Esses três
+    \emph{tiers} são
+
+    \optionA{As camadas de lógica de apresentação, lógica de domínio,
+      e acesso a dados}
+    \optionB{As aplicações web tradicionais, os \emph{mashups}, e as
+      \emph{rich internet applications} (RIAs)}
+    \optionC{O \emph{browser} web, o servidor web, e a base de dados}
+    \optionD{As camadas de \emph{web services}, lógica de domínio, e
+      acesso a dados}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qTresTiersINGLES}{
+  \begin{ClosedQuestion}
+    Currently, the most popular architecture for an enterprise
+    application is composed of 3 tiers.  The three tiers are
+
+    \optionA{The presentation logic layer, domain logic layer, and
+      data access layer}
+    \optionB{The traditional web applications, the mashups, and the rich internet applications (RIAs)}
+    \optionC{The web browser, o web server, and the data base}
+    \optionD{The web services layer, the domain logic layer, and the
+      data access layer}
+    \putOptions
+
+% Resposta: C
+  \end{ClosedQuestion}
+}
+
+
+%20
+\newcommand{\qTempoRespostaAplicacaoEmpresarial}{
+  \begin{ClosedQuestion}
+    Suponha que está a desenhar a arquitectura de software para uma
+    aplicação empresarial que tem requisitos sobre o tempo máximo que
+    o sistema deve demorar a responder a um determinado tipo de
+    pedidos por parte dos utilizadores.  Suponha ainda que a
+    frequência desses pedidos é previsível, mas que os restantes
+    pedidos ao sistema podem variar significativamente.  Finalmente,
+    suponha que o seu sistema vai ter apenas um único servidor que se
+    executará numa máquina pré-definida com um processador AMD de 12
+    cores.  Para mostrar aos \emph{stakeholders} que o seu sistema
+    satisfaz os requisitos de desempenho terá que usar vistas de que
+    estilo arquitectural?
+
+    \optionA{Do estilo Atribuição de Trabalho}
+    \optionB{Do estilo Cliente-Servidor}
+    \optionC{Do estilo Instalação}
+    \optionD{Do estilo Processos Comunicantes}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qTempoRespostaAplicacaoEmpresarialINGLES}{
+  \begin{ClosedQuestion}
+    Suppose that you are designing the software architecture for an
+    enterprise application that has requirements about the maximum
+    response time for a certain type of requests.  Moreover, assume
+    that those requests arrive at the system periodically, whereas the
+    remaining requests have an unpredictable frequency.  Finally,
+    assume that your system will have a single server that will be
+    executing on a predefined machine with a 12-core AMD processor.
+    To show to the stakeholders that your system satisfies the
+    performance requirements you have to use views of which
+    architectural style?
+
+    \optionA{The Work Assignment style}
+    \optionB{The Client-Server style}
+    \optionC{The Deployment style}
+    \optionD{The Communicating Processes style}
+    \putOptions
+
+% Resposta: D
+  \end{ClosedQuestion}
+}

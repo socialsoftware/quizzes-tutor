@@ -1,0 +1,2995 @@
+\newcommand{\wikipediaWarning}{
+{\Large 
+  \textbf{Atenção:} Nas perguntas que se seguem existem excertos de
+  texto que foram obtidos directamente de fontes disponíveis na
+  Internet (como a Wikipedia, por exemplo), sem alteração da
+  terminologia usada para a adaptar à usada na cadeira.  Por isso,
+  \textbf{pode acontecer que a terminologia usada nesses excertos de
+    texto seja diferente da usada na cadeira.  Por exemplo, o uso de
+    \emph{component} para referir outro tipo de elemento de software.
+    Tenha isso em linha de conta nas suas respostas.}
+
+}
+}
+
+\newcommand{\wikipediaWarningINGLES}{
+{\Large 
+  \textbf {Warning:} In the questions that follow there are pieces of
+  text that were obtained directly from available sources in the
+  Internet (such as Wikipedia, for example), without changing the
+  terminology used to adapt it to that used in this course. Therefore,
+  \textbf {it may happen that the terminology used in those pieces of
+    text is different from that used in the course. For example, the
+    use of \emph{component} to refer to other types of software
+    elements.  Please take this into account in your responses.}
+}
+}
+
+
+\newcommand{\gp}{Graphite}
+\newcommand{\mw}{MediaWiki}
+\newcommand{\ch}{Chrome}
+\newcommand{\gm}{GNU Mailman}
+
+%1-1
+\newcommand{\qGPReceiverWriterStyle}{
+ \begin{ClosedQuestion}
+    No sistema \gp{} as \emph{receiver} e as \emph{writer threads} suportam a escrita assíncrona de métricas de forma a otimizar os acessos a disco. A interação entre estes dois componentes segue o estilo arquitetural
+
+    \optionA{Cliente-servidor}
+    \optionB{Processos-comunicantes}
+    \optionC{Repositório}
+    \optionD{Canais-e-filtros} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPReceiverWriterStyleINGLES}{
+ \begin{ClosedQuestion}
+    In \gp{} system  the \emph{receiver} and the \emph{writer threads} support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style
+
+    \optionA{Client-server}
+    \optionB{Communicating Processes}
+    \optionC{Repository}
+    \optionD{Pipes-and-Filters} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%2-2
+\newcommand{\qGPCarbonBufferInterface}{
+  \begin{ClosedQuestion}
+    No sistema \gp{} o componente \emph{carbon} fornece aos componentes \emph{webapp} uma interface de acesso aos \emph{buffers} com o objetivo de melhorar a(s) qualidade(s) de
+
+    \optionA{Desempenho}
+    \optionB{Fiabilidade e Desempenho}
+    \optionC{Fiabilidade}
+    \optionD{Segurança} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPCarbonBufferInterfaceEN}{
+  \begin{ClosedQuestion}
+    In the \gp{} system the component \emph{carbon} provides to \emph{webapp} components an access interface to the \emph{buffers} in order to improve the quality(ies) of
+
+    \optionA{Performance}
+    \optionB{Reliability and Performance}
+    \optionC{Reliability}
+    \optionD{Security} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%3-1
+\newcommand{\qGPCarbonRelay}{
+  \begin{ClosedQuestion}
+    No sistema \gp{} o componente \emph{carbon-relay} implementa uma tática de
+
+    \optionA{Manter Múltiplas Cópias de Computação}
+    \optionB{Manter Múltiplas Cópias de Dados}
+    \optionC{Redundância Passiva}
+    \optionD{Redundância Ativa} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPCarbonRelayINGLES}{
+  \begin{ClosedQuestion}
+    In the \gp{} system the component \emph{carbon-relay} implements a tactic
+
+    \optionA{Maintain Multiple Copies of Computation}
+    \optionB{Maintain Multiple Copies of Data}
+    \optionC{Passive Redundancy}
+    \optionD{Active Redundancy} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%4-2
+\newcommand{\qGPCCView}{
+  \begin{ClosedQuestion}
+    Uma vista arquitetural de mais alto nível do tipo Componente-e-Conetor do sistema \gp{} pode ser desenhada usando apenas o(s) estilo(s) arquitetural(ais)
+
+    \optionA{Repositório e Processos-Comunicantes}
+    \optionB{Processos-Comunicantes}
+    \optionC{\emph{Tiers}}
+    \optionD{Cliente-Servidor e Repositório} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPCCViewEN}{
+  \begin{ClosedQuestion}
+	  An higher-level component-and-connect view of \gp{} system can be designed using only the architectural style(s)
+
+    \optionA{Repository and Communicating-Processes}
+    \optionB{Communicating-Processes}
+    \optionC{Tiers}
+    \optionD{Client-Server and Repository} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%5-1
+\newcommand{\qGPComposerUIQuality}{
+  \begin{ClosedQuestion}
+    Que qualidade, ou qualidades, do sistema \gp{} é(são) expressa(s) na frase: \emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}
+
+    \optionA{Usabilidade e desempenho}
+    \optionB{Usabilidade}
+    \optionC{Desempenho}
+    \optionD{Facilidade de teste} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPComposerUIQualityINGLES}{
+  \begin{ClosedQuestion}
+	  Which quality, or qualities, of the \gp{} system are described by the sentence: \emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}
+
+    \optionA{Usability and Performance}
+    \optionB{Usability}
+    \optionC{Performance}
+    \optionD{Testability} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%6-2
+\newcommand{\qGPComposerUIPerformance}{
+  \begin{ClosedQuestion}
+    O componente \emph{Composer UI} do sistema \gp{}, descrito como - \emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL} - para ser eficaz necessita de mostrar ao utilizador as alterações que efetua ao gráfico de modo a que este obtenha retorno imediato sobre o resultado de cada uma das alterações que acaba de fazer. Para isso o sistema deve implementar táticas de
+
+    \optionA{Modelo de Tarefa}
+    \optionB{Modelo do Sistema}
+    \optionC{Desempenho}
+    \optionD{Modelo de Utilizador} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPComposerUIPerformanceEN}{
+  \begin{ClosedQuestion}
+	  The \emph{Composer UI} component of \gp{} system, described as - \emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL} - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback about the result of the changes. To do so, the system needs to implement the tactics of
+
+    \optionA{Task Model}
+    \optionB{System Model}
+    \optionC{Performance}
+    \optionD{User Model} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%7-1
+\newcommand{\qMWQualities}{
+  \begin{ClosedQuestion}
+	  Quais são as principais qualidades do sistema \mw{}?
+    
+    \optionA{Desempenho, disponibilidade e usabilidade}
+    \optionB{Desempenho, disponibilidade e facilidade de teste}
+    \optionC{Fiabilidade, desempenho e usabilidade}
+    \optionD{Desempenho e usabilidade} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWQualitiesINGLES}{
+  \begin{ClosedQuestion}
+	  Which are the most significant qualities of the \mw{} system?
+    
+    \optionA{Performance, availability, and usability}
+    \optionB{Performance, availability, and testability}
+    \optionC{Reliability, performance, and usability}
+    \optionD{Performance and usability} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%8-2
+\newcommand{\qMWLowCost}{
+  \begin{ClosedQuestion}
+	  O desenho da arquitetura do sistema \mw{} foi condicionado por uma restrição associada à necessidade de ter uma solução de baixo custo. Para isso foi tomada a decisão arquitetural de
+    
+    \optionA{Ter apenas um servidor para escrita}
+    \optionB{Guardar toda a informação de forma estática}
+    \optionC{Dar prioridade ao desempenho e disponibilidade em detrimento da funcionalidade}
+    \optionD{Usar vários níveis de \emph{cache}} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWLowCostEN}{
+  \begin{ClosedQuestion}
+	  The design of the \mw{} architecture was constrained the requirement that the solution should have relatively low cost. Due to this restriction it was taken the architectural decision of
+    
+    \optionA{Only have a server for write requests}
+    \optionB{Store all the information statically}
+    \optionC{Prioritize performance and availability over functionality}
+    \optionD{Use several levels of cache} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%9-1
+\newcommand{\qMWArchitecuralStyle}{
+  \begin{ClosedQuestion}
+	  Os estilos arquiteturais que melhor descrevem o sistema \mw{} do ponto de vista do utilizador final são
+    
+    \optionA{Cliente-Servidor e Repositório}
+    \optionB{Repositório e Arquitetura Orientada aos Serviços}
+    \optionC{Cliente-Servidor, Repositório, Processos-Comunicantes e Arquitetura Orientada aos Serviços}
+    \optionD{Cliente-Servidor, Repositório e Processos-Comunicantes} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWArchitecuralStyleINGLES}{
+  \begin{ClosedQuestion}
+	  The architectural styles which are more suitable to describe the \mw{} system from the end user viewpoint are
+    
+    \optionA{Client-Server e Repository}
+    \optionB{Repository e Service Oriented Architecture}
+    \optionC{Client-Server, Repository, Communicating-Processes e Service Oriented Architecture}
+    \optionD{Client-Server, Repository e Communicating-Processes} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%10-2
+\newcommand{\qMWTactics}{
+  \begin{ClosedQuestion}
+	  Considere uma vista arquitetural do tipo Componente-e-Conetor do sistema \mw{} em que todos os clientes estão ligados a um servidor através de um conetor de pedido-resposta que suporta as qualidades de disponibilidade e desempenho. Este conetor implementa uma tática de 
+    
+    \optionA{Redundância Passiva e Aumento da Eficiência dos Recursos}
+    \optionB{Redundância Ativa e Aumento da Eficiência dos Recursos}
+    \optionC{Redundância Ativa e Manter Múltiplas Cópias de Computação}
+    \optionD{Redundância Passiva e Manter Múltiplas Cópias de Computação} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWTacticsEN}{
+  \begin{ClosedQuestion}
+	  Consider a Component-and-Connector architectural view of the \mw{} system where all the clients are connected to a server through a request-reply connector. This connector implements the tactics
+    
+    \optionA{Passive Redundancy and Increase Resources Efficiency}
+    \optionB{Active Redundancy and Increase Resources Efficiency}
+    \optionC{Active Redundancy and Maintain Multiple Copies of Computation}
+    \optionD{Passive Redundancy and Maintain Multiple Copies of Computation} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%11-1
+\newcommand{\qMWReliabilityTactics}{
+  \begin{ClosedQuestion}
+	  O sistema \mw{} procura manter um critério de fiabilidade segundo o qual as alterações efetuadas por um escritor são consistentemente visualizadas nas suas subsequentes leituras
+    
+    \optionA{Através de uma tática de Marca de Tempo (\emph{timestamp})}
+    \optionB{Através de uma tática de Reinvocação (\emph{retry})}
+    \optionC{Guardando a informação junto do cliente usando \emph{cookies}}
+    \optionD{Através de uma tática de Transações} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityTacticsINGLES}{
+  \begin{ClosedQuestion}
+	  The \mw{} system tries to enforce a reliability criteria that all the changes done by a writer are consistently visualized in her subsequent reads
+    
+    \optionA{By using a Timestamp tactic}
+    \optionB{By using a Retry tactic}
+    \optionC{Storing the information in the client using cookies}
+    \optionD{By using a Transactions tactic} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%12-2
+\newcommand{\qMWReliabilityImplementation}{
+  \begin{ClosedQuestion}
+	  O critério de fiabilidade do sistema \mw{}, segundo o qual as alterações efetuadas por um escritor são consistentemente preservadas nas suas subsequentes leituras, é implementado 
+    
+    \optionA{No servidor}
+    \optionB{Pelo distribuidor de carga (\emph{load balancer})}
+    \optionC{Pelo repositório}
+    \optionD{No cliente} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityImplementationEN}{
+  \begin{ClosedQuestion}
+	  The \mw{} system tries to enforce a reliability criteria that all the changes done by a writer are consistently visualized in her subsequent reads. This criteria is implemented
+    
+    \optionA{In the server}
+    \optionB{By the load balancer}
+    \optionC{In the repository}
+    \optionD{In the client} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%13-2
+\newcommand{\qMWReliabilityReadsTactic}{
+  \begin{ClosedQuestion}
+	  O sistema \mw{} procura assegurar um critério de fiabilidade segundo o qual a informação escrita há mais de 30 segundos deverá estar disponível para leitura para todos os leitores. Para se alcançar este critério é implementada uma tática de  
+    
+    \optionA{Reinício Escalonado}
+    \optionB{Votação}
+    \optionC{Funcionamento Degradado}
+    \optionD{Tratamento de Exceções} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityReadsTacticEN}{
+  \begin{ClosedQuestion}
+	  The \mw{} system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria it is implemented a tactic of
+    
+    \optionA{Escalating Restart}
+    \optionB{Voting}
+    \optionC{Degradation}
+    \optionD{Exception Handling} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%14-1
+\newcommand{\qMWReliabilityReadsImplementation}{
+  \begin{ClosedQuestion}
+	  O sistema \mw{} procura assegurar um critério de fiabilidade segundo o qual a informação escrita há mais de 30 segundos está disponível para leitura para todos os leitores, para se alcançar este critério o distribuidor de carga  
+    
+    \optionA{Pode deixar de aceitar leituras}
+    \optionB{Pode deixar de aceitar escritas}
+    \optionC{Pode deixar de aceitar leituras e escritas}
+    \optionD{Pode ter de adicionar mais servidores ao \emph{cluster}} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityReadsImplementationINGLES}{
+  \begin{ClosedQuestion}
+	  The \mw{} system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria the load balancer 
+    
+    \optionA{May stop accepting reads}
+    \optionB{May stop accepting writes}
+    \optionC{May stop accepting reads and writes}
+    \optionD{May need to add more servers to the cluster} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%15-1
+\newcommand{\qMWResourceLoaderTactic}{
+  \begin{ClosedQuestion}
+	  Na descrição do sistema \mw{} indica-se que:
+	  \newline
+	  
+	  \emph{To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.}
+	  \newline
+	  
+	  O \emph{ResourceLoader} implementa uma tática de 
+    
+    \optionA{Aumentar a Eficiência dos Recursos}
+    \optionB{Aumentar os Recursos}
+    \optionC{Priorizar Eventos}
+    \optionD{Manter Múltiplas Cópias de Dados} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWResourceLoaderTacticINGLES}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of the \mw{} system description:
+	  \newline
+	  
+	  \emph{To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.}
+	  \newline
+	  
+	  The \emph{ResourceLoader} implements a tactic 
+    
+    \optionA{Increase Resource Efficiency}
+    \optionB{Increase Resources}
+    \optionC{Prioritize Events}
+    \optionD{Maintain Multiple Copies of Data} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%16-2
+\newcommand{\qMWVerBlobTactic}{
+  \begin{ClosedQuestion}
+	  Na descrição do sistema \mw{} indica-se que:
+	  \newline
+	  
+	  \emph{The first revision of the blob is stored in full, and following revisions to the same page are stored as diffs relative to the previous revision; the blobs are then gzipped. Because the revisions are grouped per page, they tend to be similar, so the diffs are relatively small and gzip works well. The compression ratio achieved on Wikimedia sites nears 98\%.}
+	  \newline
+	  
+	  A transcrição refere uma tática de 
+    
+    \optionA{Priorizar Eventos}
+    \optionB{Aumentar os Recursos}
+    \optionC{Aumentar a Eficiência dos Recursos}
+    \optionD{Manter Múltiplas Cópias de Dados} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWVerBlobTacticEN}{
+  \begin{ClosedQuestion}
+	  In the description of \mw{} system we can read:
+	  \newline
+	  
+	  \emph{The first revision of the blob is stored in full, and following revisions to the same page are stored as diffs relative to the previous revision; the blobs are then gzipped. Because the revisions are grouped per page, they tend to be similar, so the diffs are relatively small and gzip works well. The compression ratio achieved on Wikimedia sites nears 98\%.}
+	  \newline
+	  
+	  This description refers to a tactic of 
+    
+    \optionA{Prioritize Events}
+    \optionB{Increase Resources}
+    \optionC{Increase Resources Efficiency}
+    \optionD{Maintain Multiple Copies of Data} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%17-2
+\newcommand{\qCHQualities}{
+  \begin{ClosedQuestion}
+	  O \ch{}, tal como descrito no caso estudado durante o semestre, foi desenhado para suportar as seguintes qualidades arquiteturais:
+    
+    \optionA{Segurança e Mobilidade}
+    \optionB{Desempenho, Segurança e Interoperabilidade}
+    \optionC{Segurança, Desempenho, Usabilidade, Interoperabilidade e Mobilidade}
+    \optionD{Segurança, Desempenho, Usabilidade e Mobilidade} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHQualitiesEN}{
+  \begin{ClosedQuestion}
+	 \ch{}, as described in the case study, was designed to support the accomplish the following architectural qualities:
+    
+    \optionA{Security and Mobility}
+    \optionB{Performance, Security and Interoperability}
+    \optionC{Security, Performance, Usability, Interoperability and Mobility}
+    \optionD{Security, Performance, Usability and Mobility} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%18-1
+\newcommand{\qCHSecurityQuality}{
+  \begin{ClosedQuestion}
+	  No \ch{}, para se atingir a qualidade da segurança, o processo \emph{Browser} implementa uma tática de
+    
+    \optionA{Encriptação dos Dados}
+    \optionB{Deteção de Intrusão}
+    \optionC{Limitar Acesso}
+    \optionD{Autorizar Atores} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHSecurityQualityINGLES}{
+  \begin{ClosedQuestion}
+	  In \ch{}, to accomplish the security quality, the Browser Process implements a tactic
+   
+    \optionA{Data Encryption}
+    \optionB{Intrusion Detection}
+    \optionC{Limit Access}
+    \optionD{Authorize Actors} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%19-1
+\newcommand{\qCHPerformanceQuality}{
+  \begin{ClosedQuestion}
+	  No \ch{} pode-se associar um processo \emph{Renderer} a cada \emph{Tab}, o que resulta no aumento do desempenho através de uma tática de 
+    
+    \optionA{Introduzir Concorrência}
+    \optionB{Manter Múltiplas Cópias de Computação}
+    \optionC{Limitar a Exposição}
+    \optionD{Redundância Ativa} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHPerformanceQualityINGLES}{
+  \begin{ClosedQuestion}
+	  In \ch{} it is possible to associate a Renderer Process to each Tab, which results in the increase of performance due to a tactic of
+    
+    \optionA{Introduce Concurrency}
+    \optionB{Maintain Multiple Copies of Computation}
+    \optionC{Limit Exposition}
+    \optionD{Active Redundancy} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%20-2
+\newcommand{\qCHPerformanceQualityTwo}{
+  \begin{ClosedQuestion}
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.}
+	  \newline
+	  
+	  O \emph{Resource Dispatcher} contribui para aumentar a qualidade do desempenho pois implementa uma tática de
+	      
+    \optionA{Escalonamento de Recursos}
+    \optionB{Aumento de Recursos}
+    \optionC{Introdução de Concorrência}
+    \optionD{Manter Múltiplas Cópias de Computação} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHPerformanceQualityTwoEN}{
+  \begin{ClosedQuestion}
+	  In the description of \ch{} case study we can read:
+	  \newline
+	  
+	  \emph{Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.}
+	  \newline
+	  
+	  The \emph{Resource Dispatcher} contributes to the performance quality because it implements a tactic of
+	      
+    \optionA{Schedule Resources}
+    \optionB{Increase Resources}
+    \optionC{Introduce Concurrency}
+    \optionD{Maintain Multiple Copies of Computation} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%21-1
+\newcommand{\qCHMobilityArchitecturalStyle}{
+  \begin{ClosedQuestion}
+	  
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.} 
+	  \newline
+	  
+	  A descrição acima pode ser representada numa vista do tipo Componente-e-Conetor utilizando o estilo arquitetural	  
+	  
+    \optionA{Publicação-subscrição}
+    \optionB{Canais-e-filtros}
+    \optionC{Criação e destruição dinâmica}
+    \optionD{Cliente-servidor} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHMobilityArchitecturalStyleINGLES}{
+  \begin{ClosedQuestion}
+	  In the description of the \ch{} case you can read:
+	  \newline
+	  
+	  \emph{On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.} 
+	  \newline
+	  
+	  This description can be represented by a view of viewtype Component-and-Connector using the architectural style
+	  
+    \optionA{Publication-Subscription}
+    \optionB{Pipes-and-Filters}
+    \optionC{Dynamic Creation and Destruction}
+    \optionD{Client-server} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%22-2
+\newcommand{\qCHAmazonSilk}{
+  \begin{ClosedQuestion}
+	  Uma vantagem do Amazon Silk relativamente ao \ch{} está relacionada com 
+	      
+    \optionA{Separar o processo de \emph{Renderer} dos restantes processos}
+    \optionB{O \emph{browser} efetuar menos pedidos ao servidor}
+    \optionC{Utilizar técnicas de aprendizagem}
+    \optionD{Fazer \emph{prefetching}} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHAmazonSilkEN}{
+  \begin{ClosedQuestion}
+	  An advantage of Amazon Silk when compared with \ch{} is 
+	      
+    \optionA{Separates the Renderer process from the other processes}
+    \optionB{The \emph{browser} needs to make less requests to the server}
+    \optionC{Applies machine learning techniques}
+    \optionD{Uses prefetching} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%23-1
+\newcommand{\qCHAmazonSilkTwo}{
+  \begin{ClosedQuestion}
+	  Uma vantagem do \ch{} relativamente ao Amazon Silk está relacionada com 
+	      
+    \optionA{Poder tirar partido da concorrência}
+    \optionB{O \emph{browser} ter que efetuar mais pedidos ao servidor}
+    \optionC{Utilizar técnicas de aprendizagem}
+    \optionD{Não depender de um serviço proprietário} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHAmazonSilkTwoEN}{
+  \begin{ClosedQuestion}
+	  An advantage of \ch{} when compared with Amazon Silk is 
+	      
+    \optionA{It can take advantage of concurrency}
+    \optionB{The \emph{browser} needs to make more requests to the server}
+    \optionC{It uses machine learning techniques}
+    \optionD{It does not depend on a proprietary service} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%24-2
+\newcommand{\qCHRenderStyle}{
+  \begin{ClosedQuestion}
+	  Uma vista arquitetural do tipo Componente-e-Conetor que descreva as interações dentro do componente \emph{Renderer Process} do \ch{} utiliza um estilo arquitetural
+	      
+    \optionA{Repositório}
+    \optionB{Processos-comunicantes}
+    \optionC{Arquitetura orientada aos serviços}
+    \optionD{Cliente-servidor} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHRenderStyleEN}{
+  \begin{ClosedQuestion}
+	  An architectural view of the Component-and-Connector viewtype that describes the interactions within the Renderer Process component of \ch{}, uses the architectural style
+	      
+    \optionA{Repository}
+    \optionB{Communicating-Processes}
+    \optionC{Service-Oriented Architecture}
+    \optionD{Client-Server} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%25-1
+\newcommand{\qCHSecurityLevel}{
+  \begin{ClosedQuestion}
+	  Uma das qualidades do \ch{} é executar o código JavaScript dentro de um processo, permitindo isolar possíveis interferências entre a execução de JavaScripts com diferentes origens. O grau de isolamento
+	      
+    \optionA{É sempre o mesmo para todas as instâncias do \ch{}}
+    \optionB{É definido em tempo de compilação do código do \ch{}}
+    \optionC{É definido em tempo de inicialização de uma instância do \ch{}}
+    \optionD{Pode variar durante a execução de cada instância do \ch{}} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHSecurityLevelEN}{
+  \begin{ClosedQuestion}
+	  One of the qualities of \ch{} is the execution of the JavaScript code inside a process, which allows the isolation against possible interferences between the execution of JavaScript programs that are loaded from different sites. The isolation level
+	      
+    \optionA{It is always the same for all instances of \ch{}}
+    \optionB{It is defined compile-time of \ch{} code}
+    \optionC{It is defined during the initialization of each instance of \ch{}}
+    \optionD{It can change during the execution of each instance of \ch{}} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%26-2
+\newcommand{\qCHOmniboxQualities}{
+  \begin{ClosedQuestion}
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	  
+	  A descrição acima refere qualidades de
+	      
+    \optionA{Usabilidade e Facilidade de Modificação}
+    \optionB{Desempenho e Usabilidade}
+    \optionC{Disponibilidade e Usabilidade}
+    \optionD{Disponibilidade e Desempenho} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHOmniboxQualitiesEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \ch{} case study you can read:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	  
+	  This description refers to the qualities of
+	      	      
+    \optionA{Usability e Modifiability}
+    \optionB{Performance e Usability}
+    \optionC{Availability e Usability}
+    \optionD{Availability e Performance} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%27-1
+\newcommand{\qCHOmniboxTactics}{
+  \begin{ClosedQuestion}
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	  
+	  A descrição acima refere
+	      
+    \optionA{A tática de Manter Modelo de Utilizador}
+    \optionB{A tática de Manter Modelo de Tarefa}
+    \optionC{A tática de Manter Modelo de Sistema}
+    \optionD{Táticas de Suportar a Iniciativa do Utilizador} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHOmniboxTacticsEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \ch{} case study you can read:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	  
+	  This description refers to
+	      
+    \optionA{Maintain User Model tactic}
+    \optionB{Maintain Task Model tactic}
+    \optionC{Maintain System Model tactic}
+    \optionD{Support User Initiative tactics} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%28-2
+\newcommand{\qCHPrerenderTactics}{
+  \begin{ClosedQuestion}
+	  O \ch{} faz em algumas situações \emph{prerender} de páginas. Para isso tira partido da
+	      
+    \optionA{Tática de Introduzir Concorrência}
+    \optionB{Página estar em \emph{cache}}
+    \optionC{Tática de Manter Múltiplas Cópias de Computação}
+    \optionD{Tática de Manter Múltiplas Cópias de Dados} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHPrerenderTacticsEN}{
+  \begin{ClosedQuestion}
+	  In some situations \ch{} prerenders a page. To do it
+	      
+    \optionA{Uses the Introduce Concurrency tactic}
+    \optionB{The page is in cache}
+    \optionC{Uses the Maintain Multiple Copies of Computation tactic}
+    \optionD{Uses the Maintain Multiple Copies of Data tactic} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%29-1
+\newcommand{\qGMPicklePerformance}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called \_\_dict\_\_. So saving a mailing list object then is simply a matter of pickling its \_\_dict\_\_ to a file, and loading it just involves reading the pickle from the file and reconstituting its \_\_dict\_\_.}
+  \newline
+	  
+	  Esta solução, não obstante simples, trouxe diversos problemas pois a qualidade do desempenho é penalizada devido:
+	  
+	      
+    \optionA{A ser necessário descomprimir todo o ficheiro, mesmo que para obter apenas parte da sua informação}
+    \optionB{A deficiências do algoritmo de compressão e descompressão do \emph{pickle}}
+    \optionC{A ser uma solução específica de Python}
+    \optionD{Às limitações de acesso concorrente a ficheiros } 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPicklePerformanceEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} 
+  \newline
+  
+  \emph{In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called \_\_dict\_\_. So saving a mailing list object then is simply a matter of pickling its \_\_dict\_\_ to a file, and loading it just involves reading the pickle from the file and reconstituting its \_\_dict\_\_.}
+  \newline
+	  
+	  Although simple, this solution resulted in several problems which had a negative impact on performance. This is due to:	  
+	      
+    \optionA{It is necessary to decompress the complete file, even though if only a small part of the information is needed}
+    \optionB{Pickle algorithm is not efficient}
+    \optionC{It is a Python specific solution}
+    \optionD{Limitations of the concurrent access to files} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%30-2
+\newcommand{\qGMRestInteroperability}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  Esta solução permitiu aumentar a qualidade da interoperabilidade pois 
+	      
+    \optionA{A nova interface utilizador passou a usar a interface REST}
+    \optionB{Aplicações externas podem passar a fazer administração de listas de correio eletrónico residentes no GNU Mailman}
+    \optionC{Aplicações externas podem passar a ler e enviar mensagens para o \gm{}}
+    \optionD{A interface do \gm{} ficou pública} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMRestInteroperabilityEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  This solution allowed increased interoperability because
+	      
+    \optionA{The new user interface started using the REST interface}
+    \optionB{External applications can administrate the GNU Mailman mailing lists}
+    \optionC{External applications can read and send messages to \gm{}}
+    \optionD{The \gm{} interface became public} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%31-1
+\newcommand{\qGMRestModularity}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  Esta solução permitiu:
+	      
+    \optionA{Aumentar a qualidade da facilidade de modificação pois a nova interface utilizador passou a usar a interface REST}
+    \optionB{Aumentar a qualidade da facilidade de modificação pois as aplicações externas deixaram de usar as funcionalidade de administração}
+    \optionC{Aumentar a qualidade da interoperabilidade pois aplicações externas podem passar a ler e enviar mensagens para o \gm{}}
+    \optionD{Nenhuma das anteriores} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMRestModularityEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  This solution allowed:
+	      
+    \optionA{Increase the modifiability quality, because the new user interface was implemented using the REST interface}
+    \optionB{Increase the modifiability quality, because external applications stopped using the administrative functionalities}
+    \optionC{Increase the interoperability quality, because external applications can read and send messages to \gm{}}
+    \optionD{None of the previous options} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%32-2
+\newcommand{\qGMPipesFilters}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.}
+  \newline
+	  
+	  O estilo arquitetural que se adequa a um processamento flexível das mensagens é
+	      
+    \optionA{Processos-Comunicantes}
+    \optionB{Cliente-Servidor}
+    \optionC{Canais-e-Filtros}
+    \optionD{Publicação-Subscrição} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPipesFiltersEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.}
+  \newline
+	  
+	  The architectural style that is more accurate to describe the flexible processing of messages is
+	      
+    \optionA{Communicating-Processes}
+    \optionB{Client-Server}
+    \optionC{Pipes-and-Filters}
+    \optionD{Publish-Subscribe} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%33-1
+\newcommand{\qGMPipesFiltersData}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.}
+  \newline
+	  
+	  Em que o estilo arquitetural Canais-e-Filtros é usado no tratamento das mensagens. Neste contexto o tipo de dados que é passado entre os filtros é
+	      
+    \optionA{Uma sequência de bytes para permitir independência entre os filtros}
+    \optionB{Um objeto estruturado em árvore para possibilitar a execução simultânea de diversos filtros}
+    \optionC{Uma sequência de bytes para permitir que a ordem de aplicação dos filtros não seja relevante}
+    \optionD{Um objeto estruturado em árvore para facilitar o processamento de cada um dos filtros} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPipesFiltersDataEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.}
+  \newline
+	  
+	  The Pipes-and-Filters architectural style is used in the handling of messages. In this context the data type which is sent among the filters is
+	      
+    \optionA{A sequence of bytes to allow independence between filters}
+    \optionB{An object tree to allow the simultaneous execution of several filters}
+    \optionC{A sequence of bytes to allow that the order of filters execution is not relevant}
+    \optionD{An object tree to simplify the processing of each filter} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%34-2
+\newcommand{\qGMDataModel}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Email messages can act as containers for other types of data, as defined in the various MIME standards. A container message part can encode an image, some audio, or just about any type of binary or text data, including other container parts.}
+  \newline
+	  
+	  O estilo arquitetural que mais se adequa à representação da transcrição acima é
+	      
+    \optionA{Modelo de Dados}
+    \optionB{Decomposição}
+    \optionC{Aspetos}
+    \optionD{Canais-e-Filtros} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMDataModelEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Email messages can act as containers for other types of data, as defined in the various MIME standards. A container message part can encode an image, some audio, or just about any type of binary or text data, including other container parts.}
+  \newline
+	  
+	  The architectural style that is more accurate to describe this transcription is
+	      
+    \optionA{Data Model}
+    \optionB{Decomposition}
+    \optionC{Aspects}
+    \optionD{Pipes-and-Filters} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%35-1
+\newcommand{\qGMReliabilityFIFO}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} propõe-se uma solução para garantir que nas situações em que vários \emph{queue runners} executam sobre a mesma \emph{queue} a entrega de mensagens é feita por ordem de chegada.
+  \newline
+  
+  \emph{There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.}
+	      
+    \optionA{A solução proposta assegura efetivamente a entrega FIFO de mensagens e os vários processos não necessitam de se sincronizar}
+    \optionB{A solução proposta assegura a entrega FIFO de mensagens mas os vários processos necessitam de se sincronizar}
+    \optionC{A solução proposta não assegura a entrega FIFO de mensagens, podendo algumas mensagens ser entregues por outra ordem}
+    \optionD{A solução proposta assegura a entrega FIFO de mensagens pois em cada \emph{queue} apenas são colocadas mensagens com intervalos de tempo suficientemente espaçados} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMReliabilityFIFOEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \gm{} case study it is proposed a solution that, when there are several queue runners executing on the same queue, the delivery of messages is done according to arrival order (FIFO).
+  \newline
+  
+  \emph{There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.}
+  \newline
+  
+  The proposed solution
+	      
+    \optionA{Effectively guarantees the FIFO delivery of messages and the queue runners do not need to synchronize}
+    \optionB{Guarantees the FIFO delivery of messages but the queue runners need to synchronize}
+    \optionC{Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order}
+    \optionD{Guarantees the FIFO delivery of messages because in each \emph{queue} only are stored messages which arrived with a difference of more than one minute} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%36-2
+\newcommand{\qGMPerformance}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{...Mailman supports running more than one runner process per queue directory...}
+  \newline
+  
+  Com o objetivo de assegurar
+	      
+    \optionA{A qualidade do desempenho}
+    \optionB{A qualidade da disponibilidade}
+    \optionC{A qualidade da fiabilidade}
+    \optionD{A entrega FIFO de mensagens} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPerformanceEN}{
+  \begin{ClosedQuestion}
+	  Consider the following transcription of the \gm{} system:
+  \newline
+  
+  \emph{...Mailman supports running more than one runner process per queue directory...}
+  \newline
+  
+  It has the goal to support
+	      
+    \optionA{The quality of Performance}
+    \optionB{The quality of Availability}
+    \optionC{The quality of Reliability}
+    \optionD{The FIFO delivery of messages} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%37-1
+\newcommand{\qGMMasterRunner}{
+  \begin{ClosedQuestion}
+	  A função do componente \emph{Master Runner} do \gm{} pode ser representada usando o estilo arquitetural
+	      
+    \optionA{Cliente-Servidor}
+    \optionB{Par-a-Par}
+    \optionC{Criação e Destruição Dinâmica}
+    \optionD{\emph{Tiers}} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMMasterRunnerEN}{
+  \begin{ClosedQuestion}
+	  The function of Master Runner component of \gm{} can be represented using an architecture style of
+	      
+    \optionA{Client-Server}
+    \optionB{Peer-to-Peer}
+    \optionC{Dynamic Creation and Destruction}
+    \optionD{Tiers} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%38
+\newcommand{\qGMReliabilityBounce}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{VERP stands for Variable Envelope Return Path, and it is a well-known technique that mailing lists use to unambiguously determine bouncing recipient addresses. When an address on a mailing list is no longer active, the recipient's mail server will send a notification back to the sender. In the case of a mailing list, you want this bounce to go back to the mailing list, not to the original author of the message; the author can't do anything about the bounce, and worse, sending the bounce back to the author can leak information about who is subscribed to the mailing list. When the mailing list gets the bounce, however, it can do something useful, such as disable the bouncing address or remove it from the list's membership.}
+  \newline
+  
+  Esta transcrição descreve qualidade(s) de
+	      
+    \optionA{Segurança}
+    \optionB{Segurança e Facilidade de Teste}
+    \optionC{Fiabilidade e Facilidade de Modificação}
+    \optionD{Fiabilidade e Facilidade de Teste} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMReliabilityBounceEN}{
+  \begin{ClosedQuestion}
+	  Consider the following description of the \gm{} system:
+  \newline
+  
+  \emph{VERP stands for Variable Envelope Return Path, and it is a well-known technique that mailing lists use to unambiguously determine bouncing recipient addresses. When an address on a mailing list is no longer active, the recipient's mail server will send a notification back to the sender. In the case of a mailing list, you want this bounce to go back to the mailing list, not to the original author of the message; the author can't do anything about the bounce, and worse, sending the bounce back to the author can leak information about who is subscribed to the mailing list. When the mailing list gets the bounce, however, it can do something useful, such as disable the bouncing address or remove it from the list's membership.}
+  \newline
+  
+  This transcription describes the quality(ies) of
+	      
+    \optionA{Security}
+    \optionB{Security and Testability}
+    \optionC{Reliability and Modifiability}
+    \optionD{Reliability and Testability} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%39-1
+\newcommand{\qGMMessagesPersistence}{
+  \begin{ClosedQuestion}
+	  No Mailman 3 as mensagens continuam a ser guardadas persistentemente usando \emph{pickle} pois
+	      
+    \optionA{Pois cada mensagem não necessita de ser acedida simultaneamente por diversos processos}
+    \optionB{Pois \emph{pickle} é eficiente a escrever e a ler mensagens}
+    \optionC{Pois cada mensagem é guardada como um ficheiro num diretório}
+    \optionD{Todas as opções anteriores} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMMessagesPersistenceEN}{
+  \begin{ClosedQuestion}
+	  In Mailman 3 messages are still being persistently stored using pickle because
+	      
+    \optionA{Each messages does not need to be accessed concurrently by several processes}
+    \optionB{Pickle can efficiently write and read messages}
+    \optionC{Each message is stored as a file in a directory}
+    \optionD{Al the previous options} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%40-2
+\newcommand{\qGMSwitchboard}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{There is a core Mailman class called Switchboard which provides an interface for enqueuing (i.e., writing) and dequeuing (i.e., reading) the message object tree and metadata dictionary to files in a specific queue directory. Every queue directory has at least one switchboard instance, and every queue runner instance has exactly one switchboard.}
+  \newline
+  
+  Esta transcrição contém informação útil para vistas do tipo
+	      
+      \optionA{Módulo}
+      \optionB{Componente-e-Conetor}
+      \optionC{Módulo e Componente-e-Conetor}
+      \optionD{Módulo mas apenas para o estilo arquitetural Decomposição} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMSwitchboardEN}{
+  \begin{ClosedQuestion}
+	  Consider the following description of the \gm{} system:
+  \newline
+  
+  \emph{There is a core Mailman class called Switchboard which provides an interface for enqueuing (i.e., writing) and dequeuing (i.e., reading) the message object tree and metadata dictionary to files in a specific queue directory. Every queue directory has at least one switchboard instance, and every queue runner instance has exactly one switchboard.}
+  \newline
+  
+  This transcription contains relevant information for viewtypes of
+	      
+      \optionA{Module}
+      \optionB{Component-and-Connector}
+      \optionC{Module and Component-and-Connector}
+      \optionD{Module, but only for the Decomposition architectural style} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%41-1
+\newcommand{\qInstallImplementationStyles}{
+  \begin{ClosedQuestion}
+	  Os estilos arquiteturais Instalação (\emph{Install}) e Implementação (\emph{Implementation})
+	      
+      \optionA{Afetam módulos ao sistema de ficheiros}
+      \optionB{Diferem no ênfase dado à fase de produção e à fase de desenvolvimento do processo de software}
+      \optionC{Aplicam-se a conjuntos completamente distintos de ficheiros}
+      \optionD{Aplicam-se ao mesmo conjunto de ficheiros} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qInstallImplementationStylesEN}{
+  \begin{ClosedQuestion}
+	  The Install and Implementation architectural styles
+	      
+      \optionA{Allocate modules to the file system}
+      \optionB{Differ on the emphasis on production and development phases of the software process}
+      \optionC{Are applied to completely distinct sets of files}
+      \optionD{Are applied to the same set of files} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%42-2
+\newcommand{\qFenixThree}{
+  \begin{ClosedQuestion}
+	  Os requisitos arquiteturalmente significativos da terceira arquitetura do sistema Fénix são
+	      
+      \optionA{Facilidade de Modificação e Interoperabilidade}
+      \optionB{Desempenho e Interoperabilidade}
+      \optionC{Facilidade de Desenvolvimento e Desempenho}
+      \optionD{Interoperabilidade} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qFenixThreeEN}{
+  \begin{ClosedQuestion}
+	  The architecturally significant requirements of the third architecture of Fénix are
+	      
+      \optionA{Modifiability and Interoperability}
+      \optionB{Performance and Interoperability}
+      \optionC{Easiness of Development and Performance}
+      \optionD{Interoperability} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%43-1
+\newcommand{\qFenixTwo}{
+  \begin{ClosedQuestion}
+	  As qualidades arquiteturalmente significativas da segunda arquitetura do sistema Fénix são
+	      
+      \optionA{Interoperabilidade e Desempenho}
+      \optionB{Desempenho e Disponibilidade}
+      \optionC{Facilidade de Desenvolvimento e Desempenho}
+      \optionD{Facilidade de Modificação e Desempenho} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qFenixTwoEN}{
+  \begin{ClosedQuestion}
+	  The architecturally significant qualities of the second Fénix architecture are:
+	  	      
+      \optionA{Interoperability e Performance}
+      \optionB{Performance and Availability}
+      \optionC{Easy Development and Performance}
+      \optionD{Modifiability and Performance} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%44-2
+\newcommand{\qFenixOne}{
+  \begin{ClosedQuestion}
+	  Na primeira arquitetura do sistema Fénix era frequente os programadores esquecerem-se de reservar (\emph{lock}) um objeto no contexto de uma transação. Uma solução para esta situação pode ser arquiteturalmente descrita usando uma vista com o estilo arquitetural
+	      
+      \optionA{Decomposição}
+      \optionB{Aspetos}
+      \optionC{Utilização}
+      \optionD{Modelo de Dados} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qFenixOneEN}{
+  \begin{ClosedQuestion}
+	  In the Fénix first architecture it was common programmers forget to lock objects in the context of transactions. A solution for this problem can be architecturally described using a view of the architectural style
+	      
+      \optionA{Decomposition}
+      \optionB{Aspects}
+      \optionC{Uses}
+      \optionD{Data Model} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%45-1
+\newcommand{\qElasticityDeferBinding}{
+  \begin{ClosedQuestion}
+	  A elasticidade de um sistema, entendida como a capacidade do sistema se adaptar com facilidade a alterações de carga, é muitas vezes apresentada como uma característica necessária para a qualidade da escalabilidade. Para o grau dessa facilidade de adaptação contribuem soluções arquiteturais associadas
+	      
+      \optionA{À tática de Ligação Diferida (\emph{Defer Binding})}
+      \optionB{À tática de Redundância Passiva}
+      \optionC{À tática de Redundância Ativa}
+      \optionD{Às táticas de Redundância Passiva e Redundância Ativa} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qElasticityDeferBindingEN}{
+  \begin{ClosedQuestion}
+	  The elasticity of a system, defined as its capability to easily adapt to load changes, is often represented as a required property of the scalability quality. For this level of easiness contribute the architectural solutions associated with the following tactic(s)
+	      
+      \optionA{Defer Binding}
+      \optionB{Passive Redundancy}
+      \optionC{Active Redundancy}
+      \optionD{Passive Redundancy and Active Redundancy} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%46-2
+\newcommand{\qInternationalizationTactics}{
+  \begin{ClosedQuestion}
+	  A internacionalização da interface utilizador é suportada pela(s) tática(s)
+	      
+      \optionA{Modelo de Utilizador e \emph{Undo}}
+      \optionB{Modelo de Utilizador}
+      \optionC{Modelo de Utilizador e Modelo de Sistema}
+      \optionD{Modelo de Sistema} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qInternationalizationTacticsEN}{
+  \begin{ClosedQuestion}
+	  The internationalization of the user interface is supported by the tactic(s)
+	      
+      \optionA{User Model and Undo}
+      \optionB{User Model}
+      \optionC{User Model and System Model}
+      \optionD{System Model} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%47-1
+\newcommand{\qUnitOfWork}{
+  \begin{ClosedQuestion}
+	  O padrão Unidade de Trabalho (\emph{Unit of Work}) pode ser implementado no servidor aplicacional, enquanto que no repositório continua a ser necessário usar transações para aceder aos dados. Neste caso
+	      
+      \optionA{Apenas pode ser usada uma política otimista de controlo de concorrência pois as transações não podem estar abertas durante muito tempo}
+      \optionB{Apenas pode ser usada uma política pessimista de controlo de concorrência para evitar os frequentes conflitos nas transações}
+      \optionC{Podem ser usadas políticas pessimistas ou otimistas de controlo de concorrência}
+      \optionD{A gestão transacional é da inteira responsabilidade do repositório} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qUnitOfWorkEN}{
+  \begin{ClosedQuestion}
+	  The Unit of Work pattern can be implemented in an application server, while it is still necessary to use transactions in the repository to access to the data. In this situation
+	      
+      \optionA{It is necessary to use a optimistic concurrency control policy because the transactions cannot be open for a long period}
+      \optionB{It is necessary to use a pessimistic concurrency control policy to avoid frequent conflicts in the transactions}
+      \optionC{Both, pessimistic and optimistic, concurrency control policies can be used}
+      \optionD{Transactional management is the complete responsibility of the repsoitory} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%48-2
+\newcommand{\qIdentityMap}{
+  \begin{ClosedQuestion}
+	  Para se poder implementar o padrão Mapa de Identidades (\emph{Identity Map}) 
+	      
+      \optionA{Não é possível suportar pesquisas SQL no servidor aplicacional}
+      \optionB{É necessário fazer sempre uma pesquisa na base de dados antes de aceder a um objeto}
+      \optionC{Todos os acessos aos objetos têm que ser feitos através das suas inter-referências}
+      \optionD{É necessário que cada objeto da base de dados possua um identificador único} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qIdentityMapEN}{
+  \begin{ClosedQuestion}
+	  To implement the Identity Map pattern
+	      
+      \optionA{It is not possible to support SQL searches in the application server}
+      \optionB{It is always necessary to search in the database before accessing an object}
+      \optionC{All accesses to objects should occur through their inter-references}
+      \optionD{It is necessary that each object has a unique identifier} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%49-1
+\newcommand{\qAvailabilityVoting}{
+  \begin{ClosedQuestion}
+	  A qualidade da disponibilidade pode ser suportada pela tática de votação de forma a identificar faltas de 
+	      
+      \optionA{Codificação, se os componentes executarem módulos desenvolvidos por diferentes equipas de desenvolvimento}
+      \optionB{Hardware, se houver redundância de hardware}
+      \optionC{Sistema Operativo, se componentes executarem em diferentes sistemas operativos}
+      \optionD{Todas as opções anteriores} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qAvailabilityVotingEN}{
+  \begin{ClosedQuestion}
+	  The availability quality can be supported by a voting tactic in order to identify faults of
+
+      \optionA{Programming, if the components execute modules developed by different teams}
+      \optionB{Hardware, if there is hardware redundancy}
+      \optionC{Operating Systems, if redundant components execute on top of different operating systems}
+      \optionD{All the previous options} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%50-2
+\newcommand{\qAvailabilityDefensive}{
+  \begin{ClosedQuestion}
+	  Na programação defensiva o programador verifica se todos as condições em que os módulos são invocados estão de acordo com a sua especificação, devendo, caso contrário, lançar uma exceção por forma a evitar a propagação da falta. Quando a programação defensiva é aplicada no contexto da qualidade da disponibilidade está-se a usar uma tática de
+	      
+      \optionA{Tratamento de Exceções}
+      \optionB{Aumentar o Conjunto de Competências (\emph{Increase Competence Set})}
+      \optionC{Prevenção de Exceções}
+      \optionD{Deteção de Exceções} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qAvailabilityDefensiveEN}{
+  \begin{ClosedQuestion}
+	  In defensive programming the programmer checks that the conditions under which modules are invoked comply with their specification, and if they don't an exception is raised to avoid failure propagation. When defensive programming is followed, in the context of availability quality, we are using a tactic of
+	      
+      \optionA{Exception Handling}
+      \optionB{Increase Competence Set}
+      \optionC{Exception Prevention}
+      \optionD{Exception Detection} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%51-1
+\newcommand{\qSecurityInternalSource}{
+  \begin{ClosedQuestion}
+	  Nos casos em que a fonte dos ataques é interna à organização as táticas mais eficazes são
+	      
+      \optionA{Detetar e Recuperar do Ataque}
+      \optionB{Resistir ao Ataque}
+      \optionC{Reagir ao Ataque}
+      \optionD{Resistir e Reagir ao Ataque} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qSecurityInternalSourceEN}{
+  \begin{ClosedQuestion}
+	  When the source of an attack is internal to an organization the tactics which are more efective are
+	      
+      \optionA{Detect and Recover from the attack}
+      \optionB{Resist to the attack}
+      \optionC{React to the attack}
+      \optionD{Resist and React to the attack} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%52-2
+\newcommand{\qObserverUses}{
+  \begin{ClosedQuestion}
+	  No padrão de desenho Observador, em que o modelo invoca um método de notificação nos seus observadores sempre que sofre alterações, pode-se afirmar em termos da relação de Usa do estilo arquitetural Utilização que
+	      
+      \optionA{O módulo Modelo usa o módulo Observador}
+      \optionB{O módulo Modelo usa o módulo Observador se forem passados dados na notificação} 
+      \optionC{O módulo Modelo usa o módulo Observador se forem passados dados complexos na notificação}
+      \optionD{No que diz respeito à notificação, o módulo Modelo não usa o módulo Observador}
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qObserverUsesEN}{
+  \begin{ClosedQuestion}
+	  In the Observer design pattern, where the model invokes a notification method on all its observers whenever it is changed, can be said, in what concerns the Uses relation of the Uses architectural style, that
+	      
+      \optionA{The Model module uses the Observer module}
+      \optionB{The Model module uses the Observer module if data is sent in the notification} 
+      \optionC{The Model module uses the Observer module if complex data is sent in the notification}
+      \optionD{In what concerns the notification, the Model module does not use the Observer module}
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%53-1
+\newcommand{\qDataModel}{
+  \begin{ClosedQuestion}
+	  O detalhe em que se aplica o estilo arquitetural Modelo de Dados pode ser ao nível conceptual, lógico ou físico.
+	  
+      \optionA{Se houver requisitos arquiteturais de desempenho relativos aos acessos aos dados então deve ser feito até ao nível físico}
+      \optionB{Deve ser sempre feito até ao nível físico}
+      \optionC{Só deve ser até ao nível lógico nos casos em que o alvo da implementação for uma base de dados relacional}
+      \optionD{Apenas o nível conceptual é efetivamente necessário, sendo os restantes opcionais} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qDataModelEN}{
+  \begin{ClosedQuestion}
+	  The detail that can be used in a view of the Data Model view type can be conceptual, logical or physical.
+	  
+      \optionA{If there are performance requirements concerning the access to data, then the level of detail should be physical}
+      \optionB{It should always consider the physical detail level}
+      \optionC{The logical detail level should only be used when the target of implementation is a relational database}
+      \optionD{Only the conceptual level is required, the other two levels of detail are optional} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+%54-2
+\newcommand{\qUsesLayers}{
+  \begin{ClosedQuestion}
+	  Considere os estilos arquiteturais Utilização e Camadas.
+	  
+      \optionA{Primeiro devem ser desenhadas vistas de Utilização e de seguida de Camadas}
+      \optionB{Primeiro devem ser desenhadas vistas de Camadas e depois de Utilização}
+      \optionC{As vistas de Camadas e de Utilização não necessitam de ser desenhadas por uma ordem pré-definida}
+      \optionD{Sempre que há vistas de Utilização tem que haver pelo menos uma vista de camadas} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qUsesLayersEN}{
+  \begin{ClosedQuestion}
+	  Consider the Uses and Layered architectural styles.
+	  
+      \optionA{The Uses views are designed first}
+      \optionB{The Layered view are designed first}
+      \optionC{There isn't any predefined order to design Uses and Layered views}
+      \optionD{Whenever there is at least one Uses view then a Layered view needs to be designed as well} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%55-1
+\newcommand{\qPublishSubscribe}{
+  \begin{ClosedQuestion}
+	  No estilo arquitetural Publicação-Subscrição os componentes, do ponto de vista da facilidade de modificação dos módulos que executam
+	  
+      \optionA{Dependem dos tipos de componentes publicadores}
+      \optionB{Dependem apenas dos tipos de eventos}
+      \optionC{São totalmente independentes entre si}
+      \optionD{Necessitam que seja suportada Ligação Diferida (\emph{Defer Binding}) dinâmica dos componentes, publicadores e subscritores, ao conetor para serem totalmente independentes entre si} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qPublishSubscribeEN}{
+  \begin{ClosedQuestion}
+	  In the Publish-Subscribe architectural style, the components, from the point of view of the modules they execute
+	  
+      \optionA{Depend on the types of the publishers components}
+      \optionB{Only depend on the type of events}
+      \optionC{Are completely independent}
+      \optionD{It is necessary to support dynamic Defer Binding of components, publishers and subscribers, to the connector to be completely independent} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%56-2
+\newcommand{\qSeveralStylesView}{
+  \begin{ClosedQuestion}
+	  Uma vista arquitetural
+	  
+      \optionA{Apenas pode possuir um único estilo arquitetural}
+      \optionB{Pode possuir vários estilos arquiteturais, mas apenas se forem dos tipos vista Componente-e-Conetor e Afetação}
+      \optionC{Pode possuir vários estilos arquiteturais, mas apenas se forem do mesmo tipo vista}
+      \optionD{Pode possuir vários estilos arquiteturais, desde que essa seja a melhor forma de comunicar com um particular grupo de \emph{stakeholders}} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qSeveralStylesViewEN}{
+  \begin{ClosedQuestion}
+	  An architectural view
+	  
+      \optionA{Can only contain a single architectural style}
+      \optionB{May contain several architectural styles, but only if the are of the Component-and-Connector and Allocation viewtypes}
+      \optionC{May contain several architectural styles, but only if they are of the same viewtype}
+      \optionD{May contain several architectural styles, if that is the best way to convey the information to a group of stakeholders} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%57-1
+\newcommand{\qUsabilityNonArchitectural}{
+  \begin{ClosedQuestion}
+	  Algumas qualidades de usabilidade não são arquiteturais pois
+	  
+      \optionA{Apenas dizem respeito aos \emph{web designers}}
+      \optionB{Dependem de táticas de desempenho}
+      \optionC{Dependem de táticas de disponibilidade}
+      \optionD{Não são implementadas por nenhuma tática de usabilidade} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qUsabilityNonArchitecturalEN}{
+  \begin{ClosedQuestion}
+	  Some usability qualities are not architectural because 
+	  
+      \optionA{They only concern the web designers}
+      \optionB{They are dependent on performance tactics}
+      \optionC{They are dependent on availability tactics}
+      \optionD{They are not implemented by a usability tactic} 
+	  
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+%58-2
+\newcommand{\qApplyUses}{
+  \begin{ClosedQuestion}
+	  O estilo arquitetural Utilização
+	  
+      \optionA{Deve ser aplicado apenas após a vista de decomposição estar terminada}
+      \optionB{Pode ser aplicado antes de haver uma vista de decomposição}
+      \optionC{Uma vez aplicado numa vista pode levar à revisão da vista de decomposição}
+      \optionD{Deve ser sempre aplicado em pelo menos numa vista do sistema} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qApplyUsesEN}{
+  \begin{ClosedQuestion}
+	  The Uses architectural style
+	  
+      \optionA{Can only be applied after the Decomposition view is finished}
+      \optionB{Can be applied before a Decomposition view is designed}
+      \optionC{Once applied in a view may be necessary to change the Decomposition view}
+      \optionD{Should be applied in at least a view of the system} 
+	  
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+%59-1
+\newcommand{\qWorldWide}{
+  \begin{ClosedQuestion}
+	  Num sistema \emph{world-wide}, como o Facebook ou o Amazon
+	  
+      \optionA{Todas as funcionalidades podem ser transacionais}
+      \optionB{Apenas um conjunto restrito de funcionalidades é transacional}
+      \optionC{Não é necessário ter propriedades transacionais pois todos os dados estão em memória}
+      \optionD{Apenas a propriedade transacional do isolamento é assegurada} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qWorldWideEN}{
+  \begin{ClosedQuestion}
+	  In world-wide systems like Facebook or Amazon,
+	  
+      \optionA{All functionalities can be transactional}
+      \optionB{Only a small set of functionalities are transactional}
+      \optionC{It is not necessary to have transactional properties because all data is in memory}
+      \optionD{Only the isolation property of transactions is supported} 
+	  
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+%60
+\newcommand{\qEnterpriseWide}{
+  \begin{ClosedQuestion}
+	  Num sistema \emph{enterprise-wide}, como o sistema Fénix,
+	  
+      \optionA{O comportamento transacional suportado de uma forma transparente é uma vantagem para os programadores}
+      \optionB{Não é necessário ter comportamento transacional associado à lógica de negócio}
+      \optionC{A arquitetura componente-e-conetor tem que ter três \emph{Tiers}}
+      \optionD{A arquitetura módulo tem que ter três Camadas} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+   
+\newcommand{\qEnterpriseWideEN}{
+  \begin{ClosedQuestion}
+	  In a enterprise-wide system, like Fénix system,
+	  
+      \optionA{It is an advantage for programmers that the transactional behavior is transparently provided}
+      \optionB{It is not necessary to have transactional behavior in the business logic}
+      \optionC{The Component-and-Connector architecture needs to have three Tiers}
+      \optionD{The Module architecture needs to have three Layers} 
+	  
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+% Época Especial
+
+%ee-1
+\newcommand{\qGPCarbonBufferInterfaceEE}{
+  \begin{ClosedQuestion}
+    No sistema \gp{}, com vista a se melhorar o desempenho, o componente \emph{carbon} não escreve imediatamente em disco, usando um \emph{buffer}:
+
+    \optionA{mas penaliza a fiabilidade pois os componentes \emph{webapp} não têm acesso aos dados mais recentes}
+    \optionB{mas ainda assim penaliza o desempenho pois os \emph{buffer} facilmente enche}
+    \optionC{e melhora a fiabilidade pois é fornecida uma interface para os componentes \emph{webapp} acederem aos dados mais recentes}
+    \optionD{e melhora a segurança pois o \emph{buffer} está protegido de ataques} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPCarbonBufferInterfaceEEEN}{
+  \begin{ClosedQuestion}
+    In the \gp{} system, in order to improve performance the component \emph{carbon} do not write directly on disk, it uses a buffer instead: 
+
+    \optionA{but this reduces reliability because de webapp components do not access the most recent date}
+    \optionB{but it reduces performance, anyway, because the buffer components easily overflow}
+    \optionC{and it improves reliability because it also provides an interface that the webapp components can use to access the most recent data}
+    \optionD{and it improves security because the buffer is protected agains attacks} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-2
+\newcommand{\qGPCarbonRelayEE}{
+  \begin{ClosedQuestion}
+    No sistema \gp{} o componente \emph{carbon-relay} implementa uma tática de manter múltiplas cópias de computação, com vista a melhorar a qualidade de
+
+    \optionA{desempenho}
+    \optionB{segurança}
+    \optionC{facilidade de modificação}
+    \optionD{facilidade de utilização} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPCarbonRelayEEEN}{
+  \begin{ClosedQuestion}
+    In the \gp{} system the component \emph{carbon-relay} implements a tactic of maintain multiple copies of computation, in order to improve the quality
+
+    \optionA{performance}
+    \optionB{security}
+    \optionC{modifiability}
+    \optionD{usability} 
+
+    \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-3
+\newcommand{\qGPWhisperViewTypeEE}{
+  \begin{ClosedQuestion}
+    Para descrever a estrutura de um ficheiro \emph{whisper} do sistema \gp{} deve-se usar uma vista do tipo vista 
+
+    \optionA{decomposição}
+    \optionB{generalização}
+    \optionC{modelo de dados}
+    \optionD{utilização} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGPWhisperViewTypeEEEN}{
+  \begin{ClosedQuestion}
+	  To describe the structure of a whisper file of the \gp{} system it is necessary to use a view of the viewtype
+
+    \optionA{Decomposition}
+    \optionB{Generalization}
+    \optionC{Data Model}
+    \optionD{Uses} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-4
+\newcommand{\qMWLowCostEE}{
+  \begin{ClosedQuestion}
+	  No desenho da arquitetura do sistema \mw{} foi decidido ter apenas um servidor de escrita
+    
+    \optionA{pois o desempenho não é muito relevante}
+    \optionB{para guardar toda a informação de forma estática}
+    \optionC{devido a se pretender ter uma solução de baixo custo e reduzida complexidade}
+    \optionD{pois não há requisitos de disponibilidade} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWLowCostEEEN}{
+  \begin{ClosedQuestion}
+	  The design of the \mw{} architecture was decided to have a single write server
+    
+    \optionA{Because performance is not relevant}
+    \optionB{To statically store all the information}
+    \optionC{To have a low cost solution and with reduced complexity}
+    \optionD{Because there are no requirements for availability} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-5
+\newcommand{\qMWReliabilityImplementationEE}{
+  \begin{ClosedQuestion}
+	  O critério de fiabilidade do sistema \mw{}, segundo o qual as alterações efetuadas por um escritor são consistentemente preservadas nas suas subsequentes leituras, 
+    
+    \optionA{pode levar a que escritor receba uma exceção indicando que a informação ainda não está disponível}
+    \optionB{obriga a associar uma marca de tempo a cada escrita}
+    \optionC{resulta em que os pedidos do escritor têm prioridade sobre os pedidos dos restantes leitores}
+    \optionD{resulta em que o escritor não possa fazer muitas escritas simultâneas} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityImplementationEEEN}{
+  \begin{ClosedQuestion}
+	  The reliability criteria of the \mw{} system  that all the changes done by a writer are consistently visualized in her subsequent reads,
+    
+    \optionA{May result in a writer receiving an exception when the information when is not available yet}
+    \optionB{Requires that a timestamp is associated with every write}
+    \optionC{Results in that the writer requests have priority over all the other all other request}
+    \optionD{Results in that the writer cannot do many simultaneous writes} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-6
+\newcommand{\qMWQualitiesEE}{
+  \begin{ClosedQuestion}
+	  Qual das seguintes qualidades não é relevante para o sistema \mw{}?
+    
+    \optionA{Desempenho}
+    \optionB{Facilidade de teste}
+    \optionC{Disponibilidade}
+    \optionD{Usabilidade} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWQualitiesEEEN}{
+  \begin{ClosedQuestion}
+	  Which of the following qualities are not relevant for the \mw{} system?
+    
+    \optionA{Performance}
+    \optionB{Testability}
+    \optionC{Availability}
+    \optionD{Usability} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-7
+\newcommand{\qMWReliabilityReadsImplementationEE}{
+  \begin{ClosedQuestion}
+	  O sistema \mw{} procura assegurar um critério de fiabilidade segundo o qual a informação escrita há mais de 30 segundos está disponível, para leitura, para todos os leitores. Para se alcançar este critério o distribuidor de carga pode deixar de aceitar escritas até que
+    
+    \optionA{Os servidores de leitura tenham respondido a todos os pedidos de leitura}
+    \optionB{Até que os servidores de leitura se tenham sincronizado com o servidor de escrita}
+    \optionC{Até que o servidor de escrita tenha processado todas as escritas pendentes}
+    \optionD{Durante cerca de 30 segundos} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWReliabilityReadsImplementationEEEN}{
+  \begin{ClosedQuestion}
+	  The \mw{} system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria the load balancer may stop accepting writes until
+    
+    \optionA{Read servers respond to all requests}
+    \optionB{Read servers synchronize with the master server}
+    \optionC{Write server had processed all pending writes}
+    \optionD{After 30 seconds} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-8
+\newcommand{\qMWResourceLoaderTacticEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do sistema \mw{} indica-se que:
+	  \newline
+	  
+	  \emph{To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.}
+	  \newline
+	  
+	  O \emph{ResourceLoader} suporta a qualidade de
+    
+    \optionA{Desempenho}
+    \optionB{Facilidade de utilização}
+    \optionC{Disponibilidade}
+    \optionD{Facilidade de manutenção} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qMWResourceLoaderTacticEEEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of the \mw{} system description:
+	  \newline
+	  
+	  \emph{To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.}
+	  \newline
+	  
+	  The \emph{ResourceLoader} supports a quality
+    
+    \optionA{Performance}
+    \optionB{Usability}
+    \optionC{Availability}
+    \optionD{Modifiabilit} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-9
+\newcommand{\qCHQualitiesEE}{
+  \begin{ClosedQuestion}
+	  O \ch{}, tal como descrito no caso estudado durante o semestre, foi desenhado para suportar as seguintes qualidades arquiteturais:
+    
+    \optionA{Segurança e Mobilidade}
+    \optionB{Desempenho, Segurança e Interoperabilidade}
+    \optionC{Segurança, Desempenho, Usabilidade, Interoperabilidade e Mobilidade}
+    \optionD{Segurança, Desempenho, Usabilidade e Mobilidade} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHQualitiesEEEN}{
+  \begin{ClosedQuestion}
+	 \ch{}, as described in the case study, was designed to support the accomplish the following architectural qualities:
+    
+    \optionA{Security and Mobility}
+    \optionB{Performance, Security and Interoperability}
+    \optionC{Security, Performance, Usability, Interoperability and Mobility}
+    \optionD{Security, Performance, Usability and Mobility} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-10
+\newcommand{\qCHPerformanceQualityEE}{
+  \begin{ClosedQuestion}
+	  No \ch{}, ao se associar um processo \emph{Renderer} a cada \emph{Tab}, alcançam-se as qualidades de
+    
+    \optionA{Desempenho e Segurança}
+    \optionB{Desempenho}
+    \optionC{Segurança}
+    \optionD{Mobilidade e Desempenho} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHPerformanceQualityEEEN}{
+  \begin{ClosedQuestion}
+	  In \ch{} it is possible to associate a Renderer Process to each Tab, which results in the qualities
+    
+    \optionA{Performance and Security}
+    \optionB{Performance}
+    \optionC{Security}
+    \optionD{Mobility and Performance} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-11
+\newcommand{\qCHPrerenderTacticsEE}{
+  \begin{ClosedQuestion}
+	  O \ch{} faz em algumas situações \emph{prerender} de páginas. Com isso consegue alcançar qualidades de
+	      
+    \optionA{Desempenho}
+    \optionB{Desempenho e Disponibilidade}
+    \optionC{Disponibilidade}
+    \optionD{Segurança e Disponibilidade} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHPrerenderTacticsEEEN}{
+  \begin{ClosedQuestion}
+	  In some situations \ch{} prerenders a page. Therefore it achieves the qualities of
+	      
+    \optionA{Performance}
+    \optionB{Performance and Availability}
+    \optionC{Availability}
+    \optionD{Security and Availabilty} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-12
+\newcommand{\qCHOmniboxTacticsEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	  
+	  A descrição acima refere qualidade de 
+	      
+    \optionA{Desempenho e Facilidade de Utilização}
+    \optionB{Segurança e Facilidade de Utilização}
+    \optionC{Desempenho e Segurança}
+    \optionD{Desempenho e Disponibilidade} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHOmniboxTacticsEEEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \ch{} case study you can read:
+	  \newline
+	  
+	  \emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} 
+	  \newline
+	   
+	  This description refers to the qualities of
+	      
+    \optionA{Performance and Usability}
+    \optionB{Security and Usability}
+    \optionC{Performance and Security}
+    \optionD{Performance and Availability} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-13
+\newcommand{\qCHAmazonSilkTwoEE}{
+  \begin{ClosedQuestion}
+	  Arquiteturalmente o \ch{} e o Amazon Silk diferem pois
+	      
+    \optionA{Apenas um deles tira partido da concorrência}
+    \optionB{Apenas um deles utiliza técnicas de aprendizagem}
+    \optionC{Apenas um deles faz \emph{prefetch}}
+    \optionD{Apenas um deles faz uso de um serviço proprietário} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHAmazonSilkTwoEEEN}{
+  \begin{ClosedQuestion}
+	  Architecturally \ch{} and Amazon Silk differ because 
+	      
+    \optionA{Only one of them take advantage of concurrency}
+    \optionB{Only one of them uses machine learning techniques}
+    \optionC{Only one of them does prefetch}
+    \optionD{Only one of them uses a proprietary service} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-14
+\newcommand{\qCHMobilityArchitecturalStyleEE}{
+  \begin{ClosedQuestion}
+	  
+	  Na descrição do caso \ch{} pode-se ler:
+	  \newline
+	  
+	  \emph{On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.} 
+	  \newline
+	  
+	  A descrição acima refere uma qualidade, por vezes referida como mobilidade, devido à adaptação às caraterísticas do dispositivo. Devido a esta qualidade que outras qualidades podem ser comprometidas.	  
+	  
+    \optionA{Disponibilidade}
+    \optionB{Desempenho e Disponibilidade}
+    \optionC{Segurança e Disponibilidade}
+    \optionD{Facilidade de modificação} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qCHMobilityArchitecturalStyleEEEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \ch{} case you can read:
+	  \newline
+	  
+	  \emph{On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.} 
+	  \newline
+	  
+	  This description refers to a quality, usually named mobility, due to adaptation to the condition of the device. Due to this quality other qualities can be compromissed
+	  
+    \optionA{Availability}
+    \optionB{Performance and Availability}
+    \optionC{Security and Availability}
+    \optionD{Usability} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-15
+\newcommand{\qGMPicklePerformanceEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called \_\_dict\_\_. So saving a mailing list object then is simply a matter of pickling its \_\_dict\_\_ to a file, and loading it just involves reading the pickle from the file and reconstituting its \_\_dict\_\_.}
+  \newline
+	  
+	  Para descrever a estrutura interna do ficheiro config.pck deve-se usar uma vista do estilo arquitetural:
+	  
+	      
+    \optionA{Utilização}
+    \optionB{Aspetos}
+    \optionC{Decomposição}
+    \optionD{Modelo de dados} 
+
+     \putOptions
+% Resposta: D
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPicklePerformanceEEEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} 
+  \newline
+  
+  \emph{In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called \_\_dict\_\_. So saving a mailing list object then is simply a matter of pickling its \_\_dict\_\_ to a file, and loading it just involves reading the pickle from the file and reconstituting its \_\_dict\_\_.}
+  \newline
+	  
+	  To describe the internal structure of the config.pck file	it should be used a view of the viewtype
+	      
+    \optionA{Uses}
+    \optionB{Aspects}
+    \optionC{Decomposition}
+    \optionD{Data Model} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-16
+\newcommand{\qGMPerformanceEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{...Mailman supports running more than one runner process per queue directory...}
+  \newline
+  
+  A qual corresponde a uma tática de 
+	      
+    \optionA{Introduzir concorrência}
+    \optionB{Replicação ativa}
+    \optionC{Aumentar recursos}
+    \optionD{Aumentar a eficiência dos recursos} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMPerformanceEEEN}{
+  \begin{ClosedQuestion}
+	  Consider the following transcription of the \gm{} system:
+  \newline
+  
+  \emph{...Mailman supports running more than one runner process per queue directory...}
+  \newline
+  
+  It refers to a tactic of
+	      
+    \optionA{Introduce concurrency}
+    \optionB{Active replication}
+    \optionC{Increase resources}
+    \optionD{Increase resource efficiency} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%ee-17
+\newcommand{\qGMRestModularityEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} indica-se que:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  Esta solução permitiu:
+	      
+    \optionA{Melhorar a qualidade da facilidade de modificação pois a nova interface REST esconde a estrutura das mensagens}
+    \optionB{Melhorar a qualidade de interoperabilidade pois as aplicações externas passaram a poder usar as funcionalidade de administração}
+    \optionC{Melhorar a qualidade da interoperabilidade pois aplicações externas podem passar a ler e enviar mensagens para o \gm{}}
+    \optionD{Nenhuma das anteriores} 
+
+     \putOptions
+% Resposta: B
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMRestModularityEEEN}{
+  \begin{ClosedQuestion}
+	  Consider the following fragment of \gm{} case study:
+  \newline
+  
+  \emph{Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.}
+  \newline
+	  
+	  This solution allowed:
+	      
+    \optionA{Improve the modifiability quality, because the new REST interface hides the messages' structure}
+    \optionB{Improve the interoperability quality, because external applications can use the administrative functionalities}
+    \optionC{Improve the interoperability quality, because external applications can read and send messages to \gm{}}
+    \optionD{None of the previous options} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-18
+\newcommand{\qGMReliabilityFIFOEE}{
+  \begin{ClosedQuestion}
+	  Na descrição do \gm{} refere-se:
+  \newline
+  
+  \emph{There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.}
+  \newline
+  
+  A qualidade que se pretende tratar é:
+	      
+    \optionA{Segurança}
+    \optionB{Desempenho}
+    \optionC{Disponibilidade}
+    \optionD{Facilidade de utilização} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMReliabilityFIFOEEEN}{
+  \begin{ClosedQuestion}
+	  In the description of the \gm{} case study:
+  \newline
+  
+  \emph{There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.}
+  \newline
+  
+  The quality being addressed is:
+	      
+    \optionA{Security}
+    \optionB{Performance}
+    \optionC{Availability}
+    \optionD{Usability} 
+
+    \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-19
+\newcommand{\qGMMessagesPersistenceEE}{
+  \begin{ClosedQuestion}
+	  No Mailman 3 as mensagens continuam a ser guardadas persistentemente usando \emph{pickle}
+	      
+    \optionA{Pois cada mensagem não necessita de ser acedida simultaneamente por diversos processos}
+    \optionB{Pois a estrutura de dados de uma mensagem é mais facilmente implementada num ficheiro}
+    \optionC{Pois é menos eficiente guardar as mensagens numa base de dados relacional}
+    \optionD{Todas as opções anteriores} 
+
+     \putOptions
+% Resposta: A
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMMessagesPersistenceEEEN}{
+  \begin{ClosedQuestion}
+	  In Mailman 3 messages are still being persistently stored using pickle because
+	      
+    \optionA{Each messages does not need to be accessed concurrently by several processes}
+    \optionB{The message data structure is easily implemented in a file}
+    \optionC{It is not efficient to store the messages in a relational database}
+    \optionD{Al the previous options} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+%ee-20
+\newcommand{\qGMMasterRunnerEE}{
+  \begin{ClosedQuestion}
+	  A função do componente \emph{Master Runner} do \gm{} pode ser representada usando o estilo arquitetural
+	      
+    \optionA{Cliente-Servidor}
+    \optionB{Par-a-Par}
+    \optionC{Criação e Destruição Dinâmica}
+    \optionD{\emph{Tiers}} 
+
+     \putOptions
+% Resposta: C
+   \end{ClosedQuestion}
+}
+
+\newcommand{\qGMMasterRunnerEEEN}{
+  \begin{ClosedQuestion}
+	  The function of Master Runner component of \gm{} can be represented using an architecture style of
+	      
+    \optionA{Client-Server}
+    \optionB{Peer-to-Peer}
+    \optionC{Dynamic Creation and Destruction}
+    \optionD{Tiers} 
+
+     \putOptions
+   \end{ClosedQuestion}
+}
+
+
+%%ee-21
+\newcommand{\qFirstEE}{
+  \begin{ClosedQuestion}
+    A arquitetura de software de um sistema
+
+    \optionA{É uma vista de alto nível do sistema com objetivo de perceber quais são os objetivos e as funcionalidades do sistema}
+    \optionB{É composta de unidades de código, elementos de execução, hardware e pessoas, assim como os relacionamentos entre eles}
+    \optionC{É um conjunto de regras que a equipa de desenvolvimento deve seguir para desenvolver o sistema}
+    \optionD{É um conjunto de diagramas que mostram os elementos de execução do sistema e os seus relacionamentos}
+ 
+     \putOptions
+% Resposta: B
+  \end{ClosedQuestion}
+}
+
+
+\newcommand{\qFirstEEEN}{
+  \begin{ClosedQuestion}
+    The software architecture of a system
+
+    \optionA{Is a high-level view of the system with the purpose of
+    understanding what are the system's goals and features}
+    \optionB{Is composed of things such as code units, runtime elements,
+    hardware, and people, together with the relationships among them}
+    \optionC{Is a set of guidelines that the developing team should
+    follow in the development of the system}
+    \optionD{Is a set of diagrams that show the runtime elements of the
+    system and their relationships}
+ 
+     \putOptions
+  \end{ClosedQuestion}
+}
+
+%%ee-22
+\newcommand{\qSecondEE}{
+\begin{ClosedQuestion}
+	A dcumentação da arquitetura de software de um sistema é frequentemente composta de diferentes vistas, pois
+
+  \optionA{É necessária uma vista para cada \emph{stakeholder} do sistema}
+  \optionB{Uma vista apenas pode ser muito simplista}
+  \optionC{As vistas descrevem diferentes aspetos do sistema}
+  \optionD{Todas as anteriores}
+  \putOptions
+% Resposta: c
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qSecondEEEN}{
+\begin{ClosedQuestion}
+  The documentation of the software architecture for a system is often
+  composed of several views, because
+
+  \optionA{We need one view for each system stakeholder}
+  \optionB{A single view would be too simplistic}
+  \optionC{The views describe different aspects of the system}
+  \optionD{All of the above}
+  \putOptions
+  \end{ClosedQuestion}
+}
+
+%%ee-23
+\newcommand{\qThirdEE}{
+\begin{ClosedQuestion}
+	Estabecer uma convenção de programação como 
+  \begin{quote}
+	  Todas as variáveis globais do sistema devem começar pelo prefixo
+    \textsc{g\_}, enquanto que as variáveis não-globais não possuem \emph{underscores} no nome
+  \end{quote}
+
+  \optionA{Nunca é uma decisão arquitetural pois é de demasiado baixo nível}
+  \optionB{É sempre uma decisão arquitetural pois aplica-se a todo o programa}
+  \optionC{Pode ser uma decisão arquitetural, dependendo dos requisitos do sistema}
+  \optionD{Pode ser uma decisão arquitetural, dependendo da experiência do arquiteto}
+  
+  \putOptions
+% Resposta: c
+  \end{ClosedQuestion}
+}
+
+\newcommand{\qThirdEEEN}{
+\begin{ClosedQuestion}
+  Establishing a programming convention such as 
+  \begin{quote}
+    All of the global variables of the program should start with the
+    prefix \textsc{g\_}, whereas all the non-global variables have
+    no underscores in their name.
+  \end{quote}
+
+  \optionA{Is never an architectural decision because it is too low-level}
+  \optionB{Is always an architectural decision because it applies to
+  the entire program}
+  \optionC{May be an architectural decision, depending on the
+  requirements for the system}
+  \optionD{May be an architectural decision, depending on the
+  architect's experience}
+  
+  \putOptions
+  \end{ClosedQuestion}
+}
+
+%%ee-24
+\newcommand{\qFourthEEEN}{
+\begin{ClosedQuestion}
+  Assume that one of the requirements for a graphical chess game is
+  that it should be able to run both in Microsoft's Windows and
+  Apple's Mac OS X operating systems.  A good solution for this system
+  would:
+
+  \optionA{Create a decomposition where there is a module corresponding
+  to the Windows OS and another one for the Mac OS X, each one
+  encapsulating the behavior of the corresponding OS}
+  \optionB{Use a classic 3-layer architecture with the following
+  layers, from top to bottom: Presentation, Domain Logic, and Data
+  Access}
+  \optionC{Use a layered architecture, where the bottommost layer
+  provides an interface for creating a graphical interface}
+  \optionD{Use two deployment views, each one allocating different
+  components to different machines with different operating systems}
+
+  \putOptions
+% Resposta: a
+\end{ClosedQuestion}
+}
+
+\newcommand{\qFourthEE}{
+\begin{ClosedQuestion}
+	Considere que um dos requisitos de um jogo de xadrez com um interface gráfica é que seja possível executar nos sistemas operativos Microsoft Windows e 
+  Apple Mac OS X. Uma boa solução para este sistema deveria:
+
+  \optionA{Criar uma decomposição em que há um módulo correspondente ao Windows OS e outro ao Mac OS X, em que cada um destes módulos encapsula o comportamento dos respetivos sistemas operativos}
+  \optionB{Utilizar uma arquitetura de 3 camadas com as seguintes camadas, de cima para baixo: Apresentação, Lógica de Domínio, Acesso a Dados}
+  \optionC{Utilizar uma arquitetura de camadas em que o nível mais baixo fornece uma interface para criar uma interface gráfica}
+  \optionD{Utilizar duas vistas de implantação, em que cada uma delas atribui diferentes componentes a diferentes máquinas com diferentes sistemas operativos}
+
+  \putOptions
+% Resposta: a
+\end{ClosedQuestion}
+}
+
+%%ee-25
+\newcommand{\qFifthEE}{
+\begin{ClosedQuestion}
+	Um outro requisito do jogo de xadrez da pergunta anterior é que mantem uma tabela com as melhores pontuações do jogo. Naturalmente, esta informação deve ser mantida entre duas diferentes execuções do sistema. Assumindo que o jogo é uma aplicação de \emph{desktop}
+
+  \optionA{Devemos usar um estilo Utilização}
+  \optionB{Devemos usar uma arquitetura de camadas com uma camada de acesso a dados}
+  \optionC{Devemos identificar um módulo para escrever as pontuações num estilo Decomposição}
+  \optionD{Devemos atribuir a responsabilidade de escrever as pontuações para um outro módulo que já tenha essas responsabilidades}
+
+  \putOptions
+  % Resposta b
+\end{ClosedQuestion}
+}
+
+\newcommand{\qFifthEEEN}{
+\begin{ClosedQuestion}
+  Another requirement for the chess game from the previous questions
+  is that it keeps a table with the best scores obtained in the game.
+  Naturally, this information should be kept between two different
+  executions of the system.  Assuming that the game is a desktop
+  application, then
+
+  \optionA{We must use a Uses style}
+  \optionB{We must use a layered architecture with a ``Data Access''
+  layer}
+  \optionC{We must identify a module for writing the scores in a
+  Decomposition style}
+  \optionD{We may assign the responsibility of writing the scores to
+  another module that already has other responsibilities}
+
+  \putOptions
+\end{ClosedQuestion}
+}
+
+%%ee-26
+\newcommand{\qSixthEE}{
+\begin{ClosedQuestion}
+	Para se obter um rápido \emph{time-to-market}, as companhias de software estão a usar cada vez mais estratégias de entregas incrementais, em que cada nova entrega contém novas funcionalidades. Que estilo arquitetural é melhor para analisar se a arquitetura de software do sistema se adequa à entrega incremental de versões do sistema?
+ 
+  \optionA{O estilo Decomposição}
+  \optionB{O estilo Implantação}
+  \optionC{O estilo Utilização}
+  \optionD{O estilo Atribuição de trabalho}
+  
+  \putOptions
+% Resposta: c
+\end{ClosedQuestion}
+}
+
+\newcommand{\qSixthEEEN}{
+\begin{ClosedQuestion}
+  To achieve a faster time-to-market, software companies are
+  increasingly using a strategy of incremental releases of their
+  software, where each new release has a set of new features.  Which
+  architectural style is better to analyse whether the system's
+  software architecture is adequate for the planned incremental
+  releases?
+ 
+  \optionA{The Decomposition style}
+  \optionB{The Deployment style}
+  \optionC{The Uses style}
+  \optionD{The Work-assignment style}
+  
+  \putOptions
+\end{ClosedQuestion}
+}
+
+%%ee-27
+\newcommand{\qSeventhEE}{
+\begin{ClosedQuestion}
+	Qual das seguintes frases melhor descreve o relação entre módulos e componentes?
+
+  \optionA{Um módulo pode conter código de diversos componentes}
+  \optionB{Um componente pode executar código de diversos módulos}
+  \optionC{Um módulo pode executar código de diversos componentes}
+  \optionD{Um componente pode conter código de diversos módulos}
+  
+  \putOptions
+% Resposta: b
+\end{ClosedQuestion}
+}
+
+\newcommand{\qSeventhEEEN}{
+\begin{ClosedQuestion}
+  Which of the following phrases best describe the relationship
+  between modules and components?
+
+  \optionA{A module may contain code from different components}
+  \optionB{A component may execute code from different modules}
+  \optionC{A module may execute code from different components}
+  \optionD{A component may contain code from different modules}
+  
+  \putOptions
+\end{ClosedQuestion}
+}
+
+%%ee-28
+\newcommand{\qEighthEE}{
+\begin{ClosedQuestion}
+	O padrão \emph{Transaction Script}
+
+  \optionA{Necessita de uma equipa mais capaz, pois é difícil de desenvolver}
+  \optionB{Permite desenvolvimento independente com reduzida comunicação entre os membros da equipa}
+  \optionC{É melhor para domínios complexos, por causa de ser fácil de manter}
+  \optionD{Nenhum dos anteriores}
+
+  \putOptions
+% Resposta: b
+\end{ClosedQuestion}
+}
+
+\newcommand{\qEighthEEEN}{
+\begin{ClosedQuestion}
+  The Transaction Script pattern
+
+  \optionA{Requires a more skilled team, because it is harder to develop}
+  \optionB{Allows independent development with little communication
+  between the team members}
+  \optionC{Is better for more complex domains, because it becomes
+  easier to maintain}
+  \optionD{None of the above}
+
+  \putOptions
+\end{ClosedQuestion}
+}
+
+
+%%ee-29
+\newcommand{\qNinethEE}{
+\begin{ClosedQuestion}
+	O padrão \emph{Service Layer} é frequentemente usado em conjuntamente com
+ 
+  \optionA{O padrão \emph{Transaction Script} para ajudar a demarcar as transações de negócio}
+  \optionB{O padrão Modelo de Domínio para reduzir a interface da camada de lógica de negócio para um conjunto controlado de funcionalidades}
+  \optionC{A camada de acesso a dados para poder aceder aos dados que necessita em cada serviço}
+  \optionD{Nenhum dos anteriores}
+
+  \putOptions
+% Resposta: b
+\end{ClosedQuestion}
+}
+
+\newcommand{\qNinethEEEN}{
+\begin{ClosedQuestion}
+  The Service Layer pattern is often used in conjunction with
+ 
+  \optionA{The Transaction Script pattern to help demarcate the
+  business transactions}
+  \optionB{The Domain Model pattern to reduce the interface of the
+  Domain Logic layer to a controlled set}
+  \optionC{The Data Access layer to be able to access the data that it
+  needs in each service}
+  \optionD{None of de above}
+
+  \putOptions
+\end{ClosedQuestion}
+}
+
+%%ee-30
+\newcommand{\qTenthEE}{
+\begin{ClosedQuestion}
+	O padrão \emph{Identity Map} é usado
+ 
+  \optionA{Para impedir os dados de ficarem incoerentes quando há múltiplos acessos dentro da mesma transação de negócio à mesma entidade}
+  \optionB{Para aumentar o desempenho da aplicação, porque faz cache dos valores previamente carregados em memória, desta forma reduzindo o número de acessos à base de dados}
+  \optionC{Para evitar carregar muitos dados da base de dados quando uma dada entidade que tem muitas relações com outras entidades é carregada}
+  \optionD{Nenhuma das anteriores}
+
+  \putOptions
+% Resposta: a
+\end{ClosedQuestion}
+}
+
+\newcommand{\qTenthEEEN}{
+\begin{ClosedQuestion}
+  The Identity Map pattern is used
+ 
+  \optionA{To prevent that data becomes incoherent when there are
+  multiple accesses within the same business operation to the same
+  entity}
+  \optionB{To increase the performance of the application, because it
+  caches previously loaded values in memory, thereby reducing the
+  number of round-trips to the database}
+  \optionC{To avoid loading many data from the database when a given
+  entity that has many relationships with other entities is loaded}
+  \optionD{None of the above}
+
+  \putOptions
+\end{ClosedQuestion}
+}
+
+
+

@@ -1,0 +1,63 @@
+.Main.p-4.bg-light
+  // jumbotron start
+  #quiz-list.card
+    // card start
+    .card-header
+      // card-header start
+      h5 Listing Quizes
+    // card-header end
+    
+    if data.quizes.length == 0
+      .card-body No quizes exist in the database
+      
+    for quiz in data.quizes
+      - var quizCard = "quiz-card-" + quiz.id
+      - var quizId = "quiz-id-" + quiz.id
+      - var quizTitle = "quiz-title-" + quiz.id
+      - var quizDate = "quiz-date-" + quiz.id
+      - var editQuiz = "edit-quiz-" + quiz.id
+      - var deleteQuiz = "delete-quiz-" + quiz.id
+      - var exportQuiz = "export-quiz-" + quiz.id
+      .card-body.border-bottom(id=quizCard)
+        .row.pb-2
+          .col-md-8.font-weight-bold(id=quizId)
+            | Quiz #{quiz.id}
+          .col-md-4
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=exportQuiz) Export Quiz
+              script.
+                $("##{exportQuiz}").click(function () { 
+                  /* alert("exporting"); */
+                  /* location.href="api/exportarsnova/" + #{quiz.id} + ".json"; */
+                  
+                  $.get("api/exportarsnova/" + #{quiz.id} + ".json", function( data ) {
+                    console.log(JSON.stringify(data.result));
+                    
+                    var content = JSON.stringify(data.result);
+                    // any kind of extension (.txt,.cpp,.cs,.bat)
+                    var filename = #{quiz.id} + ".json";
+
+                    var blob = new Blob([content], {
+                     type: "text/plain;charset=utf-8"
+                    });
+
+                    saveAs(blob, filename);
+                  });  
+                });
+        .row.pb-2
+          .col-md-9(id=quizTitle)
+            | #{quiz.title}
+          .col-md-3.text-right(id=quizDate)
+            | #{quiz.quizdate}
+        // buttons
+        .row
+          .col-6
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=editQuiz) Edit Quiz
+              script.
+                $("##{editQuiz}").click(function () { window.location = "/editQuiz/#{quiz.id}";});
+          .col-6
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=deleteQuiz) Delete Quiz
+              script.
+                $("##{deleteQuiz}").click(function () { alert("deleting quiz #{quiz.id}"); });

@@ -1,0 +1,2 @@
+curl --data "questionid=1&content=Isto é uma resposta estúpida" \
+http://127.0.0.1:3000/api/answers

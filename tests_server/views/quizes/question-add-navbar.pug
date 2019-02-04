@@ -1,0 +1,12 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top
+  button.navbar-toggler( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+    
+  .collapse.navbar-collapse(id="navbarSupportedContent")
+    .form-inline.mr-auto
+      
+    .form-inline
+      
+      button.btn.btn-sm.btn-light.mx-1(type="button" id="cancelAddQuestion") Cancel
+      script.
+        $("#cancelAddQuestion").click(function () { window.location = "/editQuiz/#{data.quiz.id}" ;});

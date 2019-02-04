@@ -1,0 +1,178 @@
+quiz {
+  title: string
+  date: date
+  questions: question []
+}
+
+add tags / topics to questions
+add images to Questions
+
+// python based don't have it currently
+Remake the parser from latex to csv
+(need to extract extra information)
+
+Duplicate elimination for questions
+
+Quiz view
+
+Add images to question view
+
+
+# 2018/06/25
+List Quiz View
+- Create New
+- Generate New
+- Filter
+  Search title
+  By date
+  By topics
+
+Quiz View
+- Remove Question
+- Add Question
+  - Functionality
+  - Filter Add Question List
+    Search content
+    By date
+    By topics
+  - Correct answer preview
+- Save Changes
+- Date Picker
+- Character count / kahoot ready
+
+Edit Question View
+- Image and Image Uploader / Selector (original version URL)
+- Topics
+- Character count / kahoot ready
+
+List Question view
+- Create New
+- Filter
+  Search content
+  By date
+  By topics
+
+
+  -- Topics (should be present in collapsed short view)
+  --- Add topic to question
+
+# priorities
+-- Answer Time
+-- Character Count
+-- Quiz Date and Title
+-- Save Quiz
+-- Remove question from quiz
+
+-- Show quizes that contain the Question in Question view (RITO)
+-> this requires changing the import scripts and / or changing the data model in some manner
+
+--- autosize of textareas in required screens (done but not integrated)
+-- Img (currently only allows updates to questions that already have an image - does not allow adding or removing images)
+
+# fixes
+- disallow collapse of navbar so that i don't need to fix the mobile layout
+-- textarea disabled color not working on pug template (may need to advance versions)
+-- sort questions and answers by id
+
+
+# Rui's Email
+- entry point homepage
+-> quiz infos list and search criterias (also summary of content -> number of quizes, questions)
+- NOTE: does it make sense to present the search criteria here?
+--> create new quiz and questions
+
+- Demo - criação de um quiz.
+--> endpoint (needs modifications to add new questions as well)
+--> view (needs modifications to add new questions as well)
+--> data submission (needs modifications to add new questions as well)
+
+- Adicionar questão (edit quiz) -> Ideally this should stay in the quiz context
+-> from database (implies having a search window and display of existing questions, insert copy)
+-> (popover?)
+-> create new question
+
+- inserir pergunta previamente inserida, pesquisando por tópicos -> Ideally this should stay in the quiz context
+-> add Question is not implemented
+--> endpoint
+--> view
+--> data submission
+-> topics not implemented in the interface
+- (algumas inseridas como estão, as outras devem ser modificadas -> criar cópia)
+
+- Exportação de quiz -> ArsNova (resultar no ficheiro final mesmo, e não apenas no resultado json do serviço da webAPI)
+-> not fully implemented (only have the API endpoint, not downloading the actual file result that only includes the quiz json)
+-) Quick win (not that quick, just redirection to a json endpoint, need to review this)
+-) still returning the json in a result structure and not the actual export json
+
+# Extra work
+
+-> image upload when creating / editing a question
+-> content search/filter for questions (adding existing questions to a quiz)
+-) low priority
+
+- gerar respostas aleatórias para uma pergunta (opcional)
+-> answers only exist in the context of a question
+-> this can still stay the same, it might be just a case of copying the answer into a quiz
+
+# Questões levantadas
+- Os scripts de import estão a inserir uma versão da pergunta por quiz
+- Edição de uma questão no contexto de uma quiz (parece-me que deveria ser diferente de edição de uma questão sem contexto)
+--> alterar todas vs criar uma cópia modificada
+- comandos extras de tex nos ficheiros originais (macros definidas que depois são reutilizadas nas questões), não há parsing a ser feito
+
+-> delete quiz and question is not implemented
+- delete quiz -> delete quizhasquestions, delete questions (questionhasimage and questionhascorrectanswer cascade), delete quiz
+
+-> save and cancel returning to previous page
+- requires that the page knows what the previous page was
+
+-> pagination for listings
+
+# Reunião com o rui (script para a apresentação)
+2018/07/04
+
+- Make sure the content in Quiz 152 is correct
+Title -> 2017-test-4-test-43B
+Question 1694
+Question 1695
+Question 1696
+Question 1697
+Question 1698
+(may require hammering away at the questions.tex so that it can be portable from install to install)
+
+-> create quiz
+
+--> Add new questions
+
+-> Export to arsnova working as a download (maybe the button should also be in the edit quiz view)
+--> Make sure the exported question works with correct answers selected (on the export)
+--> missing
+
+-> filtering list views (see -> http://api.jquery.com/filter/) (mebbe pagination -> see http://pagination.js.org/)
+--> missing
+--> what are bootstrap 4 datatables? and will they work for this?
+
+-> setup instructions and deployment
+--> this might be tricky (not having access to the machine may compromise this)
+--> database init and configuration of webapp db
+---> !Remember to change database init scripts user and password
+---> Software Engineering Game/SQL/CreateDB.sql and SQL/CreateUser.sql (don't remember order)
+---> Software Engineering Game/tests_server/config/db.json (match user and password that was used on the database init scripts)
+---> questions/python3 populateDB.py
+----> required python3 modules glob, os, re, json, psycopg2, shutil, pathlib (most should be available)
+----> run the command questions/python3 populateDB.py
+---> Software Engineering Game/tests_server/npm start (can't recall if there is anything else that needs to be done so that it stays up)
+
+# NOTES
+-> answertime init scripts (not being setup correctly)
+
+-> list questions view, can probably be changed to be similar to how questions are displayed in quiz view
+
+-> try and see if i can integrate the resizing textarea code
+
+-> error handling / messages for creation / updates when saving changes (uniques mostly)
+
+-> image is not currently being copied when duplicating questions (only the questionhasimage relation is duplicated)
+
+-> export to arsnova having some issues
+--> probably due to not using https
