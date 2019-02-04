@@ -1,0 +1,35 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top
+  button.navbar-toggler( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+    
+  .collapse.navbar-collapse(id="navbarSupportedContent")
+    .form-inline.mr-auto
+      
+    .form-inline
+      button.btn.btn-sm.btn-light.mx-1(type="button" id="saveQuestion") Save
+      script.
+        $("#" + "saveQuestion").click(function () {
+          
+          //alert(JSON.stringify(questionInterface.getQuestionData()));
+          
+          var data = questionInterface.getQuestionData();
+          
+          /* alert("Created Question") */
+          
+          console.log(JSON.stringify(data));
+          
+          $.ajax({
+            url: "/api/createnewquizquestion/#{data.quiz.id}",
+            type: 'POST',
+            success: function () {
+              /* alert("Question Created"); */
+              window.location = "/editQuiz/#{data.quiz.id}" ;
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json"
+          });
+        });
+        
+      button.btn.btn-sm.btn-light.mx-1(type="button" id="cancelCreateQuestion") Cancel
+      script.
+        $("#cancelCreateQuestion").click(function () { window.location = "/editQuiz/#{data.quiz.id}" ;});

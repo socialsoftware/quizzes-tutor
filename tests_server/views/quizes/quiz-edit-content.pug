@@ -1,0 +1,156 @@
+.Main.p-4.bg-light
+  - var quizTitleId = "quizTitle-" + data.quiz.id
+  - var quizDateId = "quizDate-" + data.quiz.id
+  .card.quiz(id=data.quiz.id)
+    // card start
+    .card-header
+      // card-header start
+      h5 Editting Quiz #{data.quiz.id}
+    // card-header end
+    .card-body
+      .row
+        .col-md-12
+          .input-group.mb-3
+            .input-group-prepend
+              span.input-group-text(id=quizTitleId + "-prepend") Quiz Title
+            input.form-control(type="text" placeholder="Title" aria-label=quizTitleId aria-describedby=quizTitleid + "-prepend" id=quizTitleId value=data.quiz.title)
+        
+      //  .col-md-3
+          .input-group.mb-3
+            .input-group-prepend
+              span.input-group-text(id=quizDateId + "-prepend") Date
+            input.form-control(type="text" placeholder="DD/MM/YYYY" aria-label=quizDateId aria-describedby=quizDateId + "-prepend" id=quizDateId value=data.quiz.quizdate)
+          
+            script.
+              $('##{quizDateId}').datepicker({
+              uiLibrary: 'bootstrap4',
+              format: 'dd mmm yyyy'
+              });
+                  
+    for question in data.questions
+      - var questionId = "question-" + question.id;
+      - var questionContentId = "questionContent-" + question.id;
+      - var editQuestionId = "editQuestion-" + question.id;
+      - var removeQuestionId = "removeQuestion-" + question.id;
+      - var toggleButtonId = "toggle-answers-question-" + question.id
+      - var questionAnswersId = "question-" + question.id + "-answers"
+      .card-body.border-top(id=questionId)
+        // Start Edit Question Form
+        .form-group
+          // Start Text Edit Form
+          label.row
+            .col-md-10.col-sm-7.text-secondary.font-weight-bold(for="questionContentId") Question #{question.id}
+            .col-md-2.col-sm-5.text-right
+              button.btn.btn-sm.btn-outline-secondary(type="button" id=toggleButtonId data-toggle="button" aria-pressed="false" autocomplete="off")
+                i.fa.fa-caret-down
+                
+              script.
+                $("##{toggleButtonId}").click(function() {
+                  $("##{questionAnswersId}").slideToggle("slow", function() {})});
+          .row
+            .col-12
+              textarea.form-control-plaintext(rows="3" id=questionContentId disabled="true")
+                | #{question.content}
+          
+          if question.image.length == 1      
+            .row
+              .col-md-12.text-center
+                img.img-fluid(src=question.image[0].url id="question-image")
+                
+        div(id=questionAnswersId style="display: none;")
+          for answer in question.answers
+            - var answerId = questionId + "-answer-" + answer.id
+            - var answerText = answerId + "-text"
+            - var isAnswerCorrect = false;
+            
+            for correct in question.correctAnswers
+              if correct.answerid == answer.id
+                - isAnswerCorrect = true;
+                - break
+            
+            .form-group(id=answerId)
+              label.row
+                .col-md-10.col-sm-7.text-secondary.float-left
+                  | Answer #{answer.id}
+                .col-md-2.col-sm-5
+                  if isAnswerCorrect
+                    i.fa.fa-check.text-success.float-right
+                  else
+                    i.fa.fa-times.text-danger.float-right
+                    
+              .row
+                .col-12
+                  textarea.form-control-plaintext(id=answerText rows="3" disabled="true")
+                    | #{answer.content}
+        
+        .row
+          .col-6
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=editQuestionId) Edit Question
+              script.
+                $("##{editQuestionId}").click(function() {
+                   window.location = "/editQuizQuestion/#{data.quiz.id}/#{question.id}";
+                });
+          .col-6
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=removeQuestionId) Remove Question
+              script.
+                $("##{removeQuestionId}").click(quizInterface.removeOldQuestion.bind(null, "#{questionId}"));
+    // End Edit From
+    #newQuestions
+    .card-body.border-top
+      .row
+        .col-6
+          .form-group
+            button#addNewQuestion.btn(type="button") Add New Question
+            script.
+              $("#addNewQuestion").click(function () {
+                
+                //alert(JSON.stringify(questionInterface.getQuizData()));
+                
+                var data = quizInterface.getQuizData();
+                
+                var quizId = data.quiz.id
+                
+                console.log(JSON.stringify(data));
+                
+                $.ajax({
+                  url: "/api/updatequiz/" + quizId,
+                  type: 'PUT',
+                  success: function (data) {
+                    /* alert("Quiz Updated - " + quizId); */
+                    // get the quiz id from the response
+                    // change this to /createQuizQuestion/:quizId
+                    window.location = "/createQuizQuestion/" + quizId ;
+                  },
+                  data: JSON.stringify(data),
+                  contentType: "application/json"
+                });
+              });
+        .col-6
+          .form-group.float-right
+            button#addExistingQuestion.btn(type="button") Add Existing Question
+            script.
+              $("#addExistingQuestion").click(function () {
+                
+                //alert(JSON.stringify(questionInterface.getQuizData()));
+                
+                var data = quizInterface.getQuizData();
+                
+                var quizId = data.quiz.id
+                
+                /* alert("Updating Quiz") */
+                
+                $.ajax({
+                  url: "/api/updatequiz/" + quizId,
+                  type: 'PUT',
+                  success: function (data) {
+                    /* alert("Quiz Updated - " + quizId); */
+                    // get the quiz id from the response
+                    // change this to /createQuizQuestion/:quizId
+                    window.location = "/addQuizQuestion/" + quizId ;
+                  },
+                  data: JSON.stringify(data),
+                  contentType: "application/json"
+                });
+              });

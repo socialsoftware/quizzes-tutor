@@ -1,0 +1,83 @@
+.Main.p-4.bg-light
+  - var quizTitleId = "quizTitle-new"
+  - var quizDateId = "quizDate-new"
+  .card.quiz(id="quiz-new")
+    // card start
+    .card-header
+      // card-header start
+      h5 Creating a new Quiz
+    // card-header end
+    .card-body
+      .row
+        .col-md-12
+          .input-group.mb-3
+            .input-group-prepend
+              span.input-group-text(id=quizTitleId + "-prepend") Quiz Title
+            input.form-control(type="text" placeholder="Title" aria-label=quizTitleId aria-describedby=quizTitleid + "-prepend" id=quizTitleId)
+        
+      //  .col-md-3
+          .input-group.mb-3
+            .input-group-prepend
+              span.input-group-text(id=quizDateId + "-prepend") Date
+            input.form-control(type="text" placeholder="DD/MM/YYYY" aria-label=quizDateId aria-describedby=quizDateId + "-prepend" id=quizDateId value=data.quiz.quizdate)
+          
+            script.
+              $('##{quizDateId}').datepicker({
+              uiLibrary: 'bootstrap4',
+              format: 'dd mmm yyyy'
+              });
+                  
+    #newQuestions
+    .card-body.border-top
+      .row
+        .col-6
+          .form-group
+            button#addNewQuestion.btn(type="button") Add New Question
+            script.
+              $("#addNewQuestion").click(function () {
+                
+                //alert(JSON.stringify(questionInterface.getQuizData()));
+                
+                var data = quizInterface.getQuizData();
+                
+                console.log(JSON.stringify(data));
+                
+                $.ajax({
+                  url: "/api/createnewquiz",
+                  type: 'POST',
+                  success: function (data) {
+                    /* alert("Quiz Created - " + data.id); */
+                    // get the quiz id from the response
+                    // change this to /createQuizQuestion/:quizId
+                    window.location = "/createQuizQuestion/" + data.id ;
+                  },
+                  data: JSON.stringify(data),
+                  contentType: "application/json"
+                });
+              });
+        .col-6
+          .form-group.float-right
+            button#addExistingQuestion.btn(type="button") Add Existing Question
+            script.
+              $("#addExistingQuestion").click(function () {
+                
+                //alert(JSON.stringify(questionInterface.getQuizData()));
+                
+                var data = quizInterface.getQuizData();
+                
+                var quizId = data.quiz.id
+                
+                /* alert("Updating Quiz") */
+                $.ajax({
+                  url: "/api/createnewquiz",
+                  type: 'POST',
+                  success: function (data) {
+                    /* alert("Quiz Created - " + data.id); */
+                    // get the quiz id from the response
+                    // change this to /createQuizQuestion/:quizId
+                    window.location = "/addQuizQuestion/" + data.id ;
+                  },
+                  data: JSON.stringify(data),
+                  contentType: "application/json"
+                });
+              });

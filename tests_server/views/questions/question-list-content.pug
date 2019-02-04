@@ -1,0 +1,47 @@
+.Main.p-4.bg-light
+  #question-list.card
+    // card start
+    .card-header
+      // card-header start
+      h5 Listing Questions
+    // card-header end
+    
+    if data.questions.length == 0
+      .card-body No questions exist in the database
+    
+    for question in data.questions
+      - var questionCard = "question-card-" + question.id
+      - var questionId = "question-id-" + question.id
+      - var questionContent = "quiz-content-" + question.id
+      - var editQuestion = "edit-question-" + question.id
+      - var deleteQuestion = "delete-question-" + question.id
+      .card-body.border-bottom(id=questionCard)
+        // Start Edit Question Form
+        .form-group
+          // Start Text Edit Form
+          label.text-secondary.font-weight-bold(for="questionText-x") Question #{question.id}
+          textarea.form-control-plaintext(disabled="" rows="3" id=questionContent)
+            | #{question.content}
+        // End Text Question Form
+        .row
+          .col-6
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=editQuestion) Edit Question
+              script.
+                $("##{editQuestion}").click(function () { window.location = "/editQuestion/#{question.id}";});
+          .col-6
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=deleteQuestion) Delete Question
+              script.
+                $("##{deleteQuestion}").click(function () { 
+                  $.ajax({
+                    url: "/api/questions/#{question.id}",
+                    type: 'DELETE',
+                    success: function () {
+                      $("##{questionCard}").slideUp('slow', function(){
+                        $("##{questionCard}").remove();
+                      });
+                    },
+                    contentType: "application/json"
+                  });
+                });

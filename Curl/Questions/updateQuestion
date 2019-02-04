@@ -1,0 +1,2 @@
+curl -X PUT --data "content=Nova pergunta parva&answerTime=15" \
+http://127.0.0.1:3000/api/questions/2

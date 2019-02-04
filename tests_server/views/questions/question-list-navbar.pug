@@ -1,0 +1,14 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top
+  button.navbar-toggler( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+    
+  .collapse.navbar-collapse(id="navbarSupportedContent")
+    .form-inline.mr-auto
+      button.btn.btn-sm.btn-light.btn-secondary.mr-1(type="button" id="create-question") Create Question
+      script.
+        $("#create-question").click(function () { 
+          window.location = "/createQuestion";
+        });
+        
+    .form-inline
+      
