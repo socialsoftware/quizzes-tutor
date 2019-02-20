@@ -49,5 +49,22 @@ module.exports = function (db) {
     });
   };
 
+  module.remove = function (req, res, next) {
+    var quizId = parseInt(req.params.id);
+    db.result('delete from quizes where id = $1', quizId)
+      .then(function (result) {
+        /* jshint ignore:start */
+        res.status(200)
+          .json({
+            status: 'success',
+            message: `Removed ${result.rowCount} quiz`
+          });
+        /* jshint ignore:end */
+      })
+      .catch(function (err) {
+        return next(err);
+      });
+  };
+
   return module;
 };

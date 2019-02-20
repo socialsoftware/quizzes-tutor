@@ -117,6 +117,7 @@ router.put('/api/updatequestion/:id', updateQuestion.update);
 
 // List quizes
 router.get('/api/quizes', quizes.getAll);
+router.delete('/api/quizes/:id', quizes.remove);
 router.get('/api/previousQuiz/:id', quizes.previous);
 router.get('/api/nextQuiz/:id', quizes.next);
 
