@@ -4,3 +4,9 @@ block content
   
   include quizes/question-add-navbar.pug
   include quizes/question-add-content.pug
+  // IE 10+ / Edge support via babel-polyfill: https://babeljs.io/docs/en/babel-polyfill/
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/6.26.0/polyfill.min.js')
+  // jPList Library
+  script(src='/javascripts/jplist.min.js')
+  script.
+    jplist.init();
