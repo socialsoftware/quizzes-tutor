@@ -80,4 +80,4 @@ typings/
 .dynamodb/
 
 # questions images
-.tests_server/public/images/questions
+tests_server/public/images/questions
