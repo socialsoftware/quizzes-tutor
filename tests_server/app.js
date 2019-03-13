@@ -17,7 +17,7 @@ var users = require('./routes/users');
 // will be set at `req.user` in route handlers after authentication.
 passport.use(new Strategy(
   function(username, password, cb) {
-    db.users.findByUsername(username, function(err, user) {
+    users.findByUsername(username, function(err, user) {
       if (err) { return cb(err); }
       if (!user) { return cb(null, false); }
       if (user.password != password) { return cb(null, false); }
@@ -38,7 +38,7 @@ passport.serializeUser(function(user, cb) {
 });
 
 passport.deserializeUser(function(id, cb) {
-  db.users.findById(id, function (err, user) {
+  users.findById(id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
   });
@@ -71,30 +71,50 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Define routes.
-app.use('/', index);
-app.use('/users', users);
-
+// User Login routes
 app.get('/login',
   function(req, res){
     res.render('login');
   });
 
+app.post('/login',
+  passport.authenticate('local', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
+
+app.get('/logout',
+  function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
+
+app.get('/logout',
+  function(req, res){
+    req.logout();
+    res.redirect('/');
+  });
+
 // catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+// app.use(function(req, res, next) {
+//   var err = new Error('Not Found');
+//   err.status = 404;
+//   next(err);
+// });
 
 // error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+// app.use(function(err, req, res, next) {
+//   // set locals, only providing error in development
+//   res.locals.message = err.message;
+//   res.locals.error = req.app.get('env') === 'development' ? err : {};
+//
+//   // render the error page
+//   res.status(err.status || 500);
+//   res.render('error');
+// });
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+//  protected routes
+app.use('/', require('connect-ensure-login').ensureLoggedIn(), index);
+// app.use('/users', users);
 
 module.exports = app;

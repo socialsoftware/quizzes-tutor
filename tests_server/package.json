@@ -10,6 +10,7 @@
     "bluebird": "^3.5.1",
     "body-parser": "~1.18.2",
     "combine": "^0.1.4",
+    "connect-ensure-login": "^0.1.1",
     "cookie-parser": "^1.4.4",
     "debug": "~2.6.9",
     "express": "~4.15.5",
