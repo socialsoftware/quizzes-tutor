@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  .Main.p-4.bg-light
+    .d-flex.justify-content-center.h-100
+      .card.login
+        .card-header
+          h3 Sign in 
+        .card-body
+          .input-group.form-group
+            .input-group-prepend
+              span.input-group-text
+                i.fa.fa-user
+            input.form-control(type='text', placeholder='username')
+          .input-group.form-group
+            .input-group-prepend
+              span.input-group-text
+                i.fa.fa-key
+            input.form-control(type='password', placeholder='password')
+          .form-group
+            input.btn.float-right.login_btn(type='submit', value='Login')
