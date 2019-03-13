@@ -47,10 +47,15 @@ var addQuizQuestion = require('../queries/addQuizQuestion')(db.db);
 
 var copyQuestionIntoQuiz = require('../queries/copyQuestionIntoQuiz')(db.db);
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('listQuiz', { title: 'Express' });
+/* GET login */
+router.get('/login', function(req, res, next) {
+  res.render('login');
 });
+
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//   res.render('listQuiz', { title: 'Express' });
+// });
 
 
 // Questions API endpoints
