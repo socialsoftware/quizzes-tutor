@@ -77,11 +77,9 @@ app.get('/login',
     res.render('login');
   });
 
-app.post('/login',
-  passport.authenticate('local', { failureRedirect: '/login' }),
-  function(req, res) {
-    res.redirect('/');
-  });
+app.post('/login', passport.authenticate('local', {
+  successReturnToOrRedirect: '/index'
+}));
 
 app.get('/logout',
   function(req, res) {
@@ -114,7 +112,7 @@ app.get('/logout',
 // });
 
 //  protected routes
-app.use('/', require('connect-ensure-login').ensureLoggedIn(), index);
+app.use('/', require('connect-ensure-login').ensureLoggedIn('/login'), index);
 // app.use('/users', users);
 
 module.exports = app;

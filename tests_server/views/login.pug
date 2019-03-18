@@ -2,21 +2,35 @@ extends layout
 
 block content
   .Main.p-4.bg-light
+    //- .card
+      .card-header
+        h3 Sign in 
+      .card-body
+        form(action='/login' method='post')
+          div
+            label Username:
+            input(type='text' name='username')
+            br
+          div
+            label Password:
+            input(type='password' name='password')
+          div
+            input(type='submit' value='Submit')
     .d-flex.justify-content-center.h-100
       .card.login
         .card-header
           h3 Sign in 
         .card-body
-          form(method='POST' action='/login')
+          form(action='/login' method='post')
             .input-group.form-group
               .input-group-prepend
                 span.input-group-text
                   i.fa.fa-user
-              input.form-control(type='text', placeholder='username')
+              input.form-control(type='text' placeholder='username' name='username')
             .input-group.form-group
               .input-group-prepend
                 span.input-group-text
                   i.fa.fa-key
-              input.form-control(type='password', placeholder='password')
+              input.form-control(type='password' placeholder='password' name='password')
             .form-group
-              input.btn.float-right.login_btn(type='submit', value='Submit')
+              input.btn.float-right.login_btn(type='submit', value='Login')
