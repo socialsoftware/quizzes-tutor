@@ -9,6 +9,8 @@ var bodyParser = require('body-parser');
 var index = require('./routes/index');
 var users = require('./routes/users');
 
+var flash = require('connect-flash');
+
 // Configure the local strategy for use by Passport.
 //
 // The local strategy require a `verify` function which receives the credentials
@@ -65,6 +67,8 @@ app.use(require('cookie-parser')());
 // app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 
+app.use(flash());
+
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 app.use(passport.initialize());
@@ -74,11 +78,14 @@ app.use(passport.session());
 // User Login routes
 app.get('/login',
   function(req, res){
-    res.render('login');
+    res.render('login', { error: req.flash('error') });
   });
 
 app.post('/login', passport.authenticate('local', {
-  successReturnToOrRedirect: '/index'
+  successRedirect: '/start',
+  failureRedirect: '/login',
+  failureFlash: true,
+  failureFlash: 'Invalid username or password.'
 }));
 
 app.get('/logout',
