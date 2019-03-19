@@ -33,4 +33,6 @@ block content
                   i.fa.fa-key
               input.form-control(type='password' placeholder='password' name='password')
             .form-group
-              input.btn.float-right.login_btn(type='submit', value='Login')
+              input.btn.col-12.login_btn(type='submit', value='Login')
+          - if(messages)
+            p.text-danger #{messages}
