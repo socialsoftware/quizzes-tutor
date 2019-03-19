@@ -78,7 +78,7 @@ app.use(passport.session());
 // User Login routes
 app.get('/login',
   function(req, res){
-    res.render('login', { error: req.flash('error') });
+    res.render('login', { messages: req.flash('error') });
   });
 
 app.post('/login', passport.authenticate('local', {
