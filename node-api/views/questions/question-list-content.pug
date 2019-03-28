@@ -1,0 +1,70 @@
+.Main.p-4.bg-light
+  .box.py-4.px-2
+    // text filter control
+    input(data-jplist-control='textbox-filter', data-group='data-group-1', data-name='my-filter-1', data-path='.questionContent', type='text', value='', placeholder='Filter by Question Content', data-clear-btn-id='name-clear-btn')
+    button#name-clear-btn(type='button') Clear
+  #question-list.card(data-jplist-group="data-group-1")
+    // card start
+    .card-header
+      // card-header start
+      h5 Listing Questions
+    // card-header end
+    
+    if data.questions.length == 0
+      .card-body No questions exist in the database
+    
+    for question in data.questions
+      - var questionCard = "question-card-" + question.id
+      - var questionId = "question-id-" + question.id
+      - var questionContent = "quiz-content-" + question.id
+      - var editQuestion = "edit-question-" + question.id
+      - var deleteQuestion = "delete-question-" + question.id
+      .card-body.border-bottom(id=questionCard data-jplist-item)
+        // Start Edit Question Form
+        .form-group
+          // Start Text Edit Form
+          label.text-secondary.font-weight-bold(for="questionText-x") Question #{question.id}
+          textarea.form-control-plaintext.questionContent(disabled="" rows="3" id=questionContent)
+            | #{question.content}
+        // End Text Question Form
+        .row
+          .col-6
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=editQuestion) Edit Question
+              script.
+                $("##{editQuestion}").click(function () { window.location = "/editQuestion/#{question.id}";});
+          .col-6
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=deleteQuestion) Delete Question
+              script.
+                $("##{deleteQuestion}").click(function () { 
+                  $.ajax({
+                    url: "/api/questions/#{question.id}",
+                    type: 'DELETE',
+                    success: function () {
+                      $("##{questionCard}").slideUp('slow', function(){
+                        $("##{questionCard}").remove();
+                      });
+                    },
+                    contentType: "application/json"
+                  });
+                });
+
+  .controls.py-2
+    // pagination control
+    div(data-jplist-control='pagination', data-group='data-group-1', data-items-per-page='3', data-current-page='1', data-name='pagination1')
+      .row.mb-3
+        select(data-type='items-per-page')
+          option(value='3')  3 per page 
+          option(value='5')  5 per page 
+          option(value='10')  10 per page 
+          option(value='0')  view all 
+        button(type='button', data-type='first') «
+        button(type='button', data-type='prev') ‹
+        .jplist-holder(data-type='pages')
+          button(type='button', data-type='page') {pageNumber}
+        button(type='button', data-type='next') ›
+        button(type='button', data-type='last') »
+      .row
+        span(data-type='info')
+          | Page {pageNumber} of {pagesNumber}

@@ -1,0 +1,761 @@
+[{
+	"quizTitle": "2010-primeiro-exame-20110113-companion-pt-a",
+	"questions": ["VistasDesempenho", "AtrQualNegocio", "Reutilizar", "AumentarDesempenhoClienteServidor", "TresTiposVista", "ModificabilidadeCamadas", "UtilidadeArquitectura", "ArchitecturalDrivers", "ArqEmailMTA", "ArqEmailIMAP", "AlteracaoWebDois", "XBoardChess", "AlterarFuncionalidadesExistentes", "BlackBoxTesting", "TrocarBDCamadas", "GoogleAppEngine", "PluginsEclipse", "ServiceLayer", "UnitOfWork", "IdentityMap"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2010/primeiro/exame-20110113-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2010/primeiro/questions.tex"
+}, {
+	"quizTitle": "2010-primeiro-exame-20110113-companion-pt-b",
+	"questions": ["UtilidadeArquitectura", "TresTiposVista", "ArchitecturalDrivers", "AlterarFuncionalidadesExistentes", "AtrQualNegocio", "ModificabilidadeCamadas", "Reutilizar", "VistasDesempenho", "TrocarBDCamadas", "PluginsEclipse", "GoogleAppEngine", "XBoardChess", "BlackBoxTesting", "AumentarDesempenhoClienteServidor", "AlteracaoWebDois", "ServiceLayer", "ArqEmailMTA", "ArqEmailIMAP", "IdentityMap", "UnitOfWork"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2010/primeiro/exame-20110113-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2010/primeiro/questions.tex"
+}, {
+	"quizTitle": "2010-segundo-exame-20110203-companion-pt-a",
+	"questions": ["VistasNecessarias", "ImportanciaStakeholders", "GerirEquipaManutencao", "PorqueSepararComponentes", "ArqChrome", "Webkit", "ChromeMultiPlatform", "RelacaoModulosComponentes", "ArqEmailMUA", "CamadasParaCloudComputing", "VistasParaReplicacao", "AumentarDesempenhoClienteServidor", "PluginsEclipse", "Mashups", "DisponibilidadeRetalhix", "DisponibilidadeRetalhixMeioDasCompras", "UsesAMais", "RelacaoComponentsDeployment", "IdentityMap", "UnitOfWork"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2010/segundo/exame-20110203-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2010/segundo/questions.tex"
+}, {
+	"quizTitle": "2010-segundo-exame-20110203-companion-pt-b",
+	"questions": ["VistasNecessarias", "PorqueSepararComponentes", "GerirEquipaManutencao", "ImportanciaStakeholders", "CamadasParaCloudComputing", "ArqEmailMUA", "ArqChrome", "Webkit", "ChromeMultiPlatform", "RelacaoModulosComponentes", "Mashups", "PluginsEclipse", "AumentarDesempenhoClienteServidor", "VistasParaReplicacao", "DisponibilidadeRetalhix", "DisponibilidadeRetalhixMeioDasCompras", "RelacaoComponentsDeployment", "UsesAMais", "UnitOfWork", "IdentityMap"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2010/segundo/exame-20110203-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2010/segundo/questions.tex"
+}, {
+	"quizTitle": "2011-exam1-exame-20120109-companion-pt-a",
+	"questions": ["HadoopEscalabilidadePossivel", "HadoopDisponibilidadeDesempenho", "HadoopTacticasRecuperacaoFaltas", "HadoopTacticasRecuperacaoFaltasDois", "HadoopTacticasSeguranca", "HadoopHeartbeat", "ModulosCamadas", "UtilizacaoImpactoAlteracoes", "UtilizacaoNotifica", "UtilizacaoNotificaDois", "HadoopInteraccaoDataNodes", "HadoopInteraccaoNameNodeDataNodes", "HadoopNameNodeComoConector", "HadoopNameNodeThreads", "HadoopReplicarNameNode", "ServiceLayer", "SharedDataAccessorsDirect", "WhiteBoxTesting", "TresTiers", "TempoRespostaAplicacaoEmpresarial"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2011/exam1/exame-20120109-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2011/exam1/questions.tex"
+}, {
+	"quizTitle": "2011-exam1-exame-20120109-companion-pt-b",
+	"questions": ["HadoopTacticasRecuperacaoFaltas", "HadoopEscalabilidadePossivel", "HadoopTacticasRecuperacaoFaltasDois", "HadoopDisponibilidadeDesempenho", "HadoopHeartbeat", "HadoopTacticasSeguranca", "ModulosCamadas", "UtilizacaoNotifica", "UtilizacaoImpactoAlteracoes", "HadoopInteraccaoNameNodeDataNodes", "UtilizacaoNotificaDois", "HadoopNameNodeThreads", "HadoopInteraccaoDataNodes", "HadoopNameNodeComoConector", "HadoopReplicarNameNode", "SharedDataAccessorsDirect", "ServiceLayer", "WhiteBoxTesting", "TempoRespostaAplicacaoEmpresarial", "TresTiers"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2011/exam1/exame-20120109-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2011/exam1/questions.tex"
+}, {
+	"quizTitle": "2011-exam2-exame-20120203-companion-pt-a",
+	"questions": ["HadoopStakeholdersEuros", "HadoopCheckpointBackupNode", "HadoopCheckpoint", "HadoopPoliticaLocalizacaoReplicas", "HadoopPing", "HadoopInstalacao", "TacticaCheckpointRollback", "TiposVistaDesempenho", "UsaCircular", "UsaPodeUsar", "HadoopFileWriteBuffered", "HadoopDisponibilidadeDados", "HadoopMapReduce", "HadoopComoDatabase", "HadoopCheckpointNode", "DomainModel", "RelacaoComponentesMaquinas", "WebDois", "Mashups", "Seguranca"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2011/exam2/exame-20120203-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2011/exam2/questions.tex"
+}, {
+	"quizTitle": "2011-exam2-exame-20120203-companion-pt-b",
+	"questions": ["HadoopCheckpointBackupNode", "HadoopCheckpoint", "HadoopStakeholdersEuros", "HadoopPing", "HadoopPoliticaLocalizacaoReplicas", "HadoopInstalacao", "TacticaCheckpointRollback", "UsaCircular", "UsaPodeUsar", "HadoopDisponibilidadeDados", "TiposVistaDesempenho", "Seguranca", "HadoopFileWriteBuffered", "HadoopComoDatabase", "HadoopMapReduce", "HadoopCheckpointNode", "RelacaoComponentesMaquinas", "DomainModel", "Mashups", "WebDois"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2011/exam2/exame-20120203-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2011/exam2/questions.tex"
+}, {
+	"quizTitle": "2012-exam1-exame-20130109-companion-pt-a",
+	"questions": ["GHCStakeholders", "GHCChunks", "GHCDesugaring", "GHCRTS", "GHCPipeAndFilter", "ZeroMQApps", "ZeroMQWorkersPerCore", "ZeroMQMessagingPatterns", "ZeroMQBatching", "ZeroMQLockFree", "nginxFirstAD", "nginxEventDriven", "nginxModuleTypes", "nginxOSOptimizations", "nginxProcessThread", "WebPartioning", "WebPartitioningDois", "WebRedundancy", "ThreeVsFourTiers", "WebLoadBalancer", "DomainLogicFenix", "IncrementalReleases", "Scalability", "SOA", "Availability", "ChromiumDecomposition", "Security", "SkeletonSystem", "ArqEmailMTAIMAP", "Aspects"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2012/exam1/exame-20130109-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2012/exam1/questions.tex"
+}, {
+	"quizTitle": "2012-exam1-exame-20130109-companion-pt-b",
+	"questions": ["DomainLogicFenix", "IncrementalReleases", "Scalability", "SOA", "Availability", "ChromiumDecomposition", "Security", "SkeletonSystem", "ArqEmailMTAIMAP", "Aspects", "ZeroMQApps", "ZeroMQWorkersPerCore", "ZeroMQMessagingPatterns", "ZeroMQBatching", "ZeroMQLockFree", "nginxFirstAD", "nginxEventDriven", "nginxModuleTypes", "nginxProcessThread", "nginxOSOptimizations", "GHCStakeholders", "GHCChunks", "GHCDesugaring", "GHCRTS", "GHCPipeAndFilter", "WebPartioning", "WebPartitioningDois", "WebRedundancy", "ThreeVsFourTiers", "WebLoadBalancer"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2012/exam1/exame-20130109-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2012/exam1/questions.tex"
+}, {
+	"quizTitle": "2012-exam2-exame-20130201-companion-pt-a",
+	"questions": ["GHCBlockLayer", "GHCBlockLayerQualities", "GHCRewriteRules", "GHCAsLibrary", "GHCCodeGeneration", "ZeroMQScaleMulticore", "ZeroMQBroker", "ZeroMQAsLibrary", "ZeroMQExtensibleEngines", "ZeroMQBSDSockets", "nginxProcesses", "nginxCaching", "nginxWorkers", "nginxWorkerParallel", "nginxCTenKProblem", "WebCacheModule", "WebCacheGlobal", "WebDistributedCache", "WebMissingCacheNode", "DomainLogicFenix", "Performance", "MemcachedModules", "Subcontractors", "Aspects", "SOA", "Availability", "Security", "WebEvolution", "Tiers", "ArqEmailMUAMTA"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2012/exam2/exame-20130201-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2012/exam2/questions.tex"
+}, {
+	"quizTitle": "2012-exam2-exame-20130201-companion-pt-b",
+	"questions": ["ZeroMQScaleMulticore", "ZeroMQAsLibrary", "ZeroMQBroker", "ZeroMQExtensibleEngines", "ZeroMQBSDSockets", "nginxProcesses", "nginxCaching", "nginxWorkers", "nginxWorkerParallel", "nginxCTenKProblem", "GHCBlockLayer", "GHCBlockLayerQualities", "GHCRewriteRules", "GHCAsLibrary", "GHCCodeGeneration", "WebCacheModule", "WebCacheGlobal", "WebDistributedCache", "WebMissingCacheNode", "MemcachedModules", "DomainLogicFenix", "Performance", "Subcontractors", "Aspects", "SOA", "ArqEmailMUAMTA", "Availability", "Security", "WebEvolution", "Tiers"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2012/exam2/exame-20130201-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2012/exam2/questions.tex"
+}, {
+	"quizTitle": "2013-20140110-exame-20140110-companion-pt-a",
+	"questions": ["GPReceiverWriterStyle", "GPCarbonRelay", "GPComposerUIQuality", "MWQualities", "MWArchitecuralStyle", "MWReliabilityTactics", "MWReliabilityReadsImplementation", "MWResourceLoaderTactic", "CHSecurityQuality", "CHPerformanceQuality", "CHMobilityArchitecturalStyle", "CHAmazonSilkTwo", "CHSecurityLevel", "CHOmniboxTactics", "GMPicklePerformance", "GMRestModularity", "GMPipesFiltersData", "GMReliabilityFIFO", "GMMasterRunner", "GMMessagesPersistence", "InstallImplementationStyles", "FenixTwo", "ElasticityDeferBinding", "UnitOfWork", "AvailabilityVoting", "SecurityInternalSource", "DataModel", "PublishSubscribe", "UsabilityNonArchitectural", "WorldWide"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2013/20140110/exame-20140110-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2013/questions.tex"
+}, {
+	"quizTitle": "2013-20140110-exame-20140110-companion-pt-b",
+	"questions": ["InstallImplementationStyles", "FenixTwo", "MWQualities", "MWArchitecuralStyle", "MWReliabilityTactics", "MWReliabilityReadsImplementation", "MWResourceLoaderTactic", "UnitOfWork", "AvailabilityVoting", "CHSecurityQuality", "CHPerformanceQuality", "CHMobilityArchitecturalStyle", "CHAmazonSilkTwo", "CHSecurityLevel", "CHOmniboxTactics", "SecurityInternalSource", "DataModel", "GPReceiverWriterStyle", "GPCarbonRelay", "GPComposerUIQuality", "UsabilityNonArchitectural", "WorldWide", "GMPicklePerformance", "GMRestModularity", "GMPipesFiltersData", "GMReliabilityFIFO", "GMMasterRunner", "GMMessagesPersistence", "PublishSubscribe", "ElasticityDeferBinding"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2013/20140110/exame-20140110-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2013/questions.tex"
+}, {
+	"quizTitle": "2013-20140130-exame-20140130-companion-pt-a",
+	"questions": ["GPCarbonBufferInterface", "GPCCView", "GPComposerUIPerformance", "MWLowCost", "MWTactics", "MWReliabilityImplementation", "MWReliabilityReadsTactic", "MWVerBlobTactic", "CHQualities", "CHPerformanceQualityTwo", "CHAmazonSilk", "CHRenderStyle", "CHPrerenderTactics", "CHOmniboxQualities", "GMRestInteroperability", "GMPipesFilters", "GMDataModel", "GMPerformance", "GMReliabilityBounce", "GMSwitchboard", "FenixThree", "FenixOne", "InternationalizationTactics", "IdentityMap", "AvailabilityDefensive", "ObserverUses", "UsesLayers", "SeveralStylesView", "ApplyUses", "EnterpriseWide"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2013/20140130/exame-20140130-companion-pt-a.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2013/questions.tex"
+}, {
+	"quizTitle": "2013-20140130-exame-20140130-companion-pt-b",
+	"questions": ["MWLowCost", "MWTactics", "MWReliabilityImplementation", "MWReliabilityReadsTactic", "MWVerBlobTactic", "InternationalizationTactics", "IdentityMap", "GPCarbonBufferInterface", "GPCCView", "GPComposerUIPerformance", "AvailabilityDefensive", "ObserverUses", "UsesLayers", "GMRestInteroperability", "GMPipesFilters", "GMDataModel", "GMPerformance", "GMReliabilityBounce", "GMSwitchboard", "SeveralStylesView", "ApplyUses", "CHQualities", "CHPerformanceQualityTwo", "CHAmazonSilk", "CHRenderStyle", "CHPrerenderTactics", "CHOmniboxQualities", "FenixThree", "FenixOne", "EnterpriseWide"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2013/20140130/exame-20140130-companion-pt-b.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2013/questions.tex"
+}, {
+	"quizTitle": "2013-20140715-exame-20140715-companion-pt",
+	"questions": ["GPCarbonBufferInterfaceEE", "GPCarbonRelayEE", "GPWhisperViewTypeEE", "MWLowCostEE", "MWReliabilityImplementationEE", "MWQualitiesEE", "MWReliabilityReadsImplementationEE", "MWResourceLoaderTacticEE", "CHQualitiesEE", "CHPerformanceQualityEE", "CHPrerenderTacticsEE", "CHOmniboxTacticsEE", "CHAmazonSilkTwoEE", "CHMobilityArchitecturalStyleEE", "GMPicklePerformanceEE", "GMPerformanceEE", "GMRestModularityEE", "GMReliabilityFIFOEE", "GMMessagesPersistenceEE", "GMMasterRunnerEE", "FirstEE", "SecondEE", "ThirdEE", "FourthEE", "FifthEE", "SixthEE", "SeventhEE", "EighthEE", "NinethEE", "TenthEE"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2013/20140715/exame-20140715-companion-pt.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2013/questions.tex"
+}, {
+	"quizTitle": "2014-exam-exam20150109-exame-20150109-companion-A",
+	"questions": ["ArchitectureInfluenceCycle", "TechoGeeks", "FeaturitisOrderPad", "ArchitectureDefinition", "ModuleComponent", "Scenario", "Checksum", "Attack", "SocialCalcTactics", "ThousandParsecTactics", "GitTactics", "DesigningArchitecture", "DecompositionGeneralization", "UsesStyle", "Layered", "InterfaceDelegation", "Repository", "PeerToPeer", "PipesFilters", "InstallView", "ThounsandParsecView", "SocialCalcView", "GitViews", "OrderPad", "EtherCalcAllocation", "EtherCalcRedundancy", "EtherCalcSnapshotPerformance", "EtherCalcModifiabilityTestability", "ServiceLayer", "ActiveRecord"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/exam/exam20150109/exame-20150109-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/exam/questions.tex"
+}, {
+	"quizTitle": "2014-exam-exam20150109-exame-20150109-companion-B",
+	"questions": ["ServiceLayer", "ActiveRecord", "InstallView", "ThounsandParsecView", "Checksum", "Attack", "SocialCalcTactics", "ThousandParsecTactics", "GitTactics", "Layered", "InterfaceDelegation", "Repository", "PeerToPeer", "ArchitectureInfluenceCycle", "TechoGeeks", "ModuleComponent", "Scenario", "PipesFilters", "SocialCalcView", "GitViews", "OrderPad", "EtherCalcAllocation", "EtherCalcRedundancy", "EtherCalcSnapshotPerformance", "EtherCalcModifiabilityTestability", "FeaturitisOrderPad", "ArchitectureDefinition", "DesigningArchitecture", "DecompositionGeneralization", "UsesStyle"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/exam/exam20150109/exame-20150109-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/exam/questions.tex"
+}, {
+	"quizTitle": "2014-exam-exam20150127-exame-20150127-companion-A",
+	"questions": ["ArchitectureKnowledge", "ArchitectureEvolution", "Performitis", "ArchitecturalViews", "ModueComponent", "ConcreteScenario", "AvailabilityPingEchoHeartbeat", "SecurityDatabase", "SocialCalcTactic", "ThousandParsecScenario", "GitTactic", "ArchitecturallySignificantRequirements", "ModuleTraceability", "GeneralizationInterfaces", "UsesIncremental", "ComponentAndConnnector", "LoadBalancer", "ThreeTiers", "PublishSubscribe", "DeploymentPerformance", "ThousandParsecPersistence", "SocialCalcBroadcastEvents", "GitHubViews", "OrderPadTactics", "EtherCalcPerformance", "EtherCalcTactic", "EtherCalcTestability", "EtherCalcViews", "TransactionScript", "ActiveRecordRuby"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/exam/exam20150127/exame-20150127-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/exam/questions.tex"
+}, {
+	"quizTitle": "2014-exam-exam20150127-exame-20150127-companion-B",
+	"questions": ["OrderPadTactics", "TransactionScript", "ActiveRecordRuby", "ConcreteScenario", "AvailabilityPingEchoHeartbeat", "SecurityDatabase", "SocialCalcTactic", "ThousandParsecScenario", "GitTactic", "ModuleTraceability", "ArchitectureKnowledge", "ArchitectureEvolution", "Performitis", "ArchitecturalViews", "ArchitecturallySignificantRequirements", "ModueComponent", "GeneralizationInterfaces", "UsesIncremental", "EtherCalcPerformance", "EtherCalcTactic", "EtherCalcTestability", "ComponentAndConnnector", "EtherCalcViews", "LoadBalancer", "ThreeTiers", "PublishSubscribe", "DeploymentPerformance", "ThousandParsecPersistence", "SocialCalcBroadcastEvents", "GitHubViews"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/exam/exam20150127/exame-20150127-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/exam/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-1",
+	"questions": ["Featuritis", "Explicit", "Flexibilitis", "Prioritize", "Performitis", "FeaturitisPerformitisFlexibilities", "WalkingSkeleton", "HammersNails", "ArchitectureDefinition", "ComponentvsModule", "ComponentvsModuleTwo", "FunctionalModule", "ModuleViewType", "ComponentViewType", "EarlyDecisions", "SharedUnderstanding", "ArchitectDwarves", "ArchitectAstronauts", "CreateArchitectureOne", "CreateArchitectureTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-1.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-11A-17co\u2560\u00fcpias",
+	"questions": ["Featuritis", "Performitis", "ArchitectureDefinition", "SharedUnderstanding", "CreateArchitectureOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-11A-17co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-11B-17co\u2560\u00fcpias",
+	"questions": ["SharedUnderstanding", "CreateArchitectureOne", "Performitis", "ArchitectureDefinition", "Featuritis"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-11B-17co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-12A-24co\u2560\u00fcpias",
+	"questions": ["Flexibilitis", "FeaturitisPerformitisFlexibilities", "ComponentvsModule", "EarlyDecisions", "ArchitectAstronauts"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-12A-24co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-12B-24co\u2560\u00fcpias",
+	"questions": ["ComponentvsModule", "EarlyDecisions", "ArchitectAstronauts", "FeaturitisPerformitisFlexibilities", "Flexibilitis"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-12B-24co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-13A-17co\u2560\u00fcpias",
+	"questions": ["Explicit", "WalkingSkeleton", "ComponentvsModuleTwo", "ModuleViewType", "ArchitectDwarves"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-13A-17co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-13B-17co\u2560\u00fcpias",
+	"questions": ["ArchitectDwarves", "ComponentvsModuleTwo", "Explicit", "ModuleViewType", "WalkingSkeleton"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-13B-17co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-14A-24co\u2560\u00fcpias",
+	"questions": ["Prioritize", "HammersNails", "FunctionalModule", "ComponentViewType", "CreateArchitectureTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-14A-24co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-1-test-14B-24co\u2560\u00fcpias",
+	"questions": ["CreateArchitectureTwo", "ComponentViewType", "HammersNails", "FunctionalModule", "Prioritize"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-1/test-14B-24co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-1/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-2",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Voting", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-2.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-21A-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Voting", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-21A-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-21B-18co\u2560\u00fcpias",
+	"questions": ["Scenario", "Tactics", "InteroperabilityScenario", "ChromeTabSecurity", "Voting", "Degradation", "GarbageCollector", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "AvailabilityScenario", "Firewall", "GraphiteTechnicaAndNonTechnicalUsers", "PingEcho", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-21B-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-22A-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Voting", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-22A-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-22B-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "Voting", "Scenario", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-22B-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-23A-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Voting", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-23A-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-23B-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "PingEcho", "Voting", "Degradation", "SeparateEntities", "ChromeUsability", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "InteroperabilityScenario", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-23B-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-24A-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "Tactics", "InteroperabilityScenario", "PingEcho", "Voting", "Degradation", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteModifiability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "ChromePredictor", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-24A-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-2-test-24B-18co\u2560\u00fcpias",
+	"questions": ["AvailabilityScenario", "Scenario", "InteroperabilityScenario", "PingEcho", "Voting", "ChromePredictor", "GarbageCollector", "GraphiteTechnicaAndNonTechnicalUsers", "GraphiteReliability", "GraphiteBackend", "Firewall", "VerifyMessageIntegrity", "InternalAttack", "SeparateEntities", "ChromeTabSecurity", "ChromePerformance", "GraphiteModifiability", "Tactics", "Degradation", "ChromeUsability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-2/test-24B-18co\u2560\u00fcpias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-2/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-3",
+	"questions": ["FenixBusinessCase", "BusinessScenarioOne", "BusinessScenarioTwo", "UtilityTree", "IterativeDesign", "LowArchitecturalImpact", "HighBusinessValue", "FenixADD", "SocialCalcMaintainTaskModel", "SocialCalcUsability", "SocialCalcAvailability", "SocialCalcModifiability", "ThounsandParsecAvailability", "ThounsandParsecInteroperability", "ThounsandParsecRollback", "ThounsandParsecSystemInitiative", "Decomposition", "DecompositionBuilvsBuy"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-3.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-31A-18copias",
+	"questions": ["FenixBusinessCase", "IterativeDesign", "SocialCalcUsability", "ThounsandParsecInteroperability", "DecompositionBuilvsBuy"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-31A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-31B-18copias",
+	"questions": ["SocialCalcUsability", "ThounsandParsecInteroperability", "FenixBusinessCase", "DecompositionBuilvsBuy", "IterativeDesign"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-31B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-32A-18copias",
+	"questions": ["BusinessScenarioOne", "LowArchitecturalImpact", "SocialCalcModifiability", "ThounsandParsecSystemInitiative", "DecompositionBuilvsBuy"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-32A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-32B-18copias",
+	"questions": ["SocialCalcModifiability", "ThounsandParsecSystemInitiative", "DecompositionBuilvsBuy", "LowArchitecturalImpact", "BusinessScenarioOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-32B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-33A-18copias",
+	"questions": ["UtilityTree", "HighBusinessValue", "SocialCalcAvailability", "ThounsandParsecAvailability", "Decomposition"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-33A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-33B-18copias",
+	"questions": ["Decomposition", "SocialCalcAvailability", "UtilityTree", "ThounsandParsecAvailability", "HighBusinessValue"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-33B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-34A-18copias",
+	"questions": ["BusinessScenarioTwo", "FenixADD", "SocialCalcMaintainTaskModel", "ThounsandParsecRollback", "Decomposition"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-34A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-3-test-34B-18copias",
+	"questions": ["SocialCalcMaintainTaskModel", "Decomposition", "ThounsandParsecRollback", "FenixADD", "BusinessScenarioTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-3/test-34B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-3/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-4",
+	"questions": ["UsesFor", "UsesCalls", "UsesCycles", "GeneralizationEvolution", "LayeredVirtualMachine", "Aspects", "DataModelFacebook", "UsesDataModel", "GitHubSecurity", "GitConditionMonitoring", "GitIncreaseResourceEfficiency", "GitHubComputationRedundancy", "ComponentPorts", "ConnectorAttach", "ModuleComponent", "ConnectorDecomposition", "RepositoryModifiability", "RepositoryPerformance", "ClientServerAvailability", "ClientServerSynchronous"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-4.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-41A-17copias",
+	"questions": ["UsesCycles", "Aspects", "GitHubSecurity", "ConnectorAttach", "RepositoryPerformance"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-41A-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-41B-17copias",
+	"questions": ["UsesCycles", "Aspects", "GitHubSecurity", "ConnectorAttach", "RepositoryPerformance"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-41B-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-42A-16copias",
+	"questions": ["GeneralizationEvolution", "DataModelFacebook", "GitIncreaseResourceEfficiency", "ConnectorDecomposition", "ClientServerSynchronous"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-42A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-42B-16copias",
+	"questions": ["ConnectorDecomposition", "ClientServerSynchronous", "GeneralizationEvolution", "GitIncreaseResourceEfficiency", "DataModelFacebook"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-42B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-43A-16copias",
+	"questions": ["UsesFor", "UsesDataModel", "GitHubComputationRedundancy", "ComponentPorts", "ClientServerAvailability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-43A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-43B-16copias",
+	"questions": ["GitHubComputationRedundancy", "ComponentPorts", "UsesDataModel", "ClientServerAvailability", "UsesFor"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-43B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-44A-18copias",
+	"questions": ["ModuleComponent", "GitConditionMonitoring", "RepositoryModifiability", "UsesCalls", "LayeredVirtualMachine"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-44A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-4-test-44B-18copias",
+	"questions": ["LayeredVirtualMachine", "RepositoryModifiability", "ModuleComponent", "GitConditionMonitoring", "UsesCalls"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-4/test-44B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-4/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-5",
+	"questions": ["PeerToPeerSpace", "PeerToPeerDynamicReconfiguration", "Tiers", "PublishSubscribe", "SOAInteroperability", "SOAQualities", "SOAClientServerPeertoPeer", "PipeFilterComposition", "GraphiteDecompositionMemcached", "GraphiteDecompositionBuffering", "GraphiteCarbon", "GraphiteDataPointSocket", "AllocationStylesCost", "ImplementationStyle", "InstallStyle", "DeploymentStyleLimitExposure", "DVDCatalogMeta", "DVDCatalogAspects", "DVDCatalogMobile", "DVDCatalogMultiPlatform"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-5.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-51A-17copias",
+	"questions": ["PeerToPeerSpace", "SOAClientServerPeertoPeer", "GraphiteCarbon", "AllocationStylesCost", "DVDCatalogMeta"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-51A-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-51B-17copias",
+	"questions": ["AllocationStylesCost", "PeerToPeerSpace", "DVDCatalogMeta", "SOAClientServerPeertoPeer", "GraphiteCarbon"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-51B-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-52A-16copias",
+	"questions": ["PeerToPeerDynamicReconfiguration", "SOAQualities", "GraphiteDataPointSocket", "ImplementationStyle", "DVDCatalogAspects"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-52A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-52B-16copias",
+	"questions": ["ImplementationStyle", "DVDCatalogAspects", "PeerToPeerDynamicReconfiguration", "SOAQualities", "GraphiteDataPointSocket"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-52B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-53A-16copias",
+	"questions": ["Tiers", "SOAInteroperability", "InstallStyle", "DVDCatalogMobile", "GraphiteDecompositionMemcached"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-53A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-53B-16copias",
+	"questions": ["DVDCatalogMobile", "SOAInteroperability", "InstallStyle", "GraphiteDecompositionMemcached", "Tiers"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-53B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-54A-18copias",
+	"questions": ["PublishSubscribe", "PipeFilterComposition", "GraphiteDecompositionBuffering", "DeploymentStyleLimitExposure", "DVDCatalogMultiPlatform"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-54A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-5-test-54B-18copias",
+	"questions": ["DeploymentStyleLimitExposure", "DVDCatalogMultiPlatform", "PublishSubscribe", "GraphiteDecompositionBuffering", "PipeFilterComposition"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-5/test-54B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-5/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-6",
+	"questions": ["SilkMobileDevices", "SilkPredictor", "SilkCaching", "SilkConnections", "ThousandParsecAI", "ThousandParsecModule", "ThousandParsecTPConnector", "ThousandParsecReadWriteConnector", "OrderPadPortability", "OrderPadReliability", "OrderPadMainframeConnector", "OrderPadIterative", "SocialCalcRemoteCursor", "SocialCalcServer", "SocialCalcParser", "SocialCalcConflictResolution", "LogicAccessDomainModel", "LogicAccessTransactionScript", "LogicAccessTransactionScriptDomainObjects", "LogicAccessTableModule"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-6.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-61A-17copias",
+	"questions": ["SilkMobileDevices", "ThousandParsecReadWriteConnector", "OrderPadReliability", "SocialCalcConflictResolution", "LogicAccessTableModule"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-61A-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-61B-17copias",
+	"questions": ["SocialCalcConflictResolution", "LogicAccessTableModule", "SilkMobileDevices", "ThousandParsecReadWriteConnector", "OrderPadReliability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-61B-17copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-62A-16copias",
+	"questions": ["SilkConnections", "ThousandParsecModule", "OrderPadIterative", "SocialCalcRemoteCursor", "LogicAccessTransactionScriptDomainObjects"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-62A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-62B-16copias",
+	"questions": ["LogicAccessTransactionScriptDomainObjects", "OrderPadIterative", "SilkConnections", "ThousandParsecModule", "SocialCalcRemoteCursor"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-62B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-63A-16copias",
+	"questions": ["SilkPredictor", "ThousandParsecTPConnector", "OrderPadPortability", "SocialCalcServer", "LogicAccessTransactionScript"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-63A-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-63B-16copias",
+	"questions": ["LogicAccessTransactionScript", "OrderPadPortability", "SilkPredictor", "SocialCalcServer", "ThousandParsecTPConnector"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-63B-16copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-64A-18copias",
+	"questions": ["SilkCaching", "ThousandParsecAI", "OrderPadMainframeConnector", "SocialCalcParser", "LogicAccessDomainModel"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-64A-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2014-test-6-test-64B-18copias",
+	"questions": ["OrderPadMainframeConnector", "LogicAccessDomainModel", "SilkCaching", "ThousandParsecAI", "SocialCalcParser"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2014/test-6/test-64B-18copias.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2014/test-6/questions.tex"
+}, {
+	"quizTitle": "2015-exams-20160108Exam-exame-20160108-companion-A",
+	"questions": ["ArchitectureInfluenceCycleOne", "AdventureBuilderOne", "RequirementsOne", "ArchitectureDefinitionOne", "ScenariosTacticsOne", "ModuleComponentOne", "AvailabilityOne", "ModifiabilityOne", "PerformanceOne", "NginxScenariosTacticsOne", "ContinousIntegrationScenariosTacticsOne", "InfinispanScenariosTacticsOne", "DesigningArchitectureOne", "ModuleViewtypeOne", "UsesGeneralizationOne", "LayeredAspectsDataModelOne", "ComponentConnectorOne", "RepositoryClientServerOne", "TiersDynamicreconfigurationPeertopeerPublishsubscribeOne", "SOAPipesFiltersOne", "AllocationOne", "nginxOne", "ContinousIntegrationViewsOne", "InfinispanViewsOne", "WebTwoOne", "MicroservicesArchitectureOne", "AmazonOne", "ScalableArchitectureOne", "GraphiteScenarioTacticsOne", "GraphiteViewsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/exams/20160108Exam/exame-20160108-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/exams/questions.tex"
+}, {
+	"quizTitle": "2015-exams-20160108Exam-exame-20160108-companion-B",
+	"questions": ["ContinousIntegrationScenariosTacticsOne", "InfinispanScenariosTacticsOne", "WebTwoOne", "MicroservicesArchitectureOne", "AmazonOne", "DesigningArchitectureOne", "ModuleViewtypeOne", "UsesGeneralizationOne", "LayeredAspectsDataModelOne", "AvailabilityOne", "ModifiabilityOne", "PerformanceOne", "NginxScenariosTacticsOne", "ComponentConnectorOne", "RepositoryClientServerOne", "TiersDynamicreconfigurationPeertopeerPublishsubscribeOne", "SOAPipesFiltersOne", "AllocationOne", "nginxOne", "ContinousIntegrationViewsOne", "InfinispanViewsOne", "ScalableArchitectureOne", "GraphiteScenarioTacticsOne", "GraphiteViewsOne", "ArchitectureInfluenceCycleOne", "AdventureBuilderOne", "RequirementsOne", "ArchitectureDefinitionOne", "ScenariosTacticsOne", "ModuleComponentOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/exams/20160108Exam/exame-20160108-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/exams/questions.tex"
+}, {
+	"quizTitle": "2015-exams-20160126Exam-exame-20160126-companion-A",
+	"questions": ["ArchitectureInfluenceCycleTwo", "RequirementsTwo", "ArchitectureDefinitionTwo", "AdventureBuilderTwo", "ModuleComponentTwo", "ScenariosTacticsTwo", "AvailabilityTwo", "ModifiabilityTwo", "NginxScenariosTacticsTwo", "PerformanceTwo", "DesigningArchitectureTwo", "ContinousIntegrationScenariosTacticsTwo", "InfinispanScenariosTacticsTwo", "ModuleViewtypeTwo", "UsesGeneralizationTwo", "LayeredAspectsDataModelTwo", "ComponentConnectorTwo", "RepositoryClientServerTwo", "TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo", "SOAPipesFiltersTwo", "AllocationTwo", "nginxTwo", "GraphiteViewsTwo", "ContinousIntegrationViewsTwo", "InfinispanViewsTwo", "WebTwoTwo", "MicroservicesArchitectureTwo", "AmazonTwo", "ScalableArchitectureTwo", "GraphiteScenarioTacticsTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/exams/20160126Exam/exame-20160126-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/exams/questions.tex"
+}, {
+	"quizTitle": "2015-exams-20160126Exam-exame-20160126-companion-B",
+	"questions": ["SOAPipesFiltersTwo", "AllocationTwo", "nginxTwo", "ContinousIntegrationViewsTwo", "InfinispanViewsTwo", "WebTwoTwo", "MicroservicesArchitectureTwo", "AmazonTwo", "ScalableArchitectureTwo", "GraphiteScenarioTacticsTwo", "GraphiteViewsTwo", "ArchitectureInfluenceCycleTwo", "RequirementsTwo", "ArchitectureDefinitionTwo", "AdventureBuilderTwo", "ModuleComponentTwo", "ScenariosTacticsTwo", "UsesGeneralizationTwo", "LayeredAspectsDataModelTwo", "ComponentConnectorTwo", "RepositoryClientServerTwo", "TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo", "AvailabilityTwo", "ModifiabilityTwo", "NginxScenariosTacticsTwo", "ModuleViewtypeTwo", "PerformanceTwo", "DesigningArchitectureTwo", "ContinousIntegrationScenariosTacticsTwo", "InfinispanScenariosTacticsTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/exams/20160126Exam/exame-20160126-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/exams/questions.tex"
+}, {
+	"quizTitle": "2015-exams-20160711Exam-exame-20160711-companion",
+	"questions": ["ArchitecturalInfluenceCycle", "InteroperabilityStimulus", "SharedUnderstanding", "ComponentvsModule", "ComponentAndConnectorTwoOne", "GeneralScenario", "OmissionRetry", "ModifiabilityOne", "NginxThree", "PerformanceThree", "IterativeDesign", "ContinousIntegrationScenariosTacticsTwo", "InfinispanTwoOne", "ModuleViewType", "UsesCalls", "LayeredAspectsDataModelOne", "ConnectorDecomposition", "ClientServerAvailability", "CCStyleTwo", "PipeFilterComposition", "InstallStyle", "nginxTwo", "JenkinsTwo", "InfinispanOne", "GraphiteDataPointSocket", "WebTwoOne", "MicroAndAmazonThree", "MicroAndAmazonOne", "ImageHostingReads", "GraphiteReliability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/exams/20160711Exam/exame-20160711-companion.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/exams/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-11A",
+	"questions": ["PragmaticArchitect", "EarlydDecisions", "ImageHostingPerformance", "GeneralScenario", "OmissionRetry"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-11A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-11B",
+	"questions": ["GeneralScenario", "OmissionRetry", "PragmaticArchitect", "EarlydDecisions", "ImageHostingPerformance"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-11B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-12A",
+	"questions": ["ArchitecturalInfluenceCycle", "SharedUnderstanding", "ImageHostingScalability", "InteroperabilityStimulus", "PingEchoHeartbeat"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-12A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-12B",
+	"questions": ["PingEchoHeartbeat", "ArchitecturalInfluenceCycle", "ImageHostingScalability", "SharedUnderstanding", "InteroperabilityStimulus"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-12B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-13A",
+	"questions": ["Diplomat", "ASDefinition", "ImageHostingReads", "RequirementsImpact", "RestartInRedundancy"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-13A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-1-test-13B",
+	"questions": ["ImageHostingReads", "RequirementsImpact", "Diplomat", "ASDefinition", "RestartInRedundancy"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-1/test-13B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-1/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-21A",
+	"questions": ["PerformanceOne", "ModifiabilityOne", "BusinessToDesignOne", "GraphiteOne", "NginxOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-21A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-21B",
+	"questions": ["NginxOne", "BusinessToDesignOne", "PerformanceOne", "GraphiteOne", "ModifiabilityOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-21B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-22A",
+	"questions": ["PerformanceTwo", "ModifiabilityTwo", "BusinessToDesignTwo", "GraphiteTwo", "NginxTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-22A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-22B",
+	"questions": ["NginxTwo", "ModifiabilityTwo", "GraphiteTwo", "BusinessToDesignTwo", "PerformanceTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-22B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-23A",
+	"questions": ["PerformanceThree", "ModifiabilityThree", "BusinessToDesignThree", "GraphiteThree", "NginxThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-23A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-2-test-23B",
+	"questions": ["BusinessToDesignThree", "GraphiteThree", "PerformanceThree", "NginxThree", "ModifiabilityThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-2/test-23B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-2/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-31A",
+	"questions": ["ModuleViewtypeOne", "ContinuousIntegrationOne", "InfinispanOne", "ComponentAndConnectorOne", "CCStyleOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-31A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-31B",
+	"questions": ["CCStyleOne", "ContinuousIntegrationOne", "ModuleViewtypeOne", "InfinispanOne", "ComponentAndConnectorOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-31B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-32A",
+	"questions": ["ModuleViewtypeTwo", "ContinuousIntegrationTwo", "InfinispanTwo", "ComponentAndConnectorTwo", "CCStyleTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-32A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-32B",
+	"questions": ["ComponentAndConnectorTwo", "CCStyleTwo", "ModuleViewtypeTwo", "ContinuousIntegrationTwo", "InfinispanTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-32B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-33A",
+	"questions": ["ModuleViewtypeThree", "ContinuousIntegrationThree", "InfinispanThree", "ComponentAndConnectorThree", "CCStyleThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-33A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-3-test-33B",
+	"questions": ["ComponentAndConnectorThree", "InfinispanThree", "CCStyleThree", "ContinuousIntegrationThree", "ModuleViewtypeThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-3/test-33B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-3/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-41A",
+	"questions": ["ComponentAndConnectorOne", "AllocationOne", "InfinispanOne", "MicroAndAmazonOne", "JenkinsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-41A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-41B",
+	"questions": ["MicroAndAmazonOne", "AllocationOne", "InfinispanOne", "JenkinsOne", "ComponentAndConnectorOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-41B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-42A",
+	"questions": ["ComponentAndConnectorThree", "InfinispanTwo", "AllocationTwo", "MicroAndAmazonTwo", "JenkinsTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-42A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-42B",
+	"questions": ["InfinispanTwo", "ComponentAndConnectorThree", "AllocationTwo", "JenkinsTwo", "MicroAndAmazonTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-42B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-43A",
+	"questions": ["ComponentAndConnectorTwo", "AllocationThree", "InfinispanThree", "MicroAndAmazonThree", "JenkinsThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-43A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2015-test-4-test-43B",
+	"questions": ["MicroAndAmazonThree", "JenkinsThree", "ComponentAndConnectorTwo", "AllocationThree", "InfinispanThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2015/test-4/test-43B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2015/test-4/questions.tex"
+}, {
+	"quizTitle": "2016-20170113Exam-exame-20170113-companion-A",
+	"questions": ["SoftwareArchitectureOne", "RequirementsImpact", "AvailabilityScenarioOne", "AvailabilityVotingEN", "MWResourceLoaderTacticEEEN", "PerfomanceTacticOne", "ScalabilityINGLES", "LayersTactics", "HadoopDisponibilidadeDadosINGLES", "HadoopTacticasRecuperacaoFaltasINGLES", "SecondEEEN", "ModuleViewType", "MemcachedModulesINGLES", "AspectsINGLES", "LayeredAspectsDataModelTwo", "AdventureBuilderThree", "AdventureBuilderFive", "DVDCatalogMeta", "AvailabilityINGLES", "PeerToPeerDynamicReconfiguration", "PipeFilterComposition", "SOAINGLES", "WhiteBoxTestingINGLES", "ArqChrome", "TwitterOne", "TwitterThree", "MicroservicesOne", "MicroAndAmazonThree", "BoundedContextOne", "DomainDesignOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/20170113Exam/exame-20170113-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-20170113Exam-exame-20170113-companion-B",
+	"questions": ["AvailabilityINGLES", "PeerToPeerDynamicReconfiguration", "PipeFilterComposition", "SOAINGLES", "WhiteBoxTestingINGLES", "ArqChrome", "SoftwareArchitectureOne", "RequirementsImpact", "AvailabilityScenarioOne", "AvailabilityVotingEN", "MWResourceLoaderTacticEEEN", "PerfomanceTacticOne", "ScalabilityINGLES", "LayersTactics", "AdventureBuilderThree", "AdventureBuilderFive", "DVDCatalogMeta", "TwitterOne", "TwitterThree", "MicroservicesOne", "MicroAndAmazonThree", "BoundedContextOne", "DomainDesignOne", "HadoopDisponibilidadeDadosINGLES", "HadoopTacticasRecuperacaoFaltasINGLES", "SecondEEEN", "ModuleViewType", "MemcachedModulesINGLES", "AspectsINGLES", "LayeredAspectsDataModelTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/20170113Exam/exame-20170113-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-20170131Exam-exame-20170131-companion-A",
+	"questions": ["SoftwareArchitectureTwo", "ConcreteScenarios", "AvailabilityScenarioTwo", "AvailabilityINGLES", "InfinispanThree", "PerfomanceTacticTwo", "ModifiabilityScenario", "AspectsTactics", "HadoopStakeholdersEurosINGLES", "HadoopHeartbeatINGLES", "ArchitecturalViews", "FunctionalModule", "SubcontractorsINGLES", "UsesStyle", "nginxModuleTypesINGLES", "AdventureBuilderFour", "AdventureBuilderSix", "DVDCatalogMobile", "TiposVistaDesempenhoINGLES", "PeerToPeerSpace", "TresTiersINGLES", "ChromeMultiPlatform", "SOAInteroperability", "InstallView", "TwitterTwo", "TwitterFour", "MicroservicesTwo", "WorldWideEN", "BoundedContextTwo", "DomainDesignTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/20170131Exam/exame-20170131-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-20170131Exam-exame-20170131-companion-B",
+	"questions": ["ModifiabilityScenario", "AspectsTactics", "HadoopStakeholdersEurosINGLES", "HadoopHeartbeatINGLES", "SoftwareArchitectureTwo", "ConcreteScenarios", "AvailabilityScenarioTwo", "AvailabilityINGLES", "InfinispanThree", "PerfomanceTacticTwo", "TresTiersINGLES", "SOAInteroperability", "InstallView", "TwitterTwo", "TwitterFour", "ArchitecturalViews", "FunctionalModule", "SubcontractorsINGLES", "UsesStyle", "nginxModuleTypesINGLES", "AdventureBuilderFour", "AdventureBuilderSix", "DVDCatalogMobile", "TiposVistaDesempenhoINGLES", "PeerToPeerSpace", "MicroservicesTwo", "WorldWideEN", "BoundedContextTwo", "DomainDesignTwo", "ChromeMultiPlatform"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/20170131Exam/exame-20170131-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-1-test-11A",
+	"questions": ["SoftwareArchitecture", "TwitterScaleOne", "GeneralScenario", "ProxyServer", "HadoopCluster"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-1/test-11A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-1-test-11B",
+	"questions": ["HadoopCluster", "SoftwareArchitecture", "GeneralScenario", "TwitterScaleOne", "ProxyServer"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-1/test-11B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-1-test-12A",
+	"questions": ["ArchitecturalTactics", "EarlyDecisions", "TwitterScaleTwo", "Queues", "HadoopCreateFile"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-1/test-12A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-1-test-12B",
+	"questions": ["HadoopCreateFile", "ArchitecturalTactics", "TwitterScaleTwo", "EarlyDecisions", "Queues"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-1/test-12B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-2-test-21A",
+	"questions": ["OmissionRetry", "Scalability", "ModifiabilityOne", "GraphiteScenarioTacticsOne", "HadoopCheckpoint"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-2/test-21A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-2-test-21B",
+	"questions": ["ModifiabilityOne", "GraphiteScenarioTacticsOne", "HadoopCheckpoint", "OmissionRetry", "Scalability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-2/test-21B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-2-test-22A",
+	"questions": ["Availability", "Performance", "ModifiabilityTwo", "GraphiteScenarioTacticsTwo", "HadoopNameNodeReplica"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-2/test-22A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-2-test-22B",
+	"questions": ["ModifiabilityTwo", "GraphiteScenarioTacticsTwo", "HadoopNameNodeReplica", "Performance", "Availability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-2/test-22B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-3-test-31A",
+	"questions": ["ModuleViewtypeTwo", "DVDCatalogMultiPlatform", "ModuleComponent", "Aspects", "AdventureBuilderModuleOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-3/test-31A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-3-test-31B",
+	"questions": ["DVDCatalogMultiPlatform", "ModuleComponent", "ModuleViewtypeTwo", "AdventureBuilderModuleOne", "Aspects"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-3/test-31B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-3-test-32A",
+	"questions": ["DVDCatalogAspects", "UsesCalls", "ModuleViewtypeThree", "DataModelFacebook", "AdventureBuilderModuleTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-3/test-32A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-3-test-32B",
+	"questions": ["ModuleViewtypeThree", "DVDCatalogAspects", "UsesCalls", "AdventureBuilderModuleTwo", "DataModelFacebook"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-3/test-32B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-4-test-41A",
+	"questions": ["ComponentConnectorTwo", "PipesFilters", "Tiers", "GraphiteViewsOne", "AdventureBuilderOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-4/test-41A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-4-test-41B",
+	"questions": ["AdventureBuilderOne", "Tiers", "ComponentConnectorTwo", "PipesFilters", "GraphiteViewsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-4/test-41B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-4-test-42A",
+	"questions": ["InterfaceDelegation", "CommunicationProcesses", "PublishSubscribe", "GraphiteViewsTwo", "AdventureBuilderTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-4/test-42A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2016-test-4-test-42B",
+	"questions": ["AdventureBuilderTwo", "PublishSubscribe", "GraphiteViewsTwo", "InterfaceDelegation", "CommunicationProcesses"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2016/test-4/test-42B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2016/questions.tex"
+}, {
+	"quizTitle": "2017-20180112-Exam-exame-20180112-companion-A",
+	"questions": ["AvailabilityOne", "PerformanceOne", "ModifiabilityExamOne", "ModuleViewtypeExamOne", "DecompositionGeneralization", "ComponentAndConnectorViewtypeOne", "PublishsubscribeOne", "ProxyServer", "GraphiteOne", "DVDOne", "AdventureBuilderOne", "PulseOne", "OrderPadOne", "Layered", "DynamicReconfiguration", "Deployment", "WebAppsOne", "FenixOne", "AggregateOne", "MicroservicesExamOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/20180112-Exam/exame-20180112-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-20180112-Exam-exame-20180112-companion-B",
+	"questions": ["ComponentAndConnectorViewtypeOne", "PublishsubscribeOne", "GraphiteOne", "ProxyServer", "FenixOne", "AvailabilityOne", "PerformanceOne", "ModifiabilityExamOne", "ModuleViewtypeExamOne", "DecompositionGeneralization", "AggregateOne", "MicroservicesExamOne", "DVDOne", "AdventureBuilderOne", "PulseOne", "OrderPadOne", "Layered", "DynamicReconfiguration", "Deployment", "WebAppsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/20180112-Exam/exame-20180112-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-20180130-Exam-exame-20180130-companion-A",
+	"questions": ["AvailabilityTwo", "PerformanceTwo", "ModifiabilityExamTwo", "DVDCatalogMobile", "ComponentAndConnectorViewtypeTwo", "ModuleViewtypeExamTwo", "PipesFilters", "ScalableArchitectureOne", "GraphiteTwo", "WorkAssigment", "WebAppsTwo", "DVDTwo", "DataModel", "SOA", "AdventureBuilderTwo", "PulseTwo", "OrderPadTwo", "FenixTwo", "AggregateTwo", "MicroservicesExamTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/20180130-Exam/exame-20180130-companion-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-20180130-Exam-exame-20180130-companion-B",
+	"questions": ["AggregateTwo", "AvailabilityTwo", "PerformanceTwo", "MicroservicesExamTwo", "ModifiabilityExamTwo", "DVDCatalogMobile", "GraphiteTwo", "WorkAssigment", "ScalableArchitectureOne", "WebAppsTwo", "DVDTwo", "DataModel", "SOA", "AdventureBuilderTwo", "FenixTwo", "PulseTwo", "OrderPadTwo", "ModuleViewtypeExamTwo", "PipesFilters", "ComponentAndConnectorViewtypeTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/20180130-Exam/exame-20180130-companion-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-11A",
+	"questions": ["QueuesQualities", "ElevatorCommon", "MicroservicesProject", "ScalablePartitioning", "PerformanceSenario"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-11A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-11B",
+	"questions": ["ElevatorCommon", "PerformanceSenario", "MicroservicesProject", "ScalablePartitioning", "QueuesQualities"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-11B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-12A",
+	"questions": ["ElevatorInteroperability", "MicroservicesModularity", "ReadsAndWrites", "QueuesSyncAndAsync", "PerformanceTacticsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-12A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-12B",
+	"questions": ["QueuesSyncAndAsync", "ElevatorInteroperability", "MicroservicesModularity", "ReadsAndWrites", "PerformanceTacticsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-12B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-13A",
+	"questions": ["DataStorageAvailability", "MicroservicesConsistency", "ElevatorDevops", "QueuesCrash", "PerformanceTacticsTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-13A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-1-test-13B",
+	"questions": ["QueuesCrash", "DataStorageAvailability", "MicroservicesConsistency", "PerformanceTacticsTwo", "ElevatorDevops"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-1/test-13B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-21-A",
+	"questions": ["AvailabilityVotingFirst", "ModifiabilityOne", "FenixADD", "ModuleViewtypeOne", "GraphiteComposerUIPerformance"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-21-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-21-B",
+	"questions": ["ModuleViewtypeOne", "GraphiteComposerUIPerformance", "AvailabilityVotingFirst", "ModifiabilityOne", "FenixADD"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-21-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-22-A",
+	"questions": ["AvailabilityVotingSecond", "ModifiabilityTwo", "LowArchitecturalImpact", "Decomposition", "GraphiteScenarioTacticsOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-22-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-22-B",
+	"questions": ["GraphiteScenarioTacticsOne", "AvailabilityVotingSecond", "LowArchitecturalImpact", "ModifiabilityTwo", "Decomposition"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-22-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-23-A",
+	"questions": ["Voting", "ModifiabilityThree", "IterativeDesign", "ArchitecturalViews", "GraphiteReliability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-23-A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-2-test-23-B",
+	"questions": ["IterativeDesign", "ArchitecturalViews", "GraphiteReliability", "Voting", "ModifiabilityThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-2/test-23-B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-31A",
+	"questions": ["ModuleStylesOne", "AdventureBuilderComponentAndConnectorOne", "AdventureBuilderModuleOne", "InterfaceDelegation", "PipeFilterComposition"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-31A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-31B",
+	"questions": ["AdventureBuilderComponentAndConnectorOne", "ModuleStylesOne", "InterfaceDelegation", "PipeFilterComposition", "AdventureBuilderModuleOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-31B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-32A",
+	"questions": ["PublishSubscribe", "AdventureBuilderComponentAndConnectorSecond", "AdventureBuilderModuleThree", "ConnectorAttach", "UsesOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-32A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-32B",
+	"questions": ["AdventureBuilderComponentAndConnectorSecond", "PublishSubscribe", "UsesOne", "AdventureBuilderModuleThree", "ConnectorAttach"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-32B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-33A",
+	"questions": ["LayeredAspectsDataModelOne", "AdventureBuilderComponentAndConnectorThird", "AdventureBuilderModuleTwo", "ComponentViewType", "PeerToPeerSpace"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-33A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-3-test-33B",
+	"questions": ["AdventureBuilderComponentAndConnectorThird", "LayeredAspectsDataModelOne", "AdventureBuilderModuleTwo", "PeerToPeerSpace", "ComponentViewType"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-3/test-33B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-41A",
+	"questions": ["Tiers", "DVDTopDecomposition", "GraphitePerformanceScenario", "OrderPadPortability", "MicroservicesOne"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-41A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-41B",
+	"questions": ["GraphitePerformanceScenario", "MicroservicesOne", "Tiers", "DVDTopDecomposition", "OrderPadPortability"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-41B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-42A",
+	"questions": ["CommunicatingProcesses", "DVDAutocomplete", "GraphiteAvailabilityScenario", "Silk", "MicroservicesTwo"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-42A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-42B",
+	"questions": ["GraphiteAvailabilityScenario", "Silk", "MicroservicesTwo", "CommunicatingProcesses", "DVDAutocomplete"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-42B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-43A",
+	"questions": ["AllocationStylesCost", "DVDGeneralization", "GraphiteWebapp", "OrderPadIterative", "MicroservicesThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-43A.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}, {
+	"quizTitle": "2017-test-4-test-43B",
+	"questions": ["OrderPadIterative", "AllocationStylesCost", "DVDGeneralization", "GraphiteWebapp", "MicroservicesThree"],
+	"quizFile": "/home/jbgrocha/Projects/questions/2017/test-4/test-43B.tex",
+	"questionsFile": "/home/jbgrocha/Projects/questions/2017/questions.tex"
+}]

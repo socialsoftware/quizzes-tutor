@@ -1,28 +1,40 @@
-CREATE TABLE Quizes (
-    ID serial not Null,
+DROP TABLE IF EXISTS Answers CASCADE;
+DROP TABLE IF EXISTS Options CASCADE;
+DROP TABLE IF EXISTS Images CASCADE;
+DROP TABLE IF EXISTS QuestionHasTopic CASCADE;
+DROP TABLE IF EXISTS Topics CASCADE;
+DROP TABLE IF EXISTS QuizHasQuestion CASCADE;
+DROP TABLE IF EXISTS Questions CASCADE;
+DROP TABLE IF EXISTS Quizzes CASCADE;
+DROP TABLE IF EXISTS Students CASCADE;
+
+CREATE TABLE Quizzes (
+    ID serial NOT Null,
     Title VARCHAR(255),
-    QuizDate DATE,
+    QuizDate TIMESTAMP,
     PRIMARY KEY (ID)
 );
 
 CREATE TABLE Questions (
     ID serial NOT NULL,
+    NewID INT REFERENCES Questions on Delete cascade,
     Content Text,
-    AnswerTime integer,
+    Difficulty INT,
     PRIMARY KEY (ID)
 );
 
-CREATE TABLE QuizHasQuestions (
-    QuizID int not null REFERENCES Quizes on Delete cascade,
-    QuestionID int not null REFERENCES Questions on Delete cascade,
+CREATE TABLE QuizHasQuestion (
+    QuizID INT NOT NULL REFERENCES Quizzes on Delete cascade,
+    QuestionID INT NOT NULL REFERENCES Questions on Delete cascade,
     Primary Key (QuizID, QuestionID)
 );
 
-CREATE TABLE Answers (
-  ID serial NOT NULL,
-  QuestionID int NOT NULL REFERENCES Questions ON DELETE CASCADE,
+CREATE TABLE Options (
+  QuestionID INT NOT NULL REFERENCES Questions ON DELETE CASCADE,
+  Option INT NOT NULL,
   Content Text,
-  PRIMARY KEY (ID)
+  IsCorrect Boolean DEFAULT FALSE,
+  PRIMARY KEY (QuestionID, Option)
 );
 
 CREATE TABLE Topics (
@@ -31,27 +43,33 @@ CREATE TABLE Topics (
   PRIMARY KEY (ID)
 );
 
-CREATE TABLE QuestionHasTopics (
-  ID serial NOT NULL,
-  QuestionID int NOT NULL REFERENCES Questions ON DELETE CASCADE,
-  TopicID int NOT NULL REFERENCES Topics ON DELETE CASCADE,
-  PRIMARY KEY (ID),
-  UNIQUE(QuestionID, TopicID)
+CREATE TABLE QuestionHasTopic (
+  TopicID INT NOT NULL REFERENCES Topics ON DELETE CASCADE,
+  QuestionID INT NOT NULL REFERENCES Questions ON DELETE CASCADE,
+  Votes INT,
+  Score INT,
+  PRIMARY KEY (TopicID, QuestionID)
 );
 
-CREATE TABLE QuestionHasImage (
-  ID serial NOT NULL,
-  QuestionID int NOT NULL REFERENCES Questions ON DELETE CASCADE,
+CREATE TABLE Images (
+  QuestionID INT NOT NULL REFERENCES Questions ON DELETE CASCADE,
   Url VARCHAR(255),
-  PRIMARY KEY (ID),
-  UNIQUE(QuestionID)
+  Width INT,
+  PRIMARY KEY (QuestionID)
 );
 
-CREATE TABLE QuestionHasCorrectAnswers (
+CREATE TABLE Students (
   ID serial NOT NULL,
-  QuestionID int NOT NULL REFERENCES Questions ON DELETE CASCADE,
-  AnswerID int NOT NULL,
-  FOREIGN KEY (AnswerID) REFERENCES Answers ON DELETE CASCADE,
-  PRIMARY KEY (ID),
-  UNIQUE(QuestionID, AnswerID)
+  PRIMARY KEY (ID)
+);
+
+
+CREATE TABLE Answers (
+  StudentID INT NOT NULL REFERENCES Students ON DELETE CASCADE,
+  QuestionID INT NOT NULL REFERENCES Questions ON DELETE CASCADE,
+  AnswerDate TIMESTAMP,
+  QuizID INT REFERENCES Quizzes ON DELETE CASCADE,
+  TimeTaken INT,
+  Option INT NOT NULL,
+  PRIMARY KEY (StudentID, QuestionID, AnswerDate)
 );
