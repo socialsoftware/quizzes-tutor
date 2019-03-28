@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Random;
 
 @Entity
-@Table(name = "Questions")
+@Table(name = "Quizzes")
 public class Quiz implements Serializable {
     @Id
     @GeneratedValue
