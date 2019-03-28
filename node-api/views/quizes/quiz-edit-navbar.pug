@@ -1,0 +1,47 @@
+nav.navbar.navbar-expand-lg.navbar-dark.bg-dark.sticky-top
+  button.navbar-toggler( type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation")
+    span.navbar-toggler-icon
+    
+  .collapse.navbar-collapse(id="navbarSupportedContent")
+    .form-inline.mr-auto
+      if data.previous[0] != null
+        button.btn.btn-sm.btn-light.btn-secondary.mr-1(type="button" id="previous") Previous
+        script.
+          $("#previous").click(function () { window.location = "/editQuiz/#{data.previous[0].id}" ;});  
+      else
+        button.btn.btn-sm.btn-light.btn-secondary.mr-1.disabled(type="button" id="previous") Previous
+      
+      if data.next[0] != null
+        button.btn.btn-sm.btn-light.btn-secondary.mr-1(type="button" id="next") Next
+        script.
+          $("#next").click(function () { window.location = "/editQuiz/#{data.next[0].id}" ;});
+      else
+        button.btn.btn-sm.btn-light.btn-secondary.disabled.mr-1(type="button" id="next") Next
+  
+    .form-inline
+      button.btn.btn-sm.btn-light.btn-secondary.mr-1(type="button" id="saveEditQuiz") Save
+      script.
+        $("#" + "saveEditQuiz").click(function () {
+          
+          var data = quizInterface.getQuizData();
+          
+          /* alert(JSON.stringify(data)); */
+          
+          console.log(JSON.stringify(data));
+          
+          $.ajax({
+            url: "/api/updatequiz/" + data.quiz.id,
+            type: 'PUT',
+            success: function () {
+              /* alert("Quiz Content Updated"); */
+              window.location = "/listQuizes" ;
+            },
+            data: JSON.stringify(data),
+            contentType: "application/json"
+          });
+        });
+        
+      button.btn.btn-sm.btn-light.btn-secondary.mx-1(type="button" id="cancelEditQuiz") Cancel
+      script.
+        $("#cancelEditQuiz").click(function () { window.location = "/listQuizes" ;});
+        // #quiz-card-#{data.quiz.id}

@@ -1,0 +1,97 @@
+.Main.p-4.bg-light
+  // jumbotron start
+  .box.py-4.px-2
+      // text filter control
+      input(data-jplist-control='textbox-filter', data-group='data-group-1', data-name='my-filter-1', data-path='.quizTitle', type='text', value='', placeholder='Filter by Quiz Title', data-clear-btn-id='name-clear-btn')
+      button#name-clear-btn(type='button') Clear
+  #quiz-list.card(data-jplist-group="data-group-1")
+    // card start
+    .card-header
+      // card-header start
+      h5 Listing Quizes
+    // card-header end
+    
+    if data.quizes.length == 0
+      .card-body No quizes exist in the database
+      
+    for quiz in data.quizes
+      - var quizCard = "quiz-card-" + quiz.id
+      - var quizId = "quiz-id-" + quiz.id
+      - var quizTitle = "quiz-title-" + quiz.id
+      - var quizDate = "quiz-date-" + quiz.id
+      - var editQuiz = "edit-quiz-" + quiz.id
+      - var deleteQuiz = "delete-quiz-" + quiz.id
+      - var exportQuiz = "export-quiz-" + quiz.id
+      .card-body.border-bottom(id=quizCard data-jplist-item)
+        .row.pb-2
+          .col-md-8.font-weight-bold(id=quizId)
+            | Quiz #{quiz.id}
+          .col-md-4
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=exportQuiz) Export Quiz
+              script.
+                $("##{exportQuiz}").click(function () { 
+                  /* alert("exporting"); */
+                  /* location.href="api/exportarsnova/" + #{quiz.id} + ".json"; */
+                  
+                  $.get("api/exportarsnova/" + #{quiz.id} + ".json", function( data ) {
+                    console.log(JSON.stringify(data.result));
+                    
+                    var content = JSON.stringify(data.result);
+                    // any kind of extension (.txt,.cpp,.cs,.bat)
+                    var filename = #{quiz.id} + ".json";
+
+                    var blob = new Blob([content], {
+                     type: "text/plain;charset=utf-8"
+                    });
+
+                    saveAs(blob, filename);
+                  });  
+                });
+        .row.pb-2
+          .col-md-9.quizTitle(id=quizTitle)
+            | #{quiz.title}
+          .col-md-3.text-right(id=quizDate)
+            | #{quiz.quizdate}
+        // buttons
+        .row
+          .col-6
+            .form-group.float-left
+              button.btn.btn-sm(type="button" id=editQuiz) Edit Quiz
+              script.
+                $("##{editQuiz}").click(function () { window.location = "/editQuiz/#{quiz.id}";});
+          .col-6
+            .form-group.float-right
+              button.btn.btn-sm(type="button" id=deleteQuiz) Delete Quiz
+              script.
+                $("##{deleteQuiz}").click(function () { 
+                  $.ajax({
+                    url: "/api/quizes/#{quiz.id}",
+                    type: 'DELETE',
+                    success: function () {
+                      $("##{quizCard}").slideUp('slow', function(){
+                        $("##{quizCard}").remove();
+                      });
+                    },
+                    contentType: "application/json"
+                  });
+                });
+
+  .controls.py-2
+    // pagination control
+    div(data-jplist-control='pagination', data-group='data-group-1', data-items-per-page='3', data-current-page='1', data-name='pagination1')
+      .row.mb-3
+        select(data-type='items-per-page')
+          option(value='3')  3 per page 
+          option(value='5')  5 per page 
+          option(value='10')  10 per page 
+          option(value='0')  view all 
+        button(type='button', data-type='first') «
+        button(type='button', data-type='prev') ‹
+        .jplist-holder(data-type='pages')
+          button(type='button', data-type='page') {pageNumber}
+        button(type='button', data-type='next') ›
+        button(type='button', data-type='last') »
+      .row
+        span(data-type='info')
+          | Page {pageNumber} of {pagesNumber}
