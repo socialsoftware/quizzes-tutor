@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>tutor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tutor</name>
+    <name>tutor2</name>
     <description>Tutor System for the Software Architecture Course</description>
 
     <properties>
