@@ -23,10 +23,10 @@ public class QuestionController {
         return questionRepository.findAll(pageable);
     }
 
-    @GetMapping("/questions/{questionID}")
-    public Question getQuestion(@PathVariable Integer questionID) {
-        return questionRepository.findById(questionID)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionID));
+    @GetMapping("/questions/{question_id}")
+    public Question getQuestion(@PathVariable Integer question_id) {
+        return questionRepository.findById(question_id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
     }
 
 
@@ -35,23 +35,23 @@ public class QuestionController {
         return questionRepository.save(question);
     }
 
-    @PutMapping("/questions/{questionID}")
-    public Question updateQuestion(@PathVariable Integer questionID,
+    @PutMapping("/questions/{question_id}")
+    public Question updateQuestion(@PathVariable Integer question_id,
                                    @Valid @RequestBody Question questionRequest) {
-        return questionRepository.findById(questionID)
+        return questionRepository.findById(question_id)
                 .map(question -> {
                     question.setContent(questionRequest.getContent());
                     return questionRepository.save(question);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionID));
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
     }
 
 
-    @DeleteMapping("/questions/{questionID}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable Integer questionID) {
-        return questionRepository.findById(questionID)
+    @DeleteMapping("/questions/{question_id}")
+    public ResponseEntity<?> deleteQuestion(@PathVariable Integer question_id) {
+        return questionRepository.findById(question_id)
                 .map(question -> {
                     questionRepository.delete(question);
                     return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionID));
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
     }
 }

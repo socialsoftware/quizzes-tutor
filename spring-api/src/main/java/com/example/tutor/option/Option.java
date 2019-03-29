@@ -7,25 +7,25 @@ import javax.persistence.*;
 
 import java.io.Serializable;
 
-@Entity
-@Table(name = "Options")
+@Entity(name = "Option")
+@Table(name = "options")
 public class Option implements Serializable {
 
     @EmbeddedId
     private OptionPK optionPK;
 
-    @Column(columnDefinition = "iscorrect")
-    private Boolean isCorrect;
+    @Column(columnDefinition = "correct")
+    private Boolean correct;
 
     @Column(columnDefinition = "content")
     private String content;
 
-    public Integer getQuestionID() {
+    public Integer getQuestion_id() {
         return optionPK.getQuestion().getId();
     }
 
-    public void setQuestionID(Integer questionID) {
-        this.optionPK.getQuestion().setId(questionID);
+    public void setQuestion_id(Integer question_id) {
+        this.optionPK.getQuestion().setId(question_id);
     }
 
     public Integer getOption() {
@@ -37,11 +37,11 @@ public class Option implements Serializable {
     }
 
     public Boolean getCorrect() {
-        return isCorrect;
+        return correct;
     }
 
     public void setCorrect(Boolean correct) {
-        isCorrect = correct;
+        this.correct = correct;
     }
 
     public String getContent() {

@@ -8,7 +8,7 @@ export default class Quiz {
 
   async getQuestions(): Promise<Question[]> {
     // Make a request for a user with a given ID
-    return await axios.get("http://localhost:8080/quiz").then(response => {
+    return await axios.get("http://localhost:8080/newquiz").then(response => {
       // handle success
       for (let i = 0; i < response.data["questions"].length; i++) {
         let a1 = new Question(response.data["questions"][i]);

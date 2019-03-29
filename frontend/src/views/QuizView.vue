@@ -1,9 +1,7 @@
 <template>
   <div id="app">
-    <h1>HELLO</h1>
     <survey v-if="survey" :survey="survey"></survey>
-
-    <div id="surveyResult"></div>
+    <div ref="surveyResult"></div>
   </div>
 </template>
 
@@ -27,9 +25,7 @@ export default class QuizView extends Vue {
   }
 
   getJson(questionsJson: string[]) {
-    console.log(3, this.quiz);
     if (this.quiz) {
-      console.log(4, this.quiz);
       let json = {
         title: "As Questionaire",
         showProgressBar: "bottom",
@@ -40,11 +36,9 @@ export default class QuizView extends Vue {
           "<h4>You have answered correctly <b>{correctedAnswers}</b> questions from <b>{questionCount}</b>.</h4>"
       };
       this.survey = new SurveyVue.Model(json);
-      this.survey.onComplete.add(result => {
-        if (document && document.querySelector("#surveyResult")) {
-          document.querySelector("#surveyResult").innerHTML =
-            "result: " + JSON.stringify(result.data);
-        }
+      this.survey.onComplete.add((result: { data: any }) => {
+        let el = this.$refs.surveyResult as HTMLElement;
+        el.innerHTML = "result: " + JSON.stringify(result.data);
       });
     }
   }

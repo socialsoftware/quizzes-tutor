@@ -18,44 +18,44 @@ public class OptionController {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @GetMapping("/questions/{questionID}/options")
-    public List<Option> getOptionsByQuestionID(@PathVariable Integer questionID) {
-        return optionRepository.findByQuestionID(questionID);
+    @GetMapping("/questions/{question_id}/options")
+    public List<Option> getOptionsByquestion_id(@PathVariable Integer question_id) {
+        return optionRepository.findByquestion_id(question_id);
     }
 
-    @PostMapping("/questions/{questionID}/options")
-    public Option addOption(@PathVariable Integer questionID,
+    @PostMapping("/questions/{question_id}/options")
+    public Option addOption(@PathVariable Integer question_id,
                             @Valid @RequestBody Option option) {
-        return questionRepository.findById(questionID)
+        return questionRepository.findById(question_id)
                 .map(question -> {
-                    option.setQuestionID(question.getId());
+                    option.setQuestion_id(question.getId());
                     return optionRepository.save(option);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionID));
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
     }
 
-    @PutMapping("/questions/{questionID}/options/{optionID}")
-    public Option updateOption(@PathVariable Integer questionID,
+    @PutMapping("/questions/{question_id}/options/{optionID}")
+    public Option updateOption(@PathVariable Integer question_id,
                                @PathVariable Integer optionID,
                                @Valid @RequestBody Option optionRequest) {
-        Option option = findOption(questionID, optionID);
+        Option option = findOption(question_id, optionID);
         option.setContent(optionRequest.getContent());
         return optionRepository.save(option);
     }
 
-    @DeleteMapping("/questions/{questionID}/options/{optionID}")
-    public ResponseEntity<?> deleteOption(@PathVariable Integer questionID,
+    @DeleteMapping("/questions/{question_id}/options/{optionID}")
+    public ResponseEntity<?> deleteOption(@PathVariable Integer question_id,
                                           @PathVariable Integer optionID) {
-        Option option = findOption(questionID, optionID);
+        Option option = findOption(question_id, optionID);
         optionRepository.delete(option);
         return ResponseEntity.ok().build();
     }
 
-    private Option findOption(@PathVariable Integer questionID, @PathVariable Integer optionID) {
-        if(!questionRepository.existsById(questionID)) {
-            throw new ResourceNotFoundException("Question not found with id " + questionID);
+    private Option findOption(@PathVariable Integer question_id, @PathVariable Integer optionID) {
+        if(!questionRepository.existsById(question_id)) {
+            throw new ResourceNotFoundException("Question not found with id " + question_id);
         }
 
-        Option option = optionRepository.findById(questionID, optionID);
+        Option option = optionRepository.findById(question_id, optionID);
         if (option == null) {
             throw new ResourceNotFoundException("Option not found with id " + optionID);
         }
