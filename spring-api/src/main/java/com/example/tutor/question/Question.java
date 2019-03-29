@@ -1,12 +1,15 @@
 package com.example.tutor.question;
 
 import com.example.tutor.option.Option;
+import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-@Entity
-@Table(name = "Questions")
+@Entity(name = "Question")
+@Table(name = "questions")
 public class Question implements Serializable {
     @Id
     @GeneratedValue
@@ -15,13 +18,19 @@ public class Question implements Serializable {
     @Column(columnDefinition = "content")
     private String content;
 
-    @Column(columnDefinition = "newid")
-    private Integer newID;
+    @Column(columnDefinition = "new_id")
+    private Integer new_id;
 
     @Column(columnDefinition = "difficulty")
     private Integer difficulty;
 
-    private Option[] options;
+    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinColumn(name="question_id")
+    private List<Option> options = new ArrayList<>();
+
+    /* TODO @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinColumn(name="question_id")
+    private List<Image> image = new ArrayList<>();*/
 
     public Integer getId() {
         return id;
@@ -39,12 +48,12 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    public Integer getNewID() {
-        return newID;
+    public Integer getNew_id() {
+        return new_id;
     }
 
-    public void setNewID(Integer newID) {
-        this.newID = newID;
+    public void setNew_id(Integer new_id) {
+        this.new_id = new_id;
     }
 
     public Integer getDifficulty() {
@@ -55,11 +64,11 @@ public class Question implements Serializable {
         this.difficulty = difficulty;
     }
 
-    public Option[] getOptions() {
+    public List<Option> getOptions() {
         return options;
     }
 
-    public void setOptions(Option[] options) {
+    public void setOptions(List<Option> options) {
         this.options = options;
     }
 }

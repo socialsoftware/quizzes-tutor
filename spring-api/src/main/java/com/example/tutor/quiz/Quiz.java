@@ -1,21 +1,20 @@
 package com.example.tutor.quiz;
 
+import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.Question;
+import com.example.tutor.question.QuestionRepository;
 import org.springframework.web.client.HttpServerErrorException;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Entity
-@Table(name = "Quizzes")
+@Table(name = "quizzes")
 public class Quiz implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "title")
@@ -26,7 +25,8 @@ public class Quiz implements Serializable {
 
     private Question[] questions;
 
-    public Quiz() {
+
+    public Quiz(QuestionRepository questionRepository) {
         int maxID = 1698;
         List<Question> questionList = new ArrayList<>();
         Random rand = new Random();
@@ -34,16 +34,21 @@ public class Quiz implements Serializable {
         Question q;
 
         while (questionList.size() < 30) {
-            int n = rand.nextInt(maxID);
+            int question_id = rand.nextInt(maxID);
             try {
-                if (!idList.contains(n)) {
-                    questionList.add(new Question());
-                    idList.add(n);
+                if (!idList.contains(question_id)) {
+                    questionRepository.findById(question_id)
+                        .ifPresent(question -> {
+                            questionList.add(question);
+                            idList.add(question_id);
+                        });
                 }
-            } catch (HttpServerErrorException e) {
-                idList.add(n);
+            } catch (ResourceNotFoundException e) {
+                idList.add(question_id);
             }
         }
+
+        this.date = LocalDateTime.now();
 
         this.questions = questionList.toArray(new Question[30]);
     }

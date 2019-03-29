@@ -3,7 +3,7 @@ from pathlib import Path
 
 dataPath = os.getcwd() + '/../data/**/*.tex'
 imagesPath = os.getcwd() + '/../node-api/public/images/questions/'
-DBNAME = 'tutorDB'
+DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
 
@@ -270,7 +270,7 @@ def populateDB(quizes):
 def insertQuiz(cur, quiz):
     quizTitle = quiz["quizTitle"]
     # insert quiz
-    cur.execute("INSERT INTO Quizzes (Title) VALUES (%s) RETURNING *", [quizTitle])
+    cur.execute("INSERT INTO quizzes (title) VALUES (%s) RETURNING *", [quizTitle])
     quizId = cur.fetchone()[0]
 
     for question in quiz["questions"]:
@@ -284,7 +284,7 @@ def insertQuestion(cur, question, quizId):
     cur.execute("INSERT INTO questions (content) VALUES (%s) RETURNING *", [content])
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
-    cur.execute("INSERT INTO QuizHasQuestion (QuizID, QuestionID) VALUES (%s, %s)", [int(quizId), int(questionId)])
+    cur.execute("INSERT INTO quiz_has_question (quiz_id, question_id) VALUES (%s, %s)", [int(quizId), int(questionId)])
 
     # image insertion
     if len(question["image"]) > 0:
@@ -294,7 +294,7 @@ def insertQuestion(cur, question, quizId):
 
         # insert QuestionHasImage
         # "INSERT INTO QuestionHasImage (QuestionID, Url, Width) VALUES (1, '/images/placeholder.svg', 100);"
-        cur.execute("INSERT INTO Images (QuestionID, Url, Width) VALUES (%s, %s, %s)", [int(questionId), serverImageName, width])
+        cur.execute("INSERT INTO images (question_id, url, width) VALUES (%s, %s, %s)", [int(questionId), serverImageName, width])
 
         # copy image from imageAbsolutePath to imagesServerPath + imageRelativePath
         copyImageToServer(questionId, imageAbsolutePath, serverImageName)
@@ -317,7 +317,7 @@ def copyImageToServer(questionId, imagePath, serverImageName):
 def insertOptions(cur, options, questionId):
     for i in range(len(options)):
       # insert option
-      cur.execute("INSERT INTO Options (QuestionID, Option, Content) VALUES (%s, %s, %s) RETURNING *", (int(questionId), i, options[i]))
+      cur.execute("INSERT INTO options (question_id, option, content) VALUES (%s, %s, %s) RETURNING *", (int(questionId), i, options[i]))
       # not really needed
       # optionId = cur.fetchone()[0]
 
