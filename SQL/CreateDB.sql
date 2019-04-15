@@ -1,2 +1,2 @@
 sudo su -l postgres
-createdb seGamification
+createdb tutordb

@@ -166,7 +166,7 @@
 	Considered the following two views of a system that receive a stream of character and produce the same stream where the characters are alternately uppercase and lowercase.
 	
 	\centering
-	\includegraphics[width=12cm]{1-module-and-cc}
+	\includegraphics[width=120mm]{1-module-and-cc}
 		
     \optionA{The \emph{config} module is not used in the implementation of any component.}
     \optionB{The \emph{main} module is used in the implementation of all components.}
@@ -215,7 +215,7 @@
 	Consider the following figure that presents a Proxy Server that collapses requests from different users.
 	
 	\begin{center}
-		\includegraphics[width=12cm]{1-proxy-server}
+		\includegraphics[width=120mm]{1-proxy-server}
 	\end{center}
 	
 	
@@ -232,7 +232,7 @@
     Consider the following figure that presents a Image Hosting System.
 	
 	\begin{center}
-		\includegraphics[width=12cm]{1-image-hosting}
+		\includegraphics[width=120mm]{1-image-hosting}
 	\end{center}
 	
 	By adding another Image File Storage component, which contains a redundant copy of the data and provides read access to the clients, but without guaranteeing a ACID transactional behavior between reads and writes, it improves the quality(ies) of
@@ -305,7 +305,7 @@
 	Consider the following generalization view of the Catalog of DVD case study to fulfill a modifiability scenario
 	
 	\begin{center}
-		\includegraphics[width=6cm]{1-dvd-generalization}
+		\includegraphics[width=60mm]{1-dvd-generalization}
 	\end{center}
 	
 	From this view the stakeholders can infer
@@ -325,7 +325,7 @@
 	Consider the following view of the Adventure Builder case study that applies the tiers architectural style 
 	
 	\centering
-	\includegraphics[width=10cm]{1-adventure-tiers}
+	\includegraphics[width=100mm]{1-adventure-tiers}
 		
     \optionA{This view shows that if is possible to scale differently the \texttt{web tier} from the \texttt{EJB tier}.}
     \optionB{This view shows that the \texttt{Adventure Builder Catalog DB} and the \texttt{OPC} components should be deployed in the same hardware.}
@@ -340,7 +340,7 @@
 	Consider the following view of the Adventure Builder case study 
 	
 	\centering
-	\includegraphics[width=12cm]{1-adventure-com-proc}
+	\includegraphics[width=120mm]{1-adventure-com-proc}
 		
     \optionA{This view shows that the processing of orders is done synchronously.}
     \optionB{This view shows that the processing of tracking requests is done synchronously.}
@@ -357,7 +357,7 @@
 	Consider the following view of the Pulse case study 
 	
 	\begin{center}
-		\includegraphics[width=12cm]{1-pulse-multiple-copies-computation}
+		\includegraphics[width=120mm]{1-pulse-multiple-copies-computation}
 	\end{center}
 	
 	This view provides a solution that uses the following tactic
@@ -375,7 +375,7 @@
 	Consider the following view of the Pulse case study 
 	
 	\begin{center}
-		\includegraphics[width=12cm]{1-pulse-multiple-copies-computation}
+		\includegraphics[width=120mm]{1-pulse-multiple-copies-computation}
 	\end{center}
 	
 	This view applies the following architectural styles
@@ -583,7 +583,7 @@
 	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, \texttt{Customer} and \texttt{Order} were in the same aggregate  
 	
 	\centering
-	\includegraphics[width=12cm]{1-aggregate}
+	\includegraphics[width=120mm]{1-aggregate}
 
     \optionA{It would reduce the scalability for updates of different orders for the same customer.}
     \optionB{Two users would conflict if they attempt to edit different orders for the same customer.}
@@ -682,7 +682,7 @@
 	Consider the following decomposition view of the Catalog of DVD case study.
 	
 	\centering
-	\includegraphics[width=10cm]{dvd-top-decomposition}
+	\includegraphics[width=100mm]{dvd-top-decomposition}
 
     \optionA{The decomposition was driven by a defer binding tactic.}
     \optionB{The decomposition was driven by a quality that is supported by a restrict dependencies tactic.}
@@ -697,7 +697,7 @@
 	Consider the following decomposition views of the Catalog of DVD case study were the \emph{Autocomplete} module is implemented in javascript and executes in a browser.
 	
 	\centering
-	\includegraphics[width=12cm]{dvd-autocomplete}
+	\includegraphics[width=120mm]{dvd-autocomplete}
 
     \optionA{The view illustrates the achievement of a security scenario.}
     \optionB{The view illustrates the achievement of a performance scenario.}
@@ -712,7 +712,7 @@
 	Consider the following generalization view of the Catalog of DVD case study.
 	
 	\centering
-	\includegraphics[width=6cm]{dvd-generalization}
+	\includegraphics[width=60mm]{dvd-generalization}
 
     \optionA{This generalization was driven by a split module tactic.}
     \optionB{This view fulfills an availability scenario, which defines the expected behavior whenever an external source is not available.}
@@ -730,7 +730,7 @@
 	In the context of the \emph{Graphite} case study, consider the following view that represents the internal behavior of the \emph{Carbon} component, where the components \texttt{r1,... , rn, w} are threads and \texttt{q1, ..., qn} are buffers. This view shows the Graphite's architecture support of
 	
 	\centering
-	\includegraphics[width=12cm]{graphite-carbon}
+	\includegraphics[width=120mm]{graphite-carbon}
 
     \optionA{A performance scenario associated with the throughput of writing data points to disk.}
     \optionB{A performance scenario associated with the latency of writing data points to disk.}
@@ -745,7 +745,7 @@
 	In the context of the \emph{Graphite} case study, consider the following view that represents the internal behavior of the \emph{Carbon} component, where the components \texttt{r1,... , rn, w} are threads and \texttt{q1, ..., qn} are buffers. The port \emph{read}, which provides an interface to read the data points stored in the queue, can be used, in an enrichment of the view, to illustrate
 	
 	\centering
-	\includegraphics[width=12cm]{graphite-carbon}
+	\includegraphics[width=120mm]{graphite-carbon}
 
     \optionA{A modifiability scenario the \emph{Graphite} system.}
     \optionB{A usability scenario of the \emph{Graphite} system.}
@@ -760,7 +760,7 @@
 	In the context of the \emph{Graphite} case study, consider the following application-specific types that are used in a view to represent the internal behavior of the \emph{Webapp} component. 
 	
 	\centering
-	\includegraphics[width=12cm]{graphite-webapp}
+	\includegraphics[width=120mm]{graphite-webapp}
 	
 	This view can show that the architecture fulfills  
 
@@ -926,7 +926,7 @@
 	and the following architectural view
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderModule}
+		\includegraphics[width=95mm]{AdventureBuilderModule}
 	\end{center}
 	
     \optionA{The view does not address the scenario}
@@ -948,7 +948,7 @@
 	and the following architectural view
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderModule}
+		\includegraphics[width=95mm]{AdventureBuilderModule}
 	\end{center}
 	
     \optionA{The view does not address the scenario}
@@ -970,7 +970,7 @@
 	and the following architectural view
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderModule}
+		\includegraphics[width=95mm]{AdventureBuilderModule}
 	\end{center}
 	
     \optionA{The view does not address the scenario.}
@@ -1069,7 +1069,7 @@
 	Consider the following view of the Adventure Builder system
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderComponentAndConnector}
+		\includegraphics[width=95mm]{AdventureBuilderComponentAndConnector}
 	\end{center}
 	
 	In this view the following architectural styles are used
@@ -1089,7 +1089,7 @@
 	Consider the following view of the Adventure Builder system
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderComponentAndConnector}
+		\includegraphics[width=95mm]{AdventureBuilderComponentAndConnector}
 	\end{center}
 	
 	In this view it is possible to reason that
@@ -1109,7 +1109,7 @@
 	Consider the following view of the Adventure Builder system
 	
 	\begin{center}
-		\includegraphics[width=9.5cm]{AdventureBuilderComponentAndConnector}
+		\includegraphics[width=95mm]{AdventureBuilderComponentAndConnector}
 	\end{center}
 	
 	This view \textbf{does not} apply the architectural style
@@ -1476,7 +1476,7 @@
 	Consider the following figure that presents an architectural view of an \emph{Image Hosting Application} which resulted from the enrichment of another architectural view by adding another \emph{Image File Storage} pair, in the figure they are distinguished by 1 and 2. 
 	
 	\begin{center}
-		\includegraphics[width=10cm]{ScalablePartitioning}
+		\includegraphics[width=100mm]{ScalablePartitioning}
 	\end{center}
 	
 	Which quality results from this enrichment, that was not provided by the previous version of the architecture?
@@ -1494,7 +1494,7 @@
 	Consider the following figure that presents an architectural view of an \emph{Image Hosting Application}. 
 	
 	\begin{center}
-		\includegraphics[width=10cm]{ScalablePartitioning}
+		\includegraphics[width=100mm]{ScalablePartitioning}
 	\end{center}
 		
     \optionA{The number of Image Write Service components should be the same of the number Image Retrieval Service components}
@@ -1510,7 +1510,7 @@
 	Consider the following figure that presents an architectural view of an \emph{Image Hosting Application}. 
 	
 	\begin{center}
-		\includegraphics[width=10cm]{ScalablePartitioning}
+		\includegraphics[width=100mm]{ScalablePartitioning}
 	\end{center}
 	
 	The replication between the Image File Storage \emph{n} and Image File Storage \emph{nb}
@@ -1530,7 +1530,7 @@
 	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server.
 	
 	\begin{center}
-		\includegraphics[width=10cm]{Queues}
+		\includegraphics[width=100mm]{Queues}
 	\end{center}
 	
 	This solution \textbf{does not} provide the following quality:
@@ -1548,7 +1548,7 @@
 	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server (asynchronous) and compare with another architectural design (synchronous) where a thread is associated with each request.
 	
 	\begin{center}
-		\includegraphics[width=10cm]{Queues}
+		\includegraphics[width=100mm]{Queues}
 	\end{center}
 		
     \optionA{The synchronous solution requires less memory than asynchronous solution}
@@ -1564,7 +1564,7 @@
 	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server (asynchronous) and compare with another architectural design (synchronous) where a thread is associated with each request.
 	
 	\begin{center}
-		\includegraphics[width=10cm]{Queues}
+		\includegraphics[width=100mm]{Queues}
 	\end{center}
 	
 	Consider a situation where the server that processes the tasks crashes
