@@ -2,7 +2,14 @@ import glob, os, re, json, psycopg2, shutil
 from pathlib import Path
 
 dataPath = os.getcwd() + '/../data/**/*.tex'
-imagesPath = os.getcwd() + '/../tests_server/public/images/questions/'
+imagesPath = os.getcwd() + '/../node-api/public/images/questions/'
+DBNAME = 'tutordb'
+DBUSER = 'pedro'
+DBPASS = 'foobar123'
+
+
+
+
 
 # get tex files list
 def getTexFiles():
@@ -150,12 +157,11 @@ def extractImage(questionTex):
     result = []
 
     # match includegraphics
-    pattern = '\\\\includegraphics\[[\S]*?\]\{([\S]*?)\}'
+    pattern = '\\\\includegraphics\[width=(.*)mm\]\{([\S]*?)\}'
     match = re.search(pattern, questionTex)
 
     if match:
-        match = match.group(1)
-        result.append(match)
+        result.append({'image': match.group(2), 'width': match.group(1)})
 
     return result
 
@@ -217,12 +223,12 @@ def getImagePath(quizFile, imageList):
 
     if len(imageList) > 0:
         dirname = os.path.dirname(quizFile)
-        filename = imageList[0]
+        filename = imageList[0]['image']
         suffix = '.png'
 
         imagePath  = Path(dirname).joinpath(filename).with_suffix(suffix)
 
-        # .resolve() to eliminate /../
+        # TODO .resolve() to eliminate /../
 
         # some errors in finding some files (makes resolve not work)
         # - basically the files don't exist (not even as pdf in these directories)
@@ -236,14 +242,14 @@ def getImagePath(quizFile, imageList):
         except FileNotFoundError:
             print('error: ' + str(imagePath))
 
-        result.append(str(imagePath))
+        result.append({'image':str(imagePath), 'width': int(imageList[0]['width'])})
 
     return result
 
 def populateDB(quizes):
 
     try:
-        conn = psycopg2.connect("dbname='seGamification' user='pedro' host='localhost' password='foobar123'")
+        conn = psycopg2.connect("dbname='" + DBNAME + "' user='" + DBUSER + "' host='localhost' password='" + DBPASS + "'")
 
         cur = conn.cursor()
 
@@ -264,7 +270,7 @@ def populateDB(quizes):
 def insertQuiz(cur, quiz):
     quizTitle = quiz["quizTitle"]
     # insert quiz
-    cur.execute("INSERT INTO Quizes (Title) VALUES (%s) RETURNING *", [quizTitle])
+    cur.execute("INSERT INTO quizzes (title) VALUES (%s) RETURNING *", [quizTitle])
     quizId = cur.fetchone()[0]
 
     for question in quiz["questions"]:
@@ -277,17 +283,18 @@ def insertQuestion(cur, question, quizId):
     # insert question
     cur.execute("INSERT INTO questions (content) VALUES (%s) RETURNING *", [content])
     questionId = cur.fetchone()[0]
-    # insert quizhasquestions
-    cur.execute("INSERT INTO QuizHasQuestions (QuizID, QuestionID) VALUES (%s, %s)", [int(quizId), int(questionId)])
+    # insert quizhasquestion
+    cur.execute("INSERT INTO quiz_has_question (quiz_id, question_id) VALUES (%s, %s)", [int(quizId), int(questionId)])
 
     # image insertion
     if len(question["image"]) > 0:
-        imageAbsolutePath = question["image"][0]
+        imageAbsolutePath = question["image"][0]['image']
+        width = question["image"][0]['width']
         serverImageName = getServerImageName(questionId)
 
         # insert QuestionHasImage
-        # "INSERT INTO QuestionHasImage (QuestionID, Url) VALUES (1, '/images/placeholder.svg');"
-        cur.execute("INSERT INTO QuestionHasImage (QuestionID, Url) VALUES (%s, %s)", [int(questionId), serverImageName])
+        # "INSERT INTO QuestionHasImage (QuestionID, Url, Width) VALUES (1, '/images/placeholder.svg', 100);"
+        cur.execute("INSERT INTO images (question_id, url, width) VALUES (%s, %s, %s)", [int(questionId), serverImageName, width])
 
         # copy image from imageAbsolutePath to imagesServerPath + imageRelativePath
         copyImageToServer(questionId, imageAbsolutePath, serverImageName)
@@ -308,11 +315,11 @@ def copyImageToServer(questionId, imagePath, serverImageName):
     shutil.copy(imagePath, destination)
 
 def insertOptions(cur, options, questionId):
-    for option in options:
-      # insert answer
-      cur.execute("INSERT INTO Answers (QuestionID, Content) VALUES (%s, %s) RETURNING *", (int(questionId), option))
+    for i in range(len(options)):
+      # insert option
+      cur.execute("INSERT INTO options (question_id, option, content) VALUES (%s, %s, %s) RETURNING *", (int(questionId), i, options[i]))
       # not really needed
-      # answerId = cur.fetchone()[0]
+      # optionId = cur.fetchone()[0]
 
 def main():
 
@@ -327,13 +334,13 @@ def main():
     questionsDBs = parseQuestionFiles(questionFiles)
 
     outputQuizes = getQuizes(quizes, questionsDBs)
-    # outputing the data as a json
-    # encoding not working
-    # should also validate the encoding for the reads
-    # with open('data.json', 'w', encoding="iso-8859-15") as outfile:
-    #     json.dump(outputQuizes, outfile)
+    #outputing the data as a json
+    #encoding not working
+    #should also validate the encoding for the reads
+    with open('data.json', 'w', encoding="iso-8859-15") as outfile:
+        json.dump(outputQuizes, outfile, indent=4)
 
-    # print(outputQuizes)
+    #print(outputQuizes)
 
     populateDB(outputQuizes)
 

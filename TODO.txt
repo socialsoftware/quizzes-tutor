@@ -157,11 +157,11 @@ Question 1698
 --> database init and configuration of webapp db
 ---> !Remember to change database init scripts user and password
 ---> Software Engineering Game/SQL/CreateDB.sql and SQL/CreateUser.sql (don't remember order)
----> Software Engineering Game/tests_server/config/db.json (match user and password that was used on the database init scripts)
+---> Software Engineering Game/node-api/config/db.json (match user and password that was used on the database init scripts)
 ---> questions/python3 populateDB.py
 ----> required python3 modules glob, os, re, json, psycopg2, shutil, pathlib (most should be available)
 ----> run the command questions/python3 populateDB.py
----> Software Engineering Game/tests_server/npm start (can't recall if there is anything else that needs to be done so that it stays up)
+---> Software Engineering Game/node-api/npm start (can't recall if there is anything else that needs to be done so that it stays up)
 
 # NOTES
 -> answertime init scripts (not being setup correctly)
