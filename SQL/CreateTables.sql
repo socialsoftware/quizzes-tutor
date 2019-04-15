@@ -11,7 +11,10 @@ DROP TABLE IF EXISTS students CASCADE;
 CREATE TABLE quizzes (
     id SERIAL NOT NULL,
     title VARCHAR(255),
-    quiz_date TIMESTAMP,
+    year INT,
+    type VARCHAR(1), -- E exame or T test
+    series INT, -- Test 1, Test 2
+    version VARCHAR(1), -- A, B, C
     PRIMARY KEY (id)
 );
 
