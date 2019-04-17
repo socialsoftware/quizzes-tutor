@@ -168,16 +168,11 @@ def extractImage(questionTex):
 def extractOptions(questionTex):
     result = []
 
-    # findall options
-    # for all options extract option and append to result
-    # \\\\option[ABCD]\{([\s\S]*?)\}
-    # \\\\option ([\s\S]*?)(?=\\\\option)|\\\\option ([\s\S]*?)(?=\\\\end\{options\})
-    optionsTex = re.findall('\\\\option[ABCD]\{([\s\S]*?)\}|\\\\option ([\s\S]*?)(?=\\\\option)|\\\\option ([\s\S]*?)(?=\\\\end\{options\})', questionTex)
-    # for each node it should be merged
-    for optionTex in optionsTex:
-        option = optionTex[0] + optionTex[1] + optionTex[2]
-        result.append(option)
-
+    result += re.findall('\\\\optionA\{([\s\S]*?)\}\s*\\\\optionB', questionTex)
+    result += re.findall('\\\\optionB\{([\s\S]*?)\}\s*\\\\optionC', questionTex)
+    result += re.findall('\\\\optionC\{([\s\S]*?)\}\s*\\\\optionD', questionTex)
+    result += re.findall('\\\\optionD\{([\s\S]*?)\}\s*\\\\putOptions', questionTex)
+   
     return result
 
 def getQuizes(quizes, questionsDBs):
