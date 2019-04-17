@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>correctoptions</name>
+    <name>extract-correct-options</name>
     <description/>
     <extended_description/>
     <trans_version/>
@@ -513,11 +513,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Microsoft Excel input</from>
-      <to>Select values 5</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Merge join 3</from>
       <to>Select values 4</to>
       <enabled>Y</enabled>
@@ -573,11 +568,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Select values 4</from>
-      <to>Sort rows</to>
-      <enabled>N</enabled>
-    </hop>
-    <hop>
       <from>Sort rows</from>
       <to>Value mapper</to>
       <enabled>Y</enabled>
@@ -585,6 +575,16 @@
     <hop>
       <from>Value mapper</from>
       <to>Merge join 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 4</from>
+      <to>Sort rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Microsoft Excel input</from>
+      <to>Select values 5</to>
       <enabled>Y</enabled>
     </hop>
   </order>
