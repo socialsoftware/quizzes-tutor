@@ -1,6 +1,6 @@
 [
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2010/primeiro/exame-20110113-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2010/primeiro/exame-20110113-companion-en.tex",
         "quizTitle": "..-data-2010-primeiro-exame-20110113-companion-en",
         "questions": [
             {
@@ -226,7 +226,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2011/exam1/exame-20120109-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2011/exam1/exame-20120109-companion-en.tex",
         "quizTitle": "..-data-2011-exam1-exame-20120109-companion-en",
         "questions": [
             {
@@ -452,7 +452,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2011/exam2/exame-20120203-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2011/exam2/exame-20120203-companion-en.tex",
         "quizTitle": "..-data-2011-exam2-exame-20120203-companion-en",
         "questions": [
             {
@@ -678,7 +678,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2012/exam1/exame-20130109-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2012/exam1/exame-20130109-companion-en.tex",
         "quizTitle": "..-data-2012-exam1-exame-20130109-companion-en",
         "questions": [
             {
@@ -1014,7 +1014,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2012/exam2/exame-20130201-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2012/exam2/exame-20130201-companion-en.tex",
         "quizTitle": "..-data-2012-exam2-exame-20130201-companion-en",
         "questions": [
             {
@@ -1350,7 +1350,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2013/exam1/exame-20140110-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2013/exam1/exame-20140110-companion-en.tex",
         "quizTitle": "..-data-2013-exam1-exame-20140110-companion-en",
         "questions": [
             {
@@ -1686,7 +1686,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2013/exam2/exame-20140130-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2013/exam2/exame-20140130-companion-en.tex",
         "quizTitle": "..-data-2013-exam2-exame-20140130-companion-en",
         "questions": [
             {
@@ -2022,7 +2022,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2013/exam3/exame-20140715-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2013/exam3/exame-20140715-companion-en.tex",
         "quizTitle": "..-data-2013-exam3-exame-20140715-companion-en",
         "questions": [
             {
@@ -2358,7 +2358,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/exam/exam20150109/exame-20150109-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150109/exame-20150109-companion-A.tex",
         "quizTitle": "..-data-2014-exam-exam20150109-exame-20150109-companion-A",
         "questions": [
             {
@@ -2699,7 +2699,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/exam/exam20150109/exame-20150109-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150109/exame-20150109-companion-B.tex",
         "quizTitle": "..-data-2014-exam-exam20150109-exame-20150109-companion-B",
         "questions": [
             {
@@ -3040,7 +3040,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/exam/exam20150127/exame-20150127-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150127/exame-20150127-companion-A.tex",
         "quizTitle": "..-data-2014-exam-exam20150127-exame-20150127-companion-A",
         "questions": [
             {
@@ -3386,7 +3386,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/exam/exam20150127/exame-20150127-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150127/exame-20150127-companion-B.tex",
         "quizTitle": "..-data-2014-exam-exam20150127-exame-20150127-companion-B",
         "questions": [
             {
@@ -3732,7 +3732,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-1.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-1.tex",
         "quizTitle": "..-data-2014-test-1-test-1",
         "questions": [
             {
@@ -3958,7 +3958,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-11A-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-11A-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-11A-17co\u2560\u0411pias",
         "questions": [
             {
@@ -4019,7 +4019,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-11B-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-11B-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-11B-17co\u2560\u0411pias",
         "questions": [
             {
@@ -4080,7 +4080,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-12A-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-12A-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-12A-24co\u2560\u0411pias",
         "questions": [
             {
@@ -4141,7 +4141,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-12B-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-12B-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-12B-24co\u2560\u0411pias",
         "questions": [
             {
@@ -4202,7 +4202,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-13A-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-13A-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-13A-17co\u2560\u0411pias",
         "questions": [
             {
@@ -4263,7 +4263,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-13B-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-13B-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-13B-17co\u2560\u0411pias",
         "questions": [
             {
@@ -4324,7 +4324,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-14A-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-14A-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-14A-24co\u2560\u0411pias",
         "questions": [
             {
@@ -4385,7 +4385,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-1/test-14B-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-14B-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-14B-24co\u2560\u0411pias",
         "questions": [
             {
@@ -4446,7 +4446,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-2.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-2.tex",
         "quizTitle": "..-data-2014-test-2-test-2",
         "questions": [
             {
@@ -4672,7 +4672,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-21A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-21A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-21A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -4898,7 +4898,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-21B-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-21B-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-21B-18co\u2560\u0411pias",
         "questions": [
             {
@@ -5124,7 +5124,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-22A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-22A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-22A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -5350,7 +5350,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-22B-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-22B-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-22B-18co\u2560\u0411pias",
         "questions": [
             {
@@ -5576,7 +5576,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-23A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-23A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-23A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -5802,7 +5802,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-23B-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-23B-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-23B-18co\u2560\u0411pias",
         "questions": [
             {
@@ -6028,7 +6028,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-24A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-24A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-24A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -6254,7 +6254,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-2/test-24B-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-24B-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-24B-18co\u2560\u0411pias",
         "questions": [
             {
@@ -6480,7 +6480,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-3.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-3.tex",
         "quizTitle": "..-data-2014-test-3-test-3",
         "questions": [
             {
@@ -6684,7 +6684,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-31A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-31A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-31A-18copias",
         "questions": [
             {
@@ -6745,7 +6745,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-31B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-31B-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-31B-18copias",
         "questions": [
             {
@@ -6806,7 +6806,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-32A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-32A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-32A-18copias",
         "questions": [
             {
@@ -6867,7 +6867,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-32B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-32B-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-32B-18copias",
         "questions": [
             {
@@ -6928,7 +6928,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-33A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-33A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-33A-18copias",
         "questions": [
             {
@@ -6989,7 +6989,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-33B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-33B-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-33B-18copias",
         "questions": [
             {
@@ -7050,7 +7050,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-34A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-34A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-34A-18copias",
         "questions": [
             {
@@ -7111,7 +7111,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-3/test-34B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-34B-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-34B-18copias",
         "questions": [
             {
@@ -7172,7 +7172,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-4.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-4.tex",
         "quizTitle": "..-data-2014-test-4-test-4",
         "questions": [
             {
@@ -7398,7 +7398,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-41A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-41A-17copias.tex",
         "quizTitle": "..-data-2014-test-4-test-41A-17copias",
         "questions": [
             {
@@ -7459,7 +7459,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-41B-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-41B-17copias.tex",
         "quizTitle": "..-data-2014-test-4-test-41B-17copias",
         "questions": [
             {
@@ -7520,7 +7520,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-42A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-42A-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-42A-16copias",
         "questions": [
             {
@@ -7581,7 +7581,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-42B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-42B-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-42B-16copias",
         "questions": [
             {
@@ -7642,7 +7642,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-43A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-43A-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-43A-16copias",
         "questions": [
             {
@@ -7703,7 +7703,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-43B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-43B-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-43B-16copias",
         "questions": [
             {
@@ -7764,7 +7764,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-44A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-44A-18copias.tex",
         "quizTitle": "..-data-2014-test-4-test-44A-18copias",
         "questions": [
             {
@@ -7825,7 +7825,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-4/test-44B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-44B-18copias.tex",
         "quizTitle": "..-data-2014-test-4-test-44B-18copias",
         "questions": [
             {
@@ -7886,7 +7886,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-5.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-5.tex",
         "quizTitle": "..-data-2014-test-5-test-5",
         "questions": [
             {
@@ -8132,7 +8132,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-51A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-51A-17copias.tex",
         "quizTitle": "..-data-2014-test-5-test-51A-17copias",
         "questions": [
             {
@@ -8198,7 +8198,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-51B-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-51B-17copias.tex",
         "quizTitle": "..-data-2014-test-5-test-51B-17copias",
         "questions": [
             {
@@ -8264,7 +8264,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-52A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-52A-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-52A-16copias",
         "questions": [
             {
@@ -8330,7 +8330,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-52B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-52B-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-52B-16copias",
         "questions": [
             {
@@ -8396,7 +8396,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-53A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-53A-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-53A-16copias",
         "questions": [
             {
@@ -8462,7 +8462,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-53B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-53B-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-53B-16copias",
         "questions": [
             {
@@ -8528,7 +8528,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-54A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-54A-18copias.tex",
         "quizTitle": "..-data-2014-test-5-test-54A-18copias",
         "questions": [
             {
@@ -8594,7 +8594,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-5/test-54B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-54B-18copias.tex",
         "quizTitle": "..-data-2014-test-5-test-54B-18copias",
         "questions": [
             {
@@ -8660,7 +8660,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-6.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-6.tex",
         "quizTitle": "..-data-2014-test-6-test-6",
         "questions": [
             {
@@ -8926,7 +8926,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-61A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-61A-17copias.tex",
         "quizTitle": "..-data-2014-test-6-test-61A-17copias",
         "questions": [
             {
@@ -8997,7 +8997,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-61B-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-61B-17copias.tex",
         "quizTitle": "..-data-2014-test-6-test-61B-17copias",
         "questions": [
             {
@@ -9068,7 +9068,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-62A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-62A-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-62A-16copias",
         "questions": [
             {
@@ -9139,7 +9139,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-62B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-62B-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-62B-16copias",
         "questions": [
             {
@@ -9210,7 +9210,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-63A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-63A-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-63A-16copias",
         "questions": [
             {
@@ -9281,7 +9281,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-63B-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-63B-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-63B-16copias",
         "questions": [
             {
@@ -9352,7 +9352,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-64A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-64A-18copias.tex",
         "quizTitle": "..-data-2014-test-6-test-64A-18copias",
         "questions": [
             {
@@ -9423,7 +9423,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2014/test-6/test-64B-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-64B-18copias.tex",
         "quizTitle": "..-data-2014-test-6-test-64B-18copias",
         "questions": [
             {
@@ -9494,7 +9494,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/exams/20160108Exam/exame-20160108-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160108Exam/exame-20160108-companion-A.tex",
         "quizTitle": "..-data-2015-exams-20160108Exam-exame-20160108-companion-A",
         "questions": [
             {
@@ -9850,7 +9850,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/exams/20160108Exam/exame-20160108-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160108Exam/exame-20160108-companion-B.tex",
         "quizTitle": "..-data-2015-exams-20160108Exam-exame-20160108-companion-B",
         "questions": [
             {
@@ -10206,7 +10206,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/exams/20160126Exam/exame-20160126-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160126Exam/exame-20160126-companion-A.tex",
         "quizTitle": "..-data-2015-exams-20160126Exam-exame-20160126-companion-A",
         "questions": [
             {
@@ -10552,7 +10552,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/exams/20160126Exam/exame-20160126-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160126Exam/exame-20160126-companion-B.tex",
         "quizTitle": "..-data-2015-exams-20160126Exam-exame-20160126-companion-B",
         "questions": [
             {
@@ -10898,7 +10898,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/exams/20160711Exam/exame-20160711-companion.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160711Exam/exame-20160711-companion.tex",
         "quizTitle": "..-data-2015-exams-20160711Exam-exame-20160711-companion",
         "questions": [
             {
@@ -11254,7 +11254,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-11A.tex",
         "quizTitle": "..-data-2015-test-1-test-11A",
         "questions": [
             {
@@ -11320,7 +11320,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-11B.tex",
         "quizTitle": "..-data-2015-test-1-test-11B",
         "questions": [
             {
@@ -11386,7 +11386,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-12A.tex",
         "quizTitle": "..-data-2015-test-1-test-12A",
         "questions": [
             {
@@ -11452,7 +11452,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-12B.tex",
         "quizTitle": "..-data-2015-test-1-test-12B",
         "questions": [
             {
@@ -11518,7 +11518,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-13A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-13A.tex",
         "quizTitle": "..-data-2015-test-1-test-13A",
         "questions": [
             {
@@ -11584,7 +11584,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-1/test-13B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-13B.tex",
         "quizTitle": "..-data-2015-test-1-test-13B",
         "questions": [
             {
@@ -11650,7 +11650,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-21A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-21A.tex",
         "quizTitle": "..-data-2015-test-2-test-21A",
         "questions": [
             {
@@ -11711,7 +11711,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-21B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-21B.tex",
         "quizTitle": "..-data-2015-test-2-test-21B",
         "questions": [
             {
@@ -11772,7 +11772,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-22A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-22A.tex",
         "quizTitle": "..-data-2015-test-2-test-22A",
         "questions": [
             {
@@ -11833,7 +11833,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-22B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-22B.tex",
         "quizTitle": "..-data-2015-test-2-test-22B",
         "questions": [
             {
@@ -11894,7 +11894,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-23A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-23A.tex",
         "quizTitle": "..-data-2015-test-2-test-23A",
         "questions": [
             {
@@ -11955,7 +11955,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-2/test-23B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-23B.tex",
         "quizTitle": "..-data-2015-test-2-test-23B",
         "questions": [
             {
@@ -12016,7 +12016,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-31A.tex",
         "quizTitle": "..-data-2015-test-3-test-31A",
         "questions": [
             {
@@ -12077,7 +12077,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-31B.tex",
         "quizTitle": "..-data-2015-test-3-test-31B",
         "questions": [
             {
@@ -12138,7 +12138,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-32A.tex",
         "quizTitle": "..-data-2015-test-3-test-32A",
         "questions": [
             {
@@ -12199,7 +12199,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-32B.tex",
         "quizTitle": "..-data-2015-test-3-test-32B",
         "questions": [
             {
@@ -12260,7 +12260,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-33A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-33A.tex",
         "quizTitle": "..-data-2015-test-3-test-33A",
         "questions": [
             {
@@ -12326,7 +12326,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-3/test-33B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-33B.tex",
         "quizTitle": "..-data-2015-test-3-test-33B",
         "questions": [
             {
@@ -12392,7 +12392,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-41A.tex",
         "quizTitle": "..-data-2015-test-4-test-41A",
         "questions": [
             {
@@ -12463,7 +12463,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-41B.tex",
         "quizTitle": "..-data-2015-test-4-test-41B",
         "questions": [
             {
@@ -12534,7 +12534,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-42A.tex",
         "quizTitle": "..-data-2015-test-4-test-42A",
         "questions": [
             {
@@ -12605,7 +12605,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-42B.tex",
         "quizTitle": "..-data-2015-test-4-test-42B",
         "questions": [
             {
@@ -12676,7 +12676,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-43A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-43A.tex",
         "quizTitle": "..-data-2015-test-4-test-43A",
         "questions": [
             {
@@ -12747,7 +12747,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2015/test-4/test-43B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-43B.tex",
         "quizTitle": "..-data-2015-test-4-test-43B",
         "questions": [
             {
@@ -12818,7 +12818,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/20170113Exam/exame-20170113-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170113Exam/exame-20170113-companion-A.tex",
         "quizTitle": "..-data-2016-20170113Exam-exame-20170113-companion-A",
         "questions": [
             {
@@ -13169,7 +13169,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/20170113Exam/exame-20170113-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170113Exam/exame-20170113-companion-B.tex",
         "quizTitle": "..-data-2016-20170113Exam-exame-20170113-companion-B",
         "questions": [
             {
@@ -13520,7 +13520,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/20170131Exam/exame-20170131-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170131Exam/exame-20170131-companion-A.tex",
         "quizTitle": "..-data-2016-20170131Exam-exame-20170131-companion-A",
         "questions": [
             {
@@ -13871,7 +13871,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/20170131Exam/exame-20170131-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170131Exam/exame-20170131-companion-B.tex",
         "quizTitle": "..-data-2016-20170131Exam-exame-20170131-companion-B",
         "questions": [
             {
@@ -14222,7 +14222,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-11A.tex",
         "quizTitle": "..-data-2016-test-1-test-11A",
         "questions": [
             {
@@ -14293,7 +14293,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-11B.tex",
         "quizTitle": "..-data-2016-test-1-test-11B",
         "questions": [
             {
@@ -14364,7 +14364,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-12A.tex",
         "quizTitle": "..-data-2016-test-1-test-12A",
         "questions": [
             {
@@ -14430,7 +14430,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-12B.tex",
         "quizTitle": "..-data-2016-test-1-test-12B",
         "questions": [
             {
@@ -14496,7 +14496,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-2/test-21A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-21A.tex",
         "quizTitle": "..-data-2016-test-2-test-21A",
         "questions": [
             {
@@ -14557,7 +14557,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-2/test-21B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-21B.tex",
         "quizTitle": "..-data-2016-test-2-test-21B",
         "questions": [
             {
@@ -14618,7 +14618,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-2/test-22A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-22A.tex",
         "quizTitle": "..-data-2016-test-2-test-22A",
         "questions": [
             {
@@ -14679,7 +14679,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-2/test-22B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-22B.tex",
         "quizTitle": "..-data-2016-test-2-test-22B",
         "questions": [
             {
@@ -14740,7 +14740,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-31A.tex",
         "quizTitle": "..-data-2016-test-3-test-31A",
         "questions": [
             {
@@ -14806,7 +14806,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-31B.tex",
         "quizTitle": "..-data-2016-test-3-test-31B",
         "questions": [
             {
@@ -14872,7 +14872,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-32A.tex",
         "quizTitle": "..-data-2016-test-3-test-32A",
         "questions": [
             {
@@ -14938,7 +14938,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-32B.tex",
         "quizTitle": "..-data-2016-test-3-test-32B",
         "questions": [
             {
@@ -15004,7 +15004,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-41A.tex",
         "quizTitle": "..-data-2016-test-4-test-41A",
         "questions": [
             {
@@ -15070,7 +15070,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-41B.tex",
         "quizTitle": "..-data-2016-test-4-test-41B",
         "questions": [
             {
@@ -15136,7 +15136,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-42A.tex",
         "quizTitle": "..-data-2016-test-4-test-42A",
         "questions": [
             {
@@ -15202,7 +15202,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2016/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-42B.tex",
         "quizTitle": "..-data-2016-test-4-test-42B",
         "questions": [
             {
@@ -15268,7 +15268,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/20180112-Exam/exame-20180112-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180112-Exam/exame-20180112-companion-A.tex",
         "quizTitle": "..-data-2017-20180112-Exam-exame-20180112-companion-A",
         "questions": [
             {
@@ -15509,7 +15509,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/20180112-Exam/exame-20180112-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180112-Exam/exame-20180112-companion-B.tex",
         "quizTitle": "..-data-2017-20180112-Exam-exame-20180112-companion-B",
         "questions": [
             {
@@ -15750,7 +15750,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/20180130-Exam/exame-20180130-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180130-Exam/exame-20180130-companion-A.tex",
         "quizTitle": "..-data-2017-20180130-Exam-exame-20180130-companion-A",
         "questions": [
             {
@@ -16006,7 +16006,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/20180130-Exam/exame-20180130-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180130-Exam/exame-20180130-companion-B.tex",
         "quizTitle": "..-data-2017-20180130-Exam-exame-20180130-companion-B",
         "questions": [
             {
@@ -16262,7 +16262,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-11A.tex",
         "quizTitle": "..-data-2017-test-1-test-11A",
         "questions": [
             {
@@ -16333,7 +16333,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-11B.tex",
         "quizTitle": "..-data-2017-test-1-test-11B",
         "questions": [
             {
@@ -16404,7 +16404,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-12A.tex",
         "quizTitle": "..-data-2017-test-1-test-12A",
         "questions": [
             {
@@ -16475,7 +16475,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-12B.tex",
         "quizTitle": "..-data-2017-test-1-test-12B",
         "questions": [
             {
@@ -16546,7 +16546,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-13A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-13A.tex",
         "quizTitle": "..-data-2017-test-1-test-13A",
         "questions": [
             {
@@ -16617,7 +16617,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-1/test-13B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-13B.tex",
         "quizTitle": "..-data-2017-test-1-test-13B",
         "questions": [
             {
@@ -16688,7 +16688,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-21-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-21-A.tex",
         "quizTitle": "..-data-2017-test-2-test-21-A",
         "questions": [
             {
@@ -16749,7 +16749,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-21-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-21-B.tex",
         "quizTitle": "..-data-2017-test-2-test-21-B",
         "questions": [
             {
@@ -16810,7 +16810,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-22-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-22-A.tex",
         "quizTitle": "..-data-2017-test-2-test-22-A",
         "questions": [
             {
@@ -16871,7 +16871,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-22-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-22-B.tex",
         "quizTitle": "..-data-2017-test-2-test-22-B",
         "questions": [
             {
@@ -16932,7 +16932,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-23-A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-23-A.tex",
         "quizTitle": "..-data-2017-test-2-test-23-A",
         "questions": [
             {
@@ -16993,7 +16993,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-2/test-23-B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-23-B.tex",
         "quizTitle": "..-data-2017-test-2-test-23-B",
         "questions": [
             {
@@ -17054,7 +17054,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-31A.tex",
         "quizTitle": "..-data-2017-test-3-test-31A",
         "questions": [
             {
@@ -17125,7 +17125,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-31B.tex",
         "quizTitle": "..-data-2017-test-3-test-31B",
         "questions": [
             {
@@ -17196,7 +17196,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-32A.tex",
         "quizTitle": "..-data-2017-test-3-test-32A",
         "questions": [
             {
@@ -17267,7 +17267,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-32B.tex",
         "quizTitle": "..-data-2017-test-3-test-32B",
         "questions": [
             {
@@ -17338,7 +17338,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-33A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-33A.tex",
         "quizTitle": "..-data-2017-test-3-test-33A",
         "questions": [
             {
@@ -17409,7 +17409,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-3/test-33B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-33B.tex",
         "quizTitle": "..-data-2017-test-3-test-33B",
         "questions": [
             {
@@ -17480,7 +17480,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-41A.tex",
         "quizTitle": "..-data-2017-test-4-test-41A",
         "questions": [
             {
@@ -17551,7 +17551,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-41B.tex",
         "quizTitle": "..-data-2017-test-4-test-41B",
         "questions": [
             {
@@ -17622,7 +17622,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-42A.tex",
         "quizTitle": "..-data-2017-test-4-test-42A",
         "questions": [
             {
@@ -17693,7 +17693,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-42B.tex",
         "quizTitle": "..-data-2017-test-4-test-42B",
         "questions": [
             {
@@ -17764,7 +17764,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-43A.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-43A.tex",
         "quizTitle": "..-data-2017-test-4-test-43A",
         "questions": [
             {
@@ -17835,7 +17835,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2017/test-4/test-43B.tex",
+        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-43B.tex",
         "quizTitle": "..-data-2017-test-4-test-43B",
         "questions": [
             {

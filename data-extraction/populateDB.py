@@ -109,6 +109,7 @@ def extractQuestions(questionsTex):
 def extractQuestion(questionTex):
     result = {"questionId": "", "content": "", "image": [], "options": []}
 
+
     # get question id
     # should append the question file somehow?
     result["questionId"] = extractQuestionId(questionTex)
@@ -130,7 +131,7 @@ def extractQuestionId(questionTex):
     if match:
         result = match.group(1)
 
-    return result
+    return result.strip()
 
 def extractContent(questionTex):
     result = ''
@@ -151,7 +152,7 @@ def extractContent(questionTex):
         elif match2:
             result = match2
 
-    return result
+    return result.strip()
 
 def extractImage(questionTex):
     result = []
@@ -205,7 +206,7 @@ def getQuestion(quizFile, questionId, questionsDB):
     result = {}
 
     for question in questionsDB["questions"]:
-        if(question["questionId"] == questionId):
+        if(question["questionId"].strip() == questionId.strip()):
             result = question
             # get the actual path for the image file
             result["image"] = getImagePath(quizFile, question["image"])
@@ -245,13 +246,11 @@ def populateDB(quizes):
 
     try:
         conn = psycopg2.connect("dbname='" + DBNAME + "' user='" + DBUSER + "' host='localhost' password='" + DBPASS + "'")
-
         cur = conn.cursor()
 
         # quiz = {"quizFile": quiz["quizFile"], "quizTitle": quiz["quizTitle"], "questions": []}
         for quiz in quizes:
             insertQuiz(cur, quiz)
-
         # Make the changes to the database persistent
         conn.commit()
 
@@ -265,18 +264,19 @@ def populateDB(quizes):
 def insertQuiz(cur, quiz):
     quizTitle = quiz["quizTitle"]
     # insert quiz
+
     cur.execute("INSERT INTO quizzes (title) VALUES (%s) RETURNING *", [quizTitle])
     quizId = cur.fetchone()[0]
 
     for question in quiz["questions"]:
-      questionId = insertQuestion(cur, question, quizId)
-      insertOptions(cur, question["options"], questionId)
+        questionId = insertQuestion(cur, question, quizId)
+        insertOptions(cur, question["options"], questionId)
+      
 
 def insertQuestion(cur, question, quizId):
     # question = {"questionId": "", "content": "", "image": [], "options": []}
-    content = question["content"]
     # insert question
-    cur.execute("INSERT INTO questions (content) VALUES (%s) RETURNING *", [content])
+    cur.execute("INSERT INTO questions (content, name) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
     cur.execute("INSERT INTO quiz_has_question (quiz_id, question_id) VALUES (%s, %s)", [int(quizId), int(questionId)])

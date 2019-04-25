@@ -642,7 +642,7 @@
         <value>
           <name>constant</name>
           <type>Number</type>
-          <text>5.0</text>
+          <text>2.0</text>
           <length>-1</length>
           <precision>-1</precision>
           <isnull>N</isnull>
