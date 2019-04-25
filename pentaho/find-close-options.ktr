@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>find-equal-options</name>
+    <name>find-close-options</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
+    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -574,11 +575,6 @@
     </hop>
     <hop>
       <from>Sort rows 5</from>
-      <to>Microsoft Excel output</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows 5</from>
       <to>JSON output</to>
       <enabled>Y</enabled>
     </hop>
@@ -696,23 +692,44 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Sort rows 5</send_true_to>
+    <send_true_to>Sort rows 6</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
         <negated>N</negated>
-        <leftvalue>m1</leftvalue>
-        <function>&lt;</function>
-        <rightvalue/>
-        <value>
-          <name>constant</name>
-          <type>Number</type>
-          <text>10.0</text>
-          <length>-1</length>
-          <precision>-1</precision>
-          <isnull>N</isnull>
-          <mask>####0.0#########;-####0.0#########</mask>
-        </value>
+        <conditions>
+          <condition>
+            <negated>N</negated>
+            <leftvalue>m1</leftvalue>
+            <function>&gt;</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>Number</type>
+              <text>10.0</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask>####0.0#########;-####0.0#########</mask>
+            </value>
+          </condition>
+          <condition>
+            <negated>N</negated>
+            <operator>AND</operator>
+            <leftvalue>m1</leftvalue>
+            <function>&lt;</function>
+            <rightvalue/>
+            <value>
+              <name>constant</name>
+              <type>Number</type>
+              <text>100.0</text>
+              <length>-1</length>
+              <precision>-1</precision>
+              <isnull>N</isnull>
+              <mask>####0.0#########;-####0.0#########</mask>
+            </value>
+          </condition>
+        </conditions>
       </condition>
     </compare>
     <attributes/>
@@ -871,7 +888,7 @@
     <defaultPathLeafToNull>Y</defaultPathLeafToNull>
     <rownum_field/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/equal-questions.js</name>
+      <name>/home/pedro/as-tutor/pentaho/close-questions.js</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -989,7 +1006,7 @@
     <encoding>UTF-8</encoding>
     <addtoresult>N</addtoresult>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/equal-options</name>
+      <name>/home/pedro/as-tutor/pentaho/close-options</name>
       <extention>js</extention>
       <append>N</append>
       <split>N</split>
@@ -1010,14 +1027,6 @@
         <element>id2</element>
       </field>
       <field>
-        <name>group1</name>
-        <element>group1</element>
-      </field>
-      <field>
-        <name>group2</name>
-        <element>group2</element>
-      </field>
-      <field>
         <name>m1</name>
         <element>m1</element>
       </field>
@@ -1031,8 +1040,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>240</yloc>
+      <xloc>512</xloc>
+      <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1105,104 +1114,6 @@
     </GUI>
   </step>
   <step>
-    <name>Microsoft Excel output</name>
-    <type>ExcelOutput</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <header>Y</header>
-    <footer>N</footer>
-    <encoding/>
-    <append>N</append>
-    <add_to_result_filenames>Y</add_to_result_filenames>
-    <file>
-      <name>/home/pedro/as-tutor/pentaho/equal-options</name>
-      <extention>xls</extention>
-      <do_not_open_newfile_init>N</do_not_open_newfile_init>
-      <create_parent_folder>N</create_parent_folder>
-      <split>N</split>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <SpecifyFormat>N</SpecifyFormat>
-      <date_time_format/>
-      <sheetname>Sheet1</sheetname>
-      <autosizecolums>N</autosizecolums>
-      <nullisblank>N</nullisblank>
-      <protect_sheet>N</protect_sheet>
-      <password>Encrypted </password>
-      <splitevery>0</splitevery>
-      <usetempfiles>N</usetempfiles>
-      <tempdirectory/>
-    </file>
-    <template>
-      <enabled>N</enabled>
-      <append>N</append>
-      <filename>template.xls</filename>
-    </template>
-    <fields>
-      <field>
-        <name>id1</name>
-        <type>Integer</type>
-        <format/>
-      </field>
-      <field>
-        <name>id2</name>
-        <type>Integer</type>
-        <format/>
-      </field>
-      <field>
-        <name>group1</name>
-        <type>String</type>
-        <format/>
-      </field>
-      <field>
-        <name>group2</name>
-        <type>String</type>
-        <format/>
-      </field>
-      <field>
-        <name>m1</name>
-        <type>Number</type>
-        <format/>
-      </field>
-    </fields>
-    <custom>
-      <header_font_name>arial</header_font_name>
-      <header_font_size>10</header_font_size>
-      <header_font_bold>N</header_font_bold>
-      <header_font_italic>N</header_font_italic>
-      <header_font_underline>no</header_font_underline>
-      <header_font_orientation>horizontal</header_font_orientation>
-      <header_font_color>black</header_font_color>
-      <header_background_color>none</header_background_color>
-      <header_row_height>255</header_row_height>
-      <header_alignment>left</header_alignment>
-      <header_image/>
-      <row_font_name>arial</row_font_name>
-      <row_font_size>10</row_font_size>
-      <row_font_color>black</row_font_color>
-      <row_background_color>none</row_background_color>
-    </custom>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>608</xloc>
-      <yloc>384</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Replace in string</name>
     <type>ReplaceString</type>
     <description/>
@@ -1255,7 +1166,6 @@
     <fields>
       <field>
         <name>id2</name>
-        <rename/>
       </field>
       <field>
         <name>id</name>
@@ -1338,15 +1248,12 @@
       </field>
       <field>
         <name>id2</name>
-        <rename/>
       </field>
       <field>
         <name>id1</name>
-        <rename/>
       </field>
       <field>
         <name>sim</name>
-        <rename/>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
