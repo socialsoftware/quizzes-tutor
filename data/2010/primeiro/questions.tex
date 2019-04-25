@@ -1,14 +1,14 @@
 
 {\Large 
 
-  \textbf{Atenção:} Nas perguntas que se seguem existem excertos de
-  texto que foram obtidos directamente de fontes disponíveis na
-  Internet (como a Wikipedia, por exemplo), sem alteração da
-  terminologia usada para a adaptar à usada na cadeira.  Por isso,
-  \textbf{pode acontecer que a terminologia usada nesses excertos de
-    texto seja diferente da usada na cadeira.  Por exemplo, o uso de
-    \emph{component} para referir outro tipo de elemento de software.
-    Tenha isso em linha de conta nas suas respostas.}
+  \textbf {Warning:} In the questions that follow there are pieces of
+  text that were obtained directly from available sources in the
+  Internet (such as Wikipedia, for example), without changing the
+  terminology used to adapt it to that used in this course. Therefore,
+  \textbf {it may happen that the terminology used in those pieces of
+    text is different from that used in the course. For example, the
+    use of \emph{component} to refer to other types of software
+    elements.  Please take this into account in your responses.}
 
 }
 
@@ -17,19 +17,20 @@
 %1
 \newcommand{\qVistasDesempenho}{
 \begin{ClosedQuestion}
-  Suponha que existem determinados requisitos de desempenho para um
-  sistema, e que pretende mostrar aos stakeholders desse sistema que a
-  arquitectura de software que concebeu satisfaz esses requisitos.
-  Para isso
+  Suppose that there are certain performance requirements for a
+  system, and that you want to show to the stakeholders of the system
+  that the software architecture that you designed meet those
+  requirements.  To do this
 
-    \optionA{Não faz sentido usar vistas do tipo de vista módulo, uma
-    vez que estas apenas descrevem o sistema do ponto de vista estático}
-    \optionB{Deve-se usar exclusivamente vistas do tipo de vista
-    componente-e-conector, que descrevem os aspectos dinâmicos do sistema}
-    \optionC{Pode ser necessário usar vistas dos três tipos de vistas}
-    \optionD{As únicas vistas que são relevantes para aspectos de
-    desempenho são vistas do estilo instalação (\emph{deployment})}
- \putOptions
+  \optionA{It makes no sense to use views of the module viewtype, as
+    they give only a static view of the system}
+  \optionB{You should use only views of the component-and-connector
+    viewtype, which describe the dynamic aspects of the system}
+   \optionC{You may need to use views of the three viewtypes}
+   \optionD{The only views that are relevant to performance
+     requirements are views of the Deployment style}}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -37,24 +38,24 @@
 %2
 \newcommand{\qAtrQualNegocio}{
 \begin{ClosedQuestion}
-  Existem outros factores que afectam o desenvolvimento de um sistema
-  de software, para além dos seus requisitos funcionais e de atributos
-  de qualidade.  Por exemplo, factores como o orçamento ou o tempo
-  disponível.  Estes factores
+  There are other factors that affect the development of a software
+  system, besides its functional requirements and quality attributes.
+  For example, factors such as budget or available time.  These factors
 
-    \optionA{Influenciam o processo de desenvolvimento de software e a
-    gestão do mesmo, mas não a arquitectura de software do sistema a
-    desenvolver}
-    \optionB{Devem ser capturados através de cenários, tais como os
-    requisitos de atributos de qualidade, e ser tidos em conta no
-    desenho da arquitectura de software}
-    \optionC{São importantes para determinar a viabilidade do sistema,
-    mas uma vez que se chegue à conclusão de que o sistema pode ser
-    desenvolvido com essas restrições, a arquitectura de software já
-    não depende destes factores}
-    \optionD{Não são uma das influências da arquitectura de software no
-    ciclo de negócio da arquitectura}
- \putOptions
+    \optionA{Influence the software development process and its
+   management, but not the software architecture of the system under
+   development}
+    \optionB{Should be captured in scenarios, as the requirements for
+   quality attributes, and be taken into account in the design of the
+   software architecture}
+    \optionC{Are important to determine the feasibility of the system,
+   but once we reach the conclusion that the system can be developed
+   with these restrictions, software architecture no longer depends on
+   these factors}
+    \optionD{Are not one of the influences of the software architecture
+   in the Architecture Business Cycle}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -62,26 +63,25 @@
 %3
 \newcommand{\qReutilizar}{
 \begin{ClosedQuestion}
-  Suponha que vai desenvolver um novo sistema de software e que
-  pretende que uma parte da funcionalidade deste novo sistema possa
-  ser facilmente reutilizada em sistemas a desenvolver no futuro.
-  Quais dos seguintes estilos arquitecturais são mais adequados para
-  mostrar que a arquitectura do sistema satisfaz este requisito.
+  Suppose that you are developing a new software system and that you
+  want some part of the system's functionality to be easily reusable
+  in future systems.  Which of the following architectural styles are
+  more suitable to show that the system architecture meets this
+  requirement.
+  
+    \optionA{The \emph{decomposition} and \emph{uses} styles, which
+    allow us to show how dependent a certain module is of other parts
+    of the system}
+    \optionB{The \emph{implementation} style, which allows us to know
+    where are the artifacts that implement a certain module}
+    \optionC{The \emph{layers} style, which allows us to show that the
+    structure of our system is composed of various modules that may be
+    easily reused in other systems}
+    \optionD{The \emph{client-server} and \emph{deployment} styles,
+    which allow us to isolate the required functionality in a
+    component that executes autonomously and, thus, reusable in other systems}
 
-    \optionA{Os estilos decomposição (\emph{decomposition}) e
-    utilização (\emph{uses}), que nos permitem mostrar até que ponto
-    um determinado módulo depende de outras partes do sistema}
-    \optionB{O estilo implementação (\emph{implementation}), que nos
-    permite saber onde estão os artefactos que implementam um
-    determinado módulo}
-    \optionC{O estilo camadas (\emph{layers}), que nos permite mostrar
-    que a estrutura do nosso sistema é composta por vários módulos que
-    podem ser facilmente reutilizados noutros sistemas}
-    \optionD{Os estilos cliente-servidor (\emph{client-server}) e
-    instalação (\emph{deployment}), que nos permitem isolar a
-    funcionalidade pretendida num componente que executa autonomamente
-    e, portanto, reutilizável noutros sistemas}
- \putOptions
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -89,22 +89,23 @@
 %4
 \newcommand{\qTresTiposVista}{
 \begin{ClosedQuestion}
-  De acordo com o modelo do SEI, existem três tipos diferentes de
-  vistas arquitecturais que são normalmente necessárias para descrever
-  completamente uma arquitectura de software.
+  According to the SEI model, there are three different architectural
+  viewtypes that are usually necessary to describe completely a
+  software architecture.
 
-    \optionA{Estes três tipos de vistas complementam-se, mas são
-    completamente independentes entre si, mostrando aspectos
-    diferentes de um sistema que não se relacionam de nenhuma forma}
-    \optionB{Os tipos de vista módulo e componente-e-conector
-    são independentes entre si, mas o tipo de vista afectação depende
-    dos dois primeiros}
-    \optionC{Cada tipo de vista utiliza elementos de software
-    diferentes, como módulos ou componentes, pelo que não faz sentido
-    falar em relações entre estes tipos de vistas}
-    \optionD{Apesar de cada tipo de vista apresentar aspectos
-    diferentes de um sistema, existem relações entre todos eles}
- \putOptions
+    \optionA{Those three viewtypes complement each other, but they are
+    completely independent, showing different aspects that have no
+    relation among them}
+    \optionB{The module and component-and-connector viewtypes are
+    independent of one another, but the allocation viewtype depends on
+    the first two}
+    \optionC{Each viewtype uses different software elements, such as
+    modules or components, so it does not make sense to talk about
+    relationships among these viewtypes}
+    \optionD{Even though each viewtype addresses different aspects of a
+    system, there are relationships among all of them}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -112,17 +113,16 @@
 %5
 \newcommand{\qModificabilidadeCamadas}{
 \begin{ClosedQuestion}
-  Numa arquitectura de camadas composta por quatro camadas, em que a
-  camada mais de cima é a camada número 1 e a de mais de baixo é a
-  camada número 4, qual das camadas é mais facilmente modificável?
+  In a layered architecture composed by four layers, where the topmost
+  layer is the layer number 1 and the bottommost layer is the layer
+  number 4, which of the layers is more modifiable?
 
-    \optionA{A camada 1}
-    \optionB{A camada 4}
-    \optionC{Numa arquitectura de camadas, qualquer camada é igualmente
-    modificável}
-    \optionD{A facilidade de modificação não é particularmente
-    facilitada por uma arquitectura de camadas}
- \putOptions
+    \optionA{Layer 1}
+    \optionB{Layer 4}
+    \optionC{In a layered architecture all layers are equally modifiable}
+    \optionD{Modifiability is not made easier by a layered architecture}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -130,22 +130,22 @@
 %6
 \newcommand{\qUtilidadeArquitectura}{
 \begin{ClosedQuestion}
-  O desenho da arquitectura de software de um sistema complexo
+  Designing the software architecture for a complex system
 
-    \optionA{Só é útil se for feito (ainda que apenas parcialmente)
-    antes de a implementação do sistema ter sido concluída, visto que
-    a arquitectura serve para restringir a implementação}
-    \optionB{Só é útil se for feito (ainda que apenas parcialmente)
-    antes de a implementação do sistema ter sido concluída, porque
-    se o sistema já está implementado, a sua implementação determina
-    univocamente a arquitectura do sistema}
-    \optionC{Só é útil se for feito (ainda que apenas parcialmente)
-    antes de o sistema passar todos os testes de aceitação por parte
-    do cliente, altura a partir da qual não vão existir mais
-    alterações de requisitos}
-    \optionD{É útil mesmo que a implementação já tenha sido concluída e
-    o sistema tenha entrado na fase de manutenção}
- \putOptions
+    \optionA{Is useful only if done (even if only partially) before the
+    system's implementation is concluded, given that the architecture
+    is used for restricting the implementation}
+    \optionB{Is useful only if done (even if only partially) before the 
+    system's implementation is concluded, because if the system is
+    already implemented, its implementation uniquely determines the
+    architecture}
+    \optionC{Is useful only if done (even if only partially) before the 
+    system passes all of the acceptance tests by the client, given
+    that no more requirements changes will take place after that time}
+    \optionD{Is useful even if the implementation is concluded and the
+    system has entered the maintenance phase}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -153,26 +153,28 @@
 %7
 \newcommand{\qArchitecturalDrivers}{
 \begin{ClosedQuestion}
-  Os requisitos para sistemas complexos são normalmente muito
-  numerosos e conflituosos entre si, tornando impossível satisfazer
-  todos os requisitos completamente numa implementação do sistema.
-  Por isso, o processo recomendado para se fazer o desenho da
-  arquitectura de software de um sistema passa pela identificação dos
-  \emph{architectural drivers}, que irão moldar o desenho da
-  arquitectura.  Estes \emph{architectural drivers} devem ser
-  escolhidos de forma a que sejam
+  The requirements for complex systems are usually very numerous and
+  conflicting among them, making it impossible to satisfy all the
+  requirements in a given implementation of the system.  Therefore,
+  the recommended process for making the design of a software
+  architecture involves the identification of the \emph{architectural
+    drivers} that will shape the design of architecture.  These
+  \emph{architectural drivers} should be chosen so that they are
 
-    \optionA{Um subconjunto dos requisitos que não entram em conflito
-    entre si e que correspondam aos objectivos de negócio mais importantes}
-    \optionB{Um subconjunto dos requisitos que mais entram em conflito e
-    para os quais é preciso encontrar compromissos cedo no processo de desenho}
-    \optionC{Um subconjunto dos requisitos que correspondam aos
-    objectivos de negócio mais importantes, independentemente de
-    entrarem em conflito entre si}
-    \optionD{Um subconjunto dos requisitos que é escolhido
-    exclusivamente pelo arquitecto tendo em conta a sua influência na
-    arquitectura do sistema}
- \putOptions
+    \optionA{A subset of the requirements that do not have conflicts
+     among them and that correspond to the most important business
+     goals}
+     \optionB{A subset of the requirements that have many conflicts
+     among them and for which you need to find tradeoffs  early in the
+     design process}
+     \optionC{A subset of the requirements that correspond to the 
+     most important business goals, regardless of whether they have
+     conflicts among them or not}
+    \optionD{A subset of the requirements that is chosen
+     exclusively by the architect by taking into account their
+     influence on the system's architecture}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -180,32 +182,32 @@
 %8
 \newcommand{\qArqEmailMTA}{
 \begin{ClosedQuestion}
-  O sistema de email é composto por vários tipos de componentes
- que desempenham diferentes funções.  Por exemplo, para
-  enviar um email, um utilizador pode utilizar um programa como o
-  Microsoft Outlook ou o Mozilla Thunderbird, genericamente designado
-  por \emph{mail user agent} (MUA), para compor a sua mensagem e
-  enviá-la.  Para enviar a mensagem, tipicamente o MUA liga-se a um
-  \emph{mail transfer agent} (MTA), que recebe a mensagem, analisa os
-  cabeçalhos da mesma para determinar os vários destinatários e, após
-  consulta do sistema DNS para determinar quais os MTA responsáveis
-  por cada um dos destinatários, liga-se aos MTAs responsáveis pelos
-  endereços de destino para entregar a mensagem.  Cada um desses MTAs
-  recebe a mensagem e armazena-a localmente ou reenvia-a para outros
-  MTAs (por exemplo, quando existem \emph{forwards} ou \emph{aliases}
-  configurados, ou quando o MTA que recebe a mensagem não é o
-  responsável final pelo endereço de email do destinatário).
+  The email system is composed of various types of components playing
+  different roles.  For example, to send an email, a user can use a
+  program such as Microsoft Outlook or Mozilla Thunderbird,
+  generically designed a \emph{mail user agent} (MUA), to compose his
+  message and send it.  To send the message, the MUA typically
+  connects to a \emph{mail transfer agent} (MTA) that receives the
+  message, analyzes the message's headers to determine the recipients
+  and, after querying the DNS system to determine the MTA responsible
+  for each recipient, it connects to the MTAs responsible for the
+  destination addresses to deliver the message.  Each of these MTAs
+  receives the message and stores it locally or forwards it to others
+  MTAs (for example, when there are forwards or aliases configured, or
+  when the MTA that receives the message is not the ultimately
+  responsible for the email address of the recipient).
 
- Tendo em conta esta descrição simplificada do funcionamento do
-  sistema de email, qual dos seguintes estilos arquitecturais lhe
-  parece mais adequado para representar o padrão de interacção
-  existente entre os MTAs?
+  Given this simplified description of the operation of the email
+  system, which of the following architectural styles is more
+  appropriate to represent the pattern of interaction between the
+  MTAs?
 
-    \optionA{O estilo Par-a-Par (\emph{Peer-to-Peer})}
-    \optionB{O estilo Dados Partilhados (\emph{Shared data})}
-    \optionC{O estilo Cliente-Servidor (\emph{Client-Server})}
-    \optionD{O estilo Publicação-Subscrição (\emph{Publish-subscribe})}
- \putOptions
+    \optionA{The \emph{Peer-to-Peer} style}
+    \optionB{The \emph{Shared data} style}
+    \optionC{The \emph{Client-Server} style}
+    \optionD{The \emph{Publish-subscribe} style}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -213,27 +215,27 @@
 %9
 \newcommand{\qArqEmailIMAP}{
 \begin{ClosedQuestion}
-  Considerando ainda o exemplo do sistema de email, os MUAs servem não
-  só para compor e enviar mensagens, mas também para os utilizadores
-  lerem as mensagens de email que lhe foram enviadas.  Para isso os
-  MUAs têm que obter essas mensagens do componente que as armazena
-  para as mostrar ao utilizador.  Duas formas diferentes de o fazer é
-  usando os protocolos POP e IMAP.  No primeiro caso, as mensagens são
-  movidas do servidor de POP para o computador do utilizador.  No
-  segundo caso, as mensagens continuam armazenadas no servidor de
-  IMAP, permitindo assim que o utilizador possa aceder ao seu email a
-  partir de computadores diferentes, desde que todos eles se consigam
-  ligar ao mesmo servidor de IMAP.
+  Considering yet the example of the email system, MUAs are used not
+  only to compose and to send messages, but also for users to read the
+  email messages sent to them. For this, the MUAs have to get those
+  messages from the component that stores them to show them to the
+  user.  Two different ways of doing this is by using the POP and IMAP
+  protocols.  In the first case, messages are moved from the POP
+  server to the user's computer.  In second case, the messages are
+  always stored on the IMAP server, allowing the user to access email
+  from different computers, as long as they are able to connect to the
+  same IMAP server.
 
-  Qual dos seguintes estilos arquitecturais lhe parece mais adequado
-  para representar o padrão de interacção existente entre os MUAs e um
-  servidor de IMAP?
+  Which of the following architectural styles is more appropriate to
+  represent the pattern of interaction between the MUAs and a IMAP
+  server?
 
-   \optionA{O estilo Processos Comunicantes (\emph{Communicating Processes})}
-    \optionB{O estilo Canais-e-filtros (\emph{Pipes-and-filters})}
-    \optionC{O estilo Par-a-Par (\emph{Peer-to-Peer})}
-    \optionD{O estilo Dados Partilhados (\emph{Shared data})}
- \putOptions
+    \optionA{The \emph{Communicating Processes} style}
+    \optionB{The \emph{Pipes-and-filters} style}
+    \optionC{The \emph{Peer-to-Peer} style}
+    \optionD{The \emph{Shared data} style}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -241,11 +243,10 @@
 %10
 \newcommand{\qXBoardChess}{
 \begin{ClosedQuestion}
-  Dada a complexidade de construir um bom jogador automático de
-  Xadrez, é normal que os programas para jogar Xadrez recorram a
-  motores de Xadrez (\emph{chess engines}) já existentes, como mostra
-  o seguinte excerto da Wikipedia:
-  \begin{quote}
+  Given the complexity of building a good automatic Chess player,
+  programs that play chess usually make use of existing chess engines,
+  as shown by the following excerpt from Wikipedia:
+ \begin{quote}
     A chess engine is a computer program that can play the game of
     chess.
 
@@ -255,8 +256,8 @@
     protocol.
   \end{quote}
 
-  Na página web do XBoard, podemos ler o seguinte:
-  \begin{quote}
+  In the web page for XBoard, we may read the following:
+ \begin{quote}
     XBoard is a graphical user interface for chess [...]. It displays
     a chessboard on the screen, accepts moves made with the mouse, and
     loads and saves games in Portable Game Notation (PGN). It serves
@@ -270,16 +271,17 @@
     \end{itemize}
   \end{quote}
  
-  Tendo em conta a informação acima sobre o XBoard, os motores de
-  Xadrez, e a forma como eles interagem em tempo de execução, qual dos
-  seguintes estilos arquitecturais melhor representa a arquitectura de
-  software de um sistema baseado no XBoard e num dos motores?
+  Given the above information on XBoard, chess engines, and how they
+  interact at runtime, which of the following architectural styles
+  best represents the of architecture of a software system based on
+  XBoard and one of the engines?
 
-    \optionA{O estilo Processos Comunicantes (\emph{Communicating Processes})}
-    \optionB{O estilo Utilização (\emph{Uses})}
-    \optionC{O estilo Camadas (\emph{Layers})}
-    \optionD{O estilo Par-a-Par (\emph{Peer-to-Peer})}
-\putOptions
+    \optionA{The \emph{Communicating Processes} style}
+    \optionB{The \emph{Uses} style}
+    \optionC{The \emph{Layers} style}
+    \optionD{The \emph{Peer-to-Peer} style}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -287,18 +289,17 @@
 %11 
 \newcommand{\qAlterarFuncionalidadesExistentes}{
 \begin{ClosedQuestion}
-  Suponha que vai trabalhar para a equipa de desenvolvimento de um
-  sistema de software de grandes dimensões, e que lhe são atribuídas
-  tarefas de alteração de funcionalidades já existentes.  Quais das
-  seguintes vistas arquitecturais lhe seriam, em princípio, mais úteis
-  para desempenhar rapidamente essas tarefas?
+  Suppose that you join the development team of a very large software
+  system, and that you are assigned some tasks to change some existing
+  features.  Which of the following architectural views would be, in
+  principle, more useful to you to perform those tasks quickly?
 
-    \optionA{Vistas de Decomposição (\emph{Decomposition}) e de Camadas (\emph{Layers})}
-    \optionB{Vistas de Decomposição (\emph{Decomposition}) e de
-    Atribuição de Trabalho (\emph{Work assignment})}
-    \optionC{Vistas de Decomposição (\emph{Decomposition}) e de Implementação (\emph{Implementation})}
-    \optionD{Vistas de Decomposição (\emph{Decomposition}) e de Generalização (\emph{Generalization})}
- \putOptions
+    \optionA{\emph{Decomposition} and \emph{Layers} views}
+    \optionB{\emph{Decomposition} and \emph{Work assignment} views}
+    \optionC{\emph{Decomposition} and \emph{Implementation} views}
+    \optionD{\emph{Decomposition} and \emph{Generalization} views}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -306,8 +307,8 @@
 %12
 \newcommand{\qBlackBoxTesting}{
 \begin{ClosedQuestion}
-  Considere o seguinte excerto da página da Wikipedia sobre testes de
-  caixa preta (\emph{black-box testing}):
+  Consider the following excerpt from the Wikipedia page on
+  \emph{black-box testing}:
   \begin{quote}
     Black-box testing is a method of software testing that tests the
     functionality of an application as opposed to its internal
@@ -317,18 +318,19 @@
     requirements, i.e., what the application is supposed to do.
   \end{quote}
   
-  Supondo que pertence à equipa de testes de um sistema complexo e que
-  é responsável por efectuar testes de caixa preta sobre o sistema,
-  quais das seguintes vistas da arquitectura de software do sistema
-  lhe seriam mais úteis?
+  Assuming that you belong to the team testing a complex system and
+  that you are responsible for performing black box tests on the
+  system, which of the following architectural views of the system
+  would be most useful to you?
 
-    \optionA{Vistas de Decomposição (\emph{Decomposition}) e de Implementação (\emph{Implementation})}
-    \optionB{Vistas de Decomposição (\emph{Decomposition}) e de Utilização (\emph{Uses})}
-    \optionC{Vistas de componente-e-conector}
-    \optionD{Nenhumas, visto que para efectuar os testes de caixa preta
-    não é necessário conhecer o código ou a estrutura interna da
-    aplicação a ser testada}
- \putOptions
+    \optionA{\emph{Decomposition} and \emph{Implementation} views}
+    \optionB{\emph{Decomposition} and \emph{Uses} views}
+    \optionC{\emph{Component-and-connector} views}
+    \optionD{ None, given that to perform black-box testing you do not
+    need to know the code or the internal structure of the application
+    to be tested}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -336,22 +338,23 @@
 %13
 \newcommand{\qTrocarBDCamadas}{
 \begin{ClosedQuestion}
-  Considere uma aplicação empresarial que necessita de guardar os seus
-  dados de forma persistente, mas para a qual não se sabe ainda qual
-  será o volume de informação que esta terá que suportar.  Por isso,
-  pretende-se desenvolver o sistema de forma a que seja possível
-  alterar facilmente o componente de bases de dados relacional (RDBMS)
-  usado para armazenar os dados da aplicação, substituindo-o por um
-  RDBMS de outro fabricante.  Visto que este é um requisito comum, a
-  arquitectura de software recomendada para este tipo de aplicações
-  satisfaz este requisito através da utilização de um determinado
-  estilo arquitectural.  Que estilo é esse?
+  Consider an enterprise application that needs to keep its data
+  persistently, but for which no one knows yet what is the volume of
+  information that will be handled by the application.  Therefore, the
+  system's architect intends to develop the system such that it is
+  possible to change easily the relational database (RDBMS) component
+  used to store the application's data, replacing it with an RDBMS
+  from another manufacturer.  Given that this is a common requirement,
+  the recommended software architecture for such applications fulfills
+  this requirement by using a particular architectural style.  Which
+  style is it?
 
-    \optionA{O estilo Dados partilhados (\emph{Shared data})}
-    \optionB{O estilo Repositório (\emph{Repository})}
-    \optionC{O estilo Camadas (\emph{Layers})}
-    \optionD{O estilo Cliente-Servidor (\emph{Client-Server})}
- \putOptions
+    \optionA{The \emph{Shared data} style}
+    \optionB{The \emph{Repository} style}
+    \optionC{The \emph{Layers} style}
+    \optionD{The \emph{Client-Server} style}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -359,10 +362,10 @@
 %14
 \newcommand{\qGoogleAppEngine}{
 \begin{ClosedQuestion}
-  Suponha que decidiu usar o Google App Engine (GAE) no
-  desenvolvimento de uma aplicação web.
+  Suppose that you decided to use the Google App Engine (GAE) in the
+  development of a web application.
 
-  O GAE é descrito na Wikipedia da seguinte forma:
+  The GAE is described in the Wikipedia as follows:
   \begin{quote}
     Google App Engine is a platform for developing and hosting web
     applications in Google-managed data centers.
@@ -375,7 +378,7 @@
     required by the application.
   \end{quote}
   
-  Por outro lado a documentação do GAE diz o seguinte:
+  On the other hand, the GAE documentation reads the following:
   \begin{quote}
     With App Engine, you can build web applications using standard
     Java technologies and run them on Google's scalable
@@ -388,15 +391,16 @@
     straightforward.
   \end{quote}
 
-  Tendo em conta estas duas perspectivas sobre o GAE, que estilos
-  arquitecturais são mais indicados para representar a sua utilização
-  na arquitectura de software da sua aplicação web?
+  Taking into account these two perspectives on the GAE, which
+  architectural styles are more appropriate to represent the use of
+  GAE in the software architecture of your web application?
 
-    \optionA{Os estilos Decomposição (\emph{Decompostion}) e Implementação (\emph{Implementation})}
-    \optionB{Os estilos Instalação (\emph{Deployment}) e Utilização (\emph{Uses})}
-    \optionC{Os estilos Cliente-Servidor (\emph{Client-Server}) e Generalização (\emph{Generalization})}
-    \optionD{Os estilos Instalação (\emph{Deployment}) e Camadas (\emph{Layers})}
- \putOptions
+    \optionA{The \emph{Decompostion} and \emph{Implementation} styles}
+    \optionB{The \emph{Deployment} and \emph{Uses} styles}
+    \optionC{The \emph{Client-Server} and \emph{Generalization} styles}
+    \optionD{the \emph{Deployment} and \emph{Layers} styles}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -404,27 +408,29 @@
 %15
 \newcommand{\qAumentarDesempenhoClienteServidor}{
 \begin{ClosedQuestion}
-  Suponha que tem um sistema com uma arquitectura cliente-servidor que
-  foi concebido para suportar a existência simultânea de no máximo 100
-  clientes, sem requisitos especiais de disponibilidade.  A solução
-  adoptada e posta em funcionamento há 4 anos consiste num único
-  componente do tipo servidor ao qual se ligam todos os clientes.
-  Esta solução satisfazia os requisitos iniciais mas com o aumento
-  recente do número máximo de clientes para 200, o sistema deixou de
-  ter um desempenho aceitável.  Não sabendo mais nada sobre a
-  arquitectura do sistema, que solução propõe para resolver os
-  problemas de desempenho do sistema?
+  Suppose you have a system with a client-server architecture that was
+  designed to support the simultaneous existence of at most 100
+  clients, without specific requirements for availability.  The
+  solution adopted and put into operation four years ago is a single
+  server component to which all clients connect to.  This solution
+  satisfies the initial requirements but with the recent increase in
+  the maximum number of clients to 200, the system no longer has
+  acceptable performance.  Not knowing anything else about the
+  system's architecture, which solution do you propose to solve the
+  system's performance problems?
 
-    \optionA{Manter a arquitectura actual do sistema e optimizar o
-    código de modo a alcançar os níveis de desempenho necessários actualmente}
-    \optionB{Alterar a vista de instalação do sistema, replicando o servidor por
-    mais máquinas}
-    \optionC{Rever a arquitectura do sistema de forma a passar parte da
-    computação actualmente feita no servidor para os clientes}
-    \optionD{Substituir a máquina usada pelo servidor por uma máquina
-    mais poderosa que satisfaça os novos requisitos de desempenho,
-    mantendo apenas um componente servidor em funcionamento}
- \putOptions
+    \optionA{To keep the current architecture of the system and optimize
+    the code to achieve the currently required performance levels}
+    \optionB{To change the Deployment view, replicating the server
+    component by more machines}
+    \optionC{To review the system's architecture so that part of the
+    computation that is currently done at the server shifts to the
+    clients}
+    \optionD{To replace the machine used to run the server component by
+    a more powerful machine that meets the new performance
+    requirements, keeping only a server component running}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -432,27 +438,26 @@
 %16
 \newcommand{\qAlteracaoWebDois}{
 \begin{ClosedQuestion}
-  A evolução registada nas aplicações web no sentido de providenciar
-  uma interface com o utilizador mais rica levou a uma mudança na sua
-  arquitectura: parte da computação da aplicação passou a ser feita no
-  \emph{browser} web usado pelos utilizadores para aceder à aplicação.
-  Como é que esta alteração na arquitectura se manifesta nos
-  diferentes tipos de vista que descrevem a arquitectura de software
-  de uma aplicação web?
+  The recent developments in web applications that made them provide a
+  richer user interface led to a change in its architecture: part of
+  the application's computation has to be done in the web browser used
+  by users to access the application.  How is this change in the
+  architecture manifested in the different types of views that
+  describe the software architecture of a web application?
 
-    \optionA{Visto que é sobre aspectos de execução, a alteração
-    manifesta-se apenas através da alteração dos componentes e
-    conectores existentes no sistema}
-    \optionB{Esta alteração na forma de funcionamento das aplicações
-    não corresponde a nenhuma alteração da sua arquitectura, visto
-    que, a nível arquitectural, continuamos a ter os mesmos
-    componentes}
-    \optionC{A única alteração arquitectural é na vista de Instalação
-    (\emph{Deployment}), uma vez que os componentes e conectores
-    continuam a ser os mesmos, mas executam em sítios diferentes}
-    \optionD{Esta alteração reflecte-se na relação existente entre
-    módulos e componentes do sistema}
-  \putOptions
+    \optionA{Given that the change is on execution aspects, the change
+     manifests itself only through the modification of components and
+     connectors on the system}
+     \optionB{This change in the way of how web applications run
+     does not correspond to any change in its architecture, because at
+     the architectural level we still have the same components}
+     \optionC{The only architectural change is on the Deployment view,
+     because the components and connectors remain the same, but
+     execute in different places}
+     \optionD{This change manifests itself on the relationship between
+     the system's modules and components}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -460,12 +465,12 @@
 %17
 \newcommand{\qPluginsEclipse}{
 \begin{ClosedQuestion}
-  O IDE Eclipse é uma aplicação \emph{open source} escrita em Java, e
-  é extensível através da utilização de \emph{plug-ins}.  No documento
-  que descreve a arquitectura de plug-ins existente no Eclipse,
-  podemos ler o seguinte:
+  The Eclipse IDE is an open source application written in Java, and
+  is extensible through the use of plug-ins.  In the document that
+  describes the existing plug-ins architecture in Eclipse, we may read
+  the following:
 
-  \begin{quote}
+ \begin{quote}
     A plug-in in Eclipse is a component that provides a certain type
     of service within the context of the Eclipse workbench. [...]  The
     plug-in class provides configuration and management support for
@@ -474,16 +479,16 @@
     class that provides generic facilities for managing plug-ins.
   \end{quote}
 
-  Tendo em conta o modelo e a nomenclatura usados na cadeira para a
-  descrição de uma arquitectura de software, que tipo de vistas lhe
-  parecem mais adequadas para representar a arquitectura de plug-ins
-  do Eclipse descrita acima?
+  Considering the model and terminology used in the course to describe
+  a software architecture, what kind of views are more appropriate to
+  represent the plug-ins architecture of Eclipse described above?
 
-    \optionA{Vistas do tipo de vista componente-e-conector}
-    \optionB{Vistas do tipo de vista módulo}
-    \optionC{Vistas do tipo de vista afectação (\emph{Allocation})}
-    \optionD{Todas as anteriores}
- \putOptions
+    \optionA{Views of the Component-and-Connector viewtype}
+    \optionB{Views of the Module viewtype}
+    \optionC{Views of the Allocation viewtype}
+    \optionD{All of the above}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -491,21 +496,24 @@
 %18
 \newcommand{\qServiceLayer}{
 \begin{ClosedQuestion}
-  Quando se utiliza o padrão Domain Model na implementação da camada
-  de lógica de domínio de uma aplicação empresarial, é comum
-  utilizar-se também o padrão Service Layer.  O padrão Service Layer é
-  usado nestes casos para
+  When someone uses the Domain Model pattern to implement the domain
+  logic layer of an enterprise application, it is common to use also
+  the Service Layer pattern. The Service Layer pattern is used in
+  these cases
 
-    \optionA{Controlar e reduzir a interface exposta pela camada de lógica de
-    domínio, aumentando assim a modificabilidade dessa camada}
-    \optionB{Permitir a existência de mais do que uma camada de lógica
-    de apresentação para a mesma aplicação (para providenciar, por
-    exemplo, uma interface de \emph{web services})}
-    \optionC{Expor diferentes interfaces da camada de lógica de domínio
-    para permitir a existência de diferentes camadas de lógica de apresentação}
-    \optionD{Facilitar o utilização da camada de acesso a dados por
-    parte da camada de lógica de apresentação}
- \putOptions
+    \optionA{To control and to reduce the interface exposed by the
+    domain logic layer, thereby increasing the modifiability of that
+    layer}
+    \optionB{To allow the existence of more than one layer of
+    presentation logic for the same application (to provide for
+    example, an interface to web services)}
+    \optionC{To expose different interfaces of the domain logic layer
+    so that it allows the implementation of different layers for the
+    presentation logic}
+    \optionD{To facilitate the use of the data access layer by the
+    presentation logic layer}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -513,21 +521,19 @@
 %19
 \newcommand{\qUnitOfWork}{
 \begin{ClosedQuestion}
-  O padrão Unif of Work é normalmente usado nas aplicações
-  empresariais para
+  The Unit of Work pattern is often used in enterprise applications 
 
-    \optionA{Implementar cada um dos serviços que são executados sempre
-    que é feito um pedido do cliente ao servidor}
-    \optionB{Melhorar o desempenho do servidor por manter uma cache
-    dos objectos mais acedidos durante o processamento de um pedido
-    feito pelo cliente}
-    \optionC{Dividir a computação necessária para processar cada um dos
-    pedidos feitos pelo cliente em unidades de trabalho mais pequenas
-    e paralelizáveis}
-    \optionD{Manter um registo das alterações feitas aos dados durante
-    uma transacção de negócio e coordenar a escrita dessas alterações
-    para a base de dados}
- \putOptions
+    \optionA{To implement each of the services that are executed
+    whenever the client makes a request to the server}
+    \optionB{To improve the server performance by maintaining a cache
+    of the objects most accessed during the processing of a client request}
+    \optionC{To split the computation required to process each request
+    made by the client in smaller units of work that are parallelizable}
+    \optionD{To keep a record of changes made to the data during
+     a business transaction and to coordinate the writing of these
+     changes to the database}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 
@@ -535,21 +541,22 @@
 %20
 \newcommand{\qIdentityMap}{
 \begin{ClosedQuestion}
-  O padrão Identity Map é normalmente usado nas aplicações
-  empresariais para
+  The Identity Map pattern is typically used in enterprise
+  applications
  
-    \optionA{Melhorar o desempenho do servidor aplicacional porque se
-    mantém uma cache de entidades que reduz o número de operações
-    feitas sobre a base de dados}
-    \optionB{Evitar carregar muitos dados da base de dados quando uma
-    entidade que tem muitas relações com outras entidades é carregada}
-    \optionC{Evitar que os dados fiquem incoerentes quando existem
-    múltiplos acessos dentro da mesma operação de negócio à mesma
-    entidade}
-    \optionD{Conseguir associar a cada entidade carregada pelo servidor
-    aplicacional a identidade dessa entidade na base de dados, para
-    poder actualizar a base de dados mais tarde, se for necessário}
- \putOptions
+    \optionA{To improve the performance of the application server because it
+     maintains a cache of entities that reduces the number of operations
+     made on the database}
+     \optionB{To avoid loading a lot of data from the database when an
+     entity that has many relationships with other entities is loaded}
+     \optionC{To prevent data inconsistencies when there are
+     multiple accesses within the same business operation to the same
+     entity}
+     \optionD{To map each entity loaded by the server to the identity
+     of that entity in the database, so that the server is able to
+     update the database later, if needed}
+
+    \putOptions
 \end{ClosedQuestion}
 }
 

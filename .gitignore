@@ -4,3 +4,5 @@ npm-debug.log
 node-api/public/images/questions/
 .idea
 .mvn
+
+.DS_Store

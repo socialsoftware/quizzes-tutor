@@ -11,7 +11,6 @@ DROP TABLE IF EXISTS students CASCADE;
 CREATE TABLE quizzes (
     id SERIAL NOT NULL,
     title VARCHAR(255),
-    lang VARCHAR(255),
     year INT,
     type VARCHAR(1), -- E exame or T test
     series INT, -- Test 1, Test 2
@@ -21,8 +20,8 @@ CREATE TABLE quizzes (
 
 CREATE TABLE questions (
     id SERIAL NOT NULL,
+    name VARCHAR(255),
     new_id INT REFERENCES questions ON DELETE CASCADE,
-    lang VARCHAR(255),
     content TEXT,
     difficulty INT,
     PRIMARY KEY (id)
