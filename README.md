@@ -130,10 +130,23 @@ See documentation on http://localhost:8080/swagger-ui.html
 
 ## Run frontend
 
-to run the frontend it is important to be with version 10 of the node
+To run the frontend it is important to be with version 10 of the node
+
+```
+sudo apt update
+
+sudo apt install nodejs npm
+
+
+Para instalar Node.JS 10:
+
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+
+sudo apt install -y nodejs
 
 use node version 10.15.3
 vue version 3.5.1
+```
 
 ```
 npm i
