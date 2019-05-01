@@ -117,6 +117,8 @@ Running on http://localhost:3000
 
 ## Run spring api server
 
+To run api spring it is important to be with version 11 of java
+
 Change as-tutor/spring-api/src/main/resources/application.properties
 
 ```
@@ -127,6 +129,8 @@ Running on http://localhost:8080
 See documentation on http://localhost:8080/swagger-ui.html
 
 ## Run frontend
+
+to run the frontend it is important to be with version 10 of the node
 
 use node version 10.15.3
 vue version 3.5.1
