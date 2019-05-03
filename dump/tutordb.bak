@@ -897,7 +897,7 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 143	3	Passive Redundancy and Active Redundancy	f
 144	0	It is necessary to use a optimistic concurrency control policy because the transactions cannot be open for a long period	f
 144	2	Both, pessimistic and optimistic, concurrency control policies can be used	f
-144	3	Transactional management is the complete responsibility of the repsoitory	f
+144	3	Transactional management is the complete responsibility of the repository	f
 145	1	Hardware, if there is hardware redundancy	f
 145	2	Operating Systems, if redundant components execute on top of different operating systems	f
 145	3	All the previous options	f

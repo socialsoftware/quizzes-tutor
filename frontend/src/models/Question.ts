@@ -14,6 +14,11 @@ interface ServerQuestion {
   difficulty: number | null;
 }
 
+interface Image {
+  url: string | null;
+  width: number | null;
+}
+
 export default class Question implements ServerQuestion {
   id: number | null;
   content: string | null;
@@ -21,6 +26,7 @@ export default class Question implements ServerQuestion {
   version: number | null;
   topic: string | null;
   difficulty: number | null;
+  image: Image | null;
 
   constructor(jsonObj: any) {
     this.id = jsonObj.id;
@@ -29,6 +35,7 @@ export default class Question implements ServerQuestion {
     this.version = jsonObj.version;
     this.topic = jsonObj.topic;
     this.difficulty = jsonObj.difficulty;
+    this.image = jsonObj.image;
   }
 
   get() {
@@ -49,17 +56,43 @@ export default class Question implements ServerQuestion {
 
   customjson(): any {
     if (this.content && this.options) {
-      let a = {
-        questions: [
-          {
-            type: "radiogroup",
-            title: this.content,
-            choicesOrder: "random",
-            choices: this.options.map(option => option.content)
-          }
-        ]
-      };
-      return a;
+      if (this.image && this.image.width) {
+        console.log(
+          this.content.replace(
+            /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
+            "  \n ![image](http://localhost:8080/images/questions/" +
+              this.image.url +
+              ")"
+          )
+        );
+        console.log(" ");
+        return {
+          questions: [
+            {
+              type: "radiogroup",
+              title: this.content.replace(
+                /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
+                "  \n ![image](http://localhost:8080/images/questions/" +
+                  this.image.url +
+                  ")"
+              ),
+              choicesOrder: "random",
+              choices: this.options.map(option => option.content)
+            }
+          ]
+        };
+      } else {
+        return {
+          questions: [
+            {
+              type: "radiogroup",
+              title: this.content,
+              choicesOrder: "random",
+              choices: this.options.map(option => option.content)
+            }
+          ]
+        };
+      }
     }
     return "";
   }

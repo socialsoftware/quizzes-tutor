@@ -1614,7 +1614,7 @@
                     "It is necessary to use a optimistic concurrency control policy because the transactions cannot be open for a long period",
                     "It is necessary to use a pessimistic concurrency control policy to avoid frequent conflicts in the transactions",
                     "Both, pessimistic and optimistic, concurrency control policies can be used",
-                    "Transactional management is the complete responsibility of the repsoitory"
+                    "Transactional management is the complete responsibility of the repository"
                 ]
             },
             {

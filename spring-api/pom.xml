@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>tutor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>tutor2</name>
+    <name>tutor</name>
     <description>Tutor System for the Software Architecture Course</description>
 
     <properties>
@@ -63,6 +63,13 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.3.0</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>8.0.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

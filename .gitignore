@@ -1,8 +1,11 @@
 .gitignore
 node_modules
 npm-debug.log
-node-api/public/images/questions/
 .idea
 .mvn
-
 .DS_Store
+
+
+#images
+node-api/public/images/questions/
+spring-api/src/main/resources/static/images/questions
