@@ -1,8 +1,8 @@
-import glob, os, re, json, psycopg2, shutil
+import glob, os, re, json, psycopg2, shutil, time
 from pathlib import Path
 
 dataPath = os.getcwd() + '/../data/**/*.tex'
-imagesPath = os.getcwd() + '/../node-api/public/images/questions/'
+imagesPath = os.getcwd() + '/../spring-api/src/main/resources/static/images/questions/'
 DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
@@ -301,14 +301,8 @@ def getServerImageName(questionId):
     return result
 
 def copyImageToServer(questionId, imagePath, serverImageName):
+    shutil.copyfile(imagePath, imagesPath + serverImageName)
     
-    if not os.path.exists(imagesPath):
-        os.makedirs(imagesPath)
-        
-    destination = imagesPath + serverImageName
-
-    shutil.copy(imagePath, destination)
-
 def insertOptions(cur, options, questionId):
     for i in range(len(options)):
       # insert option

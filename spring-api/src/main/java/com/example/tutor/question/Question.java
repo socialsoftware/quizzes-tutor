@@ -1,6 +1,11 @@
 package com.example.tutor.question;
 
+import com.example.tutor.image.Image;
 import com.example.tutor.option.Option;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 import org.springframework.web.client.RestTemplate;
 
 import javax.persistence.*;
@@ -28,9 +33,10 @@ public class Question implements Serializable {
     @JoinColumn(name="question_id")
     private List<Option> options = new ArrayList<>();
 
-    /* TODO @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-    @JoinColumn(name="question_id")
-    private List<Image> image = new ArrayList<>();*/
+    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "question")
+    @JoinColumn(nullable = true)
+    private Image image;
+
 
     public Integer getId() {
         return id;
@@ -48,6 +54,8 @@ public class Question implements Serializable {
         this.content = content;
     }
 
+    @JsonIgnore
+    @JsonProperty(value = "new_id")
     public Integer getNew_id() {
         return new_id;
     }
@@ -56,6 +64,8 @@ public class Question implements Serializable {
         this.new_id = new_id;
     }
 
+    @JsonIgnore
+    @JsonProperty(value = "difficulty")
     public Integer getDifficulty() {
         return difficulty;
     }
@@ -70,5 +80,18 @@ public class Question implements Serializable {
 
     public void setOptions(List<Option> options) {
         this.options = options;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "Question: " + "\n\tContent: " + this.getContent() + "\n\tImage: " + this.getImage().toString();
     }
 }

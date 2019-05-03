@@ -1,4 +1,4 @@
-declare module "latex2vue";
+declare module "showdown";
 
 declare module "*.vue" {
   import Vue from "vue";

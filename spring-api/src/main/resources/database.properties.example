@@ -1,0 +1,4 @@
+## Spring DATASOURCE (DataSourceAutoConfiguration & DataSourceProperties)
+spring.datasource.url=jdbc:postgresql://localhost:5432/tutordb
+spring.datasource.username= YOUR_USERNAME
+spring.datasource.password= YOUR_PASSWORD
