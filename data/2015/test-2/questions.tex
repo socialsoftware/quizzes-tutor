@@ -4,8 +4,8 @@
 %1
 \newcommand{\qPerformanceOne}{
 \begin{ClosedQuestion}
-	Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is
-		
+    Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is
+        
     \optionA{Manage sampling rate.}
     \optionB{Limit event response.}
     \optionC{Prioritize events.}
@@ -17,8 +17,8 @@
 %2
 \newcommand{\qPerformanceTwo}{
 \begin{ClosedQuestion}
-	The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time
-		
+    The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time
+        
     \optionA{Manage sampling rate.}
     \optionB{Limit event response.}
     \optionC{Prioritize events.}
@@ -30,8 +30,8 @@
 %3
 \newcommand{\qPerformanceThree}{
 \begin{ClosedQuestion}
-	Jeff Atwood wrote an article in its blog about performance of software systems that is entitled, \emph{Hardware is Cheap, Programmers are Expensive}. Which performance tactic(s) is he suggesting
-		
+    Jeff Atwood wrote an article in its blog about performance of software systems that is entitled, \emph{Hardware is Cheap, Programmers are Expensive}. Which performance tactic(s) is he suggesting
+        
     \optionA{Increase resource efficiency.}
     \optionB{Increase resources.}
     \optionC{Increase resource efficiency and Increase resources.}
@@ -45,8 +45,8 @@
 %4
 \newcommand{\qModifiabilityOne}{
 \begin{ClosedQuestion}
-	The modifiability tactic Use an Intermediary between two modules
-		
+    The modifiability tactic Use an Intermediary between two modules
+        
     \optionA{Has as main goal the reduction of the modules' size.}
     \optionB{Results in the creation of a third module that does not have to change when any of the original modules are changed.}
     \optionC{Increases the cohesion between the two modules.}
@@ -58,8 +58,8 @@
 %5
 \newcommand{\qModifiabilityTwo}{
 \begin{ClosedQuestion}
-	Consider the following scenario: \emph{A system administrator simultaneously launches several instances of the system, each one using a different database, and is able to do it in less than 10 minutes.}
-		
+    Consider the following scenario: \emph{A system administrator simultaneously launches several instances of the system, each one using a different database, and is able to do it in less than 10 minutes.}
+        
     \optionA{This is a performance scenario because the stimulus is an input, \emph{launches several instances of the system}.}
     \optionB{This is a modifiability scenario which has a defer binding tactic.}
     \optionC{This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.}
@@ -71,8 +71,8 @@
 %6
 \newcommand{\qModifiabilityThree}{
 \begin{ClosedQuestion}
-	Consider the modifiability quality and the cost of change.
-		
+    Consider the modifiability quality and the cost of change.
+        
     \optionA{A low cost of change may imply a high cost of development.}
     \optionB{A low cost of change implies a low cost of development, because changing the code is part of development.}
     \optionC{There is no relation between the cost of change and the cost of development.}
@@ -85,8 +85,8 @@
 
 \newcommand{\qBusinessToDesignOne}{
 \begin{ClosedQuestion}
-	The Attribute-Driven Design method is characterized by 
-		
+    The Attribute-Driven Design method is characterized by 
+        
     \optionA{In each iteration one or more architecturally significant requirements are used to decompose a software element of the system design.}
     \optionB{The architect cannot backtrack the decomposition decisions she made.}
     \optionC{During the design process the number of architecturally significant requirements cannot change.}
@@ -97,8 +97,8 @@
 
 \newcommand{\qBusinessToDesignTwo}{
 \begin{ClosedQuestion}
-	Architecturally significant requirements (ASR) are captured in a utility tree where each one of the ASRs are classified in terms of its architectural impact and business value.
-		
+    Architecturally significant requirements (ASR) are captured in a utility tree where each one of the ASRs are classified in terms of its architectural impact and business value.
+        
     \optionA{Only the scenarios that have high architectural impact and high business value should appear in the tree.}
     \optionB{A scenario for a power outage should have a low business value because the fault is temporary.}
     \optionC{A scenario for a 24 hours x 7 days availability of the system should appear as a leaf of the utility tree.}
@@ -109,8 +109,8 @@
 
 \newcommand{\qBusinessToDesignThree}{
 \begin{ClosedQuestion}
-	It was decided that the Fénix system should be based on open-source software.
-		
+    It was decided that the Fénix system should be based on open-source software.
+        
     \optionA{This decision does not have any impact on the architecture.}
     \optionB{This decision corresponds to a constraint requirement.}
     \optionC{This decision needs to be made concrete by an interoperability scenario.}
@@ -123,12 +123,12 @@
 
 \newcommand{\qGraphiteOne}{
 \begin{ClosedQuestion}
-	Consider the following fragment in the description of the Graphite system:
-	
-	\begin{quote}
-		The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response. 
-	\end{quote}
-		
+    Consider the following fragment in the description of the Graphite system:
+    
+    \begin{quote}
+        The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response. 
+    \end{quote}
+        
     \optionA{It describes a performance scenario where the stimulus is the request of a custom graph.}
     \optionB{The scenario is supported by a manage sampling rate tactic because several requests to the same graph return the same result.}
     \optionC{It describes a usability scenario where the source of stimulus is a non-technical user.}
@@ -139,14 +139,14 @@
 
 \newcommand{\qGraphiteTwo}{
 \begin{ClosedQuestion}
-	Consider the following fragment in the description of the Graphite system:
-	
-	\begin{quote}
-		To avoid this kind of catastrophe, I added several features to carbon including configurable limits on how many data points can be queued and rate-limits on how quickly various whisper operations can be performed. These features can protect carbon from spiraling out of control and instead impose less harsh effects like dropping some data points or refusing to accept more data points. However, proper values for those settings are system-specific and require a fair amount of testing to tune. They are useful but they do not fundamentally solve the problem. For that, we'll need more hardware.
-	\end{quote}
-	
-	The performance tactics referred in the above description are:
-		
+    Consider the following fragment in the description of the Graphite system:
+    
+    \begin{quote}
+        To avoid this kind of catastrophe, I added several features to carbon including configurable limits on how many data points can be queued and rate-limits on how quickly various whisper operations can be performed. These features can protect carbon from spiraling out of control and instead impose less harsh effects like dropping some data points or refusing to accept more data points. However, proper values for those settings are system-specific and require a fair amount of testing to tune. They are useful but they do not fundamentally solve the problem. For that, we'll need more hardware.
+    \end{quote}
+    
+    The performance tactics referred in the above description are:
+        
     \optionA{Bound execution times, bound queue sizes, and increase resources.}
     \optionB{Bound execution times, and increase resources.}
     \optionC{Manage sampling rate, bound queue sizes, and increase resources.}
@@ -157,12 +157,12 @@
 
 \newcommand{\qGraphiteThree}{
 \begin{ClosedQuestion}
-	Consider the following fragment in the description of the Graphite system:
-	
-	\begin{quote}
-		Imagine that you have 60,000 metrics that you send to your Graphite server, and each of these metrics has one data point per minute. Remember that each metric has its own whisper file on the filesystem. This means carbon must do one write operation to 60,000 different files each minute. As long as carbon can write to one file each millisecond, it should be able to keep up. This isn't too far fetched, but let's say you have 600,000 metrics updating each minute, or your metrics are updating every second, or perhaps you simply cannot afford fast enough storage. Whatever the case, assume the rate of incoming data points exceeds the rate of write operations that your storage can keep up with. How should this situation be handled?
-	\end{quote}
-			
+    Consider the following fragment in the description of the Graphite system:
+    
+    \begin{quote}
+        Imagine that you have 60,000 metrics that you send to your Graphite server, and each of these metrics has one data point per minute. Remember that each metric has its own whisper file on the filesystem. This means carbon must do one write operation to 60,000 different files each minute. As long as carbon can write to one file each millisecond, it should be able to keep up. This isn't too far fetched, but let's say you have 600,000 metrics updating each minute, or your metrics are updating every second, or perhaps you simply cannot afford fast enough storage. Whatever the case, assume the rate of incoming data points exceeds the rate of write operations that your storage can keep up with. How should this situation be handled?
+    \end{quote}
+            
     \optionA{It describes a reliability scenario because the data points for each metric will be split between a buffer and disk.}
     \optionB{It describes a performance scenario for the execution of reads.}
     \optionC{The tactic used to solve the problem is based in the fact that data points are appended to the end of the metric file.}
@@ -175,12 +175,12 @@
 
 \newcommand{\qNginxOne}{
 \begin{ClosedQuestion}
-	Consider the following fragment in the description of the nginx case study.
-	
-	\begin{quote}
-		nginx's configuration system was inspired by Igor Sysoev's experiences with Apache. His main insight was that a scalable configuration system is essential for a web server. The main scaling problem was encountered when maintaining large complicated configurations with lots of virtual servers, directories, locations and datasets. In a relatively big web setup it can be a nightmare if not done properly both at the application level and by the system engineer himself.
-	\end{quote}
-			
+    Consider the following fragment in the description of the nginx case study.
+    
+    \begin{quote}
+        nginx's configuration system was inspired by Igor Sysoev's experiences with Apache. His main insight was that a scalable configuration system is essential for a web server. The main scaling problem was encountered when maintaining large complicated configurations with lots of virtual servers, directories, locations and datasets. In a relatively big web setup it can be a nightmare if not done properly both at the application level and by the system engineer himself.
+    \end{quote}
+            
     \optionA{It describes an availability scenario because the configuration allows to define redundant virtual servers.}
     \optionB{It describes a scalability scenario because it is possible to increment the size of the configuration at a linear cost.}
     \optionC{It describes a usability scenario where the stimulus is reduce the number of errors when configuring the system.}
@@ -191,14 +191,14 @@
 
 \newcommand{\qNginxTwo}{
 \begin{ClosedQuestion}
-	In the description of the nginx case study we can read:
-	
-	\begin{quote}
-		nginx is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. The end result is that even as load increases, memory and CPU usage remain manageable. nginx can now deliver tens of thousands of concurrent connections on a server with typical hardware.
-	\end{quote}
-	
-	The tactic nginx follows to achieve tens of thousands of concurrent connections is
-			
+    In the description of the nginx case study we can read:
+    
+    \begin{quote}
+        nginx is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. The end result is that even as load increases, memory and CPU usage remain manageable. nginx can now deliver tens of thousands of concurrent connections on a server with typical hardware.
+    \end{quote}
+    
+    The tactic nginx follows to achieve tens of thousands of concurrent connections is
+            
     \optionA{Introduce concurrency.}
     \optionB{Increase resources.}
     \optionC{Schedule resources.}
@@ -209,14 +209,14 @@
 
 \newcommand{\qNginxThree}{
 \begin{ClosedQuestion}
-	In the description of the nginx case study we can read:
-	
-	\begin{quote}
-		nginx's modular architecture generally allows developers to extend the set of web server features without modifying the nginx core. nginx modules come in slightly different incarnations, namely core modules, event modules, phase handlers, protocols, variable handlers, filters, upstreams and load balancers. At this time, nginx doesn't support dynamically loaded modules; i.e., modules are compiled along with the core at build stage.
-	\end{quote}
-	
-	The above sentence corresponds to
-			
+    In the description of the nginx case study we can read:
+    
+    \begin{quote}
+        nginx's modular architecture generally allows developers to extend the set of web server features without modifying the nginx core. nginx modules come in slightly different incarnations, namely core modules, event modules, phase handlers, protocols, variable handlers, filters, upstreams and load balancers. At this time, nginx doesn't support dynamically loaded modules; i.e., modules are compiled along with the core at build stage.
+    \end{quote}
+    
+    The above sentence corresponds to
+            
     \optionA{A security scenario because it allows the introduction of filters to encrypt the messages.}
     \optionB{A availability scenario because it allows the introduction of load balancers.}
     \optionC{A modifiability scenario where defer binding occurs at compile time.}

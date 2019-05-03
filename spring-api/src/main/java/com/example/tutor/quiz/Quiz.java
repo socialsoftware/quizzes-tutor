@@ -39,8 +39,10 @@ public class Quiz implements Serializable {
                 if (!idList.contains(question_id)) {
                     questionRepository.findById(question_id)
                         .ifPresent(question -> {
-                            questionList.add(question);
-                            idList.add(question_id);
+                            if(null != question.getImage()){
+                                questionList.add(question);
+                                idList.add(question_id);
+                            }
                         });
                 }
             } catch (ResourceNotFoundException e) {

@@ -4,8 +4,8 @@
 %1
 \newcommand{\qUsesFor}{
 \begin{ClosedQuestion}
-	The Uses architectural style of the Module viewtype 
-	
+    The Uses architectural style of the Module viewtype 
+    
 
     \optionA{Allows the analysis of the impact of changes because if a module uses another it will necessarily have to change whenever the used module changes.}
     \optionB{Improves testability because if a module uses another then it is only possible to test them together.}
@@ -18,8 +18,8 @@
 %2
 \newcommand{\qUsesCalls}{
 \begin{ClosedQuestion}
-	A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because
-	
+    A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because
+    
 
     \optionA{The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.}
     \optionB{The invoked function may not have any input parameter.}
@@ -32,8 +32,8 @@
 %3
 \newcommand{\qUsesCycles}{
 \begin{ClosedQuestion}
-	Consider a view of the module viewtype where there is a uses loop, a cycle of uses dependences between several modules. It may be possible to break the dependence cycle by
-	
+    Consider a view of the module viewtype where there is a uses loop, a cycle of uses dependences between several modules. It may be possible to break the dependence cycle by
+    
 
     \optionA{Applying the generalization style to identify child modules of a module in the loop chain.}
     \optionB{Applying the decomposition style to some of the modules in the loop chain.}
@@ -46,8 +46,8 @@
 %4
 \newcommand{\qGeneralizationEvolution}{
 \begin{ClosedQuestion}
-	The Generalization architectural style of the module viewtype can be use to support the evolution of a system 
-	
+    The Generalization architectural style of the module viewtype can be use to support the evolution of a system 
+    
 
     \optionA{By changing the commonalities that are in the children.}
     \optionB{Because the \emph{is-a} relation does not allow reuse of implementation.}
@@ -62,8 +62,8 @@
 %5
 \newcommand{\qLayeredVirtualMachine}{
 \begin{ClosedQuestion}
-	According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.
-	
+    According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.
+    
     \optionA{This means that the modules inside a layer cannot be loosely coupled.}
     \optionB{This means that this architectural style emphasizes the quality of performance.}
     \optionC{This means that each module cannot use other modules inside the same layer.}
@@ -75,8 +75,8 @@
 %6
 \newcommand{\qAspects}{
 \begin{ClosedQuestion}
-	An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she end up with some responsibility that can not be within a single module.
-	
+    An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she end up with some responsibility that can not be within a single module.
+    
     \optionA{She should try to use a view of the Aspects style, assign this responsibility to a module such that the other modules can crosscut this responsibility.}
     \optionB{She should try to use a view of the Aspects style, assign this responsibility to a module and bind it to the modules affected by it.}
     \optionC{She should define finer-grained modules where she splits the unassigned responsibility.}
@@ -88,8 +88,8 @@
 %7
 \newcommand{\qDataModelFacebook}{
 \begin{ClosedQuestion}
-	In Facebook it is not possible to have the information about more that one bilion users in a single disk. Therefore, a sharding technique is applied, where the persistent information is split between several database servers, and applications are routed to the right servers for queries and updates. To describe this architecture
-	
+    In Facebook it is not possible to have the information about more that one bilion users in a single disk. Therefore, a sharding technique is applied, where the persistent information is split between several database servers, and applications are routed to the right servers for queries and updates. To describe this architecture
+    
     \optionA{It is necessary design a CRUD matrix to show the dependencies between the persistent information.}
     \optionB{It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.}
     \optionC{It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.}
@@ -102,8 +102,8 @@
 %8
 \newcommand{\qUsesDataModel}{
 \begin{ClosedQuestion}
-	A CRUD matrix, which indicates whether each module creates, reads, updates, or deletes data (CRUD, for short) from each data entity. The CRUD matrix
-	
+    A CRUD matrix, which indicates whether each module creates, reads, updates, or deletes data (CRUD, for short) from each data entity. The CRUD matrix
+    
     \optionA{Relates a view of the Uses style with a view of the Data Model style.}
     \optionB{Is an extension of a view of the Data Model style.}
     \optionC{Allows to avoid redundancy and inconsistency.}
@@ -118,14 +118,14 @@
 %9
 \newcommand{\qGitHubSecurity}{
 \begin{ClosedQuestion}
-	In the description of the GitHub case study can be read:
-	
-	\begin{quote}
-		Of course, allowing arbitrary execution of commands is unsafe, so SSH includes the ability to restrict what commands can be executed. In a very simple case, you can restrict execution to git-shell which is included with Git. All this script does is check the command that you're trying to execute and ensure that it's one of git upload-pack, git receive-pack, or git upload-archive.
-	\end{quote}
-	
-	The tactic addressed in this fragments is:
-	
+    In the description of the GitHub case study can be read:
+    
+    \begin{quote}
+        Of course, allowing arbitrary execution of commands is unsafe, so SSH includes the ability to restrict what commands can be executed. In a very simple case, you can restrict execution to git-shell which is included with Git. All this script does is check the command that you're trying to execute and ensure that it's one of git upload-pack, git receive-pack, or git upload-archive.
+    \end{quote}
+    
+    The tactic addressed in this fragments is:
+    
     \optionA{Limit exposure.}
     \optionB{Limit access.}
     \optionC{Authorize actors.}
@@ -137,14 +137,14 @@
 %10
 \newcommand{\qGitConditionMonitoring}{
 \begin{ClosedQuestion}
-	In the description of the Git case study can be read how to deal with the corruption of pack files in the context of the availability quality:
-	
-	\begin{quote}
-		If an object was only copied partially or another form of data corruption occurred, recalculating the SHA of the current object will identify such corruption.
-	\end{quote}
-	
-	The tactic addressed in this fragments is:
-	
+    In the description of the Git case study can be read how to deal with the corruption of pack files in the context of the availability quality:
+    
+    \begin{quote}
+        If an object was only copied partially or another form of data corruption occurred, recalculating the SHA of the current object will identify such corruption.
+    \end{quote}
+    
+    The tactic addressed in this fragments is:
+    
     \optionA{Sanity checking.}
     \optionB{Exception detection.}
     \optionC{Detect intrusion.}
@@ -156,14 +156,14 @@
 %11
 \newcommand{\qGitIncreaseResourceEfficiency}{
 \begin{ClosedQuestion}
-	In the description of the Git case study can be read how it efficiently compares content:
-	
-	\begin{quote}
-		When a content (i.e., file or directory) node in the graph has the same reference identity (the SHA in Git) as that in a different commit, the two nodes are guaranteed to contain the same content, allowing Git to short-circuit content diffing efficiently.
-	\end{quote}
-	
-	The performance tactic addressed in this fragments is:
-	
+    In the description of the Git case study can be read how it efficiently compares content:
+    
+    \begin{quote}
+        When a content (i.e., file or directory) node in the graph has the same reference identity (the SHA in Git) as that in a different commit, the two nodes are guaranteed to contain the same content, allowing Git to short-circuit content diffing efficiently.
+    \end{quote}
+    
+    The performance tactic addressed in this fragments is:
+    
     \optionA{Schedule resources.}
     \optionB{Maintain multiple copies of data.}
     \optionC{Increase resource efficiency.}
@@ -175,14 +175,14 @@
 %12
 \newcommand{\qGitHubComputationRedundancy}{
 \begin{ClosedQuestion}
-	In the description of the GitHub case study can be read:
-	
-	\begin{quote}
-		Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of file servers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD.
-	\end{quote}
-	
-	The four pairs of file servers implement:
-	
+    In the description of the GitHub case study can be read:
+    
+    \begin{quote}
+        Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of file servers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD.
+    \end{quote}
+    
+    The four pairs of file servers implement:
+    
     \optionA{Multiple copies of computation and Passive redundancy tactics.}
     \optionB{Multiple copies of computation tactic.}
     \optionC{Passive redundancy tactic.}
@@ -196,8 +196,8 @@
 %13
 \newcommand{\qComponentPorts}{
 \begin{ClosedQuestion}
-	Consider the concepts of module interface and component port. 
-		
+    Consider the concepts of module interface and component port. 
+        
     \optionA{A module interface has to be attached to a single component port.}
     \optionB{A module interface can be replicated but component ports cannot.}
     \optionC{A module interface cannot be replicated but component ports can.}
@@ -209,8 +209,8 @@
 %14
 \newcommand{\qConnectorAttach}{
 \begin{ClosedQuestion}
-	A connector may be attached to components of different types because
-		
+    A connector may be attached to components of different types because
+        
     \optionA{The type of a connector does not depend on the type of its roles.}
     \optionB{The type of a component does not depend on the type of its ports.}
     \optionC{The attachment is a runtime relation which dynamically manages type compliance.}
@@ -222,8 +222,8 @@
 %15
 \newcommand{\qModuleComponent}{
 \begin{ClosedQuestion}
-	Consider the kind of relations between components and modules.
-		
+    Consider the kind of relations between components and modules.
+        
     \optionA{A module contains the code that executes in a single component and a component executes the code of a single module.}
     \optionB{A module contains the code that can execute in several components and a component executes the code of a single module.}
     \optionC{A module contains the code that executes in a single component and a component can execute the code of several modules.}
@@ -235,8 +235,8 @@
 %16
 \newcommand{\qConnectorDecomposition}{
 \begin{ClosedQuestion}
-	Consider an architect that is designing a component-and-connector view. In some point the architect decides that she does not need to decompose a connector with a demanding quality level. This may occur because
-		
+    Consider an architect that is designing a component-and-connector view. In some point the architect decides that she does not need to decompose a connector with a demanding quality level. This may occur because
+        
     \optionA{She encapsulates the connector qualities inside a higher level component.}
     \optionB{She delays the complete specification of the connector for development time to have human resources to prototype and measure different implementations.}
     \optionC{She does not want to clutter the view with details and trusts the development team to implement the connector according to the required quality level.}
@@ -250,7 +250,7 @@
 %17
 \newcommand{\qRepositoryModifiability}{
 \begin{ClosedQuestion}
-	The repository architectural style provides modifiability because
+    The repository architectural style provides modifiability because
 
     \optionA{It is possible to integrate a new data accessor without changing the other data accessors.}
     \optionB{It is possible to change the repository schema without changing the data accessors.}
@@ -263,7 +263,7 @@
 %18
 \newcommand{\qRepositoryPerformance}{
 \begin{ClosedQuestion}
-	The repository architectural style provides performance because
+    The repository architectural style provides performance because
 
     \optionA{It implements a maintain multiple copies of computation tactic.}
     \optionB{It supports the concurrent access of data accessors.}
@@ -276,8 +276,8 @@
 %19
 \newcommand{\qClientServerAvailability}{
 \begin{ClosedQuestion}
-	The client-server architectural style provides availability because
-	
+    The client-server architectural style provides availability because
+    
     \optionA{It allows an undefined number of clients.}
     \optionB{It is possible to have redundant servers.}
     \optionC{Servers can also be clients.}
@@ -289,8 +289,8 @@
 %20
 \newcommand{\qClientServerSynchronous}{
 \begin{ClosedQuestion}
-	In the client-server architectural style the request/reply connector is synchronous. Consider an architect that wants to describe an asynchronous interaction between clients and servers. 
-	
+    In the client-server architectural style the request/reply connector is synchronous. Consider an architect that wants to describe an asynchronous interaction between clients and servers. 
+    
     \optionA{She can define a variant of this style with asynchronous communication by allowing the client to register callbacks that the server calls at specific times.}
     \optionB{She has to use another architectural style to describe asynchronous communication.}
     \optionC{She can use the request/reply connector but the server should not return results to the client.}

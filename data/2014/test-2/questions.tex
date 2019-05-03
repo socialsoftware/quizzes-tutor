@@ -4,13 +4,13 @@
 %1
 \newcommand{\qAvailabilityScenario}{
 \begin{ClosedQuestion}
-	Consider the following scenario
-	
-	\begin{quote}
-		When writing to the database the system receives an exception about a write failure. The system should stop interacting with data base and write a log message. 
-	\end{quote}
-	
-	The quality addressed by this scenario is
+    Consider the following scenario
+    
+    \begin{quote}
+        When writing to the database the system receives an exception about a write failure. The system should stop interacting with data base and write a log message. 
+    \end{quote}
+    
+    The quality addressed by this scenario is
 
     \optionA{Performance.}
     \optionB{Availability.}
@@ -23,7 +23,7 @@
 %2
 \newcommand{\qScenario}{
 \begin{ClosedQuestion}
-	In a quality scenario
+    In a quality scenario
 
     \optionA{The stimulus is a system input.}
     \optionB{The response can be omitted.}
@@ -37,7 +37,7 @@
 %3
 \newcommand{\qTactics}{
 \begin{ClosedQuestion}
-	An architectural tactic
+    An architectural tactic
 
     \optionA{Is a mediator, an application of the mediator pattern, between the input stimulus and the output response.}
     \optionB{May be associated to other tactics to deal with a single stimulus.}
@@ -50,13 +50,13 @@
 %4
 \newcommand{\qInteroperabilityScenario}{
 \begin{ClosedQuestion}
-	Consider the following scenario
-	
-	\begin{quote}
-		Our vehicle information system send our current location to the traffic monitoring system. The traffic monitoring system combines our location with other information, overlays this information on a Google Map, and broadcasts it. Our location information is correctly included with a probability of 99.99\%.
-	\end{quote}
-	
-	The quality addressed by this scenario is
+    Consider the following scenario
+    
+    \begin{quote}
+        Our vehicle information system send our current location to the traffic monitoring system. The traffic monitoring system combines our location with other information, overlays this information on a Google Map, and broadcasts it. Our location information is correctly included with a probability of 99.99\%.
+    \end{quote}
+    
+    The quality addressed by this scenario is
 
     \optionA{Performance.}
     \optionB{Availability.}
@@ -72,7 +72,7 @@
 %5
 \newcommand{\qPingEcho}{
 \begin{ClosedQuestion}
-	A heartbeat monitor
+    A heartbeat monitor
 
     \optionA{Implements a tactic to recover from faults.}
     \optionB{Implements a tactic to prevent faults.}
@@ -85,7 +85,7 @@
 %6
 \newcommand{\qVoting}{
 \begin{ClosedQuestion}
-	A voting tactic can be used to
+    A voting tactic can be used to
 
     \optionA{Prevent a fault in hardware.}
     \optionB{Prevent a fault in software.}
@@ -98,7 +98,7 @@
 %7
 \newcommand{\qDegradation}{
 \begin{ClosedQuestion}
-	Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.
+    Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.
 
     \optionA{This situation corresponds to the use of the degradation availability tactic.}
     \optionB{This situation corresponds to the use of the removal from service availability tactic.}
@@ -111,13 +111,13 @@
 %8
 \newcommand{\qGarbageCollector}{
 \begin{ClosedQuestion}
-	In wikipedia you can find the following definition:
-	
-	\begin{quote}
-		The garbage collector, or just collector, attempts to reclaim garbage, or memory occupied by objects that are no longer in use by the program.
-	\end{quote}
-	
-	The garbage collector is a component that implements an availability tactic of
+    In wikipedia you can find the following definition:
+    
+    \begin{quote}
+        The garbage collector, or just collector, attempts to reclaim garbage, or memory occupied by objects that are no longer in use by the program.
+    \end{quote}
+    
+    The garbage collector is a component that implements an availability tactic of
 
     \optionA{Ignore faulty behavior.}
     \optionB{Transactions.}
@@ -133,7 +133,7 @@
 %9
 \newcommand{\qGraphiteTechnicaAndNonTechnicalUsers}{
 \begin{ClosedQuestion}
-	Human-editable URL API for creating graphs is a usability design tactic used in the Graphite system. This tactic
+    Human-editable URL API for creating graphs is a usability design tactic used in the Graphite system. This tactic
 
     \optionA{Is an aggregate design tactic.}
     \optionB{Is a maintain user model design tactic.}
@@ -146,11 +146,11 @@
 %10
 \newcommand{\qGraphiteReliability}{
 \begin{ClosedQuestion}
-	In the Graphite system description can be read:
-	
-	\begin{quote}
-		We've got 600,000 metrics that update every minute and we're assuming our storage can only keep up with 60,000 write operations per minute. This means we will have approximately 10 minutes worth of data sitting in carbon's queues at any given time. To a user this means that the graphs they request from the Graphite webapp will be missing the most recent 10 minutes of data.
-	\end{quote}
+    In the Graphite system description can be read:
+    
+    \begin{quote}
+        We've got 600,000 metrics that update every minute and we're assuming our storage can only keep up with 60,000 write operations per minute. This means we will have approximately 10 minutes worth of data sitting in carbon's queues at any given time. To a user this means that the graphs they request from the Graphite webapp will be missing the most recent 10 minutes of data.
+    \end{quote}
 
     \optionA{The quality addressed is availability.}
     \optionB{The quality addressed is performance.}
@@ -164,11 +164,11 @@
 %11
 \newcommand{\qGraphiteModifiability}{
 \begin{ClosedQuestion}
-	In the Graphite system description can be read:
-	
-	\begin{quote}
-		Making multiple Graphite servers appear to be a single system from a user perspective isn't terribly difficult, at least for a naive implementation.
-	\end{quote}
+    In the Graphite system description can be read:
+    
+    \begin{quote}
+        Making multiple Graphite servers appear to be a single system from a user perspective isn't terribly difficult, at least for a naive implementation.
+    \end{quote}
 
     \optionA{The quality addressed is availability.}
     \optionB{The quality addressed is modifiability.}
@@ -181,8 +181,8 @@
 %12
 \newcommand{\qGraphiteBackend}{
 \begin{ClosedQuestion}
-	To reduce the backend load (writes) the Graphite system uses
-	
+    To reduce the backend load (writes) the Graphite system uses
+    
     \optionA{A Maintain Multiple Copies of Computation design tactic in Carbon.}
     \optionB{A Maintain Multiple Copies of Computation design tactic in the WebApp such that reads do not compete with writes.}
     \optionC{A Maintain Multiple Copies of Data design tactic in Carbon.}
@@ -197,8 +197,8 @@
 %13
 \newcommand{\qFirewall}{
 \begin{ClosedQuestion}
-	Having a single point of access to an intranet is a security tactic of
-	
+    Having a single point of access to an intranet is a security tactic of
+    
     \optionA{Detect intrusion.}
     \optionB{Limit access.}
     \optionC{Limit exposure.}
@@ -210,8 +210,8 @@
 %14
 \newcommand{\qVerifyMessageIntegrity}{
 \begin{ClosedQuestion}
-	In the Fenix system a checksum is associated to a set of grades. This is an application of the tactic
-	
+    In the Fenix system a checksum is associated to a set of grades. This is an application of the tactic
+    
     \optionA{Detect intrusion.}
     \optionB{Detect service denial.}
     \optionC{Verify message integrity.}
@@ -223,8 +223,8 @@
 %15
 \newcommand{\qInternalAttack}{
 \begin{ClosedQuestion}
-	In a system where the source of attacks can be internal, from authorized users, the appropriate tactics to be used are
-	
+    In a system where the source of attacks can be internal, from authorized users, the appropriate tactics to be used are
+    
     \optionA{Detect and Resist.}
     \optionB{Detect and React.}
     \optionC{Detect and Recover.}
@@ -236,8 +236,8 @@
 %16
 \newcommand{\qSeparateEntities}{
 \begin{ClosedQuestion}
-	In a system where there are sensitive data an appropriate tactic to be used is
-	
+    In a system where there are sensitive data an appropriate tactic to be used is
+    
     \optionA{Limit access, to restrict the access to the database system.}
     \optionB{Limit exposure, locate the database system in the intranet.}
     \optionC{Separate entities, to allow the use of more strict tactics on the sensitive data.}
@@ -249,8 +249,8 @@
 %17
 \newcommand{\qChromeTabSecurity}{
 \begin{ClosedQuestion}
-	In the Chrome system the use of a process per tab results form the application of a tactic of
-	
+    In the Chrome system the use of a process per tab results form the application of a tactic of
+    
     \optionA{Limit access.}
     \optionB{Increase resources.}
     \optionC{Increase resource efficiency.}
@@ -262,8 +262,8 @@
 %18
 \newcommand{\qChromePerformance}{
 \begin{ClosedQuestion}
-	In the Chrome system the following tactic is used to improve performance
-	
+    In the Chrome system the following tactic is used to improve performance
+    
     \optionA{Increase resources.}
     \optionB{Introduce concurrency.}
     \optionC{Reduce overhead.}
@@ -275,14 +275,14 @@
 %19
 \newcommand{\qChromePredictor}{
 \begin{ClosedQuestion}
-	In the description of the Chrome system can be read
-	
-	\begin{quote}
-		The goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. 
-	\end{quote}
-	
-	The above sentence refer to
-	
+    In the description of the Chrome system can be read
+    
+    \begin{quote}
+        The goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. 
+    \end{quote}
+    
+    The above sentence refer to
+    
     \optionA{Maintain multiple copies of data tactic.}
     \optionB{Introduce concurrence tactic.}
     \optionC{Increase resource efficiency tactic.}
@@ -294,14 +294,14 @@
 %20
 \newcommand{\qChromeUsability}{
 \begin{ClosedQuestion}
-	In the description of the Chrome system can be read
-	
-	\begin{quote}
-		As the user types, the Omnibox automatically proposes an action, which is either a URL based on your navigation history, or a search query.
-	\end{quote}
-	
-	The above sentence refers to
-	
+    In the description of the Chrome system can be read
+    
+    \begin{quote}
+        As the user types, the Omnibox automatically proposes an action, which is either a URL based on your navigation history, or a search query.
+    \end{quote}
+    
+    The above sentence refers to
+    
     \optionA{Maintain user model tactic.}
     \optionB{Introduce concurrence tactic.}
     \optionC{Increase resource efficiency tactic.}

@@ -1,4 +1,4 @@
-package com.example.tutor;
+package com.example.tutor.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
