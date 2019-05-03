@@ -77,19 +77,41 @@ Install npm
 ```
 sudo apt install npm
 ```
-## Create DB and extract questions data
+## Create DB by loading dump
 
 
 Change to postgresuser and create DB
 ```
 sudo su -l postgres
+dropdb tutordb
 createdb tutordb
 ```
 
 Create user to access db
 ```
 psql tutordb
-CREATE USER pedro WITH SUPERUSER LOGIN PASSWORD 'foobar123';
+CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
+```
+
+Load dump
+```
+psql tutordb < tutordb.bak
+```
+
+
+## Create DB by extracting data
+
+Change to postgresuser and create DB
+```
+sudo su -l postgres
+dropdb tutordb
+createdb tutordb
+```
+
+Create user to access db
+```
+psql tutordb
+CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 ```
 
 Create tables
@@ -100,6 +122,40 @@ psql tutordb -f CreateTables.sql
 Populate tables
 ```
 python3 populateDB.py
+```
+### Run PDI
+
+```
+download from https://sourceforge.net/projects/pentaho/files/Data%20Integration/7.1/pdi-ce-7.1.0.0-12.zip/download
+```
+
+Open .ktr files.
+
+Change source files path and database configurations
+
+Run
+
+### Useful queries:
+
+view unique questions
+```
+select count(*) from questions where new_id is null;
+```
+
+view if all questions have 4 options
+```
+select * from (select count(*), question_id from options group by question_id) as a where count <> 4;
+```
+
+copy to file list of quizzes
+```
+\copy (select title, count from quizzes, (select quiz_id, count(question_id) from quiz_has_question group by quiz_id) as q where id = quiz_id) To 'test.csv' With CSV
+```
+
+### Create dump
+
+```
+pg_dump tutordb > tutordb.bak
 ```
 
 ## Run node api server
