@@ -1,7 +1,4 @@
-/*
-package com.example.tutor.question;
-
-package pt.ist.socialsoftware.edition.ldod.search;
+/* package com.example.tutor.question;
 
 import java.io.File;
 import java.io.IOException;
@@ -321,4 +318,5 @@ public class Indexer {
         termsTFIDFCache.clear();
     }
 
-}*/
+}
+*/

@@ -64,6 +64,7 @@ CREATE TABLE images (
 
 CREATE TABLE students (
   id SERIAL NOT NULL,
+  year INT,
   PRIMARY KEY (id)
 );
 
@@ -73,7 +74,7 @@ CREATE TABLE answers (
   question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
   answer_date TIMESTAMP,
   quiz_id INT REFERENCES quizzes ON DELETE CASCADE,
-  time_taken INT,
+  time_taken TIMESTAMP,
   option INT NOT NULL,
   PRIMARY KEY (student_id, question_id, answer_date)
 );

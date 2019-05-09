@@ -1,6 +1,8 @@
 <template>
   <div id="app">
     <survey v-if="survey" :survey="survey"></survey>
+    <survey v-if="survey_result" :survey="survey_result"></survey>
+    <div ref="surveyAnswer"></div>
     <div ref="surveyResult"></div>
   </div>
 </template>
@@ -10,12 +12,14 @@ import { Component, Vue } from "vue-property-decorator";
 import * as SurveyVue from "survey-vue";
 import Quiz from "../models/Quiz";
 import showdown from "showdown";
+import Results from "@/models/Results";
 
 Vue.component("survey", SurveyVue.Survey);
 
 @Component
 export default class QuizView extends Vue {
   survey: any = null;
+  survey_result: any = null;
   quiz: Quiz;
 
   constructor() {
@@ -38,8 +42,16 @@ export default class QuizView extends Vue {
       };
       this.survey = new SurveyVue.Model(json);
       this.survey.onComplete.add((result: { data: any }) => {
-        let el = this.$refs.surveyResult as HTMLElement;
-        el.innerHTML = "result: " + JSON.stringify(result.data);
+        this.survey_result = new SurveyVue.Model(json);
+        this.survey_result.data = result.data;
+        this.survey_result.mode = "display";
+
+        let el = this.$refs.surveyAnswer as HTMLElement;
+        el.innerHTML = "answer: " + JSON.stringify(result.data);
+        Results.getAnswers(result.data, this.quiz.id).then(s => {
+          let el = this.$refs.surveyResult as HTMLElement;
+          el.innerHTML = "result: " + JSON.stringify(s);
+        });
       });
 
       const converter = new showdown.Converter();
@@ -59,6 +71,7 @@ export default class QuizView extends Vue {
 
 <style>
 img {
-  max-width: 80%;
+  max-width: 50%;
+  max-height: 50%;
 }
 </style>

@@ -1,6 +1,5 @@
 package com.example.tutor.question;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +23,10 @@ public class QuestionController {
     }
 
     @GetMapping("/questions/{question_id}")
-    public Question getQuestion(@PathVariable Integer question_id) {
-        questionRepository.findById(question_id).ifPresent(name -> System.out.println(name.toString()));
-        return questionRepository.findById(question_id)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
+    public QuestionDTO getQuestion(@PathVariable Integer question_id) {
+        return new QuestionDTO(questionRepository.findById(question_id)
+                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id)));
     }
-
 
     @PostMapping("/questions")
     public Question createQuestion(@Valid @RequestBody Question question) {
@@ -37,15 +34,17 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{question_id}")
-    public Question updateQuestion(@PathVariable Integer question_id,
+    public QuestionDTO updateQuestion(@PathVariable Integer question_id,
                                    @Valid @RequestBody Question questionRequest) {
 
-        return questionRepository.findById(question_id)
+        return new QuestionDTO(questionRepository.findById(question_id)
                 .map(question -> {
                     question.setContent(questionRequest.getContent());
+                    question.setNew_id(questionRequest.getNew_id());
+                    question.setDifficulty(questionRequest.getDifficulty());
                     question.setImage(questionRequest.getImage());
                     return questionRepository.save(question);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
+                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id)));
     }
 
 
