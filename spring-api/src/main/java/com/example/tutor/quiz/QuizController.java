@@ -59,7 +59,7 @@ public class QuizController {
 
     @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/newquiz")
-    public Quiz getNewQuiz() {
-        return quizRepository.save(new Quiz(questionRepository));
+    public QuizDTO getNewQuiz() {
+        return new QuizDTO(quizRepository.save(new Quiz(questionRepository)));
     }
 }

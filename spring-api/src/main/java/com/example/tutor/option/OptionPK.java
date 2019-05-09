@@ -29,4 +29,21 @@ public class OptionPK implements Serializable {
     public void setQuestion(Question question) {
         this.question = question;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        OptionPK o = (OptionPK) obj;
+        return this.question.getId() == o.getQuestion().getId() && this.option == o.getOption();
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

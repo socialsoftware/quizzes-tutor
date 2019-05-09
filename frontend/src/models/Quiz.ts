@@ -2,6 +2,7 @@ import axios from "axios";
 import Question from "./Question";
 
 export default class Quiz {
+  id!: number;
   questions: Question[] = [];
 
   constructor() {}
@@ -10,6 +11,7 @@ export default class Quiz {
     // Make a request for a user with a given ID
     return await axios.get("http://localhost:8080/newquiz").then(response => {
       // handle success
+      this.id = response.data["id"];
       for (let i = 0; i < response.data["questions"].length; i++) {
         let a1 = new Question(response.data["questions"][i]);
         this.questions.push(a1);
