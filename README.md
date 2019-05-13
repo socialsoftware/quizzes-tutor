@@ -115,10 +115,11 @@ CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 ```
 
 Create tables
+Go to directory ~ as-tutor / sql
 ```
 psql tutordb -f CreateTables.sql
 ```
- 
+Create directory / as-tutor / spring-api / src / main / resources / static / images / questions 
 Populate tables
 ```
 python3 populateDB.py
