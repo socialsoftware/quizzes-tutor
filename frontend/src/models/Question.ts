@@ -6,12 +6,12 @@ interface ServerResponse {
 }
 
 interface ServerQuestion {
-  id: number | null;
+  id: number;
   content: string | null;
   options: Option[] | null;
-  version: number | null;
   topic: string | null;
-  difficulty: number | null;
+  correct_option: number | null;
+  image: Image | null;
 }
 
 interface Image {
@@ -20,22 +20,20 @@ interface Image {
 }
 
 export default class Question implements ServerQuestion {
-  id: number | null;
-  content: string | null;
-  options: Option[] | null;
-  version: number | null;
-  topic: string | null;
-  difficulty: number | null;
+  id!: number;
+  content!: string | null;
+  options!: Option[] | null;
+  topic!: string | null;
   image: Image | null;
+  correct_option!: number | null;
 
-  constructor(jsonObj: any) {
+  constructor(jsonObj: ServerQuestion) {
     this.id = jsonObj.id;
     this.content = jsonObj.content;
     this.options = jsonObj.options;
-    this.version = jsonObj.version;
     this.topic = jsonObj.topic;
-    this.difficulty = jsonObj.difficulty;
     this.image = jsonObj.image;
+    this.correct_option = jsonObj.correct_option;
   }
 
   get() {
@@ -56,44 +54,27 @@ export default class Question implements ServerQuestion {
 
   customjson(): any {
     if (this.content && this.options) {
-      if (this.image && this.image.width) {
-        console.log(
-          this.content.replace(
-            /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
-            "  \n ![image](http://localhost:8080/images/questions/" +
-              this.image.url +
-              ")"
-          )
-        );
-        console.log(" ");
-        return {
-          questions: [
-            {
-              type: "radiogroup",
-              title: this.content.replace(
-                /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
-                "  \n ![image](http://localhost:8080/images/questions/" +
-                  this.image.url +
-                  ")"
-              ),
-              choicesOrder: "random",
-              choices: this.options.map(option => option.content)
-            }
-          ]
-        };
-      } else {
-        return {
-          questions: [
-            {
-              type: "radiogroup",
-              title: this.content,
-              choicesOrder: "random",
-              choices: this.options.map(option => option.content)
-            }
-          ]
-        };
+      if (this.image) {
+        this.content +=
+          "  \n  \n[image]: http://localhost:8080/images/questions/" +
+          this.image.url +
+          ' "Image"';
       }
+      return {
+        questions: [
+          {
+            type: "radiogroup",
+            name: this.id.toString(),
+            title: this.content,
+            choices: this.options.map(option => {
+              return {
+                value: option.option,
+                text: option.content
+              };
+            })
+          }
+        ]
+      };
     }
-    return "";
   }
 }

@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <transformation>
   <info>
-    <name>find-close-options</name>
+    <name>find-equal-options</name>
     <description/>
     <extended_description/>
     <trans_version/>
     <trans_type>Normal</trans_type>
-    <trans_status>0</trans_status>
     <directory>/</directory>
     <parameters>
     </parameters>
@@ -692,44 +691,23 @@
       <method>none</method>
       <schema_name/>
     </partitioning>
-    <send_true_to>Sort rows 6</send_true_to>
+    <send_true_to>Sort rows 5</send_true_to>
     <send_false_to/>
     <compare>
       <condition>
         <negated>N</negated>
-        <conditions>
-          <condition>
-            <negated>N</negated>
-            <leftvalue>m1</leftvalue>
-            <function>&gt;</function>
-            <rightvalue/>
-            <value>
-              <name>constant</name>
-              <type>Number</type>
-              <text>10.0</text>
-              <length>-1</length>
-              <precision>-1</precision>
-              <isnull>N</isnull>
-              <mask>####0.0#########;-####0.0#########</mask>
-            </value>
-          </condition>
-          <condition>
-            <negated>N</negated>
-            <operator>AND</operator>
-            <leftvalue>m1</leftvalue>
-            <function>&lt;</function>
-            <rightvalue/>
-            <value>
-              <name>constant</name>
-              <type>Number</type>
-              <text>100.0</text>
-              <length>-1</length>
-              <precision>-1</precision>
-              <isnull>N</isnull>
-              <mask>####0.0#########;-####0.0#########</mask>
-            </value>
-          </condition>
-        </conditions>
+        <leftvalue>m1</leftvalue>
+        <function>&lt;</function>
+        <rightvalue/>
+        <value>
+          <name>constant</name>
+          <type>Number</type>
+          <text>10.0</text>
+          <length>-1</length>
+          <precision>-1</precision>
+          <isnull>N</isnull>
+          <mask>####0.0#########;-####0.0#########</mask>
+        </value>
       </condition>
     </compare>
     <attributes/>
@@ -888,7 +866,7 @@
     <defaultPathLeafToNull>Y</defaultPathLeafToNull>
     <rownum_field/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/close-questions.js</name>
+      <name>/home/pedro/as-tutor/pentaho/duplicates/data/equal-questions.js</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -982,7 +960,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>128</xloc>
+      <xloc>96</xloc>
       <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
@@ -1006,7 +984,7 @@
     <encoding>UTF-8</encoding>
     <addtoresult>N</addtoresult>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/close-options</name>
+      <name>/home/pedro/as-tutor/pentaho/duplicates/data/equal-options</name>
       <extention>js</extention>
       <append>N</append>
       <split>N</split>
@@ -1027,6 +1005,14 @@
         <element>id2</element>
       </field>
       <field>
+        <name>group1</name>
+        <element>group1</element>
+      </field>
+      <field>
+        <name>group2</name>
+        <element>group2</element>
+      </field>
+      <field>
         <name>m1</name>
         <element>m1</element>
       </field>
@@ -1040,7 +1026,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>512</xloc>
+      <xloc>496</xloc>
       <yloc>256</yloc>
       <draw>Y</draw>
     </GUI>

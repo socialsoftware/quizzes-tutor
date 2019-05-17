@@ -12,9 +12,9 @@ CREATE TABLE quizzes (
     id SERIAL NOT NULL,
     title VARCHAR(255),
     year INT,
-    type VARCHAR(1), -- E exame or T test
+    type VARCHAR(255), -- E exame or T test or G generated
     series INT, -- Test 1, Test 2
-    version VARCHAR(1), -- A, B, C
+    version VARCHAR(5), -- A, B, C
     PRIMARY KEY (id)
 );
 
@@ -24,6 +24,7 @@ CREATE TABLE questions (
     new_id INT REFERENCES questions ON DELETE CASCADE,
     content TEXT,
     difficulty INT,
+    active BOOLEAN DEFAULT TRUE,
     PRIMARY KEY (id)
 );
 
@@ -64,6 +65,9 @@ CREATE TABLE images (
 
 CREATE TABLE students (
   id SERIAL NOT NULL,
+  name VARCHAR(255),
+  type VARCHAR(255), -- student, teacher, developer
+  year INT,
   PRIMARY KEY (id)
 );
 
@@ -73,7 +77,7 @@ CREATE TABLE answers (
   question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
   answer_date TIMESTAMP,
   quiz_id INT REFERENCES quizzes ON DELETE CASCADE,
-  time_taken INT,
-  option INT NOT NULL,
+  time_taken TIMESTAMP,
+  option INT,
   PRIMARY KEY (student_id, question_id, answer_date)
 );

@@ -2,12 +2,6 @@ package com.example.tutor.question;
 
 import com.example.tutor.image.Image;
 import com.example.tutor.option.Option;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import org.springframework.web.client.RestTemplate;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -54,8 +48,6 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    @JsonIgnore
-    @JsonProperty(value = "new_id")
     public Integer getNew_id() {
         return new_id;
     }
@@ -64,8 +56,6 @@ public class Question implements Serializable {
         this.new_id = new_id;
     }
 
-    @JsonIgnore
-    @JsonProperty(value = "difficulty")
     public Integer getDifficulty() {
         return difficulty;
     }
