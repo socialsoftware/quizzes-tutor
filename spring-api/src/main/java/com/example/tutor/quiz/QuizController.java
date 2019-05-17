@@ -57,7 +57,6 @@ public class QuizController {
                 }).orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizID));
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
     @GetMapping("/newquiz")
     public QuizDTO getNewQuiz() {
         return new QuizDTO(quizRepository.save(new Quiz(questionRepository)));
