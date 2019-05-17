@@ -22,7 +22,9 @@ public class QuestionDTO implements Serializable {
     public QuestionDTO(Question question) {
         this.id = question.getId();
         this.content = question.getContent();
-        this.image = new ImageDTO(question.getImage());
+        if (question.getImage() != null) {
+            this.image = new ImageDTO(question.getImage());
+        }
         this.options = question.getOptions().stream().map(OptionDTO::new).collect(Collectors.toList());
     }
 

@@ -70,7 +70,6 @@ public class AnswerController {
                 }).orElseThrow(() -> new ResourceNotFoundException("Answer not found with id " + answer_id));
     }
 
-    @CrossOrigin(origins = "http://localhost:8081")
     @PostMapping("/quiz-answers")
     public Result createAnswer(@Valid @RequestBody Answers answers) {
         quizRepository.findById(answers.getQuiz_id())

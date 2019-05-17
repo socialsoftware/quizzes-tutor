@@ -11,7 +11,7 @@
                     "It makes no sense to use views of the module viewtype, as\n    they give only a static view of the system",
                     "You should use only views of the component-and-connector\n    viewtype, which describe the dynamic aspects of the system",
                     "You may need to use views of the three viewtypes",
-                    "The only views that are relevant to performance\n     requirements are views of the Deployment style}"
+                    "The only views that are relevant to performance\n     requirements are views of the Deployment style"
                 ]
             },
             {
@@ -17901,6 +17901,2130 @@
                     "Does not support independent scalability according to the type of operation.",
                     "Reads may not be consistent with the most recent write.",
                     "Querying the event sourcing becomes more complex."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/20190111-Exam/exame-20190111-companion-A.tex",
+        "quizTitle": "..-data-2018-20190111-Exam-exame-20190111-companion-A",
+        "questions": [
+            {
+                "questionId": "AvailabilityOne",
+                "content": "Considering the availability architectural quality and the tactics of ping/echo and heartbeat",
+                "image": [],
+                "options": [
+                    "These tactics cannot be applied in conjunction with the self-test tactic.",
+                    "These tactics are used to prevent the occurrence of a fault.",
+                    "Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.",
+                    "In ping/echo the components have the initiative to start the interaction."
+                ]
+            },
+            {
+                "questionId": "PerformanceOne",
+                "content": "To analyse the performance of a system",
+                "image": [],
+                "options": [
+                    "Only views of the component-and-connector viewtype are needed",
+                    "All viewtypes may be necessary",
+                    "Only views of the component-and-connector viewtype and allocation viewtype are needed",
+                    "Views of the module viewtype are not needed"
+                ]
+            },
+            {
+                "questionId": "ModifiabilityOne",
+                "content": "In a modifiability scenario the environment can be characterized as design time, compile time, build time, initiation time, and runtime.",
+                "image": [],
+                "options": [
+                    "When the environment is design time it means that the change should be done before the system enters into production",
+                    "When the environment is build time it means that it is necessary to codify a new module that is added by rebuilding the system",
+                    "When the environment is initiation time it means that it is necessary to restart the system for the change to take effect",
+                    "When the environment is runtime the cost of doing the change is higher than in the other environments"
+                ]
+            },
+            {
+                "questionId": "ModuleViewTypeOne",
+                "content": "The quality that is more relevant to views of the module viewtype is:",
+                "image": [],
+                "options": [
+                    "Modifiability.",
+                    "Usability.",
+                    "Security.",
+                    "Availability."
+                ]
+            },
+            {
+                "questionId": "ModuleStyleOne",
+                "content": "Consider the following description of \\emph{Memcached}, which is\n    adapted from its Wiki:\n    \\begin{quote}\n      Memcached is an in-memory key-value store for small chunks of\n      arbitrary data from results of database calls, API calls, or\n      page rendering.  It is made up of:\n      \\begin{itemize}\n      \\item Client software, which is given a list of available memcached servers.\n      \\item A client-based hashing algorithm, which chooses a server\n        based on the \"key\" input.\n      \\item Server software, which stores your values with their keys\n        into an internal hash table.\n      \\item Server algorithms, which determine when to throw out old\n        data (if out of memory), or reuse memory.\n      \\end{itemize}\n    \\end{quote}\n    Suppose that you want to present an architectural view for\n    \\emph{Memcached} that represents the above information.  Which\n    view is more adequate?",
+                "image": [],
+                "options": [
+                    "A view of the Data Model style",
+                    "A view of the Layers style",
+                    "A view of the Decomposition style",
+                    "A view of the Uses style"
+                ]
+            },
+            {
+                "questionId": "ModuleStyleThree",
+                "content": "The Generalization architectural style of the module viewtype can be use to support the evolution of a system",
+                "image": [],
+                "options": [
+                    "By changing the commonalities that are in the children.",
+                    "Because the \\emph{is-a} relation does not allow reuse of implementation.",
+                    "By adding, removing, or changing children.",
+                    "By changing a parent, which will automatically change all the children that inherit from it."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorViewtypeOne",
+                "content": "According to the document that describes the architecture of web\n    services:\n    \\begin{quote}\n      Another critical piece of any distributed system is a load\n      balancer.  Load balancers are a principal part of any\n      architecture, as their role is to distribute load across a set\n      of nodes responsible for servicing requests.  This allows\n      multiple nodes to transparently service the same function in a\n      system.  Their main purpose is to handle a lot of simultaneous\n      connections and route those connections to one of the request\n      nodes, allowing the system to scale to service more requests by\n      just adding nodes.\n    \\end{quote}\n    Based on this description, what is the best way to represent the\n    architecture of a system that is using a \\emph{load balancer}?",
+                "image": [],
+                "options": [
+                    "With a component-and-connector view, where the \n      \\emph{load balancer} is a component of the system",
+                    "With a Deployment view, where the \\emph{load balancer} is\n      part of the communication infra-structure used to execute the\n      system",
+                    "With a Uses view, representing the existing dependencies\n      between the \\emph{load balancer} and the services that it uses",
+                    "With a Layers view, where the \\emph{load balancer}\n      creates an abstraction layer between who makes the request and\n      who provides the service"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleOne",
+                "content": "The repository architectural style provides performance because",
+                "image": [],
+                "options": [
+                    "It implements a maintain multiple copies of computation tactic.",
+                    "It supports the concurrent access of data accessors.",
+                    "It supports the access to persistent information.",
+                    "It implements a maintain multiple copies of data tactic."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleThree",
+                "content": "Typically, Instant Messaging clients have a window to list the contacts of the user, and\n  show in that window the status of each contact (whether it is available, unavailable, busy,\n  etc). Given that the status of a contact may be changed at any time, and that the contact's\n  status is given by the Instant Messaging application of that contact, which architectural\n  style represents best the interaction pattern between these components?",
+                "image": [],
+                "options": [
+                    "The Shared Data style",
+                    "The Pipes-and-filters style",
+                    "The Publish-subscribe style",
+                    "The Client-Server style"
+                ]
+            },
+            {
+                "questionId": "AllocationOne",
+                "content": "In the software architecture of a system, the Deployment view is best suited for",
+                "image": [],
+                "options": [
+                    "Analysing the performance of the system",
+                    "Planning incremental releases of the system",
+                    "Estimating the effort needed to implement the system",
+                    "Analysing the system's portability and reusability"
+                ]
+            },
+            {
+                "questionId": "WebApplicationsOne",
+                "content": "One of the evolutions in the development of web applications was\n    the appearance of \\emph{mashups}, which are described in Wikipedia\n    as follows:\n\n    \\begin{quote}\n      In web development, a mashup is a web page or application that\n      uses and combines data, presentation or functionality from two\n      or more sources to create new services.\n    \\end{quote}\n\n    Knowing that the sources used by \\emph{mashups} do not know about\n    the existence of the \\emph{mashups} and that they change\n    frequently, forcing the adaptation of the \\emph{mashups} to\n    accommodate those changes, what is the best architecture to\n    minimize the effects of those changes?",
+                "image": [],
+                "options": [
+                    "A \\emph{web services} architecture",
+                    "A Client-Server architecture, where the \\emph{mashup}\n      is the client and the various sources are the servers",
+                    "A layered architecture, where the access to the various\n      sources is the responsibility of the bottommost layer",
+                    "A Publish-Subscribe architecture, where the various\n      sources publish events with the changes made and the\n      \\emph{mashup} subscribes those events"
+                ]
+            },
+            {
+                "questionId": "ScalableArchitectureOne",
+                "content": "Consider the following excerpt about the Scalable web architecture and distributed systems case study about two different possible implementations of a global cache\n\t\n\t\\begin{quote}\n\t\t There are two common forms of global caches (...), when a cached response is not found in the cache, the cache itself becomes responsible for retrieving the missing piece of data from the underlying store. (...) it is the responsibility of request nodes to retrieve any data that is not found in the cache. \t\n\t \\end{quote}",
+                "image": [],
+                "options": [
+                    "The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability",
+                    "The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better availability",
+                    "The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better modifiability",
+                    "The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better performance"
+                ]
+            },
+            {
+                "questionId": "DVDCatalogOne",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo allow the share of catalogs with family and friends, including some access control. \n\t\\end{quote}\n\t\n\tThis requirement requires",
+                "image": [],
+                "options": [
+                    "A change to the uses view to represent that friends can use each other catalog.",
+                    "A change of the layered view to support different presentations, one for each friend.",
+                    "A change of the decomposition view to include the responsibilities associated with the access control.",
+                    "A new aspect view to include the responsibilities associated with the access control."
+                ]
+            },
+            {
+                "questionId": "AdventureBuilderOne",
+                "content": "Consider the following architectural view of the Adventure Builder system, designed around the Order Processing Center\n\t\n\t\\begin{center}\n\t\t\\includegraphics[width=12cm]{../AdventureBuilderCandC}\n\t\\end{center}\n\t\n\tThe views \\textbf{does not} allow the reason about the quality of",
+                "image": [],
+                "options": [
+                    "Interoperability",
+                    "Modifiability",
+                    "Performance",
+                    "Security"
+                ]
+            },
+            {
+                "questionId": "GraphiteOne",
+                "content": "In the Graphite system, in order to improve performance the component \\emph{carbon} do not write directly on disk, it uses a buffer instead:",
+                "image": [],
+                "options": [
+                    "but this reduces reliability because de webapp components do not access the most recent data",
+                    "but it reduces performance, anyway, because the buffer components easily overflow",
+                    "and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data",
+                    "and it improves security because the buffer is protected agains attacks"
+                ]
+            },
+            {
+                "questionId": "ChromeOne",
+                "content": "In the description of Chrome case study we can read:\n\t  \\newline\n\t  \n\t  \\emph{Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.}\n\t  \\newline\n\t  \n\t  The \\emph{Resource Dispatcher} contributes to the performance quality because it implements a tactic of",
+                "image": [],
+                "options": [
+                    "Schedule Resources",
+                    "Increase Resources",
+                    "Introduce Concurrency",
+                    "Maintain Multiple Copies of Computation"
+                ]
+            },
+            {
+                "questionId": "SocialCalcOne",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tTherefore, on browsers with support for CSS3, we use the box-shadow property to represent multiple peer cursors in the same cell.\n\t\\end{quote} \n\t\n\tThis corresponds to the application of",
+                "image": [],
+                "options": [
+                    "Maintain system model tactic.",
+                    "Support user initiative tactic.",
+                    "Maintain multiple copies of data tactic.",
+                    "Conflict detection tactic."
+                ]
+            },
+            {
+                "questionId": "OrderPadOne",
+                "content": "Consider the architecture of the Morrison's OrderPad. In the description of the system can be read:\n\t\n\t\\begin{quote}\n\t\tOne of these was using a file-transfer to send data to the mainframe rather than MQ, which wouldn't perform well once many stores were active.\n\t\\end{quote}\n\t\n\tThis approach means that",
+                "image": [],
+                "options": [
+                    "Performance was traded for easy of development.",
+                    "An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.",
+                    "Performance was traded for the modifiability quality.",
+                    "An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe."
+                ]
+            },
+            {
+                "questionId": "AggregatesOne",
+                "content": "Consider the following decomposition of a domain model into 3 aggregates. \n\t\n\t\\centering\n\t\\includegraphics[width=12cm]{../1-aggregate}",
+                "image": [],
+                "options": [
+                    "This decomposition is the only possible of the original domain model.",
+                    "This decomposition implies that, in average, customers are going to have a large number of orders.",
+                    "This decomposition implies that products will frequently change their unique identification.",
+                    "All the above."
+                ]
+            },
+            {
+                "questionId": "EventSourcingOne",
+                "content": "Command Query Responsibility Segregation (CQRS) technique uses the following architectural styles",
+                "image": [],
+                "options": [
+                    "Client-server and Repository.",
+                    "Repository and Publish-subscribe.",
+                    "Publish-subscribe and Repository.",
+                    "Client-server, Repository and Publish-subscribe."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/20190111-Exam/exame-20190111-companion-B.tex",
+        "quizTitle": "..-data-2018-20190111-Exam-exame-20190111-companion-B",
+        "questions": [
+            {
+                "questionId": "ModuleViewTypeOne",
+                "content": "The quality that is more relevant to views of the module viewtype is:",
+                "image": [],
+                "options": [
+                    "Modifiability.",
+                    "Usability.",
+                    "Security.",
+                    "Availability."
+                ]
+            },
+            {
+                "questionId": "ModuleStyleOne",
+                "content": "Consider the following description of \\emph{Memcached}, which is\n    adapted from its Wiki:\n    \\begin{quote}\n      Memcached is an in-memory key-value store for small chunks of\n      arbitrary data from results of database calls, API calls, or\n      page rendering.  It is made up of:\n      \\begin{itemize}\n      \\item Client software, which is given a list of available memcached servers.\n      \\item A client-based hashing algorithm, which chooses a server\n        based on the \"key\" input.\n      \\item Server software, which stores your values with their keys\n        into an internal hash table.\n      \\item Server algorithms, which determine when to throw out old\n        data (if out of memory), or reuse memory.\n      \\end{itemize}\n    \\end{quote}\n    Suppose that you want to present an architectural view for\n    \\emph{Memcached} that represents the above information.  Which\n    view is more adequate?",
+                "image": [],
+                "options": [
+                    "A view of the Data Model style",
+                    "A view of the Layers style",
+                    "A view of the Decomposition style",
+                    "A view of the Uses style"
+                ]
+            },
+            {
+                "questionId": "ModuleStyleThree",
+                "content": "The Generalization architectural style of the module viewtype can be use to support the evolution of a system",
+                "image": [],
+                "options": [
+                    "By changing the commonalities that are in the children.",
+                    "Because the \\emph{is-a} relation does not allow reuse of implementation.",
+                    "By adding, removing, or changing children.",
+                    "By changing a parent, which will automatically change all the children that inherit from it."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorViewtypeOne",
+                "content": "According to the document that describes the architecture of web\n    services:\n    \\begin{quote}\n      Another critical piece of any distributed system is a load\n      balancer.  Load balancers are a principal part of any\n      architecture, as their role is to distribute load across a set\n      of nodes responsible for servicing requests.  This allows\n      multiple nodes to transparently service the same function in a\n      system.  Their main purpose is to handle a lot of simultaneous\n      connections and route those connections to one of the request\n      nodes, allowing the system to scale to service more requests by\n      just adding nodes.\n    \\end{quote}\n    Based on this description, what is the best way to represent the\n    architecture of a system that is using a \\emph{load balancer}?",
+                "image": [],
+                "options": [
+                    "With a component-and-connector view, where the \n      \\emph{load balancer} is a component of the system",
+                    "With a Deployment view, where the \\emph{load balancer} is\n      part of the communication infra-structure used to execute the\n      system",
+                    "With a Uses view, representing the existing dependencies\n      between the \\emph{load balancer} and the services that it uses",
+                    "With a Layers view, where the \\emph{load balancer}\n      creates an abstraction layer between who makes the request and\n      who provides the service"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleOne",
+                "content": "The repository architectural style provides performance because",
+                "image": [],
+                "options": [
+                    "It implements a maintain multiple copies of computation tactic.",
+                    "It supports the concurrent access of data accessors.",
+                    "It supports the access to persistent information.",
+                    "It implements a maintain multiple copies of data tactic."
+                ]
+            },
+            {
+                "questionId": "ScalableArchitectureOne",
+                "content": "Consider the following excerpt about the Scalable web architecture and distributed systems case study about two different possible implementations of a global cache\n\t\n\t\\begin{quote}\n\t\t There are two common forms of global caches (...), when a cached response is not found in the cache, the cache itself becomes responsible for retrieving the missing piece of data from the underlying store. (...) it is the responsibility of request nodes to retrieve any data that is not found in the cache. \t\n\t \\end{quote}",
+                "image": [],
+                "options": [
+                    "The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability",
+                    "The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better availability",
+                    "The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better modifiability",
+                    "The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better performance"
+                ]
+            },
+            {
+                "questionId": "DVDCatalogOne",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo allow the share of catalogs with family and friends, including some access control. \n\t\\end{quote}\n\t\n\tThis requirement requires",
+                "image": [],
+                "options": [
+                    "A change to the uses view to represent that friends can use each other catalog.",
+                    "A change of the layered view to support different presentations, one for each friend.",
+                    "A change of the decomposition view to include the responsibilities associated with the access control.",
+                    "A new aspect view to include the responsibilities associated with the access control."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleThree",
+                "content": "Typically, Instant Messaging clients have a window to list the contacts of the user, and\n  show in that window the status of each contact (whether it is available, unavailable, busy,\n  etc). Given that the status of a contact may be changed at any time, and that the contact's\n  status is given by the Instant Messaging application of that contact, which architectural\n  style represents best the interaction pattern between these components?",
+                "image": [],
+                "options": [
+                    "The Shared Data style",
+                    "The Pipes-and-filters style",
+                    "The Publish-subscribe style",
+                    "The Client-Server style"
+                ]
+            },
+            {
+                "questionId": "AllocationOne",
+                "content": "In the software architecture of a system, the Deployment view is best suited for",
+                "image": [],
+                "options": [
+                    "Analysing the performance of the system",
+                    "Planning incremental releases of the system",
+                    "Estimating the effort needed to implement the system",
+                    "Analysing the system's portability and reusability"
+                ]
+            },
+            {
+                "questionId": "EventSourcingOne",
+                "content": "Command Query Responsibility Segregation (CQRS) technique uses the following architectural styles",
+                "image": [],
+                "options": [
+                    "Client-server and Repository.",
+                    "Repository and Publish-subscribe.",
+                    "Publish-subscribe and Repository.",
+                    "Client-server, Repository and Publish-subscribe."
+                ]
+            },
+            {
+                "questionId": "AdventureBuilderOne",
+                "content": "Consider the following architectural view of the Adventure Builder system, designed around the Order Processing Center\n\t\n\t\\begin{center}\n\t\t\\includegraphics[width=12cm]{../AdventureBuilderCandC}\n\t\\end{center}\n\t\n\tThe views \\textbf{does not} allow the reason about the quality of",
+                "image": [],
+                "options": [
+                    "Interoperability",
+                    "Modifiability",
+                    "Performance",
+                    "Security"
+                ]
+            },
+            {
+                "questionId": "GraphiteOne",
+                "content": "In the Graphite system, in order to improve performance the component \\emph{carbon} do not write directly on disk, it uses a buffer instead:",
+                "image": [],
+                "options": [
+                    "but this reduces reliability because de webapp components do not access the most recent data",
+                    "but it reduces performance, anyway, because the buffer components easily overflow",
+                    "and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data",
+                    "and it improves security because the buffer is protected agains attacks"
+                ]
+            },
+            {
+                "questionId": "WebApplicationsOne",
+                "content": "One of the evolutions in the development of web applications was\n    the appearance of \\emph{mashups}, which are described in Wikipedia\n    as follows:\n\n    \\begin{quote}\n      In web development, a mashup is a web page or application that\n      uses and combines data, presentation or functionality from two\n      or more sources to create new services.\n    \\end{quote}\n\n    Knowing that the sources used by \\emph{mashups} do not know about\n    the existence of the \\emph{mashups} and that they change\n    frequently, forcing the adaptation of the \\emph{mashups} to\n    accommodate those changes, what is the best architecture to\n    minimize the effects of those changes?",
+                "image": [],
+                "options": [
+                    "A \\emph{web services} architecture",
+                    "A Client-Server architecture, where the \\emph{mashup}\n      is the client and the various sources are the servers",
+                    "A layered architecture, where the access to the various\n      sources is the responsibility of the bottommost layer",
+                    "A Publish-Subscribe architecture, where the various\n      sources publish events with the changes made and the\n      \\emph{mashup} subscribes those events"
+                ]
+            },
+            {
+                "questionId": "ChromeOne",
+                "content": "In the description of Chrome case study we can read:\n\t  \\newline\n\t  \n\t  \\emph{Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.}\n\t  \\newline\n\t  \n\t  The \\emph{Resource Dispatcher} contributes to the performance quality because it implements a tactic of",
+                "image": [],
+                "options": [
+                    "Schedule Resources",
+                    "Increase Resources",
+                    "Introduce Concurrency",
+                    "Maintain Multiple Copies of Computation"
+                ]
+            },
+            {
+                "questionId": "SocialCalcOne",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tTherefore, on browsers with support for CSS3, we use the box-shadow property to represent multiple peer cursors in the same cell.\n\t\\end{quote} \n\t\n\tThis corresponds to the application of",
+                "image": [],
+                "options": [
+                    "Maintain system model tactic.",
+                    "Support user initiative tactic.",
+                    "Maintain multiple copies of data tactic.",
+                    "Conflict detection tactic."
+                ]
+            },
+            {
+                "questionId": "OrderPadOne",
+                "content": "Consider the architecture of the Morrison's OrderPad. In the description of the system can be read:\n\t\n\t\\begin{quote}\n\t\tOne of these was using a file-transfer to send data to the mainframe rather than MQ, which wouldn't perform well once many stores were active.\n\t\\end{quote}\n\t\n\tThis approach means that",
+                "image": [],
+                "options": [
+                    "Performance was traded for easy of development.",
+                    "An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.",
+                    "Performance was traded for the modifiability quality.",
+                    "An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe."
+                ]
+            },
+            {
+                "questionId": "AggregatesOne",
+                "content": "Consider the following decomposition of a domain model into 3 aggregates. \n\t\n\t\\centering\n\t\\includegraphics[width=12cm]{../1-aggregate}",
+                "image": [],
+                "options": [
+                    "This decomposition is the only possible of the original domain model.",
+                    "This decomposition implies that, in average, customers are going to have a large number of orders.",
+                    "This decomposition implies that products will frequently change their unique identification.",
+                    "All the above."
+                ]
+            },
+            {
+                "questionId": "AvailabilityOne",
+                "content": "Considering the availability architectural quality and the tactics of ping/echo and heartbeat",
+                "image": [],
+                "options": [
+                    "These tactics cannot be applied in conjunction with the self-test tactic.",
+                    "These tactics are used to prevent the occurrence of a fault.",
+                    "Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.",
+                    "In ping/echo the components have the initiative to start the interaction."
+                ]
+            },
+            {
+                "questionId": "PerformanceOne",
+                "content": "To analyse the performance of a system",
+                "image": [],
+                "options": [
+                    "Only views of the component-and-connector viewtype are needed",
+                    "All viewtypes may be necessary",
+                    "Only views of the component-and-connector viewtype and allocation viewtype are needed",
+                    "Views of the module viewtype are not needed"
+                ]
+            },
+            {
+                "questionId": "ModifiabilityOne",
+                "content": "In a modifiability scenario the environment can be characterized as design time, compile time, build time, initiation time, and runtime.",
+                "image": [],
+                "options": [
+                    "When the environment is design time it means that the change should be done before the system enters into production",
+                    "When the environment is build time it means that it is necessary to codify a new module that is added by rebuilding the system",
+                    "When the environment is initiation time it means that it is necessary to restart the system for the change to take effect",
+                    "When the environment is runtime the cost of doing the change is higher than in the other environments"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/20190129-Exam/exame-20190129-companion-A.tex",
+        "quizTitle": "..-data-2018-20190129-Exam-exame-20190129-companion-A",
+        "questions": [
+            {
+                "questionId": "AvailabilityTwo",
+                "content": "A voting tactic can be used to",
+                "image": [],
+                "options": [
+                    "Prevent a fault in hardware.",
+                    "Prevent a fault in software.",
+                    "Prevent a fault in a process.",
+                    "Detect a fault."
+                ]
+            },
+            {
+                "questionId": "PerformanceTwo",
+                "content": "Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Prioritize events",
+                    "Bound execution time"
+                ]
+            },
+            {
+                "questionId": "ModifiabilityTwo",
+                "content": "The main tactic associated with the layered architectural style is:",
+                "image": [],
+                "options": [
+                    "Split module",
+                    "Encapsulate",
+                    "Restrict dependencies",
+                    "Defer binding"
+                ]
+            },
+            {
+                "questionId": "ModuleViewTypeTwo",
+                "content": "Consider the kind of relations between components and modules.",
+                "image": [],
+                "options": [
+                    "A module contains the code that executes in a single component and a component executes the code of a single module",
+                    "A module contains the code that can execute in several components and a component executes the code of a single module",
+                    "A module contains the code that executes in a single component and a component can execute the code of several modules",
+                    "A module contains the code that can execute in several components and a component can execute the code of several modules"
+                ]
+            },
+            {
+                "questionId": "ModuleStyleTwo",
+                "content": "Suppose that you are implementing a module in a system that has a two layered architecture.\n\t Knowing that your module belongs to the upper layer (assuming the usual notation\n\t for the layer style), this means that you",
+                "image": [],
+                "options": [
+                    "Can use the operations defined in any of the system's modules",
+                    "Can use the operations defined in the lower layer, but not the ones defined in\n\t \tthe upper layer",
+                    "Can use the operations defined in the upper layer, but not the ones defined in\n\t \tthe lower layer",
+                    "Should use some operation defined in the lower layer"
+                ]
+            },
+            {
+                "questionId": "ModuleStyleFour",
+                "content": "Using the Aspects architectural style promotes the modifiability\n    of a system because",
+                "image": [],
+                "options": [
+                    "It imposes restrictions on which uses relationships may\n      exist between the system's modules",
+                    "It makes it easier to create generalization relationships\n      between the system's modules",
+                    "It separates in new modules responsibilities that were\n      spread over various of the system's modules",
+                    "It allows the decomposition of each of the system's\n      modules into finer grained modules"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorViewtypeTwo",
+                "content": "Consider the concept of interface delegation",
+                "image": [],
+                "options": [
+                    "It corresponds to a particular case of a specialization in a generalization view.",
+                    "It represents a relation between a connector's role and a port of one of its internal components.",
+                    "It represents a relation between a component's port and a port of one of its internal components.",
+                    "It represents a relation between a component's port and a connector's role."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleTwo",
+                "content": "In the Service Oriented Architecture style it is common to have a\n    specialized component, named \\emph{Enterprise Service Bus} (ESB).\n    The goal of using of an ESB in a system is",
+                "image": [],
+                "options": [
+                    "To facilitate the interaction among heterogeneous\n      components that use distinct communication protocols",
+                    "To promote the use of a common communication protocol for\n      all the remaining components of the system",
+                    "To increase the performance of the interaction between\n      the components of the system",
+                    "To create a strong coupling between the various services\n      provided by the organization"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleFour",
+                "content": "In the description of the Gnutella system can be read:\n\t\n\t\\begin{quote}\n\t\tThe topology of the system changes at runtime as peer components connect and disconnect to the network.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "When a peer connects to the network it establishes connections with all other peers in the network",
+                    "The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used",
+                    "When a peer receives a connection it sends all its files to the peer connecting it",
+                    "The behavior described in the sentence can be represented in a view where the tier architectural style is used"
+                ]
+            },
+            {
+                "questionId": "AllocationTwo",
+                "content": "Consider the install architectural style of the allocation viewtype.",
+                "image": [],
+                "options": [
+                    "The development team is the main stakeholder interesting in these views.",
+                    "It assigns modules to files.",
+                    "It is completely independent of the deployment architectural style.",
+                    "It helps on the configuration of systems."
+                ]
+            },
+            {
+                "questionId": "WebApplicationsTwo",
+                "content": "Web applications went through several evolutions over the last\n    years.  One of those evolutions was to make their user interfaces\n    more sophisticated, by leveraging on new technologies available in\n    the browsers, such as, for example, Javascript, to provide a more\n    satisfying user experience.  What were the most visible\n    consequences of such an evolution on the typical software\n    architecture of a web application?",
+                "image": [],
+                "options": [
+                    "The presentation logic layer and how it relates with the\n      underlying layer changed",
+                    "The style of the connector used to represent the interaction between\n      the browser and the web server changed",
+                    "The browser is now a component of a different type",
+                    "That evolution did not have any consequences on the\n      software architecture of a web application"
+                ]
+            },
+            {
+                "questionId": "ScalableArchitectureTwo",
+                "content": "Consider the use of a proxy to collapse requests. This corresponds to a tactic of",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Prioritize events",
+                    "Bound execution times"
+                ]
+            },
+            {
+                "questionId": "DVDCatalogTwo",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo support multi-platform (Mac, Windows, Linux)\n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The layered view to deal with the aspects of portability.",
+                    "The uses view to show the coupling between the different platforms.",
+                    "The uses view to show the uses relationships between the different platforms.",
+                    "The data model view to represent each one of the platforms."
+                ]
+            },
+            {
+                "questionId": "AdventureBuilderTwo",
+                "content": "Consider the following performance/scalability scenario for the Adventure Builder system \n\t\n\t\\begin{quote}\n\t\tUp to 500 users click to see the catalog of adventure packages following a random distribution over 1 minute; the system is under normal operating conditions; the maximal latency to serve the first page of content is under 5 seconds; average latency for same is less than 2 seconds. If required, the system should easily support an increase in the number of simultaneous requests while maintaining the same latency per request.\n\t\\end{quote}\n\t\n\tand the following architectural view\n\t\n\t\\begin{center}\n\t\t\\includegraphics[width=10.5cm]{../AdventureBuilderHighLevelVIew}\n\t\\end{center}",
+                "image": [],
+                "options": [
+                    "The view does not address the scenario",
+                    "The view addresses the scenario because it separates the \\texttt{Consumer Website} module from the \\texttt{OpcApp} module to allow the execution of the \\texttt{Consumer Website} module in a component that can have multiple copies of computation",
+                    "The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement",
+                    "The view addresses the scenario because the \\texttt{Consumer Website} module uses the \\texttt{gwt} and \\texttt{waf} modules"
+                ]
+            },
+            {
+                "questionId": "GraphiteTwo",
+                "content": "The \\emph{Composer UI} component of Graphite system, described as - \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL} - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback about the result of the changes. To do so, the system needs to implement the tactics of",
+                "image": [],
+                "options": [
+                    "Task Model",
+                    "System Model",
+                    "Performance",
+                    "User Model"
+                ]
+            },
+            {
+                "questionId": "ChromeTwo",
+                "content": "In the description of the Chrome case study you can read:\n\t  \\newline\n\t  \n\t  \\emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} \n\t  \\newline\n\t  \n\t  This description refers to the qualities of",
+                "image": [],
+                "options": [
+                    "Usability e Modifiability",
+                    "Performance e Usability",
+                    "Availability e Usability",
+                    "Availability e Performance"
+                ]
+            },
+            {
+                "questionId": "SocialCalcTwo",
+                "content": "Consider the architectural views for the SocialCalc system. In the case description can be read:\n\t\n\t\\begin{quote}\n\t\tThe save format is in standard MIME multipart/mixed format, consisting of four text/plain; charset=UTF-8 parts, each part containing newline-delimited text with colon-delimited data fields. The parts are...\n\t\\end{quote}\n\t\n\tFrom the above excerpt can be inferred the need to have",
+                "image": [],
+                "options": [
+                    "A module view of the decomposition style.",
+                    "A module view of the data model style.",
+                    "A component-and-connector view of the service-oriented architecture style.",
+                    "A module view of the uses style."
+                ]
+            },
+            {
+                "questionId": "OrderPadTwo",
+                "content": "Frank Buschmann defines Featuritis as\n\t\t\n\t\\begin{quote}\n\t\tFeaturitis is the tendency to trade functional coverage for quality - the more functions the earlier they're delivered, the better.\n\t\\end{quote}\n\t\n\tIn the OrderPad system the architect regretted not getting performance tests going earlier. The OrderPad system",
+                "image": [],
+                "options": [
+                    "Suffered from featuritis, because the architect decided to delay the difficult parts for latter in the development.",
+                    "Did not suffer from featuritis.",
+                    "Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.",
+                    "Suffered from featuritis, but it had no impact on the final development."
+                ]
+            },
+            {
+                "questionId": "AggregatesTwo",
+                "content": "Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, \\texttt{Customer} and \\texttt{Order} were in the same aggregate  \n\t\n\t\\centering\n\t\\includegraphics[width=12cm]{../1-aggregate}",
+                "image": [],
+                "options": [
+                    "It would reduce the scalability for updates of different orders for the same customer.",
+                    "Two users would not conflict if they attempt to edit different orders for the same customer.",
+                    "The increase of the number of orders would not have impact on the load the aggregate.",
+                    "All the above."
+                ]
+            },
+            {
+                "questionId": "EventSourcingTwo",
+                "content": "Consider the architectural solutions for microservices architectures that use the Command Query Responsibility Segregation (CQRS) technique in the context of Event Sourcing. This technique has the following disadvantage",
+                "image": [],
+                "options": [
+                    "Does not allow optimizations according to the type of query.",
+                    "Does not support independent scalability according to the type of operation.",
+                    "Reads may not be consistent with the most recent write.",
+                    "Does not support joins."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/20190129-Exam/exame-20190129-companion-B.tex",
+        "quizTitle": "..-data-2018-20190129-Exam-exame-20190129-companion-B",
+        "questions": [
+            {
+                "questionId": "ModuleStyleTwo",
+                "content": "Suppose that you are implementing a module in a system that has a two layered architecture.\n\t Knowing that your module belongs to the upper layer (assuming the usual notation\n\t for the layer style), this means that you",
+                "image": [],
+                "options": [
+                    "Can use the operations defined in any of the system's modules",
+                    "Can use the operations defined in the lower layer, but not the ones defined in\n\t \tthe upper layer",
+                    "Can use the operations defined in the upper layer, but not the ones defined in\n\t \tthe lower layer",
+                    "Should use some operation defined in the lower layer"
+                ]
+            },
+            {
+                "questionId": "ModuleStyleFour",
+                "content": "Using the Aspects architectural style promotes the modifiability\n    of a system because",
+                "image": [],
+                "options": [
+                    "It imposes restrictions on which uses relationships may\n      exist between the system's modules",
+                    "It makes it easier to create generalization relationships\n      between the system's modules",
+                    "It separates in new modules responsibilities that were\n      spread over various of the system's modules",
+                    "It allows the decomposition of each of the system's\n      modules into finer grained modules"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorViewtypeTwo",
+                "content": "Consider the concept of interface delegation",
+                "image": [],
+                "options": [
+                    "It corresponds to a particular case of a specialization in a generalization view.",
+                    "It represents a relation between a connector's role and a port of one of its internal components.",
+                    "It represents a relation between a component's port and a port of one of its internal components.",
+                    "It represents a relation between a component's port and a connector's role."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleTwo",
+                "content": "In the Service Oriented Architecture style it is common to have a\n    specialized component, named \\emph{Enterprise Service Bus} (ESB).\n    The goal of using of an ESB in a system is",
+                "image": [],
+                "options": [
+                    "To facilitate the interaction among heterogeneous\n      components that use distinct communication protocols",
+                    "To promote the use of a common communication protocol for\n      all the remaining components of the system",
+                    "To increase the performance of the interaction between\n      the components of the system",
+                    "To create a strong coupling between the various services\n      provided by the organization"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorStyleFour",
+                "content": "In the description of the Gnutella system can be read:\n\t\n\t\\begin{quote}\n\t\tThe topology of the system changes at runtime as peer components connect and disconnect to the network.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "When a peer connects to the network it establishes connections with all other peers in the network",
+                    "The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used",
+                    "When a peer receives a connection it sends all its files to the peer connecting it",
+                    "The behavior described in the sentence can be represented in a view where the tier architectural style is used"
+                ]
+            },
+            {
+                "questionId": "AllocationTwo",
+                "content": "Consider the install architectural style of the allocation viewtype.",
+                "image": [],
+                "options": [
+                    "The development team is the main stakeholder interesting in these views.",
+                    "It assigns modules to files.",
+                    "It is completely independent of the deployment architectural style.",
+                    "It helps on the configuration of systems."
+                ]
+            },
+            {
+                "questionId": "WebApplicationsTwo",
+                "content": "Web applications went through several evolutions over the last\n    years.  One of those evolutions was to make their user interfaces\n    more sophisticated, by leveraging on new technologies available in\n    the browsers, such as, for example, Javascript, to provide a more\n    satisfying user experience.  What were the most visible\n    consequences of such an evolution on the typical software\n    architecture of a web application?",
+                "image": [],
+                "options": [
+                    "The presentation logic layer and how it relates with the\n      underlying layer changed",
+                    "The style of the connector used to represent the interaction between\n      the browser and the web server changed",
+                    "The browser is now a component of a different type",
+                    "That evolution did not have any consequences on the\n      software architecture of a web application"
+                ]
+            },
+            {
+                "questionId": "AvailabilityTwo",
+                "content": "A voting tactic can be used to",
+                "image": [],
+                "options": [
+                    "Prevent a fault in hardware.",
+                    "Prevent a fault in software.",
+                    "Prevent a fault in a process.",
+                    "Detect a fault."
+                ]
+            },
+            {
+                "questionId": "PerformanceTwo",
+                "content": "Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Prioritize events",
+                    "Bound execution time"
+                ]
+            },
+            {
+                "questionId": "ModifiabilityTwo",
+                "content": "The main tactic associated with the layered architectural style is:",
+                "image": [],
+                "options": [
+                    "Split module",
+                    "Encapsulate",
+                    "Restrict dependencies",
+                    "Defer binding"
+                ]
+            },
+            {
+                "questionId": "AggregatesTwo",
+                "content": "Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, \\texttt{Customer} and \\texttt{Order} were in the same aggregate  \n\t\n\t\\centering\n\t\\includegraphics[width=12cm]{../1-aggregate}",
+                "image": [],
+                "options": [
+                    "It would reduce the scalability for updates of different orders for the same customer.",
+                    "Two users would not conflict if they attempt to edit different orders for the same customer.",
+                    "The increase of the number of orders would not have impact on the load the aggregate.",
+                    "All the above."
+                ]
+            },
+            {
+                "questionId": "EventSourcingTwo",
+                "content": "Consider the architectural solutions for microservices architectures that use the Command Query Responsibility Segregation (CQRS) technique in the context of Event Sourcing. This technique has the following disadvantage",
+                "image": [],
+                "options": [
+                    "Does not allow optimizations according to the type of query.",
+                    "Does not support independent scalability according to the type of operation.",
+                    "Reads may not be consistent with the most recent write.",
+                    "Does not support joins."
+                ]
+            },
+            {
+                "questionId": "ModuleViewTypeTwo",
+                "content": "Consider the kind of relations between components and modules.",
+                "image": [],
+                "options": [
+                    "A module contains the code that executes in a single component and a component executes the code of a single module",
+                    "A module contains the code that can execute in several components and a component executes the code of a single module",
+                    "A module contains the code that executes in a single component and a component can execute the code of several modules",
+                    "A module contains the code that can execute in several components and a component can execute the code of several modules"
+                ]
+            },
+            {
+                "questionId": "ScalableArchitectureTwo",
+                "content": "Consider the use of a proxy to collapse requests. This corresponds to a tactic of",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Prioritize events",
+                    "Bound execution times"
+                ]
+            },
+            {
+                "questionId": "DVDCatalogTwo",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo support multi-platform (Mac, Windows, Linux)\n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The layered view to deal with the aspects of portability.",
+                    "The uses view to show the coupling between the different platforms.",
+                    "The uses view to show the uses relationships between the different platforms.",
+                    "The data model view to represent each one of the platforms."
+                ]
+            },
+            {
+                "questionId": "AdventureBuilderTwo",
+                "content": "Consider the following performance/scalability scenario for the Adventure Builder system \n\t\n\t\\begin{quote}\n\t\tUp to 500 users click to see the catalog of adventure packages following a random distribution over 1 minute; the system is under normal operating conditions; the maximal latency to serve the first page of content is under 5 seconds; average latency for same is less than 2 seconds. If required, the system should easily support an increase in the number of simultaneous requests while maintaining the same latency per request.\n\t\\end{quote}\n\t\n\tand the following architectural view\n\t\n\t\\begin{center}\n\t\t\\includegraphics[width=10.5cm]{../AdventureBuilderHighLevelVIew}\n\t\\end{center}",
+                "image": [],
+                "options": [
+                    "The view does not address the scenario",
+                    "The view addresses the scenario because it separates the \\texttt{Consumer Website} module from the \\texttt{OpcApp} module to allow the execution of the \\texttt{Consumer Website} module in a component that can have multiple copies of computation",
+                    "The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement",
+                    "The view addresses the scenario because the \\texttt{Consumer Website} module uses the \\texttt{gwt} and \\texttt{waf} modules"
+                ]
+            },
+            {
+                "questionId": "GraphiteTwo",
+                "content": "The \\emph{Composer UI} component of Graphite system, described as - \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL} - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback about the result of the changes. To do so, the system needs to implement the tactics of",
+                "image": [],
+                "options": [
+                    "Task Model",
+                    "System Model",
+                    "Performance",
+                    "User Model"
+                ]
+            },
+            {
+                "questionId": "ChromeTwo",
+                "content": "In the description of the Chrome case study you can read:\n\t  \\newline\n\t  \n\t  \\emph{Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.} \n\t  \\newline\n\t  \n\t  This description refers to the qualities of",
+                "image": [],
+                "options": [
+                    "Usability e Modifiability",
+                    "Performance e Usability",
+                    "Availability e Usability",
+                    "Availability e Performance"
+                ]
+            },
+            {
+                "questionId": "SocialCalcTwo",
+                "content": "Consider the architectural views for the SocialCalc system. In the case description can be read:\n\t\n\t\\begin{quote}\n\t\tThe save format is in standard MIME multipart/mixed format, consisting of four text/plain; charset=UTF-8 parts, each part containing newline-delimited text with colon-delimited data fields. The parts are...\n\t\\end{quote}\n\t\n\tFrom the above excerpt can be inferred the need to have",
+                "image": [],
+                "options": [
+                    "A module view of the decomposition style.",
+                    "A module view of the data model style.",
+                    "A component-and-connector view of the service-oriented architecture style.",
+                    "A module view of the uses style."
+                ]
+            },
+            {
+                "questionId": "OrderPadTwo",
+                "content": "Frank Buschmann defines Featuritis as\n\t\t\n\t\\begin{quote}\n\t\tFeaturitis is the tendency to trade functional coverage for quality - the more functions the earlier they're delivered, the better.\n\t\\end{quote}\n\t\n\tIn the OrderPad system the architect regretted not getting performance tests going earlier. The OrderPad system",
+                "image": [],
+                "options": [
+                    "Suffered from featuritis, because the architect decided to delay the difficult parts for latter in the development.",
+                    "Did not suffer from featuritis.",
+                    "Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.",
+                    "Suffered from featuritis, but it had no impact on the final development."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-11-A.tex",
+        "quizTitle": "..-data-2018-test-1-test-11-A",
+        "questions": [
+            {
+                "questionId": "MicroservicesMonitorability",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tMicroservice teams would expect to see (...) for each individual service such as dashboards showing up/down status and a variety of operational and business relevant metrics. Details on circuit breaker status, current throughput and latency are other examples we often encounter in the wild.\n\t\\end{quote}\n\t\n\tWhich quality is being referred?",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Availability",
+                    "Usability",
+                    "Monitorability"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsOne",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tThe Netflix app or website determines what particular device you are using to watch, and fetches the exact file for that show meant to specially play on your particular device, with a particular video quality based on how fast your internet is at that moment.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Introduce concurrency",
+                    "Prioritize events"
+                ]
+            },
+            {
+                "questionId": "LoadBalancer",
+                "content": "To which performance tactic can a load balancer be associated?",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation",
+                    "Bound execution times",
+                    "Reduce overhead"
+                ]
+            },
+            {
+                "questionId": "GPComposerUIQuality",
+                "content": "Which quality, or qualities, of the Graphite system are described by the sentence: \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}",
+                "image": [],
+                "options": [
+                    "Usability and Performance",
+                    "Usability",
+                    "Performance",
+                    "Testability"
+                ]
+            },
+            {
+                "questionId": "ChromeQualities",
+                "content": "Which quality(ies) of Chrome can be inferred from the sentence below?\n\t\n\t\\begin{quote}\n\t\tBy contrast, Chrome works on a multi-process model, which provides process and memory isolation, and a tight security sandbox for each tab. In an increasingly multi-core world, the ability to isolate the processes as well as shield each open tab from other misbehaving pages alone proves that Chrome has a significant performance edge over the competition. In fact, it is important to note that most other browsers have followed suit, or are in the process of migrating to similar architecture.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Security",
+                    "Performance and security",
+                    "Security and modifiability"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-11-B.tex",
+        "quizTitle": "..-data-2018-test-1-test-11-B",
+        "questions": [
+            {
+                "questionId": "NetflixTacticsOne",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tThe Netflix app or website determines what particular device you are using to watch, and fetches the exact file for that show meant to specially play on your particular device, with a particular video quality based on how fast your internet is at that moment.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Introduce concurrency",
+                    "Prioritize events"
+                ]
+            },
+            {
+                "questionId": "LoadBalancer",
+                "content": "To which performance tactic can a load balancer be associated?",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation",
+                    "Bound execution times",
+                    "Reduce overhead"
+                ]
+            },
+            {
+                "questionId": "GPComposerUIQuality",
+                "content": "Which quality, or qualities, of the Graphite system are described by the sentence: \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}",
+                "image": [],
+                "options": [
+                    "Usability and Performance",
+                    "Usability",
+                    "Performance",
+                    "Testability"
+                ]
+            },
+            {
+                "questionId": "ChromeQualities",
+                "content": "Which quality(ies) of Chrome can be inferred from the sentence below?\n\t\n\t\\begin{quote}\n\t\tBy contrast, Chrome works on a multi-process model, which provides process and memory isolation, and a tight security sandbox for each tab. In an increasingly multi-core world, the ability to isolate the processes as well as shield each open tab from other misbehaving pages alone proves that Chrome has a significant performance edge over the competition. In fact, it is important to note that most other browsers have followed suit, or are in the process of migrating to similar architecture.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Security",
+                    "Performance and security",
+                    "Security and modifiability"
+                ]
+            },
+            {
+                "questionId": "MicroservicesMonitorability",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tMicroservice teams would expect to see (...) for each individual service such as dashboards showing up/down status and a variety of operational and business relevant metrics. Details on circuit breaker status, current throughput and latency are other examples we often encounter in the wild.\n\t\\end{quote}\n\t\n\tWhich quality is being referred?",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Availability",
+                    "Usability",
+                    "Monitorability"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-11-C.tex",
+        "quizTitle": "..-data-2018-test-1-test-11-C",
+        "questions": [
+            {
+                "questionId": "LoadBalancer",
+                "content": "To which performance tactic can a load balancer be associated?",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation",
+                    "Bound execution times",
+                    "Reduce overhead"
+                ]
+            },
+            {
+                "questionId": "GPComposerUIQuality",
+                "content": "Which quality, or qualities, of the Graphite system are described by the sentence: \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}",
+                "image": [],
+                "options": [
+                    "Usability and Performance",
+                    "Usability",
+                    "Performance",
+                    "Testability"
+                ]
+            },
+            {
+                "questionId": "ChromeQualities",
+                "content": "Which quality(ies) of Chrome can be inferred from the sentence below?\n\t\n\t\\begin{quote}\n\t\tBy contrast, Chrome works on a multi-process model, which provides process and memory isolation, and a tight security sandbox for each tab. In an increasingly multi-core world, the ability to isolate the processes as well as shield each open tab from other misbehaving pages alone proves that Chrome has a significant performance edge over the competition. In fact, it is important to note that most other browsers have followed suit, or are in the process of migrating to similar architecture.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Security",
+                    "Performance and security",
+                    "Security and modifiability"
+                ]
+            },
+            {
+                "questionId": "MicroservicesMonitorability",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tMicroservice teams would expect to see (...) for each individual service such as dashboards showing up/down status and a variety of operational and business relevant metrics. Details on circuit breaker status, current throughput and latency are other examples we often encounter in the wild.\n\t\\end{quote}\n\t\n\tWhich quality is being referred?",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Availability",
+                    "Usability",
+                    "Monitorability"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsOne",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tThe Netflix app or website determines what particular device you are using to watch, and fetches the exact file for that show meant to specially play on your particular device, with a particular video quality based on how fast your internet is at that moment.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Introduce concurrency",
+                    "Prioritize events"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-11-D.tex",
+        "quizTitle": "..-data-2018-test-1-test-11-D",
+        "questions": [
+            {
+                "questionId": "GPComposerUIQuality",
+                "content": "Which quality, or qualities, of the Graphite system are described by the sentence: \\emph{Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.}",
+                "image": [],
+                "options": [
+                    "Usability and Performance",
+                    "Usability",
+                    "Performance",
+                    "Testability"
+                ]
+            },
+            {
+                "questionId": "ChromeQualities",
+                "content": "Which quality(ies) of Chrome can be inferred from the sentence below?\n\t\n\t\\begin{quote}\n\t\tBy contrast, Chrome works on a multi-process model, which provides process and memory isolation, and a tight security sandbox for each tab. In an increasingly multi-core world, the ability to isolate the processes as well as shield each open tab from other misbehaving pages alone proves that Chrome has a significant performance edge over the competition. In fact, it is important to note that most other browsers have followed suit, or are in the process of migrating to similar architecture.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Security",
+                    "Performance and security",
+                    "Security and modifiability"
+                ]
+            },
+            {
+                "questionId": "MicroservicesMonitorability",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tMicroservice teams would expect to see (...) for each individual service such as dashboards showing up/down status and a variety of operational and business relevant metrics. Details on circuit breaker status, current throughput and latency are other examples we often encounter in the wild.\n\t\\end{quote}\n\t\n\tWhich quality is being referred?",
+                "image": [],
+                "options": [
+                    "Performance",
+                    "Availability",
+                    "Usability",
+                    "Monitorability"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsOne",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tThe Netflix app or website determines what particular device you are using to watch, and fetches the exact file for that show meant to specially play on your particular device, with a particular video quality based on how fast your internet is at that moment.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Introduce concurrency",
+                    "Prioritize events"
+                ]
+            },
+            {
+                "questionId": "LoadBalancer",
+                "content": "To which performance tactic can a load balancer be associated?",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation",
+                    "Bound execution times",
+                    "Reduce overhead"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-12-A.tex",
+        "quizTitle": "..-data-2018-test-1-test-12-A",
+        "questions": [
+            {
+                "questionId": "MicroservicesModuleAndComponent",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tAs well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams.\n\t\\end{quote}\n\t\n\tFor this description it is relevant to consider the software architecture concept(s) of",
+                "image": [],
+                "options": [
+                    "Component",
+                    "Module",
+                    "Component and Module",
+                    "None of the above"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsTwo",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tWhat CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation"
+                ]
+            },
+            {
+                "questionId": "Queues",
+                "content": "To which performance tactic can the use of queues be associated?",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Schedule resources",
+                    "Bound execution times",
+                    "Increase resource efficiency"
+                ]
+            },
+            {
+                "questionId": "GraphiteScenarioTacticsOne",
+                "content": "In the Graphite system the component \\emph{carbon} provides to \\emph{webapp} components an access interface to the \\emph{buffers} in order to improve the quality of",
+                "image": [],
+                "options": [
+                    "Performance.",
+                    "Interoperability.",
+                    "Availability.",
+                    "Security."
+                ]
+            },
+            {
+                "questionId": "ChromeTactics",
+                "content": "Which performance tactic is referred in the following description of Chrome?\n\n\t\\begin{quote}\n\t\tThe ability of the browser to optimize the order, priority, and latency of each network resource is one of the most critical contributors to the overall user experience. You may not be aware of it, but Chrome's network stack is, quite literally, getting smarter every day, trying to hide or decrease the latency cost of each resource: it learns likely DNS lookups, it remembers the topology of the web, it pre-connects to likely destination targets, and more. From the outside, it presents itself as a simple resource fetching mechanism, but from the inside it is an elaborate and a fascinating case study for how to optimize web performance and deliver the best experience to the user.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Maintain multiple copies of computation",
+                    "Maintain multiple copies of data",
+                    "Schedule resources"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-12-B.tex",
+        "quizTitle": "..-data-2018-test-1-test-12-B",
+        "questions": [
+            {
+                "questionId": "NetflixTacticsTwo",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tWhat CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation"
+                ]
+            },
+            {
+                "questionId": "Queues",
+                "content": "To which performance tactic can the use of queues be associated?",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Schedule resources",
+                    "Bound execution times",
+                    "Increase resource efficiency"
+                ]
+            },
+            {
+                "questionId": "GraphiteScenarioTacticsOne",
+                "content": "In the Graphite system the component \\emph{carbon} provides to \\emph{webapp} components an access interface to the \\emph{buffers} in order to improve the quality of",
+                "image": [],
+                "options": [
+                    "Performance.",
+                    "Interoperability.",
+                    "Availability.",
+                    "Security."
+                ]
+            },
+            {
+                "questionId": "ChromeTactics",
+                "content": "Which performance tactic is referred in the following description of Chrome?\n\n\t\\begin{quote}\n\t\tThe ability of the browser to optimize the order, priority, and latency of each network resource is one of the most critical contributors to the overall user experience. You may not be aware of it, but Chrome's network stack is, quite literally, getting smarter every day, trying to hide or decrease the latency cost of each resource: it learns likely DNS lookups, it remembers the topology of the web, it pre-connects to likely destination targets, and more. From the outside, it presents itself as a simple resource fetching mechanism, but from the inside it is an elaborate and a fascinating case study for how to optimize web performance and deliver the best experience to the user.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Maintain multiple copies of computation",
+                    "Maintain multiple copies of data",
+                    "Schedule resources"
+                ]
+            },
+            {
+                "questionId": "MicroservicesModuleAndComponent",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tAs well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams.\n\t\\end{quote}\n\t\n\tFor this description it is relevant to consider the software architecture concept(s) of",
+                "image": [],
+                "options": [
+                    "Component",
+                    "Module",
+                    "Component and Module",
+                    "None of the above"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-12-C.tex",
+        "quizTitle": "..-data-2018-test-1-test-12-C",
+        "questions": [
+            {
+                "questionId": "Queues",
+                "content": "To which performance tactic can the use of queues be associated?",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Schedule resources",
+                    "Bound execution times",
+                    "Increase resource efficiency"
+                ]
+            },
+            {
+                "questionId": "GraphiteScenarioTacticsOne",
+                "content": "In the Graphite system the component \\emph{carbon} provides to \\emph{webapp} components an access interface to the \\emph{buffers} in order to improve the quality of",
+                "image": [],
+                "options": [
+                    "Performance.",
+                    "Interoperability.",
+                    "Availability.",
+                    "Security."
+                ]
+            },
+            {
+                "questionId": "ChromeTactics",
+                "content": "Which performance tactic is referred in the following description of Chrome?\n\n\t\\begin{quote}\n\t\tThe ability of the browser to optimize the order, priority, and latency of each network resource is one of the most critical contributors to the overall user experience. You may not be aware of it, but Chrome's network stack is, quite literally, getting smarter every day, trying to hide or decrease the latency cost of each resource: it learns likely DNS lookups, it remembers the topology of the web, it pre-connects to likely destination targets, and more. From the outside, it presents itself as a simple resource fetching mechanism, but from the inside it is an elaborate and a fascinating case study for how to optimize web performance and deliver the best experience to the user.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Maintain multiple copies of computation",
+                    "Maintain multiple copies of data",
+                    "Schedule resources"
+                ]
+            },
+            {
+                "questionId": "MicroservicesModuleAndComponent",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tAs well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams.\n\t\\end{quote}\n\t\n\tFor this description it is relevant to consider the software architecture concept(s) of",
+                "image": [],
+                "options": [
+                    "Component",
+                    "Module",
+                    "Component and Module",
+                    "None of the above"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsTwo",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tWhat CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-1/test-12-D.tex",
+        "quizTitle": "..-data-2018-test-1-test-12-D",
+        "questions": [
+            {
+                "questionId": "GraphiteScenarioTacticsOne",
+                "content": "In the Graphite system the component \\emph{carbon} provides to \\emph{webapp} components an access interface to the \\emph{buffers} in order to improve the quality of",
+                "image": [],
+                "options": [
+                    "Performance.",
+                    "Interoperability.",
+                    "Availability.",
+                    "Security."
+                ]
+            },
+            {
+                "questionId": "ChromeTactics",
+                "content": "Which performance tactic is referred in the following description of Chrome?\n\n\t\\begin{quote}\n\t\tThe ability of the browser to optimize the order, priority, and latency of each network resource is one of the most critical contributors to the overall user experience. You may not be aware of it, but Chrome's network stack is, quite literally, getting smarter every day, trying to hide or decrease the latency cost of each resource: it learns likely DNS lookups, it remembers the topology of the web, it pre-connects to likely destination targets, and more. From the outside, it presents itself as a simple resource fetching mechanism, but from the inside it is an elaborate and a fascinating case study for how to optimize web performance and deliver the best experience to the user.\n\t\\end{quote}",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Maintain multiple copies of computation",
+                    "Maintain multiple copies of data",
+                    "Schedule resources"
+                ]
+            },
+            {
+                "questionId": "MicroservicesModuleAndComponent",
+                "content": "In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:\n\t\n\t\\begin{quote}\n\t\tAs well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams.\n\t\\end{quote}\n\t\n\tFor this description it is relevant to consider the software architecture concept(s) of",
+                "image": [],
+                "options": [
+                    "Component",
+                    "Module",
+                    "Component and Module",
+                    "None of the above"
+                ]
+            },
+            {
+                "questionId": "NetflixTacticsTwo",
+                "content": "In the description of the \\emph{How Netflix works} can be read:\n\t\n\t\\begin{quote}\n\t\tWhat CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest.\n\t\\end{quote}\n\t\n\tWhich corresponds to the application of the following tactic",
+                "image": [],
+                "options": [
+                    "Manage sampling rate",
+                    "Limit event response",
+                    "Maintain multiple copies of data",
+                    "Maintain multiple copies of computation"
+                ]
+            },
+            {
+                "questionId": "Queues",
+                "content": "To which performance tactic can the use of queues be associated?",
+                "image": [],
+                "options": [
+                    "Limit event response",
+                    "Schedule resources",
+                    "Bound execution times",
+                    "Increase resource efficiency"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-2/test-21-A.tex",
+        "quizTitle": "..-data-2018-test-2-test-21-A",
+        "questions": [
+            {
+                "questionId": "ModifiabilityResponseMeasure",
+                "content": "A response measure of a modifiability scenario is",
+                "image": [],
+                "options": [
+                    "When the modification should occur.",
+                    "The features that will be implemented.",
+                    "The new defects introduced.",
+                    "Defer binding."
+                ]
+            },
+            {
+                "questionId": "IterativeDesign",
+                "content": "Designing an architecture",
+                "image": [],
+                "options": [
+                    "Is driven by functional requirements.",
+                    "Is done in a single step, after all the tactics were identified.",
+                    "Is a top-down process where a initial decomposition is chosen and it is successively decomposed without changing the initial decisions.",
+                    "Is an iterative process where architectural designs are proposed as hypothesis and tested."
+                ]
+            },
+            {
+                "questionId": "Decomposition",
+                "content": "The Decomposition architectural style of the Module viewtype",
+                "image": [],
+                "options": [
+                    "Is applied only once at the beginning of the architectural design process.",
+                    "Is applied at the begin of the architectural design process but may be necessary to redo it later.",
+                    "Is mostly driven by the security attribute quality.",
+                    "Follows a bottom-up decomposition process of the system."
+                ]
+            },
+            {
+                "questionId": "ChromeTabSecurity",
+                "content": "In the Chrome system the use of a process per tab results form the application of a tactic of",
+                "image": [],
+                "options": [
+                    "Limit access.",
+                    "Increase resources.",
+                    "Increase resource efficiency.",
+                    "Maintain multiple copies of data."
+                ]
+            },
+            {
+                "questionId": "SocialCalcTacticsOne",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tAs the user scrolls the spreadsheet through our custom-drawn scroll bars, we dynamically update the innerHTML of the pre-drawn \\textsc{<td>} elements. This means we don't need to create or destroy any \\textsc{<tr>} or \\textsc{<td>} elements in many common cases, which greatly speeds up response time.\n\t\\end{quote} \n\t\n\tThis corresponds to the application of",
+                "image": [],
+                "options": [
+                    "Manage sampling rate tactic.",
+                    "Increase resource efficiency tactic.",
+                    "Introduce concurrency tactic.",
+                    "Schedule resources tactic."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-2/test-21-B.tex",
+        "quizTitle": "..-data-2018-test-2-test-21-B",
+        "questions": [
+            {
+                "questionId": "ChromeTabSecurity",
+                "content": "In the Chrome system the use of a process per tab results form the application of a tactic of",
+                "image": [],
+                "options": [
+                    "Limit access.",
+                    "Increase resources.",
+                    "Increase resource efficiency.",
+                    "Maintain multiple copies of data."
+                ]
+            },
+            {
+                "questionId": "SocialCalcTacticsOne",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tAs the user scrolls the spreadsheet through our custom-drawn scroll bars, we dynamically update the innerHTML of the pre-drawn \\textsc{<td>} elements. This means we don't need to create or destroy any \\textsc{<tr>} or \\textsc{<td>} elements in many common cases, which greatly speeds up response time.\n\t\\end{quote} \n\t\n\tThis corresponds to the application of",
+                "image": [],
+                "options": [
+                    "Manage sampling rate tactic.",
+                    "Increase resource efficiency tactic.",
+                    "Introduce concurrency tactic.",
+                    "Schedule resources tactic."
+                ]
+            },
+            {
+                "questionId": "ModifiabilityResponseMeasure",
+                "content": "A response measure of a modifiability scenario is",
+                "image": [],
+                "options": [
+                    "When the modification should occur.",
+                    "The features that will be implemented.",
+                    "The new defects introduced.",
+                    "Defer binding."
+                ]
+            },
+            {
+                "questionId": "IterativeDesign",
+                "content": "Designing an architecture",
+                "image": [],
+                "options": [
+                    "Is driven by functional requirements.",
+                    "Is done in a single step, after all the tactics were identified.",
+                    "Is a top-down process where a initial decomposition is chosen and it is successively decomposed without changing the initial decisions.",
+                    "Is an iterative process where architectural designs are proposed as hypothesis and tested."
+                ]
+            },
+            {
+                "questionId": "Decomposition",
+                "content": "The Decomposition architectural style of the Module viewtype",
+                "image": [],
+                "options": [
+                    "Is applied only once at the beginning of the architectural design process.",
+                    "Is applied at the begin of the architectural design process but may be necessary to redo it later.",
+                    "Is mostly driven by the security attribute quality.",
+                    "Follows a bottom-up decomposition process of the system."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-2/test-22-A.tex",
+        "quizTitle": "..-data-2018-test-2-test-22-A",
+        "questions": [
+            {
+                "questionId": "AvailabilityVotingFirst",
+                "content": "There are several tactics to satisfy availability requirements,\n    which may be applied depending on the concrete requirement that we\n    want to satisfy.  Assuming that you want to detect faults of type\n    \\emph{response} in your system, which tactic is more adequate?",
+                "image": [],
+                "options": [
+                    "Ping/Echo.",
+                    "Retry.",
+                    "Voting.",
+                    "Passive Redundancy."
+                ]
+            },
+            {
+                "questionId": "LowArchitecturalImpact",
+                "content": "Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value",
+                "image": [],
+                "options": [
+                    "This ASR can easily be supported by the architecture because it has little effect in the architecture.",
+                    "This ASR requires a specific architectural design because it profoundly affects the architecture.",
+                    "The cost of meeting the ASR after development starts is too high.",
+                    "Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture."
+                ]
+            },
+            {
+                "questionId": "UsesCalls",
+                "content": "A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because",
+                "image": [],
+                "options": [
+                    "The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.",
+                    "The invoked function may not have any input parameter.",
+                    "The invoked function may not have any output parameter.",
+                    "The invoked function may not have both any input parameter nor any output parameter."
+                ]
+            },
+            {
+                "questionId": "ChromePredictor",
+                "content": "In the description of the Chrome system can be read\n\t\n\t\\begin{quote}\n\t\tThe goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. \n\t\\end{quote}\n\t\n\tThe above sentence refer to",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data tactic.",
+                    "Introduce concurrence tactic.",
+                    "Increase resource efficiency tactic.",
+                    "Schedule resources tactic."
+                ]
+            },
+            {
+                "questionId": "SocialCalcTacticsTwo",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tA simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.\n\t\\end{quote}\n\t\n\tThis sentence describes a tactic for usability which is",
+                "image": [],
+                "options": [
+                    "Maintain task model",
+                    "Maintain user model",
+                    "Maintain system model",
+                    "Aggregate"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-2/test-22-B.tex",
+        "quizTitle": "..-data-2018-test-2-test-22-B",
+        "questions": [
+            {
+                "questionId": "UsesCalls",
+                "content": "A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because",
+                "image": [],
+                "options": [
+                    "The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.",
+                    "The invoked function may not have any input parameter.",
+                    "The invoked function may not have any output parameter.",
+                    "The invoked function may not have both any input parameter nor any output parameter."
+                ]
+            },
+            {
+                "questionId": "ChromePredictor",
+                "content": "In the description of the Chrome system can be read\n\t\n\t\\begin{quote}\n\t\tThe goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. \n\t\\end{quote}\n\t\n\tThe above sentence refer to",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data tactic.",
+                    "Introduce concurrence tactic.",
+                    "Increase resource efficiency tactic.",
+                    "Schedule resources tactic."
+                ]
+            },
+            {
+                "questionId": "AvailabilityVotingFirst",
+                "content": "There are several tactics to satisfy availability requirements,\n    which may be applied depending on the concrete requirement that we\n    want to satisfy.  Assuming that you want to detect faults of type\n    \\emph{response} in your system, which tactic is more adequate?",
+                "image": [],
+                "options": [
+                    "Ping/Echo.",
+                    "Retry.",
+                    "Voting.",
+                    "Passive Redundancy."
+                ]
+            },
+            {
+                "questionId": "LowArchitecturalImpact",
+                "content": "Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value",
+                "image": [],
+                "options": [
+                    "This ASR can easily be supported by the architecture because it has little effect in the architecture.",
+                    "This ASR requires a specific architectural design because it profoundly affects the architecture.",
+                    "The cost of meeting the ASR after development starts is too high.",
+                    "Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture."
+                ]
+            },
+            {
+                "questionId": "SocialCalcTacticsTwo",
+                "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tA simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.\n\t\\end{quote}\n\t\n\tThis sentence describes a tactic for usability which is",
+                "image": [],
+                "options": [
+                    "Maintain task model",
+                    "Maintain user model",
+                    "Maintain system model",
+                    "Aggregate"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-3/test-31-A.tex",
+        "quizTitle": "..-data-2018-test-3-test-31-A",
+        "questions": [
+            {
+                "questionId": "Layered",
+                "content": "Consider the Layered architectural style of the Module viewtype",
+                "image": [],
+                "options": [
+                    "The modules inside a layer cannot use other modules in the same layer",
+                    "A layer cannot call the layer above",
+                    "Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer",
+                    "It is possible to have a circular allowed-to-use relationship between several layers"
+                ]
+            },
+            {
+                "questionId": "DataModelOne",
+                "content": "The detail that can be used in a view of the Data Model viewtype can be conceptual, logical or physical.",
+                "image": [],
+                "options": [
+                    "If there are performance requirements concerning the access to data, then the level of detail should be physical",
+                    "It should always consider the physical detail level",
+                    "The logical detail level should only be used when the target of implementation is a relational database",
+                    "Only the conceptual level is required, the other two levels of detail are optional"
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorOne",
+                "content": "In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.",
+                "image": [],
+                "options": [
+                    "Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.",
+                    "It is preferable to only design views that do not use complex connectors to increase understandability.",
+                    "If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.",
+                    "Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them."
+                ]
+            },
+            {
+                "questionId": "PipesFilters",
+                "content": "Consider that you intend to develop a system where it is necessary to change the emails received by the server (for instance, to remove potential virus or URLs for phishing sites). The goal is that each email is processed by this system before it is sent to other servers or it is stored locally. Additionally, the system should be easily modified to support new kinds of transformations. Which style is more suitable to satisfy these requirements?",
+                "image": [],
+                "options": [
+                    "Peer-to-Peer.",
+                    "Pipe-and-Filter.",
+                    "Client-Server.",
+                    "Publish-Subscribe."
+                ]
+            },
+            {
+                "questionId": "SOA",
+                "content": "Consider the Service-Oriented Architecture architectural style",
+                "image": [],
+                "options": [
+                    "The main quality this style addresses is interoperability.",
+                    "It cannot be applied when the system includes legacy systems.",
+                    "Its enterprise service bus cannot support asynchronous communication between the components.",
+                    "The typical communication pattern is point-to-point."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-3/test-31-B.tex",
+        "quizTitle": "..-data-2018-test-3-test-31-B",
+        "questions": [
+            {
+                "questionId": "ComponentAndConnectorOne",
+                "content": "In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.",
+                "image": [],
+                "options": [
+                    "Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.",
+                    "It is preferable to only design views that do not use complex connectors to increase understandability.",
+                    "If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.",
+                    "Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them."
+                ]
+            },
+            {
+                "questionId": "PipesFilters",
+                "content": "Consider that you intend to develop a system where it is necessary to change the emails received by the server (for instance, to remove potential virus or URLs for phishing sites). The goal is that each email is processed by this system before it is sent to other servers or it is stored locally. Additionally, the system should be easily modified to support new kinds of transformations. Which style is more suitable to satisfy these requirements?",
+                "image": [],
+                "options": [
+                    "Peer-to-Peer.",
+                    "Pipe-and-Filter.",
+                    "Client-Server.",
+                    "Publish-Subscribe."
+                ]
+            },
+            {
+                "questionId": "SOA",
+                "content": "Consider the Service-Oriented Architecture architectural style",
+                "image": [],
+                "options": [
+                    "The main quality this style addresses is interoperability.",
+                    "It cannot be applied when the system includes legacy systems.",
+                    "Its enterprise service bus cannot support asynchronous communication between the components.",
+                    "The typical communication pattern is point-to-point."
+                ]
+            },
+            {
+                "questionId": "Layered",
+                "content": "Consider the Layered architectural style of the Module viewtype",
+                "image": [],
+                "options": [
+                    "The modules inside a layer cannot use other modules in the same layer",
+                    "A layer cannot call the layer above",
+                    "Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer",
+                    "It is possible to have a circular allowed-to-use relationship between several layers"
+                ]
+            },
+            {
+                "questionId": "DataModelOne",
+                "content": "The detail that can be used in a view of the Data Model viewtype can be conceptual, logical or physical.",
+                "image": [],
+                "options": [
+                    "If there are performance requirements concerning the access to data, then the level of detail should be physical",
+                    "It should always consider the physical detail level",
+                    "The logical detail level should only be used when the target of implementation is a relational database",
+                    "Only the conceptual level is required, the other two levels of detail are optional"
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-3/test-32-A.tex",
+        "quizTitle": "..-data-2018-test-3-test-32-A",
+        "questions": [
+            {
+                "questionId": "Aspects",
+                "content": "Using the Aspects architectural style promotes the modifiability\n    of a system because",
+                "image": [],
+                "options": [
+                    "It imposes restrictions on which uses relationships may\n      exist between the system's modules",
+                    "It makes it easier to create generalization relationships\n      between the system's modules",
+                    "It separates in new modules responsibilities that were\n      spread over various of the system's modules",
+                    "It allows the decomposition of each of the system's\n      modules into finer grained modules"
+                ]
+            },
+            {
+                "questionId": "DataModelTwo",
+                "content": "In Facebook it is not possible to have the information about more that one bilion users in a single disk. Therefore, a sharding technique is applied, where the persistent information is split between several database servers, and requests are routed to the right servers for queries and updates. Additionally, due to performance requirements, the information needs to be replicated in several servers. To describe this architecture",
+                "image": [],
+                "options": [
+                    "It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.",
+                    "It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.",
+                    "It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database.",
+                    "It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorTwo",
+                "content": "Consider the Component-and-Connector viewtype",
+                "image": [],
+                "options": [
+                    "A component is an instance and a view can have several instances of the same component type.",
+                    "A component type is made of a single architectural style.",
+                    "Only components can be associated with application-specific types.",
+                    "A component-and-connector view can only use a single architectural style."
+                ]
+            },
+            {
+                "questionId": "PeerToPeer",
+                "content": "Consider the peer-to-peer architectural style",
+                "image": [],
+                "options": [
+                    "All the peers are equal.",
+                    "Any peer can access any other peer.",
+                    "Peers are only used to share files.",
+                    "The interaction between peers is symmetric."
+                ]
+            },
+            {
+                "questionId": "Tiers",
+                "content": "The Tiers architectural style",
+                "image": [],
+                "options": [
+                    "Applies layers to tiers.",
+                    "Restricts the communication between components because, for instance, a group of components should be located in the same hardware.",
+                    "Is an extension of the Client-Server architectural style.",
+                    "Defines tiers as components."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-3/test-32-B.tex",
+        "quizTitle": "..-data-2018-test-3-test-32-B",
+        "questions": [
+            {
+                "questionId": "Tiers",
+                "content": "The Tiers architectural style",
+                "image": [],
+                "options": [
+                    "Applies layers to tiers.",
+                    "Restricts the communication between components because, for instance, a group of components should be located in the same hardware.",
+                    "Is an extension of the Client-Server architectural style.",
+                    "Defines tiers as components."
+                ]
+            },
+            {
+                "questionId": "Aspects",
+                "content": "Using the Aspects architectural style promotes the modifiability\n    of a system because",
+                "image": [],
+                "options": [
+                    "It imposes restrictions on which uses relationships may\n      exist between the system's modules",
+                    "It makes it easier to create generalization relationships\n      between the system's modules",
+                    "It separates in new modules responsibilities that were\n      spread over various of the system's modules",
+                    "It allows the decomposition of each of the system's\n      modules into finer grained modules"
+                ]
+            },
+            {
+                "questionId": "PeerToPeer",
+                "content": "Consider the peer-to-peer architectural style",
+                "image": [],
+                "options": [
+                    "All the peers are equal.",
+                    "Any peer can access any other peer.",
+                    "Peers are only used to share files.",
+                    "The interaction between peers is symmetric."
+                ]
+            },
+            {
+                "questionId": "DataModelTwo",
+                "content": "In Facebook it is not possible to have the information about more that one bilion users in a single disk. Therefore, a sharding technique is applied, where the persistent information is split between several database servers, and requests are routed to the right servers for queries and updates. Additionally, due to performance requirements, the information needs to be replicated in several servers. To describe this architecture",
+                "image": [],
+                "options": [
+                    "It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.",
+                    "It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.",
+                    "It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database.",
+                    "It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data."
+                ]
+            },
+            {
+                "questionId": "ComponentAndConnectorTwo",
+                "content": "Consider the Component-and-Connector viewtype",
+                "image": [],
+                "options": [
+                    "A component is an instance and a view can have several instances of the same component type.",
+                    "A component type is made of a single architectural style.",
+                    "Only components can be associated with application-specific types.",
+                    "A component-and-connector view can only use a single architectural style."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-4/test-41-A.tex",
+        "quizTitle": "..-data-2018-test-4-test-41-A",
+        "questions": [
+            {
+                "questionId": "AllocationStylesCost",
+                "content": "Consider a stakeholder that is particularly concerned about the total cost of the project. When it comes to describing the system using allocation viewtypes she is interested in",
+                "image": [],
+                "options": [
+                    "A deployment view.",
+                    "A work assignment view.",
+                    "A deployment and a work assignment view.",
+                    "A install view."
+                ]
+            },
+            {
+                "questionId": "DVDCatalogMeta",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tThe application should support other kinds of catalogs (CDs, games, books, ...). \n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The layered view to support a new specific layer for the customization of the catalog.",
+                    "The layered view to accommodate a new layer for each kind of catalog, which other layers may use.",
+                    "The data model view in order to define entities for each kind of catalog.",
+                    "The data model view in order to define generic entities that can be customized for different kinds of catalogs."
+                ]
+            },
+            {
+                "questionId": "GraphiteClientServer",
+                "content": "In Graphite system, in order to generate up-to-date graphs, the \\emph{WebApp} component interacts with the \\emph{Carbon} component. The interaction between these two components follows the architectural style",
+                "image": [],
+                "options": [
+                    "Client-server.",
+                    "Communicating Processes.",
+                    "Repository.",
+                    "Pipes-and-Filters."
+                ]
+            },
+            {
+                "questionId": "ChromeCommunicatingProcesses",
+                "content": "In Chrome system, to show that it provides availability when the javascript code executing in a tab crashes, and security when the javascript code executing in a tab tries to access the information in another tab, it is necessary to design",
+                "image": [],
+                "options": [
+                    "One view of the component-and-connector viewtype and another of the deployment style.",
+                    "A single view of the communicating processes style.",
+                    "Two views of the communicating processes style.",
+                    "A view of the aspects style."
+                ]
+            },
+            {
+                "questionId": "AggregateAndEventSourcing",
+                "content": "How can be guaranteed that the update of an aggregate and the publishing of an event about the update is an atomic action",
+                "image": [],
+                "options": [
+                    "The aggregates publishes the event in a message broker and subscribes to the published event.",
+                    "Using the database of the aggregate as a temporary message queue.",
+                    "Using event sourcing.",
+                    "All of the above."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-4/test-41-B.tex",
+        "quizTitle": "..-data-2018-test-4-test-41-B",
+        "questions": [
+            {
+                "questionId": "ChromeCommunicatingProcesses",
+                "content": "In Chrome system, to show that it provides availability when the javascript code executing in a tab crashes, and security when the javascript code executing in a tab tries to access the information in another tab, it is necessary to design",
+                "image": [],
+                "options": [
+                    "One view of the component-and-connector viewtype and another of the deployment style.",
+                    "A single view of the communicating processes style.",
+                    "Two views of the communicating processes style.",
+                    "A view of the aspects style."
+                ]
+            },
+            {
+                "questionId": "AggregateAndEventSourcing",
+                "content": "How can be guaranteed that the update of an aggregate and the publishing of an event about the update is an atomic action",
+                "image": [],
+                "options": [
+                    "The aggregates publishes the event in a message broker and subscribes to the published event.",
+                    "Using the database of the aggregate as a temporary message queue.",
+                    "Using event sourcing.",
+                    "All of the above."
+                ]
+            },
+            {
+                "questionId": "AllocationStylesCost",
+                "content": "Consider a stakeholder that is particularly concerned about the total cost of the project. When it comes to describing the system using allocation viewtypes she is interested in",
+                "image": [],
+                "options": [
+                    "A deployment view.",
+                    "A work assignment view.",
+                    "A deployment and a work assignment view.",
+                    "A install view."
+                ]
+            },
+            {
+                "questionId": "DVDCatalogMeta",
+                "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tThe application should support other kinds of catalogs (CDs, games, books, ...). \n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The layered view to support a new specific layer for the customization of the catalog.",
+                    "The layered view to accommodate a new layer for each kind of catalog, which other layers may use.",
+                    "The data model view in order to define entities for each kind of catalog.",
+                    "The data model view in order to define generic entities that can be customized for different kinds of catalogs."
+                ]
+            },
+            {
+                "questionId": "GraphiteClientServer",
+                "content": "In Graphite system, in order to generate up-to-date graphs, the \\emph{WebApp} component interacts with the \\emph{Carbon} component. The interaction between these two components follows the architectural style",
+                "image": [],
+                "options": [
+                    "Client-server.",
+                    "Communicating Processes.",
+                    "Repository.",
+                    "Pipes-and-Filters."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-4/test-42-A.tex",
+        "quizTitle": "..-data-2018-test-4-test-42-A",
+        "questions": [
+            {
+                "questionId": "WorkAssignment",
+                "content": "The Work-assignment is an architectural style of the allocation viewtype, where",
+                "image": [],
+                "options": [
+                    "Components are allocated to persons and teams.",
+                    "Modules are allocated to persons and teams.",
+                    "Components and modules are allocated to persons and teams.",
+                    "None of the above."
+                ]
+            },
+            {
+                "questionId": "DVDCatalogMobile",
+                "content": "Consider the module viewtype views of the Catalog of DVD application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo support iPhone, iPad, Android versions with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available\n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The decomposition view to include a module for the synchronization responsibilities.",
+                    "The uses view to represent how the mobile device uses the Catalog application.",
+                    "The layered view to include a layer for each type of device.",
+                    "The domain layer of the layered style to represent the types of devices."
+                ]
+            },
+            {
+                "questionId": "GraphiteCommunicationProcesses",
+                "content": "In Graphite system the \\emph{receiver} and the \\emph{writer threads} support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style",
+                "image": [],
+                "options": [
+                    "Client-server.",
+                    "Communicating Processes.",
+                    "Repository.",
+                    "Pipes-and-Filters."
+                ]
+            },
+            {
+                "questionId": "ChromeDynamicReconfiguration",
+                "content": "In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use",
+                "image": [],
+                "options": [
+                    "The communicating processes style.",
+                    "The communicating processes style and the dynamic reconfiguration style.",
+                    "The communicating processes style and the pipes-and-filters style.",
+                    "The dynamic reconfiguration style."
+                ]
+            },
+            {
+                "questionId": "EventSourcing",
+                "content": "Event Sourcing is a technique that use the following architectural style",
+                "image": [],
+                "options": [
+                    "The communicating processes.",
+                    "Pipes-and-filters.",
+                    "Publish-subscribe.",
+                    "Dynamic reconfiguration."
+                ]
+            }
+        ]
+    },
+    {
+        "quizFile": "/home/pedro/as-tutor/data-extraction/../data/2018/test-4/test-42-B.tex",
+        "quizTitle": "..-data-2018-test-4-test-42-B",
+        "questions": [
+            {
+                "questionId": "GraphiteCommunicationProcesses",
+                "content": "In Graphite system the \\emph{receiver} and the \\emph{writer threads} support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style",
+                "image": [],
+                "options": [
+                    "Client-server.",
+                    "Communicating Processes.",
+                    "Repository.",
+                    "Pipes-and-Filters."
+                ]
+            },
+            {
+                "questionId": "ChromeDynamicReconfiguration",
+                "content": "In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use",
+                "image": [],
+                "options": [
+                    "The communicating processes style.",
+                    "The communicating processes style and the dynamic reconfiguration style.",
+                    "The communicating processes style and the pipes-and-filters style.",
+                    "The dynamic reconfiguration style."
+                ]
+            },
+            {
+                "questionId": "EventSourcing",
+                "content": "Event Sourcing is a technique that use the following architectural style",
+                "image": [],
+                "options": [
+                    "The communicating processes.",
+                    "Pipes-and-filters.",
+                    "Publish-subscribe.",
+                    "Dynamic reconfiguration."
+                ]
+            },
+            {
+                "questionId": "WorkAssignment",
+                "content": "The Work-assignment is an architectural style of the allocation viewtype, where",
+                "image": [],
+                "options": [
+                    "Components are allocated to persons and teams.",
+                    "Modules are allocated to persons and teams.",
+                    "Components and modules are allocated to persons and teams.",
+                    "None of the above."
+                ]
+            },
+            {
+                "questionId": "DVDCatalogMobile",
+                "content": "Consider the module viewtype views of the Catalog of DVD application. The architect knows about a new requirement \n\t\n\t\\begin{quote}\n\t\tTo support iPhone, iPad, Android versions with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available\n\t\\end{quote}\n\t\n\tThis requirement requires a change of",
+                "image": [],
+                "options": [
+                    "The decomposition view to include a module for the synchronization responsibilities.",
+                    "The uses view to represent how the mobile device uses the Catalog application.",
+                    "The layered view to include a layer for each type of device.",
+                    "The domain layer of the layered style to represent the types of devices."
                 ]
             }
         ]

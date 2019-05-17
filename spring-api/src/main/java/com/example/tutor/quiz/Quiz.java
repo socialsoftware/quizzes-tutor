@@ -42,16 +42,14 @@ public class Quiz implements Serializable {
         HashSet<Integer> idList = new HashSet<>();
         Question q;
 
-        while (questionList.size() < 3) {
+        while (questionList.size() < 30) {
             int question_id = rand.nextInt(maxID);
             try {
                 if (!idList.contains(question_id)) {
                     questionRepository.findById(question_id)
                         .ifPresent(question -> {
-                            if(null != question.getImage()){
-                                questionList.add(question);
-                                idList.add(question_id);
-                            }
+                            questionList.add(question);
+                            idList.add(question_id);
                         });
                 }
             } catch (ResourceNotFoundException e) {

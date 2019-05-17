@@ -54,51 +54,27 @@ export default class Question implements ServerQuestion {
 
   customjson(): any {
     if (this.content && this.options) {
-      if (this.image && this.image.width) {
-        this.content.replace(
-          /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
-          "  \n ![image](http://localhost:8080/images/questions/" +
-            this.image.url +
-            ")"
-        );
-        return {
-          questions: [
-            {
-              type: "radiogroup",
-              name: this.id.toString(),
-              title: this.content.replace(
-                /\\begin\{center\}[\s\S]*\\end\{center\}/gi,
-                "  \n ![image](http://localhost:8080/images/questions/" +
-                  this.image.url +
-                  ")"
-              ),
-              choices: this.options.map(option => {
-                return {
-                  value: option.option,
-                  text: option.content
-                };
-              })
-            }
-          ]
-        };
-      } else {
-        return {
-          questions: [
-            {
-              type: "radiogroup",
-              name: this.id.toString(),
-              title: this.content,
-              choices: this.options.map(option => {
-                return {
-                  value: option.option,
-                  text: option.content
-                };
-              })
-            }
-          ]
-        };
+      if (this.image) {
+        this.content +=
+          "  \n  \n[image]: http://localhost:8080/images/questions/" +
+          this.image.url +
+          ' "Image"';
       }
+      return {
+        questions: [
+          {
+            type: "radiogroup",
+            name: this.id.toString(),
+            title: this.content,
+            choices: this.options.map(option => {
+              return {
+                value: option.option,
+                text: option.content
+              };
+            })
+          }
+        ]
+      };
     }
-    return "";
   }
 }

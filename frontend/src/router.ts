@@ -1,6 +1,9 @@
 import Vue from "vue";
 import Router from "vue-router";
-import Quiz from "./views/QuizView.vue";
+import QuizView from "./views/QuizView.vue";
+import HomeView from "./views/HomeView.vue";
+import CreatorView from "./views/CreatorView.vue";
+import LoginView from "./views/LoginView.vue";
 
 Vue.use(Router);
 
@@ -10,17 +13,23 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "quiz",
-      component: Quiz
+      name: "home",
+      component: HomeView
     },
     {
       path: "/quiz",
-      name: "quiz2",
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () =>
-        import(/* webpackChunkName: "about" */ "./views/QuizView.vue")
+      name: "quiz",
+      component: QuizView
+    },
+    {
+      path: "/creator",
+      name: "creator",
+      component: CreatorView
+    },
+    {
+      path: "/login",
+      name: "login",
+      component: LoginView
     }
   ]
 });
