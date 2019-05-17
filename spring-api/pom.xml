@@ -13,7 +13,12 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>tutor</name>
     <description>Tutor System for the Software Architecture Course</description>
-
+    <repositories>
+        <repository>
+            <id>fenix-ashes-maven-repository</id>
+            <url>https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository</url>
+        </repository>
+    </repositories>
     <properties>
         <java.version>11</java.version>
     </properties>
@@ -68,6 +73,28 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>8.0.0</version>
+        </dependency>
+
+        <!--dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency-->
+
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>feaf4j-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fenixedu</groupId>
+            <artifactId>feaf4j-okhttp</artifactId>
+            <version>2.3.1</version>
         </dependency>
 
     </dependencies>

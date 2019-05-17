@@ -1,6 +1,7 @@
 package com.example.tutor.quiz;
 
 import com.example.tutor.ResourceNotFoundException;
+import com.example.tutor.option.Option;
 import com.example.tutor.question.Question;
 import com.example.tutor.question.QuestionRepository;
 import org.springframework.web.client.HttpServerErrorException;
@@ -23,8 +24,16 @@ public class Quiz implements Serializable {
     @Column(columnDefinition = "date")
     private LocalDateTime date;
 
-    private Question[] questions;
+    @ManyToMany
+    @JoinTable(
+            name="quiz_has_question",
+            joinColumns=@JoinColumn(name="quiz_id", referencedColumnName="id"),
+            inverseJoinColumns=@JoinColumn(name="question_id", referencedColumnName="id"))
+    private List<Question> questions = new ArrayList<>();
 
+    public Quiz(){
+
+    }
 
     public Quiz(QuestionRepository questionRepository) {
         int maxID = 1698;
@@ -39,10 +48,8 @@ public class Quiz implements Serializable {
                 if (!idList.contains(question_id)) {
                     questionRepository.findById(question_id)
                         .ifPresent(question -> {
-                            if(null != question.getImage()){
-                                questionList.add(question);
-                                idList.add(question_id);
-                            }
+                            questionList.add(question);
+                            idList.add(question_id);
                         });
                 }
             } catch (ResourceNotFoundException e) {
@@ -52,7 +59,7 @@ public class Quiz implements Serializable {
 
         this.date = LocalDateTime.now();
 
-        this.questions = questionList.toArray(new Question[30]);
+        this.questions = questionList;
     }
 
     public Integer getId() {
@@ -79,11 +86,11 @@ public class Quiz implements Serializable {
         this.date = date;
     }
 
-    public Question[] getQuestions() {
+    public List<Question> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Question[] questions) {
+    public void setQuestions(List<Question> questions) {
         this.questions = questions;
     }
 }

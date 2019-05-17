@@ -1,16 +1,12 @@
 package com.example.tutor.image;
 
 import com.example.tutor.question.Question;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "Image")
 @Table(name = "images")
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Image implements Serializable {
 
     @Id
@@ -27,8 +23,6 @@ public class Image implements Serializable {
     @Column(columnDefinition = "width")
     private Integer width;
 
-    @JsonIgnore
-    @JsonProperty(value = "question_id")
     public Integer getQuestion_id() {
         return question_id;
     }
@@ -37,8 +31,6 @@ public class Image implements Serializable {
         this.question_id = question_id;
     }
 
-    @JsonIgnore
-    @JsonProperty(value = "question")
     public Question getQuestion() {
         return question;
     }
