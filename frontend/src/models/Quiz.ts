@@ -1,42 +1,45 @@
 import axios from "axios";
 import Question from "./Question";
+import Store from "@/store";
 
 export default class Quiz {
-  id!: number;
-  questions: Question[] = [];
+  static id: number;
+  static questions: Question[] = [];
 
   constructor() {}
 
-  async getQuestions(): Promise<Question[]> {
-    // Make a request for a user with a given ID
-    return await axios.get("http://localhost:8080/newquiz").then(response => {
-      // handle success
-      this.id = response.data["id"];
-      for (let i = 0; i < response.data["questions"].length; i++) {
-        let a1 = new Question(response.data["questions"][i]);
-        this.questions.push(a1);
+  static async getQuiz(
+    topic: string,
+    questions: string,
+    numberOfQuestions: number
+  ): Promise<Question[]> {
+    let params = {
+      params: {
+        token: Store.getters.getToken,
+        topic: topic,
+        questions: questions,
+        numberOfQuestions: numberOfQuestions
       }
-      return this.questions;
-    });
-  }
+    };
 
-  getJson(): Promise<string[]> {
-    if (this.questions.length == 0) {
-      return this.getQuestions().then(questions => {
-        return this.createJson(questions);
+    return await axios
+      .get(process.env.VUE_APP_ROOT_API + "/newquiz", params)
+      .then(response => {
+        // handle success
+        this.id = response.data["id"];
+        for (let i = 0; i < response.data["questions"].length; i++) {
+          let a1 = new Question(response.data["questions"][i]);
+          this.questions.push(a1);
+        }
+        return this.questions;
       });
-    } else {
-      return new Promise(resolve => resolve(this.createJson(this.questions)));
-    }
   }
 
-  createJson(questions: Question[]): string[] {
-    let a = [];
-    for (let question of questions) {
-      a.push(question.customjson());
-    }
-    // a.push(questions[0].customjson());
-    // a.push(questions[1].customjson());
-    return a;
+  static getQuestions() {
+    return this.questions;
+  }
+
+  static getId() {
+    return this.id;
   }
 }

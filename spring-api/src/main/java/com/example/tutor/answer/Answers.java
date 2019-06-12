@@ -7,18 +7,18 @@ import java.util.List;
 
 public class Answers implements Serializable {
 
-    private Integer student_id;
+    private Integer user_id;
     private Integer quiz_id;
     private LocalDateTime answer_date;
     private LocalDateTime time_taken;
     private List<AnswerDTO> answers;
 
-    public Integer getStudent_id() {
-        return student_id;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setStudent_id(Integer student_id) {
-        this.student_id = student_id;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
     public Integer getQuiz_id() {

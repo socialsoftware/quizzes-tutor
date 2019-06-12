@@ -1,6 +1,6 @@
 [
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2010/primeiro/exame-20110113-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2010/primeiro/exame-20110113-companion-en.tex",
         "quizTitle": "..-data-2010-primeiro-exame-20110113-companion-en",
         "questions": [
             {
@@ -226,7 +226,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2011/exam1/exame-20120109-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2011/exam1/exame-20120109-companion-en.tex",
         "quizTitle": "..-data-2011-exam1-exame-20120109-companion-en",
         "questions": [
             {
@@ -452,7 +452,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2011/exam2/exame-20120203-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2011/exam2/exame-20120203-companion-en.tex",
         "quizTitle": "..-data-2011-exam2-exame-20120203-companion-en",
         "questions": [
             {
@@ -678,7 +678,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2012/exam1/exame-20130109-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2012/exam1/exame-20130109-companion-en.tex",
         "quizTitle": "..-data-2012-exam1-exame-20130109-companion-en",
         "questions": [
             {
@@ -1014,7 +1014,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2012/exam2/exame-20130201-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2012/exam2/exame-20130201-companion-en.tex",
         "quizTitle": "..-data-2012-exam2-exame-20130201-companion-en",
         "questions": [
             {
@@ -1350,7 +1350,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2013/exam1/exame-20140110-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2013/exam1/exame-20140110-companion-en.tex",
         "quizTitle": "..-data-2013-exam1-exame-20140110-companion-en",
         "questions": [
             {
@@ -1686,7 +1686,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2013/exam2/exame-20140130-companion-en.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2013/exam2/exame-20140130-companion-en.tex",
         "quizTitle": "..-data-2013-exam2-exame-20140130-companion-en",
         "questions": [
             {
@@ -2022,7 +2022,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150109/exame-20150109-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/exam/exam20150109/exame-20150109-companion-A.tex",
         "quizTitle": "..-data-2014-exam-exam20150109-exame-20150109-companion-A",
         "questions": [
             {
@@ -2363,7 +2363,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150109/exame-20150109-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/exam/exam20150109/exame-20150109-companion-B.tex",
         "quizTitle": "..-data-2014-exam-exam20150109-exame-20150109-companion-B",
         "questions": [
             {
@@ -2704,7 +2704,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150127/exame-20150127-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/exam/exam20150127/exame-20150127-companion-A.tex",
         "quizTitle": "..-data-2014-exam-exam20150127-exame-20150127-companion-A",
         "questions": [
             {
@@ -3050,7 +3050,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/exam/exam20150127/exame-20150127-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/exam/exam20150127/exame-20150127-companion-B.tex",
         "quizTitle": "..-data-2014-exam-exam20150127-exame-20150127-companion-B",
         "questions": [
             {
@@ -3396,7 +3396,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-11A-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-1/test-11A-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-11A-17co\u2560\u0411pias",
         "questions": [
             {
@@ -3457,7 +3457,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-12A-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-1/test-12A-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-12A-24co\u2560\u0411pias",
         "questions": [
             {
@@ -3518,7 +3518,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-13A-17co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-1/test-13A-17co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-13A-17co\u2560\u0411pias",
         "questions": [
             {
@@ -3579,7 +3579,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-1/test-14A-24co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-1/test-14A-24co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-1-test-14A-24co\u2560\u0411pias",
         "questions": [
             {
@@ -3640,7 +3640,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-21A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-2/test-21A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-21A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -3701,7 +3701,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-22A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-2/test-22A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-22A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -3762,7 +3762,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-23A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-2/test-23A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-23A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -3823,7 +3823,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-2/test-24A-18co\u2560\u0411pias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-2/test-24A-18co\u2560\u0411pias.tex",
         "quizTitle": "..-data-2014-test-2-test-24A-18co\u2560\u0411pias",
         "questions": [
             {
@@ -3884,7 +3884,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-31A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-3/test-31A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-31A-18copias",
         "questions": [
             {
@@ -3945,7 +3945,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-32A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-3/test-32A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-32A-18copias",
         "questions": [
             {
@@ -4006,7 +4006,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-33A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-3/test-33A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-33A-18copias",
         "questions": [
             {
@@ -4067,7 +4067,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-3/test-34A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-3/test-34A-18copias.tex",
         "quizTitle": "..-data-2014-test-3-test-34A-18copias",
         "questions": [
             {
@@ -4128,7 +4128,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-41A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-4/test-41A-17copias.tex",
         "quizTitle": "..-data-2014-test-4-test-41A-17copias",
         "questions": [
             {
@@ -4189,7 +4189,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-42A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-4/test-42A-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-42A-16copias",
         "questions": [
             {
@@ -4250,7 +4250,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-43A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-4/test-43A-16copias.tex",
         "quizTitle": "..-data-2014-test-4-test-43A-16copias",
         "questions": [
             {
@@ -4311,7 +4311,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-4/test-44A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-4/test-44A-18copias.tex",
         "quizTitle": "..-data-2014-test-4-test-44A-18copias",
         "questions": [
             {
@@ -4372,7 +4372,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-51A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-5/test-51A-17copias.tex",
         "quizTitle": "..-data-2014-test-5-test-51A-17copias",
         "questions": [
             {
@@ -4438,7 +4438,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-52A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-5/test-52A-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-52A-16copias",
         "questions": [
             {
@@ -4504,7 +4504,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-53A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-5/test-53A-16copias.tex",
         "quizTitle": "..-data-2014-test-5-test-53A-16copias",
         "questions": [
             {
@@ -4570,7 +4570,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-5/test-54A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-5/test-54A-18copias.tex",
         "quizTitle": "..-data-2014-test-5-test-54A-18copias",
         "questions": [
             {
@@ -4636,7 +4636,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-61A-17copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-6/test-61A-17copias.tex",
         "quizTitle": "..-data-2014-test-6-test-61A-17copias",
         "questions": [
             {
@@ -4707,7 +4707,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-62A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-6/test-62A-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-62A-16copias",
         "questions": [
             {
@@ -4778,7 +4778,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-63A-16copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-6/test-63A-16copias.tex",
         "quizTitle": "..-data-2014-test-6-test-63A-16copias",
         "questions": [
             {
@@ -4849,7 +4849,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2014/test-6/test-64A-18copias.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2014/test-6/test-64A-18copias.tex",
         "quizTitle": "..-data-2014-test-6-test-64A-18copias",
         "questions": [
             {
@@ -4920,7 +4920,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160108Exam/exame-20160108-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/exams/20160108Exam/exame-20160108-companion-A.tex",
         "quizTitle": "..-data-2015-exams-20160108Exam-exame-20160108-companion-A",
         "questions": [
             {
@@ -5011,25 +5011,30 @@
                 ]
             },
             {
-                "questionId": "ModifiabilityOne",
-                "content": "The modifiability tactic Use an Intermediary between two modules",
+                "questionId": "ModifiabilityOneOne",
+                "content": "Consider that an architect needs to design a system which interacts with two external sources of information, and it has to import some of the information to store it in the system's internal database. The stakeholders inform him that it will be necessary to include new sources of information in the future, besides the two already identified, but they cannot precisely define which they are. This changes will occur after the first version of the system is in production. Additionally, the stakeholders define a short period of time to integrate a new source of information. Given this requirements the architect should",
                 "image": [],
                 "options": [
-                    "Has as main goal the reduction of the modules' size.",
-                    "Results in the creation of a third module that does not have to change when any of the original modules are changed.",
-                    "Increases the cohesion between the two modules.",
-                    "Cannot be used together with the Reduce Overhead performance tactic."
+                    "Consider the requirements not realistic",
+                    "Apply tactics of defer binding to allow the addition of the new sources of information in initialization time",
+                    "Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders",
+                    "Consider this requirement as a non architecturally significant requirement"
                 ]
             },
             {
-                "questionId": "PerformanceOne",
-                "content": "Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is",
-                "image": [],
+                "questionId": "PerformanceOneOne",
+                "content": "Consider the change in the architecture associated with the use of caches in web services shown in the figure\n    \n    \\begin{center}\n        \\includegraphics[width=150mm]{../LocalDistributedCache}\n    \\end{center}\n    \n    That change has the goal and the consequence of, respectively",
+                "image": [
+                    {
+                        "image": "/home/pedro/as-tutor/data/2015/exams/LocalDistributedCache.png",
+                        "width": 150
+                    }
+                ],
                 "options": [
-                    "Manage sampling rate.",
-                    "Limit event response.",
-                    "Prioritize events.",
-                    "Bound execution time."
+                    "Increasing performance and availability",
+                    "Increasing availability and decreasing performance",
+                    "Increasing performance and decreasing availability",
+                    "Increasing performance, scalability and availability"
                 ]
             },
             {
@@ -5077,14 +5082,14 @@
                 ]
             },
             {
-                "questionId": "ModuleViewtypeOne",
-                "content": "Consider the Decomposition architectural style of the Module viewtype",
+                "questionId": "ModuleViewtypeOneOne",
+                "content": "Consider the following description of \\emph{Memcached}, which is\n    adapted from its Wiki:\n    \\begin{quote}\n      Memcached is an in-memory key-value store for small chunks of\n      arbitrary data from results of database calls, API calls, or\n      page rendering.  It is made up of:\n      \\begin{itemize}\n      \\item Client software, which is given a list of available memcached servers.\n      \\item A client-based hashing algorithm, which chooses a server\n        based on the \"key\" input.\n      \\item Server software, which stores your values with their keys\n        into an internal hash table.\n      \\item Server algorithms, which determine when to throw out old\n        data (if out of memory), or reuse memory.\n      \\end{itemize}\n    \\end{quote}\n    Suppose that you want to present an architectural view for\n    \\emph{Memcached} that represents the above information.  Which\n    view is more adequate?",
                 "image": [],
                 "options": [
-                    "Its main goal is to establish the reusability qualities of the architecture.",
-                    "Project managers are not interested in views that use this style because it lacks the necessary level of detail.",
-                    "Incremental development is a criteria that drives the design of views of this type.",
-                    "There should be at least one view of the system using this architectural style."
+                    "A view of the Data Model style",
+                    "A view of the Layers style",
+                    "A view of the Decomposition style",
+                    "A view of the Uses style"
                 ]
             },
             {
@@ -5154,14 +5159,14 @@
                 ]
             },
             {
-                "questionId": "AllocationOne",
-                "content": "Consider the work assignment architectural style of the allocation viewtype.",
+                "questionId": "AllocationOneOne",
+                "content": "The Work-assignment is an architectural style of the allocation\n  viewtype, where",
                 "image": [],
                 "options": [
-                    "It assigns components and connectors to people and teams.",
-                    "It is useful for the project managers.",
-                    "It does not consider the software that is outsourced.",
-                    "It allows to estimate the cost of hardware."
+                    "Components are allocated to persons and teams",
+                    "Modules are allocated to persons and teams",
+                    "Components and modules are allocated to persons and teams",
+                    "None of the above"
                 ]
             },
             {
@@ -5276,7 +5281,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160108Exam/exame-20160108-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/exams/20160108Exam/exame-20160108-companion-B.tex",
         "quizTitle": "..-data-2015-exams-20160108Exam-exame-20160108-companion-B",
         "questions": [
             {
@@ -5351,14 +5356,14 @@
                 ]
             },
             {
-                "questionId": "ModuleViewtypeOne",
-                "content": "Consider the Decomposition architectural style of the Module viewtype",
+                "questionId": "ModuleViewtypeOneOne",
+                "content": "Consider the following description of \\emph{Memcached}, which is\n    adapted from its Wiki:\n    \\begin{quote}\n      Memcached is an in-memory key-value store for small chunks of\n      arbitrary data from results of database calls, API calls, or\n      page rendering.  It is made up of:\n      \\begin{itemize}\n      \\item Client software, which is given a list of available memcached servers.\n      \\item A client-based hashing algorithm, which chooses a server\n        based on the \"key\" input.\n      \\item Server software, which stores your values with their keys\n        into an internal hash table.\n      \\item Server algorithms, which determine when to throw out old\n        data (if out of memory), or reuse memory.\n      \\end{itemize}\n    \\end{quote}\n    Suppose that you want to present an architectural view for\n    \\emph{Memcached} that represents the above information.  Which\n    view is more adequate?",
                 "image": [],
                 "options": [
-                    "Its main goal is to establish the reusability qualities of the architecture.",
-                    "Project managers are not interested in views that use this style because it lacks the necessary level of detail.",
-                    "Incremental development is a criteria that drives the design of views of this type.",
-                    "There should be at least one view of the system using this architectural style."
+                    "A view of the Data Model style",
+                    "A view of the Layers style",
+                    "A view of the Decomposition style",
+                    "A view of the Uses style"
                 ]
             },
             {
@@ -5395,25 +5400,30 @@
                 ]
             },
             {
-                "questionId": "ModifiabilityOne",
-                "content": "The modifiability tactic Use an Intermediary between two modules",
+                "questionId": "ModifiabilityOneOne",
+                "content": "Consider that an architect needs to design a system which interacts with two external sources of information, and it has to import some of the information to store it in the system's internal database. The stakeholders inform him that it will be necessary to include new sources of information in the future, besides the two already identified, but they cannot precisely define which they are. This changes will occur after the first version of the system is in production. Additionally, the stakeholders define a short period of time to integrate a new source of information. Given this requirements the architect should",
                 "image": [],
                 "options": [
-                    "Has as main goal the reduction of the modules' size.",
-                    "Results in the creation of a third module that does not have to change when any of the original modules are changed.",
-                    "Increases the cohesion between the two modules.",
-                    "Cannot be used together with the Reduce Overhead performance tactic."
+                    "Consider the requirements not realistic",
+                    "Apply tactics of defer binding to allow the addition of the new sources of information in initialization time",
+                    "Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders",
+                    "Consider this requirement as a non architecturally significant requirement"
                 ]
             },
             {
-                "questionId": "PerformanceOne",
-                "content": "Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is",
-                "image": [],
+                "questionId": "PerformanceOneOne",
+                "content": "Consider the change in the architecture associated with the use of caches in web services shown in the figure\n    \n    \\begin{center}\n        \\includegraphics[width=150mm]{../LocalDistributedCache}\n    \\end{center}\n    \n    That change has the goal and the consequence of, respectively",
+                "image": [
+                    {
+                        "image": "/home/pedro/as-tutor/data/2015/exams/LocalDistributedCache.png",
+                        "width": 150
+                    }
+                ],
                 "options": [
-                    "Manage sampling rate.",
-                    "Limit event response.",
-                    "Prioritize events.",
-                    "Bound execution time."
+                    "Increasing performance and availability",
+                    "Increasing availability and decreasing performance",
+                    "Increasing performance and decreasing availability",
+                    "Increasing performance, scalability and availability"
                 ]
             },
             {
@@ -5472,14 +5482,14 @@
                 ]
             },
             {
-                "questionId": "AllocationOne",
-                "content": "Consider the work assignment architectural style of the allocation viewtype.",
+                "questionId": "AllocationOneOne",
+                "content": "The Work-assignment is an architectural style of the allocation\n  viewtype, where",
                 "image": [],
                 "options": [
-                    "It assigns components and connectors to people and teams.",
-                    "It is useful for the project managers.",
-                    "It does not consider the software that is outsourced.",
-                    "It allows to estimate the cost of hardware."
+                    "Components are allocated to persons and teams",
+                    "Modules are allocated to persons and teams",
+                    "Components and modules are allocated to persons and teams",
+                    "None of the above"
                 ]
             },
             {
@@ -5632,7 +5642,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160126Exam/exame-20160126-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/exams/20160126Exam/exame-20160126-companion-A.tex",
         "quizTitle": "..-data-2015-exams-20160126Exam-exame-20160126-companion-A",
         "questions": [
             {
@@ -5718,14 +5728,14 @@
                 ]
             },
             {
-                "questionId": "ModifiabilityTwo",
-                "content": "Consider the following scenario: \\emph{A system administrator simultaneously launches several instances of the system, each one using a different database, and is able to do it in less than 10 minutes.}",
+                "questionId": "ModifiabilityTwoOne",
+                "content": "Several of the cases studied in this course had scalability\n    requirements.  That means that those systems should be designed in\n    such a way that they",
                 "image": [],
                 "options": [
-                    "This is a performance scenario because the stimulus is an input, \\emph{launches several instances of the system}.",
-                    "This is a modifiability scenario which has a defer binding tactic.",
-                    "This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.",
-                    "This is a modifiability scenario and its environment design time."
+                    "Have high throughput",
+                    "Have low latency",
+                    "Allow many simultaneous users",
+                    "May be easily changed to increase their performance"
                 ]
             },
             {
@@ -5740,14 +5750,19 @@
                 ]
             },
             {
-                "questionId": "PerformanceTwo",
-                "content": "The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time",
-                "image": [],
+                "questionId": "PerformanceTwoOne",
+                "content": "Consider the change in the architecture associated with the use of caches in web services shown in the figure \n    \n    \\begin{center}\n        \\includegraphics[width=100mm]{../LocalGlobalCache}\n    \\end{center}\n    \n    Taking into consideration that this change involves adding a server, which has a larger storage capacity than the request Nodes, that change has the impact of",
+                "image": [
+                    {
+                        "image": "/home/pedro/as-tutor/data/2015/exams/LocalGlobalCache.png",
+                        "width": 100
+                    }
+                ],
                 "options": [
-                    "Manage sampling rate.",
-                    "Limit event response.",
-                    "Prioritize events.",
-                    "Maintain multiple copies of computation."
+                    "Increasing performance and availability",
+                    "Increasing availability and decreasing performance",
+                    "Increasing performance and decreasing availability",
+                    "Increasing scalability and availability"
                 ]
             },
             {
@@ -5784,14 +5799,14 @@
                 ]
             },
             {
-                "questionId": "ModuleViewtypeTwo",
-                "content": "Consider the Uses architectural style of the Module viewtype",
+                "questionId": "ModuleViewtypeTwoOne",
+                "content": "Suppose that in the development of an enterprise application (which needs to access a\n      database) it was decided to use the Hibernate framework to simplify the development\n      of the data access code. Which architectural view is the most adequate to represent this\n      decision?",
                 "image": [],
                 "options": [
-                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together.",
-                    "The project manager uses this view to get advice on the incremental development of the system.",
-                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences.",
-                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic."
+                    "A Deployment view",
+                    "A Component-and-Connector view",
+                    "A Uses view",
+                    "A Decomposition view"
                 ]
             },
             {
@@ -5861,14 +5876,14 @@
                 ]
             },
             {
-                "questionId": "AllocationTwo",
-                "content": "Consider the deployment architectural style of the allocation viewtype.",
+                "questionId": "AllocationTwoOne",
+                "content": "In the software architecture of a system, the Deployment view is\n  best suited for",
                 "image": [],
                 "options": [
-                    "It assigns modules to the hardware.",
-                    "It cannot assign software elements to virtual servers because they are not hardware.",
-                    "For each set of software elements there is a single possible assignment to hardwre.",
-                    "It is useful for system administrators."
+                    "Analysing the performance of the system",
+                    "Planning incremental releases of the system",
+                    "Estimating the effort needed to implement the system",
+                    "Analysing the system's portability and reusability"
                 ]
             },
             {
@@ -5978,7 +5993,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/exams/20160126Exam/exame-20160126-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/exams/20160126Exam/exame-20160126-companion-B.tex",
         "quizTitle": "..-data-2015-exams-20160126Exam-exame-20160126-companion-B",
         "questions": [
             {
@@ -5993,14 +6008,14 @@
                 ]
             },
             {
-                "questionId": "AllocationTwo",
-                "content": "Consider the deployment architectural style of the allocation viewtype.",
+                "questionId": "AllocationTwoOne",
+                "content": "In the software architecture of a system, the Deployment view is\n  best suited for",
                 "image": [],
                 "options": [
-                    "It assigns modules to the hardware.",
-                    "It cannot assign software elements to virtual servers because they are not hardware.",
-                    "For each set of software elements there is a single possible assignment to hardwre.",
-                    "It is useful for system administrators."
+                    "Analysing the performance of the system",
+                    "Planning incremental releases of the system",
+                    "Estimating the effort needed to implement the system",
+                    "Analysing the system's portability and reusability"
                 ]
             },
             {
@@ -6245,14 +6260,14 @@
                 ]
             },
             {
-                "questionId": "ModifiabilityTwo",
-                "content": "Consider the following scenario: \\emph{A system administrator simultaneously launches several instances of the system, each one using a different database, and is able to do it in less than 10 minutes.}",
+                "questionId": "ModifiabilityTwoOne",
+                "content": "Several of the cases studied in this course had scalability\n    requirements.  That means that those systems should be designed in\n    such a way that they",
                 "image": [],
                 "options": [
-                    "This is a performance scenario because the stimulus is an input, \\emph{launches several instances of the system}.",
-                    "This is a modifiability scenario which has a defer binding tactic.",
-                    "This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.",
-                    "This is a modifiability scenario and its environment design time."
+                    "Have high throughput",
+                    "Have low latency",
+                    "Allow many simultaneous users",
+                    "May be easily changed to increase their performance"
                 ]
             },
             {
@@ -6267,25 +6282,30 @@
                 ]
             },
             {
-                "questionId": "ModuleViewtypeTwo",
-                "content": "Consider the Uses architectural style of the Module viewtype",
+                "questionId": "ModuleViewtypeTwoOne",
+                "content": "Suppose that in the development of an enterprise application (which needs to access a\n      database) it was decided to use the Hibernate framework to simplify the development\n      of the data access code. Which architectural view is the most adequate to represent this\n      decision?",
                 "image": [],
                 "options": [
-                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together.",
-                    "The project manager uses this view to get advice on the incremental development of the system.",
-                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences.",
-                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic."
+                    "A Deployment view",
+                    "A Component-and-Connector view",
+                    "A Uses view",
+                    "A Decomposition view"
                 ]
             },
             {
-                "questionId": "PerformanceTwo",
-                "content": "The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time",
-                "image": [],
+                "questionId": "PerformanceTwoOne",
+                "content": "Consider the change in the architecture associated with the use of caches in web services shown in the figure \n    \n    \\begin{center}\n        \\includegraphics[width=100mm]{../LocalGlobalCache}\n    \\end{center}\n    \n    Taking into consideration that this change involves adding a server, which has a larger storage capacity than the request Nodes, that change has the impact of",
+                "image": [
+                    {
+                        "image": "/home/pedro/as-tutor/data/2015/exams/LocalGlobalCache.png",
+                        "width": 100
+                    }
+                ],
                 "options": [
-                    "Manage sampling rate.",
-                    "Limit event response.",
-                    "Prioritize events.",
-                    "Maintain multiple copies of computation."
+                    "Increasing performance and availability",
+                    "Increasing availability and decreasing performance",
+                    "Increasing performance and decreasing availability",
+                    "Increasing scalability and availability"
                 ]
             },
             {
@@ -6324,7 +6344,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-11A.tex",
         "quizTitle": "..-data-2015-test-1-test-11A",
         "questions": [
             {
@@ -6390,7 +6410,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-11B.tex",
         "quizTitle": "..-data-2015-test-1-test-11B",
         "questions": [
             {
@@ -6456,7 +6476,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-12A.tex",
         "quizTitle": "..-data-2015-test-1-test-12A",
         "questions": [
             {
@@ -6522,7 +6542,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-12B.tex",
         "quizTitle": "..-data-2015-test-1-test-12B",
         "questions": [
             {
@@ -6588,7 +6608,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-13A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-13A.tex",
         "quizTitle": "..-data-2015-test-1-test-13A",
         "questions": [
             {
@@ -6654,7 +6674,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-1/test-13B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-1/test-13B.tex",
         "quizTitle": "..-data-2015-test-1-test-13B",
         "questions": [
             {
@@ -6720,7 +6740,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-21A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-21A.tex",
         "quizTitle": "..-data-2015-test-2-test-21A",
         "questions": [
             {
@@ -6781,7 +6801,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-21B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-21B.tex",
         "quizTitle": "..-data-2015-test-2-test-21B",
         "questions": [
             {
@@ -6842,7 +6862,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-22A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-22A.tex",
         "quizTitle": "..-data-2015-test-2-test-22A",
         "questions": [
             {
@@ -6903,7 +6923,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-22B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-22B.tex",
         "quizTitle": "..-data-2015-test-2-test-22B",
         "questions": [
             {
@@ -6964,7 +6984,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-23A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-23A.tex",
         "quizTitle": "..-data-2015-test-2-test-23A",
         "questions": [
             {
@@ -7025,7 +7045,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-2/test-23B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-2/test-23B.tex",
         "quizTitle": "..-data-2015-test-2-test-23B",
         "questions": [
             {
@@ -7086,7 +7106,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-31A.tex",
         "quizTitle": "..-data-2015-test-3-test-31A",
         "questions": [
             {
@@ -7147,7 +7167,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-31B.tex",
         "quizTitle": "..-data-2015-test-3-test-31B",
         "questions": [
             {
@@ -7208,7 +7228,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-32A.tex",
         "quizTitle": "..-data-2015-test-3-test-32A",
         "questions": [
             {
@@ -7269,7 +7289,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-32B.tex",
         "quizTitle": "..-data-2015-test-3-test-32B",
         "questions": [
             {
@@ -7330,7 +7350,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-33A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-33A.tex",
         "quizTitle": "..-data-2015-test-3-test-33A",
         "questions": [
             {
@@ -7396,7 +7416,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-3/test-33B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-3/test-33B.tex",
         "quizTitle": "..-data-2015-test-3-test-33B",
         "questions": [
             {
@@ -7462,7 +7482,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-41A.tex",
         "quizTitle": "..-data-2015-test-4-test-41A",
         "questions": [
             {
@@ -7533,7 +7553,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-41B.tex",
         "quizTitle": "..-data-2015-test-4-test-41B",
         "questions": [
             {
@@ -7604,7 +7624,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-42A.tex",
         "quizTitle": "..-data-2015-test-4-test-42A",
         "questions": [
             {
@@ -7675,7 +7695,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-42B.tex",
         "quizTitle": "..-data-2015-test-4-test-42B",
         "questions": [
             {
@@ -7746,7 +7766,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-43A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-43A.tex",
         "quizTitle": "..-data-2015-test-4-test-43A",
         "questions": [
             {
@@ -7817,7 +7837,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2015/test-4/test-43B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2015/test-4/test-43B.tex",
         "quizTitle": "..-data-2015-test-4-test-43B",
         "questions": [
             {
@@ -7888,7 +7908,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170113Exam/exame-20170113-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/20170113Exam/exame-20170113-companion-A.tex",
         "quizTitle": "..-data-2016-20170113Exam-exame-20170113-companion-A",
         "questions": [
             {
@@ -8239,7 +8259,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170113Exam/exame-20170113-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/20170113Exam/exame-20170113-companion-B.tex",
         "quizTitle": "..-data-2016-20170113Exam-exame-20170113-companion-B",
         "questions": [
             {
@@ -8590,7 +8610,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170131Exam/exame-20170131-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/20170131Exam/exame-20170131-companion-A.tex",
         "quizTitle": "..-data-2016-20170131Exam-exame-20170131-companion-A",
         "questions": [
             {
@@ -8941,7 +8961,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/20170131Exam/exame-20170131-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/20170131Exam/exame-20170131-companion-B.tex",
         "quizTitle": "..-data-2016-20170131Exam-exame-20170131-companion-B",
         "questions": [
             {
@@ -9292,7 +9312,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-1/test-11A.tex",
         "quizTitle": "..-data-2016-test-1-test-11A",
         "questions": [
             {
@@ -9363,7 +9383,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-1/test-11B.tex",
         "quizTitle": "..-data-2016-test-1-test-11B",
         "questions": [
             {
@@ -9434,7 +9454,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-1/test-12A.tex",
         "quizTitle": "..-data-2016-test-1-test-12A",
         "questions": [
             {
@@ -9500,7 +9520,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-1/test-12B.tex",
         "quizTitle": "..-data-2016-test-1-test-12B",
         "questions": [
             {
@@ -9566,7 +9586,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-21A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-2/test-21A.tex",
         "quizTitle": "..-data-2016-test-2-test-21A",
         "questions": [
             {
@@ -9627,7 +9647,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-21B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-2/test-21B.tex",
         "quizTitle": "..-data-2016-test-2-test-21B",
         "questions": [
             {
@@ -9688,7 +9708,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-22A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-2/test-22A.tex",
         "quizTitle": "..-data-2016-test-2-test-22A",
         "questions": [
             {
@@ -9749,7 +9769,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-2/test-22B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-2/test-22B.tex",
         "quizTitle": "..-data-2016-test-2-test-22B",
         "questions": [
             {
@@ -9810,21 +9830,10 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-3/test-31A.tex",
         "quizTitle": "..-data-2016-test-3-test-31A",
         "questions": [
             {
-                "questionId": "ModuleViewtypeTwo",
-                "content": "Consider the Uses architectural style of the Module viewtype",
-                "image": [],
-                "options": [
-                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together",
-                    "The project manager uses this view to get advice on the incremental development of the system",
-                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences",
-                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic"
-                ]
-            },
-            {
                 "questionId": "DVDCatalogMultiPlatform",
                 "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n    \n    \\begin{quote}\n        To support multi-platform (Mac, Windows, Linux)\n    \\end{quote}\n    \n    This requirement requires a change of",
                 "image": [],
@@ -9847,14 +9856,14 @@
                 ]
             },
             {
-                "questionId": "Aspects",
-                "content": "An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she always end up with some responsibility that cannot fit within a single module.",
+                "questionId": "ModuleViewtypeTwo",
+                "content": "Consider the Uses architectural style of the Module viewtype",
                 "image": [],
                 "options": [
-                    "This means that in this software system it is not possible to modularize each responsibility in a cohesive module",
-                    "She should define finer-grained modules where she splits the unassigned responsibility",
-                    "She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules",
-                    "She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules"
+                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together",
+                    "The project manager uses this view to get advice on the incremental development of the system",
+                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences",
+                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic"
                 ]
             },
             {
@@ -9872,14 +9881,36 @@
                     "The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement",
                     "The view addresses the scenario because the \\texttt{Consumer Website} module does not use the interfaces a new business partner has to implement"
                 ]
+            },
+            {
+                "questionId": "Aspects",
+                "content": "An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she always end up with some responsibility that cannot fit within a single module.",
+                "image": [],
+                "options": [
+                    "This means that in this software system it is not possible to modularize each responsibility in a cohesive module",
+                    "She should define finer-grained modules where she splits the unassigned responsibility",
+                    "She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules",
+                    "She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules"
+                ]
             }
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-3/test-31B.tex",
         "quizTitle": "..-data-2016-test-3-test-31B",
         "questions": [
             {
+                "questionId": "ModuleViewtypeTwo",
+                "content": "Consider the Uses architectural style of the Module viewtype",
+                "image": [],
+                "options": [
+                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together",
+                    "The project manager uses this view to get advice on the incremental development of the system",
+                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences",
+                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic"
+                ]
+            },
+            {
                 "questionId": "DVDCatalogMultiPlatform",
                 "content": "Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement \n    \n    \\begin{quote}\n        To support multi-platform (Mac, Windows, Linux)\n    \\end{quote}\n    \n    This requirement requires a change of",
                 "image": [],
@@ -9902,14 +9933,14 @@
                 ]
             },
             {
-                "questionId": "ModuleViewtypeTwo",
-                "content": "Consider the Uses architectural style of the Module viewtype",
+                "questionId": "Aspects",
+                "content": "An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she always end up with some responsibility that cannot fit within a single module.",
                 "image": [],
                 "options": [
-                    "Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together",
-                    "The project manager uses this view to get advice on the incremental development of the system",
-                    "The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences",
-                    "There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic"
+                    "This means that in this software system it is not possible to modularize each responsibility in a cohesive module",
+                    "She should define finer-grained modules where she splits the unassigned responsibility",
+                    "She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules",
+                    "She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules"
                 ]
             },
             {
@@ -9927,22 +9958,11 @@
                     "The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement",
                     "The view addresses the scenario because the \\texttt{Consumer Website} module does not use the interfaces a new business partner has to implement"
                 ]
-            },
-            {
-                "questionId": "Aspects",
-                "content": "An architect is decomposing a system into a set of responsibilities using a view of the Decomposition style. However, she had already to backtrack several times and try new decompositions because she always end up with some responsibility that cannot fit within a single module.",
-                "image": [],
-                "options": [
-                    "This means that in this software system it is not possible to modularize each responsibility in a cohesive module",
-                    "She should define finer-grained modules where she splits the unassigned responsibility",
-                    "She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules",
-                    "She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules"
-                ]
             }
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-3/test-32A.tex",
         "quizTitle": "..-data-2016-test-3-test-32A",
         "questions": [
             {
@@ -10008,7 +10028,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-3/test-32B.tex",
         "quizTitle": "..-data-2016-test-3-test-32B",
         "questions": [
             {
@@ -10074,7 +10094,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-4/test-41A.tex",
         "quizTitle": "..-data-2016-test-4-test-41A",
         "questions": [
             {
@@ -10140,7 +10160,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-4/test-41B.tex",
         "quizTitle": "..-data-2016-test-4-test-41B",
         "questions": [
             {
@@ -10206,7 +10226,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-4/test-42A.tex",
         "quizTitle": "..-data-2016-test-4-test-42A",
         "questions": [
             {
@@ -10272,7 +10292,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2016/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2016/test-4/test-42B.tex",
         "quizTitle": "..-data-2016-test-4-test-42B",
         "questions": [
             {
@@ -10338,7 +10358,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180112-Exam/exame-20180112-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/20180112-Exam/exame-20180112-companion-A.tex",
         "quizTitle": "..-data-2017-20180112-Exam-exame-20180112-companion-A",
         "questions": [
             {
@@ -10579,7 +10599,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180112-Exam/exame-20180112-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/20180112-Exam/exame-20180112-companion-B.tex",
         "quizTitle": "..-data-2017-20180112-Exam-exame-20180112-companion-B",
         "questions": [
             {
@@ -10820,7 +10840,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180130-Exam/exame-20180130-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/20180130-Exam/exame-20180130-companion-A.tex",
         "quizTitle": "..-data-2017-20180130-Exam-exame-20180130-companion-A",
         "questions": [
             {
@@ -11076,7 +11096,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/20180130-Exam/exame-20180130-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/20180130-Exam/exame-20180130-companion-B.tex",
         "quizTitle": "..-data-2017-20180130-Exam-exame-20180130-companion-B",
         "questions": [
             {
@@ -11332,7 +11352,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-11A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-11A.tex",
         "quizTitle": "..-data-2017-test-1-test-11A",
         "questions": [
             {
@@ -11403,7 +11423,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-11B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-11B.tex",
         "quizTitle": "..-data-2017-test-1-test-11B",
         "questions": [
             {
@@ -11474,7 +11494,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-12A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-12A.tex",
         "quizTitle": "..-data-2017-test-1-test-12A",
         "questions": [
             {
@@ -11545,7 +11565,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-12B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-12B.tex",
         "quizTitle": "..-data-2017-test-1-test-12B",
         "questions": [
             {
@@ -11616,7 +11636,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-13A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-13A.tex",
         "quizTitle": "..-data-2017-test-1-test-13A",
         "questions": [
             {
@@ -11687,7 +11707,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-1/test-13B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-1/test-13B.tex",
         "quizTitle": "..-data-2017-test-1-test-13B",
         "questions": [
             {
@@ -11758,7 +11778,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-21-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-21-A.tex",
         "quizTitle": "..-data-2017-test-2-test-21-A",
         "questions": [
             {
@@ -11819,7 +11839,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-21-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-21-B.tex",
         "quizTitle": "..-data-2017-test-2-test-21-B",
         "questions": [
             {
@@ -11880,7 +11900,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-22-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-22-A.tex",
         "quizTitle": "..-data-2017-test-2-test-22-A",
         "questions": [
             {
@@ -11941,7 +11961,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-22-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-22-B.tex",
         "quizTitle": "..-data-2017-test-2-test-22-B",
         "questions": [
             {
@@ -12002,7 +12022,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-23-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-23-A.tex",
         "quizTitle": "..-data-2017-test-2-test-23-A",
         "questions": [
             {
@@ -12063,7 +12083,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-2/test-23-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-2/test-23-B.tex",
         "quizTitle": "..-data-2017-test-2-test-23-B",
         "questions": [
             {
@@ -12124,7 +12144,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-31A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-31A.tex",
         "quizTitle": "..-data-2017-test-3-test-31A",
         "questions": [
             {
@@ -12195,7 +12215,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-31B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-31B.tex",
         "quizTitle": "..-data-2017-test-3-test-31B",
         "questions": [
             {
@@ -12266,7 +12286,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-32A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-32A.tex",
         "quizTitle": "..-data-2017-test-3-test-32A",
         "questions": [
             {
@@ -12337,7 +12357,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-32B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-32B.tex",
         "quizTitle": "..-data-2017-test-3-test-32B",
         "questions": [
             {
@@ -12408,7 +12428,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-33A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-33A.tex",
         "quizTitle": "..-data-2017-test-3-test-33A",
         "questions": [
             {
@@ -12479,7 +12499,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-3/test-33B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-3/test-33B.tex",
         "quizTitle": "..-data-2017-test-3-test-33B",
         "questions": [
             {
@@ -12550,7 +12570,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-41A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-41A.tex",
         "quizTitle": "..-data-2017-test-4-test-41A",
         "questions": [
             {
@@ -12621,7 +12641,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-41B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-41B.tex",
         "quizTitle": "..-data-2017-test-4-test-41B",
         "questions": [
             {
@@ -12692,7 +12712,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-42A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-42A.tex",
         "quizTitle": "..-data-2017-test-4-test-42A",
         "questions": [
             {
@@ -12763,7 +12783,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-42B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-42B.tex",
         "quizTitle": "..-data-2017-test-4-test-42B",
         "questions": [
             {
@@ -12834,7 +12854,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-43A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-43A.tex",
         "quizTitle": "..-data-2017-test-4-test-43A",
         "questions": [
             {
@@ -12905,7 +12925,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2017/test-4/test-43B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2017/test-4/test-43B.tex",
         "quizTitle": "..-data-2017-test-4-test-43B",
         "questions": [
             {
@@ -12976,7 +12996,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/20190111-Exam/exame-20190111-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/20190111-Exam/exame-20190111-companion-A.tex",
         "quizTitle": "..-data-2018-20190111-Exam-exame-20190111-companion-A",
         "questions": [
             {
@@ -13202,7 +13222,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/20190111-Exam/exame-20190111-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/20190111-Exam/exame-20190111-companion-B.tex",
         "quizTitle": "..-data-2018-20190111-Exam-exame-20190111-companion-B",
         "questions": [
             {
@@ -13428,7 +13448,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/20190129-Exam/exame-20190129-companion-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/20190129-Exam/exame-20190129-companion-A.tex",
         "quizTitle": "..-data-2018-20190129-Exam-exame-20190129-companion-A",
         "questions": [
             {
@@ -13654,7 +13674,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/20190129-Exam/exame-20190129-companion-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/20190129-Exam/exame-20190129-companion-B.tex",
         "quizTitle": "..-data-2018-20190129-Exam-exame-20190129-companion-B",
         "questions": [
             {
@@ -13880,7 +13900,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-11-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-11-A.tex",
         "quizTitle": "..-data-2018-test-1-test-11-A",
         "questions": [
             {
@@ -13941,7 +13961,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-11-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-11-B.tex",
         "quizTitle": "..-data-2018-test-1-test-11-B",
         "questions": [
             {
@@ -14002,7 +14022,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-11-C.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-11-C.tex",
         "quizTitle": "..-data-2018-test-1-test-11-C",
         "questions": [
             {
@@ -14063,7 +14083,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-11-D.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-11-D.tex",
         "quizTitle": "..-data-2018-test-1-test-11-D",
         "questions": [
             {
@@ -14124,7 +14144,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-12-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-12-A.tex",
         "quizTitle": "..-data-2018-test-1-test-12-A",
         "questions": [
             {
@@ -14185,7 +14205,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-12-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-12-B.tex",
         "quizTitle": "..-data-2018-test-1-test-12-B",
         "questions": [
             {
@@ -14246,7 +14266,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-12-C.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-12-C.tex",
         "quizTitle": "..-data-2018-test-1-test-12-C",
         "questions": [
             {
@@ -14307,7 +14327,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-1/test-12-D.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-1/test-12-D.tex",
         "quizTitle": "..-data-2018-test-1-test-12-D",
         "questions": [
             {
@@ -14368,7 +14388,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-2/test-21-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-2/test-21-A.tex",
         "quizTitle": "..-data-2018-test-2-test-21-A",
         "questions": [
             {
@@ -14429,7 +14449,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-2/test-21-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-2/test-21-B.tex",
         "quizTitle": "..-data-2018-test-2-test-21-B",
         "questions": [
             {
@@ -14490,32 +14510,10 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-2/test-22-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-2/test-22-A.tex",
         "quizTitle": "..-data-2018-test-2-test-22-A",
         "questions": [
             {
-                "questionId": "AvailabilityVotingFirst",
-                "content": "There are several tactics to satisfy availability requirements,\n    which may be applied depending on the concrete requirement that we\n    want to satisfy.  Assuming that you want to detect faults of type\n    \\emph{response} in your system, which tactic is more adequate?",
-                "image": [],
-                "options": [
-                    "Ping/Echo.",
-                    "Retry.",
-                    "Voting.",
-                    "Passive Redundancy."
-                ]
-            },
-            {
-                "questionId": "LowArchitecturalImpact",
-                "content": "Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value",
-                "image": [],
-                "options": [
-                    "This ASR can easily be supported by the architecture because it has little effect in the architecture.",
-                    "This ASR requires a specific architectural design because it profoundly affects the architecture.",
-                    "The cost of meeting the ASR after development starts is too high.",
-                    "Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture."
-                ]
-            },
-            {
                 "questionId": "UsesCalls",
                 "content": "A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because",
                 "image": [],
@@ -14538,6 +14536,28 @@
                 ]
             },
             {
+                "questionId": "AvailabilityVotingFirst",
+                "content": "There are several tactics to satisfy availability requirements,\n    which may be applied depending on the concrete requirement that we\n    want to satisfy.  Assuming that you want to detect faults of type\n    \\emph{response} in your system, which tactic is more adequate?",
+                "image": [],
+                "options": [
+                    "Ping/Echo.",
+                    "Retry.",
+                    "Voting.",
+                    "Passive Redundancy."
+                ]
+            },
+            {
+                "questionId": "LowArchitecturalImpact",
+                "content": "Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value",
+                "image": [],
+                "options": [
+                    "This ASR can easily be supported by the architecture because it has little effect in the architecture.",
+                    "This ASR requires a specific architectural design because it profoundly affects the architecture.",
+                    "The cost of meeting the ASR after development starts is too high.",
+                    "Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture."
+                ]
+            },
+            {
                 "questionId": "SocialCalcTacticsTwo",
                 "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tA simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.\n\t\\end{quote}\n\t\n\tThis sentence describes a tactic for usability which is",
                 "image": [],
@@ -14551,32 +14571,10 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-2/test-22-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-2/test-22-B.tex",
         "quizTitle": "..-data-2018-test-2-test-22-B",
         "questions": [
             {
-                "questionId": "UsesCalls",
-                "content": "A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because",
-                "image": [],
-                "options": [
-                    "The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.",
-                    "The invoked function may not have any input parameter.",
-                    "The invoked function may not have any output parameter.",
-                    "The invoked function may not have both any input parameter nor any output parameter."
-                ]
-            },
-            {
-                "questionId": "ChromePredictor",
-                "content": "In the description of the Chrome system can be read\n\t\n\t\\begin{quote}\n\t\tThe goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. \n\t\\end{quote}\n\t\n\tThe above sentence refer to",
-                "image": [],
-                "options": [
-                    "Maintain multiple copies of data tactic.",
-                    "Introduce concurrence tactic.",
-                    "Increase resource efficiency tactic.",
-                    "Schedule resources tactic."
-                ]
-            },
-            {
                 "questionId": "AvailabilityVotingFirst",
                 "content": "There are several tactics to satisfy availability requirements,\n    which may be applied depending on the concrete requirement that we\n    want to satisfy.  Assuming that you want to detect faults of type\n    \\emph{response} in your system, which tactic is more adequate?",
                 "image": [],
@@ -14599,6 +14597,28 @@
                 ]
             },
             {
+                "questionId": "UsesCalls",
+                "content": "A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because",
+                "image": [],
+                "options": [
+                    "The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.",
+                    "The invoked function may not have any input parameter.",
+                    "The invoked function may not have any output parameter.",
+                    "The invoked function may not have both any input parameter nor any output parameter."
+                ]
+            },
+            {
+                "questionId": "ChromePredictor",
+                "content": "In the description of the Chrome system can be read\n\t\n\t\\begin{quote}\n\t\tThe goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available. \n\t\\end{quote}\n\t\n\tThe above sentence refer to",
+                "image": [],
+                "options": [
+                    "Maintain multiple copies of data tactic.",
+                    "Introduce concurrence tactic.",
+                    "Increase resource efficiency tactic.",
+                    "Schedule resources tactic."
+                ]
+            },
+            {
                 "questionId": "SocialCalcTacticsTwo",
                 "content": "In the description of the SocialCalc case study can be read:\n\t\n\t\\begin{quote}\n\t\tA simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.\n\t\\end{quote}\n\t\n\tThis sentence describes a tactic for usability which is",
                 "image": [],
@@ -14612,7 +14632,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-3/test-31-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-3/test-31-A.tex",
         "quizTitle": "..-data-2018-test-3-test-31-A",
         "questions": [
             {
@@ -14673,7 +14693,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-3/test-31-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-3/test-31-B.tex",
         "quizTitle": "..-data-2018-test-3-test-31-B",
         "questions": [
             {
@@ -14734,7 +14754,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-3/test-32-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-3/test-32-A.tex",
         "quizTitle": "..-data-2018-test-3-test-32-A",
         "questions": [
             {
@@ -14795,7 +14815,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-3/test-32-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-3/test-32-B.tex",
         "quizTitle": "..-data-2018-test-3-test-32-B",
         "questions": [
             {
@@ -14856,7 +14876,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-4/test-41-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-4/test-41-A.tex",
         "quizTitle": "..-data-2018-test-4-test-41-A",
         "questions": [
             {
@@ -14917,7 +14937,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-4/test-41-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-4/test-41-B.tex",
         "quizTitle": "..-data-2018-test-4-test-41-B",
         "questions": [
             {
@@ -14978,7 +14998,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-4/test-42-A.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-4/test-42-A.tex",
         "quizTitle": "..-data-2018-test-4-test-42-A",
         "questions": [
             {
@@ -15039,7 +15059,7 @@
         ]
     },
     {
-        "quizFile": "/home/pedro/as-tutor/SQL/../data/2018/test-4/test-42-B.tex",
+        "quizFile": "/home/pedro/as-tutor/sql/../data/2018/test-4/test-42-B.tex",
         "quizTitle": "..-data-2018-test-4-test-42-B",
         "questions": [
             {

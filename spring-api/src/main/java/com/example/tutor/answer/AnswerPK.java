@@ -1,7 +1,7 @@
 package com.example.tutor.answer;
 
 import com.example.tutor.question.Question;
-import com.example.tutor.student.Student;
+import com.example.tutor.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -17,16 +17,16 @@ public class AnswerPK implements Serializable {
     private LocalDateTime date;
 
     @OneToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public AnswerPK() {
 
     }
 
-    public AnswerPK(LocalDateTime d, Student s, Question q) {
+    public AnswerPK(LocalDateTime d, User s, Question q) {
         this.date = d;
-        this.student = s;
+        this.user = s;
         this.question = q;
     }
 
@@ -46,12 +46,12 @@ public class AnswerPK implements Serializable {
         this.date = date;
     }
 
-    public Student getStudent() {
-        return student;
+    public User getUser() {
+        return user;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class AnswerPK implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         AnswerPK o = (AnswerPK) obj;
-        return this.question.getId() == o.getQuestion().getId() && this.student.getId() == o.getStudent().getId() && this.date == o.getDate();
+        return this.question.getId() == o.getQuestion().getId() && this.user.getId() == o.getUser().getId() && this.date == o.getDate();
     }
 
     @Override

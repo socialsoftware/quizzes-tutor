@@ -4,10 +4,9 @@ import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.Question;
 import com.example.tutor.question.QuestionDTO;
 import com.example.tutor.question.QuestionRepository;
-import com.example.tutor.quiz.Quiz;
 import com.example.tutor.quiz.QuizRepository;
-import com.example.tutor.student.Student;
-import com.example.tutor.student.StudentRepository;
+import com.example.tutor.user.User;
+import com.example.tutor.user.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +21,13 @@ public class AnswerController {
     private AnswerRepository answerRepository;
     private QuizRepository quizRepository;
     private QuestionRepository questionRepository;
-    private StudentRepository studentRepository;
+    private UserRepository userRepository;
 
-    AnswerController(AnswerRepository answerRepository, QuizRepository quizRepository, QuestionRepository questionRepository, StudentRepository studentRepository) {
+    AnswerController(AnswerRepository answerRepository, QuizRepository quizRepository, QuestionRepository questionRepository, UserRepository userRepository) {
         this.answerRepository = answerRepository;
         this.quizRepository = quizRepository;
         this.questionRepository = questionRepository;
-        this.studentRepository = studentRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/answers")
@@ -74,7 +73,7 @@ public class AnswerController {
     public Result createAnswer(@Valid @RequestBody Answers answers) {
         quizRepository.findById(answers.getQuiz_id())
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + answers.getQuiz_id()));
-        Student s = this.studentRepository.findById(answers.getStudent_id()).orElseThrow(() -> new ResourceNotFoundException("Student not found with id " + answers.getStudent_id()));;
+        User s = this.userRepository.findById(answers.getUser_id()).orElseThrow(() -> new ResourceNotFoundException("User not found with id " + answers.getUser_id()));;
 
 
         return new Result(answers.getAnswers().stream().map(answer -> {

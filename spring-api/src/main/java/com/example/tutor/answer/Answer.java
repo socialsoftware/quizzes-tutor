@@ -1,7 +1,7 @@
 package com.example.tutor.answer;
 
 import com.example.tutor.question.Question;
-import com.example.tutor.student.Student;
+import com.example.tutor.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,9 +26,9 @@ public class Answer implements Serializable {
 
     }
 
-    public Answer(AnswerDTO ans, Student s, Question q){
+    public Answer(AnswerDTO ans, User s, Question q){
         this.answerPK = new AnswerPK(ans.getDate(), s, q);
-        this.answerPK.setStudent(s);
+        this.answerPK.setUser(s);
         this.quiz_id = ans.getQuiz_id();
         this.time_taken = ans.getTime_taken();
         this.option = ans.getOption();
@@ -83,12 +83,12 @@ public class Answer implements Serializable {
         answerPK.setDate(date);
     }
 
-    public Integer getStudent_id() {
-        return answerPK.getStudent().getId();
+    public Integer getUser_id() {
+        return answerPK.getUser().getId();
     }
 
-    public void setStudent_id(Integer id) {
-        answerPK.getStudent().setId(id);
+    public void setUser_id(Integer id) {
+        answerPK.getUser().setId(id);
     }
 
 }

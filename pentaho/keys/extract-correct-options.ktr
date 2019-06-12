@@ -803,7 +803,7 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/Keys/correct-quiz-keys.xls</name>
+      <name>/home/pedro/as-tutor/pentaho/keys/correct-quiz-keys.xls</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
