@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "questions")
 public class Question implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "content")

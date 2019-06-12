@@ -1,11 +1,14 @@
 package com.example.tutor.quiz;
 
+import com.example.tutor.auth.JwtTokenProvider;
 import com.example.tutor.question.QuestionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.tutor.ResourceNotFoundException;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 
@@ -14,10 +17,13 @@ public class QuizController {
 
     private QuizRepository quizRepository;
     private QuestionRepository questionRepository;
+    private JwtTokenProvider tokenProvider;
 
-    QuizController(QuizRepository repository, QuestionRepository rep2) {
+    QuizController(QuizRepository repository, QuestionRepository rep2, JwtTokenProvider tokenProvider) {
         this.quizRepository = repository;
         this.questionRepository = rep2;
+        this.tokenProvider = tokenProvider;
+
     }
 
     @GetMapping("/quizzes")
@@ -58,7 +64,14 @@ public class QuizController {
     }
 
     @GetMapping("/newquiz")
-    public QuizDTO getNewQuiz() {
-        return new QuizDTO(quizRepository.save(new Quiz(questionRepository)));
+    public QuizDTO getNewQuiz(@RequestParam("token") String token, @RequestParam("numberOfQuestions") Integer numberOfQuestions, @RequestParam("questions") String questions, @RequestParam("topic") String topic) {
+        if (tokenProvider.verifyToken(token)) {
+            Integer userId = tokenProvider.getUserIdFromJWT(token);
+            Quiz quiz = new Quiz(questionRepository, userId, numberOfQuestions, topic, questions);
+            return new QuizDTO(quizRepository.save(quiz));
+        } else {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Token not valid");
+        }
     }
 }

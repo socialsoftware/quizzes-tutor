@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS topics CASCADE;
 DROP TABLE IF EXISTS quiz_has_question CASCADE;
 DROP TABLE IF EXISTS questions CASCADE;
 DROP TABLE IF EXISTS quizzes CASCADE;
-DROP TABLE IF EXISTS students CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE quizzes (
     id SERIAL NOT NULL,
@@ -63,21 +63,22 @@ CREATE TABLE images (
   PRIMARY KEY (question_id)
 );
 
-CREATE TABLE students (
+CREATE TABLE users (
   id SERIAL NOT NULL,
   name VARCHAR(255),
-  type VARCHAR(255), -- student, teacher, developer
+  role VARCHAR(255), -- student, teacher, developer
+  username VARCHAR(255),
   year INT,
   PRIMARY KEY (id)
 );
 
 
 CREATE TABLE answers (
-  student_id INT NOT NULL REFERENCES students ON DELETE CASCADE,
+  student_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
   question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
-  answer_date TIMESTAMP,
   quiz_id INT REFERENCES quizzes ON DELETE CASCADE,
+  answer_date TIMESTAMP,
   time_taken TIMESTAMP,
   option INT,
-  PRIMARY KEY (student_id, question_id, answer_date)
+  PRIMARY KEY (student_id, question_id, quiz_id)
 );

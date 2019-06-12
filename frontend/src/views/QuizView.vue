@@ -13,6 +13,7 @@ import * as SurveyVue from "survey-vue";
 import Quiz from "../models/Quiz";
 import showdown from "showdown";
 import Results from "@/models/Results";
+import Question from "@/models/Question";
 
 Vue.component("survey", SurveyVue.Survey);
 
@@ -20,17 +21,17 @@ Vue.component("survey", SurveyVue.Survey);
 export default class QuizView extends Vue {
   survey: any = null;
   survey_result: any = null;
-  quiz: Quiz;
+  questions: Question[] = [];
+  id: number;
 
   constructor() {
     super();
-
-    this.quiz = new Quiz();
-    this.quiz.getJson().then(questions => this.getJson(questions));
+    this.questions = Quiz.getQuestions();
+    this.id = Quiz.getId();
   }
 
   getJson(questionsJson: string[]) {
-    if (this.quiz) {
+    if (this.questions) {
       let json = {
         title: "As Questionaire",
         showProgressBar: "bottom",
@@ -48,7 +49,7 @@ export default class QuizView extends Vue {
 
         let el = this.$refs.surveyAnswer as HTMLElement;
         el.innerHTML = "answer: " + JSON.stringify(result.data);
-        Results.getAnswers(result.data, this.quiz.id).then(s => {
+        Results.getAnswers(result.data, this.id).then(s => {
           let el = this.$refs.surveyResult as HTMLElement;
           el.innerHTML = "result: " + JSON.stringify(s);
         });

@@ -7,7 +7,7 @@ public class AnswerDTO implements Serializable {
 
     private Integer question_id;
     private LocalDateTime date;
-    private Integer student_id;
+    private Integer user_id;
     private Integer quiz_id;
     private LocalDateTime time_taken;
     private Integer option;
@@ -19,7 +19,7 @@ public class AnswerDTO implements Serializable {
     public AnswerDTO(Answer answer) {
         this.question_id = answer.getQuestion_id();
         this.date = answer.getDate();
-        this.student_id = answer.getStudent_id();
+        this.user_id = answer.getUser_id();
         this.question_id = answer.getQuestion_id();
         this.time_taken = answer.getTime_taken();
         this.option = answer.getOption();
@@ -41,12 +41,12 @@ public class AnswerDTO implements Serializable {
         this.date = date;
     }
 
-    public Integer getStudent_id() {
-        return student_id;
+    public Integer getUser_id() {
+        return user_id;
     }
 
-    public void setStudent_id(Integer student_id) {
-        this.student_id = student_id;
+    public void setUser_id(Integer user_id) {
+        this.user_id = user_id;
     }
 
     public Integer getQuiz_id() {

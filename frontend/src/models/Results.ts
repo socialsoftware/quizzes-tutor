@@ -1,5 +1,6 @@
 import axios from "axios";
 import Answer from "@/models/Answer";
+import Store from "@/store";
 
 interface ServerResults {
   answers: Answer[];
@@ -23,16 +24,16 @@ export default class Results implements ServerResults {
     }
 
     let data = {
-      student_id: 0,
       answer_date: new Date().toISOString(),
       time_taken: new Date().toISOString(),
       quiz_id: quiz_id,
-      answers: answersData
+      answers: answersData,
+      token: Store.getters.getToken
     };
 
     return axios
       .request<ServerResults>({
-        url: "http://localhost:8080/quiz-answers",
+        url: process.env.VUE_APP_ROOT_API + "/quiz-answers",
         method: "post",
         data: data
       })

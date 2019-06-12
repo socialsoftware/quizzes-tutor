@@ -39,7 +39,7 @@ export default class Question implements ServerQuestion {
   get() {
     axios
       .request<ServerQuestion>({
-        url: "localhost:8080/question",
+        url: process.env.VUE_APP_ROOT_API + "/question",
         transformResponse: (r: ServerResponse) => r.data
       })
       .then(response => {
@@ -56,7 +56,9 @@ export default class Question implements ServerQuestion {
     if (this.content && this.options) {
       if (this.image) {
         this.content +=
-          "  \n  \n[image]: http://localhost:8080/images/questions/" +
+          "  \n  \n[image]: " +
+          process.env.VUE_APP_ROOT_API +
+          "/images/questions/" +
           this.image.url +
           ' "Image"';
       }
