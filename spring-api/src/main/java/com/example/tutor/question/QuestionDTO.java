@@ -17,7 +17,6 @@ public class QuestionDTO implements Serializable {
     private String content;
     private List<OptionDTO> options;
     private ImageDTO image;
-    private Integer correct_option;
 
     public QuestionDTO(Question question) {
         this.id = question.getId();
@@ -27,15 +26,6 @@ public class QuestionDTO implements Serializable {
         }
         this.options = question.getOptions().stream().map(OptionDTO::new).collect(Collectors.toList());
     }
-
-    public QuestionDTO(Question question, Boolean b) {
-        this.id = question.getId();
-        Optional<Option> a = question.getOptions().stream().filter(Option::getCorrect).findFirst();
-        if(a.isPresent()){
-            this.correct_option = a.get().getOption();
-        }
-    }
-
 
     public Integer getId() {
         return id;
@@ -67,13 +57,5 @@ public class QuestionDTO implements Serializable {
 
     public void setImage(ImageDTO image) {
         this.image = image;
-    }
-
-    public Integer getCorrect_option() {
-        return correct_option;
-    }
-
-    public void setCorrect_option(Integer correct_option) {
-        this.correct_option = correct_option;
     }
 }

@@ -22644,7 +22644,7 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 139	0	Client-Server	f
 139	1	Peer-to-Peer	f
 139	3	Tiers	f
-140	0	Each messages does not need to be accessed concurrently by several processes	f
+140	0	Each message does not need to be accessed concurrently by several processes	f
 140	1	Pickle can efficiently write and read messages	f
 140	2	Each message is stored as a file in a directory	f
 141	0	Allocate modules to the file system	f
@@ -22875,9 +22875,9 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 298	1	An aspects architectural style	f
 298	2	A data model architectural style	f
 298	3	A shared-data architectural style	f
-299	0	Subscribes to the same kind of events that the extsc{sub2} port	f
-299	1	Subscribes to the same kind of events that the extsc{inputSub} port	f
-299	3	It is unnecessary in the diagram because the extsc{:TableEditor} can use port extsc{sub2} through the extsc{:Sheet} component	f
+299	0	Subscribes to the same kind of events that the [sub2]{.smallcaps} port	f
+299	1	Subscribes to the same kind of events that the [inputSub]{.smallcaps} port	f
+299	3	It is unnecessary in the diagram because the [:TableEditor]{.smallcaps} can use port [sub2]{.smallcaps} through the [:Sheet]{.smallcaps} component	f
 300	0	The communicating processes architectural style	f
 300	1	The client-server architectural style	f
 300	2	The deployment architectural style	f
@@ -23104,9 +23104,9 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 403	0	Supports asynchronous communication to deal with disconnected mode.	f
 403	1	Implements an event bus that allows the server to inform the client about new order recommendations.	f
 403	2	May loose some of the changes done on the client component.	f
-404	0	The extsc{ConflictResolution} module is part of the code executed by the extsc{: TableEditor} component.	f
-404	2	The code of the extsc{ConflictResolution} module is executed by a broadcast connector that implements an eventbus between the extsc{SpreadSheet} components.	f
-404	3	The code of the extsc{ConflictResolution} module is executed in a server component because it needs to be centralized.	f
+404	0	The [ConflictResolution]{.smallcaps} module is part of the code executed by the [: TableEditor]{.smallcaps} component.	f
+404	2	The code of the [ConflictResolution]{.smallcaps} module is executed by a broadcast connector that implements an eventbus between the [SpreadSheet]{.smallcaps} components.	f
+404	3	The code of the [ConflictResolution]{.smallcaps} module is executed in a server component because it needs to be centralized.	f
 405	0	An object oriented style is followed.	f
 405	2	Row Data Gateway is the most suitable data source pattern.	f
 405	3	A Service Layer should be used to provide an interface for the presentation layer.	f
@@ -23116,9 +23116,9 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 407	0	Should be described as a submodule of the RulesSet module.	f
 407	2	Should be described as a submodule of the Design module.	f
 407	3	Should not be described as a module because it is a component.	f
-409	0	The extsc{: TableEditor} broadcasts the cursor position through the extsc{: Sheet}.	f
-409	2	The extsc{: Sheet} broadcasts the cursor position through the extsc{Pub} port.	f
-409	3	The extsc{: TableEditor} broadcasts the cursor position through its extsc{: StatusCallback} port.	f
+409	0	The [: TableEditor]{.smallcaps} broadcasts the cursor position through the [: Sheet]{.smallcaps}.	f
+409	2	The [: Sheet]{.smallcaps} broadcasts the cursor position through the [Pub]{.smallcaps} port.	f
+409	3	The [: TableEditor]{.smallcaps} broadcasts the cursor position through its [: StatusCallback]{.smallcaps} port.	f
 410	0	Are responsible for loading the objects they refer to.	f
 410	1	Are responsible for the management of transactions, begin and end of transactions.	f
 410	2	Contain the business logic.	f
@@ -23131,13 +23131,13 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 401	0	Amazon Silk is more convenient for mobile devices because it does most of the computation in the cloud.	t
 402	2	There is a Read/Write connector which guarantees that players turns are not lost.	t
 403	3	Has reduced reliability qualities.	t
-404	1	The extsc{ConflictResolution} module is part of the code executed by the extsc{: Sheet} component.	t
+404	1	The [ConflictResolution]{.smallcaps} module is part of the code executed by the [: Sheet]{.smallcaps} component.	t
 405	1	The business logic is organized around record sets.	t
-419	1	The extsc{Parser} module is part of the code executed by the extsc{: Sheet} component.	t
+419	1	The [Parser]{.smallcaps} module is part of the code executed by the [: Sheet]{.smallcaps} component.	t
 413	3	Was taken because Native application provide better support for working offline.	f
-414	1	The server implements the extsc{: Repository} component.	f
-414	2	The server implements the extsc{: Broadcast} connector.	f
-414	3	The server implements the extsc{SpreadSheet} components	f
+414	1	The server implements the [: Repository]{.smallcaps} component.	f
+414	2	The server implements the [: Broadcast]{.smallcaps} connector.	f
+414	3	The server implements the [SpreadSheet]{.smallcaps} components	f
 415	1	Row Data Gateway and Active Record.	f
 415	2	Row Data Gateway and Data Mapper.	f
 415	3	Active Record and Data Mapper.	f
@@ -23150,9 +23150,9 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 418	1	A single bidirectional connector.	f
 418	2	Three distinct unidirectional connectors.	f
 418	3	A single unidirectional connector.	f
-419	0	The extsc{Parser} module is part of the code executed by the extsc{: TableEditor} component.	f
-419	2	The code of the extsc{Parser} module is executed by a repository component, which is not represented in the view.	f
-419	3	The code of the extsc{Parser} module is executed by both, the extsc{: Sheet} and the repository components (the latter is not visible in the view).	f
+419	0	The [Parser]{.smallcaps} module is part of the code executed by the [: TableEditor]{.smallcaps} component.	f
+419	2	The code of the [Parser]{.smallcaps} module is executed by a repository component, which is not represented in the view.	f
+419	3	The code of the [Parser]{.smallcaps} module is executed by both, the [: Sheet]{.smallcaps} and the repository components (the latter is not visible in the view).	f
 420	0	Table Data Gateway and Row Data Gateway.	f
 420	1	Row Data Gateway and Active Record.	f
 420	2	Row Data Gateway and Data Mapper.	f
@@ -24144,7 +24144,7 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 137	3	An object tree to simplify the processing of each filter	t
 138	2	Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order	t
 139	2	Dynamic Creation and Destruction	t
-140	3	Al the previous options	t
+140	3	All the previous options	t
 141	1	Differ on the emphasis on production and development phases of the software process	t
 142	3	Modifiability and Performance	t
 143	0	Defer Binding	t
@@ -24425,11 +24425,11 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 395	0	Memcached can be considered a sub-module of the Store Graphs module.	t
 398	0	Buffering can be considered a sub-module of the Store Graphs module.	t
 399	1	A deployment view.	t
-409	1	An interface delegation is missing in the picture to represent the extsc{: TableEditor} broadcasting the cursor position through the extsc{Pub} port.	t
+409	1	An interface delegation is missing in the picture to represent the [: TableEditor]{.smallcaps} broadcasting the cursor position through the [Pub]{.smallcaps} port.	t
 410	3	May not even exist, only record sets are used.	t
 411	0	Amazon Silk predicts accesses based on the information gathered for all Silk users.	t
 412	2	There is a ThousandParsec connector which can be decomposed into a set of components and Request/Reply connectors.	t
-414	0	The server implements the extsc{: Repository} component and the extsc{: Broadcast} connector.	t
+414	0	The server implements the [: Repository]{.smallcaps} component and the [: Broadcast]{.smallcaps} connector.	t
 415	0	Table Data Gateway and Row Data Gateway.	t
 416	1	Google Chrome predictor takes into consideration the amount of available cache.	t
 417	2	As a module but not included in the RulesSet subtree.	t
@@ -24893,7 +24893,7 @@ COPY public.questions (id, name, new_id, content, difficulty, active) FROM stdin
 275	AvailabilityPingEchoHeartbeat	\N	Ping-and-echo and Heartbeat are two availability tactics to detect faults.	\N	t
 276	SecurityDatabase	\N	Consider that when designing the architecture of a web application, the architect intends to guarantee of the confidentiality of persistent data in face of an attack from a system administrator.	\N	t
 278	ThousandParsecScenario	\N	In the description of the ThousandParsec case study can be read:  \n>"The Thousand Parsec Component Language (TPCL) exists to allow clients to create designs locally without server interaction - allowing for instant feedback about the properties, makeup, and validity of the designs."  \nFrom this sentence can be written	\N	t
-299	SocialCalcBroadcastEvents	\N	Consider the (partial) component-and-connector view for the extsc{:SpreasdSheet} component of the SocialCalc system ![image][image] The extsc{sub1} port	\N	t
+299	SocialCalcBroadcastEvents	\N	Consider the (partial) component-and-connector view for the [:SpreasdSheet]{.smallcaps} component of the SocialCalc system ![image][image] The [sub1]{.smallcaps} port	\N	t
 1216	Tiers	\N	The Tiers architectural style	\N	t
 279	GitTactic	\N	In the description of GitHub case study can be read  \n>"Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of fileservers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD."  \nIn this description we can find the application of tactics like	\N	t
 280	ModuleTraceability	\N	Views of the module viewtype can be used to support requirements traceability analysis, determine how the functional requirements of a system are supported. This is represented by	\N	t
@@ -24911,7 +24911,7 @@ COPY public.questions (id, name, new_id, content, difficulty, active) FROM stdin
 291	EtherCalcTestability	\N	In the description of EtherCalc case study can be read how the architect tried to increase the performance in a multi-core context  \n>"Is there a way to make use of all those spare CPUs in the multi-tenant server? For other Node.js services running on multi-core hosts, we utilized a pre-forking cluster server that creates a process for each CPU. However, while EtherCalc does support multi-server scaling with Redis, the interplay of Socket.io clustering with RedisStore in a single server would have massively complicated the logic, making debugging much more difficult."  \nThis possible solution has impact on the	\N	t
 293	EtherCalcViews	\N	In the description of EtherCalc case study can be read how the architect increased the performance in a multi-core context  \n>"Instead of pre-forking a fixed number of processes, we sought a way to create one background thread for each server-side spreadsheet, thereby distributing the work of command execution among all CPU cores."  \nWhich is represented by the diagram  \n![image][image] The above diagram, describing a server spreadsheet, can be represented using	\N	t
 295	ThreeTiers	\N	One way to increase the performance of a 3-tier enterprise application (with the standard separation in the web client, web server, and database tiers) is to replicate the web server tier and to add a load-balancer between the web clients and the web servers. Unfortunately, for some enterprise applications that option is not enough (or does not work at all), because	\N	t
-298	ThousandParsecPersistence	\N	In the description of ThousandParsec case study can be read  \n>"The flagship server, extsc{tpserver-cpp}, provides an abstract persistence interface and a modular plugin system to allow for various database back ends."  \nThis above sentence can be diagrammatically represented using	\N	t
+298	ThousandParsecPersistence	\N	In the description of ThousandParsec case study can be read  \n>"The flagship server, [tpserver-cpp]{.smallcaps}, provides an abstract persistence interface and a modular plugin system to allow for various database back ends."  \nThis above sentence can be diagrammatically represented using	\N	t
 526	ModuleComponentTwo	\N	Which of the following phrases best describe the relationship between modules and components?	\N	t
 300	GitHubViews	\N	In the description of GitHub case study can be read  \n>"For requests to the main website, the load balancer ships your request off to one of the four frontend machines. Each of these is an 8 core, 16GB RAM bare metal server. Their names are fe1, ..., fe4. Nginx accepts the connection and sends it to a Unix domain socket upon which sixteen Unicorn worker processes are selecting. One of these workers grabs the request and runs the Rails code necessary to fulfill it."  \nTo represent the above description it is necessary to use	\N	t
 301	Featuritis	\N	Frank Buschmann states that:  \n>"Featuritis is the tendency to trade functional coverage for quality - the more functions the earlier they're delivered, the better."  \n	\N	t
@@ -24981,13 +24981,13 @@ COPY public.questions (id, name, new_id, content, difficulty, active) FROM stdin
 1218	PeerToPeer	\N	Consider the peer-to-peer architectural style	\N	t
 391	Tiers	\N	The Tiers architectural style	\N	t
 393	InstallStyle	\N	An important stage of the development of any system is its build into the set of executable files. A suitable architectural style which helps on the definition of the build process is	\N	t
-395	GraphiteDecompositionMemcached	\N	Consider the following decomposition view of the Graphite system where module extsc{Store Graphs} is responsible for managing the storage of datapoints and graphs and module extsc{Present Graphs} for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system. ![image][image]	\N	t
-398	GraphiteDecompositionBuffering	\N	Consider the following decomposition view of the Graphite system where module extsc{Store Graphs} is responsible for managing the storage of datapoints and graphs and module extsc{Present Graphs} for graphs generation and presentation. Buffering is a library used to temporarily store incoming data point. ![image][image]	\N	t
+395	GraphiteDecompositionMemcached	\N	Consider the following decomposition view of the Graphite system where module [Store Graphs]{.smallcaps} is responsible for managing the storage of datapoints and graphs and module [Present Graphs]{.smallcaps} for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system. ![image][image]	\N	t
+398	GraphiteDecompositionBuffering	\N	Consider the following decomposition view of the Graphite system where module [Store Graphs]{.smallcaps} is responsible for managing the storage of datapoints and graphs and module [Present Graphs]{.smallcaps} for graphs generation and presentation. Buffering is a library used to temporarily store incoming data point. ![image][image]	\N	t
 399	DeploymentStyleLimitExposure	\N	An architect needs to show that a security tactic of limit exposure will be effectively provided by the executing system. Therefore, she decides to design	\N	t
 401	SilkMobileDevices	\N	When comparing Amazon Silk with Google Chrome in the context of mobile devices	\N	t
 402	ThousandParsecReadWriteConnector	\N	Consider the architectural views for the ThousandParsec system. The following diagram depicts a proposal of application-specific types for the architectural components, where the names of the ports are missing. Between the GameServer and Repository component ![image][image]	\N	t
 403	OrderPadReliability	\N	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	\N	t
-404	SocialCalcConflictResolution	\N	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A extsc{ConflictResolution} module is used when local commands conflict with remote commands. ![image][image]	\N	t
+404	SocialCalcConflictResolution	\N	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A [ConflictResolution]{.smallcaps} module is used when local commands conflict with remote commands. ![image][image]	\N	t
 405	LogicAccessTableModule	\N	When the domain logic is organized using a Table Module pattern	\N	t
 406	SilkConnections	\N	When comparing Amazon Silk with Google Chrome	\N	t
 407	ThousandParsecModule	\N	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The ThousandParsec protocol ![image][image]	\N	t
@@ -25002,7 +25002,7 @@ COPY public.questions (id, name, new_id, content, difficulty, active) FROM stdin
 417	ThousandParsecAI	\N	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The AI players should be described ![image][image]	\N	t
 418	OrderPadMainframeConnector	\N	Consider the architecture of the Morrison's OrderPad. The final interaction between the OrderPadDatabase component and Mainframe component is supported by	\N	t
 550	ImageHostingPerformance	\N	Consider the following informal view of an Image Hosting System ![image][image]	\N	t
-419	SocialCalcParser	\N	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A extsc{Parser} module is used when loading a file ![image][image]	\N	t
+419	SocialCalcParser	\N	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A [Parser]{.smallcaps} module is used when loading a file ![image][image]	\N	t
 420	LogicAccessDomainModel	\N	When the domain logic is organized using a Domain Model pattern the most suitable data source patterns are	\N	t
 451	ContinousIntegrationScenariosTacticsOne	\N	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \nConsider that a scenario is written from the above sentence	\N	t
 452	InfinispanScenariosTacticsOne	\N	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \nFrom the description we can infer a trade-off between the qualities of	\N	t
@@ -25296,7 +25296,7 @@ COPY public.questions (id, name, new_id, content, difficulty, active) FROM stdin
 1179	NetflixTacticsTwo	\N	In the description of the *How Netflix works* can be read:  \n>"What CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest."  \nWhich corresponds to the application of the following tactic	\N	t
 1180	Queues	\N	To which performance tactic can the use of queues be associated?	\N	t
 1186	ChromeTabSecurity	\N	In the Chrome system the use of a process per tab results form the application of a tactic of	\N	t
-1187	SocialCalcTacticsOne	\N	In the description of the SocialCalc case study can be read:  \n>"As the user scrolls the spreadsheet through our custom-drawn scroll bars, we dynamically update the innerHTML of the pre-drawn extsc{<td>} elements. This means we don't need to create or destroy any extsc{<tr>} or extsc{<td>} elements in many common cases, which greatly speeds up response time."  \nThis corresponds to the application of	\N	t
+1187	SocialCalcTacticsOne	\N	In the description of the SocialCalc case study can be read:  \n>"As the user scrolls the spreadsheet through our custom-drawn scroll bars, we dynamically update the innerHTML of the pre-drawn [<td>]{.smallcaps} elements. This means we don't need to create or destroy any [<tr>]{.smallcaps} or [<td>]{.smallcaps} elements in many common cases, which greatly speeds up response time."  \nThis corresponds to the application of	\N	t
 1188	ModifiabilityResponseMeasure	\N	A response measure of a modifiability scenario is	\N	t
 1189	IterativeDesign	\N	Designing an architecture	\N	t
 1190	Decomposition	\N	The Decomposition architectural style of the Module viewtype	\N	t

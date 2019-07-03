@@ -3,16 +3,16 @@ package com.example.tutor.quiz;
 import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.Question;
 import com.example.tutor.question.QuestionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 @Entity
 @Table(name = "quizzes")
@@ -39,7 +39,8 @@ public class Quiz implements Serializable {
     @Column(columnDefinition = "version")
     private String version;
 
-    @ManyToMany
+    @ManyToMany(fetch=FetchType.EAGER)
+    @Fetch (FetchMode.SELECT)
     @JoinTable(
             name="quiz_has_question",
             joinColumns=@JoinColumn(name="quiz_id", referencedColumnName="id"),
@@ -49,7 +50,7 @@ public class Quiz implements Serializable {
 
     public Quiz() {}
 
-    public Quiz(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String topic, String questions) {
+    public Quiz(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String[] topics, String questionType) {
         int maxID = 1698;
         List<Question> questionList = new ArrayList<>();
         Random rand = new Random();

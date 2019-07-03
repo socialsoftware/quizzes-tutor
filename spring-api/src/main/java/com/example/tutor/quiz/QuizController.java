@@ -1,28 +1,31 @@
 package com.example.tutor.quiz;
 
-import com.example.tutor.auth.JwtTokenProvider;
+import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.QuestionRepository;
+import com.example.tutor.user.User;
+import com.example.tutor.user.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.example.tutor.ResourceNotFoundException;
-import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 public class QuizController {
 
     private QuizRepository quizRepository;
     private QuestionRepository questionRepository;
-    private JwtTokenProvider tokenProvider;
+    private UserRepository userRepository;
 
-    QuizController(QuizRepository repository, QuestionRepository rep2, JwtTokenProvider tokenProvider) {
-        this.quizRepository = repository;
-        this.questionRepository = rep2;
-        this.tokenProvider = tokenProvider;
+    QuizController(QuizRepository quizRepository, QuestionRepository questionRepository, UserRepository userRepository) {
+        this.quizRepository = quizRepository;
+        this.questionRepository = questionRepository;
+        this.userRepository = userRepository;
 
     }
 
@@ -63,15 +66,13 @@ public class QuizController {
                 }).orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizID));
     }
 
-    @GetMapping("/newquiz")
-    public QuizDTO getNewQuiz(@RequestParam("token") String token, @RequestParam("numberOfQuestions") Integer numberOfQuestions, @RequestParam("questions") String questions, @RequestParam("topic") String topic) {
-        if (tokenProvider.verifyToken(token)) {
-            Integer userId = tokenProvider.getUserIdFromJWT(token);
-            Quiz quiz = new Quiz(questionRepository, userId, numberOfQuestions, topic, questions);
-            return new QuizDTO(quizRepository.save(quiz));
-        } else {
-            throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "Token not valid");
-        }
+    @PostMapping("/newquiz")
+    public QuizDTO getNewQuiz(Principal principal, @RequestBody QuizDetailsDTO quizDetails) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        Quiz quiz = new Quiz(questionRepository, user.getId(), quizDetails.getNumberOfQuestions(), quizDetails.getTopics(), quizDetails.getQuestionType());
+
+        return new QuizDTO(quizRepository.save(quiz));
     }
 }

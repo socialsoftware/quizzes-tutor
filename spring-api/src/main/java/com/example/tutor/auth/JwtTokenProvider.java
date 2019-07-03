@@ -1,54 +1,70 @@
 package com.example.tutor.auth;
 
+import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.user.User;
+import com.example.tutor.user.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
-import java.security.*;
+import javax.servlet.http.HttpServletRequest;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private UserRepository userRepository;
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
+    public JwtTokenProvider(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
     private static void generateKeys(){
-        Map<String, Object> rsaKeys;
         try {
-            rsaKeys = getRSAKeys();
-            publicKey = (PublicKey) rsaKeys.get("public");
-            privateKey = (PrivateKey) rsaKeys.get("private");
+            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
+            keyPairGenerator.initialize(2048);
+            KeyPair keyPair = keyPairGenerator.generateKeyPair();
+            privateKey = keyPair.getPrivate();
+            publicKey = keyPair.getPublic();
         } catch (Exception e) {
             logger.error("Unable to generate keys");
-            e.printStackTrace();
         }
     }
 
-    public static String generateToken(User user) {
+    static String generateToken(User user) {
         if (publicKey == null) {
             generateKeys();
         }
 
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("role", user.getRole());
+
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 1000*60*10);
+        Date expiryDate = new Date(now.getTime() + 1000*60*60*24);
 
         return Jwts.builder()
-                .setSubject(Long.toString(user.getId()))
+                .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
                 .signWith(SignatureAlgorithm.RS512, privateKey)
                 .compact();
     }
 
-    // verify and get claims using public key
+    static String getToken(HttpServletRequest req) {
+        return req.getHeader("Authorization");
+    }
 
-    public static Boolean verifyToken(String token) {
+    static Boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
             return true;
@@ -64,28 +80,20 @@ public class JwtTokenProvider {
         return false;
     }
 
-    public Integer getUserIdFromJWT(String token) {
+    static String getUsername(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(publicKey)
                 .parseClaimsJws(token)
                 .getBody();
 
-        return Integer.parseInt(claims.getSubject());
+        return claims.getSubject();
     }
 
-    // Get RSA keys. Uses key size of 2048.
-    private static Map<String, Object> getRSAKeys() throws Exception {
-        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-        keyPairGenerator.initialize(2048);
-        KeyPair keyPair = keyPairGenerator.generateKeyPair();
-        PrivateKey privateKey = keyPair.getPrivate();
-        PublicKey publicKey = keyPair.getPublic();
-        Map<String, Object> keys = new HashMap<String, Object>();
-        keys.put("private", privateKey);
-        keys.put("public", publicKey);
-        return keys;
+    Authentication getAuthentication(String token) {
+        User user = this.userRepository.findByUsername(getUsername(token));
+        if (user == null) {
+            throw new ResourceNotFoundException("User " + getUsername(token) + " not found!");
+        }
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
-
-
-
 }

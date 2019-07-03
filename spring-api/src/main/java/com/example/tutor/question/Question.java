@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity(name = "Question")
 @Table(name = "questions")
@@ -22,6 +23,9 @@ public class Question implements Serializable {
 
     @Column(columnDefinition = "difficulty")
     private Integer difficulty;
+
+    @Column(columnDefinition = "active")
+    private Boolean active;
 
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
     @JoinColumn(name="question_id")
@@ -48,11 +52,11 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    public Integer getNew_id() {
+    public Integer getNewId() {
         return new_id;
     }
 
-    public void setNew_id(Integer new_id) {
+    public void setNewId(Integer new_id) {
         this.new_id = new_id;
     }
 
@@ -62,6 +66,14 @@ public class Question implements Serializable {
 
     public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public List<Option> getOptions() {
@@ -83,5 +95,10 @@ public class Question implements Serializable {
     @Override
     public String toString() {
         return "Question: " + "\n\tContent: " + this.getContent() + "\n\tImage: " + this.getImage().toString();
+    }
+
+    public Integer getCorrectOption() {
+        Optional<Option> a = this.getOptions().stream().filter(Option::getCorrect).findFirst();
+        return a.get().getOption();
     }
 }
