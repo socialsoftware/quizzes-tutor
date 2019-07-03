@@ -32,17 +32,11 @@ export default new Vuex.Store({
   actions: {
     login({ commit }, code) {
       commit("auth_request");
-      console.log("store code", code);
       return new Promise((resolve, reject) => {
         axios
-          .get(process.env.VUE_APP_ROOT_API + "/auth/fenix", {
-            params: {
-              code: code
-            }
-          })
+          .post(process.env.VUE_APP_ROOT_API + "/auth/fenix", { code: code })
           .then(response => {
             // handle success
-            console.log(response);
             const token = response.data.token;
             const user = response.data.user;
             localStorage.setItem("token", token);

@@ -54,33 +54,17 @@ ajudar a alcançar nossos objetivos.
 
 ## Instalation
 
-### Install Postgres for database
-
-- [Postgresql](https://www.postgresql.org/) (version 10.8)
-
-```
-sudo apt install postgresql
-```
-
-### Install Node for frontend (version 10.15.3)
+### Install Postgresql for database(version 10.8)
+### Install Java 11 for spring-boot API
+### Install Node.js for frontend (version 10.15.3)
 
 ```
 sudo apt update
-
+sudo apt install postgresql
 sudo apt install nodejs npm
 ```
 
-Para instalar Node.JS 10:
-
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-
-sudo apt install -y nodejs
-
-### Install Java (version 11)
-
-
 ## Create DB by loading dump
-
 
 Change to postgres user and create DB
 ```
@@ -89,51 +73,28 @@ dropdb tutordb
 createdb tutordb
 ```
 
-Create user to access db
+Create user to access db and load dump
 ```
 psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
-```
-
-Load dump
-```
 psql tutordb < dump/tutordb.bak
 ```
 
-## Run spring api server
+## Run spring-boot API on http://localhost:8080
 
-Change as-tutor/spring-api/src/main/resources/application.properties
+Firstly, change as-tutor/spring-api/src/main/resources/application.properties
 
 ```
 cd spring-api
 mvn clean spring-boot:run
 ```
-Running on http://localhost:8080
 
 See documentation on http://localhost:8080/swagger-ui.html
 
-## Run frontend
+## Run frontend on http://localhost:8081
 
 ```
 cd frontend
 npm i
 npm start
 ```
-
-Running on http://localhost:8081
-
-Você também vai precisar do [Git](https://git-scm.com/downloads) caso ainda não
-o tenha instalado.
-
-### Inicializando o banco de dados
-
-**Atenção:**
-
-## Perguntas frequentes (FAQ)
-
-Algumas perguntas aparecem recorrentemente. Olhe primeiro por aqui: FAQ
-
----
-
-Powered by 
-

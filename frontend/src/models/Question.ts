@@ -10,7 +10,7 @@ interface ServerQuestion {
   content: string | null;
   options: Option[] | null;
   topic: string | null;
-  correct_option: number | null;
+  correctOption: number | null;
   image: Image | null;
 }
 
@@ -25,7 +25,7 @@ export default class Question implements ServerQuestion {
   options!: Option[] | null;
   topic!: string | null;
   image: Image | null;
-  correct_option!: number | null;
+  correctOption!: number | null;
 
   constructor(jsonObj: ServerQuestion) {
     this.id = jsonObj.id;
@@ -33,7 +33,7 @@ export default class Question implements ServerQuestion {
     this.options = jsonObj.options;
     this.topic = jsonObj.topic;
     this.image = jsonObj.image;
-    this.correct_option = jsonObj.correct_option;
+    this.correctOption = jsonObj.correctOption;
   }
 
   get() {
@@ -50,33 +50,5 @@ export default class Question implements ServerQuestion {
       .catch(function(error) {
         // Handle error
       });
-  }
-
-  customjson(): any {
-    if (this.content && this.options) {
-      if (this.image) {
-        this.content +=
-          "  \n  \n[image]: " +
-          process.env.VUE_APP_ROOT_API +
-          "/images/questions/" +
-          this.image.url +
-          ' "Image"';
-      }
-      return {
-        questions: [
-          {
-            type: "radiogroup",
-            name: this.id.toString(),
-            title: this.content,
-            choices: this.options.map(option => {
-              return {
-                value: option.option,
-                text: option.content
-              };
-            })
-          }
-        ]
-      };
-    }
   }
 }

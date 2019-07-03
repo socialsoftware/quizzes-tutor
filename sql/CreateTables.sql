@@ -13,8 +13,8 @@ CREATE TABLE quizzes (
     title VARCHAR(255),
     year INT,
     type VARCHAR(255), -- E exame or T test or G generated
-    series INT, -- Test 1, Test 2
-    version VARCHAR(5), -- A, B, C
+    series INT, -- Test 1, Test 2 or user id
+    version VARCHAR(5), -- A, B, C or completed
     PRIMARY KEY (id)
 );
 

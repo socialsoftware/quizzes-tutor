@@ -23,11 +23,11 @@ public class Image implements Serializable {
     @Column(columnDefinition = "width")
     private Integer width;
 
-    public Integer getQuestion_id() {
+    public Integer getQuestionId() {
         return question_id;
     }
 
-    public void setQuestion_id(Integer question_id) {
+    public void setQuestionId(Integer question_id) {
         this.question_id = question_id;
     }
 
