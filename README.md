@@ -38,7 +38,7 @@ colaboradores do projeto.
 - Adoção do [PSR2](https://)
 - Adoção do [PSR4](https://)
 
-### Planejamento Técnico
+### Planeamento Técnico
 
 Em nossa wiki você encontra um planejamento mais técnico de como devemos
 prosseguir com as melhorias e evoluções do nosso projeto.
@@ -52,178 +52,49 @@ Tutor System junto conosco, veja o nosso guia de contribuição
 onde explicamos detalhadamente como trabalhamos e de que formas você pode nos
 ajudar a alcançar nossos objetivos.
 
-## Instalação
+## Instalation
 
-> ATENÇÃO: Essa forma de instação tem o objetivo de facilitar demonstrações e desenvolvimento. Não é recomendado para ambientes de produção!
-
-Antes de começar você vai precisar instalar:
-
-- [Postgresql](https://www.postgresql.org/) (> versão)
-
-Install postgresql
-
-```
-sudo apt install postgresql
-```
-Install psycopg2 module
-
-```
-sudo apt install python3-pip
-pip3 install psycopg2-binary
-```
-
-Install npm
-
-```
-sudo apt install npm
-```
-## Create DB by loading dump
-
-
-Change to postgresuser and create DB
-```
-sudo su -l postgres
-dropdb tutordb
-createdb tutordb
-```
-
-Create user to access db
-```
-psql tutordb
-CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
-```
-
-Load dump
-```
-psql tutordb < tutordb.bak
-```
-
-
-## Create DB by extracting data
-
-Change to postgresuser and create DB
-```
-sudo su -l postgres
-dropdb tutordb
-createdb tutordb
-```
-
-Create user to access db
-```
-psql tutordb
-CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
-```
-
-Create tables
-Go to directory ~ as-tutor / sql
-```
-psql tutordb -f CreateTables.sql
-```
-Create directory / as-tutor / spring-api / src / main / resources / static / images / questions 
-Populate tables
-```
-python3 populateDB.py
-```
-### Run PDI
-
-```
-download from https://sourceforge.net/projects/pentaho/files/Data%20Integration/7.1/pdi-ce-7.1.0.0-12.zip/download
-```
-
-Open .ktr files.
-
-Change source files path and database configurations
-
-Run
-
-### Useful queries:
-
-view unique questions
-```
-select count(*) from questions where new_id is null;
-```
-
-view if all questions have 4 options
-```
-select * from (select count(*), question_id from options group by question_id) as a where count <> 4;
-```
-
-copy to file list of quizzes
-```
-\copy (select title, count from quizzes, (select quiz_id, count(question_id) from quiz_has_question group by quiz_id) as q where id = quiz_id) To 'test.csv' With CSV
-```
-
-### Create dump
-
-```
-pg_dump tutordb > tutordb.bak
-```
-
-## Run node api server
-
-use node version 9.11.1
-
-Change config/db.json and run
-
-```
-npm i
-npm start
-```
-
-Running on http://localhost:3000
-
-## Run spring api server
-
-To run api spring it is important to be with version 11 of java
-
-Change as-tutor/spring-api/src/main/resources/application.properties
-
-```
-mvn clean spring-boot:run
-```
-Running on http://localhost:8080
-
-See documentation on http://localhost:8080/swagger-ui.html
-
-## Run frontend
-
-To run the frontend it is important to be with version 10 of the node
+### Install Postgresql for database(version 10.8)
+### Install Java 11 for spring-boot API
+### Install Node.js for frontend (version 10.15.3)
 
 ```
 sudo apt update
-
+sudo apt install postgresql
 sudo apt install nodejs npm
-
-
-Para instalar Node.JS 10:
-
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-
-sudo apt install -y nodejs
-
-use node version 10.15.3
-vue version 3.5.1
 ```
 
+## Create DB by loading dump
+
+Change to postgres user and create DB
 ```
+sudo su -l postgres
+dropdb tutordb
+createdb tutordb
+```
+
+Create user to access db and load dump
+```
+psql tutordb
+CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
+psql tutordb < dump/tutordb.bak
+```
+
+## Run spring-boot API on http://localhost:8080
+
+Firstly, change as-tutor/spring-api/src/main/resources/application.properties
+
+```
+cd spring-api
+mvn clean spring-boot:run
+```
+
+See documentation on http://localhost:8080/swagger-ui.html
+
+## Run frontend on http://localhost:8081
+
+```
+cd frontend
 npm i
 npm start
 ```
-
-Running on http://localhost:8081
-
-Você também vai precisar do [Git](https://git-scm.com/downloads) caso ainda não
-o tenha instalado.
-
-### Inicializando o banco de dados
-
-**Atenção:**
-
-## Perguntas frequentes (FAQ)
-
-Algumas perguntas aparecem recorrentemente. Olhe primeiro por aqui: FAQ
-
----
-
-Powered by 
-

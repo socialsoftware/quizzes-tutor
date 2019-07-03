@@ -1,15 +1,18 @@
 package com.example.tutor.quiz;
 
 import com.example.tutor.ResourceNotFoundException;
-import com.example.tutor.option.Option;
 import com.example.tutor.question.Question;
 import com.example.tutor.question.QuestionRepository;
-import org.springframework.web.client.HttpServerErrorException;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 
 @Entity
 @Table(name = "quizzes")
@@ -24,33 +27,45 @@ public class Quiz implements Serializable {
     @Column(columnDefinition = "date")
     private LocalDateTime date;
 
-    @ManyToMany
+    @Column(columnDefinition = "year")
+    private Integer year;
+
+    @Column(columnDefinition = "type")
+    private String type;
+
+    @Column(columnDefinition = "series")
+    private Integer series;
+
+    @Column(columnDefinition = "version")
+    private String version;
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @Fetch (FetchMode.SELECT)
     @JoinTable(
             name="quiz_has_question",
             joinColumns=@JoinColumn(name="quiz_id", referencedColumnName="id"),
             inverseJoinColumns=@JoinColumn(name="question_id", referencedColumnName="id"))
-    private List<Question> questions = new ArrayList<>();
+    private List<Question> questions;
 
-    public Quiz(){
 
-    }
+    public Quiz() {}
 
-    public Quiz(QuestionRepository questionRepository) {
+    public Quiz(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String[] topics, String questionType) {
         int maxID = 1698;
         List<Question> questionList = new ArrayList<>();
         Random rand = new Random();
         HashSet<Integer> idList = new HashSet<>();
         Question q;
 
-        while (questionList.size() < 30) {
+        while (questionList.size() < numberOfQuestions) {
             int question_id = rand.nextInt(maxID);
             try {
                 if (!idList.contains(question_id)) {
                     questionRepository.findById(question_id)
-                        .ifPresent(question -> {
-                            questionList.add(question);
-                            idList.add(question_id);
-                        });
+                            .ifPresent(question -> {
+                                questionList.add(question);
+                                idList.add(question_id);
+                            });
                 }
             } catch (ResourceNotFoundException e) {
                 idList.add(question_id);
@@ -58,8 +73,9 @@ public class Quiz implements Serializable {
         }
 
         this.date = LocalDateTime.now();
-
         this.questions = questionList;
+        this.type = "Generated";
+        this.series = userId;
     }
 
     public Integer getId() {

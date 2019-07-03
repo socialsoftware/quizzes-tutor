@@ -7,10 +7,6 @@ DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
 
-
-
-
-
 # get tex files list
 def getTexFiles():
     result = glob.glob(dataPath, recursive=True)

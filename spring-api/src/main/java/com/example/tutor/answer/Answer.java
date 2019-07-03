@@ -1,7 +1,7 @@
 package com.example.tutor.answer;
 
 import com.example.tutor.question.Question;
-import com.example.tutor.student.Student;
+import com.example.tutor.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,11 +26,11 @@ public class Answer implements Serializable {
 
     }
 
-    public Answer(AnswerDTO ans, Student s, Question q){
-        this.answerPK = new AnswerPK(ans.getDate(), s, q);
-        this.answerPK.setStudent(s);
-        this.quiz_id = ans.getQuiz_id();
-        this.time_taken = ans.getTime_taken();
+    public Answer(ResultAnswerDTO ans, User user, Question question, LocalDateTime date, Integer quiz_id){
+        this.answerPK = new AnswerPK(date, user, question);
+        this.answerPK.setUser(user);
+        this.quiz_id = quiz_id;
+        this.time_taken = ans.getTimeTaken();
         this.option = ans.getOption();
     }
 
@@ -43,19 +43,19 @@ public class Answer implements Serializable {
         this.answerPK = answerPK;
     }
 
-    public Integer getQuiz_id() {
+    public Integer getQuizId() {
         return quiz_id;
     }
 
-    public void setQuiz_id(Integer quiz_id) {
+    public void setQuizId(Integer quiz_id) {
         this.quiz_id = quiz_id;
     }
 
-    public LocalDateTime getTime_taken() {
+    public LocalDateTime getTimeTaken() {
         return time_taken;
     }
 
-    public void setTime_taken(LocalDateTime time_taken) {
+    public void setTimeTaken(LocalDateTime time_taken) {
         this.time_taken = time_taken;
     }
 
@@ -67,11 +67,11 @@ public class Answer implements Serializable {
         this.option = option;
     }
 
-    public Integer getQuestion_id() {
+    public Integer getQuestionId() {
         return answerPK.getQuestion().getId();
     }
 
-    public void setQuestion_id(Integer id) {
+    public void setQuestionId(Integer id) {
         answerPK.getQuestion().setId(id);
     }
 
@@ -83,12 +83,12 @@ public class Answer implements Serializable {
         answerPK.setDate(date);
     }
 
-    public Integer getStudent_id() {
-        return answerPK.getStudent().getId();
+    public Integer getUserId() {
+        return answerPK.getUser().getId();
     }
 
-    public void setStudent_id(Integer id) {
-        answerPK.getStudent().setId(id);
+    public void setUserId(Integer id) {
+        answerPK.getUser().setId(id);
     }
 
 }
