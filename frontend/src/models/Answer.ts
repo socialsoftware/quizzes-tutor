@@ -1,14 +1,15 @@
-interface ServerAnswer {
-  id: number;
-  correct_option: number;
-}
-
 export default class Answer {
-  id!: number;
-  correct_option!: number;
+  public questionId: number;
+  public option: number | null;
+  public timeTaken: Date | null;
 
-  constructor(answerJSON: ServerAnswer) {
-    this.id = answerJSON.id;
-    this.correct_option = answerJSON.correct_option;
+  public constructor(
+    questionId: number,
+    option: number | null,
+    time_taken: Date | null
+  ) {
+    this.questionId = questionId;
+    this.option = option;
+    this.timeTaken = time_taken;
   }
 }

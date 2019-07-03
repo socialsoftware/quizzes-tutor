@@ -19,11 +19,11 @@ public class Option implements Serializable {
     @Column(columnDefinition = "content")
     private String content;
 
-    public Integer getQuestion_id() {
+    public Integer getQuestionId() {
         return optionPK.getQuestion().getId();
     }
 
-    public void setQuestion_id(Integer question_id) {
+    public void setQuestionId(Integer question_id) {
         this.optionPK.getQuestion().setId(question_id);
     }
 

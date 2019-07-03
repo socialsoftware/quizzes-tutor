@@ -40,7 +40,7 @@ public class QuestionController {
         return new QuestionDTO(questionRepository.findById(question_id)
                 .map(question -> {
                     question.setContent(questionRequest.getContent());
-                    question.setNew_id(questionRequest.getNew_id());
+                    question.setNewId(questionRequest.getNewId());
                     question.setDifficulty(questionRequest.getDifficulty());
                     question.setImage(questionRequest.getImage());
                     return questionRepository.save(question);

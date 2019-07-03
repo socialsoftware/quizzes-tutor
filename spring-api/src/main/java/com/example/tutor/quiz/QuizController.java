@@ -1,23 +1,32 @@
 package com.example.tutor.quiz;
 
+import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.QuestionRepository;
+import com.example.tutor.user.User;
+import com.example.tutor.user.UserRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import com.example.tutor.ResourceNotFoundException;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @RestController
 public class QuizController {
 
     private QuizRepository quizRepository;
     private QuestionRepository questionRepository;
+    private UserRepository userRepository;
 
-    QuizController(QuizRepository repository, QuestionRepository rep2) {
-        this.quizRepository = repository;
-        this.questionRepository = rep2;
+    QuizController(QuizRepository quizRepository, QuestionRepository questionRepository, UserRepository userRepository) {
+        this.quizRepository = quizRepository;
+        this.questionRepository = questionRepository;
+        this.userRepository = userRepository;
+
     }
 
     @GetMapping("/quizzes")
@@ -57,8 +66,13 @@ public class QuizController {
                 }).orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizID));
     }
 
-    @GetMapping("/newquiz")
-    public QuizDTO getNewQuiz() {
-        return new QuizDTO(quizRepository.save(new Quiz(questionRepository)));
+    @PostMapping("/newquiz")
+    public QuizDTO getNewQuiz(Principal principal, @RequestBody QuizDetailsDTO quizDetails) {
+
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        Quiz quiz = new Quiz(questionRepository, user.getId(), quizDetails.getNumberOfQuestions(), quizDetails.getTopics(), quizDetails.getQuestionType());
+
+        return new QuizDTO(quizRepository.save(quiz));
     }
 }

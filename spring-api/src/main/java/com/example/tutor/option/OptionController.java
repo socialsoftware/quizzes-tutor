@@ -19,7 +19,7 @@ public class OptionController {
     private QuestionRepository questionRepository;
 
     @GetMapping("/questions/{question_id}/options")
-    public List<Option> getOptionsByquestion_id(@PathVariable Integer question_id) {
+    public List<Option> getOptionsByquestionId(@PathVariable Integer question_id) {
         return optionRepository.findByquestion_id(question_id);
     }
 
@@ -28,7 +28,7 @@ public class OptionController {
                             @Valid @RequestBody Option option) {
         return questionRepository.findById(question_id)
                 .map(question -> {
-                    option.setQuestion_id(question.getId());
+                    option.setQuestionId(question.getId());
                     return optionRepository.save(option);
                 }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
     }
