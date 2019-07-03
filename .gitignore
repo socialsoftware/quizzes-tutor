@@ -8,4 +8,3 @@ npm-debug.log
 
 #images
 node-api/public/images/questions/
-spring-api/src/main/resources/static/images/questions
