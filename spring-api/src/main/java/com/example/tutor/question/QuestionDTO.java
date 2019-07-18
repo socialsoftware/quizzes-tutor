@@ -15,12 +15,16 @@ public class QuestionDTO implements Serializable {
 
     private Integer id;
     private String content;
+    private Integer difficulty;
+    private Boolean active;
     private List<OptionDTO> options;
     private ImageDTO image;
 
     public QuestionDTO(Question question) {
         this.id = question.getId();
         this.content = question.getContent();
+        this.difficulty = question.getDifficulty();
+        this.active = question.getActive();
         if (question.getImage() != null) {
             this.image = new ImageDTO(question.getImage());
         }
@@ -41,6 +45,22 @@ public class QuestionDTO implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getDifficulty() {
+        return difficulty;
+    }
+
+    public void setDifficulty(Integer difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 
     public List<OptionDTO> getOptions() {

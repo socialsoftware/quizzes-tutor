@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.8 (Ubuntu 10.8-0ubuntu0.18.04.1)
--- Dumped by pg_dump version 10.8 (Ubuntu 10.8-0ubuntu0.18.04.1)
+-- Dumped from database version 10.9 (Ubuntu 10.9-0ubuntu0.18.04.1)
+-- Dumped by pg_dump version 10.9 (Ubuntu 10.9-0ubuntu0.18.04.1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -39,7 +39,7 @@ SET default_with_oids = false;
 --
 
 CREATE TABLE public.answers (
-    student_id integer NOT NULL,
+    user_id integer NOT NULL,
     question_id integer NOT NULL,
     quiz_id integer NOT NULL,
     answer_date timestamp without time zone,
@@ -49,6 +49,18 @@ CREATE TABLE public.answers (
 
 
 ALTER TABLE public.answers OWNER TO pedro;
+
+--
+-- Name: explanations; Type: TABLE; Schema: public; Owner: pedro
+--
+
+CREATE TABLE public.explanations (
+    question_id integer NOT NULL,
+    content text
+);
+
+
+ALTER TABLE public.explanations OWNER TO pedro;
 
 --
 -- Name: images; Type: TABLE; Schema: public; Owner: pedro
@@ -151,7 +163,9 @@ CREATE TABLE public.quizzes (
     year integer,
     type character varying(255),
     series integer,
-    version character varying(5)
+    version character varying(5),
+    generated_by integer,
+    completed boolean DEFAULT false
 );
 
 
@@ -180,40 +194,17 @@ ALTER SEQUENCE public.quizzes_id_seq OWNED BY public.quizzes.id;
 
 
 --
--- Name: students; Type: TABLE; Schema: public; Owner: pedro
+-- Name: suggestions; Type: TABLE; Schema: public; Owner: pedro
 --
 
-CREATE TABLE public.students (
-    id integer NOT NULL,
-    name character varying(255),
-    type character varying(255),
-    year integer
+CREATE TABLE public.suggestions (
+    user_id integer NOT NULL,
+    question_id integer NOT NULL,
+    topic_id integer NOT NULL
 );
 
 
-ALTER TABLE public.students OWNER TO pedro;
-
---
--- Name: students_id_seq; Type: SEQUENCE; Schema: public; Owner: pedro
---
-
-CREATE SEQUENCE public.students_id_seq
-    AS integer
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.students_id_seq OWNER TO pedro;
-
---
--- Name: students_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pedro
---
-
-ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
-
+ALTER TABLE public.suggestions OWNER TO pedro;
 
 --
 -- Name: topics; Type: TABLE; Schema: public; Owner: pedro
@@ -221,6 +212,7 @@ ALTER SEQUENCE public.students_id_seq OWNED BY public.students.id;
 
 CREATE TABLE public.topics (
     id integer NOT NULL,
+    parent integer,
     name character varying(255)
 );
 
@@ -250,6 +242,43 @@ ALTER SEQUENCE public.topics_id_seq OWNED BY public.topics.id;
 
 
 --
+-- Name: users; Type: TABLE; Schema: public; Owner: pedro
+--
+
+CREATE TABLE public.users (
+    id integer NOT NULL,
+    name character varying(255),
+    role character varying(255),
+    username character varying(255),
+    year integer
+);
+
+
+ALTER TABLE public.users OWNER TO pedro;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE; Schema: public; Owner: pedro
+--
+
+CREATE SEQUENCE public.users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.users_id_seq OWNER TO pedro;
+
+--
+-- Name: users_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: pedro
+--
+
+ALTER SEQUENCE public.users_id_seq OWNED BY public.users.id;
+
+
+--
 -- Name: questions id; Type: DEFAULT; Schema: public; Owner: pedro
 --
 
@@ -264,13 +293,6 @@ ALTER TABLE ONLY public.quizzes ALTER COLUMN id SET DEFAULT nextval('public.quiz
 
 
 --
--- Name: students id; Type: DEFAULT; Schema: public; Owner: pedro
---
-
-ALTER TABLE ONLY public.students ALTER COLUMN id SET DEFAULT nextval('public.students_id_seq'::regclass);
-
-
---
 -- Name: topics id; Type: DEFAULT; Schema: public; Owner: pedro
 --
 
@@ -278,10 +300,25 @@ ALTER TABLE ONLY public.topics ALTER COLUMN id SET DEFAULT nextval('public.topic
 
 
 --
+-- Name: users id; Type: DEFAULT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_id_seq'::regclass);
+
+
+--
 -- Data for Name: answers; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.answers (student_id, question_id, quiz_id, answer_date, time_taken, option) FROM stdin;
+COPY public.answers (user_id, question_id, quiz_id, answer_date, time_taken, option) FROM stdin;
+\.
+
+
+--
+-- Data for Name: explanations; Type: TABLE DATA; Schema: public; Owner: pedro
+--
+
+COPY public.explanations (question_id, content) FROM stdin;
 \.
 
 
@@ -988,10 +1025,10 @@ COPY public.options (question_id, option, content, correct) FROM stdin;
 139	1	Peer-to-Peer	f
 139	2	Dynamic Creation and Destruction	f
 139	3	Tiers	f
-140	0	Each messages does not need to be accessed concurrently by several processes	f
+140	0	Each message does not need to be accessed concurrently by several processes	f
 140	1	Pickle can efficiently write and read messages	f
 140	2	Each message is stored as a file in a directory	f
-140	3	Al the previous options	f
+140	3	All the previous options	f
 141	0	Allocate modules to the file system	f
 141	1	Differ on the emphasis on production and development phases of the software process	f
 141	2	Are applied to completely distinct sets of files	f
@@ -7903,150 +7940,150 @@ COPY public.quiz_has_question (quiz_id, question_id) FROM stdin;
 -- Data for Name: quizzes; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.quizzes (id, title, year, type, series, version) FROM stdin;
-1	..-data-2010-primeiro-exame-20110113-companion-en	\N	\N	\N	\N
-2	..-data-2011-exam1-exame-20120109-companion-en	\N	\N	\N	\N
-3	..-data-2011-exam2-exame-20120203-companion-en	\N	\N	\N	\N
-4	..-data-2012-exam1-exame-20130109-companion-en	\N	\N	\N	\N
-5	..-data-2012-exam2-exame-20130201-companion-en	\N	\N	\N	\N
-6	..-data-2013-exam1-exame-20140110-companion-en	\N	\N	\N	\N
-7	..-data-2013-exam2-exame-20140130-companion-en	\N	\N	\N	\N
-8	..-data-2014-exam-exam20150109-exame-20150109-companion-A	\N	\N	\N	\N
-9	..-data-2014-exam-exam20150109-exame-20150109-companion-B	\N	\N	\N	\N
-10	..-data-2014-exam-exam20150127-exame-20150127-companion-A	\N	\N	\N	\N
-11	..-data-2014-exam-exam20150127-exame-20150127-companion-B	\N	\N	\N	\N
-12	..-data-2014-test-1-test-11A-17co╠Бpias	\N	\N	\N	\N
-13	..-data-2014-test-1-test-12A-24co╠Бpias	\N	\N	\N	\N
-14	..-data-2014-test-1-test-13A-17co╠Бpias	\N	\N	\N	\N
-15	..-data-2014-test-1-test-14A-24co╠Бpias	\N	\N	\N	\N
-16	..-data-2014-test-2-test-21A-18co╠Бpias	\N	\N	\N	\N
-17	..-data-2014-test-2-test-22A-18co╠Бpias	\N	\N	\N	\N
-18	..-data-2014-test-2-test-23A-18co╠Бpias	\N	\N	\N	\N
-19	..-data-2014-test-2-test-24A-18co╠Бpias	\N	\N	\N	\N
-20	..-data-2014-test-3-test-31A-18copias	\N	\N	\N	\N
-21	..-data-2014-test-3-test-32A-18copias	\N	\N	\N	\N
-22	..-data-2014-test-3-test-33A-18copias	\N	\N	\N	\N
-23	..-data-2014-test-3-test-34A-18copias	\N	\N	\N	\N
-24	..-data-2014-test-4-test-41A-17copias	\N	\N	\N	\N
-25	..-data-2014-test-4-test-42A-16copias	\N	\N	\N	\N
-26	..-data-2014-test-4-test-43A-16copias	\N	\N	\N	\N
-27	..-data-2014-test-4-test-44A-18copias	\N	\N	\N	\N
-28	..-data-2014-test-5-test-51A-17copias	\N	\N	\N	\N
-29	..-data-2014-test-5-test-52A-16copias	\N	\N	\N	\N
-30	..-data-2014-test-5-test-53A-16copias	\N	\N	\N	\N
-31	..-data-2014-test-5-test-54A-18copias	\N	\N	\N	\N
-32	..-data-2014-test-6-test-61A-17copias	\N	\N	\N	\N
-33	..-data-2014-test-6-test-62A-16copias	\N	\N	\N	\N
-34	..-data-2014-test-6-test-63A-16copias	\N	\N	\N	\N
-35	..-data-2014-test-6-test-64A-18copias	\N	\N	\N	\N
-36	..-data-2015-exams-20160108Exam-exame-20160108-companion-A	\N	\N	\N	\N
-37	..-data-2015-exams-20160108Exam-exame-20160108-companion-B	\N	\N	\N	\N
-38	..-data-2015-exams-20160126Exam-exame-20160126-companion-A	\N	\N	\N	\N
-39	..-data-2015-exams-20160126Exam-exame-20160126-companion-B	\N	\N	\N	\N
-40	..-data-2015-test-1-test-11A	\N	\N	\N	\N
-41	..-data-2015-test-1-test-11B	\N	\N	\N	\N
-42	..-data-2015-test-1-test-12A	\N	\N	\N	\N
-43	..-data-2015-test-1-test-12B	\N	\N	\N	\N
-44	..-data-2015-test-1-test-13A	\N	\N	\N	\N
-45	..-data-2015-test-1-test-13B	\N	\N	\N	\N
-46	..-data-2015-test-2-test-21A	\N	\N	\N	\N
-47	..-data-2015-test-2-test-21B	\N	\N	\N	\N
-48	..-data-2015-test-2-test-22A	\N	\N	\N	\N
-49	..-data-2015-test-2-test-22B	\N	\N	\N	\N
-50	..-data-2015-test-2-test-23A	\N	\N	\N	\N
-51	..-data-2015-test-2-test-23B	\N	\N	\N	\N
-52	..-data-2015-test-3-test-31A	\N	\N	\N	\N
-53	..-data-2015-test-3-test-31B	\N	\N	\N	\N
-54	..-data-2015-test-3-test-32A	\N	\N	\N	\N
-55	..-data-2015-test-3-test-32B	\N	\N	\N	\N
-56	..-data-2015-test-3-test-33A	\N	\N	\N	\N
-57	..-data-2015-test-3-test-33B	\N	\N	\N	\N
-58	..-data-2015-test-4-test-41A	\N	\N	\N	\N
-59	..-data-2015-test-4-test-41B	\N	\N	\N	\N
-60	..-data-2015-test-4-test-42A	\N	\N	\N	\N
-61	..-data-2015-test-4-test-42B	\N	\N	\N	\N
-62	..-data-2015-test-4-test-43A	\N	\N	\N	\N
-63	..-data-2015-test-4-test-43B	\N	\N	\N	\N
-64	..-data-2016-20170113Exam-exame-20170113-companion-A	\N	\N	\N	\N
-65	..-data-2016-20170113Exam-exame-20170113-companion-B	\N	\N	\N	\N
-66	..-data-2016-20170131Exam-exame-20170131-companion-A	\N	\N	\N	\N
-67	..-data-2016-20170131Exam-exame-20170131-companion-B	\N	\N	\N	\N
-68	..-data-2016-test-1-test-11A	\N	\N	\N	\N
-69	..-data-2016-test-1-test-11B	\N	\N	\N	\N
-70	..-data-2016-test-1-test-12A	\N	\N	\N	\N
-71	..-data-2016-test-1-test-12B	\N	\N	\N	\N
-72	..-data-2016-test-2-test-21A	\N	\N	\N	\N
-73	..-data-2016-test-2-test-21B	\N	\N	\N	\N
-74	..-data-2016-test-2-test-22A	\N	\N	\N	\N
-75	..-data-2016-test-2-test-22B	\N	\N	\N	\N
-76	..-data-2016-test-3-test-31A	\N	\N	\N	\N
-77	..-data-2016-test-3-test-31B	\N	\N	\N	\N
-78	..-data-2016-test-3-test-32A	\N	\N	\N	\N
-79	..-data-2016-test-3-test-32B	\N	\N	\N	\N
-80	..-data-2016-test-4-test-41A	\N	\N	\N	\N
-81	..-data-2016-test-4-test-41B	\N	\N	\N	\N
-82	..-data-2016-test-4-test-42A	\N	\N	\N	\N
-83	..-data-2016-test-4-test-42B	\N	\N	\N	\N
-84	..-data-2017-20180112-Exam-exame-20180112-companion-A	\N	\N	\N	\N
-85	..-data-2017-20180112-Exam-exame-20180112-companion-B	\N	\N	\N	\N
-86	..-data-2017-20180130-Exam-exame-20180130-companion-A	\N	\N	\N	\N
-87	..-data-2017-20180130-Exam-exame-20180130-companion-B	\N	\N	\N	\N
-88	..-data-2017-test-1-test-11A	\N	\N	\N	\N
-89	..-data-2017-test-1-test-11B	\N	\N	\N	\N
-90	..-data-2017-test-1-test-12A	\N	\N	\N	\N
-91	..-data-2017-test-1-test-12B	\N	\N	\N	\N
-92	..-data-2017-test-1-test-13A	\N	\N	\N	\N
-93	..-data-2017-test-1-test-13B	\N	\N	\N	\N
-94	..-data-2017-test-2-test-21-A	\N	\N	\N	\N
-95	..-data-2017-test-2-test-21-B	\N	\N	\N	\N
-96	..-data-2017-test-2-test-22-A	\N	\N	\N	\N
-97	..-data-2017-test-2-test-22-B	\N	\N	\N	\N
-98	..-data-2017-test-2-test-23-A	\N	\N	\N	\N
-99	..-data-2017-test-2-test-23-B	\N	\N	\N	\N
-100	..-data-2017-test-3-test-31A	\N	\N	\N	\N
-101	..-data-2017-test-3-test-31B	\N	\N	\N	\N
-102	..-data-2017-test-3-test-32A	\N	\N	\N	\N
-103	..-data-2017-test-3-test-32B	\N	\N	\N	\N
-104	..-data-2017-test-3-test-33A	\N	\N	\N	\N
-105	..-data-2017-test-3-test-33B	\N	\N	\N	\N
-106	..-data-2017-test-4-test-41A	\N	\N	\N	\N
-107	..-data-2017-test-4-test-41B	\N	\N	\N	\N
-108	..-data-2017-test-4-test-42A	\N	\N	\N	\N
-109	..-data-2017-test-4-test-42B	\N	\N	\N	\N
-110	..-data-2017-test-4-test-43A	\N	\N	\N	\N
-111	..-data-2017-test-4-test-43B	\N	\N	\N	\N
-112	..-data-2018-20190111-Exam-exame-20190111-companion-A	\N	\N	\N	\N
-113	..-data-2018-20190111-Exam-exame-20190111-companion-B	\N	\N	\N	\N
-114	..-data-2018-20190129-Exam-exame-20190129-companion-A	\N	\N	\N	\N
-115	..-data-2018-20190129-Exam-exame-20190129-companion-B	\N	\N	\N	\N
-116	..-data-2018-test-1-test-11-A	\N	\N	\N	\N
-117	..-data-2018-test-1-test-11-B	\N	\N	\N	\N
-118	..-data-2018-test-1-test-11-C	\N	\N	\N	\N
-119	..-data-2018-test-1-test-11-D	\N	\N	\N	\N
-120	..-data-2018-test-1-test-12-A	\N	\N	\N	\N
-121	..-data-2018-test-1-test-12-B	\N	\N	\N	\N
-122	..-data-2018-test-1-test-12-C	\N	\N	\N	\N
-123	..-data-2018-test-1-test-12-D	\N	\N	\N	\N
-124	..-data-2018-test-2-test-21-A	\N	\N	\N	\N
-125	..-data-2018-test-2-test-21-B	\N	\N	\N	\N
-126	..-data-2018-test-2-test-22-A	\N	\N	\N	\N
-127	..-data-2018-test-2-test-22-B	\N	\N	\N	\N
-128	..-data-2018-test-3-test-31-A	\N	\N	\N	\N
-129	..-data-2018-test-3-test-31-B	\N	\N	\N	\N
-130	..-data-2018-test-3-test-32-A	\N	\N	\N	\N
-131	..-data-2018-test-3-test-32-B	\N	\N	\N	\N
-132	..-data-2018-test-4-test-41-A	\N	\N	\N	\N
-133	..-data-2018-test-4-test-41-B	\N	\N	\N	\N
-134	..-data-2018-test-4-test-42-A	\N	\N	\N	\N
-135	..-data-2018-test-4-test-42-B	\N	\N	\N	\N
+COPY public.quizzes (id, title, year, type, series, version, generated_by, completed) FROM stdin;
+1	data-2010-primeiro-exame-20110113-companion-en	\N	\N	\N	\N	\N	f
+2	data-2011-exam1-exame-20120109-companion-en	\N	\N	\N	\N	\N	f
+3	data-2011-exam2-exame-20120203-companion-en	\N	\N	\N	\N	\N	f
+4	data-2012-exam1-exame-20130109-companion-en	\N	\N	\N	\N	\N	f
+5	data-2012-exam2-exame-20130201-companion-en	\N	\N	\N	\N	\N	f
+6	data-2013-exam1-exame-20140110-companion-en	\N	\N	\N	\N	\N	f
+7	data-2013-exam2-exame-20140130-companion-en	\N	\N	\N	\N	\N	f
+8	data-2014-exam-exam20150109-exame-20150109-companion-A	\N	\N	\N	\N	\N	f
+9	data-2014-exam-exam20150109-exame-20150109-companion-B	\N	\N	\N	\N	\N	f
+10	data-2014-exam-exam20150127-exame-20150127-companion-A	\N	\N	\N	\N	\N	f
+11	data-2014-exam-exam20150127-exame-20150127-companion-B	\N	\N	\N	\N	\N	f
+12	data-2014-test-1-test-11A-17co╠Бpias	\N	\N	\N	\N	\N	f
+13	data-2014-test-1-test-12A-24co╠Бpias	\N	\N	\N	\N	\N	f
+14	data-2014-test-1-test-13A-17co╠Бpias	\N	\N	\N	\N	\N	f
+15	data-2014-test-1-test-14A-24co╠Бpias	\N	\N	\N	\N	\N	f
+16	data-2014-test-2-test-21A-18co╠Бpias	\N	\N	\N	\N	\N	f
+17	data-2014-test-2-test-22A-18co╠Бpias	\N	\N	\N	\N	\N	f
+18	data-2014-test-2-test-23A-18co╠Бpias	\N	\N	\N	\N	\N	f
+19	data-2014-test-2-test-24A-18co╠Бpias	\N	\N	\N	\N	\N	f
+20	data-2014-test-3-test-31A-18copias	\N	\N	\N	\N	\N	f
+21	data-2014-test-3-test-32A-18copias	\N	\N	\N	\N	\N	f
+22	data-2014-test-3-test-33A-18copias	\N	\N	\N	\N	\N	f
+23	data-2014-test-3-test-34A-18copias	\N	\N	\N	\N	\N	f
+24	data-2014-test-4-test-41A-17copias	\N	\N	\N	\N	\N	f
+25	data-2014-test-4-test-42A-16copias	\N	\N	\N	\N	\N	f
+26	data-2014-test-4-test-43A-16copias	\N	\N	\N	\N	\N	f
+27	data-2014-test-4-test-44A-18copias	\N	\N	\N	\N	\N	f
+28	data-2014-test-5-test-51A-17copias	\N	\N	\N	\N	\N	f
+29	data-2014-test-5-test-52A-16copias	\N	\N	\N	\N	\N	f
+30	data-2014-test-5-test-53A-16copias	\N	\N	\N	\N	\N	f
+31	data-2014-test-5-test-54A-18copias	\N	\N	\N	\N	\N	f
+32	data-2014-test-6-test-61A-17copias	\N	\N	\N	\N	\N	f
+33	data-2014-test-6-test-62A-16copias	\N	\N	\N	\N	\N	f
+34	data-2014-test-6-test-63A-16copias	\N	\N	\N	\N	\N	f
+35	data-2014-test-6-test-64A-18copias	\N	\N	\N	\N	\N	f
+36	data-2015-exams-20160108Exam-exame-20160108-companion-A	\N	\N	\N	\N	\N	f
+37	data-2015-exams-20160108Exam-exame-20160108-companion-B	\N	\N	\N	\N	\N	f
+38	data-2015-exams-20160126Exam-exame-20160126-companion-A	\N	\N	\N	\N	\N	f
+39	data-2015-exams-20160126Exam-exame-20160126-companion-B	\N	\N	\N	\N	\N	f
+40	data-2015-test-1-test-11A	\N	\N	\N	\N	\N	f
+41	data-2015-test-1-test-11B	\N	\N	\N	\N	\N	f
+42	data-2015-test-1-test-12A	\N	\N	\N	\N	\N	f
+43	data-2015-test-1-test-12B	\N	\N	\N	\N	\N	f
+44	data-2015-test-1-test-13A	\N	\N	\N	\N	\N	f
+45	data-2015-test-1-test-13B	\N	\N	\N	\N	\N	f
+46	data-2015-test-2-test-21A	\N	\N	\N	\N	\N	f
+47	data-2015-test-2-test-21B	\N	\N	\N	\N	\N	f
+48	data-2015-test-2-test-22A	\N	\N	\N	\N	\N	f
+49	data-2015-test-2-test-22B	\N	\N	\N	\N	\N	f
+50	data-2015-test-2-test-23A	\N	\N	\N	\N	\N	f
+51	data-2015-test-2-test-23B	\N	\N	\N	\N	\N	f
+52	data-2015-test-3-test-31A	\N	\N	\N	\N	\N	f
+53	data-2015-test-3-test-31B	\N	\N	\N	\N	\N	f
+54	data-2015-test-3-test-32A	\N	\N	\N	\N	\N	f
+55	data-2015-test-3-test-32B	\N	\N	\N	\N	\N	f
+56	data-2015-test-3-test-33A	\N	\N	\N	\N	\N	f
+57	data-2015-test-3-test-33B	\N	\N	\N	\N	\N	f
+58	data-2015-test-4-test-41A	\N	\N	\N	\N	\N	f
+59	data-2015-test-4-test-41B	\N	\N	\N	\N	\N	f
+60	data-2015-test-4-test-42A	\N	\N	\N	\N	\N	f
+61	data-2015-test-4-test-42B	\N	\N	\N	\N	\N	f
+62	data-2015-test-4-test-43A	\N	\N	\N	\N	\N	f
+63	data-2015-test-4-test-43B	\N	\N	\N	\N	\N	f
+64	data-2016-20170113Exam-exame-20170113-companion-A	\N	\N	\N	\N	\N	f
+65	data-2016-20170113Exam-exame-20170113-companion-B	\N	\N	\N	\N	\N	f
+66	data-2016-20170131Exam-exame-20170131-companion-A	\N	\N	\N	\N	\N	f
+67	data-2016-20170131Exam-exame-20170131-companion-B	\N	\N	\N	\N	\N	f
+68	data-2016-test-1-test-11A	\N	\N	\N	\N	\N	f
+69	data-2016-test-1-test-11B	\N	\N	\N	\N	\N	f
+70	data-2016-test-1-test-12A	\N	\N	\N	\N	\N	f
+71	data-2016-test-1-test-12B	\N	\N	\N	\N	\N	f
+72	data-2016-test-2-test-21A	\N	\N	\N	\N	\N	f
+73	data-2016-test-2-test-21B	\N	\N	\N	\N	\N	f
+74	data-2016-test-2-test-22A	\N	\N	\N	\N	\N	f
+75	data-2016-test-2-test-22B	\N	\N	\N	\N	\N	f
+76	data-2016-test-3-test-31A	\N	\N	\N	\N	\N	f
+77	data-2016-test-3-test-31B	\N	\N	\N	\N	\N	f
+78	data-2016-test-3-test-32A	\N	\N	\N	\N	\N	f
+79	data-2016-test-3-test-32B	\N	\N	\N	\N	\N	f
+80	data-2016-test-4-test-41A	\N	\N	\N	\N	\N	f
+81	data-2016-test-4-test-41B	\N	\N	\N	\N	\N	f
+82	data-2016-test-4-test-42A	\N	\N	\N	\N	\N	f
+83	data-2016-test-4-test-42B	\N	\N	\N	\N	\N	f
+84	data-2017-20180112-Exam-exame-20180112-companion-A	\N	\N	\N	\N	\N	f
+85	data-2017-20180112-Exam-exame-20180112-companion-B	\N	\N	\N	\N	\N	f
+86	data-2017-20180130-Exam-exame-20180130-companion-A	\N	\N	\N	\N	\N	f
+87	data-2017-20180130-Exam-exame-20180130-companion-B	\N	\N	\N	\N	\N	f
+88	data-2017-test-1-test-11A	\N	\N	\N	\N	\N	f
+89	data-2017-test-1-test-11B	\N	\N	\N	\N	\N	f
+90	data-2017-test-1-test-12A	\N	\N	\N	\N	\N	f
+91	data-2017-test-1-test-12B	\N	\N	\N	\N	\N	f
+92	data-2017-test-1-test-13A	\N	\N	\N	\N	\N	f
+93	data-2017-test-1-test-13B	\N	\N	\N	\N	\N	f
+94	data-2017-test-2-test-21-A	\N	\N	\N	\N	\N	f
+95	data-2017-test-2-test-21-B	\N	\N	\N	\N	\N	f
+96	data-2017-test-2-test-22-A	\N	\N	\N	\N	\N	f
+97	data-2017-test-2-test-22-B	\N	\N	\N	\N	\N	f
+98	data-2017-test-2-test-23-A	\N	\N	\N	\N	\N	f
+99	data-2017-test-2-test-23-B	\N	\N	\N	\N	\N	f
+100	data-2017-test-3-test-31A	\N	\N	\N	\N	\N	f
+101	data-2017-test-3-test-31B	\N	\N	\N	\N	\N	f
+102	data-2017-test-3-test-32A	\N	\N	\N	\N	\N	f
+103	data-2017-test-3-test-32B	\N	\N	\N	\N	\N	f
+104	data-2017-test-3-test-33A	\N	\N	\N	\N	\N	f
+105	data-2017-test-3-test-33B	\N	\N	\N	\N	\N	f
+106	data-2017-test-4-test-41A	\N	\N	\N	\N	\N	f
+107	data-2017-test-4-test-41B	\N	\N	\N	\N	\N	f
+108	data-2017-test-4-test-42A	\N	\N	\N	\N	\N	f
+109	data-2017-test-4-test-42B	\N	\N	\N	\N	\N	f
+110	data-2017-test-4-test-43A	\N	\N	\N	\N	\N	f
+111	data-2017-test-4-test-43B	\N	\N	\N	\N	\N	f
+112	data-2018-20190111-Exam-exame-20190111-companion-A	\N	\N	\N	\N	\N	f
+113	data-2018-20190111-Exam-exame-20190111-companion-B	\N	\N	\N	\N	\N	f
+114	data-2018-20190129-Exam-exame-20190129-companion-A	\N	\N	\N	\N	\N	f
+115	data-2018-20190129-Exam-exame-20190129-companion-B	\N	\N	\N	\N	\N	f
+116	data-2018-test-1-test-11-A	\N	\N	\N	\N	\N	f
+117	data-2018-test-1-test-11-B	\N	\N	\N	\N	\N	f
+118	data-2018-test-1-test-11-C	\N	\N	\N	\N	\N	f
+119	data-2018-test-1-test-11-D	\N	\N	\N	\N	\N	f
+120	data-2018-test-1-test-12-A	\N	\N	\N	\N	\N	f
+121	data-2018-test-1-test-12-B	\N	\N	\N	\N	\N	f
+122	data-2018-test-1-test-12-C	\N	\N	\N	\N	\N	f
+123	data-2018-test-1-test-12-D	\N	\N	\N	\N	\N	f
+124	data-2018-test-2-test-21-A	\N	\N	\N	\N	\N	f
+125	data-2018-test-2-test-21-B	\N	\N	\N	\N	\N	f
+126	data-2018-test-2-test-22-A	\N	\N	\N	\N	\N	f
+127	data-2018-test-2-test-22-B	\N	\N	\N	\N	\N	f
+128	data-2018-test-3-test-31-A	\N	\N	\N	\N	\N	f
+129	data-2018-test-3-test-31-B	\N	\N	\N	\N	\N	f
+130	data-2018-test-3-test-32-A	\N	\N	\N	\N	\N	f
+131	data-2018-test-3-test-32-B	\N	\N	\N	\N	\N	f
+132	data-2018-test-4-test-41-A	\N	\N	\N	\N	\N	f
+133	data-2018-test-4-test-41-B	\N	\N	\N	\N	\N	f
+134	data-2018-test-4-test-42-A	\N	\N	\N	\N	\N	f
+135	data-2018-test-4-test-42-B	\N	\N	\N	\N	\N	f
 \.
 
 
 --
--- Data for Name: students; Type: TABLE DATA; Schema: public; Owner: pedro
+-- Data for Name: suggestions; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.students (id, name, type, year) FROM stdin;
+COPY public.suggestions (user_id, question_id, topic_id) FROM stdin;
 \.
 
 
@@ -8054,7 +8091,15 @@ COPY public.students (id, name, type, year) FROM stdin;
 -- Data for Name: topics; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.topics (id, name) FROM stdin;
+COPY public.topics (id, parent, name) FROM stdin;
+\.
+
+
+--
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: pedro
+--
+
+COPY public.users (id, name, role, username, year) FROM stdin;
 \.
 
 
@@ -8073,13 +8118,6 @@ SELECT pg_catalog.setval('public.quizzes_id_seq', 135, true);
 
 
 --
--- Name: students_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pedro
---
-
-SELECT pg_catalog.setval('public.students_id_seq', 1, false);
-
-
---
 -- Name: topics_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pedro
 --
 
@@ -8087,11 +8125,26 @@ SELECT pg_catalog.setval('public.topics_id_seq', 1, false);
 
 
 --
+-- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: pedro
+--
+
+SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+
+
+--
 -- Name: answers answers_pkey; Type: CONSTRAINT; Schema: public; Owner: pedro
 --
 
 ALTER TABLE ONLY public.answers
-    ADD CONSTRAINT answers_pkey PRIMARY KEY (student_id, question_id, quiz_id);
+    ADD CONSTRAINT answers_pkey PRIMARY KEY (user_id, question_id, quiz_id);
+
+
+--
+-- Name: explanations explanations_pkey; Type: CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.explanations
+    ADD CONSTRAINT explanations_pkey PRIMARY KEY (question_id);
 
 
 --
@@ -8143,11 +8196,11 @@ ALTER TABLE ONLY public.quizzes
 
 
 --
--- Name: students students_pkey; Type: CONSTRAINT; Schema: public; Owner: pedro
+-- Name: suggestions suggestions_pkey; Type: CONSTRAINT; Schema: public; Owner: pedro
 --
 
-ALTER TABLE ONLY public.students
-    ADD CONSTRAINT students_pkey PRIMARY KEY (id);
+ALTER TABLE ONLY public.suggestions
+    ADD CONSTRAINT suggestions_pkey PRIMARY KEY (user_id, question_id);
 
 
 --
@@ -8167,6 +8220,14 @@ ALTER TABLE ONLY public.topics
 
 
 --
+-- Name: users users_pkey; Type: CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.users
+    ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: answers answers_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
 --
 
@@ -8183,11 +8244,19 @@ ALTER TABLE ONLY public.answers
 
 
 --
--- Name: answers answers_student_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+-- Name: answers answers_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
 --
 
 ALTER TABLE ONLY public.answers
-    ADD CONSTRAINT answers_student_id_fkey FOREIGN KEY (student_id) REFERENCES public.students(id) ON DELETE CASCADE;
+    ADD CONSTRAINT answers_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: explanations explanations_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.explanations
+    ADD CONSTRAINT explanations_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(id) ON DELETE CASCADE;
 
 
 --
@@ -8244,6 +8313,46 @@ ALTER TABLE ONLY public.quiz_has_question
 
 ALTER TABLE ONLY public.quiz_has_question
     ADD CONSTRAINT quiz_has_question_quiz_id_fkey FOREIGN KEY (quiz_id) REFERENCES public.quizzes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: quizzes quizzes_generated_by_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.quizzes
+    ADD CONSTRAINT quizzes_generated_by_fkey FOREIGN KEY (generated_by) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: suggestions suggestions_question_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.suggestions
+    ADD CONSTRAINT suggestions_question_id_fkey FOREIGN KEY (question_id) REFERENCES public.questions(id) ON DELETE CASCADE;
+
+
+--
+-- Name: suggestions suggestions_topic_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.suggestions
+    ADD CONSTRAINT suggestions_topic_id_fkey FOREIGN KEY (topic_id) REFERENCES public.topics(id) ON DELETE CASCADE;
+
+
+--
+-- Name: suggestions suggestions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.suggestions
+    ADD CONSTRAINT suggestions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: topics topics_parent_fkey; Type: FK CONSTRAINT; Schema: public; Owner: pedro
+--
+
+ALTER TABLE ONLY public.topics
+    ADD CONSTRAINT topics_parent_fkey FOREIGN KEY (parent) REFERENCES public.topics(id);
 
 
 --

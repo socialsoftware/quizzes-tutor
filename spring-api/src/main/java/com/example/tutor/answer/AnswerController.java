@@ -33,19 +33,32 @@ public class AnswerController {
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        // Get Quiz
         Quiz quiz = quizRepository.findById(answers.getQuizId()).orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + answers.getQuizId()));
+
 
         // Verify that the list of questions received is the same as the questions associated with the quiz
         if (! Arrays.equals(quiz.getQuestions().stream().map(Question::getId).sorted().toArray(), answers.getAnswers().stream().map(ResultAnswerDTO::getQuestionId).sorted().toArray())) {
             throw new WrongParametersException("Quiz " + quiz.getId() + " question's ids do not match");
         }
 
+        // Verify this quiz was generated for this student (maybe its overkill verification)
+        if (! quiz.getGenerated_by().equals(user.getId())) {
+            throw new WrongParametersException("Quiz " + quiz.getId() + " was not generated to " + user.getUsername());
+        }
+
+        // Return correct answers in the same order as they were received
         List<CorrectAnswerDTO> correctAnswers = answers.getAnswers().stream().map(answer -> {
             Question q = quiz.getQuestions().stream().filter(question -> question.getId().equals(answer.getQuestionId())).findFirst().get();
-            answerRepository.save(new Answer(answer, user, q, answers.getAnswerDate(), answers.getQuizId()));
+
+            if (! quiz.getCompleted()) {
+                answerRepository.save(new Answer(answer, user, q, answers.getAnswerDate(), answers.getQuizId()));
+            }
+
             return new CorrectAnswerDTO(q);
         }).collect(Collectors.toList());
+
+        quiz.setCompleted(true);
+        quizRepository.save(quiz);
 
         return new CorrectAnswersDTO(correctAnswers);
 

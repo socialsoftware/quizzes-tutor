@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "quizzes")
@@ -39,6 +40,12 @@ public class Quiz implements Serializable {
     @Column(columnDefinition = "version")
     private String version;
 
+    @Column(columnDefinition = "generated_by")
+    private Integer generated_by;
+
+    @Column(columnDefinition = "completed")
+    private Boolean completed;
+
     @ManyToMany(fetch=FetchType.EAGER)
     @Fetch (FetchMode.SELECT)
     @JoinTable(
@@ -50,7 +57,20 @@ public class Quiz implements Serializable {
 
     public Quiz() {}
 
-    public Quiz(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String[] topics, String questionType) {
+    public Quiz(QuizDTO quiz) {
+        this.id = quiz.getId();
+        this.title = quiz.getTitle();
+        this.date = quiz.getDate();
+        this.year = quiz.getYear();
+        this.type = quiz.getType();
+        this.series = quiz.getSeries();
+        this.version = quiz.getVersion();
+        this.generated_by = quiz.getGenerated_by();
+        this.completed = quiz.getCompleted();
+        this.questions = quiz.getQuestions().stream().map(Question::new).collect(Collectors.toList());
+    }
+
+    public void generate(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String[] topics, String questionType) {
         int maxID = 1698;
         List<Question> questionList = new ArrayList<>();
         Random rand = new Random();
@@ -75,7 +95,8 @@ public class Quiz implements Serializable {
         this.date = LocalDateTime.now();
         this.questions = questionList;
         this.type = "Generated";
-        this.series = userId;
+        this.generated_by = userId;
+        this.completed = false;
     }
 
     public Integer getId() {
@@ -100,6 +121,54 @@ public class Quiz implements Serializable {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Integer getSeries() {
+        return series;
+    }
+
+    public void setSeries(Integer series) {
+        this.series = series;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Integer getGenerated_by() {
+        return generated_by;
+    }
+
+    public void setGenerated_by(Integer generatedBy) {
+        this.generated_by = generatedBy;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     public List<Question> getQuestions() {

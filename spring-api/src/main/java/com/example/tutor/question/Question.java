@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Entity(name = "Question")
 @Table(name = "questions")
@@ -17,9 +18,6 @@ public class Question implements Serializable {
 
     @Column(columnDefinition = "content")
     private String content;
-
-    @Column(columnDefinition = "new_id")
-    private Integer new_id;
 
     @Column(columnDefinition = "difficulty")
     private Integer difficulty;
@@ -35,6 +33,18 @@ public class Question implements Serializable {
     @JoinColumn(nullable = true)
     private Image image;
 
+    public Question(){}
+
+    public Question(QuestionDTO question) {
+        this.id = question.getId();
+        this.content = question.getContent();
+        this.difficulty = question.getDifficulty();
+        this.active = question.getActive();
+        if (question.getImage() != null) {
+            this.image = new Image(question.getImage());
+        }
+        this.options = question.getOptions().stream().map(Option::new).collect(Collectors.toList());
+    }
 
     public Integer getId() {
         return id;
@@ -50,14 +60,6 @@ public class Question implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Integer getNewId() {
-        return new_id;
-    }
-
-    public void setNewId(Integer new_id) {
-        this.new_id = new_id;
     }
 
     public Integer getDifficulty() {

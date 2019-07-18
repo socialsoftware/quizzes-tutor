@@ -23,6 +23,13 @@ public class Image implements Serializable {
     @Column(columnDefinition = "width")
     private Integer width;
 
+    public Image() {}
+
+    public Image(ImageDTO imageDTO) {
+        this.url = imageDTO.getUrl();
+        this.width = imageDTO.getWidth();
+    }
+
     public Integer getQuestionId() {
         return question_id;
     }
@@ -55,8 +62,4 @@ public class Image implements Serializable {
         this.width = width;
     }
 
-    @Override
-    public String toString() {
-        return "Url:" + this.getUrl() + ", Width: " + this.getWidth().toString();
-    }
 }

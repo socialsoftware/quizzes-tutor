@@ -1,12 +1,23 @@
+DROP TABLE IF EXISTS suggestions CASCADE;
+DROP TABLE IF EXISTS explanations CASCADE;
 DROP TABLE IF EXISTS answers CASCADE;
-DROP TABLE IF EXISTS options CASCADE;
 DROP TABLE IF EXISTS images CASCADE;
 DROP TABLE IF EXISTS question_has_topic CASCADE;
 DROP TABLE IF EXISTS topics CASCADE;
+DROP TABLE IF EXISTS options CASCADE;
 DROP TABLE IF EXISTS quiz_has_question CASCADE;
 DROP TABLE IF EXISTS questions CASCADE;
 DROP TABLE IF EXISTS quizzes CASCADE;
 DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE users (
+  id SERIAL NOT NULL,
+  name VARCHAR(255),
+  role VARCHAR(255), -- student, teacher, developer
+  username VARCHAR(255),
+  year INT,
+  PRIMARY KEY (id)
+);
 
 CREATE TABLE quizzes (
     id SERIAL NOT NULL,
@@ -15,6 +26,8 @@ CREATE TABLE quizzes (
     type VARCHAR(255), -- E exame or T test or G generated
     series INT, -- Test 1, Test 2 or user id
     version VARCHAR(5), -- A, B, C or completed
+    generated_by INT REFERENCES users ON DELETE CASCADE,
+    completed BOOLEAN DEFAULT FALSE,
     PRIMARY KEY (id)
 );
 
@@ -44,7 +57,8 @@ CREATE TABLE options (
 
 CREATE TABLE topics (
   id SERIAL NOT NULL,
-  name VARCHAR(255) unique,
+  parent INT REFERENCES topics,
+  name VARCHAR(255) UNIQUE,
   PRIMARY KEY (id)
 );
 
@@ -63,22 +77,25 @@ CREATE TABLE images (
   PRIMARY KEY (question_id)
 );
 
-CREATE TABLE users (
-  id SERIAL NOT NULL,
-  name VARCHAR(255),
-  role VARCHAR(255), -- student, teacher, developer
-  username VARCHAR(255),
-  year INT,
-  PRIMARY KEY (id)
-);
-
-
 CREATE TABLE answers (
-  student_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
+  user_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
   question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
   quiz_id INT REFERENCES quizzes ON DELETE CASCADE,
   answer_date TIMESTAMP,
   time_taken TIMESTAMP,
   option INT,
-  PRIMARY KEY (student_id, question_id, quiz_id)
+  PRIMARY KEY (user_id, question_id, quiz_id)
+);
+
+CREATE TABLE explanations (
+  question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
+  content TEXT,
+  PRIMARY KEY (question_id)
+);
+
+CREATE TABLE suggestions (
+  user_id INT NOT NULL REFERENCES users ON DELETE CASCADE,
+  question_id INT NOT NULL REFERENCES questions ON DELETE CASCADE,
+  topic_id INT NOT NULL REFERENCES topics ON DELETE CASCADE,
+  PRIMARY KEY (user_id, question_id)
 );

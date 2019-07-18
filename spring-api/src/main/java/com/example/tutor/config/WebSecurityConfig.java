@@ -16,16 +16,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    /*@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests().antMatchers("/*").permitAll();
-        http.csrf().disable();
-    }*/
 
     JwtTokenProvider jwtTokenProvider;
 
-    public WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
+    WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
     }
 

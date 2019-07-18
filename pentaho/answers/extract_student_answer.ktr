@@ -587,11 +587,6 @@
       <to>Select values 2</to>
       <enabled>Y</enabled>
     </hop>
-    <hop>
-      <from>Block this step until steps finish</from>
-      <to>students</to>
-      <enabled>Y</enabled>
-    </hop>
   </order>
   <step>
     <name>Add value fields changing sequence</name>
@@ -623,37 +618,6 @@
     <GUI>
       <xloc>400</xloc>
       <yloc>208</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Block this step until steps finish</name>
-    <type>BlockUntilStepsFinish</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <steps>
-      <step>
-        <name>Join rows (cartesian product)</name>
-        <CopyNr>0</CopyNr>
-      </step>
-    </steps>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>80</xloc>
-      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -721,7 +685,7 @@
       </key>
       <key>
         <name>student_id</name>
-        <field>student_id</field>
+        <field>user_id</field>
         <condition>=</condition>
         <name2/>
       </key>
@@ -746,7 +710,7 @@
         <update>Y</update>
       </value>
       <value>
-        <name>student_id</name>
+        <name>user_id</name>
         <rename>student_id</rename>
         <update>Y</update>
       </value>
@@ -2281,9 +2245,10 @@ FROM quizzes
     <sql>SELECT
   id
 , "name"
-, "type"
-, "year" as year_1
-FROM students
+, "role"
+, username
+, "year"
+FROM users
 </sql>
     <limit>0</limit>
     <lookup/>
