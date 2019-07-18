@@ -1,64 +1,55 @@
 package com.example.tutor.option;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.tutor.ResourceNotFoundException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.example.tutor.ResourceNotFoundException;
-import com.example.tutor.question.QuestionRepository;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class OptionController {
 
-    @Autowired
     private OptionRepository optionRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
-
-    @GetMapping("/questions/{question_id}/options")
-    public List<Option> getOptionsByquestionId(@PathVariable Integer question_id) {
-        return optionRepository.findByquestion_id(question_id);
+    OptionController(OptionRepository optionRepository) {
+        this.optionRepository = optionRepository;
     }
 
-    @PostMapping("/questions/{question_id}/options")
-    public Option addOption(@PathVariable Integer question_id,
-                            @Valid @RequestBody Option option) {
-        return questionRepository.findById(question_id)
-                .map(question -> {
-                    option.setQuestionId(question.getId());
-                    return optionRepository.save(option);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + question_id));
+    @GetMapping("/questions/{questionId}/options")
+    public List<OptionDTO> getOptionsByquestionId(@PathVariable Integer questionId) {
+        return optionRepository.findAllById(questionId).stream().map(OptionDTO::new).collect(Collectors.toList());
     }
 
-    @PutMapping("/questions/{question_id}/options/{optionID}")
-    public Option updateOption(@PathVariable Integer question_id,
-                               @PathVariable Integer optionID,
-                               @Valid @RequestBody Option optionRequest) {
-        Option option = findOption(question_id, optionID);
+    @PostMapping("/options")
+    public OptionDTO addOption(@PathVariable Integer questionId,
+                            @Valid @RequestBody OptionDTO option) {
+            optionRepository.save(new Option(option));
+            return option;
+        }
+
+
+    @PutMapping("/questions/{questionId}/options/{optionNumber}")
+    public OptionDTO updateOption(@PathVariable Integer questionId,
+                               @PathVariable Integer optionNumber,
+                               @Valid @RequestBody OptionDTO optionRequest) {
+        Option option = optionRepository.findById(questionId, optionNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Option " + optionNumber + " not found for question with id " + questionId));
+        option.setCorrect(optionRequest.getCorrect());
+        option.setOption(optionRequest.getOption());
         option.setContent(optionRequest.getContent());
-        return optionRepository.save(option);
+        optionRepository.save(option);
+        return optionRequest;
     }
 
-    @DeleteMapping("/questions/{question_id}/options/{optionID}")
-    public ResponseEntity<?> deleteOption(@PathVariable Integer question_id,
-                                          @PathVariable Integer optionID) {
-        Option option = findOption(question_id, optionID);
+    @DeleteMapping("/questions/{questionId}/options/{optionNumber}")
+    public ResponseEntity<?> deleteOption(@PathVariable Integer questionId,
+                                          @PathVariable Integer optionNumber) {
+        Option option = optionRepository.findById(questionId, optionNumber)
+                .orElseThrow(() -> new ResourceNotFoundException("Option " + optionNumber + " not found for question with id " + questionId));
+
         optionRepository.delete(option);
         return ResponseEntity.ok().build();
-    }
-
-    private Option findOption(@PathVariable Integer question_id, @PathVariable Integer optionID) {
-        if(!questionRepository.existsById(question_id)) {
-            throw new ResourceNotFoundException("Question not found with id " + question_id);
-        }
-
-        Option option = optionRepository.findById(question_id, optionID);
-        if (option == null) {
-            throw new ResourceNotFoundException("Option not found with id " + optionID);
-        }
-        return option;
     }
 }

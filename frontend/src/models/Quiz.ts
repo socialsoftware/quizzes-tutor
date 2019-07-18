@@ -16,6 +16,11 @@ interface ServerQuestion {
   } | null;
 }
 
+interface ServerAnswer {
+  questionId: number;
+  correctOption: number;
+}
+
 export default class Quiz {
   private _id: number | null = null;
   private _questions: Question[] = [];
@@ -94,7 +99,7 @@ export default class Quiz {
     return null;
   }
 
-  async getQuestions(): Promise<Question[]> {
+  async getQuestions() {
     let params = {
       topic: this.topic,
       questionType: this.questionType,
@@ -112,11 +117,10 @@ export default class Quiz {
             this.answers.push(new Answer(question.id, null, new Date()));
           }
         );
-        return this.questions;
       });
   }
 
-  async answer(): Promise<CorrectAnswer[]> {
+  async getCorrectAnswers() {
     let params = {
       answerDate: new Date().toISOString(),
       quizId: this.id,
@@ -126,8 +130,20 @@ export default class Quiz {
     return axios
       .post(process.env.VUE_APP_ROOT_API + "/quiz-answers", params)
       .then(response => {
-        const { data } = response;
-        return data.answers;
+        (response.data["answers"] as Array<ServerAnswer>).forEach(answer => {
+          this.correctAnswers.push(new CorrectAnswer(answer));
+        });
       });
+  }
+
+  reset() {
+    this.id = null;
+    this.questions = [];
+    this.answers = [];
+    this.correctAnswers = [];
+  }
+
+  isEmpty(): boolean {
+    return this.id === undefined || this.questions.length === 0;
   }
 }

@@ -1,6 +1,6 @@
 package com.example.tutor.quiz;
 
-public class QuizDetailsDTO {
+public class QuizSetupDTO {
     private Integer numberOfQuestions;
     private String questionType;
     private String[] topics;

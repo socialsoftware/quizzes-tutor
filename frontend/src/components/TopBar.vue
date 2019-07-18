@@ -3,7 +3,7 @@
     <v-toolbar dark color="primary">
       <v-toolbar-title class="white--text">
         <v-btn href="/" flat>
-          SA Tutor
+          Software Architecture Quizzes
         </v-btn></v-toolbar-title
       >
 

@@ -1,5 +1,4 @@
 module.exports = {
-  // ...
   devServer: {
     open: process.platform === "darwin",
     host: "0.0.0.0",
@@ -8,5 +7,4 @@ module.exports = {
     hotOnly: false,
     disableHostCheck: true
   }
-  // ...
 };

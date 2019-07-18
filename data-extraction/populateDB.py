@@ -1,8 +1,8 @@
 import glob, os, re, json, psycopg2, shutil, time
 from pathlib import Path
 
-dataPath = os.getcwd() + '/../data/**/*.tex'
-imagesPath = os.getcwd() + '/../spring-api/src/main/resources/static/images/questions/'
+dataPath = os.getcwd() + '/data/**/*.tex'
+imagesPath = os.getcwd() + '/spring-api/src/main/resources/static/images/questions/'
 DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
@@ -307,7 +307,6 @@ def insertOptions(cur, options, questionId):
       # optionId = cur.fetchone()[0]
 
 def main():
-
     texFiles = getTexFiles()
 
     texFiles = separateQuestionsFromQuizes(texFiles)

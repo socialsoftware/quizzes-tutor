@@ -9,6 +9,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import TopBar from "@/components/TopBar.vue";
+import "@/styles/_global.scss";
+import "@/styles/_question.scss";
 
 @Component({
   components: { TopBar }
