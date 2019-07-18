@@ -19,6 +19,15 @@ public class Option implements Serializable {
     @Column(columnDefinition = "content")
     private String content;
 
+    public Option(){}
+
+    public Option(OptionDTO option) {
+        this.optionPK = new OptionPK();
+        this.optionPK.setOption(option.getOption());
+        this.content = option.getContent();
+        this.correct = option.getCorrect();
+    }
+
     public Integer getQuestionId() {
         return optionPK.getQuestion().getId();
     }

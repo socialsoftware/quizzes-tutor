@@ -36,9 +36,9 @@
         </v-flex>
       </v-layout>
 
-      <router-link to="/quiz" tag="v-btn" depressed color="primary"
-        >Create quiz</router-link
-      >
+      <v-btn @click="createQuiz" depressed color="primary">
+        Create quiz
+      </v-btn>
     </v-container>
   </v-container>
 </template>
@@ -50,6 +50,15 @@ import Quiz from "@/models/Quiz";
 @Component
 export default class SetupView extends Vue {
   private quiz: Quiz = Quiz.getInstance;
+
+  beforeMount() {
+    this.quiz.reset();
+  }
+
+  async createQuiz() {
+    await this.quiz.getQuestions();
+    this.$router.push("/quiz");
+  }
 }
 </script>
 

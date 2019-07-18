@@ -4,14 +4,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OptionRepository extends JpaRepository<Option, OptionPK> {
 
-    @Query("select o from Option o where o.optionPK.question.id = :question_id")
-    List<Option> findByquestion_id(Integer question_id);
+    @Query(value = "select o from options o where o.question_id = :questionId", nativeQuery = true)
+    List<Option> findAllById(Integer questionId);
 
-    @Query("select o from Option o where o.optionPK.question.id = :question_id and o.optionPK.option = :option")
-    Option findById(Integer question_id, Integer option);
+    @Query(value = "select o from options o where o.question_id = :questionId and o.option = :option", nativeQuery = true)
+    Optional<Option> findById(Integer questionId, Integer option);
 
 }
