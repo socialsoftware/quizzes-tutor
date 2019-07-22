@@ -3,16 +3,11 @@ package com.example.tutor.quiz;
 import com.example.tutor.ResourceNotFoundException;
 import com.example.tutor.question.Question;
 import com.example.tutor.question.QuestionRepository;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -46,14 +41,8 @@ public class Quiz implements Serializable {
     @Column(columnDefinition = "completed")
     private Boolean completed;
 
-    @ManyToMany(fetch=FetchType.EAGER)
-    @Fetch (FetchMode.SELECT)
-    @JoinTable(
-            name="quiz_has_question",
-            joinColumns=@JoinColumn(name="quiz_id", referencedColumnName="id"),
-            inverseJoinColumns=@JoinColumn(name="question_id", referencedColumnName="id"))
-    private List<Question> questions;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    Set<QuizHasQuestion> questions;
 
     public Quiz() {}
 
@@ -65,38 +54,38 @@ public class Quiz implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.generated_by = quiz.getGenerated_by();
+        this.generated_by = quiz.getGeneratedBy();
         this.completed = quiz.getCompleted();
-        this.questions = quiz.getQuestions().stream().map(Question::new).collect(Collectors.toList());
+
+        this.questions = new HashSet<>();
+        for (int i = 0; i < quiz.getQuestions().size(); i ++) {
+            this.questions.add(new QuizHasQuestion(this, new Question(quiz.getQuestions().get(i)), i));
+        }
     }
 
     public void generate(QuestionRepository questionRepository, Integer userId, Integer numberOfQuestions, String[] topics, String questionType) {
-        int maxID = 1698;
-        List<Question> questionList = new ArrayList<>();
         Random rand = new Random();
-        HashSet<Integer> idList = new HashSet<>();
-        Question q;
+        Map<Integer, Question> questions = new HashMap<>();
 
-        while (questionList.size() < numberOfQuestions) {
-            int question_id = rand.nextInt(maxID);
+        while (questions.size() < numberOfQuestions) {
+            int question_id = rand.nextInt(questionRepository.getTotalUniqueQuestions());
             try {
-                if (!idList.contains(question_id)) {
+                if (!questions.keySet().contains(question_id)) {
                     questionRepository.findById(question_id)
                             .ifPresent(question -> {
-                                questionList.add(question);
-                                idList.add(question_id);
+                                questions.put(questions.size(), question);
                             });
                 }
             } catch (ResourceNotFoundException e) {
-                idList.add(question_id);
+
             }
         }
 
-        this.date = LocalDateTime.now();
-        this.questions = questionList;
-        this.type = "Generated";
-        this.generated_by = userId;
-        this.completed = false;
+        this.setDate(LocalDateTime.now());
+        this.setQuestions(questions);
+        this.setType("Generated");
+        this.setGeneratedBy(userId);
+        this.setCompleted(false);
     }
 
     public Integer getId() {
@@ -155,11 +144,11 @@ public class Quiz implements Serializable {
         this.version = version;
     }
 
-    public Integer getGenerated_by() {
+    public Integer getGeneratedBy() {
         return generated_by;
     }
 
-    public void setGenerated_by(Integer generatedBy) {
+    public void setGeneratedBy(Integer generatedBy) {
         this.generated_by = generatedBy;
     }
 
@@ -171,11 +160,15 @@ public class Quiz implements Serializable {
         this.completed = completed;
     }
 
-    public List<Question> getQuestions() {
-        return questions;
+    public void setQuestions(Map<Integer, Question> questions) {
+        this.questions = questions.entrySet().stream().map(entry -> new QuizHasQuestion(this, entry.getValue(), entry.getKey())).collect(Collectors.toSet());
     }
 
-    public void setQuestions(List<Question> questions) {
-        this.questions = questions;
+    public Map<Integer, Question> getQuestions() {
+        return this.questions.stream().collect(Collectors.toMap(QuizHasQuestion::getSequence, QuizHasQuestion::getQuestion));
+    }
+
+    public Set<QuizHasQuestion> getQuizHasQuestion() {
+        return this.questions;
     }
 }

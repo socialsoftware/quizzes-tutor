@@ -8,6 +8,7 @@ import java.util.List;
 public class CorrectAnswerDTO implements Serializable {
 
     private Integer question_id;
+    private Integer sequence;
     private Integer correct_option;
 
     public CorrectAnswerDTO(Question question) {
@@ -29,5 +30,13 @@ public class CorrectAnswerDTO implements Serializable {
 
     public void setCorrectOption(Integer correct_option) {
         this.correct_option = correct_option;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 public class ResultAnswerDTO implements Serializable {
 
     private Integer question_id;
+    private Integer sequence;
     private Integer option;
     private LocalDateTime time_taken;
 
@@ -31,6 +32,14 @@ public class ResultAnswerDTO implements Serializable {
         this.question_id = question_id;
     }
 
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
     public Integer getOption() {
         return option;
     }
@@ -46,4 +55,5 @@ public class ResultAnswerDTO implements Serializable {
     public void setTimeTaken(LocalDateTime time_taken) {
         this.time_taken = time_taken;
     }
+
 }

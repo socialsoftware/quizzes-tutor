@@ -10,5 +10,4 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     @Query(value = "select count(q) from questions q where q.active = true", nativeQuery = true)
     Integer getTotalUniqueQuestions();
-
 }

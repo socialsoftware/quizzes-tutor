@@ -11,7 +11,7 @@ import java.io.Serializable;
 public class Option implements Serializable {
 
     @EmbeddedId
-    private OptionPK optionPK;
+    private OptionKey optionKey;
 
     @Column(columnDefinition = "correct")
     private Boolean correct;
@@ -22,26 +22,26 @@ public class Option implements Serializable {
     public Option(){}
 
     public Option(OptionDTO option) {
-        this.optionPK = new OptionPK();
-        this.optionPK.setOption(option.getOption());
+        this.optionKey = new OptionKey();
+        this.optionKey.setOption(option.getOption());
         this.content = option.getContent();
         this.correct = option.getCorrect();
     }
 
     public Integer getQuestionId() {
-        return optionPK.getQuestion().getId();
+        return optionKey.getQuestion().getId();
     }
 
     public void setQuestionId(Integer question_id) {
-        this.optionPK.getQuestion().setId(question_id);
+        this.optionKey.getQuestion().setId(question_id);
     }
 
     public Integer getOption() {
-        return optionPK.getOption();
+        return optionKey.getOption();
     }
 
     public void setOption(Integer option) {
-        this.optionPK.setOption(option);
+        this.optionKey.setOption(option);
     }
 
     public Boolean getCorrect() {

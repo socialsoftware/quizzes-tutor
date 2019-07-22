@@ -31,7 +31,6 @@
     <question-component
       v-model="order"
       :answer="quiz.answers[order]"
-      :correctAnswers="quiz.correctAnswers"
       :question="quiz.questions[order]"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"

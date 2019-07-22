@@ -2,11 +2,14 @@ package com.example.tutor.question;
 
 import com.example.tutor.image.Image;
 import com.example.tutor.option.Option;
+import com.example.tutor.quiz.QuizHasQuestion;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity(name = "Question")
@@ -32,6 +35,9 @@ public class Question implements Serializable {
     @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "question")
     @JoinColumn(nullable = true)
     private Image image;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+    Set<QuizHasQuestion> quizzes;
 
     public Question(){}
 
@@ -92,11 +98,6 @@ public class Question implements Serializable {
 
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    @Override
-    public String toString() {
-        return "Question: " + "\n\tContent: " + this.getContent() + "\n\tImage: " + this.getImage().toString();
     }
 
     public Integer getCorrectOption() {

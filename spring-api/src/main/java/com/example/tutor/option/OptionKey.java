@@ -6,7 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Embeddable
-public class OptionPK implements Serializable {
+public class OptionKey implements Serializable {
     @Column(name = "option")
     private Integer option;
 
@@ -38,7 +38,7 @@ public class OptionPK implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        OptionPK o = (OptionPK) obj;
+        OptionKey o = (OptionKey) obj;
         return this.question.getId() == o.getQuestion().getId() && this.option == o.getOption();
     }
 

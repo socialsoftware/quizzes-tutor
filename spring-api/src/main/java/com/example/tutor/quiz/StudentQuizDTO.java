@@ -4,12 +4,14 @@ import com.example.tutor.question.QuestionDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class StudentQuizDTO implements Serializable {
     private Integer id;
-    private List<QuestionDTO> questions = new ArrayList<>();
+    private Map<Integer, QuestionDTO> questions = new HashMap<>();
 
     public StudentQuizDTO(){
 
@@ -17,7 +19,7 @@ public class StudentQuizDTO implements Serializable {
 
     public StudentQuizDTO(Quiz quiz) {
         this.id = quiz.getId();
-        this.questions = quiz.getQuestions().stream().map(QuestionDTO::new).collect(Collectors.toList());
+        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new QuestionDTO(entry.getValue())));
     }
 
     public Integer getId() {
@@ -28,11 +30,11 @@ public class StudentQuizDTO implements Serializable {
         this.id = id;
     }
 
-    public List<QuestionDTO> getQuestions() {
+    public Map<Integer, QuestionDTO> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<QuestionDTO> questions) {
+    public void setQuestions(Map<Integer, QuestionDTO> questions) {
         this.questions = questions;
     }
 }

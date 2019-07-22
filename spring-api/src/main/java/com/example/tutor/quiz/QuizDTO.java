@@ -5,7 +5,9 @@ import com.example.tutor.question.QuestionDTO;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class QuizDTO implements Serializable {
@@ -16,9 +18,9 @@ public class QuizDTO implements Serializable {
     private String type;
     private Integer series;
     private String version;
-    private Integer generated_by;
+    private Integer generatedBy;
     private Boolean completed;
-    private List<QuestionDTO> questions = new ArrayList<>();
+    private Map<Integer, QuestionDTO> questions;
 
     public QuizDTO(){
 
@@ -32,9 +34,9 @@ public class QuizDTO implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.generated_by = quiz.getGenerated_by();
+        this.generatedBy = quiz.getGeneratedBy();
         this.completed = quiz.getCompleted();
-        this.questions = quiz.getQuestions().stream().map(QuestionDTO::new).collect(Collectors.toList());
+        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), entry -> new QuestionDTO(entry.getValue())));
     }
 
     public Integer getId() {
@@ -93,12 +95,12 @@ public class QuizDTO implements Serializable {
         this.version = version;
     }
 
-    public Integer getGenerated_by() {
-        return generated_by;
+    public Integer getGeneratedBy() {
+        return generatedBy;
     }
 
-    public void setGenerated_by(Integer generated_by) {
-        this.generated_by = generated_by;
+    public void setGeneratedBy(Integer generatedBy) {
+        this.generatedBy = generatedBy;
     }
 
     public Boolean getCompleted() {
@@ -109,11 +111,11 @@ public class QuizDTO implements Serializable {
         this.completed = completed;
     }
 
-    public List<QuestionDTO> getQuestions() {
+    public Map<Integer, QuestionDTO> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<QuestionDTO> questions) {
+    public void setQuestions(Map<Integer, QuestionDTO> questions) {
         this.questions = questions;
     }
 }
