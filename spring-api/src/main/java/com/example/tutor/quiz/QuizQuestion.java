@@ -1,33 +1,36 @@
 package com.example.tutor.quiz;
 
+import com.example.tutor.answer.Answer;
 import com.example.tutor.question.Question;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name="quiz_has_question")
-public class QuizHasQuestion {
-    @EmbeddedId
-    private QuizHasQuestionKey id;
+@Table(name="quiz_question")
+public class QuizQuestion {
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     @ManyToOne
-    @MapsId("quiz_id")
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
     @ManyToOne
-    @MapsId("question_id")
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion")
+    private Set<Answer> answers;
+
     private Integer sequence;
 
-    public QuizHasQuestion(){
+    public QuizQuestion(){
 
     }
 
-    public QuizHasQuestion(Quiz quiz, Question question, Integer sequence) {
-        this.id = new QuizHasQuestionKey();
+    public QuizQuestion(Quiz quiz, Question question, Integer sequence) {
         this.quiz = quiz;
         this.question = question;
         this.sequence = sequence;

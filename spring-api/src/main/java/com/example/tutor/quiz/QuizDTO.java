@@ -36,7 +36,7 @@ public class QuizDTO implements Serializable {
         this.version = quiz.getVersion();
         this.generatedBy = quiz.getGeneratedBy();
         this.completed = quiz.getCompleted();
-        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(e -> e.getKey(), entry -> new QuestionDTO(entry.getValue())));
+        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new QuestionDTO(entry.getValue())));
     }
 
     public Integer getId() {

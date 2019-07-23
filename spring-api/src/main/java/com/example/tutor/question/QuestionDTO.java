@@ -12,16 +12,17 @@ import java.util.stream.Collectors;
 
 
 public class QuestionDTO implements Serializable {
-
-    private Integer id;
     private String content;
     private Integer difficulty;
     private Boolean active;
     private List<OptionDTO> options;
     private ImageDTO image;
 
+    public QuestionDTO() {
+
+    }
+
     public QuestionDTO(Question question) {
-        this.id = question.getId();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.active = question.getActive();
@@ -29,14 +30,6 @@ public class QuestionDTO implements Serializable {
             this.image = new ImageDTO(question.getImage());
         }
         this.options = question.getOptions().stream().map(OptionDTO::new).collect(Collectors.toList());
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getContent() {

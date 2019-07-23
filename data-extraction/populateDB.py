@@ -321,8 +321,8 @@ def main():
     #outputing the data as a json
     #encoding not working
     #should also validate the encoding for the reads
-    with open('data.json', 'w', encoding="iso-8859-15") as outfile:
-        json.dump(outputQuizes, outfile, indent=4)
+    #with open('data.json', 'w', encoding="iso-8859-15") as outfile:
+    #    json.dump(outputQuizes, outfile, indent=4)
 
     #print(outputQuizes)
 

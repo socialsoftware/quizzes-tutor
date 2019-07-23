@@ -14,52 +14,40 @@ import java.util.stream.Collectors;
 @RestController
 public class QuestionController {
 
-    private QuestionRepository questionRepository;
+    private QuestionService questionService;
 
-    QuestionController(QuestionRepository repository) {
-        this.questionRepository = repository;
+    QuestionController(QuestionService questionService) {
+        this.questionService = questionService;
     }
 
     @GetMapping("/questions")
     public List<QuestionDTO> getQuestions(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
-        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDTO::new).collect(Collectors.toList());
+        return this.questionService.findAll(pageIndex, pageSize).stream().map(QuestionDTO::new).collect(Collectors.toList());
     }
 
     @GetMapping("/questions/{questionId}")
     public QuestionDTO getQuestion(@PathVariable Integer questionId) {
-        return new QuestionDTO(questionRepository.findById(questionId)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId)));
+        return new QuestionDTO(this.questionService.findById(questionId));
     }
 
     @PostMapping("/questions")
-    public QuestionDTO createQuestion(@Valid @RequestBody QuestionDTO question) {
-        questionRepository.save(new Question(question));
-        return question;
+    public ResponseEntity createQuestion(@Valid @RequestBody QuestionDTO question) {
+        this.questionService.create(question);
+        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/questions/{questionId}")
-    public QuestionDTO updateQuestion(@PathVariable Integer questionId,
+    public ResponseEntity updateQuestion(@PathVariable Integer questionId,
                                    @Valid @RequestBody QuestionDTO questionRequest) {
 
-        questionRepository.findById(questionId)
-                .map(question -> {
-                    question.setContent(questionRequest.getContent());
-                    question.setDifficulty(questionRequest.getDifficulty());
-                    question.setImage(new Image(questionRequest.getImage()));
-                    question.setActive(questionRequest.getActive());
-                    question.setOptions(questionRequest.getOptions().stream().map(Option::new).collect(Collectors.toList()));
-                    return questionRepository.save(question);
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
-        return questionRequest;
+        questionService.update(questionId, questionRequest);
+        return ResponseEntity.ok().build();
     }
 
 
     @DeleteMapping("/questions/{questionId}")
-    public ResponseEntity<?> deleteQuestion(@PathVariable Integer questionId) {
-        return questionRepository.findById(questionId)
-                .map(question -> {
-                    questionRepository.delete(question);
-                    return ResponseEntity.ok().build();
-                }).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+    public ResponseEntity deleteQuestion(@PathVariable Integer questionId) {
+        questionService.delete(questionId);
+        return ResponseEntity.ok().build();
     }
 }

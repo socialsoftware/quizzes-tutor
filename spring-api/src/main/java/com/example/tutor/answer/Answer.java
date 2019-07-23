@@ -1,6 +1,7 @@
 package com.example.tutor.answer;
 
 import com.example.tutor.question.Question;
+import com.example.tutor.quiz.QuizQuestion;
 import com.example.tutor.user.User;
 
 import javax.persistence.*;
@@ -10,85 +11,33 @@ import java.time.LocalDateTime;
 @Entity(name = "Answer")
 @Table(name = "answers")
 public class Answer implements Serializable {
-    @EmbeddedId
-    private AnswerPK answerPK;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-    @Column(columnDefinition = "quiz_id")
-    private Integer quiz_id;
+    private Integer option;
+
+    @Column(name = "answer_date")
+    private LocalDateTime date;
 
     @Column(columnDefinition = "time_taken")
-    private LocalDateTime time_taken;
+    private LocalDateTime timeTaken;
 
-    @Column(columnDefinition = "option")
-    private Integer option;
+    @ManyToOne
+    @JoinColumn(name = "quiz_question_id")
+    private QuizQuestion quizQuestion;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Answer() {
 
     }
 
     public Answer(ResultAnswerDTO ans, User user, Question question, LocalDateTime date, Integer quiz_id){
-        this.answerPK = new AnswerPK(date, user, question);
-        this.answerPK.setUser(user);
-        this.quiz_id = quiz_id;
-        this.time_taken = ans.getTimeTaken();
+
         this.option = ans.getOption();
-    }
-
-
-    public AnswerPK getAnswerPK() {
-        return answerPK;
-    }
-
-    public void setAnswerPK(AnswerPK answerPK) {
-        this.answerPK = answerPK;
-    }
-
-    public Integer getQuizId() {
-        return quiz_id;
-    }
-
-    public void setQuizId(Integer quiz_id) {
-        this.quiz_id = quiz_id;
-    }
-
-    public LocalDateTime getTimeTaken() {
-        return time_taken;
-    }
-
-    public void setTimeTaken(LocalDateTime time_taken) {
-        this.time_taken = time_taken;
-    }
-
-    public Integer getOption() {
-        return option;
-    }
-
-    public void setOption(Integer option) {
-        this.option = option;
-    }
-
-    public Integer getQuestionId() {
-        return answerPK.getQuestion().getId();
-    }
-
-    public void setQuestionId(Integer id) {
-        answerPK.getQuestion().setId(id);
-    }
-
-    public LocalDateTime getDate() {
-        return answerPK.getDate();
-    }
-
-    public void setDate(LocalDateTime date) {
-        answerPK.setDate(date);
-    }
-
-    public Integer getUserId() {
-        return answerPK.getUser().getId();
-    }
-
-    public void setUserId(Integer id) {
-        answerPK.getUser().setId(id);
     }
 
 }

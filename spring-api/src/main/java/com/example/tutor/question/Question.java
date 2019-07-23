@@ -2,7 +2,7 @@ package com.example.tutor.question;
 
 import com.example.tutor.image.Image;
 import com.example.tutor.option.Option;
-import com.example.tutor.quiz.QuizHasQuestion;
+import com.example.tutor.quiz.QuizQuestion;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,37 +19,30 @@ public class Question implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "content")
     private String content;
-
-    @Column(columnDefinition = "difficulty")
     private Integer difficulty;
-
-    @Column(columnDefinition = "active")
     private Boolean active;
 
-    @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-    @JoinColumn(name="question_id")
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "question")
     private List<Option> options = new ArrayList<>();
 
-    @OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER, mappedBy = "question")
+    @OneToOne(cascade = { CascadeType.ALL }, mappedBy = "question")
     @JoinColumn(nullable = true)
     private Image image;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    Set<QuizHasQuestion> quizzes;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    Set<QuizQuestion> quizzes;
 
     public Question(){}
 
     public Question(QuestionDTO question) {
-        this.id = question.getId();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.active = question.getActive();
-        if (question.getImage() != null) {
-            this.image = new Image(question.getImage());
+       if (question.getImage() != null) {
+            setImage(new Image(question.getImage()));
         }
-        this.options = question.getOptions().stream().map(Option::new).collect(Collectors.toList());
+        question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
     }
 
     public Integer getId() {
@@ -98,10 +91,10 @@ public class Question implements Serializable {
 
     public void setImage(Image image) {
         this.image = image;
-    }
+   }
 
     public Integer getCorrectOption() {
-        Optional<Option> a = this.getOptions().stream().filter(Option::getCorrect).findFirst();
-        return a.get().getOption();
+        Optional<Option> correctOption = this.getOptions().stream().filter(Option::getCorrect).findAny();
+        return correctOption.get().getOption();
     }
 }

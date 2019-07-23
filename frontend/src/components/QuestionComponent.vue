@@ -74,7 +74,6 @@ export default class QuestionComponent extends Vue {
   @Model("order", Number) order: number | undefined;
   @Prop(Question) readonly question: Question | undefined;
   @Prop(Answer) answer: Answer | undefined;
-  hover: boolean = false;
 
   constructor() {
     super();

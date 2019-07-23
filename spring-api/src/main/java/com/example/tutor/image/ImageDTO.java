@@ -4,8 +4,13 @@ import java.io.Serializable;
 
 
 public class ImageDTO implements Serializable {
+    private Integer id;
     private String url;
     private Integer width;
+
+    public ImageDTO() {
+
+    }
 
     public ImageDTO(Image image) {
         this.width = image.getWidth();

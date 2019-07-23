@@ -1,30 +1,27 @@
 package com.example.tutor.user;
 
+import com.example.tutor.answer.Answer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue
     private Integer id;
 
-    @Column(columnDefinition = "username")
     private String username;
-
-    @Column(columnDefinition = "name")
     private String name;
-
-    @Column(columnDefinition = "year")
     private Integer year;
 
-    @Column(columnDefinition = "role")
-    private String role;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "answer")
+    Set<Answer> answers;
 
     @Transient
     private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
@@ -33,11 +30,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, String role) {
+    public User(String name, String username) {
         super();
         this.name = name;
         this.username = username;
-        this.role = role;
     }
 
     public Integer getId() {
@@ -73,13 +69,6 @@ public class User implements UserDetails {
         this.year = year;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
-    }
 
     @Override
     public Collection<GrantedAuthority> getAuthorities() {

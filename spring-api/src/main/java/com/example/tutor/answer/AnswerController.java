@@ -13,8 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -35,28 +34,32 @@ public class AnswerController {
 
         Quiz quiz = quizRepository.findById(answers.getQuizId()).orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + answers.getQuizId()));
 
-        /* TODO Verify that the list of questions received is the same as the questions associated with the quiz
-        if (! Arrays.equals(quiz.getQuestions().stream().map(Question::getId).sorted().toArray(), answers.getAnswers().stream().map(ResultAnswerDTO::getQuestionId).sorted().toArray())) {
-            throw new WrongParametersException("Quiz " + quiz.getId() + " question's ids do not match");
-        }*/
-
         // Verify this quiz was generated for this student (maybe its overkill verification)
         if (! quiz.getGeneratedBy().equals(user.getId())) {
             throw new WrongParametersException("Quiz " + quiz.getId() + " was not generated to " + user.getUsername());
         }
 
-        // Return correct answers in the same order as they were received
-        List<CorrectAnswerDTO> correctAnswers = answers.getAnswers().stream().map(answer -> {
-            Question q = quiz.getQuestions().get(answer.getSequence());
+        // For each received student answer, get correct answer
+        Map<Integer, CorrectAnswerDTO> correctAnswers = answers.getAnswers().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+            Integer sequence = entry.getKey();
+            Question question = quiz.getQuestions().get(sequence);
+            ResultAnswerDTO answer = answers.getAnswers().get(sequence);
 
-            //TODO check if ids match
+            System.out.println(":" + sequence + ":" + question + ":" + answer);
 
-            if (! quiz.getCompleted()) {
-                answerRepository.save(new Answer(answer, user, q, answers.getAnswerDate(), answers.getQuizId()));
+            // Verify that question ids match (maybe its overkill verification)
+            if (! question.getId().equals(answer.getQuestionId())) {
+                throw new WrongParametersException("Answer in position" + sequence + " does not have " + user.getUsername());
             }
 
-            return new CorrectAnswerDTO(q);
-        }).collect(Collectors.toList());
+            if (! quiz.getCompleted()) {
+                answerRepository.save(new Answer(answer, user, question, answers.getAnswerDate(), answers.getQuizId()));
+            }
+
+            return new CorrectAnswerDTO(question);
+        }));
+
+
 
         quiz.setCompleted(true);
         quizRepository.save(quiz);

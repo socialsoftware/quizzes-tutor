@@ -10,11 +10,11 @@ import java.io.Serializable;
 public class Image implements Serializable {
 
     @Id
-    @Column(name = "question_id")
-    private Integer question_id;
+    @GeneratedValue
+    private Integer id;
 
     @OneToOne
-    @PrimaryKeyJoinColumn(name="question_id", referencedColumnName="image_id")
+    @JoinColumn(name="question_id")
     private Question question;
 
     @Column(columnDefinition = "url")
@@ -28,14 +28,6 @@ public class Image implements Serializable {
     public Image(ImageDTO imageDTO) {
         this.url = imageDTO.getUrl();
         this.width = imageDTO.getWidth();
-    }
-
-    public Integer getQuestionId() {
-        return question_id;
-    }
-
-    public void setQuestionId(Integer question_id) {
-        this.question_id = question_id;
     }
 
     public Question getQuestion() {

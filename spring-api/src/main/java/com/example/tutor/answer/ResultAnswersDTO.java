@@ -3,16 +3,21 @@ package com.example.tutor.answer;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 
 public class ResultAnswersDTO implements Serializable {
 
     private Integer quiz_id;
     private LocalDateTime answer_date;
-    private List<ResultAnswerDTO> answers;
+    private Map<Integer, ResultAnswerDTO> answers;
 
-    ResultAnswersDTO() {
+    public ResultAnswersDTO(){
 
+    }
+
+    ResultAnswersDTO(Map<Integer, ResultAnswerDTO> answers) {
+        this.answers = answers;
     }
 
     public Integer getQuizId() {
@@ -31,11 +36,11 @@ public class ResultAnswersDTO implements Serializable {
         this.answer_date = answer_date;
     }
 
-    public List<ResultAnswerDTO> getAnswers() {
+    public Map<Integer, ResultAnswerDTO> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<ResultAnswerDTO> answers) {
+    public void setAnswers(Map<Integer, ResultAnswerDTO> answers) {
         this.answers = answers;
     }
 }

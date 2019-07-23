@@ -8,6 +8,10 @@ public class OptionDTO implements Serializable {
     private Boolean correct;
     private String content;
 
+    public OptionDTO() {
+
+    }
+
     public OptionDTO(Option option) {
         this.option = option.getOption();
         this.content = option.getContent();

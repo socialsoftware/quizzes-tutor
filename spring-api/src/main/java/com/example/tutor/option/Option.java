@@ -1,48 +1,34 @@
 package com.example.tutor.option;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import com.example.tutor.question.Question;
+
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity(name = "Option")
 @Table(name = "options")
 public class Option implements Serializable {
 
-    @EmbeddedId
-    private OptionKey optionKey;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
-    @Column(columnDefinition = "correct")
+    private Integer option;
     private Boolean correct;
-
-    @Column(columnDefinition = "content")
     private String content;
+
+    @ManyToOne
+    @JoinColumn(name = "question_id")
+    private Question question;
+
 
     public Option(){}
 
     public Option(OptionDTO option) {
-        this.optionKey = new OptionKey();
-        this.optionKey.setOption(option.getOption());
         this.content = option.getContent();
         this.correct = option.getCorrect();
     }
 
-    public Integer getQuestionId() {
-        return optionKey.getQuestion().getId();
-    }
-
-    public void setQuestionId(Integer question_id) {
-        this.optionKey.getQuestion().setId(question_id);
-    }
-
-    public Integer getOption() {
-        return optionKey.getOption();
-    }
-
-    public void setOption(Integer option) {
-        this.optionKey.setOption(option);
-    }
 
     public Boolean getCorrect() {
         return correct;
@@ -58,5 +44,29 @@ public class Option implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getOption() {
+        return option;
+    }
+
+    public void setOption(Integer option) {
+        this.option = option;
+    }
+
+    public Question getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(Question question) {
+        this.question = question;
     }
 }

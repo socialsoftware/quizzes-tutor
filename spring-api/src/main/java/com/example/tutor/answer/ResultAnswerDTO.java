@@ -9,35 +9,26 @@ import java.util.List;
 
 public class ResultAnswerDTO implements Serializable {
 
-    private Integer question_id;
-    private Integer sequence;
+    private Integer questionId;
     private Integer option;
-    private LocalDateTime time_taken;
+    private LocalDateTime timeTaken;
 
     public ResultAnswerDTO(){
 
     }
 
     public ResultAnswerDTO(Answer answer) {
-        this.question_id = answer.getQuestionId();
+        this.questionId = answer.getQuestionId();
         this.option = answer.getOption();
-        this.time_taken = answer.getTimeTaken();
+        this.timeTaken = answer.getTimeTaken();
     }
 
     public Integer getQuestionId() {
-        return question_id;
+        return questionId;
     }
 
-    public void setQuestionId(Integer question_id) {
-        this.question_id = question_id;
-    }
-
-    public Integer getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 
     public Integer getOption() {
@@ -49,11 +40,11 @@ public class ResultAnswerDTO implements Serializable {
     }
 
     public LocalDateTime getTimeTaken() {
-        return time_taken;
+        return timeTaken;
     }
 
-    public void setTimeTaken(LocalDateTime time_taken) {
-        this.time_taken = time_taken;
+    public void setTimeTaken(LocalDateTime timeTaken) {
+        this.timeTaken = timeTaken;
     }
 
 }

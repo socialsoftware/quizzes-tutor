@@ -30,8 +30,8 @@
     </div>
     <question-component
       v-model="order"
-      :answer="quiz.answers[order]"
-      :question="quiz.questions[order]"
+      :answer="quiz.answers.get(order)"
+      :question="quiz.questions.get(order)"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -60,7 +60,6 @@ import QuestionComponent from "@/components/QuestionComponent.vue";
 export default class QuizView extends Vue {
   quiz: Quiz = Quiz.getInstance;
   order: number = 0;
-  confirmed: boolean = false;
 
   constructor() {
     super();
@@ -91,7 +90,7 @@ export default class QuizView extends Vue {
   }
 
   changeAnswer(answer: Answer) {
-    this.quiz.answers[this.order] = answer;
+    this.quiz.answers.set(this.order, answer);
   }
 
   /*beforeRouteLeave(to: any, from: any, next: any) {

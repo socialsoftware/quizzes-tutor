@@ -11,7 +11,7 @@ public class Topic implements Serializable {
     private Integer id;
 
     @OneToOne
-    @JoinColumn(name = "parent")
+    @JoinColumn(name = "parent_id")
     private Topic parent;
 
     @Column(columnDefinition = "name")

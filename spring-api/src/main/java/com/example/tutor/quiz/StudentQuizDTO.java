@@ -1,6 +1,7 @@
 package com.example.tutor.quiz;
 
 import com.example.tutor.question.QuestionDTO;
+import com.example.tutor.question.StudentQuestionDTO;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class StudentQuizDTO implements Serializable {
     private Integer id;
-    private Map<Integer, QuestionDTO> questions = new HashMap<>();
+    private Map<Integer, StudentQuestionDTO> questions = new HashMap<>();
 
     public StudentQuizDTO(){
 
@@ -19,7 +20,7 @@ public class StudentQuizDTO implements Serializable {
 
     public StudentQuizDTO(Quiz quiz) {
         this.id = quiz.getId();
-        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new QuestionDTO(entry.getValue())));
+        this.questions = quiz.getQuestions().entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> new StudentQuestionDTO(entry.getValue())));
     }
 
     public Integer getId() {
@@ -30,11 +31,11 @@ public class StudentQuizDTO implements Serializable {
         this.id = id;
     }
 
-    public Map<Integer, QuestionDTO> getQuestions() {
+    public Map<Integer, StudentQuestionDTO> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Map<Integer, QuestionDTO> questions) {
+    public void setQuestions(Map<Integer, StudentQuestionDTO> questions) {
         this.questions = questions;
     }
 }
