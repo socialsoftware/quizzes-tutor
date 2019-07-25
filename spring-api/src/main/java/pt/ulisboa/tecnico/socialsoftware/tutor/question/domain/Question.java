@@ -39,7 +39,7 @@ public class Question implements Serializable {
        if (question.getImage() != null) {
             setImage(new Image(question.getImage()));
         }
-        question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
+       question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
     }
 
     public Integer getId() {

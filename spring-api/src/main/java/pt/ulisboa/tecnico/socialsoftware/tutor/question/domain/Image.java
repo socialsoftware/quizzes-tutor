@@ -20,9 +20,9 @@ public class Image implements Serializable {
 
     public Image() {}
 
-    public Image(ImageDto imageDTO) {
-        this.url = imageDTO.getUrl();
-        this.width = imageDTO.getWidth();
+    public Image(ImageDto imageDto) {
+        this.url = imageDto.getUrl();
+        this.width = imageDto.getWidth();
     }
 
 

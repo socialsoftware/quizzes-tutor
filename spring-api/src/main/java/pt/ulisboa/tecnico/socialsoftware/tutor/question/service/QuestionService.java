@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service;
 
+import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -13,7 +13,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Component
+@Service
 public class QuestionService {
 
     @Autowired
