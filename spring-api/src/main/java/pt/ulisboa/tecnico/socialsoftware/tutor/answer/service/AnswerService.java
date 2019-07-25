@@ -11,9 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.EntityManager;

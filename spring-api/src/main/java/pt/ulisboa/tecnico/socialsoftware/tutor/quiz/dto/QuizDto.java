@@ -1,7 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -16,7 +16,6 @@ public class QuizDto implements Serializable {
     private String type;
     private Integer series;
     private String version;
-    private Integer generatedBy;
     private Boolean completed;
     private Map<Integer, QuestionDto> questions;
 
@@ -90,14 +89,6 @@ public class QuizDto implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Integer getGeneratedBy() {
-        return generatedBy;
-    }
-
-    public void setGeneratedBy(Integer generatedBy) {
-        this.generatedBy = generatedBy;
     }
 
     public Boolean getCompleted() {

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
 public class QuizSetupDto {
     private Integer userId;

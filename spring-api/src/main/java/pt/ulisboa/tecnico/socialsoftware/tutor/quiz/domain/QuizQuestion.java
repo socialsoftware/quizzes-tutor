@@ -1,6 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.Answer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
 import java.util.Set;

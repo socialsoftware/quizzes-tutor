@@ -1,10 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.api;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuizSetupDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.StudentQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.StudentQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

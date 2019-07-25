@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.stats.api;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.stats.dto.StatsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import org.springframework.security.core.Authentication;

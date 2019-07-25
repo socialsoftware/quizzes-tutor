@@ -1,10 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
-import org.springframework.beans.factory.annotation.Configurable;
-import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
