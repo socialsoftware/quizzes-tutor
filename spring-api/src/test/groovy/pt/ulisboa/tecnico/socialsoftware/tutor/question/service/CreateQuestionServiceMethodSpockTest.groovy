@@ -18,7 +18,7 @@ import spock.lang.Specification
 @DataJpaTest
 class CreateQuestionServiceMethodSpockTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "option content"
+    public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
 
     @Autowired
@@ -33,7 +33,7 @@ class CreateQuestionServiceMethodSpockTest extends Specification {
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
         question.setDifficulty(1)
-        and: 'a option'
+        and: 'a optionId'
         def option = new OptionDto()
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)

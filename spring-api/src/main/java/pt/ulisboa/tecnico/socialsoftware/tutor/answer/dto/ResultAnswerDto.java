@@ -1,39 +1,39 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.Answer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
 
 public class ResultAnswerDto implements Serializable {
-    private Integer questionId;
-    private Integer option;
+    private Integer quizQuestionId;
+    private Integer optionId;
     private LocalDateTime timeTaken;
 
     public ResultAnswerDto(){
     }
 
-    public ResultAnswerDto(Answer answer) {
-        this.questionId = answer.getQuizQuestion().getQuestion().getId();
-        this.option = answer.getOption();
-        this.timeTaken = answer.getTimeTaken();
+    public ResultAnswerDto(QuestionAnswer questionAnswer) {
+        this.quizQuestionId = questionAnswer.getQuizQuestion().getQuestion().getId();
+        this.optionId = questionAnswer.getOption().getId();
+        this.timeTaken = questionAnswer.getTimeTaken();
     }
 
-    public Integer getQuestionId() {
-        return questionId;
+    public Integer getQuizQuestionId() {
+        return quizQuestionId;
     }
 
-    public void setQuestionId(Integer questionId) {
-        this.questionId = questionId;
+    public void setQuizQuestionId(Integer quizQuestionId) {
+        this.quizQuestionId = quizQuestionId;
     }
 
-    public Integer getOption() {
-        return option;
+    public Integer getOptionId() {
+        return optionId;
     }
 
-    public void setOption(Integer option) {
-        this.option = option;
+    public void setOptionId(Integer optionId) {
+        this.optionId = optionId;
     }
 
     public LocalDateTime getTimeTaken() {

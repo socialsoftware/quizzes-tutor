@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.Answer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import javax.persistence.*;
 import java.util.Collection;
@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String role;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
-    Set<Answer> answers;
+    Set<QuizAnswer> quizAnswers;
 
     @Transient
     private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
@@ -78,6 +78,21 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public Set<QuizAnswer> getQuizAnswers() {
+        return quizAnswers;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
+    }
+
+    public void addQuizAnswer(QuizAnswer quizAnswer) {
+        if (quizAnswers == null) {
+            quizAnswers = new HashSet<>();
+        }
+        this.quizAnswers.add(quizAnswer);
     }
 
 

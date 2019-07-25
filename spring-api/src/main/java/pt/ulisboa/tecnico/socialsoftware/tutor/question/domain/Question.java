@@ -5,10 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "questions")
@@ -90,8 +87,24 @@ public class Question implements Serializable {
         this.image = image;
    }
 
+    public Set<QuizQuestion> getQuizQuestions() {
+        return quizQuestions;
+    }
+
+    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
+        this.quizQuestions = quizQuestions;
+    }
+
+
     public Integer getCorrectOption() {
         Optional<Option> correctOption = this.getOptions().stream().filter(Option::getCorrect).findAny();
         return correctOption.get().getOption();
+    }
+
+    public void addQuizQuestion(QuizQuestion quizQuestion) {
+        if (quizQuestions == null) {
+            quizQuestions = new HashSet<>();
+        }
+        quizQuestions.add(quizQuestion);
     }
 }

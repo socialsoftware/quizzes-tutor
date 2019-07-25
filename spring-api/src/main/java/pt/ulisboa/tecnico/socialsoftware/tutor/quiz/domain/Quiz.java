@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
@@ -13,9 +13,8 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "quizzes")
 public class Quiz implements Serializable {
-
-    public enum QuizType {
-        GENERATED, EXAM, TEST
+   public enum QuizType {
+        GENERATED, EXAM, TEST, SINGLE, TEACHER
     }
 
     @Id
@@ -33,7 +32,10 @@ public class Quiz implements Serializable {
     private String version;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    Set<QuizQuestion> questions;
+    private Set<QuizQuestion> quizQuestions;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+    private Set<QuizAnswer> quizAnswers;
 
     public Quiz() {}
 
@@ -122,12 +124,45 @@ public class Quiz implements Serializable {
         this.version = version;
     }
 
-    public Map<Integer, QuizQuestion> getQuizQuestions() {
-        if (questions == null ) {
+    public Set<QuizQuestion> getQuizQuestions() {
+        return quizQuestions;
+    }
+
+    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
+        this.quizQuestions = quizQuestions;
+    }
+
+    public Set<QuizAnswer> getQuizAnswers() {
+        return quizAnswers;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
+    }
+
+    public void addQuizQuestion(QuizQuestion quizQuestion) {
+        if (quizQuestions == null) {
+            quizQuestions = new HashSet<>();
+        }
+        this.quizQuestions.add(quizQuestion);
+    }
+
+    public void addQuizAnswer(QuizAnswer quizAnswer) {
+        if (quizAnswers == null) {
+            quizAnswers = new HashSet<>();
+        }
+        this.quizAnswers.add(quizAnswer);
+    }
+
+
+
+    public Map<Integer, QuizQuestion> getQuizQuestionsMap() {
+        if (quizQuestions == null ) {
             return new HashMap<>();
         }
 
-        return this.questions.stream().collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> quizQuestion));
+        return this.quizQuestions.stream().collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> quizQuestion));
     }
+
 
 }

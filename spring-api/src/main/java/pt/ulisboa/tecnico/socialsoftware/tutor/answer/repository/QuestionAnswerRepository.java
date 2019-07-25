@@ -3,13 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.Answer;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 @Repository
-public interface AnswerRepository extends JpaRepository<Answer, Integer> {
+public interface QuestionAnswerRepository extends JpaRepository<QuestionAnswer, Integer> {
 
     @Query(value = "select count(distinct a.quiz_id) from answers a where a.user_id = :id", nativeQuery = true)
     Integer getTotalQuizzes(Integer id);

@@ -30,7 +30,7 @@ public class QuizDto implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.questions = quiz.getQuizQuestions().entrySet().stream()
+        this.questions = quiz.getQuizQuestionsMap().entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getKey, entry -> new QuestionDto(entry.getValue().getQuestion())));
     }
 

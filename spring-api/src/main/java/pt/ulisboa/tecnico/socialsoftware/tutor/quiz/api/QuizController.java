@@ -1,16 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.api;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.StudentQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -46,9 +45,8 @@ public class QuizController {
         return ResponseEntity.ok().build();
     }
 
-    @Transactional
     @PostMapping("/quizzes/generate/student")
-    public StudentQuizDto getNewQuiz(Principal principal, @RequestBody QuizSetupDto quizDetails) {
+    public QuizStatementDto getNewQuiz(Principal principal, @RequestBody QuizSetupDto quizDetails) {
 
         // TODO: Check how is this object materialized
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -57,7 +55,7 @@ public class QuizController {
 
         // TODO: It is necessary to consider the creation of a quiz answer associated to the student, eventually inside de service
 
-        return new StudentQuizDto(quiz);
+        return new QuizStatementDto(quiz);
     }
 
 

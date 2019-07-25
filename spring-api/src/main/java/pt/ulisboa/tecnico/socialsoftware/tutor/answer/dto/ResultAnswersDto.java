@@ -6,9 +6,8 @@ import java.util.Map;
 
 
 public class ResultAnswersDto implements Serializable {
-
-    private Integer quiz_id;
-    private LocalDateTime answer_date;
+    private Integer quizAnswerId;
+    private LocalDateTime answerDate;
     private Map<Integer, ResultAnswerDto> answers;
 
     public ResultAnswersDto(){
@@ -19,20 +18,20 @@ public class ResultAnswersDto implements Serializable {
         this.answers = answers;
     }
 
-    public Integer getQuizId() {
-        return quiz_id;
+    public Integer getQuizAnswerId() {
+        return quizAnswerId;
     }
 
-    public void setQuizId(Integer quiz_id) {
-        this.quiz_id = quiz_id;
+    public void setQuizAnswerId(Integer quizAnswerId) {
+        this.quizAnswerId = quizAnswerId;
     }
 
     public LocalDateTime getAnswerDate() {
-        return answer_date;
+        return answerDate;
     }
 
-    public void setAnswerDate(LocalDateTime answer_date) {
-        this.answer_date = answer_date;
+    public void setAnswerDate(LocalDateTime answerDate) {
+        this.answerDate = answerDate;
     }
 
     public Map<Integer, ResultAnswerDto> getAnswers() {

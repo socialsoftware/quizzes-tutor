@@ -8,20 +8,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class StudentQuestionDto implements Serializable {
+public class QuestionStatementDto implements Serializable {
 
     private Integer id;
     private String content;
-    private List<StudentOptionDto> options;
+    private List<OptionStatementDto> options;
     private ImageDto image;
 
-    public StudentQuestionDto(Question question) {
+    public QuestionStatementDto(Question question) {
         this.id = question.getId();
         this.content = question.getContent();
         if (question.getImage() != null) {
             this.image = new ImageDto(question.getImage());
         }
-        this.options = question.getOptions().stream().map(StudentOptionDto::new).collect(Collectors.toList());
+        this.options = question.getOptions().stream().map(OptionStatementDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -40,11 +40,11 @@ public class StudentQuestionDto implements Serializable {
         this.content = content;
     }
 
-    public List<StudentOptionDto> getOptions() {
+    public List<OptionStatementDto> getOptions() {
         return options;
     }
 
-    public void setOptions(List<StudentOptionDto> options) {
+    public void setOptions(List<OptionStatementDto> options) {
         this.options = options;
     }
 

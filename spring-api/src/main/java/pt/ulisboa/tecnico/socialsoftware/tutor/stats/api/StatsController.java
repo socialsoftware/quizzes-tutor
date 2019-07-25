@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.stats.api;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.stats.dto.StatsDto;
@@ -14,12 +14,12 @@ import java.security.Principal;
 @RestController
 public class StatsController {
 
-    private AnswerRepository answerRepository;
+    private QuestionAnswerRepository questionAnswerRepository;
     private QuestionRepository questionRepository;
     private QuizRepository quizRepository;
 
-    StatsController(AnswerRepository answerRepository, QuestionRepository questionRepository, QuizRepository quizRepository) {
-        this.answerRepository = answerRepository;
+    StatsController(QuestionAnswerRepository questionAnswerRepository, QuestionRepository questionRepository, QuizRepository quizRepository) {
+        this.questionAnswerRepository = questionAnswerRepository;
         this.questionRepository = questionRepository;
         this.quizRepository = quizRepository;
 
@@ -29,12 +29,12 @@ public class StatsController {
     public StatsDto getStats(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        Integer totalQuizzes = this.answerRepository.getTotalQuizzes(user.getId());
+        Integer totalQuizzes = this.questionAnswerRepository.getTotalQuizzes(user.getId());
         Integer totalActiveQuestions = this.questionRepository.getTotalActiveQuestions();
 
-        Integer totalAnswers = this.answerRepository.getTotalAnswers(user.getId());
-        Integer uniqueCorrectAnswers = this.answerRepository.getUniqueCorrectAnswers(user.getId());
-        Integer uniqueWrongAnswers = this.answerRepository.getUniqueAnswers(user.getId()) - uniqueCorrectAnswers;
+        Integer totalAnswers = this.questionAnswerRepository.getTotalAnswers(user.getId());
+        Integer uniqueCorrectAnswers = this.questionAnswerRepository.getUniqueCorrectAnswers(user.getId());
+        Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - uniqueCorrectAnswers;
         //TopicsStatsDto[] topics = this.answerRepository.getTopicsStats(user.getId());
         //AnsweredQuizDto[] quizzes = this.quizRepository.getQuizzes(user.getId());
 

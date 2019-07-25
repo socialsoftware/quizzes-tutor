@@ -2,21 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService
 import spock.lang.Specification
-import spock.lang.Subject
 
 import java.time.LocalDateTime
 
@@ -56,7 +47,7 @@ class CreateQuizServiceMethodSpockTest extends Specification {
         result.getType() == Quiz.QuizType.EXAM.name()
         result.getSeries() == 1
         result.getVersion() == VERSION
-        result.getQuizQuestions().size() == 0
+        result.getQuizQuestionsMap().size() == 0
 
     }
 

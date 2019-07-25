@@ -36,7 +36,7 @@ class CreateQuizControllerMethodSpockTest extends Specification {
                             [
                                 "content": "string",
                                 "correct": true,
-                                "option": 0
+                                "optionId": 0
                             ]
                     ]
                 ],
@@ -52,7 +52,7 @@ class CreateQuizControllerMethodSpockTest extends Specification {
                             [
                                 "content": "string",
                                 "correct": true,
-                                "option": 0
+                                "optionId": 0
                             ]
                     ]
                 ],
@@ -68,7 +68,7 @@ class CreateQuizControllerMethodSpockTest extends Specification {
                             [
                                 "content": "string",
                                 "correct": true,
-                                "option": 0
+                                "optionId": 0
                             ]
                     ]
                 ]

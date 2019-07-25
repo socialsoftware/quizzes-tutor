@@ -1,8 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -10,15 +9,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "answers")
-public class Answer implements Serializable {
+public class QuestionAnswer implements Serializable {
     @Id
     @GeneratedValue
     private Integer id;
-
-    private Integer option;
-
-    @Column(name = "answer_date")
-    private LocalDateTime date;
 
     @Column(columnDefinition = "time_taken")
     private LocalDateTime timeTaken;
@@ -28,17 +22,24 @@ public class Answer implements Serializable {
     private QuizQuestion quizQuestion;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "quiz_answer_id")
+    private QuizAnswer quizAnswer;
 
-    public Answer() {
+    @ManyToOne
+    @JoinColumn(name = "option_id")
+    private Option option;
+
+    public QuestionAnswer() {
     }
 
-    public Answer(ResultAnswerDto answer, QuizQuestion quizQuestion, User user, LocalDateTime date){
-        this.option = answer.getOption();
-        this.date = date;
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, LocalDateTime timeTaken, Option option){
+        this.timeTaken = timeTaken;
+        this.quizAnswer = quizAnswer;
+        quizAnswer.addQuestionAnswer(this);
         this.quizQuestion = quizQuestion;
-        this.user = user;
+        quizQuestion.addQuestionAnswer(this);
+        this.option = option;
+        option.addQuestionAnswer(this);
     }
 
     public Integer getId() {
@@ -47,22 +48,6 @@ public class Answer implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getOption() {
-        return option;
-    }
-
-    public void setOption(Integer option) {
-        this.option = option;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
     }
 
     public LocalDateTime getTimeTaken() {
@@ -81,12 +66,19 @@ public class Answer implements Serializable {
         this.quizQuestion = quizQuestion;
     }
 
-    public User getUser() {
-        return user;
+    public QuizAnswer getQuizAnswer() {
+        return quizAnswer;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setQuizAnswer(QuizAnswer quizAnswer) {
+        this.quizAnswer = quizAnswer;
     }
 
+    public Option getOption() {
+        return option;
+    }
+
+    public void setOption(Option option) {
+        this.option = option;
+    }
 }

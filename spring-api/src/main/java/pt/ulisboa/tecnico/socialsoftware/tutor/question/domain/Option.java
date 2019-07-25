@@ -1,9 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "options")
@@ -21,6 +24,8 @@ public class Option implements Serializable {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer")
+    private Set<QuestionAnswer> questionAnswers;
 
     public Option(){}
 
@@ -28,7 +33,6 @@ public class Option implements Serializable {
         this.content = option.getContent();
         this.correct = option.getCorrect();
     }
-
 
     public Boolean getCorrect() {
         return correct;
@@ -69,4 +73,20 @@ public class Option implements Serializable {
     public void setQuestion(Question question) {
         this.question = question;
     }
+
+    public Set<QuestionAnswer> getQuestionAnswers() {
+        return questionAnswers;
+    }
+
+    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
+        this.questionAnswers = questionAnswers;
+    }
+
+    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+        if (questionAnswers == null) {
+            questionAnswers = new HashSet<>();
+        }
+        questionAnswers.add(questionAnswer);
+    }
+
 }
