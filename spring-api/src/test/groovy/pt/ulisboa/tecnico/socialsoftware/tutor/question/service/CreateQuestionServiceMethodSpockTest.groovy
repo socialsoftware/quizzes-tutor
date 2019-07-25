@@ -27,15 +27,13 @@ class CreateQuestionServiceMethodSpockTest extends Specification {
     @Autowired
     QuestionRepository questionRepository
 
-    @Autowired
-    ImageRepository imageRepository
-
     def "create a question with no image and one option"() {
         given: "create a question"
         def question = new QuestionDto()
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
         question.setDifficulty(1)
+        and: 'a option'
         def option = new OptionDto()
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
@@ -68,10 +66,12 @@ class CreateQuestionServiceMethodSpockTest extends Specification {
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
         question.setDifficulty(1)
+        and: 'an image'
         def image = new ImageDto()
         image.setUrl(URL)
         image.setWidth(20)
         question.setImage(image)
+        and: 'two options'
         def option = new OptionDto()
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)

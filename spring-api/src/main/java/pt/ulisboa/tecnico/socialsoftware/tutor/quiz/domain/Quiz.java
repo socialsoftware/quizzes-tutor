@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
@@ -43,11 +44,6 @@ public class Quiz implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-
-        this.questions = new HashSet<>();
-        for (int i = 0; i < quiz.getQuestions().size(); i ++) {
-            this.questions.add(new QuizQuestion(this, new Question(quiz.getQuestions().get(i)), i));
-        }
     }
 
     public void generate(Integer quizSize, List<Question> activeQuestions) {
@@ -127,6 +123,10 @@ public class Quiz implements Serializable {
     }
 
     public Map<Integer, QuizQuestion> getQuizQuestions() {
+        if (questions == null ) {
+            return new HashMap<>();
+        }
+
         return this.questions.stream().collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> quizQuestion));
     }
 

@@ -16,7 +16,6 @@ public class QuizDto implements Serializable {
     private String type;
     private Integer series;
     private String version;
-    private Boolean completed;
     private Map<Integer, QuestionDto> questions;
 
     public QuizDto(){
@@ -89,14 +88,6 @@ public class QuizDto implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
-    }
-
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
     }
 
     public Map<Integer, QuestionDto> getQuestions() {
