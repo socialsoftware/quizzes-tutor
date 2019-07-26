@@ -62,7 +62,7 @@ public class AnswerService {
     }
 
     @Transactional
-    public CorrectAnswersDto createQuestionAnswer(User user, @Valid @RequestBody ResultAnswersDto answers) {
+    public CorrectAnswersDto submitQuestionsAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
 
