@@ -272,10 +272,12 @@ def insertQuiz(cur, quiz):
 def insertQuestion(cur, question, quizId, sequence):
     # question = {"questionId": "", "content": "", "image": [], "options": []}
     # insert question
-    cur.execute("INSERT INTO questions (content, name) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
+    #cur.execute("INSERT INTO questions (content, name) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
+    cur.execute("INSERT INTO questions (content) VALUES (%s) RETURNING *", [question["content"]])
+    
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
-    cur.execute("INSERT INTO quiz_has_question (quiz_id, question_id, sequence) VALUES (%s, %s, %s)", [int(quizId), int(questionId), sequence])
+    cur.execute("INSERT INTO quiz_questions (quiz_id, question_id, sequence) VALUES (%s, %s, %s)", [int(quizId), int(questionId), sequence])
 
     # image insertion
     if len(question["image"]) > 0:

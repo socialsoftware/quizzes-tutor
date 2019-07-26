@@ -15,7 +15,7 @@ public class User implements UserDetails {
     public enum Role {STUDENT, TEACHER};
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String username;

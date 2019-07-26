@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Table(name = "images")
 public class Image implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String url;
     private Integer width;

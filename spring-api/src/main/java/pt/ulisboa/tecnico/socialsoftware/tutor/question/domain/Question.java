@@ -14,7 +14,9 @@ public class Question implements Serializable {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(columnDefinition = "TEXT")
     private String content;
+
     private Integer difficulty;
     private Boolean active;
 
