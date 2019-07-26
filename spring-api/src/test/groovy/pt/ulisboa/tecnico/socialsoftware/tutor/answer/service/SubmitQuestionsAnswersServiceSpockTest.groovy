@@ -28,7 +28,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.USER_MISMATCH
 
 @DataJpaTest
-class SubmitQuestionsAnswersServiceMethodSpockTest extends Specification {
+class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     @Autowired
     AnswerService answerService
 

@@ -12,7 +12,7 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 @DataJpaTest
-class CreateQuizServiceMethodSpockTest extends Specification {
+class CreateQuizServiceSpockTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content'
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String VERSION = 'B'
@@ -59,6 +59,5 @@ class CreateQuizServiceMethodSpockTest extends Specification {
             return new QuizService()
         }
     }
-
 
 }

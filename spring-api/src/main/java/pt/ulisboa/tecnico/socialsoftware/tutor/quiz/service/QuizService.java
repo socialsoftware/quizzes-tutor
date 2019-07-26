@@ -20,8 +20,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.QUESTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.QUIZ_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
 
 @Service
 public class QuizService {
@@ -69,17 +68,24 @@ public class QuizService {
     }
 
     @Transactional
-    public QuizAnswer generateStudentQuiz(User user, Integer quizSize) {
+    public QuizAnswer generateStudentQuiz(User user, int quizSize) {
         Quiz quiz = new Quiz();
 
+        List<Question> activeQuestions = questionRepository.getActiveQuestions();
+
+        if (activeQuestions.size() < quizSize) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS, Integer.toString(activeQuestions.size()));
+        }
+
         // TODO: to include knowhow about the student in the future
-        quiz.generate(quizSize, questionRepository.getActiveQuestions());
+        quiz.generate(quizSize, activeQuestions);
 
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz, LocalDateTime.now());
 
-        entityManager.persist(quizAnswer);
+        entityManager.persist(quiz);
 
         return quizAnswer;
     }
+
 }

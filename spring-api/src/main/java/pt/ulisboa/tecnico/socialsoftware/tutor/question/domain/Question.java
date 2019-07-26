@@ -27,7 +27,7 @@ public class Question implements Serializable {
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-    Set<QuizQuestion> quizQuestions;
+    private Set<QuizQuestion> quizQuestions;
 
     public Question(){}
 
@@ -90,6 +90,9 @@ public class Question implements Serializable {
    }
 
     public Set<QuizQuestion> getQuizQuestions() {
+        if (quizQuestions == null) {
+            quizQuestions = new HashSet<>();
+        }
         return quizQuestions;
     }
 

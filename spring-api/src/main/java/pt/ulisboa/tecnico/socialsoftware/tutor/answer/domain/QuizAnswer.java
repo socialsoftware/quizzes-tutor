@@ -108,6 +108,9 @@ public class QuizAnswer implements Serializable {
     }
 
     public Set<QuestionAnswer> getQuestionAnswers() {
+        if (questionAnswers == null) {
+            questionAnswers = new HashSet<>();
+        }
         return questionAnswers;
     }
 

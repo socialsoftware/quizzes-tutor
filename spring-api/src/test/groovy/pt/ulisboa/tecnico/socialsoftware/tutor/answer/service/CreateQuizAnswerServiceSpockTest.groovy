@@ -14,7 +14,7 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 @DataJpaTest
-class CreateQuizAnswerServiceMethodSpockTest extends Specification {
+class CreateQuizAnswerServiceSpockTest extends Specification {
     @Autowired
     AnswerService answerService
 

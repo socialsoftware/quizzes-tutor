@@ -48,20 +48,18 @@ public class Quiz implements Serializable {
         this.version = quiz.getVersion();
     }
 
-    public void generate(Integer quizSize, List<Question> activeQuestions) {
+    public void generate(int quizSize, List<Question> activeQuestions) {
         Random rand = new Random();
         int numberOfActiveQuestions = activeQuestions.size();
         Set <Integer> usedQuestions = new HashSet<>();
 
-        int next;
-        for (int i = 0; i < quizSize; i++) {
-            do {
-                next = rand.nextInt(numberOfActiveQuestions);
+        int numberOfQuestions = 0;
+        while (numberOfQuestions < quizSize) {
+            int next = rand.nextInt(numberOfActiveQuestions);
+            if(!usedQuestions.contains(next)) {
+                usedQuestions.add(next);
+                new QuizQuestion(this, activeQuestions.get(next), numberOfQuestions++);
             }
-            while (!usedQuestions.contains(next));
-            usedQuestions.add(next);
-
-            new QuizQuestion(this, activeQuestions.get(next), i+1);
         }
 
         this.setDate(LocalDateTime.now());

@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateQuestionServiceMethodSpockTest extends Specification {
+class CreateQuestionServiceSpockTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'

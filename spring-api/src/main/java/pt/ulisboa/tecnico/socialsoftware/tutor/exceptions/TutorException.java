@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public class TutorException extends RuntimeException {
-    public enum ExceptionError {QUIZ_NOT_FOUND, QUIZ_ANSWER_NOT_FOUND, USER_MISMATCH, QUIZ_QUESTION_NOT_FOUND, QUIZ_MISMATCH, OPTION_NOT_FOUND, USER_NOT_FOUND, QUESTION_MISMATCH, QUIZ_ALREADY_ANSWERED, QUESTION_NOT_FOUND};
+    public enum ExceptionError {QUIZ_NOT_FOUND, QUIZ_ANSWER_NOT_FOUND, USER_MISMATCH, NOT_ENOUGH_QUESTIONS, QUIZ_QUESTION_NOT_FOUND,
+        QUIZ_MISMATCH, OPTION_NOT_FOUND, USER_NOT_FOUND, QUESTION_MISMATCH, QUIZ_ALREADY_ANSWERED, QUESTION_NOT_FOUND};
     private final ExceptionError error;
     private final String value;
 

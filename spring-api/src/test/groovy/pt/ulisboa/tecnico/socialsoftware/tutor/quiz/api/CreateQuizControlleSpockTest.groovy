@@ -10,7 +10,7 @@ import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
 @WebMvcTest(controllers = [QuizController])
-class CreateQuizControllerMethodSpockTest extends Specification {
+class CreateQuizControlleSpockTest extends Specification {
     @Autowired
     protected MockMvc mvc
 
