@@ -11,7 +11,7 @@ import java.util.Set;
 @Table(name="quiz_questions")
 public class QuizQuestion {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @ManyToOne

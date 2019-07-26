@@ -8,13 +8,13 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "answers")
+@Table(name = "question_answers")
 public class QuestionAnswer implements Serializable {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(columnDefinition = "time_taken")
+    @Column(name = "time_taken")
     private LocalDateTime timeTaken;
 
     @ManyToOne

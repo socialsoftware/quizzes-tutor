@@ -13,11 +13,13 @@ import java.util.Set;
 public class Option implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer option;
     private Boolean correct;
+
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @ManyToOne
