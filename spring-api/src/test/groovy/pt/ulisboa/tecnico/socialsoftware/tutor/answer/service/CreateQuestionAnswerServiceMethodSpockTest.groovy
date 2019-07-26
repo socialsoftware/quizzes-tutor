@@ -61,6 +61,7 @@ class CreateQuestionAnswerServiceMethodSpockTest extends Specification {
         def question = new Question()
         quizQuestion = new QuizQuestion(quiz, question, 0)
         def optionError = new Option()
+        optionError.setCorrect(false)
         question.addOption(optionError)
         optionOk = new Option()
         optionOk.setCorrect(true)

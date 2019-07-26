@@ -63,15 +63,6 @@ public class AnswerService {
 
     @Transactional
     public CorrectAnswersDto createQuestionAnswer(User user, @Valid @RequestBody ResultAnswersDto answers) {
-
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-        System.out.println(user.getUsername());
-
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
 
