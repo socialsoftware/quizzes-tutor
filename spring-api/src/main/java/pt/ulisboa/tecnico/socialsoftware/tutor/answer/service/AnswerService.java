@@ -6,11 +6,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorNotFoundException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -25,6 +26,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
 
@@ -52,76 +54,68 @@ public class AnswerService {
 
     @Transactional
     public void createQuizAnswer(Integer userId, Integer quizId, LocalDateTime availableDate) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorNotFoundException(USER_NOT_FOUND, Integer.toString(userId)));
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, Integer.toString(userId)));
 
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorNotFoundException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
 
         entityManager.persist(new QuizAnswer(user, quiz, availableDate));
     }
 
     @Transactional
-    public CorrectAnswersDto correctAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
+    public CorrectAnswersDto createQuestionAnswer(User user, @Valid @RequestBody ResultAnswersDto answers) {
+
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
+        System.out.println(user.getUsername());
 
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
-                .orElseThrow(() -> new TutorNotFoundException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
 
         quizAnswer.setAnswerDate(answers.getAnswerDate());
 
-        if (user.getId() != quizAnswer.getUser().getId()) {
-            throw new TutorNotFoundException(USER_MISMATCH, user.getUsername());
+        if (isNotAssignedStudent(user, quizAnswer)) {
+            throw new TutorException(USER_MISMATCH, user.getUsername());
         }
 
         for (Map.Entry<Integer, ResultAnswerDto> entrySet : answers.getAnswers().entrySet()) {
             QuizQuestion quizQuestion = quizQuestionRepository.findById(entrySet.getValue().getQuizQuestionId())
-                     .orElseThrow(() -> new TutorNotFoundException(QUIZ_QUESTION_NOT_FOUND, Integer.toString(entrySet.getValue().getQuizQuestionId())));
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(entrySet.getValue().getQuizQuestionId())));
 
-            if (quizQuestion.getQuiz().getId() != quizAnswer.getQuiz().getId()) {
-                throw new TutorNotFoundException(QUIZ_MISMATCH, Integer.toString(quizQuestion.getQuiz().getId()));
+            if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
+                throw new TutorException(QUIZ_MISMATCH, Integer.toString(quizQuestion.getQuiz().getId()));
             }
-
             Option option = optionRepository.findById(entrySet.getValue().getOptionId())
-                    .orElseThrow(() -> new TutorNotFoundException(OPTION_NOT_FOUND, Integer.toString(entrySet.getValue().getOptionId())));
+                    .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, Integer.toString(entrySet.getValue().getOptionId())));
 
 
-            if (!quizQuestion.getQuestion().getOptions().stream().map(option1 -> option1.getId()).anyMatch(value -> value == option.getId())) {
-                throw new TutorNotFoundException(QUIZ_MISMATCH, Integer.toString(option.getId()));
+            if (isNotQuestionOption(quizQuestion, option)) {
+                throw new TutorException(QUIZ_MISMATCH, Integer.toString(option.getId()));
             }
 
-            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, entrySet.getValue().getTimeTaken(), option));
+            if (!quizAnswer.getCompleted()) {
+                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, entrySet.getValue().getTimeTaken(), option));
+            }
         }
 
 
-//        Map<Integer, CorrectAnswerDto> correctAnswers = answers.getAnswers().entrySet().stream()
-//                .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
-//                    Integer sequence = entry.getKey();
-//                    QuizQuestion question = quiz.getQuizQuestionsMap().get(sequence);
-//                    ResultAnswerDto answer = answers.getAnswers().get(sequence);
-//
-//                    System.out.println(":" + sequence + ":" + question + ":" + answer);
-//
-//                    // TODO: to be checked later
-//
-//                    // Verify that question ids match (maybe its overkill verification)
-////            if (! question.getId().equals(answer.getQuizQuestionId())) {
-////                throw new WrongParametersException("QuestionAnswer in position" + sequence + " does not have " + user.getUsername());
-////            }
-//
-//                    // TODO: needs to be redone in the new context
-//
-//                    //    if (! quiz.getCompleted()) {
-//                    questionAnswerRepository.save(new QuestionAnswer(answer, question, user, answers.getAnswerDate()));
-//                    //   }
-//
-//                    return new CorrectAnswerDto(question.getQuestion());
-//                }));
+        return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
+                .collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> new CorrectAnswerDto(quizQuestion))));
+    }
 
+    private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
+        return !quizQuestion.getQuestion().getOptions().stream().map(option1 -> option1.getId()).anyMatch(value -> value == option.getId());
+    }
 
+    private boolean isNotAssignedQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion) {
+        return quizQuestion.getQuiz().getId() != quizAnswer.getQuiz().getId();
+    }
 
-        //  quiz.setCompleted(true);
-       // quizRepository.save(quiz);
-
-        return null;
-        // return new CorrectAnswersDto(correctAnswers);
+    private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
+        return user.getId() != quizAnswer.getUser().getId();
     }
 
 }

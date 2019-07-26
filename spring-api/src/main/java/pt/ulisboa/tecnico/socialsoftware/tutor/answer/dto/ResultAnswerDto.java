@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -12,12 +10,6 @@ public class ResultAnswerDto implements Serializable {
     private LocalDateTime timeTaken;
 
     public ResultAnswerDto(){
-    }
-
-    public ResultAnswerDto(QuestionAnswer questionAnswer) {
-        this.quizQuestionId = questionAnswer.getQuizQuestion().getQuestion().getId();
-        this.optionId = questionAnswer.getOption().getId();
-        this.timeTaken = questionAnswer.getTimeTaken();
     }
 
     public Integer getQuizQuestionId() {

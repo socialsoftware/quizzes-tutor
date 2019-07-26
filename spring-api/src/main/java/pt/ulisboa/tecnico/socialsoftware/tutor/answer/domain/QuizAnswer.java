@@ -25,6 +25,8 @@ public class QuizAnswer implements Serializable {
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
 
+    private Boolean completed;
+
     @ManyToOne
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
@@ -42,6 +44,7 @@ public class QuizAnswer implements Serializable {
     public QuizAnswer(User user, Quiz quiz, LocalDateTime availableDate){
         this.assignedDate = LocalDateTime.now();
         this.availableDate = availableDate;
+        this.completed = false;
         this.user = user;
         user.addQuizAnswer(this);
         this.quiz = quiz;
@@ -78,6 +81,14 @@ public class QuizAnswer implements Serializable {
 
     public void setAnswerDate(LocalDateTime answerDate) {
         this.answerDate = answerDate;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     public Quiz getQuiz() {

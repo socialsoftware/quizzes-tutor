@@ -14,10 +14,6 @@ public class ResultAnswersDto implements Serializable {
 
     }
 
-    ResultAnswersDto(Map<Integer, ResultAnswerDto> answers) {
-        this.answers = answers;
-    }
-
     public Integer getQuizAnswerId() {
         return quizAnswerId;
     }

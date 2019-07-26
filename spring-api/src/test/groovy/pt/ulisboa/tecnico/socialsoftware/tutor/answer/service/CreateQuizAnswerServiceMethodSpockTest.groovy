@@ -51,6 +51,7 @@ class CreateQuizAnswerServiceMethodSpockTest extends Specification {
         quizAnswer.getId() != null
         quizAnswer.getAssignedDate() != null
         quizAnswer.getAvailableDate() == availableDate
+        quizAnswer.getCompleted() == false
         quizAnswer.getUser().getId() == userId
         quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)
         quizAnswer.getQuiz().getId() == quizId

@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service;
 
-import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -27,6 +27,14 @@ public class QuestionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
     }
 
+    public List<Question> findAll(Integer pageIndex, Integer pageSize) {
+        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
+    }
+
+    @Transactional
+    public void create(QuestionDto question) {
+        this.entityManager.persist(new Question(question));
+    }
 
     @Transactional
     public void update(Integer questionId, QuestionDto questionDto) {
@@ -36,15 +44,6 @@ public class QuestionService {
         //question.setImage(new Image(questionId, questionDto.getImage()));
         question.setActive(questionDto.getActive());
         //question.setOptions(questionDto.getOptions().stream().map(Option::new).collect(Collectors.toList()));
-    }
-
-    @Transactional
-    public void create(QuestionDto question) {
-        this.entityManager.persist(new Question(question));
-    }
-
-    public List<Question> findAll(Integer pageIndex, Integer pageSize) {
-        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
     }
 
     @Transactional

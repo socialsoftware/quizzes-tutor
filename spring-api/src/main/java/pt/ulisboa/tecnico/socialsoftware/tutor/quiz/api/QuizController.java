@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
@@ -51,11 +51,9 @@ public class QuizController {
         // TODO: Check how is this object materialized
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        Quiz quiz = quizService.generateStudentQuiz(user.getId(), quizDetails.getNumberOfQuestions());
+        QuizAnswer quizAnswer = quizService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
 
-        // TODO: It is necessary to consider the creation of a quiz answer associated to the student, eventually inside de service
-
-        return new QuizStatementDto(quiz);
+        return new QuizStatementDto(quizAnswer);
     }
 
 

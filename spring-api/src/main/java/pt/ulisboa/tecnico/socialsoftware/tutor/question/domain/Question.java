@@ -95,10 +95,16 @@ public class Question implements Serializable {
         this.quizQuestions = quizQuestions;
     }
 
+    public void addOption(Option option) {
+        options.add(option);
+    }
 
-    public Integer getCorrectOption() {
-        Optional<Option> correctOption = this.getOptions().stream().filter(Option::getCorrect).findAny();
-        return correctOption.get().getOption();
+    public Integer getCorrectOptionId() {
+        return this.getOptions().stream()
+                .filter(Option::getCorrect)
+                .findAny()
+                .map(Option::getId)
+                .orElse(null);
     }
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {
@@ -107,4 +113,6 @@ public class Question implements Serializable {
         }
         quizQuestions.add(quizQuestion);
     }
+
+
 }

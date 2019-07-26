@@ -1,41 +1,32 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 
 public class CorrectAnswerDto implements Serializable {
 
-    private Integer question_id;
-    private Integer sequence;
-    private Integer correct_option;
+    private Integer quizQuestionId;
+    private Integer correctOptionId;
 
-    public CorrectAnswerDto(Question question) {
-        this.question_id = question.getId();
-        this.correct_option = question.getCorrectOption();
+    public CorrectAnswerDto(QuizQuestion quizQuestion) {
+        this.quizQuestionId = quizQuestion.getId();
+        this.correctOptionId = quizQuestion.getQuestion().getCorrectOptionId();
     }
 
-    public Integer getQuestionId() {
-        return question_id;
+    public Integer getQuizQuestionId() {
+        return quizQuestionId;
     }
 
-    public void setQuestionId(Integer question_id) {
-        this.question_id = question_id;
+    public void setQuizQuestionId(Integer quizQuestionId) {
+        this.quizQuestionId = quizQuestionId;
     }
 
-    public Integer getCorrectOption() {
-        return correct_option;
+    public Integer getCorrectOptionId() {
+        return correctOptionId;
     }
 
-    public void setCorrectOption(Integer correct_option) {
-        this.correct_option = correct_option;
-    }
-
-    public Integer getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
+    public void setCorrectOptionId(Integer correctOptionId) {
+        this.correctOptionId = correctOptionId;
     }
 }

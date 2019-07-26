@@ -55,7 +55,7 @@ public class QuizQuestion {
         this.question = question;
     }
 
-    public int getSequence() {
+    public Integer getSequence() {
         return sequence;
     }
 

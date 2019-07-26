@@ -7,7 +7,7 @@ public class CorrectAnswersDto implements Serializable {
 
     private Map<Integer, CorrectAnswerDto> answers;
 
-    CorrectAnswersDto(Map<Integer, CorrectAnswerDto> answers) {
+    public CorrectAnswersDto(Map<Integer, CorrectAnswerDto> answers) {
         this.answers = answers;
     }
 

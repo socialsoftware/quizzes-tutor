@@ -24,7 +24,6 @@ public class AnswerController {
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return answerService.correctAnswers(user, answers);
-
+        return answerService.createQuestionAnswer(user, answers);
     }
 }
