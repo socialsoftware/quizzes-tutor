@@ -14,8 +14,10 @@
     </v-card-title> 
     <v-data-table
     :headers="headers"
+    :custom-filter="customFilter"
     :items="questions"
     :items-per-page="10"
+    :search="search"
     class="elevation-1">
     <template slot="items" slot-scope="props">
         <tr @click="props.expanded = !props.expanded">
@@ -57,7 +59,7 @@ export default class QuestionsMangement extends Vue {
 
   data () {
       return {
-        search: '',
+        search: "",
         headers: [
           { text: 'Question', value: 'content' },
           { text: 'Title', value: 'title' },
@@ -66,6 +68,10 @@ export default class QuestionsMangement extends Vue {
         ],
         questions: this.questions
       }
+  }
+
+  customFilter(items: Question[], search: string) {
+    return items.filter((question: Question) => JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !== -1)
   }
 
   beforeMount() {
