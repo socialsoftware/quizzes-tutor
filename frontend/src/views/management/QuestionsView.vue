@@ -1,15 +1,42 @@
 <template>
   <div v-if="questions">
-    <div v-for="question in questions" :key="question.id">
-      <p v-html="convertMarkDown(question.content, question.image)"></p>
+   
+  <v-card>
+    <v-card-title>
+      Questions
+      <v-spacer></v-spacer>
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        label="Search"
+        single-line
+        hide-details></v-text-field>
+    </v-card-title> 
+    <v-data-table
+    :headers="headers"
+    :items="questions"
+    :items-per-page="10"
+    class="elevation-1">
+    <template slot="items" slot-scope="props">
+        <tr @click="props.expanded = !props.expanded">
+          <td class="text-left" v-html="convertMarkDown(props.item.content, props.item.image)"/>
+          <td class="text-left" v-text="props.item.title"/>
+          <td class="text-left" v-text="props.item.active"/>
+          <td class="text-left" v-text="props.item.difficulty"/>
+        </tr>
+    </template>
+    <template slot="expand" slot-scope="props">
+      <p class="text-left">Options</p>
       <ul>
-        <li
-          v-for="option in question.options"
+        <li class="text-left"
+          v-for="option in props.item.options"
           :key="option.id"
           v-html="convertMarkDown(option.content)"
         ></li>
       </ul>
-    </div>
+    </template>
+  </v-data-table>
+  </v-card>
   </div>
 </template>
 
@@ -23,8 +50,22 @@ import Image from "@/models/Image";
 @Component
 export default class QuestionsMangement extends Vue {
   questions: Question[] | null = null;
+
   constructor() {
     super();
+  }
+
+  data () {
+      return {
+        search: '',
+        headers: [
+          { text: 'Question', value: 'content' },
+          { text: 'Title', value: 'title' },
+          { text: 'Active', value: 'active' },
+          { text: 'Difficulty', value: 'difficulty' },
+        ],
+        questions: this.questions
+      }
   }
 
   beforeMount() {
