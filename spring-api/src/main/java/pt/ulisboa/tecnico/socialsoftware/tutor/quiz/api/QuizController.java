@@ -25,6 +25,7 @@ public class QuizController {
 
     @GetMapping("/quizzes")
     public List<QuizDto> getQuizzes(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
+
         return quizService.findAll(pageIndex, pageSize).stream().map(QuizDto::new).collect(Collectors.toList());
     }
 

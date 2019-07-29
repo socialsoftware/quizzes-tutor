@@ -19,7 +19,12 @@ public class QuestionController {
     }
 
     @GetMapping("/questions")
-    public List<QuestionDto> getQuestions(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
+    public List<QuestionDto> getQuestions(@RequestParam(value = "page", defaultValue = "-1") int pageIndex, @RequestParam(value = "size", defaultValue = "-1") int pageSize){
+        if (pageIndex == -1 && pageSize == -1) {
+            pageIndex = 0;
+            pageSize = Integer.MAX_VALUE;
+        }
+
         return this.questionService.findAll(pageIndex, pageSize).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 

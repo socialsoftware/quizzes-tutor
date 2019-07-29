@@ -5,6 +5,7 @@ import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
 import SetupView from "./views/SetupView.vue";
 import QuizView from "./views/QuizView.vue";
+import QuestionsManagement from "./views/question/QuestionsManagement.vue";
 import ResultsView from "./views/ResultsView.vue";
 import StatsView from "./views/StatsView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
@@ -44,6 +45,15 @@ let router = new Router({
         title: "Software Architecture - Quiz",
         requiresAuth: true,
         requiresVerification: true
+      }
+    },
+    {
+      path: "/questions",
+      name: "questionsMangement",
+      component: QuestionsManagement,
+      meta: {
+        title: "Software Architecture - Questions",
+        requiresAuth: true,
       }
     },
     {

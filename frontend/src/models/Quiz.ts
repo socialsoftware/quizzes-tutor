@@ -4,6 +4,7 @@ import CorrectAnswer from "@/models/CorrectAnswer";
 import Answer from "@/models/Answer";
 import { map_to_object } from "@/scripts/script";
 import Option from "@/models/Option";
+import Image from "@/models/Image";
 
 export interface ServerQuestion {
   quizQuestionId: number;
@@ -11,11 +12,6 @@ export interface ServerQuestion {
   options: Option[] | null;
   //topic: string | null;
   image: Image | null;
-}
-
-export interface Image {
-  url: string;
-  width: number | null;
 }
 
 export default class Quiz {

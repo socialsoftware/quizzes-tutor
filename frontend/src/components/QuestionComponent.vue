@@ -12,7 +12,7 @@
       >
       <div
         class="question-content"
-        v-html="convertMarkDown(question.content)"
+        v-html="convertMarkDown(question.content, question.image)"
       ></div>
       <div class="square" @click="increaseOrder">
         <i class="fas fa-chevron-right"></i>
@@ -43,7 +43,7 @@
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import Question from "@/models/Question";
 import Answer from "@/models/Answer";
-import showdown from "showdown";
+import { convertMarkDown } from "@/scripts/script"
 
 @Component
 export default class QuestionComponent extends Vue {
@@ -55,26 +55,6 @@ export default class QuestionComponent extends Vue {
 
   constructor() {
     super();
-  }
-
-  convertMarkDown(text: string): string {
-    const converter = new showdown.Converter();
-
-    if (this.question && this.question.image) {
-      text +=
-        "  \n  \n  \n[image]: " +
-        process.env.VUE_APP_ROOT_API +
-        "/images/questions/" +
-        this.question.image.url +
-        ' "Image"';
-    }
-
-    let str = converter.makeHtml(text);
-    //remove root paragraphs <p></p>
-    str = str.substring(3);
-    str = str.substring(0, str.length - 4);
-
-    return str;
   }
 
   @Emit()

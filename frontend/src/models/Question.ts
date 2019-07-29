@@ -1,4 +1,5 @@
 import Option from "@/models/Option";
+import Image from "@/models/Image";
 
 export interface ServerQuestion {
   quizQuestionId: number;
@@ -6,11 +7,6 @@ export interface ServerQuestion {
   options: Option[] | null;
   //topic: string | null;
   image: Image | null;
-}
-
-export interface Image {
-  url: string;
-  width: number | null;
 }
 
 export default class Question implements ServerQuestion {

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 
 public class QuestionDto implements Serializable {
+    private Integer id;
     private String content;
     private Integer difficulty;
     private Boolean active;
@@ -20,6 +21,7 @@ public class QuestionDto implements Serializable {
     }
 
     public QuestionDto(Question question) {
+        this.id = question.getId();
         this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
@@ -28,6 +30,14 @@ public class QuestionDto implements Serializable {
             this.image = new ImageDto(question.getImage());
         }
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getContent() {
