@@ -15,8 +15,8 @@
         <span
           v-for="index in +quiz.numberOfQuestions"
           v-bind:class="[
-            'question-button',
-            index === order + 1 ? 'current-question-button' : ''
+            'management-button',
+            index === order + 1 ? 'current-management-button' : ''
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -49,7 +49,7 @@ Component.registerHooks([
   "beforeRouteLeave"
 ]);
 
-import Quiz from "../models/Quiz";
+import Quiz from "../../models/Quiz";
 import Answer from "@/models/Answer";
 import QuestionComponent from "@/components/QuestionComponent.vue";
 

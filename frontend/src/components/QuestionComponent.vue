@@ -42,8 +42,8 @@
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import Question from "@/models/Question";
-import Answer from "@/models/Answer";
-import { convertMarkDown } from "@/scripts/script"
+import { convertMarkDown } from "@/scripts/script";
+import Image from "@/models/Image";
 
 @Component
 export default class QuestionComponent extends Vue {
@@ -70,6 +70,10 @@ export default class QuestionComponent extends Vue {
   @Emit()
   selectOption(optionId: number) {
     return optionId;
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

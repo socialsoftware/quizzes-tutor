@@ -1,9 +1,9 @@
 export default class Image {
-    url: string;
-    width: number | null;
+  url: string;
+  width: number | null;
 
-    constructor(url: string, width: number) {
-        this.url = url;
-        this.width = width;
-    }
+  constructor(url: string, width: number) {
+    this.url = url;
+    this.width = width;
+  }
 }

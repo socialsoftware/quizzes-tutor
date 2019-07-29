@@ -8,8 +8,8 @@
         <span
           v-for="index in +quiz.numberOfQuestions"
           v-bind:class="[
-            'question-button',
-            index === order + 1 ? 'current-question-button' : ''
+            'management-button',
+            index === order + 1 ? 'current-management-button' : ''
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Quiz from "../models/Quiz";
+import Quiz from "../../models/Quiz";
 import ResultComponent from "@/components/ResultComponent.vue";
 
 @Component({

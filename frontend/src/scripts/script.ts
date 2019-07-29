@@ -1,4 +1,4 @@
-import Image from "@/models/Image"
+import Image from "@/models/Image";
 import showdown from "showdown";
 
 export function map_to_object(aMap: Map<any, any>) {
@@ -10,7 +10,10 @@ export function map_to_object(aMap: Map<any, any>) {
   return obj;
 }
 
-export function convertMarkDown(text: string, image: Image | null = null): string {
+export function convertMarkDown(
+  text: string,
+  image: Image | null = null
+): string {
   const converter = new showdown.Converter();
 
   if (image) {

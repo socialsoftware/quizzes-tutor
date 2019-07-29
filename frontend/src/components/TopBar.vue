@@ -10,6 +10,11 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
+        <v-btn v-if="isLoggedIn" to="/management/questions" flat>
+          Management
+          <v-icon>fas fa-file-alt</v-icon>
+        </v-btn>
+
         <v-btn v-if="isLoggedIn" to="/stats" flat>
           Stats
           <v-icon>fas fa-user</v-icon>

@@ -111,11 +111,11 @@ export default class Quiz {
     this._id = value;
   }
 
-  get questions(): Map<number, ServerQuestion> {
+  get questions(): Map<number, Question> {
     return this._questions;
   }
 
-  set questions(value: Map<number, ServerQuestion>) {
+  set questions(value: Map<number, Question>) {
     this._questions = value;
   }
 

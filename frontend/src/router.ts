@@ -3,12 +3,13 @@ import Router from "vue-router";
 import Store from "./store";
 import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
-import SetupView from "./views/SetupView.vue";
-import QuizView from "./views/QuizView.vue";
-import QuestionsManagement from "./views/question/QuestionsManagement.vue";
-import ResultsView from "./views/ResultsView.vue";
-import StatsView from "./views/StatsView.vue";
+import SetupView from "./views/user/SetupView.vue";
+import QuizView from "./views/user/QuizView.vue";
+import QuestionsView from "./views/management/QuestionsView.vue";
+import ResultsView from "./views/user/ResultsView.vue";
+import StatsView from "./views/user/StatsView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
+import ManagementView from "@/views/management/ManagementView.vue";
 
 Vue.use(Router);
 
@@ -29,6 +30,22 @@ let router = new Router({
       meta: { title: "Software Architecture - Login" }
     },
     {
+      path: "/management",
+      name: "management",
+      component: ManagementView,
+      children: [
+        {
+          path: "questions",
+          name: "questions-management",
+          component: QuestionsView,
+          meta: {
+            title: "Software Architecture - Questions",
+            requiresAuth: true
+          }
+        }
+      ]
+    },
+    {
       path: "/setup",
       name: "setup",
       component: SetupView,
@@ -45,15 +62,6 @@ let router = new Router({
         title: "Software Architecture - Quiz",
         requiresAuth: true,
         requiresVerification: true
-      }
-    },
-    {
-      path: "/questions",
-      name: "questionsMangement",
-      component: QuestionsManagement,
-      meta: {
-        title: "Software Architecture - Questions",
-        requiresAuth: true,
       }
     },
     {

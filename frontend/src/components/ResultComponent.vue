@@ -74,8 +74,7 @@ import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import Question from "@/models/Question";
 import Answer from "@/models/Answer";
 import CorrectAnswer from "@/models/CorrectAnswer";
-import { convertMarkDown } from "@/scripts/script"
-
+import { convertMarkDown } from "@/scripts/script";
 
 @Component
 export default class ResultComponent extends Vue {
