@@ -13,12 +13,14 @@ public class QuestionDto implements Serializable {
     private Boolean active;
     private List<OptionDto> options;
     private ImageDto image;
+    private String title;
 
     public QuestionDto() {
 
     }
 
     public QuestionDto(Question question) {
+        this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.active = question.getActive();
@@ -66,5 +68,13 @@ public class QuestionDto implements Serializable {
 
     public void setImage(ImageDto image) {
         this.image = image;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

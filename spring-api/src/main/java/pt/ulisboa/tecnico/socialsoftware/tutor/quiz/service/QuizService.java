@@ -80,10 +80,10 @@ public class QuizService {
         // TODO: to include knowhow about the student in the future
         quiz.generate(quizSize, activeQuestions);
 
-
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz, LocalDateTime.now());
 
         entityManager.persist(quiz);
+        entityManager.persist(quizAnswer);
 
         return quizAnswer;
     }

@@ -1,5 +1,5 @@
 <template>
-  <div class="question-container" v-if="question">
+  <div class="question-container" v-if="question && question.options">
     <div class="question">
       <span
         class="square"
@@ -20,43 +20,19 @@
     </div>
     <ul class="option-list">
       <li
-        v-bind:class="['option', answer.option === 0 ? 'selected' : '']"
-        @click="selectOption(0)"
+        v-for="(n, index) in question.options.length"
+        v-if="question.options[index]"
+        :key="index"
+        v-bind:class="[
+          'option',
+          optionId === question.options[index].optionId ? 'selected' : ''
+        ]"
+        @click="selectOption(question.options[index].optionId)"
       >
-        <span class="option-letter">A</span>
+        <span class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
-          v-html="convertMarkDown(question.options[0].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="['option', answer.option === 1 ? 'selected' : '']"
-        @click="selectOption(1)"
-      >
-        <span class="option-letter">B</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[1].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="['option', answer.option === 2 ? 'selected' : '']"
-        @click="selectOption(2)"
-      >
-        <span class="option-letter">C</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[2].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="['option', answer.option === 3 ? 'selected' : '']"
-        @click="selectOption(3)"
-      >
-        <span class="option-letter">D</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[3].content)"
+          v-html="convertMarkDown(question.options[index].content)"
         ></span>
       </li>
     </ul>
@@ -73,7 +49,9 @@ import showdown from "showdown";
 export default class QuestionComponent extends Vue {
   @Model("order", Number) order: number | undefined;
   @Prop(Question) readonly question: Question | undefined;
-  @Prop(Answer) answer: Answer | undefined;
+  @Prop(Number) optionId: number | undefined;
+  hover: boolean = false;
+  optionLetters: string[] = ["A", "B", "C", "D"];
 
   constructor() {
     super();
@@ -110,14 +88,8 @@ export default class QuestionComponent extends Vue {
   }
 
   @Emit()
-  selectOption(option: number) {
-    if (this.answer && this.answer.option === option) {
-      this.answer.option = null;
-      return this.answer;
-    } else if (this.answer) {
-      this.answer.option = option;
-      return this.answer;
-    }
+  selectOption(optionId: number) {
+    return optionId;
   }
 }
 </script>

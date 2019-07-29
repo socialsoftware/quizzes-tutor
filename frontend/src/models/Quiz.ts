@@ -2,8 +2,21 @@ import axios from "axios";
 import Question from "@/models/Question";
 import CorrectAnswer from "@/models/CorrectAnswer";
 import Answer from "@/models/Answer";
-import { ServerQuestion, ServerAnswer } from "@/types";
 import { map_to_object } from "@/scripts/script";
+import Option from "@/models/Option";
+
+export interface ServerQuestion {
+  quizQuestionId: number;
+  content: string | null;
+  options: Option[] | null;
+  //topic: string | null;
+  image: Image | null;
+}
+
+export interface Image {
+  url: string;
+  width: number | null;
+}
 
 export default class Quiz {
   private _id: number | null = null;
@@ -46,10 +59,10 @@ export default class Quiz {
     };
 
     return await axios
-      .post(process.env.VUE_APP_ROOT_API + "/newquiz", params)
+      .post(process.env.VUE_APP_ROOT_API + "/quizzes/generate/student", params)
       .then(response => {
         // handle success
-        this.id = response.data["id"];
+        this.id = response.data["quizAnswerId"];
 
         Object.keys(response.data["questions"]).forEach(sequence => {
           this.questions.set(

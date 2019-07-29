@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
 public class QuizSetupDto {
-    private Integer userId;
     private Integer numberOfQuestions;
     private String questionType;
     private String[] topics;

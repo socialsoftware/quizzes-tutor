@@ -1,9 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -13,20 +9,26 @@ import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private UserRepository userRepository;
     private static String COURSE_ACRONYM = "ASof";
 
-    AuthController(UserRepository repository) {
-        this.userRepository = repository;
-    }
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/fenix")
     public ResponseEntity<?> fenixAuth(@RequestBody FenixCode data) {
@@ -55,7 +57,7 @@ public class AuthController {
         String username = person.get("username").toString().replaceAll("^\"|\"$", "");
 
         // Find if user is in database
-        User user = this.userRepository.findByUsername(username);
+        User user = this.userService.findByUsername(username);
 
         // If user is not in database
         if (user == null){
@@ -69,8 +71,7 @@ public class AuthController {
             }
 
             if (isInAS) {
-                user = new User(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
-                this.userRepository.save(user);
+                user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
             } else {
                 // Verify if user is teaching the course
                 courses = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
@@ -80,8 +81,7 @@ public class AuthController {
                 }
 
                 if (isInAS) {
-                    user = new User(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
-                    this.userRepository.save(user);
+                    user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
                 } else {
                     throw new NotEnrolledException("User " + username + " is not enrolled");
                 }

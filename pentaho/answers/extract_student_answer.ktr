@@ -573,11 +573,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Sort rows 3</from>
-      <to>Select values 4</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>options</from>
       <to>Sort rows 5 2</to>
       <enabled>Y</enabled>
@@ -585,11 +580,6 @@
     <hop>
       <from>Select values 3</from>
       <to>Sort rows 5</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows 5</from>
-      <to>Join rows (cartesian product) 4</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -603,8 +593,38 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
+      <from>Sort rows 5</from>
+      <to>Filter rows</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Select values 6</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Select values 6</from>
+      <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
       <from>Select values 5</from>
+      <to>Dummy (do nothing)</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Dummy (do nothing)</from>
       <to>Microsoft Excel output</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Filter rows</from>
+      <to>Join rows (cartesian product) 4</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Sort rows 3</from>
+      <to>Select values 4</to>
       <enabled>Y</enabled>
     </hop>
   </order>
@@ -1311,152 +1331,152 @@
     <fields>
       <field>
         <name>1</name>
-        <value>1</value>
+        <value>0</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>2</name>
-        <value>2</value>
+        <value>1</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>3</name>
-        <value>3</value>
+        <value>2</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>4</name>
-        <value>4</value>
+        <value>3</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>5</name>
-        <value>5</value>
+        <value>4</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>6</name>
-        <value>6</value>
+        <value>5</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>7</name>
-        <value>7</value>
+        <value>6</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>8</name>
-        <value>8</value>
+        <value>7</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>9</name>
-        <value>9</value>
+        <value>8</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>10</name>
-        <value>10</value>
+        <value>9</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>11</name>
-        <value>11</value>
+        <value>10</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>12</name>
-        <value>12</value>
+        <value>11</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>13</name>
-        <value>13</value>
+        <value>12</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>14</name>
-        <value>14</value>
+        <value>13</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>15</name>
-        <value>15</value>
+        <value>14</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>16</name>
-        <value>16</value>
+        <value>15</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>17</name>
-        <value>17</value>
+        <value>16</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>18</name>
-        <value>18</value>
+        <value>17</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>19</name>
-        <value>19</value>
+        <value>18</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>20</name>
-        <value>20</value>
+        <value>19</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>21</name>
-        <value>21</value>
+        <value>20</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>22</name>
-        <value>22</value>
+        <value>21</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>23</name>
-        <value>23</value>
+        <value>22</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>24</name>
-        <value>24</value>
+        <value>23</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>25</name>
-        <value>25</value>
+        <value>24</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>26</name>
-        <value>26</value>
+        <value>25</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>27</name>
-        <value>27</value>
+        <value>26</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>28</name>
-        <value>28</value>
+        <value>27</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>29</name>
-        <value>29</value>
+        <value>28</value>
         <norm>answer</norm>
       </field>
       <field>
         <name>30</name>
-        <value>30</value>
+        <value>29</value>
         <norm>answer</norm>
       </field>
     </fields>
@@ -2228,7 +2248,7 @@ FROM "options"
     <name>Sort rows 5</name>
     <type>SortRows</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -2368,8 +2388,8 @@ FROM "options"
       </output>
     </remotesteps>
     <GUI>
-      <xloc>880</xloc>
-      <yloc>464</yloc>
+      <xloc>800</xloc>
+      <yloc>496</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2514,8 +2534,116 @@ FROM "options"
       </output>
     </remotesteps>
     <GUI>
-      <xloc>528</xloc>
-      <yloc>464</yloc>
+      <xloc>400</xloc>
+      <yloc>416</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Filter rows</name>
+    <type>FilterRows</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <send_true_to>Select values 6</send_true_to>
+    <send_false_to>Join rows (cartesian product) 4</send_false_to>
+    <compare>
+      <condition>
+        <negated>N</negated>
+        <leftvalue>answer</leftvalue>
+        <function>IS NULL</function>
+        <rightvalue/>
+      </condition>
+    </compare>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 6</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>date</name>
+        <rename/>
+      </field>
+      <field>
+        <name>quiz_id</name>
+        <rename/>
+      </field>
+      <field>
+        <name>question_id</name>
+        <rename/>
+      </field>
+      <field>
+        <name>student_id</name>
+        <rename/>
+      </field>
+      <field>
+        <name>answer</name>
+        <rename>option_id</rename>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>688</xloc>
+      <yloc>384</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Dummy (do nothing)</name>
+    <type>Dummy</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>544</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

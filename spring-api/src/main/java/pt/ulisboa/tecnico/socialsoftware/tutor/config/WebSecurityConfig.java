@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers( HttpMethod.POST, "/newquiz**").authenticated()
+                .antMatchers( HttpMethod.POST, "/quiz**").authenticated()
                 .antMatchers( HttpMethod.POST,"/quiz-answers**").authenticated()
                 .anyRequest().permitAll()
                 .and()

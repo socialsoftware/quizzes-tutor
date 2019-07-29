@@ -20,16 +20,3 @@ export interface ServerAnswer {
   questionId: number;
   correctOption: number;
 }
-
-export interface ServerQuestion {
-  id: number;
-  content: string | null;
-  options: Option[] | null;
-  //topic: string | null;
-  image: Image | null;
-}
-
-export interface Image {
-  url: string;
-  width: number | null;
-}

@@ -97,4 +97,5 @@ public class QuizDto implements Serializable {
     public void setQuestions(Map<Integer, QuestionDto> questions) {
         this.questions = questions;
     }
+
 }

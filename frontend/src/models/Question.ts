@@ -1,17 +1,31 @@
 import Option from "@/models/Option";
-import { ServerQuestion, Image } from "@/types";
+
+export interface ServerQuestion {
+  quizQuestionId: number;
+  content: string | null;
+  options: Option[] | null;
+  //topic: string | null;
+  image: Image | null;
+}
+
+export interface Image {
+  url: string;
+  width: number | null;
+}
 
 export default class Question implements ServerQuestion {
-  id!: number;
+  quizQuestionId!: number;
   content!: string | null;
-  options!: Option[] | null;
+  options!: Option[];
   // TODO topic!: string | null;
   image: Image | null;
 
   constructor(jsonObj: ServerQuestion) {
-    this.id = jsonObj.id;
+    this.quizQuestionId = jsonObj.quizQuestionId;
     this.content = jsonObj.content;
-    this.options = jsonObj.options;
+    if (jsonObj.options) {
+      this.options = jsonObj.options;
+    }
     // TODO this.topic = jsonObj.topic;
     this.image = jsonObj.image;
   }

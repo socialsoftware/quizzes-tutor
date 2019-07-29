@@ -272,8 +272,7 @@ def insertQuiz(cur, quiz):
 def insertQuestion(cur, question, quizId, sequence):
     # question = {"questionId": "", "content": "", "image": [], "options": []}
     # insert question
-    #cur.execute("INSERT INTO questions (content, name) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
-    cur.execute("INSERT INTO questions (content) VALUES (%s) RETURNING *", [question["content"]])
+    cur.execute("INSERT INTO questions (content, title) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
     
     questionId = cur.fetchone()[0]
     # insert quizhasquestion

@@ -33,11 +33,13 @@ public class StatsController {
         Integer totalActiveQuestions = this.questionRepository.getTotalActiveQuestions();
 
         Integer totalAnswers = this.questionAnswerRepository.getTotalAnswers(user.getId());
-        Integer uniqueCorrectAnswers = this.questionAnswerRepository.getUniqueCorrectAnswers(user.getId());
-        Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - uniqueCorrectAnswers;
+        //Integer uniqueCorrectAnswers = this.questionAnswerRepository.getUniqueCorrectAnswers(user.getId());
+        Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - 0;
+        //Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - uniqueCorrectAnswers;
         //TopicsStatsDto[] topics = this.answerRepository.getTopicsStats(user.getId());
         //AnsweredQuizDto[] quizzes = this.quizRepository.getQuizzes(user.getId());
 
-        return new StatsDto(totalQuizzes, totalAnswers, uniqueCorrectAnswers, uniqueWrongAnswers, totalActiveQuestions);
+        //return new StatsDto(totalQuizzes, totalAnswers, uniqueCorrectAnswers, uniqueWrongAnswers, totalActiveQuestions);
+        return new StatsDto(totalQuizzes, totalAnswers, 0, uniqueWrongAnswers, totalActiveQuestions);
     }
 }

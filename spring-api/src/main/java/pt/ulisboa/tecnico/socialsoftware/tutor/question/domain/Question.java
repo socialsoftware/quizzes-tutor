@@ -17,13 +17,14 @@ public class Question implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
+    private String title;
     private Integer difficulty;
-    private Boolean active;
+    private Boolean active = true;
 
     @OneToOne(cascade = { CascadeType.ALL }, mappedBy = "question")
     private Image image;
 
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "question")
+    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "question", fetch=FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
@@ -32,6 +33,7 @@ public class Question implements Serializable {
     public Question(){}
 
     public Question(QuestionDto question) {
+        this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.active = question.getActive();
@@ -88,6 +90,14 @@ public class Question implements Serializable {
     public void setImage(Image image) {
         this.image = image;
    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public Set<QuizQuestion> getQuizQuestions() {
         if (quizQuestions == null) {
