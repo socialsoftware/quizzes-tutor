@@ -46,7 +46,7 @@ public class QuizAnswer implements Serializable {
         this.availableDate = availableDate;
         this.completed = false;
         this.user = user;
-//        user.addQuizAnswer(this);
+        user.addQuizAnswer(this);
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
     }

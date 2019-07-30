@@ -82,14 +82,14 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'create for one question and two options'() {
         given:
-        def resutlsDto = new HashMap<Integer, ResultAnswerDto>()
+        def resultsDto = new ArrayList<ResultAnswerDto>()
         def resultDto = new ResultAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
-        resutlsDto.put(0, resultDto)
+        resultsDto.add(resultDto)
         def resultAnswersDto = new ResultAnswersDto()
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
-        resultAnswersDto.setAnswers(resutlsDto)
+        resultAnswersDto.setAnswers(resultsDto)
 
         when:
         def correctAnswersDto = answerService.submitQuestionsAnswers(user, resultAnswersDto)
@@ -105,7 +105,6 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         optionOk.getQuestionAnswers().contains(result)
         and: 'the return value is OK'
         correctAnswersDto.getAnswers().size() == 1
-        correctAnswersDto.getAnswers().entrySet().stream().map{e-> e.getKey()}.allMatch{key -> key == 0}
         def correctAnswerDto = correctAnswersDto.getAnswers().get(0)
         correctAnswerDto.getQuizQuestionId() == quizQuestion.getId()
         correctAnswerDto.getCorrectOptionId() == optionOk.getId()
@@ -113,14 +112,14 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'user not consistent'() {
         given:
-        def resutlsDto = new HashMap<Integer, ResultAnswerDto>()
+        def resultsDto = new ArrayList<ResultAnswerDto>()
         def resultDto = new ResultAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
-        resutlsDto.put(0, resultDto)
+        resultsDto.add(resultDto)
         def resultAnswersDto = new ResultAnswersDto()
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
-        resultAnswersDto.setAnswers(resutlsDto)
+        resultAnswersDto.setAnswers(resultsDto)
         and: 'another user'
         def otherUser = new User('name', 'username2', User.Role.STUDENT)
         userRepository.save(otherUser)
@@ -138,7 +137,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'quiz question not consistent'() {
         given:
-        def resutlsDto = new HashMap<Integer, ResultAnswerDto>()
+        def resultsDto = new ArrayList<ResultAnswerDto>()
         def resultDto = new ResultAnswerDto()
         def quiz = new Quiz()
         def question = new Question()
@@ -148,10 +147,10 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         quizQuestionRepository.save(quizQuestion)
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
-        resutlsDto.put(0, resultDto)
+        resultsDto.add(resultDto)
         def resultAnswersDto = new ResultAnswersDto()
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
-        resultAnswersDto.setAnswers(resutlsDto)
+        resultAnswersDto.setAnswers(resultsDto)
 
         when:
         answerService.submitQuestionsAnswers(user, resultAnswersDto)
@@ -165,7 +164,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'question option not consistent'() {
         given:
-        def resutlsDto = new HashMap<Integer, ResultAnswerDto>()
+        def resultsDto = new ArrayList<ResultAnswerDto>()
         def resultDto = new ResultAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         def otherOptionOK = new Option()
@@ -175,10 +174,10 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         questionRepository.save(otherQuestion)
         optionRepository.save(otherOptionOK)
         resultDto.setOptionId(otherOptionOK.getId())
-        resutlsDto.put(0, resultDto)
+        resultsDto.add(resultDto)
         def resultAnswersDto = new ResultAnswersDto()
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
-        resultAnswersDto.setAnswers(resutlsDto)
+        resultAnswersDto.setAnswers(resultsDto)
 
         when:
         answerService.submitQuestionsAnswers(user, resultAnswersDto)

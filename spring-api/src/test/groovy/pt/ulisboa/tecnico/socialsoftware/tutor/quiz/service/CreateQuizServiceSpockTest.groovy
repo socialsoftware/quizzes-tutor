@@ -47,7 +47,7 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getType() == Quiz.QuizType.EXAM.name()
         result.getSeries() == 1
         result.getVersion() == VERSION
-        result.getQuizQuestionsMap().size() == 0
+        result.getQuizQuestions().size() == 0
 
     }
 

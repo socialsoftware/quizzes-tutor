@@ -32,7 +32,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         def question = new QuestionDto()
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
-        question.setDifficulty(1)
+        question.setNumberOfAnswers(4)
+        question.setNumberOfCorrect(2)
         and: 'a optionId'
         def option = new OptionDto()
         option.setContent(OPTION_CONTENT)
@@ -50,7 +51,9 @@ class CreateQuestionServiceSpockTest extends Specification {
         result.getId() != null
         result.getActive() == true
         result.getContent() == QUESTION_CONTENT
-        result.getDifficulty() == 1
+        result.getNumberOfAnswers() == 4
+        result.getNumberOfCorrect() == 2
+        result.getDifficulty() == 0.5
         result.getImage() == null
         result.getOptions().size() == 1
         def resOption = result.getOptions().get(0)
@@ -65,7 +68,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         def question = new QuestionDto()
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
-        question.setDifficulty(1)
+        question.setNumberOfAnswers(4)
+        question.setNumberOfCorrect(2)
         and: 'an image'
         def image = new ImageDto()
         image.setUrl(URL)
@@ -92,7 +96,9 @@ class CreateQuestionServiceSpockTest extends Specification {
         result.getId() != null
         result.getActive() == true
         result.getContent() == QUESTION_CONTENT
-        result.getDifficulty() == 1
+        result.getNumberOfAnswers() == 4
+        result.getNumberOfCorrect() == 2
+        result.getDifficulty() == 0.5
         result.getImage().getId() != null
         result.getImage().getUrl() == URL
         result.getImage().getWidth() == 20

@@ -22,10 +22,10 @@ public class Question implements Serializable {
     private String title;
 
     @Column(name= "number_of_answers")
-    private Integer numberOfAnswers;
+    private Integer numberOfAnswers = 0;
 
     @Column(name= "number_of_correct")
-    private Integer numberOfCorrect;
+    private Integer numberOfCorrect = 0;
 
     private Boolean active = true;
 
@@ -43,6 +43,8 @@ public class Question implements Serializable {
     public Question(QuestionDto question) {
         this.title = question.getTitle();
         this.content = question.getContent();
+        this.numberOfAnswers = question.getNumberOfAnswers();
+        this.numberOfCorrect = question.getNumberOfCorrect();
         this.active = question.getActive();
        if (question.getImage() != null) {
             setImage(new Image(question.getImage()));
@@ -147,7 +149,7 @@ public class Question implements Serializable {
 
     public double getDifficulty() {
         // required because the import is done directely in the database
-        if (numberOfAnswers == null) {
+        if (numberOfAnswers == null || numberOfAnswers == 0) {
             numberOfAnswers = getQuizQuestions().stream()
                     .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
                     .collect(Collectors.reducing(0, e -> 1, Integer::sum));

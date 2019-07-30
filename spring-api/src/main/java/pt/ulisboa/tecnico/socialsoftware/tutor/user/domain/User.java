@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    Set<QuizAnswer> quizAnswers;
+    Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @Transient
     private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
@@ -80,20 +80,20 @@ public class User implements UserDetails {
         this.role = role;
     }
 
-//    public Set<QuizAnswer> getQuizAnswers() {
-//        return quizAnswers;
-//    }
-//
-//    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
-//        this.quizAnswers = quizAnswers;
-//    }
-//
-//    public void addQuizAnswer(QuizAnswer quizAnswer) {
-//        if (quizAnswers == null) {
-//            quizAnswers = new HashSet<>();
-//        }
-//        this.quizAnswers.add(quizAnswer);
-//    }
+    public Set<QuizAnswer> getQuizAnswers() {
+        return quizAnswers;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
+    }
+
+    public void addQuizAnswer(QuizAnswer quizAnswer) {
+        if (quizAnswers == null) {
+            quizAnswers = new HashSet<>();
+        }
+        this.quizAnswers.add(quizAnswer);
+    }
 
 
     @Override

@@ -34,10 +34,10 @@ public class Quiz implements Serializable {
     private String version;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    private Set<QuizQuestion> quizQuestions;
+    private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    private Set<QuizAnswer> quizAnswers;
+    private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     public Quiz() {}
 
