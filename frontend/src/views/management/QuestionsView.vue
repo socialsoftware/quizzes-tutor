@@ -21,21 +21,28 @@
     class="elevation-1">
     <template slot="items" slot-scope="props">
         <tr @click="props.expanded = !props.expanded">
-          <td class="text-left" v-html="convertMarkDown(props.item.content, props.item.image)"/>
-          <td class="text-left" v-text="props.item.title"/>
-          <td class="text-left" v-text="props.item.active"/>
-          <td class="text-left" v-text="props.item.difficulty"/>
+          <td class="text-left" v-html="convertMarkDown(props.item.content, props.item.image)"></td>
+          <td class="text-left" v-text="props.item.title"></td>
+          <td class="text-left"><span v-if="props.item.active">TRUE</span><span v-else>FALSE</span></td>
+          <td class="text-left" v-text="props.item.difficulty"></td>
+          <td class="text-left" v-text="props.item.numberOfAnswers"></td>
         </tr>
     </template>
     <template slot="expand" slot-scope="props">
-      <p class="text-left">Options</p>
-      <ul>
-        <li class="text-left"
-          v-for="option in props.item.options"
-          :key="option.id"
-          v-html="convertMarkDown(option.content)"
-        ></li>
-      </ul>
+        <v-simple-table>
+        <thead>
+          <tr>
+            <th class="text-left">Option</th>
+            <th class="text-left">Correct</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="option in props.item.options" :key="option.id">
+            <td class="text-left" v-html="convertMarkDown(option.content)"></td>
+            <td><span v-if="option.correct">TRUE</span><span v-else>FALSE</span></td>
+          </tr>
+        </tbody>
+      </v-simple-table>
     </template>
   </v-data-table>
   </v-card>
@@ -65,6 +72,7 @@ export default class QuestionsMangement extends Vue {
           { text: 'Title', value: 'title' },
           { text: 'Active', value: 'active' },
           { text: 'Difficulty', value: 'difficulty' },
+          { text: 'Number of Answers', value: 'numberOfAnswers' },
         ],
         questions: this.questions
       }

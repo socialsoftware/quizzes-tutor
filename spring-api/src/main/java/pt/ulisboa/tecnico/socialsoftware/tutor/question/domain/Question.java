@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "questions")
@@ -18,7 +20,13 @@ public class Question implements Serializable {
     private String content;
 
     private String title;
-    private Integer difficulty;
+
+    @Column(name= "number_of_answers")
+    private Integer numberOfAnswers;
+
+    @Column(name= "number_of_correct")
+    private Integer numberOfCorrect;
+
     private Boolean active = true;
 
     @OneToOne(cascade = { CascadeType.ALL }, mappedBy = "question")
@@ -35,7 +43,6 @@ public class Question implements Serializable {
     public Question(QuestionDto question) {
         this.title = question.getTitle();
         this.content = question.getContent();
-        this.difficulty = question.getDifficulty();
         this.active = question.getActive();
        if (question.getImage() != null) {
             setImage(new Image(question.getImage()));
@@ -59,13 +66,6 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    public Integer getDifficulty() {
-        return difficulty;
-    }
-
-    public void setDifficulty(Integer difficulty) {
-        this.difficulty = difficulty;
-    }
 
     public Boolean getActive() {
         return active;
@@ -106,6 +106,22 @@ public class Question implements Serializable {
         return quizQuestions;
     }
 
+    public Integer getNumberOfAnswers() {
+        return numberOfAnswers;
+    }
+
+    public void setNumberOfAnswers(Integer numberOfAnswers) {
+        this.numberOfAnswers = numberOfAnswers;
+    }
+
+    public Integer getNumberOfCorrect() {
+        return numberOfCorrect;
+    }
+
+    public void setNumberOfCorrect(Integer numberOfCorrect) {
+        this.numberOfCorrect = numberOfCorrect;
+    }
+
     public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
         this.quizQuestions = quizQuestions;
     }
@@ -129,5 +145,28 @@ public class Question implements Serializable {
         quizQuestions.add(quizQuestion);
     }
 
+    public double getDifficulty() {
+        // required because the import is done directely in the database
+        if (numberOfAnswers == null) {
+            numberOfAnswers = getQuizQuestions().stream()
+                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                    .collect(Collectors.reducing(0, e -> 1, Integer::sum));
+            numberOfCorrect = getQuizQuestions().stream()
+                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect() != null && questionAnswer.getOption().getCorrect())
+                    .collect(Collectors.reducing(0, e -> 1, Integer::sum));
+        }
 
+        double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect/ (double) numberOfAnswers : 0.0;
+        result = result * 100;
+        result = Math.round(result);
+        return result / 100;
+    }
+
+    public void addAnswer(QuestionAnswer questionAnswer) {
+        numberOfAnswers++;
+        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect() != null && questionAnswer.getOption().getCorrect()) {
+           numberOfCorrect++;
+       }
+    }
 }

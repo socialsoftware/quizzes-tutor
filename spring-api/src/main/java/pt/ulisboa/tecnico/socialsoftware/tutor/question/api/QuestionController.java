@@ -25,7 +25,7 @@ public class QuestionController {
             pageSize = Integer.MAX_VALUE;
         }
 
-        return this.questionService.findAll(pageIndex, pageSize).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return this.questionService.findAll(pageIndex, pageSize);
     }
 
     @GetMapping("/questions/{questionId}")
@@ -38,15 +38,6 @@ public class QuestionController {
         this.questionService.create(question);
         return ResponseEntity.ok().build();
     }
-
-    @PutMapping("/questions/{questionId}")
-    public ResponseEntity updateQuestion(@PathVariable Integer questionId,
-                                   @Valid @RequestBody QuestionDto questionRequest) {
-
-        questionService.update(questionId, questionRequest);
-        return ResponseEntity.ok().build();
-    }
-
 
     @DeleteMapping("/questions/{questionId}")
     public ResponseEntity deleteQuestion(@PathVariable Integer questionId) {

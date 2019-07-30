@@ -40,6 +40,8 @@ public class QuestionAnswer implements Serializable {
         quizQuestion.addQuestionAnswer(this);
         this.option = option;
         option.addQuestionAnswer(this);
+
+        changeDifficulty();
     }
 
     public Integer getId() {
@@ -81,4 +83,9 @@ public class QuestionAnswer implements Serializable {
     public void setOption(Option option) {
         this.option = option;
     }
+
+    private void changeDifficulty() {
+        quizQuestion.getQuestion().addAnswer(this);
+    }
+
 }

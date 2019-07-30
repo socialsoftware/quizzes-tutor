@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
@@ -27,8 +28,9 @@ public class QuestionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
     }
 
-    public List<Question> findAll(Integer pageIndex, Integer pageSize) {
-        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
+    @Transactional
+    public List<QuestionDto> findAll(Integer pageIndex, Integer pageSize) {
+        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Transactional
@@ -36,16 +38,7 @@ public class QuestionService {
         this.entityManager.persist(new Question(question));
     }
 
-    @Transactional
-    public void update(Integer questionId, QuestionDto questionDto) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
-        question.setContent(questionDto.getContent());
-        question.setDifficulty(questionDto.getDifficulty());
-        //question.setImage(new Image(questionId, questionDto.getImage()));
-        question.setActive(questionDto.getActive());
-        //question.setOptions(questionDto.getOptions().stream().map(Option::new).collect(Collectors.toList()));
-    }
-
+    // TODO: Check that it can be deleted, it is has answers, it cannot
     @Transactional
     public void delete(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));

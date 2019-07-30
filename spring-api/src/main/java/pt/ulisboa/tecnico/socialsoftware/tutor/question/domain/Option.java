@@ -17,7 +17,7 @@ public class Option implements Serializable {
     private Integer id;
 
     private Integer option;
-    private Boolean correct;
+    private Boolean correct = false;
 
     @Column(columnDefinition = "TEXT")
     private String content;

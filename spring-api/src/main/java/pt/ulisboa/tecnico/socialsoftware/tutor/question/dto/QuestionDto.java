@@ -10,14 +10,14 @@ import java.util.stream.Collectors;
 public class QuestionDto implements Serializable {
     private Integer id;
     private String content;
-    private Integer difficulty;
+    private double difficulty;
+    private int numberOfAnswers;
     private Boolean active;
     private List<OptionDto> options;
     private ImageDto image;
     private String title;
 
     public QuestionDto() {
-
     }
 
     public QuestionDto(Question question) {
@@ -25,6 +25,7 @@ public class QuestionDto implements Serializable {
         this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
+        this.numberOfAnswers = question.getNumberOfAnswers();
         this.active = question.getActive();
         if (question.getImage() != null) {
             this.image = new ImageDto(question.getImage());
@@ -48,12 +49,24 @@ public class QuestionDto implements Serializable {
         this.content = content;
     }
 
-    public Integer getDifficulty() {
+    public double getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public void setDifficulty(double difficulty) {
+        this.difficulty = difficulty;
+    }
+
+    public int getNumberOfAnswers() {
+        return numberOfAnswers;
+    }
+
+    public void setNumberOfAnswers(int numberOfAnswers) {
+        this.numberOfAnswers = numberOfAnswers;
     }
 
     public Boolean getActive() {
