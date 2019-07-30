@@ -2,10 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuizDto implements Serializable {
@@ -16,7 +18,7 @@ public class QuizDto implements Serializable {
     private String type;
     private Integer series;
     private String version;
-    private Map<Integer, QuestionDto> questions;
+    private List<QuestionDto> questions;
 
     public QuizDto(){
 
@@ -30,8 +32,10 @@ public class QuizDto implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.questions = quiz.getQuizQuestionsMap().entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, entry -> new QuestionDto(entry.getValue().getQuestion())));
+        this.questions = quiz.getQuizQuestions().stream()
+                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+                .map(quizQuestion -> new QuestionDto(quizQuestion.getQuestion()))
+                .collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -90,12 +94,11 @@ public class QuizDto implements Serializable {
         this.version = version;
     }
 
-    public Map<Integer, QuestionDto> getQuestions() {
+    public List<QuestionDto> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Map<Integer, QuestionDto> questions) {
+    public void setQuestions(List<QuestionDto> questions) {
         this.questions = questions;
     }
-
 }

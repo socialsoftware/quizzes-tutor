@@ -1,14 +1,4 @@
-interface ServerResponse {
-  data: ServerOption;
-}
-
-interface ServerOption {
-  content: string | null;
-  correct: Boolean | null;
-  optionId: number | null;
-}
-
-export default class Option implements ServerOption {
+export default class Option {
   content: string | null;
   correct: Boolean | null;
   optionId: number | null;

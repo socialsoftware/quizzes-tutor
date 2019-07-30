@@ -21,7 +21,6 @@
     <ul class="option-list">
       <li
         v-for="(n, index) in question.options.length"
-        v-if="question.options[index]"
         :key="index"
         v-bind:class="[
           'option',
@@ -41,9 +40,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import Question from "@/models/Question";
+import Question from "@/models/student/Question";
 import { convertMarkDown } from "@/scripts/script";
-import Image from "@/models/Image";
+import Image from "@/models/student/Image";
 
 @Component
 export default class QuestionComponent extends Vue {

@@ -15,8 +15,8 @@
         <span
           v-for="index in +quiz.numberOfQuestions"
           v-bind:class="[
-            'management-button',
-            index === order + 1 ? 'current-management-button' : ''
+            'question-button',
+            index === order + 1 ? 'current-question-button' : ''
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -30,9 +30,8 @@
     </div>
     <question-component
       v-model="order"
-      :optionId="this.quiz.answers.get(this.order).optionId"
-      :question="quiz.questions.get(order)"
-      :key="order + optionKey"
+      :optionId="quiz.answers[order].optionId"
+      :question="quiz.questions[order]"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -49,19 +48,18 @@ Component.registerHooks([
   "beforeRouteLeave"
 ]);
 
-import Quiz from "../../models/Quiz";
-import Answer from "@/models/Answer";
-import QuestionComponent from "@/components/QuestionComponent.vue";
+import Quiz from "@/models/student/Quiz";
+import Answer from "@/models/student/Answer";
+import QuestionComponent from "@/views/components/QuestionComponent.vue";
 
 @Component({
   components: {
     "question-component": QuestionComponent
   }
 })
-export default class QuizView extends Vue {
+export default class StudentQuizView extends Vue {
   quiz: Quiz = Quiz.getInstance;
   order: number = 0;
-  optionKey: number = 0;
 
   constructor() {
     super();
@@ -92,13 +90,12 @@ export default class QuizView extends Vue {
   }
 
   changeAnswer(optionId: number) {
-    if (this.quiz.answers.get(this.order) != undefined) {
-      if (this.quiz.answers.get(this.order).optionId === optionId) {
-        this.quiz.answers.get(this.order).optionId = null;
-      } else if (this.quiz.answers.get(this.order)) {
-        this.quiz.answers.get(this.order).optionId = optionId;
+    if (this.quiz.answers[this.order]) {
+      if (this.quiz.answers[this.order].optionId === optionId) {
+        this.quiz.answers[this.order].optionId = null;
+      } else {
+        this.quiz.answers[this.order].optionId = optionId;
       }
-      this.optionKey += 1;
     }
   }
 

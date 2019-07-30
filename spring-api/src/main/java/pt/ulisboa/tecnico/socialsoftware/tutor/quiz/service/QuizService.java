@@ -57,7 +57,7 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, Integer.toString(questionId)));
 
-        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsMap().size());
+        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
 
         entityManager.persist(quizQuestion);
     }

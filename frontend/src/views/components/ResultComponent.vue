@@ -71,9 +71,9 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import Question from "@/models/Question";
-import Answer from "@/models/Answer";
-import CorrectAnswer from "@/models/CorrectAnswer";
+import Question from "@/models/student/Question";
+import Answer from "@/models/student/Answer";
+import CorrectAnswer from "@/models/student/CorrectAnswer";
 import { convertMarkDown } from "@/scripts/script";
 
 @Component

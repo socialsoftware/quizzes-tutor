@@ -1,7 +1,7 @@
-import Option from "@/models/Option";
-import Image from "@/models/Image";
+import Option from "@/models/student/Option";
+import Image from "@/models/student/Image";
 
-export interface ServerQuestion {
+export interface QuestionDto {
   quizQuestionId: number;
   content: string | null;
   options: Option[] | null;
@@ -9,14 +9,14 @@ export interface ServerQuestion {
   image: Image | null;
 }
 
-export default class Question implements ServerQuestion {
+export default class Question implements QuestionDto {
   quizQuestionId!: number;
   content!: string | null;
   options!: Option[];
   // TODO topic!: string | null;
   image: Image | null;
 
-  constructor(jsonObj: ServerQuestion) {
+  constructor(jsonObj: QuestionDto) {
     this.quizQuestionId = jsonObj.quizQuestionId;
     this.content = jsonObj.content;
     if (jsonObj.options) {

@@ -54,7 +54,7 @@ import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import { Question, QuestionDto } from "@/models/question/Question";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown } from "@/scripts/script";
-import Image from "@/models/Image";
+import Image from "@/models/student/Image";
 
 @Component
 export default class QuestionsMangement extends Vue {
@@ -79,7 +79,12 @@ export default class QuestionsMangement extends Vue {
   }
 
   customFilter(items: Question[], search: string) {
-    return items.filter((question: Question) => JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !== -1)
+    return items.filter(
+      (question: Question) =>
+        JSON.stringify(question)
+          .toLowerCase()
+          .indexOf(search.toLowerCase()) !== -1
+    );
   }
 
   beforeMount() {

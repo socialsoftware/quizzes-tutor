@@ -3,13 +3,14 @@ import Router from "vue-router";
 import Store from "./store";
 import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
-import SetupView from "./views/user/SetupView.vue";
-import QuizView from "./views/user/QuizView.vue";
-import QuestionsView from "./views/management/QuestionsView.vue";
-import ResultsView from "./views/user/ResultsView.vue";
-import StatsView from "./views/user/StatsView.vue";
-import NotFoundView from "./views/NotFoundView.vue";
 import ManagementView from "@/views/management/ManagementView.vue";
+import QuestionsView from "./views/management/QuestionsView.vue";
+import StudentView from "@/views/student/StudentView.vue";
+import QuizSetupView from "./views/student/QuizSetupView.vue";
+import StudentQuizView from "./views/student/StudentQuizView.vue";
+import StudentResultsView from "./views/student/StudentResultsView.vue";
+import StudentStatsView from "./views/student/StudentStatsView.vue";
+import NotFoundView from "./views/NotFoundView.vue";
 
 Vue.use(Router);
 
@@ -46,42 +47,49 @@ let router = new Router({
       ]
     },
     {
-      path: "/setup",
-      name: "setup",
-      component: SetupView,
-      meta: {
-        title: "Software Architecture - Quiz Setup",
-        requiresAuth: true
-      }
-    },
-    {
-      path: "/quiz",
-      name: "quiz",
-      component: QuizView,
-      meta: {
-        title: "Software Architecture - Quiz",
-        requiresAuth: true,
-        requiresVerification: true
-      }
-    },
-    {
-      path: "/results",
-      name: "results",
-      component: ResultsView,
-      meta: {
-        title: "Software Architecture - Results",
-        requiresAuth: true,
-        requiresVerification: true
-      }
-    },
-    {
-      path: "/stats",
-      name: "stats",
-      component: StatsView,
-      meta: {
-        title: "Software Architecture - Stats",
-        requiresAuth: true
-      }
+      path: "/student",
+      name: "student",
+      component: StudentView,
+      children: [
+        {
+          path: "/setup",
+          name: "setup",
+          component: QuizSetupView,
+          meta: {
+            title: "Software Architecture - Quiz Setup",
+            requiresAuth: true
+          }
+        },
+        {
+          path: "/quiz",
+          name: "quiz",
+          component: StudentQuizView,
+          meta: {
+            title: "Software Architecture - Quiz",
+            requiresAuth: true,
+            requiresVerification: true
+          }
+        },
+        {
+          path: "/results",
+          name: "results",
+          component: StudentResultsView,
+          meta: {
+            title: "Software Architecture - Results",
+            requiresAuth: true,
+            requiresVerification: true
+          }
+        },
+        {
+          path: "/stats",
+          name: "stats",
+          component: StudentStatsView,
+          meta: {
+            title: "Software Architecture - Stats",
+            requiresAuth: true
+          }
+        }
+      ]
     },
     {
       path: "**",

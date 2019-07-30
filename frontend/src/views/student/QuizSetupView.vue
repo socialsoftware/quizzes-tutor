@@ -45,10 +45,10 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Quiz from "@/models/Quiz";
+import Quiz from "@/models/student/Quiz";
 
 @Component
-export default class SetupView extends Vue {
+export default class QuizSetupView extends Vue {
   private quiz: Quiz = Quiz.getInstance;
 
   beforeMount() {

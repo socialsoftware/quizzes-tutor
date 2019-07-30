@@ -7,8 +7,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 @Entity
 @Table(name = "quizzes")
@@ -151,16 +153,4 @@ public class Quiz implements Serializable {
         }
         this.quizAnswers.add(quizAnswer);
     }
-
-
-
-    public Map<Integer, QuizQuestion> getQuizQuestionsMap() {
-        if (quizQuestions == null ) {
-            return new HashMap<>();
-        }
-
-        return this.quizQuestions.stream().collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> quizQuestion));
-    }
-
-
 }

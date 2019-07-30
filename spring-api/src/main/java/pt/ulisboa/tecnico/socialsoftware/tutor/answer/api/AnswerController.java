@@ -24,6 +24,10 @@ public class AnswerController {
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
+        if(user == null){
+            return null;
+        }
+
         return answerService.submitQuestionsAnswers(user, answers);
     }
 }

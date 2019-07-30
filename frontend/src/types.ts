@@ -1,4 +1,4 @@
-import Option from "@/models/Option";
+import Option from "@/models/student/Option";
 
 export interface RootState {
   version: string;

@@ -25,7 +25,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
@@ -72,41 +71,46 @@ public class AnswerService {
             throw new TutorException(USER_MISMATCH, user.getUsername());
         }
 
-        for (Map.Entry<Integer, ResultAnswerDto> entrySet : answers.getAnswers().entrySet()) {
-            QuizQuestion quizQuestion = quizQuestionRepository.findById(entrySet.getValue().getQuizQuestionId())
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(entrySet.getValue().getQuizQuestionId())));
+        for (ResultAnswerDto resultAnswerDto : answers.getAnswers()) {
+            QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(resultAnswerDto.getQuizQuestionId())));
 
             if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
                 throw new TutorException(QUIZ_MISMATCH, Integer.toString(quizQuestion.getQuiz().getId()));
             }
-            Option option = optionRepository.findById(entrySet.getValue().getOptionId())
-                    .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, Integer.toString(entrySet.getValue().getOptionId())));
+
+            Option option = null;
+
+            if (resultAnswerDto.getOptionId() != null) {
+                option = optionRepository.findById(resultAnswerDto.getOptionId())
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, Integer.toString(resultAnswerDto.getOptionId())));
 
 
-            if (isNotQuestionOption(quizQuestion, option)) {
-                throw new TutorException(QUIZ_MISMATCH, Integer.toString(option.getId()));
+                if (isNotQuestionOption(quizQuestion, option)) {
+                    throw new TutorException(QUIZ_MISMATCH, Integer.toString(option.getId()));
+                }
             }
 
             if (!quizAnswer.getCompleted()) {
-                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, entrySet.getValue().getTimeTaken(), option));
+                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
             }
         }
 
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
-                .collect(Collectors.toMap(QuizQuestion::getSequence, quizQuestion -> new CorrectAnswerDto(quizQuestion))));
+                .map(CorrectAnswerDto::new).collect(Collectors.toList()));
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
-        return !quizQuestion.getQuestion().getOptions().stream().map(option1 -> option1.getId()).anyMatch(value -> value == option.getId());
+        return quizQuestion.getQuestion().getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
     }
 
     private boolean isNotAssignedQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion) {
-        return quizQuestion.getQuiz().getId() != quizAnswer.getQuiz().getId();
+        return !quizQuestion.getQuiz().getId().equals(quizAnswer.getQuiz().getId());
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
-        return user.getId() != quizAnswer.getUser().getId();
+        return !user.getId().equals(quizAnswer.getUser().getId());
     }
 
 }

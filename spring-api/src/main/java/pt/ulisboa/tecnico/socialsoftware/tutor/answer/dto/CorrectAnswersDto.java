@@ -1,21 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 public class CorrectAnswersDto implements Serializable {
 
-    private Map<Integer, CorrectAnswerDto> answers;
+    private List<CorrectAnswerDto> answers;
 
-    public CorrectAnswersDto(Map<Integer, CorrectAnswerDto> answers) {
+    public CorrectAnswersDto(List<CorrectAnswerDto> answers) {
         this.answers = answers;
     }
 
-    public Map<Integer, CorrectAnswerDto> getAnswers() {
+    public List<CorrectAnswerDto> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(Map<Integer, CorrectAnswerDto> answers) {
+    public void setAnswers(List<CorrectAnswerDto> answers) {
         this.answers = answers;
     }
 }
