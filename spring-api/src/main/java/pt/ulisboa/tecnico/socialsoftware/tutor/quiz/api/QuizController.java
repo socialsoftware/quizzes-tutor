@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
@@ -49,12 +48,9 @@ public class QuizController {
     @PostMapping("/quizzes/generate/student")
     public QuizStatementDto getNewQuiz(Principal principal, @RequestBody QuizSetupDto quizDetails) {
 
-        // TODO: Check how is this object materialized
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        QuizAnswer quizAnswer = quizService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
-
-        return new QuizStatementDto(quizAnswer);
+        return quizService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
     }
 
 

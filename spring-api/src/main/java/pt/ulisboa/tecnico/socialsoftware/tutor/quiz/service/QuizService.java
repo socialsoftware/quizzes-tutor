@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
@@ -68,7 +69,7 @@ public class QuizService {
     }
 
     @Transactional
-    public QuizAnswer generateStudentQuiz(User user, int quizSize) {
+    public QuizStatementDto generateStudentQuiz(User user, int quizSize) {
         Quiz quiz = new Quiz();
 
         List<Question> activeQuestions = questionRepository.getActiveQuestions();
@@ -85,7 +86,7 @@ public class QuizService {
         entityManager.persist(quiz);
         entityManager.persist(quizAnswer);
 
-        return quizAnswer;
+        return new QuizStatementDto(quizAnswer);
     }
 
 }

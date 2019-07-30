@@ -1,14 +1,14 @@
 export interface CorrectAnswerDto {
   questionId: number;
-  correctOption: number;
+  correctOptionId: number;
 }
 
 export default class CorrectAnswer {
   questionId!: number;
-  correctOption!: number;
+  correctOptionId!: number;
 
   constructor(answerJSON: CorrectAnswerDto) {
     this.questionId = answerJSON.questionId;
-    this.correctOption = answerJSON.correctOption;
+    this.correctOptionId = answerJSON.correctOptionId;
   }
 }

@@ -22,11 +22,11 @@
       ></span>
     </div>
     <result-component
-      v-if="quiz.correctAnswers.get(order)"
+      v-if="quiz.correctAnswers[order]"
       v-model="order"
-      :answer="quiz.answers.get(order)"
-      :correctAnswer="quiz.correctAnswers.get(order)"
-      :question="quiz.questions.get(order)"
+      :answer="quiz.answers[order]"
+      :correctAnswer="quiz.correctAnswers[order]"
+      :question="quiz.questions[order]"
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
     ></result-component>

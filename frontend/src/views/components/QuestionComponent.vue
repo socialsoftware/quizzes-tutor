@@ -8,8 +8,10 @@
         @mouseleave="hover = false"
       >
         <i v-if="hover" class="fas fa-chevron-left"></i>
-        <span v-else>{{ order + 1 }}</span></span
-      >
+        <span v-else>{{ order + 1 }}</span>
+
+        {{ question.quizQuestionId }}
+      </span>
       <div
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
@@ -29,6 +31,7 @@
         @click="selectOption(question.options[index].optionId)"
       >
         <span class="option-letter">{{ optionLetters[index] }}</span>
+        {{ question.options[index].optionId }}
         <span
           class="option-content"
           v-html="convertMarkDown(question.options[index].content)"

@@ -25,6 +25,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
@@ -98,6 +99,7 @@ public class AnswerService {
 
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
+                .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(CorrectAnswerDto::new).collect(Collectors.toList()));
     }
 

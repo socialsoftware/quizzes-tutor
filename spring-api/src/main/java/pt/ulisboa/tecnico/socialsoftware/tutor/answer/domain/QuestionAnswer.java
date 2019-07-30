@@ -39,7 +39,9 @@ public class QuestionAnswer implements Serializable {
         this.quizQuestion = quizQuestion;
         quizQuestion.addQuestionAnswer(this);
         this.option = option;
-        option.addQuestionAnswer(this);
+        if (option != null) {
+            option.addQuestionAnswer(this);
+        }
 
         changeDifficulty();
     }
