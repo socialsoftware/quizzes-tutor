@@ -21,12 +21,13 @@ public class Question implements Serializable {
 
     private String title;
 
-    @Column(name= "number_of_answers")
-    private Integer numberOfAnswers = 0;
+    @Column(name= "number_of_answers", columnDefinition = "integer default 0")
+    private Integer numberOfAnswers;
 
-    @Column(name= "number_of_correct")
-    private Integer numberOfCorrect = 0;
+    @Column(name= "number_of_correct", columnDefinition = "integer default 0")
+    private Integer numberOfCorrect;
 
+    @Column(columnDefinition = "boolean default true")
     private Boolean active = true;
 
     @OneToOne(cascade = { CascadeType.ALL }, mappedBy = "question")

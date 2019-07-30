@@ -3,7 +3,6 @@
     <div class="question">
       <span class="square" @click="decreaseOrder">
         <span>{{ order + 1 }}</span>
-        {{ question.quizQuestionId }}
       </span>
       <div
         class="question-content"
@@ -25,12 +24,7 @@
           'option'
         ]"
       >
-        <span class="option-letter">{{ optionLetters[index] }}</span
-        >{{
-          correctAnswer.correctOptionId +
-            " : " +
-            question.options[index].optionId
-        }}
+        <span class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
           v-html="convertMarkDown(question.options[index].content)"
