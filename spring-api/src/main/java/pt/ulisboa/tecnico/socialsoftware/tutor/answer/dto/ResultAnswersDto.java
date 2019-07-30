@@ -2,13 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.List;
 
 
 public class ResultAnswersDto implements Serializable {
     private Integer quizAnswerId;
     private LocalDateTime answerDate;
-    private Map<Integer, ResultAnswerDto> answers;
+    private List<ResultAnswerDto> answers;
 
     public ResultAnswersDto(){
 
@@ -30,11 +30,11 @@ public class ResultAnswersDto implements Serializable {
         this.answerDate = answerDate;
     }
 
-    public Map<Integer, ResultAnswerDto> getAnswers() {
+    public List<ResultAnswerDto> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(Map<Integer, ResultAnswerDto> answers) {
+    public void setAnswers(List<ResultAnswerDto> answers) {
         this.answers = answers;
     }
 }

@@ -9,10 +9,10 @@
 <script lang="ts">
 import Component, { mixins } from "vue-class-component";
 import { HorizontalBar } from "vue-chartjs";
-import Stats from "@/models/Stats";
+import Stats from "@/models/student/Stats";
 
 @Component
-export default class LineChart extends mixins(HorizontalBar) {
+export default class StudentStatsView extends mixins(HorizontalBar) {
   stats: Stats = new Stats();
 
   async mounted() {

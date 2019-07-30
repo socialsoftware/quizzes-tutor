@@ -1,10 +1,6 @@
 import axios from "axios";
-import Question from "./Question";
-import CorrectAnswer from "@/models/CorrectAnswer";
-import Answer from "@/models/Answer";
-import Option from "@/models/Option";
 
-interface ServerStats {
+interface StatsDto {
   totalQuizzes: number;
   totalAnswers: number;
   uniqueCorrectAnswers: number;
@@ -12,7 +8,7 @@ interface ServerStats {
   totalUniqueQuestions: number;
 }
 
-export default class Stats implements ServerStats {
+export default class Stats implements StatsDto {
   totalAnswers!: number;
   totalQuizzes!: number;
   totalUniqueQuestions!: number;
