@@ -8,8 +8,8 @@
         @mouseleave="hover = false"
       >
         <i v-if="hover" class="fas fa-chevron-left"></i>
-        <span v-else>{{ order + 1 }}</span></span
-      >
+        <span v-else>{{ order + 1 }}</span>
+      </span>
       <div
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"

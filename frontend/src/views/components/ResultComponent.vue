@@ -2,8 +2,8 @@
   <div class="question-container" v-if="question">
     <div class="question">
       <span class="square" @click="decreaseOrder">
-        <span>{{ order + 1 }}</span></span
-      >
+        <span>{{ order + 1 }}</span>
+      </span>
       <div
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
@@ -14,55 +14,20 @@
     </div>
     <ul class="option-list">
       <li
+        v-for="(n, index) in question.options.length"
+        :key="index"
         v-bind:class="[
-          correctAnswer.correctOption === 0 ? 'correct' : '',
-          answer.option === 0 ? 'wrong' : '',
+          answer.optionId === question.options[index].optionId ? 'wrong' : '',
+          correctAnswer.correctOptionId === question.options[index].optionId
+            ? 'correct'
+            : '',
           'option'
         ]"
       >
-        <span class="option-letter">A</span>
+        <span class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
-          v-html="convertMarkDown(question.options[0].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="[
-          correctAnswer.correctOption === 1 ? 'correct' : '',
-          answer.option === 1 ? 'wrong' : '',
-          'option'
-        ]"
-      >
-        <span class="option-letter">B</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[1].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="[
-          correctAnswer.correctOption === 2 ? 'correct' : '',
-          answer.option === 2 ? 'wrong' : '',
-          'option'
-        ]"
-      >
-        <span class="option-letter">C</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[2].content)"
-        ></span>
-      </li>
-      <li
-        v-bind:class="[
-          correctAnswer.correctOption === 3 ? 'correct' : '',
-          answer.option === 3 ? 'wrong' : '',
-          'option'
-        ]"
-      >
-        <span class="option-letter">D</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[3].content)"
+          v-html="convertMarkDown(question.options[index].content)"
         ></span>
       </li>
     </ul>
@@ -71,10 +36,11 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
+import { convertMarkDown } from "@/scripts/script";
 import Question from "@/models/student/Question";
 import Answer from "@/models/student/Answer";
 import CorrectAnswer from "@/models/student/CorrectAnswer";
-import { convertMarkDown } from "@/scripts/script";
+import Image from "@/models/student/Image";
 
 @Component
 export default class ResultComponent extends Vue {
@@ -82,6 +48,8 @@ export default class ResultComponent extends Vue {
   @Prop(Question) readonly question: Question | undefined;
   @Prop(CorrectAnswer) readonly correctAnswer!: CorrectAnswer;
   @Prop(Answer) readonly answer: Answer | undefined;
+
+  optionLetters: string[] = ["A", "B", "C", "D"];
 
   constructor() {
     super();
@@ -95,6 +63,10 @@ export default class ResultComponent extends Vue {
   @Emit()
   decreaseOrder() {
     return 1;
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

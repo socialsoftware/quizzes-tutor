@@ -1,5 +1,6 @@
 import Option from "@/models/student/Option";
 import Image from "@/models/student/Image";
+import { _ } from "vue-underscore";
 
 export interface QuestionDto {
   quizQuestionId: number;
@@ -20,7 +21,7 @@ export default class Question implements QuestionDto {
     this.quizQuestionId = jsonObj.quizQuestionId;
     this.content = jsonObj.content;
     if (jsonObj.options) {
-      this.options = jsonObj.options;
+      this.options = _.shuffle(jsonObj.options);
     }
     // TODO this.topic = jsonObj.topic;
     this.image = jsonObj.image;
