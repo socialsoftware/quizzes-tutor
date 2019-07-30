@@ -508,11 +508,6 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>Add value fields changing sequence</from>
-      <to>Merge join 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
       <from>Select values 5</from>
       <to>Row normaliser</to>
       <enabled>Y</enabled>
@@ -538,7 +533,7 @@
       <enabled>Y</enabled>
     </hop>
     <hop>
-      <from>quiz_has_question</from>
+      <from>quiz_question</from>
       <to>Sort rows 2</to>
       <enabled>Y</enabled>
     </hop>
@@ -550,11 +545,6 @@
     <hop>
       <from>Sort rows 3</from>
       <to>Merge join 3</to>
-      <enabled>Y</enabled>
-    </hop>
-    <hop>
-      <from>Sort rows 2</from>
-      <to>Add value fields changing sequence</to>
       <enabled>Y</enabled>
     </hop>
     <hop>
@@ -597,6 +587,11 @@
       <to>Merge join</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Sort rows 2</from>
+      <to>Merge join 3</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
   <step>
     <name>Add constants</name>
@@ -632,41 +627,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1280</xloc>
-      <yloc>304</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Add value fields changing sequence</name>
-    <type>FieldsChangeSequence</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <start>1</start>
-    <increment>1</increment>
-    <resultfieldName>result</resultfieldName>
-    <fields>
-      <field>
-        <name>quiz_id</name>
-      </field>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>464</xloc>
-      <yloc>384</yloc>
+      <xloc>1136</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -699,8 +661,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>512</xloc>
-      <yloc>176</yloc>
+      <xloc>464</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -716,7 +678,7 @@
       <schema_name/>
     </partitioning>
     <join_type>INNER</join_type>
-    <step1>Add value fields changing sequence</step1>
+    <step1>Sort rows 2</step1>
     <step2>Sort rows 3</step2>
     <keys_1>
       <key>question_id</key>
@@ -733,8 +695,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>480</yloc>
+      <xloc>416</xloc>
+      <yloc>528</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -771,8 +733,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1040</xloc>
-      <yloc>304</yloc>
+      <xloc>896</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1290,7 +1252,7 @@
     </remotesteps>
     <GUI>
       <xloc>128</xloc>
-      <yloc>64</yloc>
+      <yloc>128</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1309,152 +1271,152 @@
     <fields>
       <field>
         <name>1</name>
-        <value>1</value>
+        <value>0</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>2</name>
-        <value>2</value>
+        <value>1</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>3</name>
-        <value>3</value>
+        <value>2</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>4</name>
-        <value>4</value>
+        <value>3</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>5</name>
-        <value>5</value>
+        <value>4</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>6</name>
-        <value>6</value>
+        <value>5</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>7</name>
-        <value>7</value>
+        <value>6</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>8</name>
-        <value>8</value>
+        <value>7</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>9</name>
-        <value>9</value>
+        <value>8</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>10</name>
-        <value>10</value>
+        <value>9</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>11</name>
-        <value>11</value>
+        <value>10</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>12</name>
-        <value>12</value>
+        <value>11</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>13</name>
-        <value>13</value>
+        <value>12</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>14</name>
-        <value>14</value>
+        <value>13</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>15</name>
-        <value>15</value>
+        <value>14</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>16</name>
-        <value>16</value>
+        <value>15</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>17</name>
-        <value>17</value>
+        <value>16</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>18</name>
-        <value>18</value>
+        <value>17</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>19</name>
-        <value>19</value>
+        <value>18</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>20</name>
-        <value>20</value>
+        <value>19</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>21</name>
-        <value>21</value>
+        <value>20</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>22</name>
-        <value>22</value>
+        <value>21</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>23</name>
-        <value>23</value>
+        <value>22</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>24</name>
-        <value>24</value>
+        <value>23</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>25</name>
-        <value>25</value>
+        <value>24</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>26</name>
-        <value>26</value>
+        <value>25</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>27</name>
-        <value>27</value>
+        <value>26</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>28</name>
-        <value>28</value>
+        <value>27</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>29</name>
-        <value>29</value>
+        <value>28</value>
         <norm>correct_option</norm>
       </field>
       <field>
         <name>30</name>
-        <value>30</value>
+        <value>29</value>
         <norm>correct_option</norm>
       </field>
     </fields>
@@ -1467,8 +1429,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>944</xloc>
-      <yloc>16</yloc>
+      <xloc>800</xloc>
+      <yloc>80</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1515,8 +1477,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
-      <yloc>128</yloc>
+      <xloc>288</xloc>
+      <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1551,8 +1513,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
-      <yloc>240</yloc>
+      <xloc>288</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1579,8 +1541,11 @@
         <rename>option_number</rename>
       </field>
       <field>
-        <name>result</name>
+        <name>sequence</name>
         <rename>question_number</rename>
+      </field>
+      <field>
+        <name>option_id</name>
       </field>
       <select_unspecified>N</select_unspecified>
     </fields>
@@ -1593,8 +1558,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>736</xloc>
-      <yloc>480</yloc>
+      <xloc>544</xloc>
+      <yloc>528</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1715,8 +1680,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>336</xloc>
-      <yloc>16</yloc>
+      <xloc>288</xloc>
+      <yloc>80</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1738,6 +1703,9 @@
       <field>
         <name>option_number</name>
       </field>
+      <field>
+        <name>option_id</name>
+      </field>
       <select_unspecified>N</select_unspecified>
     </fields>
     <attributes/>
@@ -1749,8 +1717,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1152</xloc>
-      <yloc>304</yloc>
+      <xloc>1008</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1807,8 +1775,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>848</xloc>
-      <yloc>480</yloc>
+      <xloc>656</xloc>
+      <yloc>528</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1832,7 +1800,7 @@
     <unique_rows>N</unique_rows>
     <fields>
       <field>
-        <name>quiz_id</name>
+        <name>question_id</name>
         <ascending>Y</ascending>
         <case_sensitive>N</case_sensitive>
         <collator_enabled>N</collator_enabled>
@@ -1850,7 +1818,7 @@
     </remotesteps>
     <GUI>
       <xloc>288</xloc>
-      <yloc>384</yloc>
+      <yloc>480</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1892,7 +1860,7 @@
     </remotesteps>
     <GUI>
       <xloc>288</xloc>
-      <yloc>480</yloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1941,8 +1909,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>96</yloc>
+      <xloc>384</xloc>
+      <yloc>160</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1991,8 +1959,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>432</xloc>
-      <yloc>240</yloc>
+      <xloc>384</xloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2048,8 +2016,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>624</xloc>
-      <yloc>176</yloc>
+      <xloc>576</xloc>
+      <yloc>240</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2085,6 +2053,12 @@
         <condition>=</condition>
         <name2/>
       </key>
+      <key>
+        <name>option_id</name>
+        <field>id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
       <value>
         <name>correct</name>
         <rename>correct</rename>
@@ -2099,8 +2073,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>1376</xloc>
-      <yloc>304</yloc>
+      <xloc>1232</xloc>
+      <yloc>368</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2145,8 +2119,8 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>944</xloc>
-      <yloc>480</yloc>
+      <xloc>752</xloc>
+      <yloc>528</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2163,7 +2137,8 @@
     </partitioning>
     <connection>Tutor</connection>
     <sql>SELECT
-  question_id
+  id as option_id
+, question_id
 , "option"
 , content
 , correct
@@ -2183,13 +2158,13 @@ FROM "options"
       </output>
     </remotesteps>
     <GUI>
-      <xloc>128</xloc>
-      <yloc>480</yloc>
+      <xloc>144</xloc>
+      <yloc>576</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
   <step>
-    <name>quiz_has_question</name>
+    <name>quiz_question</name>
     <type>TableInput</type>
     <description/>
     <distribute>Y</distribute>
@@ -2201,9 +2176,11 @@ FROM "options"
     </partitioning>
     <connection>Tutor</connection>
     <sql>SELECT
-  quiz_id
+  id as quiz_question_id
+, quiz_id
 , question_id
-FROM quiz_has_question
+, "sequence"
+FROM quiz_questions
 </sql>
     <limit>0</limit>
     <lookup/>
@@ -2219,8 +2196,8 @@ FROM quiz_has_question
       </output>
     </remotesteps>
     <GUI>
-      <xloc>128</xloc>
-      <yloc>384</yloc>
+      <xloc>144</xloc>
+      <yloc>480</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -2260,7 +2237,7 @@ FROM quizzes
     </remotesteps>
     <GUI>
       <xloc>128</xloc>
-      <yloc>256</yloc>
+      <yloc>304</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

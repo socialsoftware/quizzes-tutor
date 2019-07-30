@@ -264,18 +264,19 @@ def insertQuiz(cur, quiz):
     cur.execute("INSERT INTO quizzes (title) VALUES (%s) RETURNING *", [quizTitle])
     quizId = cur.fetchone()[0]
 
-    for question in quiz["questions"]:
-        questionId = insertQuestion(cur, question, quizId)
-        insertOptions(cur, question["options"], questionId)
+    for index in range(len(quiz["questions"])):
+        questionId = insertQuestion(cur, quiz["questions"][index], quizId, index)
+        insertOptions(cur, quiz["questions"][index]["options"], questionId)
       
 
-def insertQuestion(cur, question, quizId):
+def insertQuestion(cur, question, quizId, sequence):
     # question = {"questionId": "", "content": "", "image": [], "options": []}
     # insert question
-    cur.execute("INSERT INTO questions (content, name) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
+    cur.execute("INSERT INTO questions (content, title) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
+    
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
-    cur.execute("INSERT INTO quiz_has_question (quiz_id, question_id) VALUES (%s, %s)", [int(quizId), int(questionId)])
+    cur.execute("INSERT INTO quiz_questions (quiz_id, question_id, sequence) VALUES (%s, %s, %s)", [int(quizId), int(questionId), sequence])
 
     # image insertion
     if len(question["image"]) > 0:
@@ -321,8 +322,8 @@ def main():
     #outputing the data as a json
     #encoding not working
     #should also validate the encoding for the reads
-    with open('data.json', 'w', encoding="iso-8859-15") as outfile:
-        json.dump(outputQuizes, outfile, indent=4)
+    #with open('data.json', 'w', encoding="iso-8859-15") as outfile:
+    #    json.dump(outputQuizes, outfile, indent=4)
 
     #print(outputQuizes)
 

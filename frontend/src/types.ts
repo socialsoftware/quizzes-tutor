@@ -1,3 +1,5 @@
+import Option from "@/models/student/Option";
+
 export interface RootState {
   version: string;
 }
@@ -12,4 +14,9 @@ export interface ProfileState {
 export interface TokenAndUser {
   token: string;
   user: string;
+}
+
+export interface ServerAnswer {
+  questionId: number;
+  correctOption: number;
 }
