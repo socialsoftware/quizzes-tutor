@@ -5,6 +5,7 @@ export interface QuestionDto {
   id: number;
   title: string;
   active: boolean;
+  numberOfAnswers: number;
   difficulty: number;
   content: string | null;
   options: Option[];
@@ -15,6 +16,7 @@ export class Question implements QuestionDto {
   id!: number;
   title: string;
   active: boolean;
+  numberOfAnswers: number;
   difficulty: number;
   content!: string | null;
   options!: Option[];
@@ -24,6 +26,7 @@ export class Question implements QuestionDto {
     this.id = jsonObj.id;
     this.title = jsonObj.title;
     this.active = jsonObj.active;
+    this.numberOfAnswers = jsonObj.numberOfAnswers;
     this.difficulty = jsonObj.difficulty;
     this.content = jsonObj.content;
     this.options = jsonObj.options;

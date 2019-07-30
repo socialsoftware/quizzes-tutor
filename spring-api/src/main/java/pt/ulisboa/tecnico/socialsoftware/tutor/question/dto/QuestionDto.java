@@ -27,6 +27,7 @@ public class QuestionDto implements Serializable {
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.numberOfAnswers = question.getNumberOfAnswers();
+        this.numberOfCorrect = question.getNumberOfCorrect();
         this.active = question.getActive();
         if (question.getImage() != null) {
             this.image = new ImageDto(question.getImage());

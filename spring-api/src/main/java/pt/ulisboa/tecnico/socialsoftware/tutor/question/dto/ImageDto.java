@@ -15,8 +15,17 @@ public class ImageDto implements Serializable {
     }
 
     public ImageDto(Image image) {
+        this.id = image.getId();
         this.width = image.getWidth();
         this.url = image.getUrl();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getUrl() {
