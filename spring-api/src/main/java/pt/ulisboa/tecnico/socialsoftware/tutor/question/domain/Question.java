@@ -172,4 +172,11 @@ public class Question implements Serializable {
            numberOfCorrect++;
        }
     }
+
+    public void update(QuestionDto questionDto) {
+        setTitle(questionDto.getTitle());
+        setContent(questionDto.getContent());
+        // not yet implemented
+        //new Image(questionDto.getImage());
+    }
 }

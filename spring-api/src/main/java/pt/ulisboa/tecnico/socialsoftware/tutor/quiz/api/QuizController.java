@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-public class QuizController {
+public class    QuizController {
 
     @Autowired
     private QuizService quizService;

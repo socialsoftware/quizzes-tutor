@@ -39,6 +39,12 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
+    @PutMapping("/questions/{questionId}")
+    public ResponseEntity updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
+        this.questionService.update(questionId, question);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/questions/{questionId}")
     public ResponseEntity deleteQuestion(@PathVariable Integer questionId) {
         questionService.delete(questionId);
