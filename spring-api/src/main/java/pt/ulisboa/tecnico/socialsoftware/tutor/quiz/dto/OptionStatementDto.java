@@ -6,14 +6,11 @@ import java.io.Serializable;
 
 
 public class OptionStatementDto implements Serializable {
-
     private Integer optionId;
-    private Integer option;
     private String content;
 
     public OptionStatementDto(Option option) {
         this.optionId = option.getId();
-        this.option = option.getOption();
         this.content = option.getContent();
     }
 
@@ -23,14 +20,6 @@ public class OptionStatementDto implements Serializable {
 
     public void setOptionId(Integer optionId) {
         this.optionId = optionId;
-    }
-
-    public Integer getOption() {
-        return option;
-    }
-
-    public void setOption(Integer option) {
-        this.option = option;
     }
 
     public String getContent() {

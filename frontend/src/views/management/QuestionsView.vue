@@ -21,6 +21,13 @@
             <v-card-title>
               <span class="headline">{{ formTitle() }}</span>
             </v-card-title>
+            
+            <p class="red--text" v-if="error">
+              {{error}}
+            </p>
+              <!-- <v-alert type="error">
+                  {{error}}
+              </v-alert> -->
 
             <v-card-text v-if="editedItem">
               <v-container grid-list-md fluid>
@@ -29,28 +36,28 @@
                       <v-text-field v-model="editedItem.title" label="Title"></v-text-field>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
-                      <v-text-field textarea rows="10" v-model="editedItem.content" 
-                      label="Content"></v-text-field>
+                      <v-textarea outline rows="10" v-model="editedItem.content" 
+                      label="Content"></v-textarea>
                     </v-flex>
                     <v-flex xs12 sm6 md10>
                       <v-switch v-model="editedItem.correctZero" class="ma-4" label="Correct"></v-switch>
-                      <v-text-field textarea rows="3" v-model="editedItem.optionZero" 
-                      label="Option One"></v-text-field>
+                      <v-textarea outline rows="3" v-model="editedItem.optionZero" 
+                      label="Option One"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctOne" class="ma-4" label="Correct"></v-switch>
-                      <v-text-field textarea rows="3" v-model="editedItem.optionOne" 
-                      label="Option Two"></v-text-field>
+                      <v-textarea outline rows="3" v-model="editedItem.optionOne" 
+                      label="Option Two"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctTwo" class="ma-4" label="Correct"></v-switch>
-                      <v-text-field textarea rows="3" v-model="editedItem.optionTwo" 
-                      label="Option Three"></v-text-field>
+                      <v-textarea outline rows="3" v-model="editedItem.optionTwo" 
+                      label="Option Three"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctThree" class="ma-4" label="Correct"></v-switch>
-                      <v-text-field textarea rows="3" v-model="editedItem.optionThree" 
-                      label="Option Four"></v-text-field>
+                      <v-textarea outline rows="3" v-model="editedItem.optionThree" 
+                      label="Option Four"></v-textarea>
                     </v-flex>
                 </v-layout>
               </v-container>
@@ -89,12 +96,14 @@
         <v-simple-table>
         <thead>
           <tr>
+            <th class="text-left">Id</th>
             <th class="text-left">Option</th>
             <th class="text-left">Correct</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="option in props.item.options" :key="option.id">
+            <td class="text-left">{{option.id}}</td>
             <td class="text-left" v-html="convertMarkDown(option.content)"></td>
             <td><span v-if="option.correct">TRUE</span><span v-else>FALSE</span></td>
           </tr>
@@ -119,6 +128,7 @@ export default class QuestionsMangement extends Vue {
   questions: Question[] | null = null;
   editedItem: QuestionForm = new QuestionForm();
   editedId: number = -1;
+  error: string | null = null;
   dialog: boolean = false;
 
   constructor() {
@@ -140,6 +150,7 @@ export default class QuestionsMangement extends Vue {
         questions: this.questions,
         editedId: this.editedId,
         editedItem: this.editedItem,
+        error: this.error
       }
   }
 
@@ -169,17 +180,9 @@ export default class QuestionsMangement extends Vue {
   }
 
   open() {
+    this.editedId = -1
     this.editedItem = new QuestionForm();
-    this.editedItem.title = '';
-    this.editedItem.content = '';
-    this.editedItem.optionZero = '';
-    this.editedItem.correctZero = false;
-    this.editedItem.optionOne = '';
-    this.editedItem.correctOne = false;
-    this.editedItem.optionTwo = '';
-    this.editedItem.correctTwo = false;
-    this.editedItem.optionThree = '';
-    this.editedItem.correctThree = false;
+    this.error = null;
     this.dialog = true;
   }
 
@@ -213,31 +216,29 @@ export default class QuestionsMangement extends Vue {
   }
 
   close () {
+    this.error = null;
     this.dialog = false
-    setTimeout(() => {
-      this.editedItem = new QuestionForm()
-      this.editedId = -1
-    }, 300)
   }
 
   save () {
     if (this.questions !== null && this.editedId > -1) {
       var question = this.questions.find(question => question.id === this.editedId);
       if (question !== null) {
-        var clone = {...question, 
+        var clone = {title: question.title, content: question.content, 
           options: question.options.map(option => Object.assign({}, option)),
           image: Object.assign({}, question.image)};
-          clone.title = this.editedItem.title;
-          clone.content = this.editedItem.content;
-          clone.options[0].content = this.editedItem.optionZero;
-          clone.options[0].correct = this.editedItem.correctZero;
-          clone.options[1].content = this.editedItem.optionOne;
-          clone.options[1].correct = this.editedItem.correctOne;
-          clone.options[2].content = this.editedItem.optionTwo;
-          clone.options[2].correct = this.editedItem.correctTwo;
-          clone.options[3].content = this.editedItem.optionThree;
-          clone.options[3].correct = this.editedItem.correctThree;
-        RemoteServices.updateQuestion(this.editedId, clone).then(result => {
+        clone.title = this.editedItem.title;
+        clone.content = this.editedItem.content;
+        clone.options[0].content = this.editedItem.optionZero;
+        clone.options[0].correct = this.editedItem.correctZero;
+        clone.options[1].content = this.editedItem.optionOne;
+        clone.options[1].correct = this.editedItem.correctOne;
+        clone.options[2].content = this.editedItem.optionTwo;
+        clone.options[2].correct = this.editedItem.correctTwo;
+        clone.options[3].content = this.editedItem.optionThree;
+        clone.options[3].correct = this.editedItem.correctThree;
+        RemoteServices.updateQuestion(this.editedId, clone)
+        .then(response => {
           question.title = this.editedItem.title;
           question.content = this.editedItem.content;
           question.options[0].content = this.editedItem.optionZero;
@@ -248,7 +249,18 @@ export default class QuestionsMangement extends Vue {
           question.options[2].correct = this.editedItem.correctTwo;
           question.options[3].content = this.editedItem.optionThree;
           question.options[3].correct = this.editedItem.correctThree;
-        });
+        })
+        .catch((error) => {
+          if (error.response) {
+            this.error = error.response.data.message;
+            console.log(error.response.data.message);
+          } else if (error.request) {
+            this.error = "No response received";
+          } else {
+            this.error = "Error";
+          }
+          this.dialog = true;
+        });   
       }
       
     } else {

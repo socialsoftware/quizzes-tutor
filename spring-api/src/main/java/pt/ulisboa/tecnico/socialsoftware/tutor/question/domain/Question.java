@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -9,11 +11,13 @@ import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.OPTION_NOT_FOUND;
+
 @Entity
 @Table(name = "questions")
 public class Question implements Serializable {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "TEXT")
@@ -21,25 +25,26 @@ public class Question implements Serializable {
 
     private String title;
 
-    @Column(name= "number_of_answers", columnDefinition = "integer default 0")
-    private Integer numberOfAnswers;
+    @Column(name = "number_of_answers", columnDefinition = "integer default 0")
+    private Integer numberOfAnswers = 0;
 
-    @Column(name= "number_of_correct", columnDefinition = "integer default 0")
-    private Integer numberOfCorrect;
+    @Column(name = "number_of_correct", columnDefinition = "integer default 0")
+    private Integer numberOfCorrect = 0;
 
     @Column(columnDefinition = "boolean default true")
     private Boolean active = true;
 
-    @OneToOne(cascade = { CascadeType.ALL }, mappedBy = "question")
+    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "question")
     private Image image;
 
-    @OneToMany(cascade = { CascadeType.ALL }, mappedBy = "question", fetch=FetchType.EAGER)
+    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "question", fetch = FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
     private Set<QuizQuestion> quizQuestions;
 
-    public Question(){}
+    public Question() {
+    }
 
     public Question(QuestionDto question) {
         this.title = question.getTitle();
@@ -47,10 +52,10 @@ public class Question implements Serializable {
         this.numberOfAnswers = question.getNumberOfAnswers();
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.active = question.getActive();
-       if (question.getImage() != null) {
+        if (question.getImage() != null) {
             setImage(new Image(question.getImage()));
         }
-       question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
+        question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
     }
 
     public Integer getId() {
@@ -92,7 +97,7 @@ public class Question implements Serializable {
 
     public void setImage(Image image) {
         this.image = image;
-   }
+    }
 
     public String getTitle() {
         return title;
@@ -160,7 +165,7 @@ public class Question implements Serializable {
                     .collect(Collectors.reducing(0, e -> 1, Integer::sum));
         }
 
-        double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect/ (double) numberOfAnswers : 0.0;
+        double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect / (double) numberOfAnswers : 0.0;
         result = result * 100;
         result = Math.round(result);
         return result / 100;
@@ -169,14 +174,51 @@ public class Question implements Serializable {
     public void addAnswer(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
         if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect() != null && questionAnswer.getOption().getCorrect()) {
-           numberOfCorrect++;
-       }
+            numberOfCorrect++;
+        }
     }
 
     public void update(QuestionDto questionDto) {
+        checkConsistentQuestion(questionDto);
+
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
-        // not yet implemented
+
+        questionDto.getOptions().stream().forEach(optionDto -> {
+            Option option = getOptionById(optionDto.getId());
+            if (option == null) {
+                throw new TutorException(OPTION_NOT_FOUND, optionDto.getId().toString());
+            }
+            option.setContent(optionDto.getContent());
+            option.setCorrect(optionDto.getCorrect());
+        });
+
+        // TODO: not yet implemented
         //new Image(questionDto.getImage());
     }
+
+    private void checkConsistentQuestion(QuestionDto questionDto) {
+        if (questionDto.getTitle().trim().length() == 0 ||
+                questionDto.getContent().trim().length() == 0 ||
+                questionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
+            throw new TutorException(TutorException.ExceptionError.QUESTION_MISSING_DATA, "");
+        }
+
+        if (questionDto.getOptions().stream().filter(option -> option.getCorrect()).count() != 1) {
+            throw new TutorException(TutorException.ExceptionError.QUESTION_MULTIPLE_CORRECT_OPTIONS, "");
+        }
+
+        if (!questionDto.getOptions().stream().filter(OptionDto::getCorrect).findAny()
+                .equals(getOptions().stream().filter(Option::getCorrect).findAny())
+            && getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                .findAny().isPresent()) {
+            throw new TutorException(TutorException.ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS, "");
+        }
+
+    }
+
+    private Option getOptionById(Integer id) {
+        return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
+    }
+
 }

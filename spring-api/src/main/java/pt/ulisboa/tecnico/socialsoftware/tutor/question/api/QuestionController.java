@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -11,6 +13,8 @@ import java.util.stream.Collectors;
 
 @RestController
 public class QuestionController {
+    private static Logger logger = LoggerFactory.getLogger(QuestionController.class);
+
 
     private QuestionService questionService;
 
@@ -41,6 +45,10 @@ public class QuestionController {
 
     @PutMapping("/questions/{questionId}")
     public ResponseEntity updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
+        logger.debug("updateQuestion questionId: {}, title: {}, content: {}, options: {}: ", questionId,
+                question.getTitle(), question.getContent(),
+                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
+                        .collect(Collectors.joining("\n")));
         this.questionService.update(questionId, question);
         return ResponseEntity.ok().build();
     }

@@ -1,4 +1,4 @@
-import Option from "@/models/student/Option";
+import Option from "@/models/question/Option";
 import Image from "@/models/student/Image";
 
 export interface QuestionDto {
