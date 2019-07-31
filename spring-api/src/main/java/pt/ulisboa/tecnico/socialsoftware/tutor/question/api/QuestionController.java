@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.api;
+package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 @RestController
 public class QuestionController {
     private static Logger logger = LoggerFactory.getLogger(QuestionController.class);
-
 
     private QuestionService questionService;
 
@@ -34,13 +33,16 @@ public class QuestionController {
 
     @GetMapping("/questions/{questionId}")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
-        return new QuestionDto(this.questionService.findById(questionId));
+        return this.questionService.findById(questionId);
     }
 
     @PostMapping("/questions")
-    public ResponseEntity createQuestion(@Valid @RequestBody QuestionDto question) {
-        this.questionService.create(question);
-        return ResponseEntity.ok().build();
+    public QuestionDto createQuestion(@Valid @RequestBody QuestionDto question) {
+        logger.debug("createQuestion title: {}, content: {}, options: {}: ",
+                question.getTitle(), question.getContent(),
+                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
+                        .collect(Collectors.joining("\n")));
+         return this.questionService.create(question);
     }
 
     @PutMapping("/questions/{questionId}")

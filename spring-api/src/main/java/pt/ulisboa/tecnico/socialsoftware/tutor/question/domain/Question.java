@@ -46,16 +46,18 @@ public class Question implements Serializable {
     public Question() {
     }
 
-    public Question(QuestionDto question) {
-        this.title = question.getTitle();
-        this.content = question.getContent();
-        this.numberOfAnswers = question.getNumberOfAnswers();
-        this.numberOfCorrect = question.getNumberOfCorrect();
-        this.active = question.getActive();
-        if (question.getImage() != null) {
-            setImage(new Image(question.getImage()));
+    public Question(QuestionDto questionDto) {
+        checkConsistentQuestion(questionDto);
+
+        this.title = questionDto.getTitle();
+        this.content = questionDto.getContent();
+        this.active = true;
+
+        if (questionDto.getImage() != null) {
+            setImage(new Image(questionDto.getImage()));
         }
-        question.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
+
+        questionDto.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
     }
 
     public Integer getId() {
@@ -73,7 +75,6 @@ public class Question implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
-
 
     public Boolean getActive() {
         return active;

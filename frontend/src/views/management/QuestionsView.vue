@@ -1,4 +1,4 @@
-<template v-if="questions">
+<template v-if="questions.size == 0">
    
   <v-card>
     <v-card-title>
@@ -21,13 +21,10 @@
             <v-card-title>
               <span class="headline">{{ formTitle() }}</span>
             </v-card-title>
-            
+
             <p class="red--text" v-if="error">
               {{error}}
             </p>
-              <!-- <v-alert type="error">
-                  {{error}}
-              </v-alert> -->
 
             <v-card-text v-if="editedItem">
               <v-container grid-list-md fluid>
@@ -125,7 +122,7 @@ import Image from "@/models/student/Image";
 
 @Component
 export default class QuestionsMangement extends Vue {
-  questions: Question[] | null = null;
+  questions: Question[] = [];
   editedItem: QuestionForm = new QuestionForm();
   editedId: number = -1;
   error: string | null = null;
@@ -253,7 +250,6 @@ export default class QuestionsMangement extends Vue {
         .catch((error) => {
           if (error.response) {
             this.error = error.response.data.message;
-            console.log(error.response.data.message);
           } else if (error.request) {
             this.error = "No response received";
           } else {
@@ -261,11 +257,35 @@ export default class QuestionsMangement extends Vue {
           }
           this.dialog = true;
         });   
-      }
-      
+      }      
     } else {
-      confirm('I\'m going to create the question')
+      var question = { 
+        title: this.editedItem.title,
+        content: this.editedItem.content,
+        options: [
+          {id: -1, content: this.editedItem.optionZero, correct: this.editedItem.correctZero},
+          {id: -1, content: this.editedItem.optionOne, correct: this.editedItem.correctOne},
+          {id: -1, content: this.editedItem.optionTwo, correct: this.editedItem.correctTwo},
+          {id: -1, content: this.editedItem.optionThree, correct: this.editedItem.correctThree}
+        ]
+      }
 
+      RemoteServices.createQuestion(question)
+        .then(response => {
+          var result = new Question(response.data);
+          this.questions.push(result);
+        })
+        .catch((error) => {
+          if (error.response) {
+            this.error = error.response.data.message;
+            console.log(error.response.data.message);
+          } else if (error.request) {
+            this.error = "No response received";
+          } else {
+            this.error = "Error";
+          }
+          this.dialog = true;
+      });   
     }
     this.close()
   }

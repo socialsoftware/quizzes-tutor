@@ -24,8 +24,9 @@ public class QuestionService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public Question findById(Integer questionId) {
-        return questionRepository.findById(questionId)
+    @Transactional
+    public QuestionDto findById(Integer questionId) {
+        return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
     }
 
@@ -35,8 +36,10 @@ public class QuestionService {
     }
 
     @Transactional
-    public void create(QuestionDto question) {
-        this.entityManager.persist(new Question(question));
+    public QuestionDto create(QuestionDto questionDto) {
+        Question question = new Question(questionDto);
+        this.entityManager.persist(question);
+        return new QuestionDto(question);
     }
 
     @Transactional
