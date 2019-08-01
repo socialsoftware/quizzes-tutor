@@ -1,4 +1,4 @@
-<template v-if="questions.size == 0">
+<template v-if="questions.size == 0 ">
    
   <v-card>
     <v-card-title>
@@ -184,32 +184,42 @@ export default class QuestionsMangement extends Vue {
   }
 
   editItem(item: number) {
-    if (this.questions !== null) {
-      var question = this.questions.find(question => question.id === item);
-      if (question) {
-        this.editedId = question.id;
-        this.editedItem = new QuestionForm();
-        this.editedItem.title = question.title;
-        this.editedItem.content = question.content !== null ? question.content : '';
-        this.editedItem.optionZero = question.options[0].content;
-        this.editedItem.correctZero = question.options[0].correct;
-        this.editedItem.optionOne = question.options[1].content;
-        this.editedItem.correctOne = question.options[1].correct;
-        this.editedItem.optionTwo = question.options[2].content;
-        this.editedItem.correctTwo = question.options[2].correct;
-        this.editedItem.optionThree = question.options[3].content;
-        this.editedItem.correctThree = question.options[3].correct;
-        this.dialog = true;
-      }
+    var question = this.questions.find(question => question.id === item);
+    if (question) {
+      this.editedId = question.id;
+      this.editedItem = new QuestionForm();
+      this.editedItem.title = question.title;
+      this.editedItem.content = question.content !== null ? question.content : '';
+      this.editedItem.optionZero = question.options[0].content;
+      this.editedItem.correctZero = question.options[0].correct;
+      this.editedItem.optionOne = question.options[1].content;
+      this.editedItem.correctOne = question.options[1].correct;
+      this.editedItem.optionTwo = question.options[2].content;
+      this.editedItem.correctTwo = question.options[2].correct;
+      this.editedItem.optionThree = question.options[3].content;
+      this.editedItem.correctThree = question.options[3].correct;
+      this.dialog = true;
     }
   }
 
   deleteItem (item: number) {
-    if (this.questions != null) {
-      // const index = this.questions.find(question => question.id === item)
-      // confirm('Are you sure you want to delete this item?') && this.questions.splice(index, 1)
-      confirm('Are you sure you want to delete this item?')
-    }
+      const selectedQuestion = this.questions.find(question => question.id === item)
+      if (confirm('Are you sure you want to delete this question?')) {
+        RemoteServices.deleteQuestion(selectedQuestion.id)
+        .then(response => {
+          this.questions = this.questions.splice(selectedQuestion.id, 1);
+        })
+        .catch((error) => {
+          if (error.response) {
+            confirm(error.response.data.message)
+            console.log(error.response.data.message);
+          } else if (error.request) {
+            confirm("No response received")
+          } else {
+            confirm("Error")
+          }
+        });   
+      }
   }
 
   close () {
@@ -218,10 +228,10 @@ export default class QuestionsMangement extends Vue {
   }
 
   save () {
-    if (this.questions !== null && this.editedId > -1) {
-      var question = this.questions.find(question => question.id === this.editedId);
+    if (this.editedId > -1) {
+      let question = this.questions.find(question => question.id === this.editedId);
       if (question !== null) {
-        var clone = {title: question.title, content: question.content, 
+        let clone = {title: question.title, content: question.content, 
           options: question.options.map(option => Object.assign({}, option)),
           image: Object.assign({}, question.image)};
         clone.title = this.editedItem.title;
@@ -259,7 +269,7 @@ export default class QuestionsMangement extends Vue {
         });   
       }      
     } else {
-      var question = { 
+      const question = { 
         title: this.editedItem.title,
         content: this.editedItem.content,
         options: [

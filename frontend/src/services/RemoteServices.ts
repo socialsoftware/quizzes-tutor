@@ -10,7 +10,12 @@ export default class RemoteServices {
     return axios.post(process.env.VUE_APP_ROOT_API + "/questions/", question);
   }
 
-  static updateQuestion(editedId: string, question: Question) {
-    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + editedId, question);
+  static updateQuestion(questionId: string, question: Question) {
+    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId, question);
+  }
+
+  static deleteQuestion(questionId: string) {
+    alert(questionId);
+    return axios.delete(process.env.VUE_APP_ROOT_API + "/questions/" + questionId);
   }
 }

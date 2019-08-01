@@ -48,10 +48,10 @@ public class QuestionService {
         question.update(questionDto);
     }
 
-    // TODO: Check that it can be deleted, it is has answers, it cannot
     @Transactional
-    public void delete(Integer questionId) {
+    public void remove(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        question.canRemove();
         entityManager.remove(question);
     }
 

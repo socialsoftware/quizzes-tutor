@@ -17,6 +17,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class CreateQuestionServiceSpockTest extends Specification {
+    public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
@@ -30,10 +31,9 @@ class CreateQuestionServiceSpockTest extends Specification {
     def "create a question with no image and one option"() {
         given: "create a question"
         def question = new QuestionDto()
+        question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
-        question.setNumberOfAnswers(4)
-        question.setNumberOfCorrect(2)
         and: 'a optionId'
         def option = new OptionDto()
         option.setContent(OPTION_CONTENT)
@@ -50,10 +50,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         def result = questionRepository.findAll().get(0)
         result.getId() != null
         result.getActive() == true
+        result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
-        result.getNumberOfAnswers() == 4
-        result.getNumberOfCorrect() == 2
-        result.getDifficulty() == 0.5
         result.getImage() == null
         result.getOptions().size() == 1
         def resOption = result.getOptions().get(0)
@@ -62,14 +60,13 @@ class CreateQuestionServiceSpockTest extends Specification {
 
     }
 
-
     def "create a question with image and two options"() {
         given: "create a question"
         def question = new QuestionDto()
+        question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
-        question.setNumberOfAnswers(4)
-        question.setNumberOfCorrect(2)
+
         and: 'an image'
         def image = new ImageDto()
         image.setUrl(URL)
@@ -83,7 +80,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         options.add(option)
         option = new OptionDto()
         option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
+        option.setCorrect(false)
         options.add(option)
         question.setOptions(options)
 
@@ -95,10 +92,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         def result = questionRepository.findAll().get(0)
         result.getId() != null
         result.getActive() == true
+        result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
-        result.getNumberOfAnswers() == 4
-        result.getNumberOfCorrect() == 2
-        result.getDifficulty() == 0.5
         result.getImage().getId() != null
         result.getImage().getUrl() == URL
         result.getImage().getWidth() == 20

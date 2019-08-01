@@ -222,4 +222,9 @@ public class Question implements Serializable {
         return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
     }
 
+    public void canRemove() {
+        if (getQuizQuestions().size() != 0) {
+            throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, "");
+        }
+    }
 }

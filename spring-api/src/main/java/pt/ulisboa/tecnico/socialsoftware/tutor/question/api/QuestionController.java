@@ -56,8 +56,9 @@ public class QuestionController {
     }
 
     @DeleteMapping("/questions/{questionId}")
-    public ResponseEntity deleteQuestion(@PathVariable Integer questionId) {
-        questionService.delete(questionId);
+    public ResponseEntity removeQuestion(@PathVariable Integer questionId) {
+        logger.debug("removeQuestion questionId: {}: ", questionId);
+        questionService.remove(questionId);
         return ResponseEntity.ok().build();
     }
 }
