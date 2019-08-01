@@ -57,7 +57,11 @@ public class Question implements Serializable {
             setImage(new Image(questionDto.getImage()));
         }
 
-        questionDto.getOptions().stream().map(Option::new).forEach(option -> this.options.add(option));
+        for (OptionDto optionDto : questionDto.getOptions()) {
+            Option option = new Option(optionDto);
+            this.options.add(option);
+            option.setQuestion(this);
+        }
     }
 
     public Integer getId() {

@@ -2,21 +2,22 @@
    
   <v-card>
     <v-card-title>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        label="Search"
-        single-line
-        hide-details></v-text-field>
+      <v-flex xs12 sm6 md6>
+        <v-text-field
+          v-model="search"
+          append-icon="search"
+          label="Search"
+          single-line
+          hide-details></v-text-field>
+      </v-flex>
       <v-divider
           class="mx-4"
           inset
           vertical>
       </v-divider>
+      <v-spacer></v-spacer>
+        <v-btn color="primary" dark class="mb-2" @click="open">New Item</v-btn>
       <v-dialog v-model="dialog" max-width="1000px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" @click="open">New Item</v-btn>
-          </template>
           <v-card>
             <v-card-title>
               <span class="headline">{{ formTitle() }}</span>
@@ -207,7 +208,7 @@ export default class QuestionsMangement extends Vue {
       if (confirm('Are you sure you want to delete this question?')) {
         RemoteServices.deleteQuestion(selectedQuestion.id)
         .then(response => {
-          this.questions = this.questions.splice(selectedQuestion.id, 1);
+          this.questions = this.questions.filter(question => question.id != selectedQuestion.id);
         })
         .catch((error) => {
           if (error.response) {
