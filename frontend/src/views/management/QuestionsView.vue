@@ -90,9 +90,16 @@
             </v-btn>
           </td>
           <td class="text-left">
+            <label>
+              <input type="file" style="display:none" @change="handleFileUpload($event, props.item.id)"
+              accept="image/*" class="input-file">Upload</label>
+            <!-- <v-file-input accept="image/*" label="File input">Upload</v-file-input> -->
+          </td>
+          <td class="text-left">
             <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
             <v-icon small class="mr-2" @click="duplicateItem(props.item.id)">cached</v-icon>
-            <v-icon small class="mr-2" @click="deleteItem(props.item.id)">delete</v-icon></td>
+            <v-icon small class="mr-2" @click="deleteItem(props.item.id)">delete</v-icon>
+          </td>
         </tr>
     </template>
     <template slot="expand" slot-scope="props">
@@ -148,6 +155,7 @@ export default class QuestionsMangement extends Vue {
           { text: 'Number of Answers', value: 'numberOfAnswers' },
           { text: 'Title', value: 'title' },
           { text: 'Active', value: 'active' },
+          { text: 'Image', value: 'image' },
           { text: 'Actions', value: 'action', sortable: false },
         ],
         questions: this.questions,
@@ -205,6 +213,27 @@ export default class QuestionsMangement extends Vue {
             confirm("Error")
         }
     });   
+  }
+
+  handleFileUpload(event: Event, questionId: number) {
+    var question = this.questions.find(question => question.id === questionId);
+    if (question) {
+      RemoteServices.uploadImage(event.target.files[0], questionId)
+        .then(response => {
+          question.image = {...question.image, url: response.data}
+          confirm("Image " + response.data +  " was uploaded!")
+        })
+        .catch((error) => {
+          if (error.response) {
+            confirm(error.response.data.message)
+            console.log(error.response.data.message);
+          } else if (error.request) {
+            confirm("No response received")
+          } else {
+            confirm("Error")
+          }
+        });   
+    }
   }
 
   duplicateItem(item: number) {

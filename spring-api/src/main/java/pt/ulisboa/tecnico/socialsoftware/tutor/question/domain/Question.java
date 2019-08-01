@@ -206,6 +206,11 @@ public class Question implements Serializable {
         this.active = !this.active;
     }
 
+    public void addImage(Image image) {
+        this.image = image;
+        image.setQuestion(this);
+    }
+
     private void checkConsistentQuestion(QuestionDto questionDto) {
         if (questionDto.getTitle().trim().length() == 0 ||
                 questionDto.getContent().trim().length() == 0 ||

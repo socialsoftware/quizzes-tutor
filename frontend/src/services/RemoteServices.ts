@@ -21,4 +21,17 @@ export default class RemoteServices {
   static questionSwitchActive(questionId: string) {
     return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/switchActive");
   }
+
+  static uploadImage(file: File, questionId: string) {
+    let formData = new FormData();
+    formData.append('file', file);
+    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/image", 
+      formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+  }
+
 }

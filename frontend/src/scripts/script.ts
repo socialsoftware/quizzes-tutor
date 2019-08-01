@@ -7,7 +7,7 @@ export function convertMarkDown(
 ): string {
   const converter = new showdown.Converter();
 
-  if (image) {
+  if (image && image.url) {
     text +=
       "  \n  \n  \n[image]: " +
       process.env.VUE_APP_ROOT_API +

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -60,6 +61,25 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
         question.switchActive();
     }
-    
+
+    @Transactional
+    public void setImageUrl(Integer questionId, String type) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+
+        Image image = question.getImage();
+
+        if (image != null) {
+            image.setUrl(question.getId() + "." + type);
+
+            return;
+        }
+
+        image = new Image();
+        image.setUrl(question.getId() + "." + type);
+
+        question.addImage(image);
+
+        entityManager.persist(image);
+    }
 }
 

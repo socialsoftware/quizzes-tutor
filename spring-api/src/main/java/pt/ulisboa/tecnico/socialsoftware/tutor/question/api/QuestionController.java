@@ -4,10 +4,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 
 import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -67,6 +74,30 @@ public class QuestionController {
         logger.debug("questionSwitchActive questionId: {}: ", questionId);
         questionService.questionSwitchActive(questionId);
         return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/questions/{questionId}/image")
+    public String uploadImage(@PathVariable Integer questionId, @RequestParam("file") MultipartFile file) throws IOException {
+        logger.debug("uploadImage  questionId: {}: , filename: {}", questionId, file.getContentType());
+
+        int lastIndex = file.getContentType().lastIndexOf('/');
+        String type = file.getContentType().substring(lastIndex + 1);
+
+        questionService.setImageUrl(questionId, type);
+
+        String url = questionService.findById(questionId).getImage().getUrl();
+
+        Path resourceDirectory = Paths.get("src","main","resources", "static", "images", "questions");
+        String fileLocation = resourceDirectory.toFile().getAbsolutePath() + "/" +   url;
+
+
+        logger.debug("filelocation: {}", fileLocation);
+
+
+        Path targetLocation = Paths.get(fileLocation);
+        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+
+        return url;
     }
 
 }
