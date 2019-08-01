@@ -63,7 +63,7 @@ public class QuestionService {
     }
 
     @Transactional
-    public void createImage(Integer questionId) {
+    public void uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
 
         Image image = question.getImage();
@@ -75,6 +75,8 @@ public class QuestionService {
 
             entityManager.persist(image);
         }
+
+        question.getImage().setUrl(question.getId() + "." + type);
     }
 
     @Transactional
