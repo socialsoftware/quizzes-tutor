@@ -63,9 +63,17 @@ public class QuestionController {
     }
 
     @DeleteMapping("/questions/{questionId}")
-    public ResponseEntity removeQuestion(@PathVariable Integer questionId) {
+    public ResponseEntity removeQuestion(@PathVariable Integer questionId) throws IOException {
         logger.debug("removeQuestion questionId: {}: ", questionId);
+        QuestionDto questionDto = questionService.findById(questionId);
+        String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
+
         questionService.remove(questionId);
+
+        if (url != null && Files.exists(getTargetLocation(url))) {
+            Files.delete(getTargetLocation(url));
+        }
+
         return ResponseEntity.ok().build();
     }
 
@@ -80,24 +88,29 @@ public class QuestionController {
     public String uploadImage(@PathVariable Integer questionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  questionId: {}: , filename: {}", questionId, file.getContentType());
 
+        QuestionDto questionDto = questionService.findById(questionId);
+        String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
+        if (url != null && Files.exists(getTargetLocation(url))) {
+            Files.delete(getTargetLocation(url));
+        }
+
         int lastIndex = file.getContentType().lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
+        questionService.createImage(questionId);
+
         questionService.setImageUrl(questionId, type);
 
-        String url = questionService.findById(questionId).getImage().getUrl();
-
-        Path resourceDirectory = Paths.get("src","main","resources", "static", "images", "questions");
-        String fileLocation = resourceDirectory.toFile().getAbsolutePath() + "/" +   url;
-
-
-        logger.debug("filelocation: {}", fileLocation);
-
-
-        Path targetLocation = Paths.get(fileLocation);
-        Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+        url = questionService.findById(questionId).getImage().getUrl();
+        Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;
+    }
+
+    private Path getTargetLocation(String url) {
+        Path resourceDirectory = Paths.get("src","main","resources", "static", "images", "questions");
+        String fileLocation = resourceDirectory.toFile().getAbsolutePath() + "/" +   url;
+        return Paths.get(fileLocation);
     }
 
 }

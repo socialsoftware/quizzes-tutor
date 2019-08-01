@@ -28,7 +28,7 @@ public class QuestionService {
     @Transactional
     public QuestionDto findById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
-                .orElseThrow(() -> new ResourceNotFoundException("Question not found with id " + questionId));
+                .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
     }
 
     @Transactional
@@ -63,23 +63,30 @@ public class QuestionService {
     }
 
     @Transactional
-    public void setImageUrl(Integer questionId, String type) {
+    public void createImage(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
 
         Image image = question.getImage();
 
-        if (image != null) {
-            image.setUrl(question.getId() + "." + type);
+        if (image == null) {
+            image = new Image();
 
-            return;
+            question.addImage(image);
+
+            entityManager.persist(image);
+        }
+    }
+
+    @Transactional
+    public void setImageUrl(Integer questionId, String type) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+
+        if (question.getImage() == null) {
+            throw new TutorException(TutorException.ExceptionError.IMAGE_NOT_FOUND, questionId.toString());
         }
 
-        image = new Image();
-        image.setUrl(question.getId() + "." + type);
-
-        question.addImage(image);
-
-        entityManager.persist(image);
+        question.getImage().setUrl(question.getId() + "." + type);
     }
+
 }
 

@@ -11,7 +11,6 @@ public class ImageDto implements Serializable {
     private Integer width;
 
     public ImageDto() {
-
     }
 
     public ImageDto(Image image) {
