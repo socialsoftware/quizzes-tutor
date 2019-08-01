@@ -17,4 +17,8 @@ export default class RemoteServices {
   static deleteQuestion(questionId: string) {
     return axios.delete(process.env.VUE_APP_ROOT_API + "/questions/" + questionId);
   }
+
+  static questionSwitchActive(questionId: string) {
+    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/switchActive");
+  }
 }

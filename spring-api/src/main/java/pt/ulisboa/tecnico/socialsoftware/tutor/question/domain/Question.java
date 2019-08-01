@@ -202,6 +202,10 @@ public class Question implements Serializable {
         //new Image(questionDto.getImage());
     }
 
+    public void switchActive() {
+        this.active = !this.active;
+    }
+
     private void checkConsistentQuestion(QuestionDto questionDto) {
         if (questionDto.getTitle().trim().length() == 0 ||
                 questionDto.getContent().trim().length() == 0 ||
@@ -231,4 +235,6 @@ public class Question implements Serializable {
             throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, "");
         }
     }
+
+
 }

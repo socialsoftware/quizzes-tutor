@@ -55,5 +55,11 @@ public class QuestionService {
         entityManager.remove(question);
     }
 
+    @Transactional
+    public void questionSwitchActive(Integer questionId) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        question.switchActive();
+    }
+    
 }
 

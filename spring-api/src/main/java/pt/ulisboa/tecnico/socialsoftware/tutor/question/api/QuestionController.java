@@ -61,4 +61,12 @@ public class QuestionController {
         questionService.remove(questionId);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/questions/{questionId}/switchActive")
+    public ResponseEntity questionSwitchActive(@PathVariable Integer questionId) {
+        logger.debug("questionSwitchActive questionId: {}: ", questionId);
+        questionService.questionSwitchActive(questionId);
+        return ResponseEntity.ok().build();
+    }
+
 }

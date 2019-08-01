@@ -81,13 +81,18 @@
           <td class="text-left" 
           @click="props.expanded = !props.expanded"
           v-html="convertMarkDown(props.item.content, props.item.image)"></td>
-          <td>{{props.item.difficulty}}</td>
-          <td>{{props.item.numberOfAnswers}}</td>
-          <td>{{props.item.title}}</td>
-          <td><span v-if="props.item.active">TRUE</span><span v-else>FALSE</span></td>
-          <td>
+          <td class="text-left">{{props.item.difficulty}}</td>
+          <td class="text-left">{{props.item.numberOfAnswers}}</td>
+          <td class="text-left">{{props.item.title}}</td>
+          <td class="text-left">
+            <v-btn text small @click="switchActive(props.item.id)">
+              <span v-if="props.item.active">Active</span><span v-else>Inactive</span>
+            </v-btn>
+          </td>
+          <td class="text-left">
             <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
-            <v-icon small @click="deleteItem(props.item.id)">delete</v-icon></td>
+            <v-icon small class="mr-2" @click="duplicateItem(props.item.id)">cached</v-icon>
+            <v-icon small class="mr-2" @click="deleteItem(props.item.id)">delete</v-icon></td>
         </tr>
     </template>
     <template slot="expand" slot-scope="props">
@@ -183,6 +188,45 @@ export default class QuestionsMangement extends Vue {
     this.error = null;
     this.dialog = true;
   }
+
+  switchActive(item: number) {
+    RemoteServices.questionSwitchActive(item)
+      .then(response => {
+        var question = this.questions.find(question => question.id === item);
+        question.active = !question.active;
+      })
+      .catch((error) => {
+        if (error.response) {
+          confirm(error.response.data.message)
+          console.log(error.response.data.message);
+        } else if (error.request) {
+          confirm("No response received")
+        } else {
+            confirm("Error")
+        }
+    });   
+  }
+
+  duplicateItem(item: number) {
+    var question = this.questions.find(question => question.id === item);
+    if (question) {
+      this.editedId = -1;
+      this.editedItem = new QuestionForm();
+      this.editedItem.title = question.title;
+      this.editedItem.content = question.content !== null ? question.content : '';
+      this.editedItem.optionZero = question.options[0].content;
+      this.editedItem.correctZero = question.options[0].correct;
+      this.editedItem.optionOne = question.options[1].content;
+      this.editedItem.correctOne = question.options[1].correct;
+      this.editedItem.optionTwo = question.options[2].content;
+      this.editedItem.correctTwo = question.options[2].correct;
+      this.editedItem.optionThree = question.options[3].content;
+      this.editedItem.correctThree = question.options[3].correct;
+      this.dialog = true;
+    }
+  }
+
+
 
   editItem(item: number) {
     var question = this.questions.find(question => question.id === item);
