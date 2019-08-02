@@ -100,6 +100,19 @@ public class QuestionService {
     }
 
     @Transactional
+    public void removeTopic(String name) {
+        Topic topic = topicRepository.findByName(name);
+
+        if (topic == null) {
+            throw new TutorException(TutorException.ExceptionError.TOPIC_NOT_FOUND, name);
+        }
+
+        topic.remove();
+
+        entityManager.remove(topic);
+    }
+
+    @Transactional
     public void updateQuestionTopics(Integer questionId, String[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
 

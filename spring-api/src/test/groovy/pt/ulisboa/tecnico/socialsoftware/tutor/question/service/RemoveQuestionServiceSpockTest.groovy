@@ -100,6 +100,15 @@ class RemoveQuestionServiceSpockTest extends Specification {
         exception.getError() == TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ
     }
 
+    def "remove a question that has topics"() {
+        // TODO: implement
+        when:
+        questionService.remove(question.getId())
+
+        then:
+        thrown(TutorException)
+    }
+
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
 

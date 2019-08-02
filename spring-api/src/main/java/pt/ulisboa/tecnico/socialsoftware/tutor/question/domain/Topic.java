@@ -50,4 +50,9 @@ public class Topic implements Serializable {
         this.questions = questions;
     }
 
+    public void remove() {
+        getQuestions().stream().forEach(question -> question.getTopics().remove(this));
+        getQuestions().clear();
+
+    }
 }
