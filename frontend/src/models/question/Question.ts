@@ -10,6 +10,7 @@ export interface QuestionDto {
   content: string | null;
   options: Option[];
   image: Image | null;
+  tags: string[];
 }
 
 export class Question implements QuestionDto {
@@ -21,6 +22,8 @@ export class Question implements QuestionDto {
   content!: string | null;
   options!: Option[];
   image: Image | null;
+  tags: string[] = [];
+
 
   constructor(jsonObj: QuestionDto) {
     this.id = jsonObj.id;

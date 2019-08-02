@@ -81,21 +81,33 @@
           <td class="text-left" 
           @click="props.expanded = !props.expanded"
           v-html="convertMarkDown(props.item.content, props.item.image)"></td>
-          <td class="text-left">{{props.item.difficulty}}</td>
-          <td class="text-left">{{props.item.numberOfAnswers}}</td>
+          <td class="text-left">
+            <v-autocomplete
+                v-model="props.item.tags"
+                :items="tags"
+                filled
+                chips
+                multiple
+                @focus="getSelectedTags(props.item.id)"
+                @change="saveTags(props.item.id)"
+              >
+              </v-autocomplete>
+          </td>
+          <td>{{props.item.difficulty}}</td>
+          <td>{{props.item.numberOfAnswers}}</td>
           <td class="text-left">{{props.item.title}}</td>
           <td class="text-left">
             <v-btn text small @click="switchActive(props.item.id)">
-              <span v-if="props.item.active">Active</span><span v-else>Inactive</span>
+              <span v-if="props.item.active">Enabled</span><span v-else>Disabled</span>
             </v-btn>
           </td>
-          <td class="text-left">
+          <td class="text-center">
             <label>
               <input type="file" style="display:none" @change="handleFileUpload($event, props.item.id)"
               accept="image/*" class="input-file">Upload</label>
-            <!-- <v-file-input accept="image/*" label="File input">Upload</v-file-input> -->
+            <!-- <v-file-input accept="image/*" label="File input"></v-file-input> -->
           </td>
-          <td class="text-left">
+          <td>
             <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
             <v-icon small class="mr-2" @click="duplicateItem(props.item.id)">cached</v-icon>
             <v-icon small class="mr-2" @click="deleteItem(props.item.id)">delete</v-icon>
@@ -125,7 +137,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
+import { Component, Vue, Prop, Model, Emit, Watch } from "vue-property-decorator";
 import { Question, QuestionDto } from "@/models/question/Question";
 import QuestionForm from "@/models/question/QuestionForm";
 import Option from "@/models/question/Option";
@@ -150,18 +162,20 @@ export default class QuestionsMangement extends Vue {
         dialog: this.dialog,
         search: "",
         headers: [
-          { text: 'Question', value: 'content' },
-          { text: 'Difficulty', value: 'difficulty' },
-          { text: 'Number of Answers', value: 'numberOfAnswers' },
-          { text: 'Title', value: 'title' },
-          { text: 'Active', value: 'active' },
-          { text: 'Image', value: 'image' },
-          { text: 'Actions', value: 'action', sortable: false },
+          { text: 'Question', value: 'content', align: 'left', width: "50%" },
+          { text: 'Tags', value: 'tags', align: 'left', width: "20%" , sortable: false },
+          { text: 'Difficulty', value: 'difficulty', align: 'center', width: "1%"  },
+          { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: "1%"  },
+          { text: 'Title', value: 'title', align: 'left', width: "5%"  },
+          { text: 'Active', value: 'active', align: 'left', width: "1%"  },
+          { text: 'Image', value: 'image', align: 'center', width: "1%",  sortable: false  },
+          { text: 'Actions', value: 'action', align: 'center', width: "1%",  sortable: false },
         ],
         questions: this.questions,
         editedId: this.editedId,
         editedItem: this.editedItem,
-        error: this.error
+        error: this.error,
+        tags: ['hello', 'goodbye', 'another', 'yet another'],
       }
   }
 
@@ -184,6 +198,10 @@ export default class QuestionsMangement extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  saveTags(questionId: string) {
+    alert('saveTags' + questionId)
   }
 
   formTitle() {
