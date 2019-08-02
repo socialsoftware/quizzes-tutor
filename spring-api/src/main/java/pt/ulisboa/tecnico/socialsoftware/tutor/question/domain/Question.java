@@ -68,6 +68,16 @@ public class Question implements Serializable {
         }
     }
 
+    public void remove() {
+        canRemove();
+
+        getTopics().stream().forEach(topic -> {
+            topic.getQuestions().remove(this);
+        });
+
+        getTopics().clear();
+    }
+
     public Integer getId() {
         return id;
     }
@@ -261,7 +271,7 @@ public class Question implements Serializable {
         return getOptions().stream().filter(option -> option.getId().equals(id)).findAny().orElse(null);
     }
 
-    public void canRemove() {
+    private void canRemove() {
         if (getQuizQuestions().size() != 0) {
             throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, "");
         }

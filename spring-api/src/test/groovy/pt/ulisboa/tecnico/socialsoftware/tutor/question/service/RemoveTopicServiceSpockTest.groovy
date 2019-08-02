@@ -4,16 +4,14 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
-class REmoveTopicServiceSpockTest extends Specification {
+class RemoveTopicServiceSpockTest extends Specification {
     public static final String TOPIC_ONE = 'nameOne'
     public static final String TOPIC_TWO = 'nameTwo'
     public static final String TOPIC_THREE = 'nameThree'

@@ -16,7 +16,7 @@ public class Topic implements Serializable {
 
     private String name;
 
-    @ManyToMany
+    @ManyToMany 
     private Set<Question> questions = new HashSet<>();
 
     public Topic() {

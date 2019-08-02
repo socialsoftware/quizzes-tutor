@@ -10,11 +10,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import spock.lang.Specification
@@ -37,6 +39,9 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
     @Autowired
     ImageRepository imageRepository
+
+    @Autowired
+    TopicRepository topicRepository
 
     @Autowired
     QuizQuestionRepository quizQuestionRepository
@@ -101,12 +106,26 @@ class RemoveQuestionServiceSpockTest extends Specification {
     }
 
     def "remove a question that has topics"() {
-        // TODO: implement
+        given: 'a question with topics'
+        def topicOne = new Topic("name1")
+        def topicTwo = new Topic("name2")
+        question.getTopics().add(topicOne)
+        topicOne.getQuestions().add(question)
+        question.getTopics().add(topicTwo)
+        topicTwo.getQuestions().add(question)
+        topicRepository.save(topicOne)
+        topicRepository.save(topicTwo)
+
         when:
         questionService.remove(question.getId())
 
         then:
-        thrown(TutorException)
+        questionRepository.count() == 0L
+        imageRepository.count() == 0L
+        optionRepository.count() == 0L
+        topicRepository.count() == 2L
+        topicOne.getQuestions().size() == 0
+        topicTwo.getQuestions().size() == 0
     }
 
     @TestConfiguration

@@ -59,7 +59,7 @@ public class QuestionService {
     @Transactional
     public void remove(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
-        question.canRemove();
+        question.remove();
         entityManager.remove(question);
     }
 
