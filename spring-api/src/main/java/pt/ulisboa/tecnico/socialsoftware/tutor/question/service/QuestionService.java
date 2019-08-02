@@ -4,15 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionalEventListener;
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +25,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -80,15 +87,23 @@ public class QuestionService {
     }
 
     @Transactional
-    public void setImageUrl(Integer questionId, String type) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+    public void createTopic(String name) {
+        Topic topic = topicRepository.findByName(name);
 
-        if (question.getImage() == null) {
-            throw new TutorException(TutorException.ExceptionError.IMAGE_NOT_FOUND, questionId.toString());
+        if (topic != null) {
+            throw new TutorException(TutorException.ExceptionError.DUPLICATE_TOPIC, name);
         }
 
-        question.getImage().setUrl(question.getId() + "." + type);
+        topic = new Topic(name);
+
+        entityManager.persist(topic);
     }
 
+    @Transactional
+    public void updateQuestionTopics(Integer questionId, String[] topics) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+
+        question.updateTopics(Arrays.stream(topics).map(name -> topicRepository.findByName(name)).collect(Collectors.toSet()));
+    }
 }
 

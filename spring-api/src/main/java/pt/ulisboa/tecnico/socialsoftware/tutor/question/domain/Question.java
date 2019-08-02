@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.OPTION_NOT_FOUND;
 
@@ -42,6 +43,9 @@ public class Question implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
     private Set<QuizQuestion> quizQuestions;
+
+    @ManyToMany(mappedBy = "questions")
+    private Set<Topic> topics = new HashSet<>();
 
     public Question() {
     }
@@ -143,6 +147,14 @@ public class Question implements Serializable {
         options.add(option);
     }
 
+    public Set<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<Topic> topics) {
+        this.topics = topics;
+    }
+
     public Integer getCorrectOptionId() {
         return this.getOptions().stream()
                 .filter(Option::getCorrect)
@@ -229,6 +241,20 @@ public class Question implements Serializable {
             throw new TutorException(TutorException.ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS, "");
         }
 
+    }
+
+    public void updateTopics(Set<Topic> newTopics) {
+        Set<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic)).collect(Collectors.toSet());
+
+        toRemove.stream().forEach(topic -> {
+            this.topics.remove(topic);
+            topic.getQuestions().remove(this);
+        });
+
+        newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
+            this.topics.add(topic);
+            topic.getQuestions().add(this);
+        });
     }
 
     private Option getOptionById(Integer id) {

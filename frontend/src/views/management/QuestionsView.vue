@@ -83,13 +83,13 @@
           v-html="convertMarkDown(props.item.content, props.item.image)"></td>
           <td class="text-left">
             <v-autocomplete
-                v-model="props.item.tags"
-                :items="tags"
+                v-model="props.item.topics"
+                :items="topics"
                 filled
                 chips
                 multiple
-                @focus="getSelectedTags(props.item.id)"
-                @change="saveTags(props.item.id)"
+                @focus="getSelectedTopics(props.item.id)"
+                @change="saveTopics(props.item.id)"
               >
               </v-autocomplete>
           </td>
@@ -163,7 +163,7 @@ export default class QuestionsMangement extends Vue {
         search: "",
         headers: [
           { text: 'Question', value: 'content', align: 'left', width: "50%" },
-          { text: 'Tags', value: 'tags', align: 'left', width: "20%" , sortable: false },
+          { text: 'Topics', value: 'topics', align: 'left', width: "20%" , sortable: false },
           { text: 'Difficulty', value: 'difficulty', align: 'center', width: "1%"  },
           { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: "1%"  },
           { text: 'Title', value: 'title', align: 'left', width: "5%"  },
@@ -175,7 +175,7 @@ export default class QuestionsMangement extends Vue {
         editedId: this.editedId,
         editedItem: this.editedItem,
         error: this.error,
-        tags: ['hello', 'goodbye', 'another', 'yet another'],
+        topics: ['hello', 'goodbye', 'another', 'yet another'],
       }
   }
 
@@ -200,8 +200,8 @@ export default class QuestionsMangement extends Vue {
     return convertMarkDown(text, image);
   }
 
-  saveTags(questionId: string) {
-    alert('saveTags' + questionId)
+  saveTopics(questionId: string) {
+    alert('saveTopics' + questionId)
   }
 
   formTitle() {

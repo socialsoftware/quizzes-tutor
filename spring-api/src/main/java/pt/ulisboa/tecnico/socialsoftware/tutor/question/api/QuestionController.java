@@ -15,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -104,6 +105,16 @@ public class QuestionController {
 
         return url;
     }
+
+    @PutMapping("/questions/{questionId}/topics")
+    public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody String[] topics) {
+        logger.debug("updateQuestionTopics  questionId: {}: , topics: {}", questionId, Arrays.toString(topics));
+
+        questionService.updateQuestionTopics(questionId, topics);
+
+        return ResponseEntity.ok().build();
+    }
+
 
     private Path getTargetLocation(String url) {
         Path resourceDirectory = Paths.get("src","main","resources", "static", "images", "questions");
