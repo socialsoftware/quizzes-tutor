@@ -52,7 +52,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
     def optionKO
 
     def setup() {
-        given: "create a question"
+        given: "createQuestion a question"
         question = new Question()
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -82,7 +82,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
     }
 
     def "update a question"() {
-        given: "create a question"
+        given: "createQuestion a question"
         def questionDto = new QuestionDto()
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)
@@ -105,7 +105,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.update(question.getId(), questionDto)
+        questionService.updateQuestion(question.getId(), questionDto)
 
         then: "the question is changed"
         questionRepository.count() == 1L
@@ -153,7 +153,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.update(question.getId(), questionDto)
+        questionService.updateQuestion(question.getId(), questionDto)
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
@@ -183,7 +183,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.update(question.getId(), questionDto)
+        questionService.updateQuestion(question.getId(), questionDto)
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
@@ -203,7 +203,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionAnswer.setOption(optionKO)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
-        and: "create a question dto"
+        and: "createQuestion a question dto"
         def questionDto = new QuestionDto()
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)
@@ -226,7 +226,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.update(question.getId(), questionDto)
+        questionService.updateQuestion(question.getId(), questionDto)
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)

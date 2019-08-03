@@ -10,27 +10,44 @@ export default class RemoteServices {
     return axios.post(process.env.VUE_APP_ROOT_API + "/questions/", question);
   }
 
-  static updateQuestion(questionId: string, question: Question) {
+  static updateQuestion(questionId: number, question: Question) {
     return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId, question);
   }
 
-  static deleteQuestion(questionId: string) {
+  static deleteQuestion(questionId: number) {
     return axios.delete(process.env.VUE_APP_ROOT_API + "/questions/" + questionId);
   }
 
-  static questionSwitchActive(questionId: string) {
+  static questionSwitchActive(questionId: number) {
     return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/switchActive");
   }
 
-  static uploadImage(file: File, questionId: string) {
+  static uploadImage(file: File, questionId: number) {
     let formData = new FormData();
     formData.append('file', file);
     return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/image", 
-      formData, {
+      formData, 
+      {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       }
+    );
+  }
+
+  static updateQuestionTopics(questionId: number, topics: string[]) {
+    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/topics", topics)
+  }
+
+  static getTopics() {
+    return axios.get(process.env.VUE_APP_ROOT_API + "/topics");
+  }
+  
+  static createTopic(topic: String) {
+    return axios.post(
+      process.env.VUE_APP_ROOT_API + "/topics/",
+      topic,
+      {headers: {"Content-Type": "text/plain"}}
     );
   }
 

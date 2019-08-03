@@ -33,31 +33,31 @@ public class QuestionService {
     EntityManager entityManager;
 
     @Transactional
-    public QuestionDto findById(Integer questionId) {
+    public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
     }
 
     @Transactional
-    public List<QuestionDto> findAll(Integer pageIndex, Integer pageSize) {
+    public List<QuestionDto> findAllQuestions(Integer pageIndex, Integer pageSize) {
         return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Transactional
-    public QuestionDto create(QuestionDto questionDto) {
+    public QuestionDto createQuestion(QuestionDto questionDto) {
         Question question = new Question(questionDto);
         this.entityManager.persist(question);
         return new QuestionDto(question);
     }
 
     @Transactional
-    public void update(Integer questionId, QuestionDto questionDto) {
+    public void updateQuestion(Integer questionId, QuestionDto questionDto) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
         question.update(questionDto);
     }
 
     @Transactional
-    public void remove(Integer questionId) {
+    public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
         question.remove();
         entityManager.remove(question);
@@ -84,6 +84,11 @@ public class QuestionService {
         }
 
         question.getImage().setUrl(question.getId() + "." + type);
+    }
+
+    @Transactional
+    public List<String> findAllTopics() {
+        return topicRepository.findAll().stream().map(topic -> topic.getName()).sorted().collect(Collectors.toList());
     }
 
     @Transactional

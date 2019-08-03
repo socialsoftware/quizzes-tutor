@@ -4,15 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.test.context.ContextConfiguration
-import org.springframework.transaction.annotation.Transactional
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
@@ -29,7 +24,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     QuestionRepository questionRepository
 
     def "create a question with no image and one option"() {
-        given: "create a question"
+        given: "createQuestion a question"
         def question = new QuestionDto()
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -43,7 +38,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         question.setOptions(options)
 
         when:
-        questionService.create(question)
+        questionService.createQuestion(question)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -61,7 +56,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     }
 
     def "create a question with image and two options"() {
-        given: "create a question"
+        given: "createQuestion a question"
         def question = new QuestionDto()
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -85,7 +80,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         question.setOptions(options)
 
         when:
-        questionService.create(question)
+        questionService.createQuestion(question)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L

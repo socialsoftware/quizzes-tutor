@@ -42,7 +42,7 @@ class FindAllServiceSpockTest extends Specification {
 
 
     def "create a question with image and two options and a quiz questions with two answers"() {
-        given: "create a question"
+        given: "createQuestion a question"
         def question = new Question()
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
@@ -82,7 +82,7 @@ class FindAllServiceSpockTest extends Specification {
 
 
         when:
-        def result = questionService.findAll(0, Integer.MAX_VALUE)
+        def result = questionService.findAllQuestions(0, Integer.MAX_VALUE)
 
         then: "the returned data are correct"
         result.size() == 1

@@ -10,10 +10,32 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn v-if="isLoggedIn" to="/management/questions" flat>
-          Management
-          <v-icon>fas fa-file-alt</v-icon>
-        </v-btn>
+        <v-menu offset-y v-if="isLoggedIn" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              color="primary"
+              dark
+              v-on="on"
+            >
+              Management
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list-items>
+            <v-list-item :key="0">
+              <v-btn color="primary" dark
+                v-if="isLoggedIn" to="/management/questions">
+                Questions
+              </v-btn>
+            </v-list-item><br/>
+            <v-list-item :key="1">
+              <v-btn color="primary" dark
+                v-if="isLoggedIn" to="/management/topics">
+                Topics
+              </v-btn>
+            </v-list-item>
+          </v-list-items>
+        </v-menu>
 
         <v-btn v-if="isLoggedIn" to="/stats" flat>
           Stats

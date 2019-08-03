@@ -94,7 +94,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         when:
         def correctAnswersDto = answerService.submitQuestionsAnswers(user, resultAnswersDto)
 
-        then: 'the value is create and persistent'
+        then: 'the value is createQuestion and persistent'
         questionAnswerRepository.findAll().size() == 1
         def result = questionAnswerRepository.findAll().get(0)
         result.getQuizAnswer() == quizAnswer

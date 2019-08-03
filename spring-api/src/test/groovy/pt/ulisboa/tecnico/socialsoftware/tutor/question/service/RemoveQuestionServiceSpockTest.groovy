@@ -4,15 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -51,7 +47,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
     def optionKO
 
     def setup() {
-        given: "create a question"
+        given: "createQuestion a question"
         question = new Question()
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -82,9 +78,9 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
     def "remove a question"() {
         when:
-        questionService.remove(question.getId())
+        questionService.removeQuestion(question.getId())
 
-        then: "the question is remove"
+        then: "the question is removeQuestion"
         questionRepository.count() == 0L
         imageRepository.count() == 0L
         optionRepository.count() == 0L
@@ -98,7 +94,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
         question.addQuizQuestion(quizQuestion)
 
         when:
-        questionService.remove(question.getId())
+        questionService.removeQuestion(question.getId())
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
@@ -117,7 +113,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
         topicRepository.save(topicTwo)
 
         when:
-        questionService.remove(question.getId())
+        questionService.removeQuestion(question.getId())
 
         then:
         questionRepository.count() == 0L

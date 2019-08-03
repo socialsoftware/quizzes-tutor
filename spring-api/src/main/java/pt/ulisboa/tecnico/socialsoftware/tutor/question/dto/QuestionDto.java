@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
 import java.util.List;
@@ -9,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class QuestionDto implements Serializable {
     private Integer id;
+    private String title;
     private String content;
     private double difficulty;
     private int numberOfAnswers;
@@ -16,7 +18,7 @@ public class QuestionDto implements Serializable {
     private Boolean active;
     private List<OptionDto> options;
     private ImageDto image;
-    private String title;
+    private List<String> topics;
 
     public QuestionDto() {
     }
@@ -33,6 +35,7 @@ public class QuestionDto implements Serializable {
             this.image = new ImageDto(question.getImage());
         }
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+        this.topics = question.getTopics().stream().map(Topic::getName).sorted().collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -109,5 +112,13 @@ public class QuestionDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public List<String> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(List<String> topics) {
+        this.topics = topics;
     }
 }

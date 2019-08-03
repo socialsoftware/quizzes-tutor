@@ -34,5 +34,6 @@ export class Question implements QuestionDto {
     this.content = jsonObj.content;
     this.options = jsonObj.options;
     this.image = jsonObj.image;
+    this.topics = jsonObj.topics;
   }
 }

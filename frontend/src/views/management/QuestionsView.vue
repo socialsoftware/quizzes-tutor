@@ -16,7 +16,7 @@
           vertical>
       </v-divider>
       <v-spacer></v-spacer>
-        <v-btn color="primary" dark class="mb-2" @click="open">New Item</v-btn>
+        <v-btn color="primary" dark class="mb-2" @click="open">New Question</v-btn>
       <v-dialog v-model="dialog" max-width="1000px">
           <v-card>
             <v-card-title>
@@ -73,8 +73,9 @@
     :headers="headers"
     :custom-filter="customFilter"
     :items="questions"
-    :items-per-page="10"
     :search="search"
+    loading
+    :items-per-page="10"
     class="elevation-1">
     <template slot="items" slot-scope="props">
         <tr>
@@ -146,12 +147,13 @@ import { convertMarkDown } from "@/scripts/script";
 import Image from "@/models/student/Image";
 
 @Component
-export default class QuestionsMangement extends Vue {
+export default class QuestionsView extends Vue {
   questions: Question[] = [];
   editedItem: QuestionForm = new QuestionForm();
   editedId: number = -1;
   error: string | null = null;
   dialog: boolean = false;
+  topics: string[] = [];
 
   constructor() {
     super();
@@ -175,10 +177,21 @@ export default class QuestionsMangement extends Vue {
         editedId: this.editedId,
         editedItem: this.editedItem,
         error: this.error,
-        topics: ['hello', 'goodbye', 'another', 'yet another'],
+        topics: this.topics,
       }
   }
 
+  beforeMount() {
+    RemoteServices.getTopics().then(result => {
+      this.topics = result.data;
+        RemoteServices.getQuestions().then(result => {
+        this.questions = result.data.map(
+          (question: QuestionDto) => new Question(question)
+        );
+        });
+    });
+  }
+  
   customFilter(items: Question[], search: string) {
     return items.filter(
       (question: Question) =>
@@ -188,20 +201,26 @@ export default class QuestionsMangement extends Vue {
     );
   }
 
-  beforeMount() {
-    RemoteServices.getQuestions().then(result => {
-      this.questions = result.data.map(
-        (question: QuestionDto) => new Question(question)
-      );
-    });
-  }
-
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
-  saveTopics(questionId: string) {
-    alert('saveTopics' + questionId)
+  saveTopics(questionId: number) {
+    let question = this.questions.find(question => question.id === questionId);
+    RemoteServices.updateQuestionTopics(questionId, question.topics)
+      .then(response => {
+        
+      })
+      .catch((error) => {
+        if (error.response) {
+          confirm(error.response.data.message)
+          console.log(error.response.data.message);
+        } else if (error.request) {
+          confirm("No response received")
+        } else {
+          confirm("Error")
+        }
+      });   
   }
 
   formTitle() {
@@ -218,7 +237,7 @@ export default class QuestionsMangement extends Vue {
   switchActive(item: number) {
     RemoteServices.questionSwitchActive(item)
       .then(response => {
-        var question = this.questions.find(question => question.id === item);
+        let question = this.questions.find(question => question.id === item);
         question.active = !question.active;
       })
       .catch((error) => {
@@ -234,7 +253,7 @@ export default class QuestionsMangement extends Vue {
   }
 
   handleFileUpload(event: Event, questionId: number) {
-    var question = this.questions.find(question => question.id === questionId);
+    let question = this.questions.find(question => question.id === questionId);
     if (question) {
       RemoteServices.uploadImage(event.target.files[0], questionId)
         .then(response => {
@@ -255,7 +274,7 @@ export default class QuestionsMangement extends Vue {
   }
 
   duplicateItem(item: number) {
-    var question = this.questions.find(question => question.id === item);
+    let question = this.questions.find(question => question.id === item);
     if (question) {
       this.editedId = -1;
       this.editedItem = new QuestionForm();
@@ -273,10 +292,8 @@ export default class QuestionsMangement extends Vue {
     }
   }
 
-
-
   editItem(item: number) {
-    var question = this.questions.find(question => question.id === item);
+    let question = this.questions.find(question => question.id === item);
     if (question) {
       this.editedId = question.id;
       this.editedItem = new QuestionForm();
@@ -374,8 +391,8 @@ export default class QuestionsMangement extends Vue {
 
       RemoteServices.createQuestion(question)
         .then(response => {
-          var result = new Question(response.data);
-          this.questions.push(result);
+          let result = new Question(response.data);
+          this.questions.unshift(result);
         })
         .catch((error) => {
           if (error.response) {

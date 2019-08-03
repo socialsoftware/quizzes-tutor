@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 
 import javax.validation.Valid;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -36,12 +35,12 @@ public class QuestionController {
             pageSize = Integer.MAX_VALUE;
         }
 
-        return this.questionService.findAll(pageIndex, pageSize);
+        return this.questionService.findAllQuestions(pageIndex, pageSize);
     }
 
     @GetMapping("/questions/{questionId}")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
-        return this.questionService.findById(questionId);
+        return this.questionService.findQuestionById(questionId);
     }
 
     @PostMapping("/questions")
@@ -50,7 +49,7 @@ public class QuestionController {
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
-         return this.questionService.create(question);
+         return this.questionService.createQuestion(question);
     }
 
     @PutMapping("/questions/{questionId}")
@@ -59,17 +58,17 @@ public class QuestionController {
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
-        this.questionService.update(questionId, question);
+        this.questionService.updateQuestion(questionId, question);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/questions/{questionId}")
     public ResponseEntity removeQuestion(@PathVariable Integer questionId) throws IOException {
         logger.debug("removeQuestion questionId: {}: ", questionId);
-        QuestionDto questionDto = questionService.findById(questionId);
+        QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
 
-        questionService.remove(questionId);
+        questionService.removeQuestion(questionId);
 
         if (url != null && Files.exists(getTargetLocation(url))) {
             Files.delete(getTargetLocation(url));
@@ -89,7 +88,7 @@ public class QuestionController {
     public String uploadImage(@PathVariable Integer questionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  questionId: {}: , filename: {}", questionId, file.getContentType());
 
-        QuestionDto questionDto = questionService.findById(questionId);
+        QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
         if (url != null && Files.exists(getTargetLocation(url))) {
             Files.delete(getTargetLocation(url));
@@ -100,7 +99,7 @@ public class QuestionController {
 
         questionService.uploadImage(questionId, type);
 
-        url = questionService.findById(questionId).getImage().getUrl();
+        url = questionService.findQuestionById(questionId).getImage().getUrl();
         Files.copy(file.getInputStream(), getTargetLocation(url), StandardCopyOption.REPLACE_EXISTING);
 
         return url;

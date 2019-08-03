@@ -36,12 +36,12 @@ class CreateTopicServiceSpockTest extends Specification {
     }
 
     def "create a topic with the same name"() {
-        given: "create a question"
+        given: "createQuestion a question"
         Topic topic = new Topic()
         topic.setName(NAME)
         topicRepository.save(topic)
 
-        when: 'create another with the same name'
+        when: 'createQuestion another with the same name'
         questionService.createTopic(NAME)
 
         then: "an error occurs"

@@ -24,7 +24,7 @@ class CreateQuizServiceSpockTest extends Specification {
     QuizRepository quizRepository
 
     def "create a quiz"() {
-        given: 'create a quiz'
+        given: 'createQuestion a quiz'
         def quiz = new QuizDto()
         quiz.setTitle(QUIZ_TITLE)
         def date =LocalDateTime.now()
