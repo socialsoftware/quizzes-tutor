@@ -8,6 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,20 +46,14 @@ public class TopicController {
 //        this.questionService.updateQuestion(questionId, question);
 //        return ResponseEntity.ok().build();
 //    }
-//
-//    @DeleteMapping("/questions/{questionId}")
-//    public ResponseEntity removeQuestion(@PathVariable Integer questionId) throws IOException {
-//        logger.debug("removeQuestion questionId: {}: ", questionId);
-//        QuestionDto questionDto = questionService.findQuestionById(questionId);
-//        String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
-//
-//        questionService.removeQuestion(questionId);
-//
-//        if (url != null && Files.exists(getTargetLocation(url))) {
-//            Files.delete(getTargetLocation(url));
-//        }
-//
-//        return ResponseEntity.ok().build();
-//    }
+
+    @DeleteMapping("/topics/{topic}")
+    public ResponseEntity removeTopic(@PathVariable String topic) {
+        logger.debug("removeTopic topic: {}: ", topic);
+
+        questionService.removeTopic(topic);
+
+        return ResponseEntity.ok().build();
+    }
 
 }

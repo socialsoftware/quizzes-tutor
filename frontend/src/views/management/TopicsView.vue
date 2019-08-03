@@ -56,8 +56,8 @@
         <tr>
           <td class="text-left">{{props.item}}</td>
           <td>
-            <v-icon small class="mr-2" @click="editItem(props.item)">edit</v-icon>
-            <v-icon small class="mr-2" @click="deleteItem(props.item)">delete</v-icon>
+            <v-icon small class="mr-2" @click="editTopic(props.item)">edit</v-icon>
+            <v-icon small class="mr-2" @click="deleteTopic(props.item)">delete</v-icon>
           </td>
         </tr>
     </template>
@@ -71,7 +71,7 @@ import RemoteServices from "@/services/RemoteServices";
 
 @Component
 export default class TopicsView extends Vue {
-  topics: string[] = [];
+  topics: String[] = [];
   editedTopic: string | null = null;
   oldTopic: string | null = null;
   error: string | null = null;
@@ -127,7 +127,7 @@ export default class TopicsView extends Vue {
     this.dialog = true;
   }
 
-  deleteItem (topic: string) {
+  deleteTopic(topic: string) {
       if (confirm('Are you sure you want to delete this topic?')) {
         RemoteServices.deleteTopic(topic)
         .then(response => {
@@ -146,12 +146,12 @@ export default class TopicsView extends Vue {
       }
   }
 
-  close () {
+  close() {
     this.error = null;
     this.dialog = false
   }
 
-  save () {
+  save() {
     if (this.oldTopic !== null) {
       RemoteServices.updateTopic(this.oldTopic, this.editedTopic)
       .then(response => {
