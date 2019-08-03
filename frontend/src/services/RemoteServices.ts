@@ -51,6 +51,14 @@ export default class RemoteServices {
     );
   }
 
+  static updateTopic(topic: string, newName: string) {
+    return axios.put(
+      process.env.VUE_APP_ROOT_API + "/topics/" + topic,
+      newName,
+      {headers: {"Content-Type": "text/plain"}}
+    );
+  }
+
   static deleteTopic(topic: string) {
     return axios.delete(process.env.VUE_APP_ROOT_API + "/topics/" + topic);
   }

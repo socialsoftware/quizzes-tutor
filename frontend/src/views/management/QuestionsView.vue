@@ -74,7 +74,7 @@
     :custom-filter="customFilter"
     :items="questions"
     :search="search"
-    loading
+    loading loading-text="Loading... Please wait"
     :items-per-page="10"
     class="elevation-1">
     <template slot="items" slot-scope="props">

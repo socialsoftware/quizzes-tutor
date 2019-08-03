@@ -37,15 +37,13 @@ public class TopicController {
         return ResponseEntity.ok().build();
     }
 
-//    @PutMapping("/questions/{questionId}")
-//    public ResponseEntity updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
-//        logger.debug("updateQuestion questionId: {}, title: {}, content: {}, options: {}: ", questionId,
-//                question.getTitle(), question.getContent(),
-//                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
-//                        .collect(Collectors.joining("\n")));
-//        this.questionService.updateQuestion(questionId, question);
-//        return ResponseEntity.ok().build();
-//    }
+    @PutMapping(value = "/topics/{topic}", consumes = "text/plain")
+    public ResponseEntity updateTopic(@PathVariable String topic, @Valid @RequestBody String newName) {
+        logger.debug("updateTopic oldTopic: {}, newTopic: {}", topic, newName);
+
+        this.questionService.updateTopic(topic, newName);
+        return ResponseEntity.ok().build();
+    }
 
     @DeleteMapping("/topics/{topic}")
     public ResponseEntity removeTopic(@PathVariable String topic) {

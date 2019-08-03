@@ -105,6 +105,17 @@ public class QuestionService {
     }
 
     @Transactional
+    public void updateTopic(String oldName, String newName) {
+        Topic topic = topicRepository.findByName(oldName);
+
+        if (topic == null) {
+            throw new TutorException(TutorException.ExceptionError.TOPIC_NOT_FOUND, oldName);
+        }
+
+        topic.setName(newName);
+    }
+
+    @Transactional
     public void removeTopic(String name) {
         Topic topic = topicRepository.findByName(name);
 
@@ -123,5 +134,6 @@ public class QuestionService {
 
         question.updateTopics(Arrays.stream(topics).map(name -> topicRepository.findByName(name)).collect(Collectors.toSet()));
     }
+
 }
 

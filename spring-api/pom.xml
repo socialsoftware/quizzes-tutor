@@ -135,12 +135,6 @@
             <artifactId>groovy-all</artifactId>
             <version>${version.groovy}</version>
         </dependency>
-<!--        <dependency> &lt;!&ndash; enables mocking of classes (in addition to interfaces) &ndash;&gt;-->
-<!--            <groupId>net.bytebuddy</groupId>-->
-<!--            <artifactId>byte-buddy</artifactId>-->
-<!--            <version>${net.bytebuddy.version}</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
         <dependency> <!-- enables mocking of classes without default constructor (together with
         CGLIB) -->
             <groupId>org.objenesis</groupId>
