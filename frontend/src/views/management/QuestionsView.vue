@@ -68,6 +68,27 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
+        <v-dialog v-model="showQuestion" max-width="1000px">
+          <v-card v-if="questionToShow">
+            <v-card-title>
+              <span class="headline">{{ questionToShow.title }}</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container grid-list-md fluid>
+                <v-layout column wrap>
+                    <v-flex class="text-left" xs24 sm12 md8>
+                      <p v-html="renderQuestion(questionToShow)"></p>
+                    </v-flex>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeShowQuestionDialog">Close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
     </v-card-title> 
     <v-data-table
     :headers="headers"
@@ -81,7 +102,7 @@
         <tr>
           <td class="text-left" 
           @click="props.expanded = !props.expanded"
-          v-html="convertMarkDown(props.item.content, props.item.image)"></td>
+          v-html="convertMarkDownNoFigure(props.item.content, props.item.image)"></td>
           <td class="text-left">
             <v-autocomplete
                 v-model="props.item.topics"
@@ -109,6 +130,7 @@
             <!-- <v-file-input accept="image/*" label="File input"></v-file-input> -->
           </td>
           <td>
+            <v-icon small class="mr-2" @click="openShowQuestionDialog(props.item.id)">visibility</v-icon>
             <v-icon small class="mr-2" @click="editItem(props.item.id)">edit</v-icon>
             <v-icon small class="mr-2" @click="duplicateItem(props.item.id)">cached</v-icon>
             <v-icon small class="mr-2" @click="deleteItem(props.item.id)">delete</v-icon>
@@ -143,7 +165,7 @@ import { Question, QuestionDto } from "@/models/question/Question";
 import QuestionForm from "@/models/question/QuestionForm";
 import Option from "@/models/question/Option";
 import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDown } from "@/scripts/script";
+import { convertMarkDown, convertMarkDownNoFigure } from "@/scripts/script";
 import Image from "@/models/student/Image";
 
 @Component
@@ -154,6 +176,8 @@ export default class QuestionsView extends Vue {
   error: string | null = null;
   dialog: boolean = false;
   topics: string[] = [];
+  showQuestion: boolean = false;
+  questionToShow: Question | null = null;
 
   constructor() {
     super();
@@ -164,7 +188,7 @@ export default class QuestionsView extends Vue {
         dialog: this.dialog,
         search: "",
         headers: [
-          { text: 'Question', value: 'content', align: 'left', width: "50%" },
+          { text: 'Question', value: 'content', align: 'left', width: "70%" },
           { text: 'Topics', value: 'topics', align: 'left', width: "20%" , sortable: false },
           { text: 'Difficulty', value: 'difficulty', align: 'center', width: "1%"  },
           { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: "1%"  },
@@ -178,6 +202,8 @@ export default class QuestionsView extends Vue {
         editedItem: this.editedItem,
         error: this.error,
         topics: this.topics,
+        showQuestion: this.showQuestion,
+        questionToShow: this.questionToShow
       }
   }
 
@@ -201,8 +227,8 @@ export default class QuestionsView extends Vue {
     );
   }
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
+  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
+    return convertMarkDownNoFigure(text, image);
   }
 
   saveTopics(questionId: number) {
@@ -223,6 +249,24 @@ export default class QuestionsView extends Vue {
       });   
   }
 
+  openShowQuestionDialog(questionId: number) {
+    this.questionToShow = this.questions.find(question => question.id === questionId);
+    this.showQuestion = true;    
+  }
+
+  renderQuestion(question: Question): string {
+    let text = convertMarkDown(question.content, question.image) + " <br/> <br/> ";
+    text = text + question.options
+      .map((option, index) => index.toString() + " - " + option.content +
+             (option.correct ? " (correct)" : "") ).join(" <br/> ");
+    return text;
+  }
+
+  closeShowQuestionDialog() {
+    this.questionToShow = null;
+    this.showQuestion = false;
+  }
+
   formTitle() {
     return this.editedId === -1 ? "New Question" : "Edit Question"
   }
@@ -234,10 +278,10 @@ export default class QuestionsView extends Vue {
     this.dialog = true;
   }
 
-  switchActive(item: number) {
+  switchActive(questionId: number) {
     RemoteServices.questionSwitchActive(item)
       .then(response => {
-        let question = this.questions.find(question => question.id === item);
+        let question = this.questions.find(question => question.id === questionId);
         question.active = !question.active;
       })
       .catch((error) => {
@@ -273,8 +317,8 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  duplicateItem(item: number) {
-    let question = this.questions.find(question => question.id === item);
+  duplicateItem(questionId: number) {
+    let question = this.questions.find(question => question.id === questionId);
     if (question) {
       this.editedId = -1;
       this.editedItem = new QuestionForm();
@@ -292,8 +336,8 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  editItem(item: number) {
-    let question = this.questions.find(question => question.id === item);
+  editItem(questionId: number) {
+    let question = this.questions.find(question => question.id === questionId);
     if (question) {
       this.editedId = question.id;
       this.editedItem = new QuestionForm();
@@ -311,8 +355,8 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  deleteItem (item: number) {
-      const selectedQuestion = this.questions.find(question => question.id === item)
+  deleteItem (questionId: number) {
+      const selectedQuestion = this.questions.find(question => question.id === questionId)
       if (confirm('Are you sure you want to delete this question?')) {
         RemoteServices.deleteQuestion(selectedQuestion.id)
         .then(response => {
