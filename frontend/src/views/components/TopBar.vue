@@ -21,20 +21,24 @@
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
           </template>
-          <v-list-items>
-            <v-list-item :key="0">
-              <v-btn color="primary" dark
-                v-if="isLoggedIn" to="/management/questions">
-                Questions
-              </v-btn>
-            </v-list-item><br/>
-            <v-list-item :key="1">
-              <v-btn color="primary" dark
-                v-if="isLoggedIn" to="/management/topics">
-                Topics
-              </v-btn>
-            </v-list-item>
-          </v-list-items>
+          <v-list dense>
+            <v-list-tile v-if="isLoggedIn" to="/management/questions">
+              <v-list-tile-action>
+                <v-icon>ballot</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Questions</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile v-if="isLoggedIn" to="/management/topics">
+              <v-list-tile-action>
+                <v-icon>category</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Topics</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+          </v-list>
         </v-menu>
 
         <v-btn v-if="isLoggedIn" to="/stats" flat>
