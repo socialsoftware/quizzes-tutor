@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.PropertiesManager;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -116,8 +117,9 @@ public class QuestionController {
 
 
     private Path getTargetLocation(String url) {
-        Path resourceDirectory = Paths.get("src","main","resources", "static", "images", "questions");
-        String fileLocation = resourceDirectory.toFile().getAbsolutePath() + "/" +   url;
+        String figuresDir = PropertiesManager.getProperties().getProperty("figures.dir");
+
+        String fileLocation = figuresDir + url;
         return Paths.get(fileLocation);
     }
 

@@ -230,6 +230,10 @@ export default class QuestionsView extends Vue {
     );
   }
 
+  convertMarkDown(text: string): string {
+    return convertMarkDown(text);
+  }
+
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
   }
@@ -282,7 +286,7 @@ export default class QuestionsView extends Vue {
   }
 
   switchActive(questionId: number) {
-    RemoteServices.questionSwitchActive(item)
+    RemoteServices.questionSwitchActive(questionId)
       .then(response => {
         let question = this.questions.find(question => question.id === questionId);
         question.active = !question.active;
