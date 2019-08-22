@@ -127,7 +127,10 @@
             <label>
               <input type="file" style="display:none" @change="handleFileUpload($event, props.item.id)"
               accept="image/*" class="input-file">Upload</label>
-            <!-- <v-file-input accept="image/*" label="File input"></v-file-input> -->
+            <!-- <v-file-input 
+              @change="handleFileUpload($event, props.item.id)"
+              accept="image/*" 
+              label="File input">Upload</v-file-input> -->
           </td>
           <td>
             <v-icon small class="mr-2" @click="openShowQuestionDialog(props.item.id)">visibility</v-icon>

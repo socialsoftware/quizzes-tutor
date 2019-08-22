@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtConfigurer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import org.springframework.context.annotation.Bean;
@@ -21,6 +22,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
         this.jwtTokenProvider = jwtTokenProvider;
+    }
+
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().antMatchers("/resources/**");
     }
 
     @Override
