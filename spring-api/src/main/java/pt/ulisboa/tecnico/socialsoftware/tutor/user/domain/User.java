@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
-    public enum Role {STUDENT, TEACHER};
+    public enum Role {STUDENT, TEACHER}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class User implements UserDetails {
 
     public User(String name, String username, Role role) {
         this.name = name;
-        this.username = username;
+        setUsername(username);
         this.role = role.name();
     }
 
@@ -95,7 +95,6 @@ public class User implements UserDetails {
         this.quizAnswers.add(quizAnswer);
     }
 
-
     @Override
     public Collection<GrantedAuthority> getAuthorities() {
         return this.authorities;
@@ -127,6 +126,7 @@ public class User implements UserDetails {
     }
 
     public boolean hasRole(String role) {
-        return getAuthorities().stream().filter(a -> a.getAuthority().equals(role)).findFirst().isPresent();
+        return getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(role));
     }
+
 }
