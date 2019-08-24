@@ -21,6 +21,8 @@ public class Question implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer number;
+
     @Column(columnDefinition = "TEXT")
     private String content;
 
@@ -54,6 +56,7 @@ public class Question implements Serializable {
         checkConsistentQuestion(questionDto);
 
         this.title = questionDto.getTitle();
+        this.number = questionDto.getNumber();
         this.content = questionDto.getContent();
         this.active = true;
 
@@ -84,6 +87,14 @@ public class Question implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public String getContent() {
@@ -246,7 +257,7 @@ public class Question implements Serializable {
 
         if (!questionDto.getOptions().stream().filter(OptionDto::getCorrect).findAny()
                 .equals(getOptions().stream().filter(Option::getCorrect).findAny())
-            && getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                && getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
                 .findAny().isPresent()) {
             throw new TutorException(TutorException.ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS, "");
         }
@@ -276,6 +287,5 @@ public class Question implements Serializable {
             throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, "");
         }
     }
-
 
 }

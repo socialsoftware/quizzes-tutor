@@ -45,6 +45,8 @@ public class QuestionService {
 
     @Transactional
     public QuestionDto createQuestion(QuestionDto questionDto) {
+        Integer maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ? questionRepository.getMaxQuestionNumber() : 0;
+        questionDto.setNumber(maxQuestionNumber + 1);
         Question question = new Question(questionDto);
         this.entityManager.persist(question);
         return new QuestionDto(question);

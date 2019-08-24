@@ -24,7 +24,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     QuestionRepository questionRepository
 
     def "create a question with no image and one option"() {
-        given: "createQuestion a question"
+        given: "a questionDto"
         def question = new QuestionDto()
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -44,19 +44,20 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
-        result.getActive() == true
+        result.getNumber() == 1
+        result.getActive()
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage() == null
         result.getOptions().size() == 1
         def resOption = result.getOptions().get(0)
         resOption.getContent() == OPTION_CONTENT
-        resOption.getCorrect() == true
+        resOption.getCorrect()
 
     }
 
     def "create a question with image and two options"() {
-        given: "createQuestion a question"
+        given: "a questionDto"
         def question = new QuestionDto()
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -86,7 +87,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
-        result.getActive() == true
+        result.getNumber() == 1
+        result.getActive()
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage().getId() != null
@@ -94,6 +96,32 @@ class CreateQuestionServiceSpockTest extends Specification {
         result.getImage().getWidth() == 20
         result.getOptions().size() == 2
     }
+
+    def "create two questions"() {
+        given: "a questionDto"
+        def question = new QuestionDto()
+        question.setTitle(QUESTION_TITLE)
+        question.setContent(QUESTION_CONTENT)
+        question.setActive(true)
+        and: 'a optionId'
+        def option = new OptionDto()
+        option.setContent(OPTION_CONTENT)
+        option.setCorrect(true)
+        def options = new ArrayList<>()
+        options.add(option)
+        question.setOptions(options)
+
+        when: 'are created two questions'
+        questionService.createQuestion(question)
+        questionService.createQuestion(question)
+
+        then: "the two questions are created with the correct numbers"
+        questionRepository.count() == 2L
+        def resultOne = questionRepository.findAll().get(0)
+        def resultTwo = questionRepository.findAll().get(1)
+        resultOne.getNumber() + resultTwo.getNumber() == 3
+    }
+
 
 
     @TestConfiguration
