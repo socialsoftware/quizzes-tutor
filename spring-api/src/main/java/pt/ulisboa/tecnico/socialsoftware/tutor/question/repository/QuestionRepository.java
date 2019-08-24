@@ -10,13 +10,12 @@ import java.util.List;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-
-    @Query(value = "select max(id) from questions q where q.active = true", nativeQuery = true)
-    Integer getTotalActiveQuestions();
-
-    @Query(value = "select max(number) as maxNumber from questions", nativeQuery = true)
+    @Query(value = "select MAX(number) from questions", nativeQuery = true)
     Integer getMaxQuestionNumber();
 
     @Query(value = "select * from questions q where q.active = true", nativeQuery = true)
     List<Question> getActiveQuestions();
+
+    @Query(value = "select COUNT(*) from questions q where q.active = true", nativeQuery = true)
+    Integer getTotalActiveQuestions();
 }

@@ -58,7 +58,7 @@ public class Question implements Serializable {
         this.title = questionDto.getTitle();
         this.number = questionDto.getNumber();
         this.content = questionDto.getContent();
-        this.active = true;
+        this.active = questionDto.getActive();
 
         if (questionDto.getImage() != null) {
             setImage(new Image(questionDto.getImage()));
@@ -90,7 +90,7 @@ public class Question implements Serializable {
     }
 
     public Integer getNumber() {
-        return number;
+        return number != null ? number : getId();
     }
 
     public void setNumber(Integer number) {

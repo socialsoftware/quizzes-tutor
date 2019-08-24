@@ -50,7 +50,8 @@ public class QuestionController {
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
-         return this.questionService.createQuestion(question);
+        question.setActive(true);
+        return this.questionService.createQuestion(question);
     }
 
     @PutMapping("/questions/{questionId}")

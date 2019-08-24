@@ -7,6 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionalEventListener;
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuestionsXMLExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuestionsXMLImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -45,8 +49,12 @@ public class QuestionService {
 
     @Transactional
     public QuestionDto createQuestion(QuestionDto questionDto) {
-        Integer maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ? questionRepository.getMaxQuestionNumber() : 0;
-        questionDto.setNumber(maxQuestionNumber + 1);
+        if (questionDto.getNumber() == null) {
+            Integer maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
+                    questionRepository.getMaxQuestionNumber() : 0;
+            questionDto.setNumber(maxQuestionNumber + 1);
+        }
+
         Question question = new Question(questionDto);
         this.entityManager.persist(question);
         return new QuestionDto(question);
@@ -85,7 +93,7 @@ public class QuestionService {
             entityManager.persist(image);
         }
 
-        question.getImage().setUrl(question.getId() + "." + type);
+        question.getImage().setUrl(question.getNumber() + "." + type);
     }
 
     @Transactional
@@ -136,6 +144,20 @@ public class QuestionService {
 
         question.updateTopics(Arrays.stream(topics).map(name -> topicRepository.findByName(name)).collect(Collectors.toSet()));
     }
+
+    public String exportQuestions() {
+        QuestionsXMLExport xmlExporter = new QuestionsXMLExport();
+
+        return xmlExporter.export(questionRepository.findAll());
+    }
+
+    @Transactional
+    public void importQuestions(String questionsXML) {
+        QuestionsXMLImport xmlImporter = new QuestionsXMLImport();
+
+        xmlImporter.importQuestions(questionsXML, this);
+    }
+
 
 }
 

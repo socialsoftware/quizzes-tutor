@@ -23,8 +23,9 @@ class ImportExportUsersSpockTest extends Specification {
     UserRepository userRepository
 
     def setup() {
-        userService.create('Rito', 'ar', User.Role.TEACHER)
-        userService.create('Pedro', 'pc', User.Role.STUDENT)
+        def user = userService.create('Rito', 'ar', User.Role.TEACHER)
+        user.setYear(2019)
+        user = userService.create('Pedro', 'pc', User.Role.STUDENT)
     }
 
     def 'export and import users'() {
@@ -38,8 +39,17 @@ class ImportExportUsersSpockTest extends Specification {
 
         then:
         userRepository.findAll().size() == 2
-        userRepository.findByUsername('ar') != null
-        userRepository.findByUsername('pc') != null
+        def userOne = userRepository.findByUsername('ar')
+        userOne != null
+        userOne.getName() == 'Rito'
+        userOne.getRole() == 'TEACHER'
+        userOne.getYear() == 2019
+
+        def userTwo = userRepository.findByUsername('pc')
+        userTwo != null
+        userTwo.getName() == 'Pedro'
+        userTwo.getRole() == 'STUDENT'
+        userTwo.getYear() == null
     }
 
     @TestConfiguration

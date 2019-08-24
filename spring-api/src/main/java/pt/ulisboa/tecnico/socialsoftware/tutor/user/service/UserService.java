@@ -21,10 +21,6 @@ public class UserService {
     @PersistenceContext
     EntityManager entityManager;
 
-    public List<User> getUsers() {
-        return userRepository.findAll();
-    }
-
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
     }
@@ -43,7 +39,7 @@ public class UserService {
     public String exportUsers() {
         UsersXMLExport xmlExporter = new UsersXMLExport();
 
-       return xmlExporter.export(getUsers());
+       return xmlExporter.export(userRepository.findAll());
     }
 
     @Transactional

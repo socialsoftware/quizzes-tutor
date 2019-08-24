@@ -113,6 +113,7 @@ class CreateQuestionServiceSpockTest extends Specification {
 
         when: 'are created two questions'
         questionService.createQuestion(question)
+        question.setNumber(null)
         questionService.createQuestion(question)
 
         then: "the two questions are created with the correct numbers"
