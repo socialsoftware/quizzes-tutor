@@ -8,16 +8,11 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
 
 public class TopicsXmlImport {
 	private QuestionService questionService;
@@ -31,15 +26,15 @@ public class TopicsXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.TAGS_IMPORT_ERROR, "File not found");
+			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.TAGS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.TAGS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.TAGS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		importTopics(doc);

@@ -36,13 +36,7 @@ public class QuizController {
 
     @PostMapping("/quizzes")
     public QuizDto createQuiz(@Valid @RequestBody QuizDto quiz) {
-        return new QuizDto(this.quizService.create(quiz));
-    }
-
-    @DeleteMapping("/quizzes/{quizId}")
-    public ResponseEntity deleteQuiz(@PathVariable Integer quizId) {
-        quizService.delete(quizId);
-        return ResponseEntity.ok().build();
+        return new QuizDto(this.quizService.createQuiz(quiz));
     }
 
     @PostMapping("/quizzes/generate/student")

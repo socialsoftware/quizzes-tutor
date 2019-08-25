@@ -7,6 +7,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuizzesXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuizzesXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -47,7 +50,7 @@ public class QuizService {
     }
 
     @Transactional
-    public Quiz create(QuizDto quizDto) {
+    public Quiz createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
             Integer maxQuizNumber = quizRepository.getMaxQuizNumber() != null ?
                     quizRepository.getMaxQuizNumber() : 0;
@@ -59,18 +62,15 @@ public class QuizService {
     }
 
     @Transactional
-    public void addQuestionToQuiz(int questionId, int quizId) {
+    public QuizQuestion addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, Integer.toString(questionId)));
 
         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
 
         entityManager.persist(quizQuestion);
-    }
 
-    @Transactional
-    public void delete(Integer quizId) {
-        entityManager.remove(findById(quizId));
+        return quizQuestion;
     }
 
     @Transactional
@@ -92,6 +92,29 @@ public class QuizService {
         entityManager.persist(quizAnswer);
 
         return new QuizStatementDto(quizAnswer);
+    }
+
+    @Transactional
+    public void removeQuiz(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
+
+        quiz.remove();
+
+        entityManager.remove(quiz);
+    }
+
+    @Transactional
+    public String exportQuizzes() {
+        QuizzesXmlExport xmlExport = new QuizzesXmlExport();
+
+        return xmlExport.export(quizRepository.findAll());
+    }
+
+    @Transactional
+    public void importQuizzes(String quizzesXml) {
+        QuizzesXmlImport xmlImport = new QuizzesXmlImport();
+
+        xmlImport.importQuizzes(quizzesXml, this, questionRepository);
     }
 
 }

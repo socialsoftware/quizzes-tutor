@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
@@ -23,7 +24,7 @@ public class QuizQuestion {
     private Question question;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion")
-    private Set<QuestionAnswer> questionAnswers;
+    private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;
 
@@ -37,6 +38,21 @@ public class QuizQuestion {
         this.question = question;
         question.addQuizQuestion(this);
         this.sequence = sequence;
+    }
+
+    public void remove() {
+        canRemove();
+
+        quiz.getQuizQuestions().remove(this);
+        quiz = null;
+        question.getQuizQuestions().remove(this);
+        question = null;
+    }
+
+    private void canRemove() {
+        if (questionAnswers.size() != 0) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, sequence.toString());
+        }
     }
 
     public Quiz getQuiz() {
