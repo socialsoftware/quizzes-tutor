@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.util.List;
 
-public class UsersXMLExport {
+public class UsersXmlExport {
 	public String export(List<User> users) {
 		Element element = createHeader();
 

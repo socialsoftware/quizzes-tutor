@@ -4,13 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.event.TransactionalEventListener;
-import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuestionsXMLExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.QuestionsXMLImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -40,6 +35,12 @@ public class QuestionService {
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+    }
+
+    @Transactional
+    public QuestionDto findQuestionByNumber(Integer number) {
+        return questionRepository.findByNumber(number).map(QuestionDto::new)
+                .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, number.toString()));
     }
 
     @Transactional
@@ -146,18 +147,30 @@ public class QuestionService {
     }
 
     public String exportQuestions() {
-        QuestionsXMLExport xmlExporter = new QuestionsXMLExport();
+        QuestionsXmlExport xmlExporter = new QuestionsXmlExport();
 
         return xmlExporter.export(questionRepository.findAll());
     }
 
     @Transactional
     public void importQuestions(String questionsXML) {
-        QuestionsXMLImport xmlImporter = new QuestionsXMLImport();
+        QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 
         xmlImporter.importQuestions(questionsXML, this);
     }
 
+    @Transactional
+    public String exportTopics() {
+        TopicsXmlExport xmlExport = new TopicsXmlExport();
 
+        return xmlExport.export(topicRepository.findAll());
+    }
+
+    @Transactional
+    public void importTopics(String topicsXML) {
+        TopicsXmlImport xmlImporter = new TopicsXmlImport();
+
+        xmlImporter.importTopics(topicsXML, this);
+    }
 }
 

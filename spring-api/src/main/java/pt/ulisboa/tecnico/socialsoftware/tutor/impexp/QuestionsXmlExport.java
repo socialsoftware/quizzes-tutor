@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.util.List;
 
-public class QuestionsXMLExport {
+public class QuestionsXmlExport {
 	public String export(List<Question> questions) {
 		Element element = createHeader();
 

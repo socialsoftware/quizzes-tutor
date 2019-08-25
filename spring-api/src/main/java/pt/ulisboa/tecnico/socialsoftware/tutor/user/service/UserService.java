@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXMLImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -37,14 +36,14 @@ public class UserService {
     }
 
     public String exportUsers() {
-        UsersXMLExport xmlExporter = new UsersXMLExport();
+        UsersXmlExport xmlExporter = new UsersXmlExport();
 
        return xmlExporter.export(userRepository.findAll());
     }
 
     @Transactional
     public void importUsers(String usersXML) {
-        UsersXMLImport xmlImporter = new UsersXMLImport();
+        UsersXmlImport xmlImporter = new UsersXmlImport();
 
         xmlImporter.importUsers(usersXML, this);
     }

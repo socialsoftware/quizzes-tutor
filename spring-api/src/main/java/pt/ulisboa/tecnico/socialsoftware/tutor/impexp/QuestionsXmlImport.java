@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-public class QuestionsXMLImport {
+public class QuestionsXmlImport {
 	private QuestionService questionService;
 
 	public void importQuestions(InputStream inputStream) {
@@ -45,13 +45,13 @@ public class QuestionsXMLImport {
 		importQuestions(doc);
 	}
 
-	public void importQuestions(String usersXML, QuestionService questionService) {
+	public void importQuestions(String questionXML, QuestionService questionService) {
 		this.questionService = questionService;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(usersXML.getBytes());
+		InputStream stream = new ByteArrayInputStream(questionXML.getBytes());
 
 		importQuestions(stream);
 	}

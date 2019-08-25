@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
 import java.io.*;
 import java.nio.charset.Charset;
 
-public class UsersXMLImport {
+public class UsersXmlImport {
 	private UserService userService;
 
 	public void importUsers(InputStream inputStream) {
