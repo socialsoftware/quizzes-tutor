@@ -48,6 +48,11 @@ public class QuizService {
 
     @Transactional
     public Quiz create(QuizDto quizDto) {
+        if (quizDto.getNumber() == null) {
+            Integer maxQuizNumber = quizRepository.getMaxQuizNumber() != null ?
+                    quizRepository.getMaxQuizNumber() : 0;
+            quizDto.setNumber(maxQuizNumber + 1);
+        }
         Quiz quiz = new Quiz(quizDto);
         entityManager.persist(quiz);
         return quiz;

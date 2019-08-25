@@ -92,7 +92,10 @@ public class Question implements Serializable {
     }
 
     public Integer getNumber() {
-        return number != null ? number : getId();
+        if (number == null) {
+            number =  getId();
+        }
+        return number;
     }
 
     public void setNumber(Integer number) {

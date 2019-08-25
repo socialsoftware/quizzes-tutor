@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 public class QuizDto implements Serializable {
     private Integer id;
+    private Integer number;
     private String title;
     private LocalDateTime date;
     private Integer year;
@@ -21,11 +22,11 @@ public class QuizDto implements Serializable {
     private List<QuestionDto> questions;
 
     public QuizDto(){
-
     }
 
     public QuizDto(Quiz quiz) {
         this.id = quiz.getId();
+        this.number = quiz.getNumber();
         this.title = quiz.getTitle();
         this.date = quiz.getDate();
         this.year = quiz.getYear();
@@ -44,6 +45,14 @@ public class QuizDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public String getTitle() {

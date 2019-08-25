@@ -17,55 +17,58 @@ import java.util.Set;
 public class Quiz implements Serializable {
    public enum QuizType {
         GENERATED, EXAM, TEST, SINGLE, TEACHER
-    }
+   }
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Integer id;
+   @Id
+   @GeneratedValue(strategy=GenerationType.IDENTITY)
+   private Integer id;
 
-    private String title;
+   private Integer number;
 
-    @Column(name = "generation_date")
-    private LocalDateTime date;
+   private String title;
 
-    private Integer year;
-    private String type;
-    private Integer series;
-    private String version;
+   @Column(name = "generation_date")
+   private LocalDateTime date;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    private Set<QuizQuestion> quizQuestions = new HashSet<>();
+   private Integer year;
+   private String type;
+   private Integer series;
+   private String version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
-    private Set<QuizAnswer> quizAnswers = new HashSet<>();
+   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+   private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-    public Quiz() {}
+   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+   private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    public Quiz(QuizDto quiz) {
-        this.title = quiz.getTitle();
-        this.date = quiz.getDate();
-        this.year = quiz.getYear();
-        this.type = quiz.getType();
-        this.series = quiz.getSeries();
-        this.version = quiz.getVersion();
-    }
+   public Quiz() {}
 
-    public void generate(int quizSize, List<Question> activeQuestions) {
-        Random rand = new Random();
-        int numberOfActiveQuestions = activeQuestions.size();
-        Set <Integer> usedQuestions = new HashSet<>();
+   public Quiz(QuizDto quiz) {
+       this.number = quiz.getNumber();
+       this.title = quiz.getTitle();
+       this.date = quiz.getDate();
+       this.year = quiz.getYear();
+       this.type = quiz.getType();
+       this.series = quiz.getSeries();
+       this.version = quiz.getVersion();
+   }
 
-        int numberOfQuestions = 0;
-        while (numberOfQuestions < quizSize) {
-            int next = rand.nextInt(numberOfActiveQuestions);
-            if(!usedQuestions.contains(next)) {
-                usedQuestions.add(next);
-                new QuizQuestion(this, activeQuestions.get(next), numberOfQuestions++);
-            }
-        }
+   public void generate(int quizSize, List<Question> activeQuestions) {
+       Random rand = new Random();
+       int numberOfActiveQuestions = activeQuestions.size();
+       Set <Integer> usedQuestions = new HashSet<>();
 
-        this.setDate(LocalDateTime.now());
-        this.setType(QuizType.GENERATED.name());
+       int numberOfQuestions = 0;
+       while (numberOfQuestions < quizSize) {
+           int next = rand.nextInt(numberOfActiveQuestions);
+           if(!usedQuestions.contains(next)) {
+               usedQuestions.add(next);
+               new QuizQuestion(this, activeQuestions.get(next), numberOfQuestions++);
+           }
+       }
+
+       this.setDate(LocalDateTime.now());
+       this.setType(QuizType.GENERATED.name());
     }
 
     public Integer getId() {
@@ -74,6 +77,17 @@ public class Quiz implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumber() {
+       if (number == null) {
+           number = getId();
+       }
+       return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public String getTitle() {

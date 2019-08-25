@@ -41,6 +41,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quizRepository.count() == 1L
         def result = quizRepository.findAll().get(0)
         result.getId() != null
+        result.getNumber() != null
         result.getTitle() == QUIZ_TITLE
         result.getDate() == date
         result.getYear() == 2019
