@@ -9,7 +9,6 @@ import Vuetify from "vuetify";
 import "vuetify/dist/vuetify.min.css";
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
-Vue.use(Vuetify);
 
 Vue.config.productionTip = false;
 
@@ -20,8 +19,11 @@ if (token) {
   Vue.prototype.$http.defaults.headers.common["Authorization"] = token;
 }
 
+Vue.use(Vuetify);
+
 new Vue({
   router,
   store,
   render: h => h(App)
 }).$mount("#app");
+

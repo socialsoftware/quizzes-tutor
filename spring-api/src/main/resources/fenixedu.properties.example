@@ -1,4 +1,0 @@
-oauth.consumer.key=<your-consumer-key>
-oauth.consumer.secret=<your-consumer-secret>
-callback.url=<your-application-callback-url> //e.g. http://localhost:8080/authorization
-base.url=<fenixedu-installation-base-url> //e.g. https://fenix.tecnico.ulisboa.pt

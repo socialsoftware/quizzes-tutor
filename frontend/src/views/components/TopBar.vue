@@ -21,20 +21,20 @@
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
           </template>
-          <v-list-items>
-            <v-list-item :key="0">
+          <v-list>
+            <v-list-tile :key="0">
               <v-btn color="primary" dark
-                v-if="isLoggedIn" to="/management/questions">
-                Questions
+                to="/management/questions">
+                <v-list-tile-title>Questions</v-list-tile-title>
               </v-btn>
-            </v-list-item><br/>
-            <v-list-item :key="1">
+            </v-list-tile>
+            <v-list-tile :key="1">
               <v-btn color="primary" dark
-                v-if="isLoggedIn" to="/management/topics">
-                Topics
+                to="/management/topics">
+                <v-list-tile-title>Topics</v-list-tile-title>
               </v-btn>
-            </v-list-item>
-          </v-list-items>
+            </v-list-tile>
+          </v-list>
         </v-menu>
 
         <v-btn v-if="isLoggedIn" to="/stats" flat>
@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue} from "vue-property-decorator";
 import Store from "@/store";
 
 @Component

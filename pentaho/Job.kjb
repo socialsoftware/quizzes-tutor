@@ -456,8 +456,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1104</xloc>
-      <yloc>256</yloc>
+      <xloc>864</xloc>
+      <yloc>64</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -494,8 +494,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>1248</xloc>
-      <yloc>256</yloc>
+      <xloc>1008</xloc>
+      <yloc>64</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -608,18 +608,18 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>64</yloc>
+      <xloc>768</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Merge Duplicates 3 2</name>
+      <name>Merge Duplicates 2 2</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates.ktr</filename>
+      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates2.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -646,18 +646,18 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>960</xloc>
-      <yloc>256</yloc>
+      <xloc>896</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Merge Duplicates 3 3</name>
+      <name>Delete Merged 2</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates.ktr</filename>
+      <filename>/home/pedro/as-tutor/pentaho/merge/DeleteMerged.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -684,8 +684,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>848</xloc>
-      <yloc>256</yloc>
+      <xloc>1040</xloc>
+      <yloc>208</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
@@ -746,15 +746,6 @@
     </hop>
     <hop>
       <from>Merge Duplicates</from>
-      <to>Merge Duplicates 3</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Merge Duplicates 3 2</from>
       <to>Merge Duplicates 2</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -763,8 +754,8 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Merge Duplicates 3</from>
-      <to>Merge Duplicates 3 3</to>
+      <from>Delete Merged</from>
+      <to>Merge Duplicates 3</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -772,8 +763,17 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Merge Duplicates 3 3</from>
-      <to>Merge Duplicates 3 2</to>
+      <from>Merge Duplicates 3</from>
+      <to>Merge Duplicates 2 2</to>
+      <from_nr>0</from_nr>
+      <to_nr>0</to_nr>
+      <enabled>Y</enabled>
+      <evaluation>Y</evaluation>
+      <unconditional>N</unconditional>
+    </hop>
+    <hop>
+      <from>Merge Duplicates 2 2</from>
+      <to>Delete Merged 2</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>

@@ -1,4 +1,4 @@
 dropdb tutordb
 createdb tutordb
 cd spring-api/
-mvn clean spring-boot:run
+mvn clean -Pdev spring-boot:run

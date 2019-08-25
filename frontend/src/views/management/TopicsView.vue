@@ -1,5 +1,4 @@
-<template v-if="topics.size == 0 ">
-   
+<template v-if="topics.size === 0 ">
   <v-card>
     <v-card-title>
       <v-flex xs12 sm6 md6>
@@ -44,7 +43,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-    </v-card-title> 
+    </v-card-title>
     <v-data-table
     :headers="headers"
     :custom-filter="customFilter"
@@ -66,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit, Watch } from "vue-property-decorator";
+import { Component, Vue} from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
 
 @Component
@@ -76,29 +75,23 @@ export default class TopicsView extends Vue {
   oldTopic: string | null = null;
   error: string | null = null;
   dialog: boolean = false;
+  search: string = "";
+  headers: object = [
+    { text: 'Topic', value: 'topic', align: 'left', width: "50%" },
+    { text: 'Actions', value: 'action', align: 'center', width: "10%",  sortable: false }
+  ];
 
   constructor() {
     super();
   }
 
-  data () {
-      return {
-        dialog: this.dialog,
-        search: "",
-        headers: [
-          { text: 'Topic', value: 'topic', align: 'left', width: "50%" },
-          { text: 'Actions', value: 'action', align: 'center', width: "10%",  sortable: false },
-        ],
-        topics: this.topics,
-        editedTopic: this.editedTopic,
-        error: this.error,
+  // noinspection JSUnusedGlobalSymbols
+  async beforeMount() {
+      try {
+        this.topics = await RemoteServices.getTopics();
+      } catch (e) {
+          console.log(e);
       }
-  }
-
-  beforeMount() {
-    RemoteServices.getTopics().then(result => {
-      this.topics = result.data;
-    });
   }
 
   customFilter(items: string[], search: string) {
@@ -115,7 +108,7 @@ export default class TopicsView extends Vue {
   }
 
   open() {
-    this.editedTopic = null
+    this.editedTopic = null;
     this.oldTopic = null;
     this.error = null;
     this.dialog = true;
@@ -127,22 +120,20 @@ export default class TopicsView extends Vue {
     this.dialog = true;
   }
 
-  deleteTopic(topic: string) {
+  async deleteTopic(topic: string) {
       if (confirm('Are you sure you want to delete this topic?')) {
-        RemoteServices.deleteTopic(topic)
-        .then(response => {
+         await RemoteServices.deleteTopic(topic);
           this.topics = this.topics.filter(t => t != topic);
-        })
-        .catch((error) => {
+        /*.catch((error) => {
           if (error.response) {
-            confirm(error.response.data.message)
+            confirm(error.response.data.message);
             console.log(error.response.data.message);
           } else if (error.request) {
             confirm("No response received")
           } else {
             confirm("Error")
           }
-        });   
+        });*/
       }
   }
 
@@ -151,14 +142,13 @@ export default class TopicsView extends Vue {
     this.dialog = false
   }
 
-  save() {
-    if (this.oldTopic !== null) {
-      RemoteServices.updateTopic(this.oldTopic, this.editedTopic)
-      .then(response => {
-        this.topics = this.topics.filter(topic => topic !== this.oldTopic);
-        this.topics.unshift(this.editedTopic)
-      })
-      .catch((error) => {
+  async save() {
+    if (this.oldTopic && this.editedTopic) {
+      await RemoteServices.updateTopic(this.oldTopic, this.editedTopic);
+      this.topics = this.topics.filter(topic => topic !== this.oldTopic);
+      this.topics.unshift(this.editedTopic);
+
+      /*.catch((error) => {
         if (error.response) {
           this.error = error.response.data.message;
         } else if (error.request) {
@@ -167,13 +157,11 @@ export default class TopicsView extends Vue {
           this.error = "Error";
         }
         this.dialog = true;
-      });  
-    } else {
-      RemoteServices.createTopic(this.editedTopic)
-        .then(response => {
-          this.topics.unshift(this.editedTopic);
-        })
-        .catch((error) => {
+      });*/
+    } else if (this.editedTopic){
+      await RemoteServices.createTopic(this.editedTopic);
+      this.topics.unshift(this.editedTopic);
+       /* .catch((error) => {
           if (error.response) {
             this.error = error.response.data.message;
             console.log(error.response.data.message);
@@ -183,7 +171,7 @@ export default class TopicsView extends Vue {
             this.error = "Error";
           }
           this.dialog = true;
-      });   
+      });*/
     }
     this.close()
   }
