@@ -91,10 +91,12 @@ public class QuestionsXmlImport {
 
 		List<OptionDto> optionDtos = new ArrayList<>();
 		for (Element optionElement : questionElement.getChild("options").getChildren("option")) {
+			Integer optionNumber = Integer.valueOf( optionElement.getAttributeValue("number"));
 			String optionContent = optionElement.getAttributeValue("content");
 			Boolean correct = Boolean.valueOf(optionElement.getAttributeValue("correct"));
 
 			OptionDto optionDto = new OptionDto();
+			optionDto.setNumber(optionNumber);
 			optionDto.setContent(optionContent);
 			optionDto.setCorrect(correct);
 

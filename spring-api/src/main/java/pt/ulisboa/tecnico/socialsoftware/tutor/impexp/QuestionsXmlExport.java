@@ -75,6 +75,7 @@ public class QuestionsXmlExport {
 	private void exportOption(Element optionsElement, Option option) {
 		Element optionElement = new Element("option");
 
+		optionElement.setAttribute("number", option.getNumber().toString());
 		optionElement.setAttribute("content", option.getContent());
 		optionElement.setAttribute("correct", option.getCorrect().toString());
 
