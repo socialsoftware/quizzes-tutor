@@ -64,7 +64,9 @@ public class Question implements Serializable {
             setImage(new Image(questionDto.getImage()));
         }
 
+        int index = 1;
         for (OptionDto optionDto : questionDto.getOptions()) {
+            optionDto.setNumber(index++);
             Option option = new Option(optionDto);
             this.options.add(option);
             option.setQuestion(this);
@@ -288,4 +290,10 @@ public class Question implements Serializable {
         }
     }
 
+    public void setOptionsNumber() {
+        int index = 1;
+        for (Option option: getOptions()) {
+            option.setNumber(index++);
+        }
+    }
 }

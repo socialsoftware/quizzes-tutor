@@ -16,6 +16,8 @@ public class Option implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer number;
+
     @Column(columnDefinition = "boolean default false")
     private Boolean correct;
 
@@ -32,8 +34,28 @@ public class Option implements Serializable {
     public Option(){}
 
     public Option(OptionDto option) {
+        this.number = option.getNumber();
         this.content = option.getContent();
         this.correct = option.getCorrect();
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Integer getNumber() {
+        if (number == null) {
+            getQuestion().setOptionsNumber();
+        }
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Boolean getCorrect() {
@@ -50,14 +72,6 @@ public class Option implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public Question getQuestion() {

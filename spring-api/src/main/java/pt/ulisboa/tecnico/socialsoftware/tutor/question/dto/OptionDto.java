@@ -7,6 +7,7 @@ import java.io.Serializable;
 
 public class OptionDto implements Serializable {
     private Integer id;
+    private Integer number;
     private Boolean correct;
     private String content;
 
@@ -15,6 +16,7 @@ public class OptionDto implements Serializable {
 
     public OptionDto(Option option) {
         this.id = option.getId();
+        this.number = option.getNumber();
         this.content = option.getContent();
         this.correct = option.getCorrect();
     }
@@ -25,6 +27,14 @@ public class OptionDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Boolean getCorrect() {
