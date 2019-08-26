@@ -1,2 +1,0 @@
-curl -X PUT -H "Content-Type: application/json" -d '{"question" : {"content":"pergunta de teste", "answerTime":15}, "answers": [{"content": "resposta teste 10", "id": 5}, {"content": "resposta teste 11", "id": 6}, {"content": "resposta teste 12", "id": 7}, {"content": "resposta teste 13", "id": 8}], "correctAnswers": [{"questionid":2, "answerid":5}, {"questionid":2, "answerid":7}]}' \
-http://127.0.0.1:3000/api/updatequestion/2

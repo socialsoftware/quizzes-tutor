@@ -1,5 +1,5 @@
-<template v-if="questions.size == 0 ">
-   
+<template v-if="questions.size === 0 ">
+
   <v-card>
     <v-card-title>
       <v-flex xs12 sm6 md6>
@@ -34,27 +34,27 @@
                       <v-text-field v-model="editedItem.title" label="Title"></v-text-field>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
-                      <v-textarea outline rows="10" v-model="editedItem.content" 
+                      <v-textarea outline rows="10" v-model="editedItem.content"
                       label="Content"></v-textarea>
                     </v-flex>
                     <v-flex xs12 sm6 md10>
                       <v-switch v-model="editedItem.correctZero" class="ma-4" label="Correct"></v-switch>
-                      <v-textarea outline rows="3" v-model="editedItem.optionZero" 
+                      <v-textarea outline rows="3" v-model="editedItem.optionZero"
                       label="Option One"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctOne" class="ma-4" label="Correct"></v-switch>
-                      <v-textarea outline rows="3" v-model="editedItem.optionOne" 
+                      <v-textarea outline rows="3" v-model="editedItem.optionOne"
                       label="Option Two"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctTwo" class="ma-4" label="Correct"></v-switch>
-                      <v-textarea outline rows="3" v-model="editedItem.optionTwo" 
+                      <v-textarea outline rows="3" v-model="editedItem.optionTwo"
                       label="Option Three"></v-textarea>
                     </v-flex>
                     <v-flex xs24 sm12 md12>
                       <v-switch v-model="editedItem.correctThree" class="ma-4" label="Correct"></v-switch>
-                      <v-textarea outline rows="3" v-model="editedItem.optionThree" 
+                      <v-textarea outline rows="3" v-model="editedItem.optionThree"
                       label="Option Four"></v-textarea>
                     </v-flex>
                 </v-layout>
@@ -89,7 +89,7 @@
             </v-card-actions>
           </v-card>
         </v-dialog>
-    </v-card-title> 
+    </v-card-title>
     <v-data-table
     :headers="headers"
     :custom-filter="customFilter"
@@ -100,7 +100,7 @@
     class="elevation-1">
     <template slot="items" slot-scope="props">
         <tr>
-          <td class="text-left" 
+          <td class="text-left"
           @click="props.expanded = !props.expanded"
           v-html="convertMarkDownNoFigure(props.item.content, props.item.image)"></td>
           <td class="text-left">
@@ -110,9 +110,9 @@
                 filled
                 chips
                 multiple
-                @focus="getSelectedTopics(props.item.id)"
                 @change="saveTopics(props.item.id)"
               >
+                <!-- TODO @focus="getSelectedTopics(props.item.id)"-->
               </v-autocomplete>
           </td>
           <td>{{props.item.difficulty}}</td>
@@ -125,11 +125,12 @@
           </td>
           <td class="text-center">
             <label>
+              <!--suppress JSUnresolvedVariable -->
               <input type="file" style="display:none" @change="handleFileUpload($event, props.item.id)"
               accept="image/*" class="input-file">Upload</label>
-            <!-- <v-file-input 
+            <!-- <v-file-input
               @change="handleFileUpload($event, props.item.id)"
-              accept="image/*" 
+              accept="image/*"
               label="File input">Upload</v-file-input> -->
           </td>
           <td>
@@ -163,10 +164,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit, Watch } from "vue-property-decorator";
+import { Component, Vue} from "vue-property-decorator";
 import { Question, QuestionDto } from "@/models/question/Question";
 import QuestionForm from "@/models/question/QuestionForm";
-import Option from "@/models/question/Option";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown, convertMarkDownNoFigure } from "@/scripts/script";
 import Image from "@/models/student/Image";
@@ -180,47 +180,33 @@ export default class QuestionsView extends Vue {
   dialog: boolean = false;
   topics: string[] = [];
   showQuestion: boolean = false;
-  questionToShow: Question | null = null;
+  questionToShow: Question | null | undefined = null;
+  search: string = "";
+  headers: object = [
+      { text: 'Question', value: 'content', align: 'left', width: "70%" },
+      { text: 'Topics', value: 'topics', align: 'left', width: "20%" , sortable: false },
+      { text: 'Difficulty', value: 'difficulty', align: 'center', width: "1%"  },
+      { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: "1%"  },
+      { text: 'Title', value: 'title', align: 'left', width: "5%"  },
+      { text: 'Active', value: 'active', align: 'left', width: "1%"  },
+      { text: 'Image', value: 'image', align: 'center', width: "1%",  sortable: false  },
+      { text: 'Actions', value: 'action', align: 'center', width: "1%",  sortable: false },
+  ];
 
   constructor() {
     super();
   }
 
-  data () {
-      return {
-        dialog: this.dialog,
-        search: "",
-        headers: [
-          { text: 'Question', value: 'content', align: 'left', width: "70%" },
-          { text: 'Topics', value: 'topics', align: 'left', width: "20%" , sortable: false },
-          { text: 'Difficulty', value: 'difficulty', align: 'center', width: "1%"  },
-          { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: "1%"  },
-          { text: 'Title', value: 'title', align: 'left', width: "5%"  },
-          { text: 'Active', value: 'active', align: 'left', width: "1%"  },
-          { text: 'Image', value: 'image', align: 'center', width: "1%",  sortable: false  },
-          { text: 'Actions', value: 'action', align: 'center', width: "1%",  sortable: false },
-        ],
-        questions: this.questions,
-        editedId: this.editedId,
-        editedItem: this.editedItem,
-        error: this.error,
-        topics: this.topics,
-        showQuestion: this.showQuestion,
-        questionToShow: this.questionToShow
+  // noinspection JSUnusedGlobalSymbols
+  async beforeMount() {
+      try{
+        this.topics = await RemoteServices.getTopics();
+        this.questions = await RemoteServices.getQuestions();
+      } catch (e) {
+          console.log(e);
       }
   }
 
-  beforeMount() {
-    RemoteServices.getTopics().then(result => {
-      this.topics = result.data;
-        RemoteServices.getQuestions().then(result => {
-        this.questions = result.data.map(
-          (question: QuestionDto) => new Question(question)
-        );
-        });
-    });
-  }
-  
   customFilter(items: Question[], search: string) {
     return items.filter(
       (question: Question) =>
@@ -230,35 +216,30 @@ export default class QuestionsView extends Vue {
     );
   }
 
-  convertMarkDown(text: string): string {
-    return convertMarkDown(text);
-  }
-
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
   }
 
-  saveTopics(questionId: number) {
+  async saveTopics(questionId: number) {
     let question = this.questions.find(question => question.id === questionId);
-    RemoteServices.updateQuestionTopics(questionId, question.topics)
-      .then(response => {
-        
-      })
-      .catch((error) => {
+    if (question) {
+      await RemoteServices.updateQuestionTopics(questionId, question.topics);
+      /*.catch((error) => {
         if (error.response) {
-          confirm(error.response.data.message)
+          confirm(error.response.data.message);
           console.log(error.response.data.message);
         } else if (error.request) {
           confirm("No response received")
         } else {
           confirm("Error")
         }
-      });   
+      });*/
+      }
   }
 
   openShowQuestionDialog(questionId: number) {
     this.questionToShow = this.questions.find(question => question.id === questionId);
-    this.showQuestion = true;    
+    this.showQuestion = true;
   }
 
   renderQuestion(question: Question): string {
@@ -279,48 +260,48 @@ export default class QuestionsView extends Vue {
   }
 
   open() {
-    this.editedId = -1
+    this.editedId = -1;
     this.editedItem = new QuestionForm();
     this.error = null;
     this.dialog = true;
   }
 
-  switchActive(questionId: number) {
-    RemoteServices.questionSwitchActive(questionId)
-      .then(response => {
-        let question = this.questions.find(question => question.id === questionId);
-        question.active = !question.active;
-      })
-      .catch((error) => {
+  async switchActive(questionId: number) {
+    await RemoteServices.questionSwitchActive(questionId);
+    let question = this.questions.find(question => question.id === questionId);
+    if (question) {
+      question.active = !question.active;
+    }
+      /*.catch((error) => {
         if (error.response) {
-          confirm(error.response.data.message)
+          confirm(error.response.data.message);
           console.log(error.response.data.message);
         } else if (error.request) {
           confirm("No response received")
         } else {
             confirm("Error")
         }
-    });   
+    });*/
   }
 
-  handleFileUpload(event: Event, questionId: number) {
+  async handleFileUpload(event: Event, questionId: number) {
     let question = this.questions.find(question => question.id === questionId);
-    if (question) {
-      RemoteServices.uploadImage(event.target.files[0], questionId)
-        .then(response => {
-          question.image = {...question.image, url: response.data}
-          confirm("Image " + response.data +  " was uploaded!")
-        })
-        .catch((error) => {
+    let target : HTMLInputElement = event.target as HTMLInputElement;
+    if (question && event.target && target && target.files) {
+      const imageURL = await RemoteServices.uploadImage(target.files[0], questionId);
+      question.image = new Image(imageURL, null);
+      confirm("Image " + imageURL +  " was uploaded!");
+
+        /*.catch((error) => {
           if (error.response) {
-            confirm(error.response.data.message)
+            confirm(error.response.data.message);
             console.log(error.response.data.message);
           } else if (error.request) {
             confirm("No response received")
           } else {
             confirm("Error")
           }
-        });   
+        });*/
     }
   }
 
@@ -362,14 +343,12 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  deleteItem (questionId: number) {
-      const selectedQuestion = this.questions.find(question => question.id === questionId)
-      if (confirm('Are you sure you want to delete this question?')) {
-        RemoteServices.deleteQuestion(selectedQuestion.id)
-        .then(response => {
-          this.questions = this.questions.filter(question => question.id != selectedQuestion.id);
-        })
-        .catch((error) => {
+  async deleteItem (questionId: number) {
+      const selectedQuestion = this.questions.find(question => question.id === questionId);
+      if (selectedQuestion && confirm('Are you sure you want to delete this question?')) {
+        await RemoteServices.deleteQuestion(selectedQuestion.id);
+        this.questions = this.questions.filter(question => question.id != selectedQuestion.id);
+        /*.catch((error) => {
           if (error.response) {
             confirm(error.response.data.message)
             console.log(error.response.data.message);
@@ -378,7 +357,7 @@ export default class QuestionsView extends Vue {
           } else {
             confirm("Error")
           }
-        });   
+        });*/
       }
   }
 
@@ -387,25 +366,26 @@ export default class QuestionsView extends Vue {
     this.dialog = false
   }
 
-  save () {
+  async save () {
     if (this.editedId > -1) {
       let question = this.questions.find(question => question.id === this.editedId);
-      if (question !== null) {
-        let clone = {title: question.title, content: question.content, 
-          options: question.options.map(option => Object.assign({}, option)),
-          image: Object.assign({}, question.image)};
-        clone.title = this.editedItem.title;
-        clone.content = this.editedItem.content;
-        clone.options[0].content = this.editedItem.optionZero;
-        clone.options[0].correct = this.editedItem.correctZero;
-        clone.options[1].content = this.editedItem.optionOne;
-        clone.options[1].correct = this.editedItem.correctOne;
-        clone.options[2].content = this.editedItem.optionTwo;
-        clone.options[2].correct = this.editedItem.correctTwo;
-        clone.options[3].content = this.editedItem.optionThree;
-        clone.options[3].correct = this.editedItem.correctThree;
-        RemoteServices.updateQuestion(this.editedId, clone)
-        .then(response => {
+      if (question && this.editedItem.title && this.editedItem.content) {
+        let questionJson = {
+            title: this.editedItem.title,
+            content: this.editedItem.content,
+            options: question.options.map(option => Object.assign({}, option)),
+            image: Object.assign({}, question.image)};
+
+
+        questionJson.options[0].content = this.editedItem.optionZero;
+        questionJson.options[0].correct = this.editedItem.correctZero;
+        questionJson.options[1].content = this.editedItem.optionOne;
+        questionJson.options[1].correct = this.editedItem.correctOne;
+        questionJson.options[2].content = this.editedItem.optionTwo;
+        questionJson.options[2].correct = this.editedItem.correctTwo;
+        questionJson.options[3].content = this.editedItem.optionThree;
+        questionJson.options[3].correct = this.editedItem.correctThree;
+        await RemoteServices.updateQuestion(this.editedId, new Question(questionJson as QuestionDto));
           question.title = this.editedItem.title;
           question.content = this.editedItem.content;
           question.options[0].content = this.editedItem.optionZero;
@@ -416,8 +396,7 @@ export default class QuestionsView extends Vue {
           question.options[2].correct = this.editedItem.correctTwo;
           question.options[3].content = this.editedItem.optionThree;
           question.options[3].correct = this.editedItem.correctThree;
-        })
-        .catch((error) => {
+        /*.catch((error: { response: { data: { message: string | null; }; }; request: any; }) => {
           if (error.response) {
             this.error = error.response.data.message;
           } else if (error.request) {
@@ -426,10 +405,10 @@ export default class QuestionsView extends Vue {
             this.error = "Error";
           }
           this.dialog = true;
-        });   
-      }      
+        });*/
+      }
     } else {
-      const question = { 
+      const question = {
         title: this.editedItem.title,
         content: this.editedItem.content,
         options: [
@@ -438,14 +417,14 @@ export default class QuestionsView extends Vue {
           {id: -1, content: this.editedItem.optionTwo, correct: this.editedItem.correctTwo},
           {id: -1, content: this.editedItem.optionThree, correct: this.editedItem.correctThree}
         ]
-      }
+      };
 
-      RemoteServices.createQuestion(question)
-        .then(response => {
+      RemoteServices.createQuestion(new Question(question as QuestionDto))
+        .then((response: { data: QuestionDto; }) => {
           let result = new Question(response.data);
           this.questions.unshift(result);
         })
-        .catch((error) => {
+        .catch((error: { response: { data: { message: string | null; }; }; request: any; }) => {
           if (error.response) {
             this.error = error.response.data.message;
             console.log(error.response.data.message);
@@ -455,7 +434,7 @@ export default class QuestionsView extends Vue {
             this.error = "Error";
           }
           this.dialog = true;
-      });   
+      });
     }
     this.close()
   }

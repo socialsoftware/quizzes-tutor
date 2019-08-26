@@ -1,9 +1,7 @@
 python3 data-extraction/populateDB.py
-pg_dump tutordb > dump/0_original.bak
-python3 dump/removeLateX.py
-dropdb tutordb
-createdb tutordb
-psql tutordb < dump/1_withoutLateX.bak
+pg_dump tutordb > postgres/dumps/dump0.sql
 export JAVA_HOME=/usr/lib/jvm/java-8-oracle
 ~/pentaho/kitchen.sh  -file=pentaho/Job.kjb
-pg_dump tutordb > dump/2_withAnswers.bak
+~/pentaho/kitchen.sh  -file=pentaho/Job2.kjb
+~/pentaho/kitchen.sh  -file=pentaho/Job3.kjb
+pg_dump tutordb > postgres/dumps/dump.sql

@@ -13,6 +13,9 @@
     <version>0.0.1-SNAPSHOT</version>
     <name>tutor</name>
     <description>Tutor System for the Software Architecture Course</description>
+
+    <packaging>jar</packaging>
+
     <repositories>
         <repository>
             <id>fenix-ashes-maven-repository</id>
@@ -29,6 +32,31 @@
         <net.bytebuddy.version>1.8.21</net.bytebuddy.version>
         <org.objenesis.version>2.6</org.objenesis.version>
     </properties>
+
+    <!-- Allows multiple properties files-->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <activatedProperties>dev</activatedProperties>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <activatedProperties>test</activatedProperties>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencies>
         <dependency>

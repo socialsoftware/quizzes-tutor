@@ -579,7 +579,7 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/answers/pautas.xls</name>
+      <name>/home/pedro/as-tutor/pentaho/answers/data/original_answers.xls</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>

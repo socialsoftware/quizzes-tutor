@@ -96,5 +96,4 @@ public class Option implements Serializable {
         }
         questionAnswers.add(questionAnswer);
     }
-
 }

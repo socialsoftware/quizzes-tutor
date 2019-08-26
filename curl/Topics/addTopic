@@ -1,2 +1,0 @@
-curl --data "name=outro" \
-http://127.0.0.1:3000/api/topics

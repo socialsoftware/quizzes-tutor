@@ -25,6 +25,10 @@ HELP.md
 /.nb-gradle/
 /build/
 
-database.properties
-fenixedu.properties
-specific.properties
+
+application-dev.properties
+application-prod.properties
+application-test.properties
+
+### images location ###
+/src/main/resources/static/images/questions/
