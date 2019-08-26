@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
@@ -53,7 +54,24 @@ public class Quiz implements Serializable {
        this.version = quiz.getVersion();
    }
 
-   public void generate(int quizSize, List<Question> activeQuestions) {
+    public void remove() {
+       canRemove();
+
+       for (QuizQuestion quizQuestion: getQuizQuestions()) {
+           quizQuestion.remove();
+       }
+
+       quizQuestions.clear();
+
+    }
+
+    private void canRemove() {
+       if (quizAnswers.size() != 0) {
+           throw new TutorException(TutorException.ExceptionError.QUIZ_HAS_ANSWERS, id.toString());
+       }
+    }
+
+    public void generate(int quizSize, List<Question> activeQuestions) {
        Random rand = new Random();
        int numberOfActiveQuestions = activeQuestions.size();
        Set <Integer> usedQuestions = new HashSet<>();

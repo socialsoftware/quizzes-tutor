@@ -24,7 +24,7 @@ class CreateQuizServiceSpockTest extends Specification {
     QuizRepository quizRepository
 
     def "create a quiz"() {
-        given: 'createQuestion a quiz'
+        given: 'createQuiz a quiz'
         def quiz = new QuizDto()
         quiz.setTitle(QUIZ_TITLE)
         def date =LocalDateTime.now()
@@ -35,7 +35,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setVersion(VERSION)
 
         when:
-        quizService.create(quiz)
+        quizService.createQuiz(quiz)
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
