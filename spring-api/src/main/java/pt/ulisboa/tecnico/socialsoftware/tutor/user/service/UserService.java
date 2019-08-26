@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 

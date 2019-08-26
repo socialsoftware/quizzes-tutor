@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.impexp;
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import org.jdom2.Document;
 import org.jdom2.Element;

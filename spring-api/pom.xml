@@ -28,6 +28,8 @@
         <version.groovy>2.4.15</version.groovy>
         <net.bytebuddy.version>1.8.21</net.bytebuddy.version>
         <org.objenesis.version>2.6</org.objenesis.version>
+
+        <version.commons-io.commons-io>2.4</version.commons-io.commons-io>
     </properties>
 
     <dependencies>
@@ -117,13 +119,18 @@
         </dependency>
 
         <!-- Import/Export -->
-        <dependency>
+         <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${version.commons-io.commons-io}</version>
         </dependency>
 
         <!-- Spock testing framework -->

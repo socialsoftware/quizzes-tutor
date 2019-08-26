@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -12,10 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.AnswersXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.AnswersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.TopicsXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.TopicsXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -35,9 +33,8 @@ import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
 
-@Component
+@Service
 public class AnswerService {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -58,7 +55,6 @@ public class AnswerService {
 
     @PersistenceContext
     EntityManager entityManager;
-
 
     @Transactional
     public QuizAnswer createQuizAnswer(Integer userId, Integer quizId, LocalDateTime availableDate) {
