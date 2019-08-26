@@ -39,13 +39,13 @@ class ImportExportQuestionsSpockTest extends Specification {
         question.setImage(image)
 
         def option = new OptionDto()
-        option.setNumber(1)
+        option.setNumber(0)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(option)
         option = new OptionDto()
-        option.setNumber(2)
+        option.setNumber(1)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(false)
         options.add(option)
@@ -75,7 +75,7 @@ class ImportExportQuestionsSpockTest extends Specification {
         questionResult.getOptions().size() == 2
         def optionOneResult = questionResult.getOptions().get(0)
         def optionTwoResult = questionResult.getOptions().get(1)
-        optionOneResult.getNumber() + optionTwoResult.getNumber() == 3
+        optionOneResult.getNumber() + optionTwoResult.getNumber() == 1
         optionOneResult.getContent() == OPTION_CONTENT
         optionTwoResult.getContent() == OPTION_CONTENT
         !(optionOneResult.getCorrect() && optionTwoResult.getCorrect())

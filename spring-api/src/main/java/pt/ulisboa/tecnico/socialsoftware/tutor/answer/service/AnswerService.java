@@ -12,8 +12,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.AnswersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.AnswersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.TopicsXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
@@ -37,6 +42,9 @@ public class AnswerService {
     private UserRepository userRepository;
 
     @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
     private QuizRepository quizRepository;
 
     @Autowired
@@ -53,12 +61,25 @@ public class AnswerService {
 
 
     @Transactional
-    public void createQuizAnswer(Integer userId, Integer quizId, LocalDateTime availableDate) {
+    public QuizAnswer createQuizAnswer(Integer userId, Integer quizId, LocalDateTime availableDate) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, Integer.toString(userId)));
 
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
 
-        entityManager.persist(new QuizAnswer(user, quiz, availableDate));
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz, availableDate);
+        entityManager.persist(quizAnswer);
+
+        return quizAnswer;
+    }
+
+    @Transactional
+    public void removeQuizAnswer(Integer quizAnswerId) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId.toString()));
+
+        quizAnswer.remove();
+
+        entityManager.remove(quizAnswer);
     }
 
     @Transactional
@@ -92,11 +113,10 @@ public class AnswerService {
                 }
             }
 
-            if (!quizAnswer.getCompleted()) {
-                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
-            }
+            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
         }
 
+        quizAnswer.setCompleted(true);
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
@@ -113,6 +133,20 @@ public class AnswerService {
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
         return !user.getId().equals(quizAnswer.getUser().getId());
+    }
+
+    @Transactional
+    public String exportAnswers() {
+        AnswersXmlExport xmlExport = new AnswersXmlExport();
+
+        return xmlExport.export(quizAnswerRepository.findAll());
+    }
+
+    @Transactional
+    public void importAnswers(String answersXml) {
+        AnswersXmlImport xmlImporter = new AnswersXmlImport();
+
+        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, userRepository);
     }
 
 }

@@ -41,7 +41,7 @@ public class QuizAnswer implements Serializable {
     public QuizAnswer() {
     }
 
-    public QuizAnswer(User user, Quiz quiz, LocalDateTime availableDate){
+    public QuizAnswer(User user, Quiz quiz, LocalDateTime availableDate) {
         this.assignedDate = LocalDateTime.now();
         this.availableDate = availableDate;
         this.completed = false;
@@ -49,6 +49,20 @@ public class QuizAnswer implements Serializable {
         user.addQuizAnswer(this);
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
+    }
+
+    public void remove() {
+        user.getQuizAnswers().remove(this);
+        user = null;
+
+        quiz.getQuizAnswers().remove(this);
+        quiz = null;
+
+        for (QuestionAnswer questionAnswer: getQuestionAnswers()) {
+            questionAnswer.remove();
+        }
+
+        questionAnswers.clear();
     }
 
     public Integer getId() {
@@ -124,4 +138,5 @@ public class QuizAnswer implements Serializable {
         }
         questionAnswers.add(questionAnswer);
     }
+
 }

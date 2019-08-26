@@ -45,13 +45,13 @@ public class QuestionsXmlImport {
 		importQuestions(doc);
 	}
 
-	public void importQuestions(String questionXML, QuestionService questionService) {
+	public void importQuestions(String questionsXml, QuestionService questionService) {
 		this.questionService = questionService;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(questionXML.getBytes());
+		InputStream stream = new ByteArrayInputStream(questionsXml.getBytes());
 
 		importQuestions(stream);
 	}

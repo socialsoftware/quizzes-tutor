@@ -11,7 +11,6 @@ public class ResultAnswersDto implements Serializable {
     private List<ResultAnswerDto> answers;
 
     public ResultAnswersDto(){
-
     }
 
     public Integer getQuizAnswerId() {

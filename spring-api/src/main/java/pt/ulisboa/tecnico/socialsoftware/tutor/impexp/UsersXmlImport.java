@@ -40,13 +40,13 @@ public class UsersXmlImport {
 		importUsers(doc);
 	}
 
-	public void importUsers(String usersXML, UserService userService) {
+	public void importUsers(String usersXml, UserService userService) {
 		this.userService = userService;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(usersXML.getBytes());
+		InputStream stream = new ByteArrayInputStream(usersXml.getBytes());
 
 		importUsers(stream);
 	}

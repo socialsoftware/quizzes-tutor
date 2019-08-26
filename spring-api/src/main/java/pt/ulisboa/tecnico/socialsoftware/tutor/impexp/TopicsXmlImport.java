@@ -40,13 +40,13 @@ public class TopicsXmlImport {
 		importTopics(doc);
 	}
 
-	public void importTopics(String tagsXML, QuestionService questionService) {
+	public void importTopics(String topicsXml, QuestionService questionService) {
 		this.questionService = questionService;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(tagsXML.getBytes());
+		InputStream stream = new ByteArrayInputStream(topicsXml.getBytes());
 
 		importTopics(stream);
 	}

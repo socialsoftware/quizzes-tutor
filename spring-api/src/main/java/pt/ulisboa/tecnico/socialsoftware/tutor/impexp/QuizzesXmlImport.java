@@ -48,14 +48,14 @@ public class QuizzesXmlImport {
 		importQuizzes(doc);
 	}
 
-	public void importQuizzes(String questionXML, QuizService quizService, QuestionRepository questionRepository) {
+	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository) {
 		this.quizService = quizService;
 		this.questionRepository = questionRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(questionXML.getBytes());
+		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());
 
 		importQuizzes(stream);
 	}

@@ -46,6 +46,17 @@ public class QuestionAnswer implements Serializable {
         changeDifficulty();
     }
 
+    public void remove() {
+        quizAnswer.getQuestionAnswers().remove(this);
+        quizAnswer = null;
+
+        quizQuestion.getQuestionAnswers().remove(this);
+        quizQuestion = null;
+
+        option.getQuestionAnswers().remove(this);
+        option = null;
+    }
+
     public Integer getId() {
         return id;
     }
