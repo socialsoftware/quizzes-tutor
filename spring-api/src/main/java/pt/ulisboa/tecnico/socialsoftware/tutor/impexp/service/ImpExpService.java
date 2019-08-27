@@ -6,12 +6,16 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.PropertiesManager;
 
 import org.apache.commons.io.IOUtils;
@@ -39,6 +43,18 @@ public class ImpExpService {
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private AnswerService answerService;
 
     @Transactional
     public String exportAll() throws IOException {
@@ -118,6 +134,34 @@ public class ImpExpService {
         AnswersXmlExport generator = new AnswersXmlExport();
         InputStream in = IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
         return in;
+    }
+
+    @Transactional
+    public void importAll() throws IOException {
+        if (userRepository.findAll().size() == 0) {
+            String loadDir = PropertiesManager.getProperties().getProperty("load.dir");
+            File directory = new File(loadDir);
+
+            File usersFile = new File(directory.getPath() + "/" + "users.xml");
+            UsersXmlImport usersXmlImport = new UsersXmlImport();
+            usersXmlImport.importUsers(new FileInputStream(usersFile), userService);
+
+            File questionsFile = new File(directory.getPath() + "/" + "questions.xml");
+            QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
+            questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService);
+
+            File topicsFile = new File(directory.getPath() + "/" + "topics.xml");
+            TopicsXmlImport topicsXmlImport = new TopicsXmlImport();
+            topicsXmlImport.importTopics(new FileInputStream(topicsFile), questionService);
+
+            File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
+            QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();
+            quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository);
+
+            File answersFile = new File(directory.getPath() + "/" + "answers.xml");
+            AnswersXmlImport answersXmlImport = new AnswersXmlImport();
+            answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, userRepository);
+        }
     }
 
 }

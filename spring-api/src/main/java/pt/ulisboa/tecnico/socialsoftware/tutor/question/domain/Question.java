@@ -15,12 +15,17 @@ import java.util.stream.Stream;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.OPTION_NOT_FOUND;
 
 @Entity
-@Table(name = "questions")
+@Table(
+        name = "questions",
+        indexes = {
+                @Index(name = "question_indx_0", columnList = "number")
+        })
 public class Question implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "number", nullable = false)
     private Integer number;
 
     @Column(columnDefinition = "TEXT")

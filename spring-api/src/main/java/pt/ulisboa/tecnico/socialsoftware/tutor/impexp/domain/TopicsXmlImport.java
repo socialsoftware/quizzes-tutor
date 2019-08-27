@@ -17,7 +17,9 @@ import java.nio.charset.Charset;
 public class TopicsXmlImport {
 	private QuestionService questionService;
 
-	public void importTopics(InputStream inputStream) {
+	public void importTopics(InputStream inputStream, QuestionService questionService) {
+		this.questionService = questionService;
+
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
@@ -41,14 +43,12 @@ public class TopicsXmlImport {
 	}
 
 	public void importTopics(String topicsXml, QuestionService questionService) {
-		this.questionService = questionService;
-
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(topicsXml.getBytes());
 
-		importTopics(stream);
+		importTopics(stream, questionService);
 	}
 
 	private void importTopics(Document doc) {

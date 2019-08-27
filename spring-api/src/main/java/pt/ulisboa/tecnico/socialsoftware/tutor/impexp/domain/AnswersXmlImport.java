@@ -27,6 +27,9 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AnswersXmlImport {
 	private AnswerService answerService;
@@ -34,7 +37,15 @@ public class AnswersXmlImport {
 	private QuizRepository quizRepository;
 	private UserRepository userRepository;
 
-	public void importAnswers(InputStream inputStream) {
+	private Map<Integer, Map<Integer,Integer>> questionMap;
+
+	public void importAnswers(InputStream inputStream, AnswerService answerService, QuestionRepository questionRepository,
+							  QuizRepository quizRepository, UserRepository userRepository) {
+		this.answerService = answerService;
+		this.questionRepository = questionRepository;
+		this.quizRepository = quizRepository;
+		this.userRepository = userRepository;
+
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
@@ -54,22 +65,26 @@ public class AnswersXmlImport {
 			throw new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR, "File not found ot format error");
 		}
 
+		loadQuestionMap();
+
 		importQuizAnswers(doc);
+	}
+
+	private void loadQuestionMap() {
+		questionMap = questionRepository.findAll().stream()
+				.collect(Collectors.toMap(Question::getNumber,
+						question -> question.getOptions().stream()
+								.collect(Collectors.toMap(Option::getNumber,Option::getId))));
 	}
 
 	public void importAnswers(String answersXml, AnswerService answerService, QuestionRepository questionRepository,
 							  QuizRepository quizRepository, UserRepository userRepository) {
-		this.answerService = answerService;
-		this.questionRepository = questionRepository;
-		this.quizRepository = quizRepository;
-		this.userRepository = userRepository;
-
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(answersXml.getBytes());
 
-		importAnswers(stream);
+		importAnswers(stream, answerService, questionRepository, quizRepository, userRepository);
 	}
 
 	private void importQuizAnswers(Document doc) {
@@ -109,37 +124,38 @@ public class AnswersXmlImport {
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 
+		Map<Integer,Integer> mapQuizQuestionId = quiz.getQuizQuestions().stream()
+				.collect(Collectors.toMap(QuizQuestion::getSequence, QuizQuestion::getId));
 
-		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, quizAnswer);
+		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, mapQuizQuestionId, quizAnswer);
 	}
 
-	private void importQuestionAnswers(Element questionAnswersElement, User user, QuizAnswer quizAnswer) {
+	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer,Integer> mapQuizQuestionId, QuizAnswer quizAnswer) {
 		ResultAnswersDto resultAnswersDto = new ResultAnswersDto();
 		resultAnswersDto.setQuizAnswerId(quizAnswer.getId());
 		resultAnswersDto.setAnswerDate(quizAnswer.getAnswerDate());
 		resultAnswersDto.setAnswers(new ArrayList<>());
 
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
-			LocalDateTime timeTaken = LocalDateTime.parse(questionAnswerElement.getAttributeValue("timeTaken"));
+			LocalDateTime timeTaken = null;
+			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
+				timeTaken = LocalDateTime.parse(questionAnswerElement.getAttributeValue("timeTaken"));
+			}
 
-			Integer quizNumber = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("quizNumber"));
 			Integer sequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
-			Quiz quiz = quizRepository.findByNumber(quizNumber).orElse(null);
-			QuizQuestion quizQuestion = quiz.getQuizQuestions().stream()
-					.filter(quizQuestion1 -> quizQuestion1.getSequence().equals(sequence)).findAny().get();
+			Integer quizQuestionId = mapQuizQuestionId.get(sequence);
 
-			Option option = null;
+			Integer optionId = null;
 			if (questionAnswerElement.getChild("option") != null) {
 				Integer questionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionNumber"));
 				Integer optionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("number"));
-				Question question = questionRepository.findByNumber(questionNumber).orElse(null);
-				option = question.getOptions().stream().filter(option1 -> option1.getNumber().equals(optionNumber)).findAny().get();
+				optionId = questionMap.get(questionNumber).get(optionNumber);
 			}
 
 			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();
 			resultAnswerDto.setTimeTaken(timeTaken);
-			resultAnswerDto.setQuizQuestionId(quizQuestion.getId());
-			resultAnswerDto.setOptionId(option != null ? option.getId() : null);
+			resultAnswerDto.setQuizQuestionId(quizQuestionId);
+			resultAnswerDto.setOptionId(optionId);
 			resultAnswersDto.getAnswers().add(resultAnswerDto);
 		}
 

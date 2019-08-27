@@ -25,7 +25,10 @@ public class QuizzesXmlImport {
 	private QuizService quizService;
 	private QuestionRepository questionRepository;
 
-	public void importQuizzes(InputStream inputStream) {
+	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository) {
+		this.quizService = quizService;
+		this.questionRepository = questionRepository;
+
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
@@ -49,15 +52,12 @@ public class QuizzesXmlImport {
 	}
 
 	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository) {
-		this.quizService = quizService;
-		this.questionRepository = questionRepository;
-
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());
 
-		importQuizzes(stream);
+		importQuizzes(stream, quizService, questionRepository);
 	}
 
 	private void importQuizzes(Document doc) {
@@ -71,7 +71,10 @@ public class QuizzesXmlImport {
 	private void importQuiz(Element quizElement) {
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
 		String title = quizElement.getAttributeValue("title");
-		LocalDateTime date = LocalDateTime.parse(quizElement.getAttributeValue("date"));
+		LocalDateTime date = null;
+		if (quizElement.getAttributeValue("date") != null) {
+			date = LocalDateTime.parse(quizElement.getAttributeValue("date"));
+		}
 		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
 		Integer series = Integer.valueOf(quizElement.getAttributeValue("series"));

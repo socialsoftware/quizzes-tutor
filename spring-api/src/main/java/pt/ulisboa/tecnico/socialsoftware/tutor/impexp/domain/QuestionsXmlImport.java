@@ -22,7 +22,9 @@ import java.util.List;
 public class QuestionsXmlImport {
 	private QuestionService questionService;
 
-	public void importQuestions(InputStream inputStream) {
+	public void importQuestions(InputStream inputStream, QuestionService questionService) {
+		this.questionService = questionService;
+
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
@@ -46,14 +48,12 @@ public class QuestionsXmlImport {
 	}
 
 	public void importQuestions(String questionsXml, QuestionService questionService) {
-		this.questionService = questionService;
-
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(questionsXml.getBytes());
 
-		importQuestions(stream);
+		importQuestions(stream, questionService);
 	}
 
 	private void importQuestions(Document doc) {

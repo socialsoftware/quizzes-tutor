@@ -14,7 +14,11 @@ import java.util.Random;
 import java.util.Set;
 
 @Entity
-@Table(name = "quizzes")
+@Table(
+        name = "quizzes",
+        indexes = {
+                @Index(name = "quizzes_indx_0", columnList = "number")
+        })
 public class Quiz implements Serializable {
    public enum QuizType {
         GENERATED, EXAM, TEST, SINGLE, TEACHER
@@ -24,6 +28,7 @@ public class Quiz implements Serializable {
    @GeneratedValue(strategy=GenerationType.IDENTITY)
    private Integer id;
 
+   @Column(name = "number", nullable = false)
    private Integer number;
 
    private String title;

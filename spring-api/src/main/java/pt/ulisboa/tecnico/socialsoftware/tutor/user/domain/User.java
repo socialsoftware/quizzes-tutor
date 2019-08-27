@@ -37,7 +37,10 @@ public class User implements UserDetails {
     public User(String name, String username, Role role, Integer number) {
         this.name = name;
         setUsername(username);
-        this.role = role.name();
+        if (role != null) {
+            this.role = role.name();
+        }
+
         this.number = number;
     }
 

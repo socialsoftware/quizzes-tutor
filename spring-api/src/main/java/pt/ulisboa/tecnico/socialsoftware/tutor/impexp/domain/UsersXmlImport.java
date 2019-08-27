@@ -17,7 +17,9 @@ import java.nio.charset.Charset;
 public class UsersXmlImport {
 	private UserService userService;
 
-	public void importUsers(InputStream inputStream) {
+	public void importUsers(InputStream inputStream, UserService userService) {
+		this.userService = userService;
+
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
@@ -41,14 +43,12 @@ public class UsersXmlImport {
 	}
 
 	public void importUsers(String usersXml, UserService userService) {
-		this.userService = userService;
-
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(usersXml.getBytes());
 
-		importUsers(stream);
+		importUsers(stream, userService);
 	}
 
 	private void importUsers(Document doc) {
@@ -61,7 +61,10 @@ public class UsersXmlImport {
 				String name = element.getAttributeValue("name");
 				String username = element.getAttributeValue("username");
 
-				User.Role role = User.Role.valueOf(element.getAttributeValue("role"));
+				User.Role role = null;
+				if (element.getAttributeValue("role") != null) {
+					role = User.Role.valueOf(element.getAttributeValue("role"));
+				}
 
 				User user = userService.create(name, username, role);
 				user.setNumber(number);

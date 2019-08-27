@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.api;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -16,12 +18,16 @@ import java.io.InputStream;
 
 @Controller
 public class ImportExportController {
+    private static Logger logger = LoggerFactory.getLogger(ImportExportController.class);
+
     @Autowired
-    private ImpExpService service;
+    private ImpExpService impExpService;
 
     @GetMapping(value = "/admin/export")
     public void exportAll(HttpServletResponse response) throws IOException {
-        String filename = service.exportAll();
+        logger.debug("exportAll");
+
+        String filename = impExpService.exportAll();
 
         String exportDir = PropertiesManager.getProperties().getProperty("export.dir");
         File directory = new File(exportDir);
@@ -32,4 +38,14 @@ public class ImportExportController {
         FileCopyUtils.copy(IOUtils.toByteArray(is), response.getOutputStream());
         response.flushBuffer();
     }
+
+    @GetMapping(value = "/admin/import")
+    public String importAll() throws IOException {
+        logger.debug("importAll");
+
+        impExpService.importAll();
+
+        return "END";
+    }
+
 }
