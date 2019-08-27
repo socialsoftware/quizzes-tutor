@@ -530,7 +530,7 @@
     <hop>
       <from>Add constants</from>
       <to>Update 2</to>
-      <enabled>Y</enabled>
+      <enabled>N</enabled>
     </hop>
     <hop>
       <from>quiz_question</from>
@@ -2005,6 +2005,10 @@
       <value>
         <name>series</name>
         <rename>series</rename>
+      </value>
+      <value>
+        <name>number</name>
+        <rename>quiz_id1</rename>
       </value>
     </lookup>
     <attributes/>

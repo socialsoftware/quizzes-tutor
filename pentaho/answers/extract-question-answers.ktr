@@ -543,6 +543,11 @@
       <to>Stream lookup 2</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Quiz_questions</from>
+      <to>Update</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
   <step>
     <name>Insert / update</name>
@@ -787,7 +792,7 @@ FROM quiz_answers
     <name>Quiz_questions</name>
     <type>TableInput</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -1238,6 +1243,51 @@ FROM quiz_questions
     <GUI>
       <xloc>752</xloc>
       <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Update</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Tutor</connection>
+    <skip_lookup>N</skip_lookup>
+    <commit>100</commit>
+    <use_batch>N</use_batch>
+    <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
+    <lookup>
+      <schema/>
+      <table>questions</table>
+      <key>
+        <name>question_id_2</name>
+        <field>id</field>
+        <condition/>
+        <name2/>
+      </key>
+      <value>
+        <name>number</name>
+        <rename>question_id_2</rename>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>304</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
