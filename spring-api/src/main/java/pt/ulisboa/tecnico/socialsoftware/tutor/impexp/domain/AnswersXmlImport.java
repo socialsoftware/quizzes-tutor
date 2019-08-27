@@ -90,15 +90,19 @@ public class AnswersXmlImport {
 		if (answerElement.getAttributeValue("answerDate") != null) {
 			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
 		}
-		Boolean completed = Boolean.valueOf(answerElement.getAttributeValue("completed"));
+
+		Boolean completed = false;
+		if (answerElement.getAttributeValue("completed") != null) {
+			completed = Boolean.valueOf(answerElement.getAttributeValue("completed"));
+		}
 
 		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("quizNumber"));
 		Quiz quiz = quizRepository.findByNumber(quizNumber)
 				.orElseThrow(() -> new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR,
 						"quiz number does not exist " + quizNumber));
 
-		String username = answerElement.getChild("user").getAttributeValue("username");
-		User user = userRepository.findByUsername(username);
+		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
+		User user = userRepository.findByNumber(number);
 
 		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId(), availableDate);
 		quizAnswer.setAssignedDate(assignedDate);
@@ -124,15 +128,18 @@ public class AnswersXmlImport {
 			QuizQuestion quizQuestion = quiz.getQuizQuestions().stream()
 					.filter(quizQuestion1 -> quizQuestion1.getSequence().equals(sequence)).findAny().get();
 
-			Integer questionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionNumber"));
-			Integer optionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("number"));
-			Question question = questionRepository.findByNumber(questionNumber).orElse(null);
-			Option option = question.getOptions().stream().filter(option1 -> option1.getNumber().equals(optionNumber)).findAny().get();
+			Option option = null;
+			if (questionAnswerElement.getChild("option") != null) {
+				Integer questionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionNumber"));
+				Integer optionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("number"));
+				Question question = questionRepository.findByNumber(questionNumber).orElse(null);
+				option = question.getOptions().stream().filter(option1 -> option1.getNumber().equals(optionNumber)).findAny().get();
+			}
 
 			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();
 			resultAnswerDto.setTimeTaken(timeTaken);
 			resultAnswerDto.setQuizQuestionId(quizQuestion.getId());
-			resultAnswerDto.setOptionId(option.getId());
+			resultAnswerDto.setOptionId(option != null ? option.getId() : null);
 			resultAnswersDto.getAnswers().add(resultAnswerDto);
 		}
 

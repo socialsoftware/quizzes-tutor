@@ -44,7 +44,9 @@ public class QuizzesXmlExport {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("number", quiz.getNumber().toString());
 		quizElement.setAttribute("title", quiz.getTitle());
-		quizElement.setAttribute("date", quiz.getDate().toString());
+		if (quiz.getDate() != null) {
+			quizElement.setAttribute("date", quiz.getDate().toString());
+		}
 		quizElement.setAttribute("year", quiz.getYear().toString());
 		quizElement.setAttribute("type", quiz.getType());
 		quizElement.setAttribute("series", quiz.getSeries().toString());

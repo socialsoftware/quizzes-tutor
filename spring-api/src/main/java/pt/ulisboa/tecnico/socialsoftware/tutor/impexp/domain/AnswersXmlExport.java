@@ -6,6 +6,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -48,14 +49,17 @@ public class AnswersXmlExport {
 		if (quizAnswer.getAnswerDate() != null) {
 			quizAnswerElement.setAttribute("answerDate", quizAnswer.getAnswerDate().toString());
 		}
-		quizAnswerElement.setAttribute("completed", quizAnswer.getCompleted().toString());
+
+		if (quizAnswer.getCompleted() != null) {
+			quizAnswerElement.setAttribute("completed", quizAnswer.getCompleted().toString());
+		}
 
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("quizNumber", quizAnswer.getQuiz().getNumber().toString());
 		quizAnswerElement.addContent(quizElement);
 
 		Element userElement = new Element("user");
-		userElement.setAttribute("username", quizAnswer.getUser().getUsername());
+		userElement.setAttribute("number", quizAnswer.getUser().getNumber().toString());
 		quizAnswerElement.addContent(userElement);
 
 		exportQuestionAnswers(quizAnswerElement, quizAnswer.getQuestionAnswers());
@@ -76,17 +80,21 @@ public class AnswersXmlExport {
 	private void exportQuestionAnswer(Element questionAnswersElement, QuestionAnswer questionAnswer) {
 		Element questionAnswerElement = new Element("questionAnswer");
 
-		questionAnswerElement.setAttribute("timeTaken", questionAnswer.getTimeTaken().toString());
+		if (questionAnswer.getTimeTaken() != null) {
+			questionAnswerElement.setAttribute("timeTaken", questionAnswer.getTimeTaken().toString());
+		}
 
 		Element quizQuestionElement = new Element("quizQuestion");
 		quizQuestionElement.setAttribute("quizNumber", questionAnswer.getQuizQuestion().getQuiz().getNumber().toString());
 		quizQuestionElement.setAttribute("sequence", questionAnswer.getQuizQuestion().getSequence().toString());
 		questionAnswerElement.addContent(quizQuestionElement);
 
-		Element optionElement = new Element("option");
-		optionElement.setAttribute("questionNumber", questionAnswer.getOption().getQuestion().getNumber().toString());
-		optionElement.setAttribute("number", questionAnswer.getOption().getNumber().toString());
-		questionAnswerElement.addContent(optionElement);
+		if ( questionAnswer.getOption() != null) {
+			Element optionElement = new Element("option");
+			optionElement.setAttribute("questionNumber", questionAnswer.getOption().getQuestion().getNumber().toString());
+			optionElement.setAttribute("number", questionAnswer.getOption().getNumber().toString());
+			questionAnswerElement.addContent(optionElement);
+		}
 
 		questionAnswersElement.addContent(questionAnswerElement);
 	}

@@ -24,13 +24,22 @@ public class UserService {
         return this.userRepository.findByUsername(username);
     }
 
+    public User findByNumber(Integer number) {
+        return this.userRepository.findByNumber(number);
+    }
+
+    public Integer getMaxUserNumber() {
+        Integer result = userRepository.getMaxUserNumber();
+        return result != null ? result : 0;
+    }
+
     @Transactional
     public User create(String name, String username, User.Role role) {
         if (findByUsername(username) != null) {
             throw new TutorException(TutorException.ExceptionError.DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, role);
+        User user = new User(name, username, role, getMaxUserNumber() + 1);
         entityManager.persist(user);
         return user;
     }

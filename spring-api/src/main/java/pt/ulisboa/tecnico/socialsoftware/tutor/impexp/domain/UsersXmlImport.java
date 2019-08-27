@@ -55,12 +55,16 @@ public class UsersXmlImport {
 		XPathFactory xpfac = XPathFactory.instance();
 		XPathExpression<Element> xp = xpfac.compile("//users/user", Filters.element());
 		for (Element element : xp.evaluate(doc)) {
-			String username = element.getAttributeValue("username");
-			if (userService.findByUsername(username) == null) {
+			Integer number = Integer.valueOf(element.getAttributeValue("number"));
+
+			if (userService.findByNumber(number) == null) {
 				String name = element.getAttributeValue("name");
+				String username = element.getAttributeValue("username");
+
 				User.Role role = User.Role.valueOf(element.getAttributeValue("role"));
 
 				User user = userService.create(name, username, role);
+				user.setNumber(number);
 
 				if (element.getAttributeValue("year") != null) {
 					user.setYear(Integer.valueOf(element.getAttributeValue("year")));

@@ -18,6 +18,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private Integer number;
     private String username;
     private String name;
     private Integer year;
@@ -33,10 +34,11 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, Role role) {
+    public User(String name, String username, Role role, Integer number) {
         this.name = name;
         setUsername(username);
         this.role = role.name();
+        this.number = number;
     }
 
     public Integer getId() {
@@ -45,6 +47,17 @@ public class User implements UserDetails {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getNumber() {
+        if (number == null) {
+            number = getId();
+        }
+        return number;
+    }
+
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     @Override
