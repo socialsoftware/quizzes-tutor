@@ -53,9 +53,6 @@ public class User implements UserDetails {
     }
 
     public Integer getNumber() {
-        if (number == null) {
-            number = getId();
-        }
         return number;
     }
 

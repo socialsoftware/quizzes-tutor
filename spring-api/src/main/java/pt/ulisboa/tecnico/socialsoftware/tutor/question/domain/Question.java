@@ -97,9 +97,6 @@ public class Question implements Serializable {
     }
 
     public Integer getNumber() {
-        if (number == null) {
-            number =  getId();
-        }
         return number;
     }
 
