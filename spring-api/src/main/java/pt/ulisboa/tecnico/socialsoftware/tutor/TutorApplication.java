@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
@@ -17,8 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
 @EnableJpaAuditing
 @SpringBootApplication
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
-    @Autowired
-    ImpExpService impExpService;
+//    @Autowired
+//    ImpExpService impExpService;
 
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
@@ -26,6 +27,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        impExpService.importAll();
+     //   impExpService.importAll();
     }
+
 }

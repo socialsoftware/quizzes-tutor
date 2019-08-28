@@ -48,6 +48,11 @@ public class QuizService {
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizId));
     }
 
+    public Integer getMaxQuizNumber() {
+        Integer maxQuizNumber = quizRepository.getMaxQuizNumber();
+        return maxQuizNumber != null ? maxQuizNumber : 0;
+    }
+
     @Transactional
     public Quiz createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
@@ -75,6 +80,7 @@ public class QuizService {
     @Transactional
     public QuizStatementDto generateStudentQuiz(User user, int quizSize) {
         Quiz quiz = new Quiz();
+        quiz.setNumber(getMaxQuizNumber() + 1);
 
         List<Question> activeQuestions = questionRepository.getActiveQuestions();
 

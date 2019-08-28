@@ -12,9 +12,10 @@ import spock.lang.Specification
 
 @DataJpaTest
 class RemoveTopicServiceSpockTest extends Specification {
-    public static final String TOPIC_ONE = 'nameOne'
-    public static final String TOPIC_TWO = 'nameTwo'
-    public static final String TOPIC_THREE = 'nameThree'
+    private static final String TOPIC_ONE = 'nameOne'
+    private static final String TOPIC_TWO = 'nameTwo'
+    private static final String TOPIC_THREE = 'nameThree'
+    private static final Integer NUMBER = 1;
 
     @Autowired
     QuestionService questionService
@@ -32,6 +33,7 @@ class RemoveTopicServiceSpockTest extends Specification {
 
     def setup() {
         question = new Question()
+        question.setNumber(NUMBER)
         topicOne = new Topic(TOPIC_ONE)
         topicTwo = new Topic(TOPIC_TWO)
         question.getTopics().add(topicOne)
