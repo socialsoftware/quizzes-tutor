@@ -26,6 +26,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     def "create a question with no image and one option"() {
         given: "a questionDto"
         def question = new QuestionDto()
+        question.setNumber(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
@@ -59,6 +60,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     def "create a question with image and two options"() {
         given: "a questionDto"
         def question = new QuestionDto()
+        question.setNumber(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)

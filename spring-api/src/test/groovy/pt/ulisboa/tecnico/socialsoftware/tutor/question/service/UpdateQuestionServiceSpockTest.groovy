@@ -52,8 +52,9 @@ class UpdateQuestionServiceSpockTest extends Specification {
     def optionKO
 
     def setup() {
-        given: "createQuestion a question"
+        given: "create a question"
         question = new Question()
+        question.setNumber(1)
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
@@ -82,7 +83,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
     }
 
     def "update a question"() {
-        given: "createQuestion a question"
+        given: "create a question"
         def questionDto = new QuestionDto()
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)

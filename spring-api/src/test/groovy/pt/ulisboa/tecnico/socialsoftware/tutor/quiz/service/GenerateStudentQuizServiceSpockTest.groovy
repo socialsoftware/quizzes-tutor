@@ -39,15 +39,16 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     def setup() {
         user = new User('name', 'username', User.Role.STUDENT, 1)
         questionOne = new Question()
+        questionOne.setNumber(1)
         questionOne.setActive(true)
         questionTwo = new Question()
+        questionTwo.setNumber(2)
         questionTwo.setActive(true)
 
         userRepository.save(user)
         questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
     }
-
 
     def 'generate quiz for one question and there are two questions available'() {
         when:

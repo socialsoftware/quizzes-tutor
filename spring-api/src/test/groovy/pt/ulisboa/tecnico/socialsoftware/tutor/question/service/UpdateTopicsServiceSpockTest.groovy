@@ -34,6 +34,7 @@ class UpdateTopicsServiceSpockTest extends Specification {
 
     def setup() {
         question = new Question()
+        question.setNumber(1)
         topicOne = new Topic(TOPIC_ONE)
         topicTwo = new Topic(TOPIC_TWO)
         question.getTopics().add(topicOne)

@@ -32,6 +32,7 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
         def user = new User()
         userRepository.save(user)
         def quiz = new Quiz()
+        quiz.setNumber(1)
         quizRepository.save(quiz)
 
     }

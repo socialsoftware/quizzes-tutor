@@ -44,6 +44,7 @@ class FindAllServiceSpockTest extends Specification {
     def "create a question with image and two options and a quiz questions with two answers"() {
         given: "createQuestion a question"
         def question = new Question()
+        question.setNumber(1)
         question.setContent(QUESTION_CONTENT)
         question.setActive(true)
         question.setNumberOfAnswers(0)
