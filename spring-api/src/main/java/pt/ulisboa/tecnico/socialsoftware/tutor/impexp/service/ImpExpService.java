@@ -1,28 +1,23 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.PropertiesManager;
-
-import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 import java.text.SimpleDateFormat;
-
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -56,11 +51,15 @@ public class ImpExpService {
     @Autowired
     private AnswerService answerService;
 
+    @Value("${load.dir}")
+    private String loadDir;
+
+    @Value("${export.dir}")
+    private String exportDir;
+
     @Transactional
     public String exportAll() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
-
-        String exportDir = PropertiesManager.getProperties().getProperty("export.dir");
         File directory = new File(exportDir);
 
         String filename = "tutor-" + timeStamp + ".zip";
@@ -108,38 +107,32 @@ public class ImpExpService {
 
     private InputStream generateUsersInputStream() throws IOException {
         UsersXmlExport usersExporter = new UsersXmlExport();
-        InputStream in = IOUtils.toInputStream(usersExporter.export(userRepository.findAll()), "UTF-8");
-        return in;
+        return IOUtils.toInputStream(usersExporter.export(userRepository.findAll()), "UTF-8");
     }
 
     private InputStream generateQuestionsInputStream() throws IOException {
         QuestionsXmlExport generator = new QuestionsXmlExport();
-        InputStream in = IOUtils.toInputStream(generator.export(questionRepository.findAll()), "UTF-8");
-        return in;
+        return IOUtils.toInputStream(generator.export(questionRepository.findAll()), "UTF-8");
     }
 
     private InputStream generateTopicsInputStream() throws IOException {
         TopicsXmlExport generator = new TopicsXmlExport();
-        InputStream in = IOUtils.toInputStream(generator.export(topicRepository.findAll()), "UTF-8");
-        return in;
+        return IOUtils.toInputStream(generator.export(topicRepository.findAll()), "UTF-8");
     }
 
     private InputStream generateQuizzesInputStream() throws IOException {
         QuizzesXmlExport generator = new QuizzesXmlExport();
-        InputStream in = IOUtils.toInputStream(generator.export(quizRepository.findAll()), "UTF-8");
-        return in;
+        return IOUtils.toInputStream(generator.export(quizRepository.findAll()), "UTF-8");
     }
 
     private InputStream generateAnswersInputStream() throws IOException {
         AnswersXmlExport generator = new AnswersXmlExport();
-        InputStream in = IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
-        return in;
+        return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
     }
 
     @Transactional
     public void importAll() throws IOException {
-        if (userRepository.findAll().size() == 0) {
-            String loadDir = PropertiesManager.getProperties().getProperty("load.dir");
+        if (userRepository.findAll().isEmpty()) {
             File directory = new File(loadDir);
 
             File usersFile = new File(directory.getPath() + "/" + "users.xml");

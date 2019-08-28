@@ -2,12 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.PropertiesManager;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -24,6 +24,9 @@ public class QuestionController {
     private static Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
     private QuestionService questionService;
+
+    @Value("${figures.dir}")
+    private String figuresDir;
 
     QuestionController(QuestionService questionService) {
         this.questionService = questionService;
@@ -118,8 +121,6 @@ public class QuestionController {
 
 
     private Path getTargetLocation(String url) {
-        String figuresDir = PropertiesManager.getProperties().getProperty("figures.dir");
-
         String fileLocation = figuresDir + url;
         return Paths.get(fileLocation);
     }

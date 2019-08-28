@@ -17,7 +17,6 @@ export default class StudentStatsView extends mixins(HorizontalBar) {
 
   async mounted() {
     this.stats = await Stats.getStats();
-    console.log(this.stats.uniqueCorrectAnswers);
     this.renderChart(
       {
         labels: ["All topics"],

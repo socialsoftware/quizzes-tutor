@@ -4,11 +4,11 @@ import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.PropertiesManager;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -23,13 +23,15 @@ public class ImportExportController {
     @Autowired
     private ImpExpService impExpService;
 
+    @Value("${export.dir}")
+    private String exportDir;
+
     @GetMapping(value = "/admin/export")
     public void exportAll(HttpServletResponse response) throws IOException {
         logger.debug("exportAll");
 
         String filename = impExpService.exportAll();
 
-        String exportDir = PropertiesManager.getProperties().getProperty("export.dir");
         File directory = new File(exportDir);
         File file = new File(directory, filename);
         response.setHeader("Content-Disposition", "attachment; filename=" + filename);

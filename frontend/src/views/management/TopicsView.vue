@@ -121,20 +121,21 @@ export default class TopicsView extends Vue {
   }
 
   async deleteTopic(topic: string) {
-      if (confirm('Are you sure you want to delete this topic?')) {
+    if (confirm('Are you sure you want to delete this topic?')) {
+      try {
          await RemoteServices.deleteTopic(topic);
-          this.topics = this.topics.filter(t => t != topic);
-        /*.catch((error) => {
-          if (error.response) {
-            confirm(error.response.data.message);
-            console.log(error.response.data.message);
-          } else if (error.request) {
-            confirm("No response received")
-          } else {
-            confirm("Error")
-          }
-        });*/
+         this.topics = this.topics.filter(t => t != topic);
+      } catch(error) {
+        if (error.response) {
+          confirm(error.response.data.message);
+          console.log(error.response.data.message);
+        } else if (error.request) {
+          confirm("No response received")
+        } else {
+          confirm("Error")
+        }
       }
+    }
   }
 
   close() {
@@ -144,11 +145,11 @@ export default class TopicsView extends Vue {
 
   async save() {
     if (this.oldTopic && this.editedTopic) {
-      await RemoteServices.updateTopic(this.oldTopic, this.editedTopic);
-      this.topics = this.topics.filter(topic => topic !== this.oldTopic);
-      this.topics.unshift(this.editedTopic);
-
-      /*.catch((error) => {
+        try {
+          await RemoteServices.updateTopic(this.oldTopic, this.editedTopic);
+          this.topics = this.topics.filter(topic => topic !== this.oldTopic);
+          this.topics.unshift(this.editedTopic);
+        } catch(error) {
         if (error.response) {
           this.error = error.response.data.message;
         } else if (error.request) {
@@ -157,11 +158,12 @@ export default class TopicsView extends Vue {
           this.error = "Error";
         }
         this.dialog = true;
-      });*/
+      }
     } else if (this.editedTopic){
-      await RemoteServices.createTopic(this.editedTopic);
-      this.topics.unshift(this.editedTopic);
-       /* .catch((error) => {
+        try {
+          await RemoteServices.createTopic(this.editedTopic);
+          this.topics.unshift(this.editedTopic);
+        } catch (error) {
           if (error.response) {
             this.error = error.response.data.message;
             console.log(error.response.data.message);
@@ -171,7 +173,7 @@ export default class TopicsView extends Vue {
             this.error = "Error";
           }
           this.dialog = true;
-      });*/
+        }
     }
     this.close()
   }

@@ -353,7 +353,8 @@ CREATE TABLE public.users (
     name character varying(255),
     role character varying(255),
     username character varying(255),
-    year integer
+    year integer,
+    number integer
 );
 
 
@@ -588,6 +589,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 95	Checkpoint/Rollback	f	2	24
 96	All of the above	f	3	24
 98	Authenticate users, authorize users, and limit exposure	f	1	25
+1424	Usability scenario.	f	3	356
 99	Authenticate users, authorize users, and limit access	f	2	25
 100	Authenticate users, authorize users, limit access, and maintain integrity	f	3	25
 105	Because it has a well-defined interface	f	0	27
@@ -658,6 +660,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 219	The Peer-to-Peer style	f	2	55
 221	Affects only the domain logic layer	f	0	56
 223	Does not affect the presentation logic layer because it cannot use it	f	2	56
+618	Active Redundancy and Increase Resources Efficiency	f	1	155
 224	Does not affect the data access layer because the data access layer does not use the domain logic layer	f	3	56
 225	A machine may execute only one component, but a component may execute in more than one machine	f	0	57
 226	A component may execute in only one machine, but a machine may execute more than one component	f	1	57
@@ -734,6 +737,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 349	To create an abstraction layer between the architecture of the system and its functionalities, so that the architecture may be changed later without affecting the functionalities	f	0	88
 350	To create an artifact that may be used to explain the system's software architecture to the various stakeholders	f	1	88
 352	To facilitate the work assignment to the members of the development team that will implement the system's functionalities	f	3	88
+1142	A component	f	1	286
 357	Does not change the existing modules of the system, because they are determined by the system's Decomposition, which is not changed	f	0	90
 358	Adds restrictions to the dependency relationships that exist between modules and that are represented using other styles, as with the layers style	f	1	90
 360	Introduces only a new type of relation among the existing modules of the system, which resulted from other styles of the module viewtype	f	3	90
@@ -901,7 +905,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 614	Store all the information statically	f	1	154
 616	Use several levels of cache	f	3	154
 617	Passive Redundancy and Increase Resources Efficiency	f	0	155
-618	Active Redundancy and Increase Resources Efficiency	f	1	155
 619	Active Redundancy and Maintain Multiple Copies of Computation	f	2	155
 621	In the server	f	0	156
 623	In the repository	f	2	156
@@ -995,6 +998,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 875	Reduce overhead.	f	2	219
 878	Use a classic 3-layer architecture with the following layers, from top to bottom: Presentation, Domain Logic, and Data Access.	f	1	220
 879	Use an aspect-oriented architecture, where an aspect is used to generate a graphical interface.	f	2	220
+1144	An allocation element	f	3	286
 880	Use two deployment views, each one allocating different components to different machines with different operating systems.	f	3	220
 886	It is not necessary to use a ''Data Access'' layer because the information is simple.	f	1	222
 887	We must identify a module for writing the scores in a Decomposition style.	f	2	222
@@ -1069,8 +1073,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 1138	If no order was established among them, we would not know from where should we start the design process	f	1	285
 1139	If one of the stakeholders complains that her requirement is not satisfied, we may explain to her that there were other more important requirements first	f	2	285
 1141	A module	f	0	286
-1142	A component	f	1	286
-1144	An allocation element	f	3	286
 1145	Peer-to-Peer to represent the communication between the components	f	0	287
 1146	Client-Server to represent the request the application makes to the different new sources	f	1	287
 1148	Layers to create a virtual machine that hides the internals of the application from its users interface code to allow the support of different user interfaces	f	3	287
@@ -1236,7 +1238,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 1416	Usability.	f	3	354
 1422	Availability scenario.	f	1	356
 1423	Modifiability scenario.	f	2	356
-1424	Usability scenario.	f	3	356
 1434	Persistence.	f	1	359
 1435	Retry.	f	2	359
 1436	Passive redundancy.	f	3	359
@@ -1311,6 +1312,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 1579	Memcached can be considered a direct sub-module of the top Graphite module.	f	2	395
 1580	Memcached is not a module.	f	3	395
 1590	Buffering can be considered a sub-module of the Present Graphs module.	f	1	398
+1808	Reliability and Security	f	3	452
 1591	Buffering can be considered a direct sub-module of the top Graphite module.	f	2	398
 1592	Buffering is not a module.	f	3	398
 1593	A work assignment view.	f	0	399
@@ -1385,7 +1387,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 1804	The measure of the response is a robust open-source community associated with it	f	3	451
 1805	Modifiability and Performance	f	0	452
 1806	Availability and Modifiability	f	1	452
-1808	Reliability and Security	f	3	452
 1809	In the Deployment view, because the presentation component is now executing in a different place	f	0	453
 1810	In the component-and-connector view, because the connector between the web client and the web server has to change	f	1	453
 1811	In the Layer view, because the order of the layers will have to change	f	2	453
@@ -1455,6 +1456,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 2057	A uses view which represent modules for the externalizers	f	0	515
 2058	A client-server view which represent the byte stream for transmission across a network	f	1	515
 2059	A connector that has the serialization and de-serialization speed qualities	f	2	515
+2436	The library approach does not build a cluster.	f	3	609
 2066	The main quality of the system in the left part of the figure is scalability	f	1	517
 2067	The main quality of the system in the right part of the figure is ease of development	f	2	517
 2068	The main quality of the system in the left part of the figure is to promote cross-functional teams	f	3	517
@@ -1601,7 +1603,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 2431	Incremental development is a criteria that drives the design of views of this type.	f	2	608
 2433	The library approach allows non-java applications.	f	0	609
 2435	The server approach implements a local cache.	f	2	609
-2436	The library approach does not build a cluster.	f	3	609
 2437	A component cannot be decomposed into a set of components and connectors.	f	0	610
 2438	A connector cannot be decomposed into a set of components and connectors.	f	1	610
 2440	A component can only have a single type of port.	f	3	610
@@ -1927,6 +1928,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 3595	Estimating the effort needed to implement the system.	f	2	899
 3596	Analysing the system's portability and reusability.	f	3	899
 3597	All layers are mapped to the application server component.	f	0	900
+4355	Estimating the effort needed to implement the system	f	2	1089
 3598	The presentation and domain logic layers are mapped to the application server component and the data access layer to the repository component.	f	1	900
 3599	The presentation layer is mapped to the browser component and the other two layers are mapped to the application server component.	f	2	900
 3681	It would reduce the scalability for updates of different orders for the same customer.	f	0	921
@@ -2005,6 +2007,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 3839	Maintain multiple copies of data	f	2	960
 3840	Schedule resources	f	3	960
 3861	In the synchronous solution only some of the tasks that are being executed are lost and they have to be resubmitted by the client	f	0	966
+4356	Analysing the system's portability and reusability	f	3	1089
 3862	In the asynchronous solution the tasks that are being executed are lost and they have to be resubmitted by the client	f	1	966
 3864	In the synchronous solution the tasks being executed are finished without requiring the client to resubmitted them	f	3	966
 3866	Provides the quality of performance	f	1	967
@@ -2080,6 +2083,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4110	The view addresses the scenario because the uses relation between the `Consumer Website` module and the `OpcApp` module has the require properties.	f	1	1028
 4111	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	f	2	1028
 4112	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules.	f	3	1028
+4357	Client-server and Repository.	f	0	1090
 4113	The file transfer has to follow the same path of nodes used to identify where the file was located.	f	0	1029
 4114	The peer initiating the request for a file needs to know where the file is located.	f	1	1029
 4115	If a peer providing a file crashes the file will not be downloaded.	f	2	1029
@@ -2154,9 +2158,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4350	The Pipes-and-filters style	f	1	1088
 4352	The Client-Server style	f	3	1088
 4354	Planning incremental releases of the system	f	1	1089
-4355	Estimating the effort needed to implement the system	f	2	1089
-4356	Analysing the system's portability and reusability	f	3	1089
-4357	Client-server and Repository.	f	0	1090
 4358	Repository and Publish-subscribe.	f	1	1090
 4359	Publish-subscribe and Repository.	f	2	1090
 4361	Interoperability	f	0	1091
@@ -2232,6 +2233,7 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4539	The uses view to show the uses relationships between the different platforms.	f	2	1135
 4540	The data model view to represent each one of the platforms.	f	3	1135
 4541	The view does not address the scenario	f	0	1136
+4195	Communicating Processes.	t	2	1049
 4543	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement	f	2	1136
 4544	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules	f	3	1136
 4545	Task Model	f	0	1137
@@ -2852,7 +2854,6 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4184	An availability scenario of the *Graphite* system.	t	3	1046
 4187	A request for a web page corresponds to requesting a service from the amazon cloud.	t	2	1047
 4191	She should try to split the system in parts in order to isolate the complex business logic and use the two architectural approaches accordingly.	t	2	1048
-4195	Communicating Processes.	t	2	1049
 4200	The view results from the implementation of a support system initiative tactic.	t	3	1050
 4504	It helps on the configuration of systems.	t	3	1126
 4222	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	t	1	1056
@@ -24884,6 +24885,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 93	t	According to the document that describes ZeroMQ:  \n>"It took us several years working on AMQP protocol [...] to realise that there's something wrong with the classic client/server model of smart messaging server (broker) and dumb messaging clients."  \n  \nWhat is the main problem, according to the authors, of the *broker*-based model?	93	0	0	ZeroMQBrokerINGLES
 94	t	According to the document that describes ZeroMQ:  \n>"The objects that handle data transfer are composed of two parts: the session object is responsible for interacting with the ØMQ socket, and the engine object is responsible for communication with the network. There's only one kind of the session object, but there's a different engine type for each underlying protocol ØMQ supports. Thus, we have TCP engines, IPC engines, PGM engines, etc. The set of engines is extensible---in the future we may choose to implement, say, a WebSocket engine or an SCTP engine."  \n  \nSupposing that the code implementing the *session object* does not need to be changed when a new type of *engine* is added to the system, which architectural views are better to show this extensibility aspect of the system?	94	0	0	ZeroMQExtensibleEnginesINGLES
 4	t	Suppose you have a system with a client-server architecture that was designed to support the simultaneous existence of at most 100 clients, without specific requirements for availability. The solution adopted and put into operation four years ago is a single server component to which all clients connect to. This solution satisfies the initial requirements but with the recent increase in the maximum number of clients to 200, the system no longer has acceptable performance. Not knowing anything else about the system's architecture, which solution do you propose to solve the system's performance problems?	4	0	0	AumentarDesempenhoClienteServidor
+42	t	In the Hadoop system the use of a *BackupNode* instead of a *CheckpointNode*:	42	0	0	HadoopCheckpointBackupNodeINGLES
 5	t	According to the SEI model, there are three different architectural viewtypes that are usually necessary to describe completely a software architecture.	5	0	0	TresTiposVista
 8	t	The requirements for complex systems are usually very numerous and conflicting among them, making it impossible to satisfy all the requirements in a given implementation of the system. Therefore, the recommended process for making the design of a software architecture involves the identification of the *architectural drivers* that will shape the design of architecture. These *architectural drivers* should be chosen so that they are	8	0	0	ArchitecturalDrivers
 18	t	When someone uses the Domain Model pattern to implement the domain logic layer of an enterprise application, it is common to use also the Service Layer pattern. The Service Layer pattern is used in these cases	18	0	0	ServiceLayer
@@ -24901,7 +24903,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 10	t	Considering yet the example of the email system, MUAs are used not only to compose and to send messages, but also for users to read the email messages sent to them. For this, the MUAs have to get those messages from the component that stores them to show them to the user. Two different ways of doing this is by using the POP and IMAP protocols. In the first case, messages are moved from the POP server to the user's computer. In second case, the messages are always stored on the IMAP server, allowing the user to access email from different computers, as long as they are able to connect to the same IMAP server. Which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUAs and a IMAP server?	10	0	0	ArqEmailIMAP
 11	t	The recent developments in web applications that made them provide a richer user interface led to a change in its architecture: part of the application's computation has to be done in the web browser used by users to access the application. How is this change in the architecture manifested in the different types of views that describe the software architecture of a web application?	11	0	0	AlteracaoWebDois
 41	t	From the stakeholders perspective the use of low cost servers to build the clusters is:	41	0	0	HadoopStakeholdersEurosINGLES
-42	t	In the Hadoop system the use of a *BackupNode* instead of a *CheckpointNode*:	42	0	0	HadoopCheckpointBackupNodeINGLES
 43	t	In the Hadoop system when the *CheckpointNode* and the *NameNode* are deployed in different nodes, the *CheckpointNode* provides:	43	0	0	HadoopCheckpointINGLES
 44	t	The Hadoop system support of different block placement policies:	44	0	0	HadoopPoliticaLocalizacaoReplicasINGLES
 47	t	The *Checkpoint/rollback* tactic is a tactic for	47	0	0	TacticaCheckpointRollbackINGLES
@@ -25017,6 +25018,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 64	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"The Runtime System is a library of mostly C code that is linked into every Haskell program. It provides the support infrastructure needed for running the compiled Haskell code, including the following main components:  \n-  Memory management, including a parallel, generational, garbage collector;  \n-  Thread management and scheduling;  \n-  The primitive operations provided by GHC;  \n-  A bytecode interpreter and dynamic linker for GHCi.  \n"  \n  \nWhich system qualities are improved by the design decision of creating the Runtime System, described above?	64	0	0	GHCRTSINGLES
 66	t	Which of the following sentences better describes the ZeroMQ system?	66	0	0	ZeroMQAppsINGLES
 71	t	The main architectural driver for the nginx system was	71	0	0	nginxFirstADINGLES
+452	t	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \n  \nFrom the description we can infer a trade-off between the qualities of	452	0	0	InfinispanScenariosTacticsOne
 74	t	According to the document that describes nginx:  \n>"While handling a variety of actions associated with accepting, processing and managing network connections and content retrieval, nginx uses event notification mechanisms and a number of disk I/O performance enhancements in Linux, Solaris and BSD-based operating systems, like kqueue, epoll, and event ports. The goal is to provide as many hints to the operating system as possible, in regards to obtaining timely asynchronous feedback for inbound and outbound traffic, disk operations, reading from or writing to sockets, timeouts and so on."  \n  \nThe goal of this approach used in the development of nginx was	74	0	0	nginxOSOptimizationsINGLES
 75	t	According to the document that describes nginx:  \n>"Traditional process- or thread-based models of handling concurrent connections involve handling each connection with a separate process or thread, and blocking on network or input/output operations."  \n  \nThe architectural style that better describes the model presented above for processing requests is	75	0	0	nginxProcessThreadINGLES
 76	t	According to the document that describes the architecture of web services (attached at the end of this document), one of the approaches introduced in Section~1.2 is *partitioning*, shown in Figure~1.4. The use of *partitioning*	76	0	0	WebPartioningINGLES
@@ -25043,7 +25045,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 407	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The ThousandParsec protocol   \n![image][image]  \n	407	0	0	ThousandParsecModule
 626	t	Consider the two following views   \n![image][image]  \n	626	0	0	ComponentAndConnectorThree
 451	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nConsider that a scenario is written from the above sentence	451	0	0	ContinousIntegrationScenariosTacticsOne
-452	t	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \n  \nFrom the description we can infer a trade-off between the qualities of	452	0	0	InfinispanScenariosTacticsOne
 455	t	Consider the following excerpt about the Amazon system  \n>"Over time, this grew into hundreds of services and a number of application servers that aggregate the information from the services. The application that renders the Amazon.com Web pages is one such application server, but so are the applications that serve the Web-services interface, the customer service application, the seller interface, and the many third-party Web sites that run on our platform."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	455	0	0	AmazonOne
 456	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecture significant requirements*. These requirements should be sorted according to their importance for the system's stakeholders because	456	0	0	DesigningArchitectureOne
 648	t	Consider the deployment architectural style of the allocation viewtype.	648	0	0	AllocationTwo
@@ -25060,6 +25061,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 469	t	Web servers implemented in Java, such as the Tomcat web server, typically use a thread-based model for processing requests. That is, they process each request on a different thread within the same JVM process, rather than on a different process. One of the reasons for this is that	469	0	0	nginxOne
 470	t	Consider the following architectural view of the Pony-Build system as described in the Continous integration case study   \n![image][image]  \n According to this view the quality of performance is achieved through	470	0	0	ContinousIntegrationViewsOne
 119	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	119	0	0	WebEvolutionINGLES
+969	t	Which of the following tactics is not related with the control of resource demand	969	0	0	PerformanceTacticsTwo
 120	t	One of the terms often used to describe the software architecture of a system is the term *tier*, being common, for instance, to talk about *multi-tier* systems. Taking into account the various types of software elements that compose a software architecture, a *tier* is	120	0	0	TiersINGLES
 122	t	In the Graphite system the component *carbon-relay* implements a tactic	122	0	0	GPCarbonRelayINGLES
 124	t	Which are the most significant qualities of the MediaWiki system?	124	0	0	MWQualitiesINGLES
@@ -25081,6 +25083,9 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 129	t	In Chrome, to accomplish the security quality, the Browser Process implements a tactic	129	0	0	CHSecurityQualityINGLES
 130	t	In Chrome it is possible to associate a Renderer Process to each Tab, which results in the increase of performance due to a tactic of	130	0	0	CHPerformanceQualityINGLES
 352	t	Consider an architecturally significant requirement (ASR) that has a high impact on the architecture but a low business value	352	0	0	HighBusinessValue
+606	t	When describing their system people refer to a part of it as containing a database server. Applying the component-and-connector styles learned in the course we can say that this system uses	606	0	0	CCStyleOne
+337	t	Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.	337	0	0	Degradation
+790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
 518	t	Consider the following excerpt about the Amazon system  \n>"Mainly, I think service orientation has helped us there. The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats. You could dictate a rigorous single format, but that would not be realistic if you are in Amazon's platform business. We have to make sure that the platform can be extended by our customers to meet their needs."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	518	0	0	AmazonTwo
 519	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study  \n>"Employing such a strategy maximizes data locality for the requests, which can result in decreased request latency. For example, let's say a bunch of nodes request parts of B: partB1, partB2, etc. We can set up our proxy to recognize the spatial locality of the individual requests, collapsing them into a single request and returning only bigB, greatly minimizing the reads from the data origin."  \n  \nThe quality that is achieved with this tactic is	519	0	0	ScalableArchitectureTwo
 523	t	The architecturally significant requirements are important in the process of creating the software architecture for a system because they are	523	0	0	RequirementsTwo
@@ -25100,7 +25105,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 532	t	Consider the following excerpt from the tutorial on the Hadoop MapReduce:  \n>"Hadoop MapReduce is a software framework for easily writing applications which process vast amounts of data (multi-terabyte data-sets) in-parallel on large clusters (thousands of nodes) of commodity hardware in a reliable, fault-tolerant manner. A MapReduce job usually splits the input data-set into independent chunks which are processed by the map tasks in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the reduce tasks. Typically both the input and the output of the job are stored in a file-system. The framework takes care of scheduling tasks, monitoring them and re-executes the failed tasks."  \n  \nWhich architectural style of the component-and-connector viewtype is more adequate to describe how the MapReduce works, taking into account its main advantages in solving a problem?	532	0	0	TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo
 533	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	533	0	0	AvailabilityTwo
 751	t	Consider the following modifiability scenario  \n>"The effort necessary to successfully port the system to execute in a new browser should not be higher than 5 person/month."  \n  \n	751	0	0	ModifiabilityScenario
-606	t	When describing their system people refer to a part of it as containing a database server. Applying the component-and-connector styles learned in the course we can say that this system uses	606	0	0	CCStyleOne
 607	t	In the Continuous Integration case study can be read  \n>"The space of architectures for continuous integration systems seems to be dominated by two extremes: master/slave architectures, in which a central server directs and controls remote builds; and reporting architectures, in which a central server aggregates build reports contributed by clients. All of the continuous integration systems of which we are aware have chosen some combination of features from these two architectures."  \n  \nThe tactic that is referred in both architectures is	607	0	0	ContinuousIntegrationOne
 608	t	Consider the Decomposition architectural style of the Module viewtype	608	0	0	ModuleViewtypeOne
 136	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed:	136	0	0	GMRestModularityEN
@@ -25123,6 +25127,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 638	t	Consider the Infinispan system when it is configured as a remote data grid. The relation between the Applications and the Grid is	638	0	0	InfinispanOne
 639	t	Consider the following representation of the Buildbot system.   \n![image][image]  \n The architecture style between the Buildbot Master and the Clients is:	639	0	0	JenkinsOne
 646	t	In the description of Infinispan system can be read  \n>"Infinispan supports several pluggable cache stores-adapters that can be used to persist data to disk or any form of secondary storage. The current default implementation is a simplistic hash bucket and linked list implementation, where each hash bucket is represented by a file on the filesystem. While easy to use and configure, this isn't the best-performing implementation."  \n  \nThe architectural style(s) that should be used to illustrate the sentence is (are)	646	0	0	InfinispanTwo
+517	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	517	0	0	MicroservicesArchitectureTwo
 649	t	In the Continuous Integration case can be read  \n>"Build notification: The outcomes of builds generally need to be communicated to interested clients, either via pull (Web, RSS, RPC, etc.) or push notification (e-mail, Twitter, etc.) This can include notification of all builds, or only failed builds, or builds that haven't been executed within a certain period."  \n  \nThe architectural style used in push notifications is	649	0	0	JenkinsTwo
 650	t	Consider the following representation of Amazon's architecture (sorry for the figure's layout: **save trees**)   \n![image][image]  \n What is the most relevant architecture style that is used in this figure?	650	0	0	MicroAndAmazonTwo
 656	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	656	0	0	MicroAndAmazonThree
@@ -25152,7 +25157,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 324	t	Having a single point of access to an intranet is a security tactic of	324	0	0	Firewall
 326	t	In a quality scenario	326	0	0	Scenario
 513	t	In Nginx, given that a *worker* processes various requests during its life, how does it do it?	513	0	0	nginxTwo
-517	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	517	0	0	MicroservicesArchitectureTwo
 660	t	In the description of Infinispan system can be read  \n>"When dealing with thread pools to process such asynchronous tasks, there is always a context switching overhead. That threads are not cheap resources is also noteworthy. Allocating appropriately sized and configured thread pools is important to any installation making use of any of the asynchronous features of Infinispan."  \n  \nThe architectural style that should be used to illustrate the sentence is	660	0	0	InfinispanThree
 1081	t	The quality that is more relevant to views of the module viewtype is:	1081	0	0	ModuleViewTypeOne
 696	t	The Chromium is a web browser that introduced an innovative architecture. In the Chromium description we can read:  \n>"We use separate processes for browser tabs to protect the overall application from bugs and glitches in the rendering engine. We also restrict access from each rendering engine process to others and to the rest of the system. In some ways, this brings to web browsing the benefits that memory protection and access control brought to operating systems. We refer to the main process that runs the UI and manages tab and plugin processes as the "browser process" or "browser." Likewise, the tab-specific processes are called "render processes" or "renderers." The renderers use the WebKit open-source layout engine for interpreting and laying out HTML."  \n  \nWhich architectural style should we use to represent this aspect of Chromium?	696	0	0	ArqChrome
@@ -25176,7 +25180,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 752	t	The main tactic associated with the aspects architectural style is:	752	0	0	AspectsTactics
 335	t	In the description of the Chrome system can be read  \n>"As the user types, the Omnibox automatically proposes an action, which is either a URL based on your navigation history, or a search query."  \n  \nThe above sentence refers to	335	0	0	ChromeUsability
 336	t	An architectural tactic	336	0	0	Tactics
-337	t	Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.	337	0	0	Degradation
+380	t	According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.	380	0	0	LayeredVirtualMachine
 338	t	In the Graphite system description can be read:  \n>"Making multiple Graphite servers appear to be a single system from a user perspective isn't terribly difficult, at least for a naive implementation."  \n  \n	338	0	0	GraphiteModifiability
 339	t	In a system where the source of attacks can be internal, from authorized users, the appropriate tactics to be used are	339	0	0	InternalAttack
 343	t	In the description of the SocialCalc case study can be read:  \n>"Even with race conditions resolved, it is still suboptimal to accidentally overwrite the cell another user is currently editing. A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on."  \n  \nFrom this fragment can be identified a scenario for	343	0	0	SocialCalcUsability
@@ -25201,7 +25205,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 375	t	The client-server architectural style provides availability because	375	0	0	ClientServerAvailability
 377	t	In the description of the Git case study can be read how to deal with the corruption of pack files in the context of the availability quality:  \n>"If an object was only copied partially or another form of data corruption occurred, recalculating the SHA of the current object will identify such corruption."  \n  \nThe tactic addressed in this fragments is:	377	0	0	GitConditionMonitoring
 378	t	The repository architectural style provides modifiability because	378	0	0	RepositoryModifiability
-380	t	According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.	380	0	0	LayeredVirtualMachine
 388	t	Consider the following application-specific types. Note that `Queue` components are within the `Carbon` components. In a view that contains components of these three types   \n![image][image]  \n	388	0	0	GraphiteDataPointSocket
 389	t	An architecture can also be represented by the set of files which contains its modules code. A suitable architectural style to represent this set of files is	389	0	0	ImplementationStyle
 391	t	The Tiers architectural style	391	0	0	Tiers
@@ -25230,7 +25233,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 896	t	In the description of architecture of the OrderPad case study it can be read that the updates the user does on the OrderPad when it is offline are not lost. This availability quality is achieved through a	896	0	0	OrderPadOne
 899	t	In the software architecture of a system, the Deployment architectural style of the allocation viewtype is best suited for	899	0	0	Deployment
 900	t	Consider a web application that was implemented using three layers: presentation, domain logic, and data access. How are these layers mapped into the components if it is a rich interface application.	900	0	0	WebAppsOne
-969	t	Which of the following tactics is not related with the control of resource demand	969	0	0	PerformanceTacticsTwo
 933	t	Suppose that you are developing the software architecture of a new system for an organization composed of several organizational units, each one with its own information systems, which have been developed independently of each other over the course of several years and depending on the particular needs of each unit. Your system has the goal of integrating the various existing systems, providing in this way not only a unified view of how the organization works, but also allowing the creation of new processes within the organization that involve more than one unit. Which architectural style is better suited to design such a system?	933	0	0	SOA
 936	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view applies the following architectural styles	936	0	0	PulseTwo
 937	t	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	937	0	0	OrderPadTwo
@@ -25307,7 +25309,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 787	t	The software architecture of a system	787	0	0	SoftwareArchitecture
 788	t	A general scenario for a quality attribute	788	0	0	GeneralScenario
 789	t	In the description of the Twitter system we can read:  \n>"Twitter is optimized to be highly available on the read path on the home timeline. Read path is in the 10s of milliseconds."  \n  \nThis is achieved because:	789	0	0	TwitterScaleOne
-790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
 796	t	In the description of Hadoop we can red.  \n>"The CheckpointNode periodically combines the existing checkpoint and journal to create a new checkpoint and an empty journal. The CheckpointNode usually runs on a different host from the NameNode since it has the same memory requirements as the NameNode."  \n  \n	796	0	0	HadoopCreateFile
 798	t	In the description of the Twitter system we can read:  \n>"On the search timeline: Write. when a tweet comes in and hits the Ingester only one Early Bird machine is hit. Write time path is O(1). A single tweet is ingested in under 5 seconds between the queuing and processing to find the one Early Bird to write it to."  \n  \n	798	0	0	TwitterScaleTwo
 799	t	In his article, *Who Needs and Architect?*, Martin Fowler cites Ralph Johnson definition:  \n>"Architecture is the set of decisions that must be made early in a project."  \n  \nIn his opinion:	799	0	0	EarlyDecisions
@@ -28473,620 +28474,620 @@ COPY public.topics_questions (topics_id, questions_id) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.users (id, name, role, username, year) FROM stdin;
-1	1,0	\N	\N	2011
-2	2,0	\N	\N	2011
-3	3,0	\N	\N	2011
-4	4,0	\N	\N	2011
-5	5,0	\N	\N	2011
-6	6,0	\N	\N	2011
-7	7,0	\N	\N	2011
-8	8,0	\N	\N	2011
-9	9,0	\N	\N	2011
-10	10,0	\N	\N	2011
-11	11,0	\N	\N	2011
-12	12,0	\N	\N	2011
-13	13,0	\N	\N	2011
-14	14,0	\N	\N	2011
-15	15,0	\N	\N	2011
-16	16,0	\N	\N	2011
-17	17,0	\N	\N	2011
-18	18,0	\N	\N	2011
-19	19,0	\N	\N	2011
-20	20,0	\N	\N	2011
-21	21,0	\N	\N	2011
-22	22,0	\N	\N	2011
-23	23,0	\N	\N	2011
-24	24,0	\N	\N	2011
-25	25,0	\N	\N	2011
-26	26,0	\N	\N	2011
-27	27,0	\N	\N	2011
-28	28,0	\N	\N	2011
-29	29,0	\N	\N	2011
-30	30,0	\N	\N	2011
-31	31,0	\N	\N	2011
-32	32,0	\N	\N	2011
-33	33,0	\N	\N	2011
-34	34,0	\N	\N	2011
-35	35,0	\N	\N	2011
-36	36,0	\N	\N	2011
-37	37,0	\N	\N	2011
-38	38,0	\N	\N	2011
-39	39,0	\N	\N	2011
-40	40,0	\N	\N	2011
-41	41,0	\N	\N	2011
-42	42,0	\N	\N	2011
-43	43,0	\N	\N	2011
-44	44,0	\N	\N	2011
-45	45,0	\N	\N	2011
-46	46,0	\N	\N	2011
-47	47,0	\N	\N	2011
-48	48,0	\N	\N	2011
-49	49,0	\N	\N	2011
-50	50,0	\N	\N	2011
-51	51,0	\N	\N	2011
-52	52,0	\N	\N	2011
-53	53,0	\N	\N	2011
-54	54,0	\N	\N	2011
-55	55,0	\N	\N	2011
-56	56,0	\N	\N	2011
-57	57,0	\N	\N	2011
-58	58,0	\N	\N	2011
-59	59,0	\N	\N	2011
-60	60,0	\N	\N	2011
-61	1,0	\N	\N	2013
-62	2,0	\N	\N	2013
-63	3,0	\N	\N	2013
-64	4,0	\N	\N	2013
-65	5,0	\N	\N	2013
-66	6,0	\N	\N	2013
-67	7,0	\N	\N	2013
-68	8,0	\N	\N	2013
-69	9,0	\N	\N	2013
-70	10,0	\N	\N	2013
-71	11,0	\N	\N	2013
-72	12,0	\N	\N	2013
-73	13,0	\N	\N	2013
-74	14,0	\N	\N	2013
-75	15,0	\N	\N	2013
-76	16,0	\N	\N	2013
-77	17,0	\N	\N	2013
-78	18,0	\N	\N	2013
-79	19,0	\N	\N	2013
-80	20,0	\N	\N	2013
-81	21,0	\N	\N	2013
-82	22,0	\N	\N	2013
-83	23,0	\N	\N	2013
-84	24,0	\N	\N	2013
-85	25,0	\N	\N	2013
-86	26,0	\N	\N	2013
-87	27,0	\N	\N	2013
-88	28,0	\N	\N	2013
-89	29,0	\N	\N	2013
-90	30,0	\N	\N	2013
-91	31,0	\N	\N	2013
-92	32,0	\N	\N	2013
-93	33,0	\N	\N	2013
-94	34,0	\N	\N	2013
-95	35,0	\N	\N	2013
-96	36,0	\N	\N	2013
-97	37,0	\N	\N	2013
-98	38,0	\N	\N	2013
-99	39,0	\N	\N	2013
-100	40,0	\N	\N	2013
-101	41,0	\N	\N	2013
-102	42,0	\N	\N	2013
-103	43,0	\N	\N	2013
-104	44,0	\N	\N	2013
-105	45,0	\N	\N	2013
-106	46,0	\N	\N	2013
-107	47,0	\N	\N	2013
-108	48,0	\N	\N	2013
-109	49,0	\N	\N	2013
-110	50,0	\N	\N	2013
-111	51,0	\N	\N	2013
-112	52,0	\N	\N	2013
-113	53,0	\N	\N	2013
-114	54,0	\N	\N	2013
-115	55,0	\N	\N	2013
-116	56,0	\N	\N	2013
-117	57,0	\N	\N	2013
-118	58,0	\N	\N	2013
-119	59,0	\N	\N	2013
-120	60,0	\N	\N	2013
-121	61,0	\N	\N	2013
-122	62,0	\N	\N	2013
-123	63,0	\N	\N	2013
-124	64,0	\N	\N	2013
-125	65,0	\N	\N	2013
-126	66,0	\N	\N	2013
-127	67,0	\N	\N	2013
-128	68,0	\N	\N	2013
-129	69,0	\N	\N	2013
-130	70,0	\N	\N	2013
-131	71,0	\N	\N	2013
-132	72,0	\N	\N	2013
-133	73,0	\N	\N	2013
-134	74,0	\N	\N	2013
-135	75,0	\N	\N	2013
-136	76,0	\N	\N	2013
-137	77,0	\N	\N	2013
-138	78,0	\N	\N	2013
-139	79,0	\N	\N	2013
-140	80,0	\N	\N	2013
-141	81,0	\N	\N	2013
-142	82,0	\N	\N	2013
-143	83,0	\N	\N	2013
-144	84,0	\N	\N	2013
-145	85,0	\N	\N	2013
-146	86,0	\N	\N	2013
-147	87,0	\N	\N	2013
-148	88,0	\N	\N	2013
-149	89,0	\N	\N	2013
-150	1,0	\N	\N	2014
-151	2,0	\N	\N	2014
-152	3,0	\N	\N	2014
-153	5,0	\N	\N	2014
-154	6,0	\N	\N	2014
-155	7,0	\N	\N	2014
-156	12,0	\N	\N	2014
-157	15,0	\N	\N	2014
-158	19,0	\N	\N	2014
-159	21,0	\N	\N	2014
-160	23,0	\N	\N	2014
-161	26,0	\N	\N	2014
-162	41,0	\N	\N	2014
-163	42,0	\N	\N	2014
-164	44,0	\N	\N	2014
-165	50,0	\N	\N	2014
-166	52,0	\N	\N	2014
-167	59,0	\N	\N	2014
-168	63,0	\N	\N	2014
-169	64,0	\N	\N	2014
-170	73,0	\N	\N	2014
-171	74,0	\N	\N	2014
-172	78,0	\N	\N	2014
-173	101,0	\N	\N	2014
-174	102,0	\N	\N	2014
-175	107,0	\N	\N	2014
-176	112,0	\N	\N	2014
-177	114,0	\N	\N	2014
-178	117,0	\N	\N	2014
-179	119,0	\N	\N	2014
-180	120,0	\N	\N	2014
-181	121,0	\N	\N	2014
-182	122,0	\N	\N	2014
-183	123,0	\N	\N	2014
-184	124,0	\N	\N	2014
-185	128,0	\N	\N	2014
-186	130,0	\N	\N	2014
-187	135,0	\N	\N	2014
-188	138,0	\N	\N	2014
-189	145,0	\N	\N	2014
-190	154,0	\N	\N	2014
-191	156,0	\N	\N	2014
-192	158,0	\N	\N	2014
-193	4,0	\N	\N	2014
-194	8,0	\N	\N	2014
-195	9,0	\N	\N	2014
-196	10,0	\N	\N	2014
-197	13,0	\N	\N	2014
-198	14,0	\N	\N	2014
-199	20,0	\N	\N	2014
-200	24,0	\N	\N	2014
-201	27,0	\N	\N	2014
-202	28,0	\N	\N	2014
-203	29,0	\N	\N	2014
-204	33,0	\N	\N	2014
-205	34,0	\N	\N	2014
-206	37,0	\N	\N	2014
-207	43,0	\N	\N	2014
-208	46,0	\N	\N	2014
-209	48,0	\N	\N	2014
-210	51,0	\N	\N	2014
-211	53,0	\N	\N	2014
-212	58,0	\N	\N	2014
-213	60,0	\N	\N	2014
-214	69,0	\N	\N	2014
-215	70,0	\N	\N	2014
-216	72,0	\N	\N	2014
-217	75,0	\N	\N	2014
-218	76,0	\N	\N	2014
-219	77,0	\N	\N	2014
-220	79,0	\N	\N	2014
-221	83,0	\N	\N	2014
-222	84,0	\N	\N	2014
-223	85,0	\N	\N	2014
-224	88,0	\N	\N	2014
-225	89,0	\N	\N	2014
-226	93,0	\N	\N	2014
-227	94,0	\N	\N	2014
-228	99,0	\N	\N	2014
-229	104,0	\N	\N	2014
-230	105,0	\N	\N	2014
-231	108,0	\N	\N	2014
-232	109,0	\N	\N	2014
-233	113,0	\N	\N	2014
-234	116,0	\N	\N	2014
-235	118,0	\N	\N	2014
-236	125,0	\N	\N	2014
-237	127,0	\N	\N	2014
-238	131,0	\N	\N	2014
-239	132,0	\N	\N	2014
-240	133,0	\N	\N	2014
-241	136,0	\N	\N	2014
-242	137,0	\N	\N	2014
-243	143,0	\N	\N	2014
-244	148,0	\N	\N	2014
-245	149,0	\N	\N	2014
-246	153,0	\N	\N	2014
-247	11,0	\N	\N	2014
-248	16,0	\N	\N	2014
-249	17,0	\N	\N	2014
-250	18,0	\N	\N	2014
-251	22,0	\N	\N	2014
-252	25,0	\N	\N	2014
-253	30,0	\N	\N	2014
-254	31,0	\N	\N	2014
-255	32,0	\N	\N	2014
-256	35,0	\N	\N	2014
-257	36,0	\N	\N	2014
-258	38,0	\N	\N	2014
-259	39,0	\N	\N	2014
-260	40,0	\N	\N	2014
-261	45,0	\N	\N	2014
-262	47,0	\N	\N	2014
-263	49,0	\N	\N	2014
-264	54,0	\N	\N	2014
-265	55,0	\N	\N	2014
-266	56,0	\N	\N	2014
-267	57,0	\N	\N	2014
-268	61,0	\N	\N	2014
-269	62,0	\N	\N	2014
-270	65,0	\N	\N	2014
-271	66,0	\N	\N	2014
-272	67,0	\N	\N	2014
-273	68,0	\N	\N	2014
-274	71,0	\N	\N	2014
-275	80,0	\N	\N	2014
-276	81,0	\N	\N	2014
-277	82,0	\N	\N	2014
-278	86,0	\N	\N	2014
-279	87,0	\N	\N	2014
-280	90,0	\N	\N	2014
-281	91,0	\N	\N	2014
-282	92,0	\N	\N	2014
-283	95,0	\N	\N	2014
-284	96,0	\N	\N	2014
-285	97,0	\N	\N	2014
-286	98,0	\N	\N	2014
-287	100,0	\N	\N	2014
-288	103,0	\N	\N	2014
-289	106,0	\N	\N	2014
-290	110,0	\N	\N	2014
-291	111,0	\N	\N	2014
-292	115,0	\N	\N	2014
-293	126,0	\N	\N	2014
-294	129,0	\N	\N	2014
-295	134,0	\N	\N	2014
-296	139,0	\N	\N	2014
-297	140,0	\N	\N	2014
-298	141,0	\N	\N	2014
-299	142,0	\N	\N	2014
-300	144,0	\N	\N	2014
-301	146,0	\N	\N	2014
-302	147,0	\N	\N	2014
-303	150,0	\N	\N	2014
-304	151,0	\N	\N	2014
-305	152,0	\N	\N	2014
-306	155,0	\N	\N	2014
-307	157,0	\N	\N	2014
-308	2,0	\N	\N	2015
-309	3,0	\N	\N	2015
-310	4,0	\N	\N	2015
-311	5,0	\N	\N	2015
-312	7,0	\N	\N	2015
-313	8,0	\N	\N	2015
-314	13,0	\N	\N	2015
-315	14,0	\N	\N	2015
-316	24,0	\N	\N	2015
-317	25,0	\N	\N	2015
-318	36,0	\N	\N	2015
-319	51,0	\N	\N	2015
-320	55,0	\N	\N	2015
-321	65,0	\N	\N	2015
-322	71,0	\N	\N	2015
-323	1,0	\N	\N	2015
-324	6,0	\N	\N	2015
-325	10,0	\N	\N	2015
-326	16,0	\N	\N	2015
-327	19,0	\N	\N	2015
-328	21,0	\N	\N	2015
-329	27,0	\N	\N	2015
-330	28,0	\N	\N	2015
-331	29,0	\N	\N	2015
-332	30,0	\N	\N	2015
-333	32,0	\N	\N	2015
-334	33,0	\N	\N	2015
-335	37,0	\N	\N	2015
-336	38,0	\N	\N	2015
-337	39,0	\N	\N	2015
-338	40,0	\N	\N	2015
-339	43,0	\N	\N	2015
-340	44,0	\N	\N	2015
-341	49,0	\N	\N	2015
-342	50,0	\N	\N	2015
-343	53,0	\N	\N	2015
-344	54,0	\N	\N	2015
-345	56,0	\N	\N	2015
-346	57,0	\N	\N	2015
-347	61,0	\N	\N	2015
-348	62,0	\N	\N	2015
-349	68,0	\N	\N	2015
-350	69,0	\N	\N	2015
-351	70,0	\N	\N	2015
-352	72,0	\N	\N	2015
-353	74,0	\N	\N	2015
-354	75,0	\N	\N	2015
-355	76,0	\N	\N	2015
-356	77,0	\N	\N	2015
-357	9,0	\N	\N	2015
-358	11,0	\N	\N	2015
-359	12,0	\N	\N	2015
-360	15,0	\N	\N	2015
-361	17,0	\N	\N	2015
-362	18,0	\N	\N	2015
-363	20,0	\N	\N	2015
-364	22,0	\N	\N	2015
-365	23,0	\N	\N	2015
-366	26,0	\N	\N	2015
-367	31,0	\N	\N	2015
-368	34,0	\N	\N	2015
-369	35,0	\N	\N	2015
-370	41,0	\N	\N	2015
-371	42,0	\N	\N	2015
-372	45,0	\N	\N	2015
-373	46,0	\N	\N	2015
-374	47,0	\N	\N	2015
-375	48,0	\N	\N	2015
-376	52,0	\N	\N	2015
-377	58,0	\N	\N	2015
-378	59,0	\N	\N	2015
-379	60,0	\N	\N	2015
-380	63,0	\N	\N	2015
-381	64,0	\N	\N	2015
-382	66,0	\N	\N	2015
-383	67,0	\N	\N	2015
-384	73,0	\N	\N	2015
-385	1,0	\N	\N	2016
-386	2,0	\N	\N	2016
-387	3,0	\N	\N	2016
-388	4,0	\N	\N	2016
-389	5,0	\N	\N	2016
-390	6,0	\N	\N	2016
-391	7,0	\N	\N	2016
-392	8,0	\N	\N	2016
-393	11,0	\N	\N	2016
-394	15,0	\N	\N	2016
-395	21,0	\N	\N	2016
-396	28,0	\N	\N	2016
-397	35,0	\N	\N	2016
-398	46,0	\N	\N	2016
-399	59,0	\N	\N	2016
-400	14,0	\N	\N	2016
-401	16,0	\N	\N	2016
-402	18,0	\N	\N	2016
-403	20,0	\N	\N	2016
-404	23,0	\N	\N	2016
-405	24,0	\N	\N	2016
-406	26,0	\N	\N	2016
-407	29,0	\N	\N	2016
-408	32,0	\N	\N	2016
-409	33,0	\N	\N	2016
-410	36,0	\N	\N	2016
-411	37,0	\N	\N	2016
-412	44,0	\N	\N	2016
-413	45,0	\N	\N	2016
-414	49,0	\N	\N	2016
-415	50,0	\N	\N	2016
-416	51,0	\N	\N	2016
-417	53,0	\N	\N	2016
-418	55,0	\N	\N	2016
-419	56,0	\N	\N	2016
-420	9,0	\N	\N	2016
-421	10,0	\N	\N	2016
-422	12,0	\N	\N	2016
-423	13,0	\N	\N	2016
-424	17,0	\N	\N	2016
-425	19,0	\N	\N	2016
-426	22,0	\N	\N	2016
-427	25,0	\N	\N	2016
-428	27,0	\N	\N	2016
-429	30,0	\N	\N	2016
-430	31,0	\N	\N	2016
-431	34,0	\N	\N	2016
-432	38,0	\N	\N	2016
-433	39,0	\N	\N	2016
-434	40,0	\N	\N	2016
-435	41,0	\N	\N	2016
-436	42,0	\N	\N	2016
-437	43,0	\N	\N	2016
-438	47,0	\N	\N	2016
-439	48,0	\N	\N	2016
-440	52,0	\N	\N	2016
-441	54,0	\N	\N	2016
-442	57,0	\N	\N	2016
-443	58,0	\N	\N	2016
-444	60,0	\N	\N	2016
-445	1,0	\N	\N	2017
-446	3,0	\N	\N	2017
-447	6,0	\N	\N	2017
-448	8,0	\N	\N	2017
-449	9,0	\N	\N	2017
-450	10,0	\N	\N	2017
-451	11,0	\N	\N	2017
-452	14,0	\N	\N	2017
-453	16,0	\N	\N	2017
-454	17,0	\N	\N	2017
-455	18,0	\N	\N	2017
-456	23,0	\N	\N	2017
-457	24,0	\N	\N	2017
-458	25,0	\N	\N	2017
-459	32,0	\N	\N	2017
-460	36,0	\N	\N	2017
-461	54,0	\N	\N	2017
-462	60,0	\N	\N	2017
-463	75,0	\N	\N	2017
-464	77,0	\N	\N	2017
-465	81,0	\N	\N	2017
-466	83,0	\N	\N	2017
-467	86,0	\N	\N	2017
-468	90,0	\N	\N	2017
-469	5,0	\N	\N	2017
-470	13,0	\N	\N	2017
-471	15,0	\N	\N	2017
-472	20,0	\N	\N	2017
-473	21,0	\N	\N	2017
-474	22,0	\N	\N	2017
-475	27,0	\N	\N	2017
-476	28,0	\N	\N	2017
-477	29,0	\N	\N	2017
-478	31,0	\N	\N	2017
-479	37,0	\N	\N	2017
-480	41,0	\N	\N	2017
-481	43,0	\N	\N	2017
-482	45,0	\N	\N	2017
-483	47,0	\N	\N	2017
-484	48,0	\N	\N	2017
-485	53,0	\N	\N	2017
-486	55,0	\N	\N	2017
-487	56,0	\N	\N	2017
-488	59,0	\N	\N	2017
-489	63,0	\N	\N	2017
-490	64,0	\N	\N	2017
-491	67,0	\N	\N	2017
-492	69,0	\N	\N	2017
-493	70,0	\N	\N	2017
-494	71,0	\N	\N	2017
-495	72,0	\N	\N	2017
-496	73,0	\N	\N	2017
-497	84,0	\N	\N	2017
-498	85,0	\N	\N	2017
-499	87,0	\N	\N	2017
-500	91,0	\N	\N	2017
-501	2,0	\N	\N	2017
-502	4,0	\N	\N	2017
-503	7,0	\N	\N	2017
-504	12,0	\N	\N	2017
-505	19,0	\N	\N	2017
-506	26,0	\N	\N	2017
-507	30,0	\N	\N	2017
-508	33,0	\N	\N	2017
-509	34,0	\N	\N	2017
-510	35,0	\N	\N	2017
-511	38,0	\N	\N	2017
-512	39,0	\N	\N	2017
-513	40,0	\N	\N	2017
-514	42,0	\N	\N	2017
-515	44,0	\N	\N	2017
-516	46,0	\N	\N	2017
-517	49,0	\N	\N	2017
-518	50,0	\N	\N	2017
-519	51,0	\N	\N	2017
-520	52,0	\N	\N	2017
-521	57,0	\N	\N	2017
-522	58,0	\N	\N	2017
-523	61,0	\N	\N	2017
-524	62,0	\N	\N	2017
-525	65,0	\N	\N	2017
-526	66,0	\N	\N	2017
-527	68,0	\N	\N	2017
-528	74,0	\N	\N	2017
-529	76,0	\N	\N	2017
-530	78,0	\N	\N	2017
-531	79,0	\N	\N	2017
-532	80,0	\N	\N	2017
-533	82,0	\N	\N	2017
-534	88,0	\N	\N	2017
-535	89,0	\N	\N	2017
-536	92,0	\N	\N	2017
-537	1,0	\N	\N	2018
-538	2,0	\N	\N	2018
-539	3,0	\N	\N	2018
-540	4,0	\N	\N	2018
-541	5,0	\N	\N	2018
-542	6,0	\N	\N	2018
-543	7,0	\N	\N	2018
-544	9,0	\N	\N	2018
-545	10,0	\N	\N	2018
-546	13,0	\N	\N	2018
-547	15,0	\N	\N	2018
-548	22,0	\N	\N	2018
-549	28,0	\N	\N	2018
-550	32,0	\N	\N	2018
-551	36,0	\N	\N	2018
-552	38,0	\N	\N	2018
-553	39,0	\N	\N	2018
-554	55,0	\N	\N	2018
-555	65,0	\N	\N	2018
-556	74,0	\N	\N	2018
-557	8,0	\N	\N	2018
-558	12,0	\N	\N	2018
-559	14,0	\N	\N	2018
-560	16,0	\N	\N	2018
-561	17,0	\N	\N	2018
-562	18,0	\N	\N	2018
-563	20,0	\N	\N	2018
-564	21,0	\N	\N	2018
-565	23,0	\N	\N	2018
-566	24,0	\N	\N	2018
-567	27,0	\N	\N	2018
-568	29,0	\N	\N	2018
-569	30,0	\N	\N	2018
-570	31,0	\N	\N	2018
-571	33,0	\N	\N	2018
-572	37,0	\N	\N	2018
-573	40,0	\N	\N	2018
-574	42,0	\N	\N	2018
-575	45,0	\N	\N	2018
-576	48,0	\N	\N	2018
-577	50,0	\N	\N	2018
-578	56,0	\N	\N	2018
-579	59,0	\N	\N	2018
-580	61,0	\N	\N	2018
-581	63,0	\N	\N	2018
-582	68,0	\N	\N	2018
-583	73,0	\N	\N	2018
-584	75,0	\N	\N	2018
-585	77,0	\N	\N	2018
-586	11,0	\N	\N	2018
-587	19,0	\N	\N	2018
-588	25,0	\N	\N	2018
-589	26,0	\N	\N	2018
-590	34,0	\N	\N	2018
-591	35,0	\N	\N	2018
-592	41,0	\N	\N	2018
-593	43,0	\N	\N	2018
-594	44,0	\N	\N	2018
-595	46,0	\N	\N	2018
-596	47,0	\N	\N	2018
-597	49,0	\N	\N	2018
-598	51,0	\N	\N	2018
-599	52,0	\N	\N	2018
-600	53,0	\N	\N	2018
-601	54,0	\N	\N	2018
-602	57,0	\N	\N	2018
-603	58,0	\N	\N	2018
-604	60,0	\N	\N	2018
-605	62,0	\N	\N	2018
-606	64,0	\N	\N	2018
-607	66,0	\N	\N	2018
-608	67,0	\N	\N	2018
-609	69,0	\N	\N	2018
-610	70,0	\N	\N	2018
-611	71,0	\N	\N	2018
-612	72,0	\N	\N	2018
-613	76,0	\N	\N	2018
+COPY public.users (id, name, role, username, year, number) FROM stdin;
+1	1,0	\N	\N	2011	1
+2	2,0	\N	\N	2011	2
+3	3,0	\N	\N	2011	3
+4	4,0	\N	\N	2011	4
+5	5,0	\N	\N	2011	5
+6	6,0	\N	\N	2011	6
+7	7,0	\N	\N	2011	7
+8	8,0	\N	\N	2011	8
+9	9,0	\N	\N	2011	9
+10	10,0	\N	\N	2011	10
+11	11,0	\N	\N	2011	11
+12	12,0	\N	\N	2011	12
+13	13,0	\N	\N	2011	13
+14	14,0	\N	\N	2011	14
+15	15,0	\N	\N	2011	15
+16	16,0	\N	\N	2011	16
+17	17,0	\N	\N	2011	17
+18	18,0	\N	\N	2011	18
+19	19,0	\N	\N	2011	19
+20	20,0	\N	\N	2011	20
+21	21,0	\N	\N	2011	21
+22	22,0	\N	\N	2011	22
+23	23,0	\N	\N	2011	23
+24	24,0	\N	\N	2011	24
+25	25,0	\N	\N	2011	25
+26	26,0	\N	\N	2011	26
+27	27,0	\N	\N	2011	27
+28	28,0	\N	\N	2011	28
+29	29,0	\N	\N	2011	29
+30	30,0	\N	\N	2011	30
+31	31,0	\N	\N	2011	31
+32	32,0	\N	\N	2011	32
+33	33,0	\N	\N	2011	33
+34	34,0	\N	\N	2011	34
+35	35,0	\N	\N	2011	35
+36	36,0	\N	\N	2011	36
+37	37,0	\N	\N	2011	37
+38	38,0	\N	\N	2011	38
+39	39,0	\N	\N	2011	39
+40	40,0	\N	\N	2011	40
+41	41,0	\N	\N	2011	41
+42	42,0	\N	\N	2011	42
+43	43,0	\N	\N	2011	43
+44	44,0	\N	\N	2011	44
+45	45,0	\N	\N	2011	45
+46	46,0	\N	\N	2011	46
+47	47,0	\N	\N	2011	47
+48	48,0	\N	\N	2011	48
+49	49,0	\N	\N	2011	49
+50	50,0	\N	\N	2011	50
+51	51,0	\N	\N	2011	51
+52	52,0	\N	\N	2011	52
+53	53,0	\N	\N	2011	53
+54	54,0	\N	\N	2011	54
+55	55,0	\N	\N	2011	55
+56	56,0	\N	\N	2011	56
+57	57,0	\N	\N	2011	57
+58	58,0	\N	\N	2011	58
+59	59,0	\N	\N	2011	59
+60	60,0	\N	\N	2011	60
+61	1,0	\N	\N	2013	61
+62	2,0	\N	\N	2013	62
+63	3,0	\N	\N	2013	63
+64	4,0	\N	\N	2013	64
+65	5,0	\N	\N	2013	65
+66	6,0	\N	\N	2013	66
+67	7,0	\N	\N	2013	67
+68	8,0	\N	\N	2013	68
+69	9,0	\N	\N	2013	69
+70	10,0	\N	\N	2013	70
+71	11,0	\N	\N	2013	71
+72	12,0	\N	\N	2013	72
+73	13,0	\N	\N	2013	73
+74	14,0	\N	\N	2013	74
+75	15,0	\N	\N	2013	75
+76	16,0	\N	\N	2013	76
+77	17,0	\N	\N	2013	77
+78	18,0	\N	\N	2013	78
+79	19,0	\N	\N	2013	79
+80	20,0	\N	\N	2013	80
+81	21,0	\N	\N	2013	81
+82	22,0	\N	\N	2013	82
+83	23,0	\N	\N	2013	83
+84	24,0	\N	\N	2013	84
+85	25,0	\N	\N	2013	85
+86	26,0	\N	\N	2013	86
+87	27,0	\N	\N	2013	87
+88	28,0	\N	\N	2013	88
+89	29,0	\N	\N	2013	89
+90	30,0	\N	\N	2013	90
+91	31,0	\N	\N	2013	91
+92	32,0	\N	\N	2013	92
+93	33,0	\N	\N	2013	93
+94	34,0	\N	\N	2013	94
+95	35,0	\N	\N	2013	95
+96	36,0	\N	\N	2013	96
+97	37,0	\N	\N	2013	97
+98	38,0	\N	\N	2013	98
+99	39,0	\N	\N	2013	99
+100	40,0	\N	\N	2013	100
+101	41,0	\N	\N	2013	101
+102	42,0	\N	\N	2013	102
+103	43,0	\N	\N	2013	103
+104	44,0	\N	\N	2013	104
+105	45,0	\N	\N	2013	105
+106	46,0	\N	\N	2013	106
+107	47,0	\N	\N	2013	107
+108	48,0	\N	\N	2013	108
+109	49,0	\N	\N	2013	109
+110	50,0	\N	\N	2013	110
+111	51,0	\N	\N	2013	111
+112	52,0	\N	\N	2013	112
+113	53,0	\N	\N	2013	113
+114	54,0	\N	\N	2013	114
+115	55,0	\N	\N	2013	115
+116	56,0	\N	\N	2013	116
+117	57,0	\N	\N	2013	117
+118	58,0	\N	\N	2013	118
+119	59,0	\N	\N	2013	119
+120	60,0	\N	\N	2013	120
+121	61,0	\N	\N	2013	121
+122	62,0	\N	\N	2013	122
+123	63,0	\N	\N	2013	123
+124	64,0	\N	\N	2013	124
+125	65,0	\N	\N	2013	125
+126	66,0	\N	\N	2013	126
+127	67,0	\N	\N	2013	127
+128	68,0	\N	\N	2013	128
+129	69,0	\N	\N	2013	129
+130	70,0	\N	\N	2013	130
+131	71,0	\N	\N	2013	131
+132	72,0	\N	\N	2013	132
+133	73,0	\N	\N	2013	133
+134	74,0	\N	\N	2013	134
+135	75,0	\N	\N	2013	135
+136	76,0	\N	\N	2013	136
+137	77,0	\N	\N	2013	137
+138	78,0	\N	\N	2013	138
+139	79,0	\N	\N	2013	139
+140	80,0	\N	\N	2013	140
+141	81,0	\N	\N	2013	141
+142	82,0	\N	\N	2013	142
+143	83,0	\N	\N	2013	143
+144	84,0	\N	\N	2013	144
+145	85,0	\N	\N	2013	145
+146	86,0	\N	\N	2013	146
+147	87,0	\N	\N	2013	147
+148	88,0	\N	\N	2013	148
+149	89,0	\N	\N	2013	149
+150	1,0	\N	\N	2014	150
+151	2,0	\N	\N	2014	151
+152	3,0	\N	\N	2014	152
+153	5,0	\N	\N	2014	153
+154	6,0	\N	\N	2014	154
+155	7,0	\N	\N	2014	155
+156	12,0	\N	\N	2014	156
+157	15,0	\N	\N	2014	157
+158	19,0	\N	\N	2014	158
+159	21,0	\N	\N	2014	159
+160	23,0	\N	\N	2014	160
+161	26,0	\N	\N	2014	161
+162	41,0	\N	\N	2014	162
+163	42,0	\N	\N	2014	163
+164	44,0	\N	\N	2014	164
+165	50,0	\N	\N	2014	165
+166	52,0	\N	\N	2014	166
+167	59,0	\N	\N	2014	167
+168	63,0	\N	\N	2014	168
+169	64,0	\N	\N	2014	169
+170	73,0	\N	\N	2014	170
+171	74,0	\N	\N	2014	171
+172	78,0	\N	\N	2014	172
+173	101,0	\N	\N	2014	173
+174	102,0	\N	\N	2014	174
+175	107,0	\N	\N	2014	175
+176	112,0	\N	\N	2014	176
+177	114,0	\N	\N	2014	177
+178	117,0	\N	\N	2014	178
+179	119,0	\N	\N	2014	179
+180	120,0	\N	\N	2014	180
+181	121,0	\N	\N	2014	181
+182	122,0	\N	\N	2014	182
+183	123,0	\N	\N	2014	183
+184	124,0	\N	\N	2014	184
+185	128,0	\N	\N	2014	185
+186	130,0	\N	\N	2014	186
+187	135,0	\N	\N	2014	187
+188	138,0	\N	\N	2014	188
+189	145,0	\N	\N	2014	189
+190	154,0	\N	\N	2014	190
+191	156,0	\N	\N	2014	191
+192	158,0	\N	\N	2014	192
+193	4,0	\N	\N	2014	193
+194	8,0	\N	\N	2014	194
+195	9,0	\N	\N	2014	195
+196	10,0	\N	\N	2014	196
+197	13,0	\N	\N	2014	197
+198	14,0	\N	\N	2014	198
+199	20,0	\N	\N	2014	199
+200	24,0	\N	\N	2014	200
+201	27,0	\N	\N	2014	201
+202	28,0	\N	\N	2014	202
+203	29,0	\N	\N	2014	203
+204	33,0	\N	\N	2014	204
+205	34,0	\N	\N	2014	205
+206	37,0	\N	\N	2014	206
+207	43,0	\N	\N	2014	207
+208	46,0	\N	\N	2014	208
+209	48,0	\N	\N	2014	209
+210	51,0	\N	\N	2014	210
+211	53,0	\N	\N	2014	211
+212	58,0	\N	\N	2014	212
+213	60,0	\N	\N	2014	213
+214	69,0	\N	\N	2014	214
+215	70,0	\N	\N	2014	215
+216	72,0	\N	\N	2014	216
+217	75,0	\N	\N	2014	217
+218	76,0	\N	\N	2014	218
+219	77,0	\N	\N	2014	219
+220	79,0	\N	\N	2014	220
+221	83,0	\N	\N	2014	221
+222	84,0	\N	\N	2014	222
+223	85,0	\N	\N	2014	223
+224	88,0	\N	\N	2014	224
+225	89,0	\N	\N	2014	225
+226	93,0	\N	\N	2014	226
+227	94,0	\N	\N	2014	227
+228	99,0	\N	\N	2014	228
+229	104,0	\N	\N	2014	229
+230	105,0	\N	\N	2014	230
+231	108,0	\N	\N	2014	231
+232	109,0	\N	\N	2014	232
+233	113,0	\N	\N	2014	233
+234	116,0	\N	\N	2014	234
+235	118,0	\N	\N	2014	235
+236	125,0	\N	\N	2014	236
+237	127,0	\N	\N	2014	237
+238	131,0	\N	\N	2014	238
+239	132,0	\N	\N	2014	239
+240	133,0	\N	\N	2014	240
+241	136,0	\N	\N	2014	241
+242	137,0	\N	\N	2014	242
+243	143,0	\N	\N	2014	243
+244	148,0	\N	\N	2014	244
+245	149,0	\N	\N	2014	245
+246	153,0	\N	\N	2014	246
+247	11,0	\N	\N	2014	247
+248	16,0	\N	\N	2014	248
+249	17,0	\N	\N	2014	249
+250	18,0	\N	\N	2014	250
+251	22,0	\N	\N	2014	251
+252	25,0	\N	\N	2014	252
+253	30,0	\N	\N	2014	253
+254	31,0	\N	\N	2014	254
+255	32,0	\N	\N	2014	255
+256	35,0	\N	\N	2014	256
+257	36,0	\N	\N	2014	257
+258	38,0	\N	\N	2014	258
+259	39,0	\N	\N	2014	259
+260	40,0	\N	\N	2014	260
+261	45,0	\N	\N	2014	261
+262	47,0	\N	\N	2014	262
+263	49,0	\N	\N	2014	263
+264	54,0	\N	\N	2014	264
+265	55,0	\N	\N	2014	265
+266	56,0	\N	\N	2014	266
+267	57,0	\N	\N	2014	267
+268	61,0	\N	\N	2014	268
+269	62,0	\N	\N	2014	269
+270	65,0	\N	\N	2014	270
+271	66,0	\N	\N	2014	271
+272	67,0	\N	\N	2014	272
+273	68,0	\N	\N	2014	273
+274	71,0	\N	\N	2014	274
+275	80,0	\N	\N	2014	275
+276	81,0	\N	\N	2014	276
+277	82,0	\N	\N	2014	277
+278	86,0	\N	\N	2014	278
+279	87,0	\N	\N	2014	279
+280	90,0	\N	\N	2014	280
+281	91,0	\N	\N	2014	281
+282	92,0	\N	\N	2014	282
+283	95,0	\N	\N	2014	283
+284	96,0	\N	\N	2014	284
+285	97,0	\N	\N	2014	285
+286	98,0	\N	\N	2014	286
+287	100,0	\N	\N	2014	287
+288	103,0	\N	\N	2014	288
+289	106,0	\N	\N	2014	289
+290	110,0	\N	\N	2014	290
+291	111,0	\N	\N	2014	291
+292	115,0	\N	\N	2014	292
+293	126,0	\N	\N	2014	293
+294	129,0	\N	\N	2014	294
+295	134,0	\N	\N	2014	295
+296	139,0	\N	\N	2014	296
+297	140,0	\N	\N	2014	297
+298	141,0	\N	\N	2014	298
+299	142,0	\N	\N	2014	299
+300	144,0	\N	\N	2014	300
+301	146,0	\N	\N	2014	301
+302	147,0	\N	\N	2014	302
+303	150,0	\N	\N	2014	303
+304	151,0	\N	\N	2014	304
+305	152,0	\N	\N	2014	305
+306	155,0	\N	\N	2014	306
+307	157,0	\N	\N	2014	307
+308	2,0	\N	\N	2015	308
+309	3,0	\N	\N	2015	309
+310	4,0	\N	\N	2015	310
+311	5,0	\N	\N	2015	311
+312	7,0	\N	\N	2015	312
+313	8,0	\N	\N	2015	313
+314	13,0	\N	\N	2015	314
+315	14,0	\N	\N	2015	315
+316	24,0	\N	\N	2015	316
+317	25,0	\N	\N	2015	317
+318	36,0	\N	\N	2015	318
+319	51,0	\N	\N	2015	319
+320	55,0	\N	\N	2015	320
+321	65,0	\N	\N	2015	321
+322	71,0	\N	\N	2015	322
+323	1,0	\N	\N	2015	323
+324	6,0	\N	\N	2015	324
+325	10,0	\N	\N	2015	325
+326	16,0	\N	\N	2015	326
+327	19,0	\N	\N	2015	327
+328	21,0	\N	\N	2015	328
+329	27,0	\N	\N	2015	329
+330	28,0	\N	\N	2015	330
+331	29,0	\N	\N	2015	331
+332	30,0	\N	\N	2015	332
+333	32,0	\N	\N	2015	333
+334	33,0	\N	\N	2015	334
+335	37,0	\N	\N	2015	335
+336	38,0	\N	\N	2015	336
+337	39,0	\N	\N	2015	337
+338	40,0	\N	\N	2015	338
+339	43,0	\N	\N	2015	339
+340	44,0	\N	\N	2015	340
+341	49,0	\N	\N	2015	341
+342	50,0	\N	\N	2015	342
+343	53,0	\N	\N	2015	343
+344	54,0	\N	\N	2015	344
+345	56,0	\N	\N	2015	345
+346	57,0	\N	\N	2015	346
+347	61,0	\N	\N	2015	347
+348	62,0	\N	\N	2015	348
+349	68,0	\N	\N	2015	349
+350	69,0	\N	\N	2015	350
+351	70,0	\N	\N	2015	351
+352	72,0	\N	\N	2015	352
+353	74,0	\N	\N	2015	353
+354	75,0	\N	\N	2015	354
+355	76,0	\N	\N	2015	355
+356	77,0	\N	\N	2015	356
+357	9,0	\N	\N	2015	357
+358	11,0	\N	\N	2015	358
+359	12,0	\N	\N	2015	359
+360	15,0	\N	\N	2015	360
+361	17,0	\N	\N	2015	361
+362	18,0	\N	\N	2015	362
+363	20,0	\N	\N	2015	363
+364	22,0	\N	\N	2015	364
+365	23,0	\N	\N	2015	365
+366	26,0	\N	\N	2015	366
+367	31,0	\N	\N	2015	367
+368	34,0	\N	\N	2015	368
+369	35,0	\N	\N	2015	369
+370	41,0	\N	\N	2015	370
+371	42,0	\N	\N	2015	371
+372	45,0	\N	\N	2015	372
+373	46,0	\N	\N	2015	373
+374	47,0	\N	\N	2015	374
+375	48,0	\N	\N	2015	375
+376	52,0	\N	\N	2015	376
+377	58,0	\N	\N	2015	377
+378	59,0	\N	\N	2015	378
+379	60,0	\N	\N	2015	379
+380	63,0	\N	\N	2015	380
+381	64,0	\N	\N	2015	381
+382	66,0	\N	\N	2015	382
+383	67,0	\N	\N	2015	383
+384	73,0	\N	\N	2015	384
+385	1,0	\N	\N	2016	385
+386	2,0	\N	\N	2016	386
+387	3,0	\N	\N	2016	387
+388	4,0	\N	\N	2016	388
+389	5,0	\N	\N	2016	389
+390	6,0	\N	\N	2016	390
+391	7,0	\N	\N	2016	391
+392	8,0	\N	\N	2016	392
+393	11,0	\N	\N	2016	393
+394	15,0	\N	\N	2016	394
+395	21,0	\N	\N	2016	395
+396	28,0	\N	\N	2016	396
+397	35,0	\N	\N	2016	397
+398	46,0	\N	\N	2016	398
+399	59,0	\N	\N	2016	399
+400	14,0	\N	\N	2016	400
+401	16,0	\N	\N	2016	401
+402	18,0	\N	\N	2016	402
+403	20,0	\N	\N	2016	403
+404	23,0	\N	\N	2016	404
+405	24,0	\N	\N	2016	405
+406	26,0	\N	\N	2016	406
+407	29,0	\N	\N	2016	407
+408	32,0	\N	\N	2016	408
+409	33,0	\N	\N	2016	409
+410	36,0	\N	\N	2016	410
+411	37,0	\N	\N	2016	411
+412	44,0	\N	\N	2016	412
+413	45,0	\N	\N	2016	413
+414	49,0	\N	\N	2016	414
+415	50,0	\N	\N	2016	415
+416	51,0	\N	\N	2016	416
+417	53,0	\N	\N	2016	417
+418	55,0	\N	\N	2016	418
+419	56,0	\N	\N	2016	419
+420	9,0	\N	\N	2016	420
+421	10,0	\N	\N	2016	421
+422	12,0	\N	\N	2016	422
+423	13,0	\N	\N	2016	423
+424	17,0	\N	\N	2016	424
+425	19,0	\N	\N	2016	425
+426	22,0	\N	\N	2016	426
+427	25,0	\N	\N	2016	427
+428	27,0	\N	\N	2016	428
+429	30,0	\N	\N	2016	429
+430	31,0	\N	\N	2016	430
+431	34,0	\N	\N	2016	431
+432	38,0	\N	\N	2016	432
+433	39,0	\N	\N	2016	433
+434	40,0	\N	\N	2016	434
+435	41,0	\N	\N	2016	435
+436	42,0	\N	\N	2016	436
+437	43,0	\N	\N	2016	437
+438	47,0	\N	\N	2016	438
+439	48,0	\N	\N	2016	439
+440	52,0	\N	\N	2016	440
+441	54,0	\N	\N	2016	441
+442	57,0	\N	\N	2016	442
+443	58,0	\N	\N	2016	443
+444	60,0	\N	\N	2016	444
+445	1,0	\N	\N	2017	445
+446	3,0	\N	\N	2017	446
+447	6,0	\N	\N	2017	447
+448	8,0	\N	\N	2017	448
+449	9,0	\N	\N	2017	449
+450	10,0	\N	\N	2017	450
+451	11,0	\N	\N	2017	451
+452	14,0	\N	\N	2017	452
+453	16,0	\N	\N	2017	453
+454	17,0	\N	\N	2017	454
+455	18,0	\N	\N	2017	455
+456	23,0	\N	\N	2017	456
+457	24,0	\N	\N	2017	457
+458	25,0	\N	\N	2017	458
+459	32,0	\N	\N	2017	459
+460	36,0	\N	\N	2017	460
+461	54,0	\N	\N	2017	461
+462	60,0	\N	\N	2017	462
+463	75,0	\N	\N	2017	463
+464	77,0	\N	\N	2017	464
+465	81,0	\N	\N	2017	465
+466	83,0	\N	\N	2017	466
+467	86,0	\N	\N	2017	467
+468	90,0	\N	\N	2017	468
+469	5,0	\N	\N	2017	469
+470	13,0	\N	\N	2017	470
+471	15,0	\N	\N	2017	471
+472	20,0	\N	\N	2017	472
+473	21,0	\N	\N	2017	473
+474	22,0	\N	\N	2017	474
+475	27,0	\N	\N	2017	475
+476	28,0	\N	\N	2017	476
+477	29,0	\N	\N	2017	477
+478	31,0	\N	\N	2017	478
+479	37,0	\N	\N	2017	479
+480	41,0	\N	\N	2017	480
+481	43,0	\N	\N	2017	481
+482	45,0	\N	\N	2017	482
+483	47,0	\N	\N	2017	483
+484	48,0	\N	\N	2017	484
+485	53,0	\N	\N	2017	485
+486	55,0	\N	\N	2017	486
+487	56,0	\N	\N	2017	487
+488	59,0	\N	\N	2017	488
+489	63,0	\N	\N	2017	489
+490	64,0	\N	\N	2017	490
+491	67,0	\N	\N	2017	491
+492	69,0	\N	\N	2017	492
+493	70,0	\N	\N	2017	493
+494	71,0	\N	\N	2017	494
+495	72,0	\N	\N	2017	495
+496	73,0	\N	\N	2017	496
+497	84,0	\N	\N	2017	497
+498	85,0	\N	\N	2017	498
+499	87,0	\N	\N	2017	499
+500	91,0	\N	\N	2017	500
+501	2,0	\N	\N	2017	501
+502	4,0	\N	\N	2017	502
+503	7,0	\N	\N	2017	503
+504	12,0	\N	\N	2017	504
+505	19,0	\N	\N	2017	505
+506	26,0	\N	\N	2017	506
+507	30,0	\N	\N	2017	507
+508	33,0	\N	\N	2017	508
+509	34,0	\N	\N	2017	509
+510	35,0	\N	\N	2017	510
+511	38,0	\N	\N	2017	511
+512	39,0	\N	\N	2017	512
+513	40,0	\N	\N	2017	513
+514	42,0	\N	\N	2017	514
+515	44,0	\N	\N	2017	515
+516	46,0	\N	\N	2017	516
+517	49,0	\N	\N	2017	517
+518	50,0	\N	\N	2017	518
+519	51,0	\N	\N	2017	519
+520	52,0	\N	\N	2017	520
+521	57,0	\N	\N	2017	521
+522	58,0	\N	\N	2017	522
+523	61,0	\N	\N	2017	523
+524	62,0	\N	\N	2017	524
+525	65,0	\N	\N	2017	525
+526	66,0	\N	\N	2017	526
+527	68,0	\N	\N	2017	527
+528	74,0	\N	\N	2017	528
+529	76,0	\N	\N	2017	529
+530	78,0	\N	\N	2017	530
+531	79,0	\N	\N	2017	531
+532	80,0	\N	\N	2017	532
+533	82,0	\N	\N	2017	533
+534	88,0	\N	\N	2017	534
+535	89,0	\N	\N	2017	535
+536	92,0	\N	\N	2017	536
+537	1,0	\N	\N	2018	537
+538	2,0	\N	\N	2018	538
+539	3,0	\N	\N	2018	539
+540	4,0	\N	\N	2018	540
+541	5,0	\N	\N	2018	541
+542	6,0	\N	\N	2018	542
+543	7,0	\N	\N	2018	543
+544	9,0	\N	\N	2018	544
+545	10,0	\N	\N	2018	545
+546	13,0	\N	\N	2018	546
+547	15,0	\N	\N	2018	547
+548	22,0	\N	\N	2018	548
+549	28,0	\N	\N	2018	549
+550	32,0	\N	\N	2018	550
+551	36,0	\N	\N	2018	551
+552	38,0	\N	\N	2018	552
+553	39,0	\N	\N	2018	553
+554	55,0	\N	\N	2018	554
+555	65,0	\N	\N	2018	555
+556	74,0	\N	\N	2018	556
+557	8,0	\N	\N	2018	557
+558	12,0	\N	\N	2018	558
+559	14,0	\N	\N	2018	559
+560	16,0	\N	\N	2018	560
+561	17,0	\N	\N	2018	561
+562	18,0	\N	\N	2018	562
+563	20,0	\N	\N	2018	563
+564	21,0	\N	\N	2018	564
+565	23,0	\N	\N	2018	565
+566	24,0	\N	\N	2018	566
+567	27,0	\N	\N	2018	567
+568	29,0	\N	\N	2018	568
+569	30,0	\N	\N	2018	569
+570	31,0	\N	\N	2018	570
+571	33,0	\N	\N	2018	571
+572	37,0	\N	\N	2018	572
+573	40,0	\N	\N	2018	573
+574	42,0	\N	\N	2018	574
+575	45,0	\N	\N	2018	575
+576	48,0	\N	\N	2018	576
+577	50,0	\N	\N	2018	577
+578	56,0	\N	\N	2018	578
+579	59,0	\N	\N	2018	579
+580	61,0	\N	\N	2018	580
+581	63,0	\N	\N	2018	581
+582	68,0	\N	\N	2018	582
+583	73,0	\N	\N	2018	583
+584	75,0	\N	\N	2018	584
+585	77,0	\N	\N	2018	585
+586	11,0	\N	\N	2018	586
+587	19,0	\N	\N	2018	587
+588	25,0	\N	\N	2018	588
+589	26,0	\N	\N	2018	589
+590	34,0	\N	\N	2018	590
+591	35,0	\N	\N	2018	591
+592	41,0	\N	\N	2018	592
+593	43,0	\N	\N	2018	593
+594	44,0	\N	\N	2018	594
+595	46,0	\N	\N	2018	595
+596	47,0	\N	\N	2018	596
+597	49,0	\N	\N	2018	597
+598	51,0	\N	\N	2018	598
+599	52,0	\N	\N	2018	599
+600	53,0	\N	\N	2018	600
+601	54,0	\N	\N	2018	601
+602	57,0	\N	\N	2018	602
+603	58,0	\N	\N	2018	603
+604	60,0	\N	\N	2018	604
+605	62,0	\N	\N	2018	605
+606	64,0	\N	\N	2018	606
+607	66,0	\N	\N	2018	607
+608	67,0	\N	\N	2018	608
+609	69,0	\N	\N	2018	609
+610	70,0	\N	\N	2018	610
+611	71,0	\N	\N	2018	611
+612	72,0	\N	\N	2018	612
+613	76,0	\N	\N	2018	613
 \.
 
 
@@ -29231,6 +29232,20 @@ ALTER TABLE ONLY public.topics_questions
 
 ALTER TABLE ONLY public.users
     ADD CONSTRAINT users_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: question_indx_0; Type: INDEX; Schema: public; Owner: pedro
+--
+
+CREATE INDEX question_indx_0 ON public.questions USING btree (number);
+
+
+--
+-- Name: quizzes_indx_0; Type: INDEX; Schema: public; Owner: pedro
+--
+
+CREATE INDEX quizzes_indx_0 ON public.quizzes USING btree (number);
 
 
 --

@@ -223,17 +223,12 @@ export default class QuestionsView extends Vue {
   async saveTopics(questionId: number) {
     let question = this.questions.find(question => question.id === questionId);
     if (question) {
-      await RemoteServices.updateQuestionTopics(questionId, question.topics);
-      /*.catch((error) => {
-        if (error.response) {
+        try {
+          await RemoteServices.updateQuestionTopics(questionId, question.topics);
+        } catch (error) {
           confirm(error.response.data.message);
           console.log(error.response.data.message);
-        } else if (error.request) {
-          confirm("No response received")
-        } else {
-          confirm("Error")
         }
-      });*/
       }
   }
 

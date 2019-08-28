@@ -63,7 +63,7 @@ export default class RemoteServices {
   }
 
   static createTopic(topic: string) {
-    return axios.post(
+    return httpClient.post(
       "/topics/",
       topic,
       {headers: {"Content-Type": "text/plain"}}
