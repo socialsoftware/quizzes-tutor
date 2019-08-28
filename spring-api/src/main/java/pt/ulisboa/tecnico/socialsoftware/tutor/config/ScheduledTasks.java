@@ -16,7 +16,7 @@ public class ScheduledTasks {
 	@Autowired
 	ImpExpService service;
 
-	@Scheduled(cron = "0 0 10,18 * * *")
+	@Scheduled(cron = "0 0 1,13 * * *")
 	public void exportAll() throws IOException {
 		service.exportAll();
 	}

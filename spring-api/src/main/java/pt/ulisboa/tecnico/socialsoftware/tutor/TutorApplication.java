@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
 
@@ -18,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
 @EnableTransactionManagement
 @EnableJpaAuditing
 @SpringBootApplication
+@EnableScheduling
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
 //    @Autowired
 //    ImpExpService impExpService;
