@@ -77,7 +77,7 @@ Create user to access db and load dump
 ```
 psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
-psql tutordb < dump/tutordb.bak
+psql tutordb < postgres/dump.bak
 ```
 
 ## Run spring-boot API on http://localhost:8080

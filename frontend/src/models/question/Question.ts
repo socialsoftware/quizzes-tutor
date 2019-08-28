@@ -7,7 +7,7 @@ export interface QuestionDto {
   active: boolean;
   numberOfAnswers: number;
   difficulty: number;
-  content: string | null;
+  content: string;
   options: Option[];
   image: Image | null;
   topics: string[];
@@ -19,7 +19,7 @@ export class Question implements QuestionDto {
   active: boolean;
   numberOfAnswers: number;
   difficulty: number;
-  content!: string | null;
+  content: string;
   options!: Option[];
   image: Image | null;
   topics: string[] = [];

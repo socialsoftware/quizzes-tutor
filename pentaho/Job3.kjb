@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <job>
-  <name>Job</name>
+  <name>Job3</name>
   <description/>
   <extended_description/>
   <job_version/>
+  <job_status>0</job_status>
   <directory>/</directory>
   <created_user>-</created_user>
   <created_date>2019/06/05 15:22:36.989</created_date>
@@ -309,203 +310,13 @@
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Extract Students</name>
+      <name>Delete Merged 2</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
       <specification_method>filename</specification_method>
       <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/answers/extract_students.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>160</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Extract Keys</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/keys/extract-correct-options.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>272</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Merge Duplicates</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>720</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Merge Duplicates 2</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates2.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>864</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Extract Quiz Answer</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/answers/extract-quiz-answers.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>400</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
-    <entry>
-      <name>Extract Question Answer</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/answers/extract-question-answers.ktr</filename>
+      <filename>/home/pedro/as-tutor/pentaho/merge/DeleteMerged.ktr</filename>
       <transname/>
       <arg_from_previous>N</arg_from_previous>
       <params_from_previous>N</params_from_previous>
@@ -536,108 +347,16 @@
       <yloc>64</yloc>
       <attributes_kjc/>
     </entry>
-    <entry>
-      <name>Merge Duplicates 3</name>
-      <description/>
-      <type>TRANS</type>
-      <attributes/>
-      <specification_method>filename</specification_method>
-      <trans_object_id/>
-      <filename>/home/pedro/as-tutor/pentaho/merge/MergeDuplicates.ktr</filename>
-      <transname/>
-      <arg_from_previous>N</arg_from_previous>
-      <params_from_previous>N</params_from_previous>
-      <exec_per_row>N</exec_per_row>
-      <clear_rows>N</clear_rows>
-      <clear_files>N</clear_files>
-      <set_logfile>N</set_logfile>
-      <logfile/>
-      <logext/>
-      <add_date>N</add_date>
-      <add_time>N</add_time>
-      <loglevel>Basic</loglevel>
-      <cluster>N</cluster>
-      <slave_server_name/>
-      <set_append_logfile>N</set_append_logfile>
-      <wait_until_finished>Y</wait_until_finished>
-      <follow_abort_remote>N</follow_abort_remote>
-      <create_parent_folder>N</create_parent_folder>
-      <logging_remote_work>N</logging_remote_work>
-      <run_configuration>Pentaho local</run_configuration>
-      <parameters>
-        <pass_all_parameters>Y</pass_all_parameters>
-      </parameters>
-      <parallel>N</parallel>
-      <draw>Y</draw>
-      <nr>0</nr>
-      <xloc>1024</xloc>
-      <yloc>64</yloc>
-      <attributes_kjc/>
-    </entry>
   </entries>
   <hops>
     <hop>
       <from>Start</from>
-      <to>Extract Students</to>
+      <to>Delete Merged 2</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
       <evaluation>Y</evaluation>
       <unconditional>Y</unconditional>
-    </hop>
-    <hop>
-      <from>Extract Keys</from>
-      <to>Extract Quiz Answer</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Extract Quiz Answer</from>
-      <to>Extract Question Answer</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Extract Students</from>
-      <to>Extract Keys</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Extract Question Answer</from>
-      <to>Merge Duplicates</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Merge Duplicates</from>
-      <to>Merge Duplicates 2</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
-    </hop>
-    <hop>
-      <from>Merge Duplicates 2</from>
-      <to>Merge Duplicates 3</to>
-      <from_nr>0</from_nr>
-      <to_nr>0</to_nr>
-      <enabled>Y</enabled>
-      <evaluation>Y</evaluation>
-      <unconditional>N</unconditional>
     </hop>
   </hops>
   <notepads>

@@ -431,7 +431,7 @@
     <created_date>2019/07/26 16:19:20.034</created_date>
     <modified_user>-</modified_user>
     <modified_date>2019/07/26 16:19:20.034</modified_date>
-    <key_for_session_key/>
+    <key_for_session_key>H4sIAAAAAAAAAAMAAAAAAAAAAAA=</key_for_session_key>
     <is_key_private>N</is_key_private>
   </info>
   <notepads>
@@ -543,7 +543,77 @@
       <to>Stream lookup 2</to>
       <enabled>Y</enabled>
     </hop>
+    <hop>
+      <from>Quiz_questions</from>
+      <to>Update</to>
+      <enabled>Y</enabled>
+    </hop>
   </order>
+  <step>
+    <name>Insert / update</name>
+    <type>InsertUpdate</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Tutor</connection>
+    <commit>100</commit>
+    <update_bypassed>N</update_bypassed>
+    <lookup>
+      <schema/>
+      <table>question_answers</table>
+      <key>
+        <name>quiz_question_id</name>
+        <field>quiz_question_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>option_id</name>
+        <field>option_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <key>
+        <name>quiz_answer_id</name>
+        <field>quiz_answer_id</field>
+        <condition>=</condition>
+        <name2/>
+      </key>
+      <value>
+        <name>quiz_question_id</name>
+        <rename>quiz_question_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>option_id</name>
+        <rename>option_id</rename>
+        <update>Y</update>
+      </value>
+      <value>
+        <name>quiz_answer_id</name>
+        <rename>quiz_answer_id</rename>
+        <update>Y</update>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>992</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
   <step>
     <name>Microsoft Excel input</name>
     <type>ExcelInput</type>
@@ -571,7 +641,7 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/answers/data/answers.xls</name>
+      <name>/home/pedro/as-tutor/pentaho/answers/data/processed_answers.xls</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -679,71 +749,6 @@
     </GUI>
   </step>
   <step>
-    <name>Insert / update</name>
-    <type>InsertUpdate</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <connection>Tutor</connection>
-    <commit>100</commit>
-    <update_bypassed>N</update_bypassed>
-    <lookup>
-      <schema/>
-      <table>question_answers</table>
-      <key>
-        <name>quiz_question_id</name>
-        <field>quiz_question_id</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>option_id</name>
-        <field>option_id</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>quiz_answer_id</name>
-        <field>quiz_answer_id</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <value>
-        <name>quiz_question_id</name>
-        <rename>quiz_question_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>option_id</name>
-        <rename>option_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>quiz_answer_id</name>
-        <rename>quiz_answer_id</rename>
-        <update>Y</update>
-      </value>
-    </lookup>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>992</xloc>
-      <yloc>272</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Quiz_answers</name>
     <type>TableInput</type>
     <description/>
@@ -787,7 +792,7 @@ FROM quiz_answers
     <name>Quiz_questions</name>
     <type>TableInput</type>
     <description/>
-    <distribute>Y</distribute>
+    <distribute>N</distribute>
     <custom_distribution/>
     <copies>1</copies>
     <partitioning>
@@ -817,6 +822,134 @@ FROM quiz_questions
     </remotesteps>
     <GUI>
       <xloc>192</xloc>
+      <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>quiz_id</name>
+      </field>
+      <field>
+        <name>question_id</name>
+      </field>
+      <field>
+        <name>option_id</name>
+      </field>
+      <field>
+        <name>quiz_answer_id</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>544</xloc>
+      <yloc>144</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Select values 2</name>
+    <type>SelectValues</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>quiz_question_id</name>
+      </field>
+      <field>
+        <name>option_id</name>
+      </field>
+      <field>
+        <name>quiz_answer_id</name>
+      </field>
+      <select_unspecified>N</select_unspecified>
+      <meta>
+        <name>option_id</name>
+        <rename>option_id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>quiz_answer_id</name>
+        <rename>quiz_answer_id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+      <meta>
+        <name>quiz_question_id</name>
+        <rename>quiz_question_id</rename>
+        <type>Integer</type>
+        <length>-2</length>
+        <precision>-2</precision>
+        <conversion_mask/>
+        <date_format_lenient>false</date_format_lenient>
+        <date_format_locale/>
+        <date_format_timezone/>
+        <lenient_string_to_number>false</lenient_string_to_number>
+        <encoding/>
+        <decimal_symbol/>
+        <grouping_symbol/>
+        <currency_symbol/>
+        <storage_type/>
+      </meta>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>880</xloc>
       <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
@@ -972,50 +1105,6 @@ FROM quiz_questions
     </GUI>
   </step>
   <step>
-    <name>Select values</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>quiz_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>question_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>option_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>quiz_answer_id</name>
-        <rename/>
-      </field>
-      <select_unspecified>N</select_unspecified>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>544</xloc>
-      <yloc>144</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
     <name>Sort rows 4</name>
     <type>SortRows</type>
     <description/>
@@ -1062,97 +1151,6 @@ FROM quiz_questions
     <GUI>
       <xloc>656</xloc>
       <yloc>144</yloc>
-      <draw>Y</draw>
-    </GUI>
-  </step>
-  <step>
-    <name>Select values 2</name>
-    <type>SelectValues</type>
-    <description/>
-    <distribute>Y</distribute>
-    <custom_distribution/>
-    <copies>1</copies>
-    <partitioning>
-      <method>none</method>
-      <schema_name/>
-    </partitioning>
-    <fields>
-      <field>
-        <name>quiz_question_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>option_id</name>
-        <rename/>
-      </field>
-      <field>
-        <name>quiz_answer_id</name>
-        <rename/>
-      </field>
-      <select_unspecified>N</select_unspecified>
-      <meta>
-        <name>option_id</name>
-        <rename>option_id</rename>
-        <type>Integer</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>quiz_answer_id</name>
-        <rename>quiz_answer_id</rename>
-        <type>Integer</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-      <meta>
-        <name>quiz_question_id</name>
-        <rename>quiz_question_id</rename>
-        <type>Integer</type>
-        <length>-2</length>
-        <precision>-2</precision>
-        <conversion_mask/>
-        <date_format_lenient>false</date_format_lenient>
-        <date_format_locale/>
-        <date_format_timezone/>
-        <lenient_string_to_number>false</lenient_string_to_number>
-        <encoding/>
-        <decimal_symbol/>
-        <grouping_symbol/>
-        <currency_symbol/>
-        <storage_type/>
-      </meta>
-    </fields>
-    <attributes/>
-    <cluster_schema/>
-    <remotesteps>
-      <input>
-      </input>
-      <output>
-      </output>
-    </remotesteps>
-    <GUI>
-      <xloc>880</xloc>
-      <yloc>272</yloc>
       <draw>Y</draw>
     </GUI>
   </step>
@@ -1245,6 +1243,51 @@ FROM quiz_questions
     <GUI>
       <xloc>752</xloc>
       <yloc>272</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Update</name>
+    <type>Update</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <connection>Tutor</connection>
+    <skip_lookup>N</skip_lookup>
+    <commit>100</commit>
+    <use_batch>N</use_batch>
+    <error_ignored>N</error_ignored>
+    <ignore_flag_field/>
+    <lookup>
+      <schema/>
+      <table>questions</table>
+      <key>
+        <name>question_id_2</name>
+        <field>id</field>
+        <condition/>
+        <name2/>
+      </key>
+      <value>
+        <name>number</name>
+        <rename>question_id_2</rename>
+      </value>
+    </lookup>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>304</xloc>
+      <yloc>416</yloc>
       <draw>Y</draw>
     </GUI>
   </step>

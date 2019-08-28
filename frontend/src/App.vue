@@ -25,9 +25,10 @@ export default class HomeView extends Vue {
     });
   }
 
-  created() {
+  // noinspection JSUnusedGlobalSymbols
+    created() {
     axios.interceptors.response.use(undefined, err => {
-      return new Promise((resolve, reject) => {
+      return new Promise(() => {
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
           this.$store.dispatch("logout");
         }
@@ -47,6 +48,8 @@ export default class HomeView extends Vue {
   color: #2c3e50;
   height: 100vh;
 }
+
+/*noinspection CssUnusedSymbol*/
 .application--wrap {
   min-height: initial !important;
 }

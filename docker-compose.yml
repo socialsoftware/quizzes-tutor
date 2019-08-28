@@ -1,0 +1,41 @@
+version: '3.3'
+
+networks:
+  app_network:
+
+services:
+  postgres:
+    build: ./postgres/
+    image: stramer1/tutor-postgres
+    network_mode: bridge
+    container_name: postgres
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+
+  spring:
+    build: ./spring-api/
+    image: stramer1/tutor-spring-api
+    network_mode: bridge
+    container_name: spring
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    links:
+      - postgres
+
+  frontend:
+    build: ./frontend/
+    image: stramer1/tutor-frontend
+    networks:
+      app_network:
+        aliases:
+          - tolocalhost.com
+    container_name: frontend
+    ports:
+      - 8081:80
+    restart: unless-stopped
+    links:
+      - spring

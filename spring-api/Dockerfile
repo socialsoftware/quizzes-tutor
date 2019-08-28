@@ -1,8 +1,15 @@
-FROM openjdk:11-jre-slim
+# http://whitfin.io/speeding-up-maven-docker-builds/
+
+FROM maven:3-jdk-11
+COPY ./pom.xml ./pom.xml
+RUN mvn dependency:go-offline -B
+COPY ./src ./src
+
+
+# Skip tests
+RUN mvn -Dmaven.test.skip=true package
 EXPOSE 8080
-VOLUME /tmp
-ARG DEPENDENCY=target/dependency
-COPY ${DEPENDENCY}/BOOT-INF/lib /app/lib
-COPY ${DEPENDENCY}/META-INF /app/META-INF
-COPY ${DEPENDENCY}/BOOT-INF/classes /app
-ENTRYPOINT ["java","-cp","app:app/lib/*","com.example.tutor.TutorApplication"]
+
+# Set to production mode
+CMD ["java","-Djava.security.egd=file:/dev/./urandom","-Dspring.profiles.active=prod", "-jar", "./target/tutor-0.0.1-SNAPSHOT.jar"]
+

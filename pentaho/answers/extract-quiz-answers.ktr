@@ -489,6 +489,11 @@
   <order>
     <hop>
       <from>Microsoft Excel input</from>
+      <to>Add constants</to>
+      <enabled>Y</enabled>
+    </hop>
+    <hop>
+      <from>Add constants</from>
       <to>Insert / update</to>
       <enabled>Y</enabled>
     </hop>
@@ -565,6 +570,11 @@
         <rename>date</rename>
         <update>Y</update>
       </value>
+      <value>
+        <name>completed</name>
+        <rename>completed</rename>
+        <update>Y</update>
+      </value>
     </lookup>
     <attributes/>
     <cluster_schema/>
@@ -575,7 +585,7 @@
       </output>
     </remotesteps>
     <GUI>
-      <xloc>448</xloc>
+      <xloc>544</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>
@@ -607,7 +617,7 @@
     <accept_field/>
     <accept_stepname/>
     <file>
-      <name>/home/pedro/as-tutor/pentaho/answers/data/answers.xls</name>
+      <name>/home/pedro/as-tutor/pentaho/answers/data/processed_answers.xls</name>
       <filemask/>
       <exclude_filemask/>
       <file_required>N</file_required>
@@ -710,6 +720,45 @@
     </remotesteps>
     <GUI>
       <xloc>272</xloc>
+      <yloc>192</yloc>
+      <draw>Y</draw>
+    </GUI>
+  </step>
+  <step>
+    <name>Add constants</name>
+    <type>Constant</type>
+    <description/>
+    <distribute>Y</distribute>
+    <custom_distribution/>
+    <copies>1</copies>
+    <partitioning>
+      <method>none</method>
+      <schema_name/>
+    </partitioning>
+    <fields>
+      <field>
+        <name>completed</name>
+        <type>Boolean</type>
+        <format/>
+        <currency/>
+        <decimal/>
+        <group/>
+        <nullif>true</nullif>
+        <length>-1</length>
+        <precision>-1</precision>
+        <set_empty_string>N</set_empty_string>
+      </field>
+    </fields>
+    <attributes/>
+    <cluster_schema/>
+    <remotesteps>
+      <input>
+      </input>
+      <output>
+      </output>
+    </remotesteps>
+    <GUI>
+      <xloc>416</xloc>
       <yloc>192</yloc>
       <draw>Y</draw>
     </GUI>

@@ -1,32 +1,43 @@
 import axios from "axios";
 import { Question } from "@/models/question/Question"
 
+const httpClient = axios.create();
+httpClient.defaults.timeout = 5000;
+httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
+
 export default class RemoteServices {
-  static getQuestions() {
-    return axios.get(process.env.VUE_APP_ROOT_API + "/questions");
+
+  static getQuestions() : Promise<Question[]> {
+    return httpClient.get( "/questions")
+      .then(response => {
+        return response.data as Question[];
+      })
+      .catch(error => {
+        return error;
+      });
   }
 
   static createQuestion(question: Question) {
-    return axios.post(process.env.VUE_APP_ROOT_API + "/questions/", question);
+    return httpClient.post("/questions/", question);
   }
 
   static updateQuestion(questionId: number, question: Question) {
-    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId, question);
+    return httpClient.put("/questions/" + questionId, question);
   }
 
   static deleteQuestion(questionId: number) {
-    return axios.delete(process.env.VUE_APP_ROOT_API + "/questions/" + questionId);
+    return httpClient.delete("/questions/" + questionId);
   }
 
   static questionSwitchActive(questionId: number) {
-    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/switchActive");
+    return httpClient.put("/questions/" + questionId + "/switchActive");
   }
 
-  static uploadImage(file: File, questionId: number) {
+  static uploadImage(file: File, questionId: number) : Promise<string>{
     let formData = new FormData();
     formData.append('file', file);
-    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/image", 
-      formData, 
+    return httpClient.put("/questions/" + questionId + "/image",
+      formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data'
@@ -36,31 +47,39 @@ export default class RemoteServices {
   }
 
   static updateQuestionTopics(questionId: number, topics: string[]) {
-    return axios.put(process.env.VUE_APP_ROOT_API + "/questions/" + questionId + "/topics", topics)
+    return httpClient.put("/questions/" + questionId + "/topics", topics)
   }
 
-  static getTopics() {
-    return axios.get(process.env.VUE_APP_ROOT_API + "/topics");
+  static getTopics() : Promise<string[]>{
+    // @ts-ignore
+    return httpClient.get("/topics")
+        .then(response => {
+          return response.data as string[];
+        })
+        .catch(error => {
+          if (error.code === 'ECONNABORTED')
+            throw Error('Timeout: Can not connect to server');
+        })
   }
-  
+
   static createTopic(topic: string) {
     return axios.post(
-      process.env.VUE_APP_ROOT_API + "/topics/",
+      "/topics/",
       topic,
       {headers: {"Content-Type": "text/plain"}}
     );
   }
 
   static updateTopic(topic: string, newName: string) {
-    return axios.put(
-      process.env.VUE_APP_ROOT_API + "/topics/" + topic,
+    return httpClient.put(
+      "/topics/" + topic,
       newName,
       {headers: {"Content-Type": "text/plain"}}
     );
   }
 
   static deleteTopic(topic: string) {
-    return axios.delete(process.env.VUE_APP_ROOT_API + "/topics/" + topic);
+    return httpClient.delete("/topics/" + topic);
   }
-
 }
+

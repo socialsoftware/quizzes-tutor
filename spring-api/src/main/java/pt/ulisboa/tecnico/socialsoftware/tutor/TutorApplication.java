@@ -11,7 +11,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
 
-@PropertySource({ "classpath:application.properties", "classpath:specific.properties", "classpath:database.properties"})
+
+@PropertySource({ "classpath:application.properties" })
 @EnableJpaRepositories
 @EnableTransactionManagement
 @EnableJpaAuditing

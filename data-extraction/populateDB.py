@@ -7,6 +7,63 @@ DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
 
+patterns = [ ("\\\\emph\{([\s\S]*?)\}", "*\\1*")]
+patterns += [("\\\\textit\{([\s\S]*?)\}", "*\\1*")]
+patterns += [("\\\\textbf\{([\s\S]*?)\}", "**\\1**")]
+patterns += [("\\\\textsc\{([\s\S]*?)\}", "\\1")]
+
+patterns += [("`", "'")]
+patterns += [("\\\\texttt\{([\s\S]*?)\}", "`\\1`")]
+
+patterns += [("<", "&lt")]
+patterns += [(">", "&gt")]
+
+patterns += [("\\\\gp\{\}", "Graphite")]
+patterns += [("\\\\mw\{\}", "MediaWiki")]
+patterns += [("\\\\ch\{\}", "Chrome")]
+patterns += [("\\\\gm\{\}", "GNU Mailman")]
+patterns += [("\\\\ghc\{\}", "Glasgow Haskell Compiler")]
+
+patterns += [("\\\\_", "_")]
+patterns += [("\\\\%", "%")]
+patterns += [("\\\\\*", "\\*")]
+
+patterns += [("\\n", "")]
+patterns += [("[ ]+", " ")]
+patterns += [("[ ]*\\t", "")]
+patterns += [("[ ]*newline[ ]*", "  \n")]
+
+patterns += [("[ ]*\\\\item([\s\S]*?)\\\\end\{itemize\}", "  \n- \\1\\\\end{itemize}")]
+patterns += [("[ ]*\\\\item([\s\S]*?)\\\\end\{itemize\}", "  \n- \\1\\\\end{itemize}")]
+patterns += [("[ ]*\\\\item([\s\S]*?)\\\\end\{itemize\}", "  \n- \\1\\\\end{itemize}")]
+patterns += [("[ ]*\\\\item([\s\S]*?)\\\\end\{itemize\}", "  \n- \\1\\\\end{itemize}")]
+patterns += [("[ ]*\\\\item([\s\S]*?)\\\\end\{itemize\}", "  \n- \\1\\\\end{itemize}")]
+
+patterns += [("[ ]*\\\\end{itemize}[ ]*", "  \n")]
+patterns += [("[ ]*\\\\begin{itemize}", "")]
+
+patterns += [("\\\\begin\{center\}[\s]*\\\\includegraphics\\[.*]{.*}[\s]*\\\\end{center}", "  \n![image][image]  \n")]
+patterns += [("\\\\centering\\\\includegraphics\\[.*\\]{.*}", "  \n![image][image]  \n")]
+
+
+patterns += [("[ ]*\\\\begin\{quote\}[ ]*([\s\S]*?)[ ]*\\\\end\{quote\}[ ]*", "  \n>\"\\1\"  \n  \n")]
+patterns += [(" \\\\begin\{flushleft\}", "")]
+patterns += [(" \\\\end\{flushleft\}", "")]
+
+patterns += [(" \\\\", "")]
+patterns += [("\\\\ ", "")]
+
+
+def removeLatex(content):
+    # a = content
+    for pattern in patterns:
+        content = re.sub(pattern[0], pattern[1], content, flags = re.M)
+    # if ("\\newline" in a):
+    #     print(repr(a))
+    #     print(repr(content))
+    #     print("end\n\nbegin")
+    return content
+
 # get tex files list
 def getTexFiles():
     result = glob.glob(dataPath, recursive=True)
@@ -131,10 +188,6 @@ def extractQuestionId(questionTex):
 
 def extractContent(questionTex):
     result = ''
-
-    # no idea why this pattern is not working
-    # \\newcommand{\\q([^\{]*?)\}\{[\s]*?\\begin\{ClosedQuestion\}([\s\S]*?)\\begin\{options\}([\s\S]*?)\\end\{options\}[\s]\\end\{ClosedQuestion\}[\s]*?\}|\\newcommand{\\q([^\{]*?)\}\{[\s]*?\\begin\{ClosedQuestion\}([\s\S]*?)(\\option[\S]\{[\s\S]*?)\\putOptions[\s\S]*?\\end\{ClosedQuestion\}[\s]*?\}
-    # pattern = '\\\\begin\{ClosedQuestion\}([\s\S]*?)\\\\begin\{options\}([\s\S]*?)\\\\end\{options\}[\s]*?\\\\end\{ClosedQuestion\}[\s]*?\}'
 
     pattern = '\\\\begin\{ClosedQuestion\}([\s\S]*?)\\\\begin\{options\}[\s\S]*?\\\\end\{options\}[\s]\\\\end\{ClosedQuestion\}|\\\\begin\{ClosedQuestion\}([\s\S]*?)\\\\option[\S]\{[\s\S]*?\\\\putOptions[\s\S]*?\\\\end\{ClosedQuestion\}'
     match = re.search(pattern, questionTex)
@@ -272,7 +325,7 @@ def insertQuiz(cur, quiz):
 def insertQuestion(cur, question, quizId, sequence):
     # question = {"questionId": "", "content": "", "image": [], "options": []}
     # insert question
-    cur.execute("INSERT INTO questions (content, title) VALUES (%s, %s) RETURNING *", [question["content"], question["questionId"]])
+    cur.execute("INSERT INTO questions (content, title) VALUES (%s, %s) RETURNING *", [removeLatex(question["content"]), question["questionId"]])
     
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
@@ -303,7 +356,7 @@ def copyImageToServer(questionId, imagePath, serverImageName):
 def insertOptions(cur, options, questionId):
     for i in range(len(options)):
       # insert option
-      cur.execute("INSERT INTO options (question_id, option, content) VALUES (%s, %s, %s) RETURNING *", (int(questionId), i, options[i]))
+      cur.execute("INSERT INTO options (question_id, number, content) VALUES (%s, %s, %s) RETURNING *", (int(questionId), i, removeLatex(options[i])))
       # not really needed
       # optionId = cur.fetchone()[0]
 

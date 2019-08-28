@@ -10,7 +10,6 @@ public class PropertiesManager {
 	static {
 		try {
 			properties.load(PropertiesManager.class.getResourceAsStream("/application.properties"));
-			properties.load(PropertiesManager.class.getResourceAsStream("/specific.properties"));
 		} catch (IOException e) {
 			throw new RuntimeException("Unable to load properties files.", e);
 		}

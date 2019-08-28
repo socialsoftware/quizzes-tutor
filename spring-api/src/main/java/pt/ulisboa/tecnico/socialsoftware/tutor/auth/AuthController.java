@@ -34,7 +34,7 @@ public class AuthController {
     public ResponseEntity<?> fenixAuth(@RequestBody FenixCode data) {
 
         // Create the client from properties file
-        ApplicationConfiguration config = ApplicationConfiguration.fromPropertyFilename("/fenixedu.properties");
+        ApplicationConfiguration config = ApplicationConfiguration.fromPropertyFilename("/application.properties");
         FenixEduClientImpl client;
         FenixEduUserDetails userDetails;
 
