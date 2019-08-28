@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -21,8 +22,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
 @SpringBootApplication
 @EnableScheduling
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
-//    @Autowired
-//    ImpExpService impExpService;
+    @Value("${spring.profiles.active}")
+    private String profile;
+
+    @Autowired(required = false)
+    ImpExpService impExpService;
 
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
@@ -30,7 +34,9 @@ public class TutorApplication extends SpringBootServletInitializer implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-     //   impExpService.importAll();
+        if (!profile.equals("test")) {
+            impExpService.importAll();
+        }
     }
 
 }
