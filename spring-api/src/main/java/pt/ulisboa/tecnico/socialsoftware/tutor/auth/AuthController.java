@@ -10,6 +10,7 @@ import org.fenixedu.sdk.exception.FenixEduClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,11 +31,22 @@ public class AuthController {
     @Autowired
     private UserService userService;
 
+    @Value("${base.url}")
+    private String baseUrl;
+
+    @Value("${oauth.consumer.key}")
+    private String oauthConsumerKey;
+
+    @Value("${oauth.consumer.secret}")
+    private String oauthConsumerSecret;
+
+    @Value("${callback.url}")
+    private String callbackUrl;
+
     @PostMapping("/fenix")
     public ResponseEntity<?> fenixAuth(@RequestBody FenixCode data) {
 
-        // Create the client from properties file
-        ApplicationConfiguration config = ApplicationConfiguration.fromPropertyFilename("/application.properties");
+        ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         FenixEduClientImpl client;
         FenixEduUserDetails userDetails;
 
