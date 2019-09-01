@@ -6,6 +6,7 @@ import LoginView from "./views/LoginView.vue";
 import ManagementView from "@/views/management/ManagementView.vue";
 import QuestionsView from "./views/management/QuestionsView.vue";
 import TopicsView from "./views/management/TopicsView.vue";
+import QuizzesView from "./views/management/QuizzesView.vue";
 import StudentView from "@/views/student/StudentView.vue";
 import QuizSetupView from "./views/student/QuizSetupView.vue";
 import StudentQuizView from "./views/student/StudentQuizView.vue";
@@ -51,6 +52,15 @@ let router = new Router({
           component: TopicsView,
           meta: {
             title: "Software Architecture - Topics",
+            requiresAuth: true
+          }
+        },
+        {
+          path: "quizzes",
+          name: "quizzes-management",
+          component: QuizzesView,
+          meta: {
+            title: "Software Architecture - Quizzes",
             requiresAuth: true
           }
         }

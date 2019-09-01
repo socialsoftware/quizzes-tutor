@@ -220,6 +220,10 @@ export default class QuestionsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
+ convertMarkDown(text: string): string {
+    return convertMarkDownNoFigure(text);
+  }
+
   async saveTopics(questionId: number) {
     let question = this.questions.find(question => question.id === questionId);
     if (question) {

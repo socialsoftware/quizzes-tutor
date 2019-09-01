@@ -1,9 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.QuestionController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizSetupDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizStatementDto;
@@ -17,26 +20,32 @@ import java.util.stream.Collectors;
 
 @RestController
 public class QuizController {
+    private static Logger logger = LoggerFactory.getLogger(QuizController.class);
+
 
     @Autowired
     private QuizService quizService;
 
-
     @GetMapping("/quizzes")
     public List<QuizDto> getQuizzes(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
+        return quizService.findAll(pageIndex, pageSize).stream().map(quiz -> new QuizDto(quiz, true)).collect(Collectors.toList());
+    }
 
-        return quizService.findAll(pageIndex, pageSize).stream().map(QuizDto::new).collect(Collectors.toList());
+    @GetMapping("/quizzes/nongenerated")
+    public List<QuizDto> getNonGeneratedQuizzes() {
+        logger.debug("getNonGeneratedQuizzes");
+        return quizService.findAllNonGenerated();
     }
 
     @GetMapping("/quizzes/{quizId}")
     public QuizDto getQuiz(@PathVariable Integer quizId) {
-        return new QuizDto(this.quizService.findById(quizId));
+        return new QuizDto(this.quizService.findById(quizId), true);
     }
 
 
     @PostMapping("/quizzes")
     public QuizDto createQuiz(@Valid @RequestBody QuizDto quiz) {
-        return new QuizDto(this.quizService.createQuiz(quiz));
+        return new QuizDto(this.quizService.createQuiz(quiz),true);
     }
 
     @PostMapping("/quizzes/generate/student")

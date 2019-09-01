@@ -7,10 +7,14 @@ import org.springframework.stereotype.Repository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
+    @Query(value = "select * from quizzes q where q.type != 'GENERATED'", nativeQuery = true)
+    List<Quiz> findAllNonGenerated();
+
     @Query(value = "select MAX(number) from quizzes", nativeQuery = true)
     Integer getMaxQuizNumber();
 

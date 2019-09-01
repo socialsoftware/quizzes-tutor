@@ -21,7 +21,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
 
@@ -48,6 +50,16 @@ public class QuizService {
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizId));
     }
 
+    public List<QuizDto> findAllNonGenerated() {
+        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear);
+        comparator = comparator.thenComparing(Quiz::getSeries);
+        comparator = comparator.thenComparing(Quiz::getVersion);
+        return quizRepository.findAllNonGenerated().stream()
+                .sorted(comparator).map(quiz -> new QuizDto(quiz, false))
+                .collect(Collectors.toList());
+    }
+
+
     public Integer getMaxQuizNumber() {
         Integer maxQuizNumber = quizRepository.getMaxQuizNumber();
         return maxQuizNumber != null ? maxQuizNumber : 0;
@@ -56,9 +68,7 @@ public class QuizService {
     @Transactional
     public Quiz createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
-            Integer maxQuizNumber = quizRepository.getMaxQuizNumber() != null ?
-                    quizRepository.getMaxQuizNumber() : 0;
-            quizDto.setNumber(maxQuizNumber + 1);
+            quizDto.setNumber(getMaxQuizNumber() + 1);
         }
         Quiz quiz = new Quiz(quizDto);
         entityManager.persist(quiz);

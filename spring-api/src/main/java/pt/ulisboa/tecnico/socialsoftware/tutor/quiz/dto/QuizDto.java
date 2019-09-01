@@ -24,7 +24,7 @@ public class QuizDto implements Serializable {
     public QuizDto(){
     }
 
-    public QuizDto(Quiz quiz) {
+    public QuizDto(Quiz quiz, boolean deepCopy) {
         this.id = quiz.getId();
         this.number = quiz.getNumber();
         this.title = quiz.getTitle();
@@ -33,10 +33,12 @@ public class QuizDto implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.questions = quiz.getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                .map(quizQuestion -> new QuestionDto(quizQuestion.getQuestion()))
-                .collect(Collectors.toList());
+        if (deepCopy) {
+            this.questions = quiz.getQuizQuestions().stream()
+                    .sorted(Comparator.comparing(QuizQuestion::getSequence))
+                    .map(quizQuestion -> new QuestionDto(quizQuestion.getQuestion()))
+                    .collect(Collectors.toList());
+        }
     }
 
     public Integer getId() {

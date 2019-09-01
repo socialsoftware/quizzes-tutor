@@ -24,7 +24,7 @@
           <v-list dense>
             <v-list-tile v-if="isLoggedIn" to="/management/questions">
               <v-list-tile-action>
-                <v-icon>ballot</v-icon>
+                <v-icon>question_answer</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title>Questions</v-list-tile-title>
@@ -36,6 +36,14 @@
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title>Topics</v-list-tile-title>
+              </v-list-tile-content>
+            </v-list-tile>
+            <v-list-tile v-if="isLoggedIn" to="/management/quizzes">
+              <v-list-tile-action>
+                <v-icon>ballot</v-icon>
+              </v-list-tile-action>
+              <v-list-tile-content>
+                <v-list-tile-title>Quizzes</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
           </v-list>

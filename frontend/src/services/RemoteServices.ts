@@ -1,5 +1,6 @@
 import axios from "axios";
 import { Question } from "@/models/question/Question"
+import { Quiz } from "@/models/quiz/Quiz"
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 5000;
@@ -7,7 +8,7 @@ httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
 
-  static getQuestions() : Promise<Question[]> {
+  static async getQuestions() : Promise<Question[]> {
     return httpClient.get( "/questions")
       .then(response => {
         return response.data as Question[];
@@ -80,6 +81,22 @@ export default class RemoteServices {
 
   static deleteTopic(topic: string) {
     return httpClient.delete("/topics/" + topic);
+  }
+
+  static async getNonGeneratedQuizzes() : Promise<Quiz[]> {
+    return httpClient.get("/quizzes/nongenerated")
+    .then(response => {
+      return response.data as Quiz[];
+    })
+    .catch(error => {
+      if (error.response) {
+        throw new Error(error.response.data.message);
+      } else if (error.request) {
+        throw new Error("No response received");
+      } else {
+        throw new Error("Error");
+      }
+    });
   }
 }
 
