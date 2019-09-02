@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(
@@ -60,20 +61,17 @@ public class Quiz implements Serializable {
    }
 
     public void remove() {
-       canRemove();
-
-       for (QuizQuestion quizQuestion: getQuizQuestions()) {
-           quizQuestion.remove();
-       }
+       getQuizQuestions().stream().collect(Collectors.toList()).forEach(QuizQuestion::remove);
 
        quizQuestions.clear();
-
     }
 
-    private void canRemove() {
+    public void checkCanRemove() {
        if (quizAnswers.size() != 0) {
-           throw new TutorException(TutorException.ExceptionError.QUIZ_HAS_ANSWERS, id.toString());
+           throw new TutorException(TutorException.ExceptionError.QUIZ_HAS_ANSWERS, String.valueOf(quizAnswers.size()));
        }
+
+       getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
     }
 
     public void generate(int quizSize, List<Question> activeQuestions) {

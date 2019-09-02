@@ -22,7 +22,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
@@ -45,11 +47,13 @@ public class QuizService {
     }
 
 
+    @Transactional
     public Quiz findById(Integer quizId) {
         return this.quizRepository.findById(quizId)
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizId));
     }
 
+    @Transactional
     public List<QuizDto> findAllNonGenerated() {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear);
         comparator = comparator.thenComparing(Quiz::getSeries);
@@ -113,7 +117,12 @@ public class QuizService {
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
 
-        quiz.remove();
+        quiz.checkCanRemove();
+
+        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+
+        quizQuestions.forEach(quizQuestion -> quizQuestion.remove());
+        quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
 
         entityManager.remove(quiz);
     }

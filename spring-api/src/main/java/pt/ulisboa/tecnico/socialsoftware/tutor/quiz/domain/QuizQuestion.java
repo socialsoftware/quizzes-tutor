@@ -28,7 +28,7 @@ public class QuizQuestion {
 
     private Integer sequence;
 
-    public QuizQuestion(){
+    public QuizQuestion() {
 
     }
 
@@ -41,17 +41,15 @@ public class QuizQuestion {
     }
 
     public void remove() {
-        canRemove();
-
         quiz.getQuizQuestions().remove(this);
         quiz = null;
         question.getQuizQuestions().remove(this);
         question = null;
     }
 
-    private void canRemove() {
+    public void checkCanRemove() {
         if (questionAnswers.size() != 0) {
-            throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, sequence.toString());
+            throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, String.valueOf(questionAnswers.size()));
         }
     }
 

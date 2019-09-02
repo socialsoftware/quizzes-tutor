@@ -42,10 +42,10 @@ public class Question implements Serializable {
     @Column(columnDefinition = "boolean default true")
     private Boolean active = true;
 
-    @OneToOne(cascade = {CascadeType.ALL}, mappedBy = "question")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
 
-    @OneToMany(cascade = {CascadeType.ALL}, mappedBy = "question", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
@@ -291,7 +291,7 @@ public class Question implements Serializable {
 
     private void canRemove() {
         if (getQuizQuestions().size() != 0) {
-            throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, "");
+            throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, getTitle());
         }
     }
 

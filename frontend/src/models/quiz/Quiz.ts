@@ -9,6 +9,8 @@ export interface QuizDto {
     year: number;
     series: number;
     version: string;
+    numberOfQuestions: number;
+    numberOfAnswers: number;
     questions: QuestionDto[] | null ;
   }
   
@@ -21,9 +23,10 @@ export interface QuizDto {
     year: number;
     series: number;
     version: string;
+    numberOfQuestions: number;
+    numberOfAnswers: number;
     questions: QuestionDto[] | null;
-  
-  
+
     constructor(jsonObj: QuizDto) {
       this.id = jsonObj.id;
       this.number = jsonObj.number;
@@ -33,6 +36,8 @@ export interface QuizDto {
       this.year = jsonObj.year;
       this.series = jsonObj.series;
       this.version = jsonObj.version;
+      this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.questions = jsonObj.questions;
     }
   }

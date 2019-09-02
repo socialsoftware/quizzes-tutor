@@ -98,5 +98,20 @@ export default class RemoteServices {
       }
     });
   }
+
+  static async deleteQuiz(quizId: number) {
+    return httpClient.delete("/quizzes/" + quizId)
+    .catch(error => {
+      if (error.response) {
+        throw new Error(error.response.data.message);
+      } else if (error.request) {
+        throw new Error("No response received");
+      } else {
+        throw new Error("Error");
+      }
+    });
+  }
+
+
 }
 
