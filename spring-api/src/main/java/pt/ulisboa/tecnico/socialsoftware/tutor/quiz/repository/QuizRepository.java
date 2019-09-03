@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
-    @Query(value = "select * from quizzes q where q.type != 'GENERATED'", nativeQuery = true)
+    @Query(value = "select * from quizzes q where q.type != STUDENT", nativeQuery = true)
     List<Quiz> findAllNonGenerated();
 
     @Query(value = "select MAX(number) from quizzes", nativeQuery = true)

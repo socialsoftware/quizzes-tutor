@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
         })
 public class Quiz implements Serializable {
    public enum QuizType {
-        GENERATED, EXAM, TEST, SINGLE, TEACHER
+       EXAM, TEST, STUDENT, TEACHER
    }
 
    @Id
@@ -89,7 +89,7 @@ public class Quiz implements Serializable {
        }
 
        this.setDate(LocalDateTime.now());
-       this.setType(QuizType.GENERATED.name());
+       this.setType(QuizType.STUDENT.name());
     }
 
     public Integer getId() {

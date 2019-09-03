@@ -152,7 +152,7 @@
         <tbody>
           <tr v-for="option in props.item.options" :key="option.id">
             <td class="text-left">{{option.id}}</td>
-            <td class="text-left" v-html="convertMarkDown(option.content)"></td>
+            <td class="text-left" v-html="convertMarkDownNoFigure(option.content, null)"></td>
             <td><span v-if="option.correct">TRUE</span><span v-else>FALSE</span></td>
           </tr>
         </tbody>
@@ -217,10 +217,6 @@ export default class QuestionsView extends Vue {
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
-  }
-
- convertMarkDown(text: string): string {
-    return convertMarkDownNoFigure(text);
   }
 
   async saveTopics(questionId: number) {
