@@ -1,22 +1,14 @@
-<template>
-  <div v-if="stats">
-    <p>Total quizzes done: {{ stats.totalQuizzes }}</p>
-    <p>Total questions done: {{ stats.totalAnswers }}</p>
-    <canvas ref="canvas" />
-  </div>
-</template>
-
 <script lang="ts">
 import Component, { mixins } from "vue-class-component";
 import { HorizontalBar } from "vue-chartjs";
-import Stats from "@/models/student/Stats";
+import { Prop } from "vue-property-decorator";
+import StudentStats from "@/models/statement/StudentStats";
 
 @Component
-export default class StudentStatsView extends mixins(HorizontalBar) {
-  stats: Stats = new Stats();
+export default class Chart extends mixins(HorizontalBar) {
+  @Prop({ required: true }) readonly stats!: StudentStats;
 
   async mounted() {
-    this.stats = await Stats.getStats();
     this.renderChart(
       {
         labels: ["All topics"],

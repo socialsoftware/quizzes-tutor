@@ -25,16 +25,16 @@ public class User implements UserDetails {
     private String role;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
-    Set<QuizAnswer> quizAnswers = new HashSet<>();
+    private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @Transient
-    private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+    private Collection<GrantedAuthority> authorities = new HashSet<>();
 
 
     public User() {
     }
 
-    public User(String name, String username, Role role, Integer number) {
+    public User(String name, String username, Role role, Integer number, Integer year) {
         this.name = name;
         setUsername(username);
         if (role != null) {
@@ -42,6 +42,7 @@ public class User implements UserDetails {
         }
 
         this.number = number;
+        this.year = year;
     }
 
     public Integer getId() {

@@ -9,9 +9,9 @@ import TopicsView from "./views/management/TopicsView.vue";
 import QuizzesView from "./views/management/QuizzesView.vue";
 import StudentView from "@/views/student/StudentView.vue";
 import QuizSetupView from "./views/student/QuizSetupView.vue";
-import StudentQuizView from "./views/student/StudentQuizView.vue";
-import StudentResultsView from "./views/student/StudentResultsView.vue";
-import StudentStatsView from "./views/student/StudentStatsView.vue";
+import QuizView from "./views/student/QuizView.vue";
+import ResultsView from "./views/student/ResultsView.vue";
+import StatsView from "./views/student/StatsView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 
 Vue.use(Router);
@@ -83,7 +83,7 @@ let router = new Router({
         {
           path: "/quiz",
           name: "quiz",
-          component: StudentQuizView,
+          component: QuizView,
           meta: {
             title: "Software Architecture - Quiz",
             requiresAuth: true,
@@ -93,7 +93,7 @@ let router = new Router({
         {
           path: "/results",
           name: "results",
-          component: StudentResultsView,
+          component: ResultsView,
           meta: {
             title: "Software Architecture - Results",
             requiresAuth: true,
@@ -103,7 +103,7 @@ let router = new Router({
         {
           path: "/stats",
           name: "stats",
-          component: StudentStatsView,
+          component: StatsView,
           meta: {
             title: "Software Architecture - Stats",
             requiresAuth: true

@@ -351,10 +351,10 @@ ALTER TABLE public.topics_questions OWNER TO pedro;
 CREATE TABLE public.users (
     id integer NOT NULL,
     name character varying(255),
+    number integer,
     role character varying(255),
     username character varying(255),
-    year integer,
-    number integer
+    year integer
 );
 
 
@@ -526,126 +526,167 @@ COPY public.images (id, url, width, question_id) FROM stdin;
 
 COPY public.options (id, content, correct, number, question_id) FROM stdin;
 5	Influence the software development process and its management, but not the software architecture of the system under development	f	0	2
+6	Should be captured in scenarios, as the requirements for quality attributes, and be taken into account in the design of the software architecture	f	1	2
 7	Are important to determine the feasibility of the system, but once we reach the conclusion that the system can be developed with these restrictions, software architecture no longer depends on these factors	f	2	2
 8	Are not one of the influences of the software architecture in the Architecture Business Cycle	f	3	2
+9	The *decomposition* and *uses* styles, which allow us to show how dependent a certain module is of other parts of the system	f	0	3
 10	The *implementation* style, which allows us to know where are the artifacts that implement a certain module	f	1	3
 11	The *layers* style, which allows us to show that the structure of our system is composed of various modules that may be easily reused in other systems	f	2	3
 12	The *client-server* and *deployment* styles, which allow us to isolate the required functionality in a component that executes autonomously and, thus, reusable in other systems	f	3	3
 13	To keep the current architecture of the system and optimize the code to achieve the currently required performance levels	f	0	4
 14	To change the Deployment view, replicating the server component by more machines	f	1	4
 15	To review the system's architecture so that part of the computation that is currently done at the server shifts to the clients	f	2	4
+16	To replace the machine used to run the server component by a more powerful machine that meets the new performance requirements, keeping only a server component running	f	3	4
 17	Those three viewtypes complement each other, but they are completely independent, showing different aspects that have no relation among them	f	0	5
 18	The module and component-and-connector viewtypes are independent of one another, but the allocation viewtype depends on the first two	f	1	5
 19	Each viewtype uses different software elements, such as modules or components, so it does not make sense to talk about relationships among these viewtypes	f	2	5
+20	Even though each viewtype addresses different aspects of a system, there are relationships among all of them	f	3	5
 29	A subset of the requirements that do not have conflicts among them and that correspond to the most important business goals	f	0	8
 30	A subset of the requirements that have many conflicts among them and for which you need to find tradeoffs early in the design process	f	1	8
+31	A subset of the requirements that correspond to the most important business goals, regardless of whether they have conflicts among them or not	f	2	8
 32	A subset of the requirements that is chosen exclusively by the architect by taking into account their influence on the system's architecture	f	3	8
+33	The *Peer-to-Peer* style	f	0	9
 34	The *Shared data* style	f	1	9
 35	The *Client-Server* style	f	2	9
 36	The *Publish-subscribe* style	f	3	9
 37	The *Communicating Processes* style	f	0	10
 38	The *Pipes-and-filters* style	f	1	10
 39	The *Peer-to-Peer* style	f	2	10
+40	The *Shared data* style	f	3	10
 41	Given that the change is on execution aspects, the change manifests itself only through the modification of components and connectors on the system	f	0	11
 42	This change in the way of how web applications run does not correspond to any change in its architecture, because at the architectural level we still have the same components	f	1	11
 43	The only architectural change is on the Deployment view, because the components and connectors remain the same, but execute in different places	f	2	11
+44	This change manifests itself on the relationship between the system's modules and components	f	3	11
+45	The *Communicating Processes* style	f	0	12
 46	The *Uses* style	f	1	12
 47	The *Layers* style	f	2	12
 48	The *Peer-to-Peer* style	f	3	12
 49	*Decomposition* and *Layers* views	f	0	13
 50	*Decomposition* and *Work assignment* views	f	1	13
+51	*Decomposition* and *Implementation* views	f	2	13
 52	*Decomposition* and *Generalization* views	f	3	13
 53	*Decomposition* and *Implementation* views	f	0	14
+54	*Decomposition* and *Uses* views	f	1	14
 55	*Component-and-connector* views	f	2	14
 56	 None, given that to perform black-box testing you do not need to know the code or the internal structure of the application to be tested	f	3	14
 57	The *Shared data* style	f	0	15
 58	The *Repository* style	f	1	15
+59	The *Layers* style	f	2	15
 60	The *Client-Server* style	f	3	15
 61	The *Decompostion* and *Implementation* styles	f	0	16
 62	The *Deployment* and *Uses* styles	f	1	16
 63	The *Client-Server* and *Generalization* styles	f	2	16
+64	the *Deployment* and *Layers* styles	f	3	16
 65	Views of the Component-and-Connector viewtype	f	0	17
+66	Views of the Module viewtype	f	1	17
 67	Views of the Allocation viewtype	f	2	17
 68	All of the above	f	3	17
+69	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	f	0	18
 70	To allow the existence of more than one layer of presentation logic for the same application (to provide for example, an interface to web services)	f	1	18
 71	To expose different interfaces of the domain logic layer so that it allows the implementation of different layers for the presentation logic	f	2	18
 72	To facilitate the use of the data access layer by the presentation logic layer	f	3	18
 73	To implement each of the services that are executed whenever the client makes a request to the server	f	0	19
 74	To improve the server performance by maintaining a cache of the objects most accessed during the processing of a client request	f	1	19
 75	To split the computation required to process each request made by the client in smaller units of work that are parallelizable	f	2	19
+76	To keep a record of changes made to the data during a business transaction and to coordinate the writing of these changes to the database	f	3	19
 77	To improve the performance of the application server because it maintains a cache of entities that reduces the number of operations made on the database	f	0	20
 78	To avoid loading a lot of data from the database when an entity that has many relationships with other entities is loaded	f	1	20
+79	To prevent data inconsistencies when there are multiple accesses within the same business operation to the same entity	f	2	20
 80	To map each entity loaded by the server to the identity of that entity in the database, so that the server is able to update the database later, if needed	f	3	20
 81	Stakeholders requirements do not emphasize performance as the most important issue	f	0	21
 82	The Hadoop small development team is highly competent and skilled	f	1	21
+83	Stakeholders do not mind if two simultaneous reads on the same file by two different applications may return different values	f	2	21
 84	The Hadoop system implementation uses complex distributed algorithms for scalability	f	3	21
 85	There is a conflict between availability and performance qualities	f	0	22
+86	The availability quality is more important, thus performance is addressed afterwards and depends on the tactics used for availability	f	1	22
 87	There is no conflict between availability and performance qualities	f	2	22
 88	Availability and performance qualities are ensured at deployment time only	f	3	22
 89	Active replication and passive replication	f	0	23
 90	Active replication, passive replication, and spare	f	1	23
+91	Passive replication and spare	f	2	23
 92	Quorum, active replication, and passive replication	f	3	23
 93	Shadow operation	f	0	24
+94	State Resynchronization	f	1	24
 95	Checkpoint/Rollback	f	2	24
 96	All of the above	f	3	24
+97	Authenticate users and authorize users	f	0	25
 98	Authenticate users, authorize users, and limit exposure	f	1	25
-1424	Usability scenario.	f	3	356
 99	Authenticate users, authorize users, and limit access	f	2	25
 100	Authenticate users, authorize users, limit access, and maintain integrity	f	3	25
 105	Because it has a well-defined interface	f	0	27
 106	That aggregates modules according to the uses relationship	f	1	27
 107	Because it has a well-defined interface and hides the internal behaviour	f	2	27
+108	That provides a set of complete and cohesive services	f	3	27
 109	Because it is a natural extension of the use cases concept	f	0	28
 110	But it requires additional information on the modules internal structure	f	1	28
+111	But it needs to be complemented, for each uses relationship, with the level of coupling	f	2	28
 112	And contains all the information required to assess effectively the impact	f	3	28
+113	The call's results may not have impact on the correct execution of the caller module	f	0	29
 114	The call's results may not have impact on the correct execution of the callee module	f	1	29
 115	The call may not transfer data between the modules	f	2	29
 116	The uses relationship requires calls to return control to the caller module	f	3	29
 117	We should always satisfy in the first place the requirements of more important stakeholders (such as the client)	f	0	30
 118	If no order was established among them, we would not know from where should we start the design process	f	1	30
 119	If one of the stakeholders complains that his requirement is not satisfied, we may explain to him that there were other more important requirements first	f	2	30
+120	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	30
 121	The Shared data style	f	0	31
 122	The Pipes-and-filters style	f	1	31
+123	The Peer-to-Peer style	f	2	31
 124	The Client-Server style	f	3	31
+125	A Client-Server architecture, where the DataNode is the Client and the NameNode is the Server	f	0	32
 126	A Client-Server architecture, where the NameNode is the Client and the DataNode is the Server	f	1	32
 127	A Peer-to-Peer architecture	f	2	32
 128	A Communicating Processes architecture	f	3	32
 129	That view will always be incomplete without the NameNode, because the HDFS Client needs to interact with it	f	0	33
+203	Using a view of the component-and-connector viewtype	f	2	51
 130	That view will always be incomplete without the NameNode, because the DataNode needs to interact with it	f	1	33
 131	The view does not need to include the NameNode, but in that case it will not be possible to reason about the availability of the system	f	2	33
+132	The availability guarantee may be given by the usage of an adequate connector between the HDFS Client and the DataNodes	f	3	33
 133	The Shared Data style	f	0	34
+134	The Communicating Processes style	f	1	34
 135	The Deployment style	f	2	34
 136	The Peer-to-Peer style	f	3	34
+141	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	f	0	36
 142	To allow the existence of more than one interface to the domain logic layer (to provide, for example, an interface to web services)	f	1	36
 143	To allow the existence of different presentation logic layers	f	2	36
 144	To facilitate the use of the data access layer by the presentation logic layer	f	3	36
 145	That should not be allowed because all interactions among components must be made through the Repository	f	0	37
 146	That is an acceptable solution if we want to reduce the dependencies among the various components of the system	f	1	37
+147	That is the recommended solution if there is a control flow that involves the choreography of both components	f	2	37
 148	That interaction cannot be represented in this view, but it may in another view of the system's architecture	f	3	37
 161	Essential to ensure the system scalability	f	0	41
+162	Essential to reduce costs whenever there is a fault in a hardware element	f	1	41
 163	Essential to ensure the system portability	f	2	41
 164	Essential to facilitate the integration with legacy systems	f	3	41
 165	Allows the creation of checkpoints but it is necessary to request all the information from the *NameNode* whenever a new checkpoint creation begins	f	0	42
 166	Does not allow the creation of checkpoints	f	1	42
+167	Allows the creation of checkpoints using the information that it gradually receives from the *NameNode*	f	2	42
 168	Allows the creation of checkpoints without requiring any kind of information from the *NameNode*	f	3	42
+169	Performance and availability qualities	f	0	43
 170	Performance qualities only	f	1	43
 171	Availability qualities only	f	2	43
 172	Performance and security qualities	f	3	43
+173	Increases the system modifiability whenever it is necessary to change the placement policy	f	0	44
 174	Allows *DataNodes* to decide which replicas they have	f	1	44
 175	Increases the system modifiability whenever it is necessary to change the the deployment structure	f	2	44
 176	Allow several replicas to be located in different *DataNodes*	f	3	44
 177	Because this tactic does not overload the *NameNode*	f	0	45
+178	But it would imply an *overhead* in the *NameNode*	f	1	45
 179	But an exceptions tactic could be used as well	f	2	45
 180	To notify other *DataNodes* that they are available	f	3	45
 181	This script is part of the system deployment module	f	0	46
 182	This script is a module that implements a security tactic	f	1	46
+183	This script is a module that implements a modifiability tactic	f	2	46
 184	This script cannot be considered a module because it is only a script	f	3	46
 185	Availability, security, and performance	f	0	47
 186	Availability only	f	1	47
 187	Availability and performance	f	2	47
+188	Availability and security	f	3	47
+193	Means that it may be difficult to design incremental testing	f	0	49
 194	Means that it is possible to implement the system according to an incremental development process	f	1	49
 195	Means that the modules that are part of the loop should be implemented first	f	2	49
 196	Gives a hint to replace the uses relations by is-a relations	f	3	49
+197	Is that the *Allowed to Use* relation defines a restriction for the possible *Uses* relations between modules belonging to different layers	f	0	50
 198	Is that the *Uses* relation can happen only among modules belonging to the same layer	f	1	50
 199	Is that the *Allowed to Use* relation does not imply that the correctness of the upper layer depends on the correct implementation of its nearest lower layer	f	2	50
 200	Is that the *Allowed to Use* relation is a *Uses* relation between layers	f	3	50
@@ -654,821 +695,1069 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 204	Using a view of the architectural style Deployment	f	3	51
 213	The component-and-connector view must, necessarily, be changed to include the components *NameNode* and *DataNode*, with which the web application has to interact to access its data	f	0	54
 214	The layered view of the web application will have to include a new layer corresponding to the Hadoop MapReduce framework	f	1	54
+215	The application continues to have a three-tiered architecture, where one of the tiers is now the HDFS system	f	2	54
 216	The Deployment view must be changed to include the racks needed to run the HDFS system	f	3	54
 217	The Pipes-and-filters style	f	0	55
 218	The Publish-Subscribe style	f	1	55
 219	The Peer-to-Peer style	f	2	55
+220	The Client Server style	f	3	55
 221	Affects only the domain logic layer	f	0	56
+222	May affect the data access layer because each pattern puts different requirements on the interface of that layer	f	1	56
 223	Does not affect the presentation logic layer because it cannot use it	f	2	56
-618	Active Redundancy and Increase Resources Efficiency	f	1	155
 224	Does not affect the data access layer because the data access layer does not use the domain logic layer	f	3	56
 225	A machine may execute only one component, but a component may execute in more than one machine	f	0	57
 226	A component may execute in only one machine, but a machine may execute more than one component	f	1	57
 227	Each component executes in only one machine and each machine executes only one component	f	2	57
+228	All components may execute in all machines	f	3	57
 237	Only views of the component-and-connector viewtype are needed	f	0	60
 238	Only views of the Deployment style are needed	f	1	60
+239	We may need views of the component-and-connector viewtype and of the Deployment style	f	2	60
 240	We always need views of the component-and-connector viewtype and of the Deployment style	f	3	60
 241	The UK government, because it funded the project	f	0	61
 242	The researchers, because they invented the Haskell programming language	f	1	61
 243	The UK government, because it intended that the system could be used to develop the British software industry	f	2	61
+244	The researchers, because they wanted to use the system to validate their research	f	3	61
+245	As modules of the system	f	0	62
 246	As components of the system	f	1	62
 247	The compiler and the RTS as components and the boot libraries as a module	f	2	62
 248	The compiler as a component and the other two as modules	f	3	62
 249	Made the type-checking much simpler	f	0	63
 250	Satisfied performance requirements of the system	f	1	63
 251	Made the desugaring simpler	f	2	63
+252	Satisfied usability requirements of the system	f	3	63
 253	The performance of the compiler, because the RTS is written as very efficient C code	f	0	64
 254	The performance of the compiled programs, because the RTS is written as very efficient C code	f	1	64
+255	The portability, because the RTS creates an abstraction layer that hides some of the details of the operating system	f	2	64
 256	The modifiability of the compiled programs, because we may change their behavior by changing only the RTS	f	3	64
 257	To allow the parallel execution of the several compilation phases, thereby improving the compiler performance	f	0	65
 258	To allow the compilation of very large programs, because wach phase may execute incrementally without loading the entire program into memory at once	f	1	65
+259	To facilitate changing the phases used in the compilation process, thereby making the compiler more modifiable	f	2	65
 260	All other options	f	3	65
 261	It is a system with a Peer-to-Peer architecture	f	0	66
 262	It is a system with a Client-Server architecture	f	1	66
 263	It allows the development of systems with a Peer-to-Peer architecture	f	2	66
+264	It allows the development of systems with Peer-to-Peer, Client-Server, or Publish-Subscribe architectures	f	3	66
 265	The Tiers style	f	0	67
 266	The Communicating Processes style	f	1	67
+267	The Deployment style	f	2	67
 268	The Work Assignment style	f	3	67
 269	Increases the portability of the system for other operating systems	f	0	68
+270	Facilitates the addition of new messaging patterns	f	1	68
 271	Makes the system more scalable	f	2	68
 272	Facilitates the reuse of the messaging patterns	f	3	68
 273	To reduce the latency of sending a message when the system is overloaded	f	0	69
+274	To increase the throughput of the system when it is overloaded	f	1	69
 275	To reduce the amount of memory needed to send a large number of messages	f	2	69
 276	To reduce the CPU usage when the system has just a few messages to send	f	3	69
 277	The Pipe-and-Filter style	f	0	70
 278	The Shared data style	f	1	70
+279	The Communicating Processes style	f	2	70
 280	The Client-Server style	f	3	70
 281	To have better throughput than Apache	f	0	71
 282	To have a lower latency in the processing of a request than Apache	f	1	71
 283	To be more modifiable than Apache	f	2	71
+284	To allow more simultaneous connections than Apache	f	3	71
 285	The code is easier to develop because it is not concurrent	f	0	72
+286	They wanted to have a more efficient use of the computational resources	f	1	72
 287	Event-driven programs are easier to change	f	2	72
 288	In an event-driven system each component may function independently of the others	f	3	72
 293	To make the system more modifiable	f	0	74
 294	To make the system more portable to different operating systems	f	1	74
+295	To make the system faster	f	2	74
 296	To make the system more fault tolerant	f	3	74
 297	The Shared-data style	f	0	75
+298	The Communicating Processes style	f	1	75
 299	The Peer-to-Peer style	f	2	75
 300	The Client-Server style	f	3	75
 301	Increases the availability	f	0	76
 302	Increases the capacity	f	1	76
 303	Increases the capacity but decreases the availability	f	2	76
+304	Increases both the availability and the capacity	f	3	76
 305	Only in the Deployment view, because only the number of machines storing images was changed	f	0	77
 306	In the Uses view, because each *Image Write/Retrieval Service* is going to use a different *Image File Storage*	f	1	77
+307	In the Component-and-Connector view, because components and connectors need to be changed	f	2	77
 308	In the Decomposition view, because we need more modules to represent the split of images by different elements of the architecture	f	3	77
 309	Increasing the performance of the *Upload* operation	f	0	78
 310	Increasing the performance of the *Retrieval* operation	f	1	78
 311	Increasing the scalability of the system	f	2	78
+312	Increasing the fault tolerance of the system	f	3	78
 313	We now have four layers, where each layer is executed in the corresponding tier, as before	f	0	79
 314	Each one of the two middle tiers executes the previously existing three layers, and no change is needed on the layers view	f	1	79
 315	There is no relation between the tiers and the layers, so the layers architecture is not changed	f	2	79
+316	The execution of the previously existing layers is split between the two new tiers, and new intermediate layers may be needed	f	3	79
 321	The domain logic layer was implemented with the Domain Model pattern	f	0	81
+322	The domain logic layer was implemented with the Transaction Script pattern	f	1	81
 323	The domain logic layer was implemented with the Service Layer pattern	f	2	81
 324	The domain logic layer was implemented with a rich domain model, on top of which there was a thin service layer	f	3	81
 325	The Decomposition style	f	0	82
 326	The Generalization style	f	1	82
+327	The Uses style	f	2	82
 328	The SOA style	f	3	82
 341	The Communicating Processes style	f	0	86
 342	The Client-Server style	f	1	86
 343	Any style of the component-and-connector viewtype	f	2	86
+344	The Decomposition style	f	3	86
+345	In the Deployment view	f	0	87
 346	In the Decomposition view	f	1	87
 347	In a view of the component-and-connector type	f	2	87
 348	In the Aspects view	f	3	87
 349	To create an abstraction layer between the architecture of the system and its functionalities, so that the architecture may be changed later without affecting the functionalities	f	0	88
 350	To create an artifact that may be used to explain the system's software architecture to the various stakeholders	f	1	88
+351	To allow testing and validating the software architecture in the early development stages	f	2	88
 352	To facilitate the work assignment to the members of the development team that will implement the system's functionalities	f	3	88
-1142	A component	f	1	286
 357	Does not change the existing modules of the system, because they are determined by the system's Decomposition, which is not changed	f	0	90
 358	Adds restrictions to the dependency relationships that exist between modules and that are represented using other styles, as with the layers style	f	1	90
+359	Typically gives rise to more modules than what we would have if not using this style	f	2	90
 360	Introduces only a new type of relation among the existing modules of the system, which resulted from other styles of the module viewtype	f	3	90
 361	To process all of the requests to send messages with a single thread, to free the remaining cores for the user threads	f	0	91
 362	To launch a worker thread for each user thread to guarantee that each user thread may send messages independently of what the others are doing	f	1	91
+363	To launch a worker thread for each core, to maximize the core usage and to minimize the need for synchronization among threads	f	2	91
 364	To launch a worker thread to process the sending of a new message, to guarantee maximal parallelism in message sending	f	3	91
 365	Only module views	f	0	92
 366	Only component-and-connector views	f	1	92
 367	Only allocation views	f	2	92
+368	Module and component-and-connector views	f	3	92
 369	It is less robust, because a fault in the *broker* causes a failure in the system	f	0	93
 370	It is less modifiable, because all components depend on the *broker*	f	1	93
+371	It has less performance, because the *broker* introduces greater latency in the communication	f	2	93
 372	It is more expensive, because it forces the existence of additional hardware to execute the *broker*	f	3	93
+373	Views of the Generalization style	f	0	94
 374	Views of the Layers style	f	1	94
 375	Views of the Decomposition style	f	2	94
 376	Views of the Uses style	f	3	94
+377	Usability	f	0	95
 378	Modifiability	f	1	95
 379	Performance	f	2	95
 380	Security	f	3	95
 381	The Publish-Subscribe style	f	0	96
 382	The Client-Server style	f	1	96
 383	The Peer-to-Peer style	f	2	96
+384	The Communicating Processes style	f	3	96
 385	The Layers style	f	0	97
 386	The Uses style	f	1	97
+387	The Shared data style	f	2	97
 388	The Communicating Processes style	f	3	97
 389	A new *worker* is created whenever a new connection is established with the server, and that *worker* processes all of the requests for that connection, being destroyed at the end of the connection	f	0	98
 390	There is a *pool* of *workers* that are reused between connections, but each *worker* processes only requests of a connection at a time	f	1	98
+391	Each *worker* is responsible for various connections, processing all requests from those connections	f	2	98
 392	Each *worker* processes requests that it obtains from a *pool of requests* that is shared among all workers	f	3	98
+393	By interleaving the various processing phases of each request in a sequential process	f	0	99
 394	By executing in parallel each of the phases of the pipeline corresponding to the processing of a request	f	1	99
 395	By executing in parallel the processing of the various requests	f	2	99
 396	By processing completely each request before moving to the next one, in a sequential process	f	3	99
 397	Have a throughput higher than Apache	f	0	100
 398	Be able to process each request faster than Apache	f	1	100
 399	Be able to launch more simultaneous threads than Apache	f	2	100
+400	Be able to reduce the amount of memory needed for each connection	f	3	100
 401	The *Decomposition* style	f	0	101
 402	The *Client-Server* style	f	1	101
+403	The *Layers* style	f	2	101
 404	The *Communicating Processes* style	f	3	101
 405	To increase the performance of RTS	f	0	102
 406	To allow changing the GC algorithm without affecting the rest of the system	f	1	102
 407	To increase the performance of the programs compiled by the GHC	f	2	102
+408	To make the RTS more portable to other operating systems	f	3	102
 409	It does not manifest, as it corresponds only to an extension to the Haskell language that must be processed by the compiler	f	0	103
+410	In the existence of a compiler component that is responsible for interpreting and applying the rewrite rules during the compilation of a program	f	1	103
 411	In a view of the Generalization style that includes a module defining an abstract interface that all *rewrite rules* must implement and of which all modules with the *rewrite rules* are specializations	f	2	103
 412	In a view of the Pipes-and-Filters style, corresponding to the process of compiling an Haskell program, to which is added a new filter whenever a new *rewrite rule* is defined	f	3	103
 413	A diagram of the component-and-connector viewtype	f	0	104
+414	A diagram of the module viewtype	f	1	104
 415	A diagram of the deployment style	f	2	104
 416	A diagram of the implementation style	f	3	104
+417	A diagram of the component-and-connector viewtype, showing the data flow between the various compiler components	f	0	105
 418	A diagram of the module viewtype, showing a decomposition of the compiler in the various modules that are responsible by each of the compilation process steps	f	1	105
 419	A diagram of the module viewtype, showing which modules use other modules	f	2	105
 420	A layered diagram, where there is a layer responsible for the code generation	f	3	105
 421	They are both modules	f	0	106
+422	They are both components	f	1	106
 423	The *Request Node* is a component and the *Cache* is a module	f	2	106
 424	The *Request Node* is a module and the *Cache* is a component	f	3	106
 425	Increasing performance and availability	f	0	107
 426	Increasing availability and decreasing performance	f	1	107
-403	The *Layers* style	t	2	101
-408	To make the RTS more portable to other operating systems	t	3	102
-410	In the existence of a compiler component that is responsible for interpreting and applying the rewrite rules during the compilation of a program	t	1	103
-414	A diagram of the module viewtype	t	1	104
-417	A diagram of the component-and-connector viewtype, showing the data flow between the various compiler components	t	0	105
-422	They are both components	t	1	106
-427	Increasing performance and decreasing availability	t	2	107
+427	Increasing performance and decreasing availability	f	2	107
 428	Increasing scalability and availability	f	3	107
 429	The Shared-Data style	f	0	108
 430	The Client-Server style	f	1	108
+431	The Peer-to-Peer style	f	2	108
 432	The Communicating Processes style	f	3	108
+433	The performance decreases	f	0	109
 434	The availability of the system's data decreases	f	1	109
 435	The availability of the system's services decreases	f	2	109
 436	The system is not affected in any way	f	3	109
 441	To start using the Transaction Script pattern in the domain logic layer	f	0	111
 442	To start using the Service Layer pattern in a new layer	f	1	111
+443	To move from an anemic domain model to a rich domain model	f	2	111
 444	To eliminate the service layer	f	3	111
 445	Views of the Module viewtype	f	0	112
 446	Views of the Component-and-Connector viewtype	f	1	112
 447	Views of the Allocation viewtype	f	2	112
+448	Views of the Component-and-Connector and Allocation viewtypes	f	3	112
 461	The Peer-to-Peer style	f	0	116
+462	The Client-Server style	f	1	116
 463	The Shared-Data style	f	2	116
 464	The Publish-subscribe style	f	3	116
 469	By using HTTPS in the communication between the browser and the web server	f	0	118
 470	By using robust authentication mechanisms to identify the users of the system with confidence	f	1	118
 471	By encrypting the information in the database with a password that is known only by the web server	f	2	118
+472	None of the other options solves the problem	f	3	118
+473	The presentation logic layer and how it relates with the underlying layer changed	f	0	119
 474	The connector used to represent the interaction between the browser and the web server changed	f	1	119
 475	The browser is now a component of a different type	f	2	119
 476	That evolution did not have any consequences on the software architecture of a web application	f	3	119
 477	A component	f	0	120
+478	A grouping of components	f	1	120
 479	A module	f	2	120
 480	A layer	f	3	120
+485	Maintain Multiple Copies of Computation	f	0	122
 486	Maintain Multiple Copies of Data	f	1	122
 487	Passive Redundancy	f	2	122
 488	Active Redundancy	f	3	122
+493	Performance, availability, and usability	f	0	124
 494	Performance, availability, and testability	f	1	124
 495	Reliability, performance, and usability	f	2	124
 496	Performance and usability	f	3	124
+497	Client-Server e Repository	f	0	125
 498	Repository e Service Oriented Architecture	f	1	125
 499	Client-Server, Repository, Communicating-Processes e Service Oriented Architecture	f	2	125
 500	Client-Server, Repository e Communicating-Processes	f	3	125
+501	By using a Timestamp tactic	f	0	126
 502	By using a Retry tactic	f	1	126
 503	Storing the information in the client using cookies	f	2	126
 504	By using a Transactions tactic	f	3	126
 505	May stop accepting reads	f	0	127
+506	May stop accepting writes	f	1	127
 507	May stop accepting reads and writes	f	2	127
 508	May need to add more servers to the cluster	f	3	127
+509	Increase Resource Efficiency	f	0	128
 510	Increase Resources	f	1	128
 511	Prioritize Events	f	2	128
 512	Maintain Multiple Copies of Data	f	3	128
 513	Data Encryption	f	0	129
 514	Intrusion Detection	f	1	129
+515	Limit Access	f	2	129
 516	Authorize Actors	f	3	129
+517	Introduce Concurrency	f	0	130
 518	Maintain Multiple Copies of Computation	f	1	130
 519	Limit Exposition	f	2	130
 520	Active Redundancy	f	3	130
 521	Publication-Subscription	f	0	131
 522	Pipes-and-Filters	f	1	131
+523	Dynamic Creation and Destruction	f	2	131
 524	Client-server	f	3	131
 525	It can take advantage of concurrency	f	0	132
 526	The *browser* needs to make more requests to the server	f	1	132
 527	It uses machine learning techniques	f	2	132
+528	It does not depend on a proprietary service	f	3	132
 529	It is always the same for all instances of Chrome	f	0	133
 530	It is defined compile-time of Chrome code	f	1	133
 531	It is defined during the initialization of each instance of Chrome	f	2	133
+532	It can change during the execution of each instance of Chrome	f	3	133
+533	Maintain User Model tactic	f	0	134
 534	Maintain Task Model tactic	f	1	134
 535	Maintain System Model tactic	f	2	134
 536	Support User Initiative tactics	f	3	134
 537	It is necessary to decompress the complete file, even though if only a small part of the information is needed	f	0	135
 538	Pickle algorithm is not efficient	f	1	135
 539	It is a Python specific solution	f	2	135
+540	Limitations of the concurrent access to files	f	3	135
+541	Increase the modifiability quality, because the new user interface was implemented using the REST interface	f	0	136
 542	Increase the modifiability quality, because external applications stopped using the administrative functionalities	f	1	136
 543	Increase the interoperability quality, because external applications can read and send messages to GNU Mailman	f	2	136
 544	None of the previous options	f	3	136
 545	A sequence of bytes to allow independence between filters	f	0	137
 546	An object tree to allow the simultaneous execution of several filters	f	1	137
 547	A sequence of bytes to allow that the order of filters execution is not relevant	f	2	137
+548	An object tree to simplify the processing of each filter	f	3	137
 549	Effectively guarantees the FIFO delivery of messages and the queue runners do not need to synchronize	f	0	138
 550	Guarantees the FIFO delivery of messages but the queue runners need to synchronize	f	1	138
+551	Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order	f	2	138
 552	Guarantees the FIFO delivery of messages because in each *queue* only are stored messages which arrived with a difference of more than one minute	f	3	138
 553	Client-Server	f	0	139
 554	Peer-to-Peer	f	1	139
+555	Dynamic Creation and Destruction	f	2	139
 556	Tiers	f	3	139
 557	Each message does not need to be accessed concurrently by several processes	f	0	140
 558	Pickle can efficiently write and read messages	f	1	140
 559	Each message is stored as a file in a directory	f	2	140
+560	All the previous options	f	3	140
 561	Allocate modules to the file system	f	0	141
+562	Differ on the emphasis on production and development phases of the software process	f	1	141
 563	Are applied to completely distinct sets of files	f	2	141
 564	Are applied to the same set of files	f	3	141
 565	Interoperability e Performance	f	0	142
 566	Performance and Availability	f	1	142
 567	Easy Development and Performance	f	2	142
+568	Modifiability and Performance	f	3	142
+569	Defer Binding	f	0	143
 570	Passive Redundancy	f	1	143
 571	Active Redundancy	f	2	143
 572	Passive Redundancy and Active Redundancy	f	3	143
 573	It is necessary to use a optimistic concurrency control policy because the transactions cannot be open for a long period	f	0	144
 574	It is necessary to use a pessimistic concurrency control policy to avoid frequent conflicts in the transactions	f	1	144
+575	Both, pessimistic and optimistic, concurrency control policies can be used	f	2	144
 576	Transactional management is the complete responsibility of the repository	f	3	144
+581	Detect and Recover from the attack	f	0	146
 582	Resist to the attack	f	1	146
 583	React to the attack	f	2	146
 584	Resist and React to the attack	f	3	146
 589	Depend on the types of the publishers components	f	0	148
+590	Only depend on the type of events	f	1	148
 591	Are completely independent	f	2	148
 592	It is necessary to support dynamic Defer Binding of components, publishers and subscribers, to the connector to be completely independent	f	3	148
 593	They only concern the web designers	f	0	149
 594	They are dependent on performance tactics	f	1	149
 595	They are dependent on availability tactics	f	2	149
+596	They are not implemented by a usability tactic	f	3	149
 601	Performance	f	0	151
 602	Reliability and Performance	f	1	151
+603	Reliability	f	2	151
 604	Security	f	3	151
 613	Only have a server for write requests	f	0	154
 614	Store all the information statically	f	1	154
+615	Prioritize performance and availability over functionality	f	2	154
 616	Use several levels of cache	f	3	154
 617	Passive Redundancy and Increase Resources Efficiency	f	0	155
+618	Active Redundancy and Increase Resources Efficiency	f	1	155
 619	Active Redundancy and Maintain Multiple Copies of Computation	f	2	155
+620	Passive Redundancy and Maintain Multiple Copies of Computation	f	3	155
 621	In the server	f	0	156
+622	By the load balancer	f	1	156
 623	In the repository	f	2	156
 624	In the client	f	3	156
 625	Escalating Restart	f	0	157
 626	Voting	f	1	157
+627	Degradation	f	2	157
 628	Exception Handling	f	3	157
 629	Prioritize Events	f	0	158
 630	Increase Resources	f	1	158
+631	Increase Resources Efficiency	f	2	158
 632	Maintain Multiple Copies of Data	f	3	158
 633	Security and Mobility	f	0	159
 634	Performance, Security and Interoperability	f	1	159
 635	Security, Performance, Usability, Interoperability and Mobility	f	2	159
+636	Security, Performance, Usability and Mobility	f	3	159
 641	Separates the Renderer process from the other processes	f	0	161
+642	The *browser* needs to make less requests to the server	f	1	161
 643	Applies machine learning techniques	f	2	161
 644	Uses prefetching	f	3	161
 645	Repository	f	0	162
+646	Communicating-Processes	f	1	162
 647	Service-Oriented Architecture	f	2	162
 648	Client-Server	f	3	162
+649	Uses the Introduce Concurrency tactic	f	0	163
 650	The page is in cache	f	1	163
 651	Uses the Maintain Multiple Copies of Computation tactic	f	2	163
 652	Uses the Maintain Multiple Copies of Data tactic	f	3	163
 657	The new user interface started using the REST interface	f	0	165
+658	External applications can administrate the GNU Mailman mailing lists	f	1	165
 659	External applications can read and send messages to GNU Mailman	f	2	165
 660	The GNU Mailman interface became public	f	3	165
 661	Communicating-Processes	f	0	166
 662	Client-Server	f	1	166
+663	Pipes-and-Filters	f	2	166
 664	Publish-Subscribe	f	3	166
+665	Data Model	f	0	167
 666	Decomposition	f	1	167
 667	Aspects	f	2	167
 668	Pipes-and-Filters	f	3	167
+669	The quality of Performance	f	0	168
 670	The quality of Availability	f	1	168
 671	The quality of Reliability	f	2	168
 672	The FIFO delivery of messages	f	3	168
+673	Security	f	0	169
 674	Security and Testability	f	1	169
 675	Reliability and Modifiability	f	2	169
 676	Reliability and Testability	f	3	169
 677	Module	f	0	170
 678	Component-and-Connector	f	1	170
+679	Module and Component-and-Connector	f	2	170
 680	Module, but only for the Decomposition architectural style	f	3	170
+681	Modifiability and Interoperability	f	0	171
 682	Performance and Interoperability	f	1	171
 683	Easiness of Development and Performance	f	2	171
 684	Interoperability	f	3	171
 685	Decomposition	f	0	172
+686	Aspects	f	1	172
 687	Uses	f	2	172
 688	Data Model	f	3	172
 689	User Model and Undo	f	0	173
+690	User Model	f	1	173
 691	User Model and System Model	f	2	173
 692	System Model	f	3	173
 693	It is not possible to support SQL searches in the application server	f	0	174
 694	It is always necessary to search in the database before accessing an object	f	1	174
 695	All accesses to objects should occur through their inter-references	f	2	174
+696	It is necessary that each object has a unique identifier	f	3	174
 697	Exception Handling	f	0	175
 698	Increase Competence Set	f	1	175
 699	Exception Prevention	f	2	175
+700	Exception Detection	f	3	175
 701	The Model module uses the Observer module	f	0	176
 702	The Model module uses the Observer module if data is sent in the notification	f	1	176
 703	The Model module uses the Observer module if complex data is sent in the notification	f	2	176
+704	In what concerns the notification, the Model module does not use the Observer module	f	3	176
 705	The Uses views are designed first	f	0	177
 706	The Layered view are designed first	f	1	177
+707	There isn't any predefined order to design Uses and Layered views	f	2	177
 708	Whenever there is at least one Uses view then a Layered view needs to be designed as well	f	3	177
 709	Can only contain a single architectural style	f	0	178
 710	May contain several architectural styles, but only if the are of the Component-and-Connector and Allocation viewtypes	f	1	178
+711	May contain several architectural styles, but only if they are of the same viewtype	f	2	178
 712	May contain several architectural styles, if that is the best way to convey the information to a group of stakeholders	f	3	178
 713	Can only be applied after the Decomposition view is finished	f	0	179
 714	Can be applied before a Decomposition view is designed	f	1	179
+715	Once applied in a view may be necessary to change the Decomposition view	f	2	179
 716	Should be applied in at least a view of the system	f	3	179
+717	It is an advantage for programmers that the transactional behavior is transparently provided	f	0	180
 718	It is not necessary to have transactional behavior in the business logic	f	1	180
 719	The Component-and-Connector architecture needs to have three Tiers	f	2	180
 720	The Module architecture needs to have three Layers	f	3	180
 841	The Transaction Script pattern to help demarcate the business transactions.	f	0	211
+842	The Domain Model pattern to reduce the interface of the Domain Logic layer to a controlled set.	f	1	211
 843	The Data Access layer to be able to access the data that it needs in each service.	f	2	211
 844	The Table Module pattern to hide the details of the table structure for the Presentation layer.	f	3	211
 845	The Transaction Script pattern.	f	0	212
 846	The Table Module pattern.	f	1	212
+847	The Domain Model pattern.	f	2	212
 848	The Service Layer pattern.	f	3	212
+853	The Requirements function is part of the Design module.	f	0	214
 854	The Requirements function is not part of the RulesSet module.	f	1	214
 855	The Requirements function is part of the Objects module.	f	2	214
 856	The Requirements function is part of the Dynamic Design module.	f	3	214
+857	A Condition Monitoring tactic for the Availability quality.	f	0	215
 858	An Encrypt Data tactic for the Security quality.	f	1	215
 859	A Verify Message Integrity tactic to React to Attacks for the Security quality.	f	2	215
 860	An Exception Prevention tactic to Prevent Faults for the Availability quality.	f	3	215
 861	The source of stimulus for scenarios of the Availability quality.	f	0	216
 862	The stimulus for scenarios of the Availability quality.	f	1	216
+863	The stimulus for scenarios of the Security quality.	f	2	216
 864	The source of stimulus for scenarios of the Security quality.	f	3	216
 869	The source of stimulus is the ruleset.	f	0	218
 870	The ruleset designer is the stimulus.	f	1	218
+871	The environment is design time.	f	2	218
 872	The response is defer binding.	f	3	218
 873	Schedule resources.	f	0	219
 874	Condition monitoring.	f	1	219
 875	Reduce overhead.	f	2	219
+876	Increase resource efficiency.	f	3	219
+877	Create a decomposition where there is a module corresponding to the Windows OS and another one for the Mac OS X, each one responsible for containing the OS-specific code.	f	0	220
 878	Use a classic 3-layer architecture with the following layers, from top to bottom: Presentation, Domain Logic, and Data Access.	f	1	220
 879	Use an aspect-oriented architecture, where an aspect is used to generate a graphical interface.	f	2	220
-1144	An allocation element	f	3	286
 880	Use two deployment views, each one allocating different components to different machines with different operating systems.	f	3	220
+885	We have to use a Repository component-and-connector style.	f	0	222
 886	It is not necessary to use a ''Data Access'' layer because the information is simple.	f	1	222
 887	We must identify a module for writing the scores in a Decomposition style.	f	2	222
 888	We may assign the responsibility of writing the scores to another module that already has other responsibilities.	f	3	222
 889	Client-server in both cases.	f	0	223
+890	Client-server in the first case and Peer-to-peer in the second.	f	1	223
 891	Peer-to-peer in both cases.	f	2	223
 892	Peer-to-peer in the first case and Client-Server in the second.	f	3	223
 893	Depends mostly on the system's functional requirements.	f	0	224
 894	Depends more on the architect's experience than on anything else.	f	1	224
 895	Should not depend on the skills of the developing team.	f	2	224
+896	Is driven by a trade-off among the stakeholders needs.	f	3	224
 897	May be responsible for the Featuritis problems of architectures.	f	0	225
+898	May be responsible for the Performitis problems of architectures.	f	1	225
 899	Is focused on creating common generalizations of several systems.	f	2	225
 900	Is focused on the details of the architecture.	f	3	225
 905	The current location is the source of the stimulus.	f	0	227
 906	The traffic monitoring system is the environment.	f	1	227
 907	The Google Map is the artefact.	f	2	227
+908	The location information is correctly included with a probability of 99.99% is the response measure.	f	3	227
 913	A component-and-connector view using a shared-data style.	f	0	229
 914	A data model view.	f	1	229
 915	A service-oriented architecture view.	f	2	229
+916	A data model view and a component-and-connector view using a shared-data style.	f	3	229
 917	Peer-to-peer style.	f	0	230
 918	Pipe-and-Filter style.	f	1	230
+919	Shared-data style.	f	2	230
 920	Publish-subscribe style.	f	3	230
 921	The team did not know the FenixFramework.	f	0	231
+922	The domain only needs CRUD (Create, Read, Update, and Delete) operations.	f	1	231
 923	A domain layer is absent from the architecture.	f	2	231
 924	Most of the information is stored in the client.	f	3	231
+925	It is necessary to design two deployment views, one for each deployment option.	f	0	232
 926	It is necessary to design a single deployment view that contains all the variation, because only the hardware capabilities change.	f	1	232
 927	Two different component-and-connector views are necessary to represent the same runtime behavior of the system.	f	2	232
 928	The deployment options have a large impact on the work assignment view.	f	3	232
 929	Passive redundancy for availability, because it is possible to recover from the commands log.	f	0	233
 930	Undo tactic for usability, because the server can undo the snapshot.	f	1	233
+931	Increase resource efficiency tactic for performance, because it reduces the need of upfront calculus/computation on new clients.	f	2	233
 932	Multiple copies of data tactic for performance, clients do not have to execute the commands.	f	3	233
 933	The server propagates them to all the clients.	f	0	234
+934	The server propagates local commands and cursor movements to the clients, and keeps the snapshots for the initialization of new clients.	f	1	234
 935	The server only propagates local commands to the clients and keeps cursor movements in a log and the snapshots in a repository.	f	2	234
 936	The server propagates the snapshots and the cursor movements to the clients and store the local commands for the initialization of new clients.	f	3	234
 937	Testability.	f	0	235
 938	Modifiability.	f	1	235
+939	Testability and Modifiability.	f	2	235
 940	Performance.	f	3	235
 1085	Requires a more skilled team, because the object-oriented paradigm is more complex than the procedural paradigm	f	0	272
 1086	Is typically used with more complex data access code	f	1	272
 1087	Requires that we write more code when we have only a couple of simple use cases	f	2	272
+1088	All of the above	f	3	272
 1089	The Service Layer pattern	f	0	273
+1090	The Active Record pattern	f	1	273
 1091	The Transaction Script pattern	f	2	273
 1092	The Data Mapper pattern	f	3	273
+1097	Ping-and-echo requires the availability monitor to know the addresses of the components it is monitoring	f	0	275
 1098	Heartbeat requires the availability monitor to confirm the reception of the signal	f	1	275
 1099	In Ping-and-echo the availability monitor should always send the same request	f	2	275
 1100	In Heartbeat, the monitored components can change the message rate	f	3	275
 1101	It is not possible to achieve this requirement. A non-architectural solution is to be careful when hiring system administrators	f	0	276
 1102	It is necessary to use the authenticate authors tactic to authenticate system administrators before they access to the database	f	1	276
 1103	It is necessary to use the encrypt data tactic to encrypt the information with a password that is in a configuration file	f	2	276
+1104	It is necessary to use the encrypt data tactic to encrypt the information on the client web browser, before it is send to the web server	f	3	276
 1109	A scenario for performance associated with a multiple copies of computation tactic	f	0	278
 1110	A scenario for usability associated with a support system initiative tactic	f	1	278
 1111	A scenario for performance associated with a limit event response tactic	f	2	278
+1112	A scenario for usability associated with a support user initiative tactic	f	3	278
+1113	Multiple copies of computation	f	0	279
 1114	Active redundancy	f	1	279
 1115	Increase resource efficiency	f	2	279
 1116	All of the above	f	3	279
+1117	Decomposition view	f	0	280
 1118	Data model view	f	1	280
 1119	Generalization view	f	2	280
 1120	Layered view	f	3	280
 1121	To analyse the source code of the system to see how it is built	f	0	281
 1122	To analyse the system's functional requirements to see what is the system supposed to do	f	1	281
 1123	To analyse the implemented set of features to see what is it that the system actually does	f	2	281
+1124	To talk with the people that developed the system to know what they did and why they did it	f	3	281
 1125	The architecture of a system cannot change	f	0	282
 1126	The main goal of an architect is to identify the quality attributes of system	f	1	282
+1127	Architecture is the design that gets harder to change as development progresses	f	2	282
 1128	The main goal of an architect is to design a detailed structure of the system that supports most of the requirements	f	3	282
 1129	It is not a good idea to consider performance when designing the architecture of the system	f	0	283
 1130	The performance of a system only depends on the global performance strategies	f	1	283
 1131	Testability and maintainability always conflict with performance	f	2	283
+1132	None of the above	f	3	283
+1133	Represent different architectural qualities and they may not be all represented in a single view	f	0	284
 1134	Have a view for each stakeholder	f	1	284
 1135	Have at least a view for each viewtype	f	2	284
 1136	Have a view for each group of interconnected components, and very often a system has several groups of interconnected components	f	3	284
 1137	We should always satisfy in the first place the requirements of the more important stakeholders (such as the client)	f	0	285
 1138	If no order was established among them, we would not know from where should we start the design process	f	1	285
 1139	If one of the stakeholders complains that her requirement is not satisfied, we may explain to her that there were other more important requirements first	f	2	285
+1140	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	285
 1141	A module	f	0	286
+1142	A component	f	1	286
+1143	Both, a module and a component	f	2	286
+1144	An allocation element	f	3	286
 1145	Peer-to-Peer to represent the communication between the components	f	0	287
 1146	Client-Server to represent the request the application makes to the different new sources	f	1	287
+1147	Generalisation to represent an abstraction common to all interfaces and keep API-specific details in child modules	f	2	287
 1148	Layers to create a virtual machine that hides the internals of the application from its users interface code to allow the support of different user interfaces	f	3	287
 1149	Performance because there is an overhead of communication between the modules.	f	0	288
 1150	Install because most of the modules need to be assigned to the same executable file	f	1	288
+1151	Development because it is not possible to do incremental development	f	2	288
 1152	Availability because if a module fails the failure easily propagates to all the other modules	f	3	288
+1153	Performance, because it describes what is the response to REST API calls	f	0	289
 1154	Modifiability, because the jsdom code can not be reused by several threads	f	1	289
 1155	Security, because it describes a "queue overflow" attack	f	2	289
 1156	Interoperability, because the REST API allow the exchange of information with external applications	f	3	289
 1157	Reduce overhead tactic	f	0	290
+1158	Increase resource efficiency tactic	f	1	290
 1159	Increase resources tactic	f	2	290
 1160	Testability tactic	f	3	290
 1161	Overall costs, because of deployment	f	0	291
 1162	Availability, because of the interprocess communication	f	1	291
+1163	Testability, because of the logic complexity	f	2	291
 1164	Performance, because there is not a significative improvement by using more CPUs	f	3	291
 1169	A publish-subscribe style	f	0	293
 1170	A peer-to-peer style	f	1	293
 1171	A client-server style	f	2	293
+1172	A communication processes style	f	3	293
 1173	It is enough to show the load-balancer between the web clients machines and the servers machines using a deployment view	f	0	294
+1174	It is necessary to change the connector between the web clients and the web servers, in the component-and-connector view, to show the semantics that is provided by the load-balancer	f	1	294
 1175	It is necessary to create a uses view to show how clients require the correct functioning of servers	f	2	294
 1176	It is necessary to change the component-and-connector view to show the communicating processes	f	3	294
 1343	Is an architectural pattern.	f	2	336
 1177	They have many different use cases, corresponding to many distinct user interfaces	f	0	295
+1178	They have to process very large amounts of data in each request	f	1	295
 1179	They need to be able to process concurrent requests from the users	f	2	295
 1180	They have a very complex domain logic that requires much processing power for answering each request	f	3	295
+1189	A generalisation architectural style	f	0	298
 1190	An aspects architectural style	f	1	298
 1191	A data model architectural style	f	2	298
 1192	A shared-data architectural style	f	3	298
 1193	Subscribes to the same kind of events that the sub2 port	f	0	299
 1194	Subscribes to the same kind of events that the inputSub port	f	1	299
+1195	Subscribes to cursor position events	f	2	299
 1196	It is unnecessary in the diagram because the :TableEditor can use port sub2 through the :Sheet component	f	3	299
 1197	The communicating processes architectural style	f	0	300
 1198	The client-server architectural style	f	1	300
 1199	The deployment architectural style	f	2	300
+1200	All of the above	f	3	300
 1201	Featuritis may result from a requirement of the technical context.	f	0	301
 1202	Featuritis requires the performance quality because the end user needs to execute the features.	f	1	301
+1203	Featuritis may be a result of a requirement of the business context.	f	2	301
 1204	Featuritis requires the modifiability quality to allow a the system to be easily modified to support new features.	f	3	301
 1209	The book definition does not consider relevant the externally visible properties.	f	0	303
+1210	The book definition also considers that the properties are externally visible because they are used for reasoning by the stakeholders.	f	1	303
 1211	The book definition also considers that the properties are externally visible because by definition an architectural property is externally visible.	f	2	303
 1212	The book definition is not correct, as pointed out in the errata.	f	3	303
+1213	This shared understanding is what distinguishes architecture from design.	f	0	304
 1214	This shared understanding is necessary to define precise requirements.	f	1	304
 1215	This shared understanding does not allow to define the architecture trade-offs because some of the stakeholders have their own goals.	f	2	304
 1216	This shared understanding does not allow to have a global perspective of the system, because stakeholders have different interests.	f	3	304
+1221	Frank Buschmann is referring to some possible consequences of the modifiability quality.	f	0	306
 1222	Frank Buschmann are considering performance and security as the most important qualities.	f	1	306
 1223	Frank Buschmann is referring that the consequences of a flexible system is poor performance and bad security.	f	2	306
 1224	Frank Buschmann is not considering modifiability as an important quality	f	3	306
 1225	Performance should be the last quality to be addressed because it is a local property of an architecture.	f	0	307
 1226	Modifiability, flexibility, should be the first quality to be addressed because it allows the delay of architectural decisions.	f	1	307
 1227	The lack of functionality results in a system without business value, therefore a rich set of features should be implemented first.	f	2	307
+1228	A solution for any quality in isolation may lead to a biased architecture.	f	3	307
 1229	A component.	f	0	308
+1230	A module.	f	1	308
 1231	Both, a component and a module, depending on the perspective.	f	2	308
 1232	An external element.	f	3	308
 1237	Is unable to define a domain model of the system.	f	0	310
 1238	Is focused on the technology context of the architecture.	f	1	310
+1239	Is focused on creating common generalizations of several systems.	f	2	310
 1240	Is focused on the details of the architecture.	f	3	310
 1241	Such misunderstanding and mistrust occurs because the stakeholders have their own agendas	f	0	311
 1242	The cycle Frank Buschmann refers to is the Architectural Influence Cycle.	f	1	311
 1243	The cycle Frank Buschmann refers to allows the clarification of requirements.	f	2	311
+1244	To break such misunderstanding and mistrust the architecture has to make explicit the stakeholders needs.	f	3	311
 1245	Is a functional prototype, which tests the functionalities required by the business stakeholders.	f	0	312
 1246	Is an architecture that demonstrates that the system will support the qualities raised by the stakeholders.	f	1	312
+1247	Is a baseline architecture that allows to experiment with the most significant architectural requirements.	f	2	312
 1344	Is a system decomposition.	f	3	336
-1203	Featuritis may be a result of a requirement of the business context.	t	2	301
-1210	The book definition also considers that the properties are externally visible because they are used for reasoning by the stakeholders.	t	1	303
-1230	A module.	t	1	308
 1248	Is an object-oriented framework, which integrates functional and non-functional requirements of the system.	f	3	312
 1249	A component.	f	0	313
+1250	A module.	f	1	313
 1251	Both, a component and a module, depending on the perspective.	f	2	313
 1252	An external element.	f	3	313
 1257	Are unable to understand the technology capabilities.	f	0	315
 1258	Are focused on the project context of the architecture.	f	1	315
+1259	Are unable to distinguish architecture from design.	f	2	315
 1260	Are focused on the business context of the architecture.	f	3	315
 1261	A flexible architecture occurs when it is not possible to identify all the requirements.	f	0	316
+1262	A solution to this problem is to prioritize the system qualities.	f	1	316
 1263	Performance uncertainty about the system should be dealt with more flexibility.	f	2	316
 1264	A solution to this problem is to reduce the level of flexibility of a system.	f	3	316
 1265	Project and Technical Contexts.	f	0	317
 1266	Project and Professional Contexts.	f	1	317
 1267	Business and Project Contexts.	f	2	317
+1268	Professional and Technical Contexts.	f	3	317
 1273	Modifiability.	f	0	319
+1274	Availability and Performance.	f	1	319
 1275	Testability.	f	2	319
 1276	Availability.	f	3	319
 1277	Tries to guarantee that the final system will have the qualities required by stakeholders.	f	0	320
+1278	Tries to guarantee that the final system will have the qualities aimed by the architecture.	f	1	320
 1279	Does not allow developers to define some of the design of the system	f	2	320
 1280	It requires automatic generation of code from the architecture.	f	3	320
 1281	Performance.	f	0	321
+1282	Availability.	f	1	321
 1283	Reliability.	f	2	321
 1284	Fault-tolerance	f	3	321
 1285	Implements a tactic to recover from faults.	f	0	322
 1286	Implements a tactic to prevent faults.	f	1	322
+1287	Can be used as the source of a stimulus in a scenario.	f	2	322
 1288	Can be used in a non-concurrent system.	f	3	322
 1289	Is an aggregate design tactic.	f	0	323
 1290	Is a maintain user model design tactic.	f	1	323
+1291	Is a design tactic for a scenario where the source of stimulus are technical users.	f	2	323
 1292	Is a design tactic for a scenario where the source of stimulus is the graph owner user.	f	3	323
 1293	Detect intrusion.	f	0	324
 1294	Limit access.	f	1	324
+1295	Limit exposure.	f	2	324
 1296	Separate entities.	f	3	324
 1301	The stimulus is a system input.	f	0	326
 1302	The response can be omitted.	f	1	326
 1303	The artefact can be outside the system.	f	2	326
+1304	The stimulus and the response should be always present.	f	3	326
+1309	The quality addressed is availability.	f	0	328
 1310	The quality addressed is performance.	f	1	328
 1311	The quality addressed is availability and a voting design tactic is required to solve the problem.	f	2	328
 1312	The quality addressed is performance and a maintain multiple copies of data design tactic is required to solve the problem.	f	3	328
 1313	Detect intrusion.	f	0	329
 1314	Detect service denial.	f	1	329
+1315	Verify message integrity.	f	2	329
 1316	Detect message delay.	f	3	329
 1317	Increase resources.	f	0	330
+1318	Introduce concurrency.	f	1	330
 1319	Reduce overhead.	f	2	330
 1320	Manage sample rate.	f	3	330
 1321	Performance.	f	0	331
 1322	Availability.	f	1	331
+1323	Interoperability.	f	2	331
 1324	Testability.	f	3	331
 1325	Ignore faulty behavior.	f	0	332
 1326	Transactions.	f	1	332
 1327	Rollback.	f	2	332
+1328	Exception prevention.	f	3	332
+1329	A Maintain Multiple Copies of Computation design tactic in Carbon.	f	0	333
 1330	A Maintain Multiple Copies of Computation design tactic in the WebApp such that reads do not compete with writes.	f	1	333
 1331	A Maintain Multiple Copies of Data design tactic in Carbon.	f	2	333
 1332	A Maintain Multiple Copies of Data design tactic in the WebApp such that reads do not compete with writes.	f	3	333
 1333	Limit access, to restrict the access to the database system.	f	0	334
 1334	Limit exposure, locate the database system in the intranet.	f	1	334
+1335	Separate entities, to allow the use of more strict tactics on the sensitive data.	f	2	334
 1336	Change default settings, because default passwords are sensitive.	f	3	334
+1337	Maintain user model tactic.	f	0	335
 1338	Introduce concurrence tactic.	f	1	335
 1339	Increase resource efficiency tactic.	f	2	335
 1340	Maintain task model tactic.	f	3	335
 1341	Is a mediator, an application of the mediator pattern, between the input stimulus and the output response.	f	0	336
-1250	A module.	t	1	313
+1342	May be associated to other tactics to deal with a single stimulus.	f	1	336
+1345	This situation corresponds to the use of the degradation availability tactic.	f	0	337
 1346	This situation corresponds to the use of the removal from service availability tactic.	f	1	337
 1347	This situation corresponds to the use of the limit access security tactic.	f	2	337
 1348	This situation corresponds to the use of the limit exposure security tactic.	f	3	337
 1349	The quality addressed is availability.	f	0	338
+1350	The quality addressed is modifiability.	f	1	338
 1351	The quality addressed is availability and an active redundancy design tactic is required to solve the problem.	f	2	338
 1352	The quality addressed is modifiability and an increase cohesion design tactic is required to solve the problem.	f	3	338
 1353	Detect and Resist.	f	0	339
 1354	Detect and React.	f	1	339
+1355	Detect and Recover.	f	2	339
 1356	Resist and React.	f	3	339
 1369	Testability.	f	0	343
 1370	Reliability.	f	1	343
 1371	Availability.	f	2	343
+1372	Usability.	f	3	343
+1373	Interoperability.	f	0	344
 1374	Performance.	f	1	344
 1375	Availability.	f	2	344
 1376	Usability.	f	3	344
+1381	Business scenario.	f	0	346
 1382	Availability scenario.	f	1	346
 1383	Modifiability scenario.	f	2	346
 1384	Usability scenario.	f	3	346
 1389	Performance.	f	0	348
+1390	Modifiability.	f	1	348
 1391	Availability.	f	2	348
 1392	Usability.	f	3	348
 1393	Change default settings.	f	0	349
 1394	Limit access.	f	1	349
 1395	Support user initiative.	f	2	349
+1396	Support system initiative.	f	3	349
 1397	Results in a similar decomposition as if the criteria was not applied but some modules are identified to be outsourced.	f	0	350
 1398	Results in a decomposition where each module may be implemented by a single developer.	f	1	350
 1399	Allows to increase the overall calendar development time of the project because there is a communication overhead with external teams.	f	2	350
+1400	Allows to identify modules for which the development team does not have the required implementation competences.	f	3	350
 1401	Only contains business qualities.	f	0	351
 1402	Cannot be defined for the security quality.	f	1	351
 1403	Contains the architectural tactics associated with architecturally significant requirements.	f	2	351
+1404	Contains the business value and the architectural impact of architecturally significant requirements.	f	3	351
 1405	This ASR can easily be supported by the architecture.	f	0	352
 1406	This ASR should be supported by the architecture because of its high impact.	f	1	352
+1407	The architect have to decide on the cost/benefit of designing an architecture that supports this ASR.	f	2	352
 1408	The architect should support this ASR after designing an architecture that supports all the ASRs with high business value.	f	3	352
 1409	Performance.	f	0	353
 1410	Reliability.	f	1	353
+1411	Availability.	f	2	353
 1412	Usability.	f	3	353
 1413	Performance.	f	0	354
 1414	Interoperability.	f	1	354
+1415	Availability.	f	2	354
 1416	Usability.	f	3	354
+1421	Business scenario.	f	0	356
 1422	Availability scenario.	f	1	356
 1423	Modifiability scenario.	f	2	356
+1424	Usability scenario.	f	3	356
+1433	Rollback.	f	0	359
 1434	Persistence.	f	1	359
 1435	Retry.	f	2	359
 1436	Passive redundancy.	f	3	359
 1441	Applying the generalization style to identify child modules of a module in the loop chain.	f	0	361
+1442	Applying the decomposition style to some of the modules in the loop chain.	f	1	361
 1443	Identifying which of the *uses* dependencies are actually generalization dependencies.	f	2	361
 1444	Decomposing a *uses* relation into different interfaces.	f	3	361
+1449	Limit exposure.	f	0	363
 1450	Limit access.	f	1	363
 1451	Authorize actors.	f	2	363
 1452	Separate entities.	f	3	363
 1453	The type of a connector does not depend on the type of its roles.	f	0	364
 1454	The type of a component does not depend on the type of its ports.	f	1	364
 1455	The attachment is a runtime relation which dynamically manages type compliance.	f	2	364
+1456	The attachment between components and connectors only depends on their ports and roles types.	f	3	364
 1465	It is necessary design a CRUD matrix to show the dependencies between the persistent information.	f	0	367
 1466	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.	f	1	367
 1467	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.	f	2	367
+1468	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance issues of the access to data.	f	3	367
 1469	Schedule resources.	f	0	368
 1470	Maintain multiple copies of data.	f	1	368
+1471	Increase resource efficiency.	f	2	368
 1472	Reduce overhead.	f	3	368
 1473	She encapsulates the connector qualities inside a higher level component.	f	0	369
 1474	She delays the complete specification of the connector for development time to have human resources to prototype and measure different implementations.	f	1	369
 1475	She does not want to clutter the view with details and trusts the development team to implement the connector according to the required quality level.	f	2	369
+1476	The required quality associated with the connector is supported by existing and well-know technology.	f	3	369
+1477	She can define a variant of this style with asynchronous communication by allowing the client to register callbacks that the server calls at specific times.	f	0	370
 1478	She has to use another architectural style to describe asynchronous communication.	f	1	370
 1479	She can use the request/reply connector but the server should not return results to the client.	f	2	370
 1480	She can define a variant of this style with asynchronous communication by allowing the server to have the initiative to initiate the interaction.	f	3	370
 1481	Allows the analysis of the impact of changes because if a module uses another it will necessarily have to change whenever the used module changes.	f	0	371
 1482	Improves testability because if a module uses another then it is only possible to test them together.	f	1	371
+1483	Allows incremental development because the possible increments of functionally can be inferred from use dependencies.	f	2	371
 1484	Improves testability because it informs the tester about which modules involved in circular use dependencies.	f	3	371
+1485	Relates a view of the Uses style with a view of the Data Model style.	f	0	372
 1486	Is an extension of a view of the Data Model style.	f	1	372
 1487	Allows to avoid redundancy and inconsistency.	f	2	372
 1488	Describes the structure of the data used by the system.	f	3	372
+1489	Multiple copies of computation and Passive redundancy tactics.	f	0	373
 1490	Multiple copies of computation tactic.	f	1	373
 1491	Passive redundancy tactic.	f	2	373
 1492	Multiple copies of computation and Active redundancy tactics.	f	3	373
 1493	A module interface has to be attached to a single component port.	f	0	374
 1494	A module interface can be replicated but component ports cannot.	f	1	374
+1495	A module interface cannot be replicated but component ports can.	f	2	374
 1496	A module interface may be attached to several component ports.	f	3	374
 1497	It allows an undefined number of clients.	f	0	375
+1498	It is possible to have redundant servers.	f	1	375
 1499	Servers can also be clients.	f	2	375
-1433	Rollback.	t	0	359
 1500	Servers can send a heartbeat to clients.	f	3	375
 1505	Sanity checking.	f	0	377
 1506	Exception detection.	f	1	377
 1507	Detect intrusion.	f	2	377
+1508	Condition monitoring.	f	3	377
+1509	It is possible to integrate a new data accessor without changing the other data accessors.	f	0	378
 1510	It is possible to change the repository schema without changing the data accessors.	f	1	378
 1511	The integration of a new data accessor only implies changes in the data accessors that access the same type of data.	f	2	378
 1512	The communication between data accessors does not occur through the repository.	f	3	378
 1517	This means that the modules inside a layer cannot be loosely coupled.	f	0	380
 1518	This means that this architectural style emphasizes the quality of performance.	f	1	380
 1519	This means that each module cannot use other modules inside the same layer.	f	2	380
+1520	This means that the modules inside a layer are likely to be ported to a new application together.	f	3	380
 1525	Is a Client-Server style because consumers are clients and providers are servers.	f	0	382
 1526	Is a Peer-to-Peer style because consumers and providers are peers.	f	1	382
+1527	Can use a Service Registry to improve transparency of location of service providers.	f	2	382
 1528	Is a Publish-subscriber style because consumers use an enterprise service bus.	f	3	382
+1529	In the view there are multiple instances of the `Queue` component.	f	0	383
 1530	In the view there are multiple instances of the `Writer` component.	f	1	383
 1531	In the view `Receiver` component's `client` port is not associated with an external port.	f	2	383
 1532	In the view the `produce` port of a `Receiver` component is attached to the `consume` port of a `Writer` component.	f	3	383
 1545	It encapsulates applications through well-defined interfaces.	f	0	387
 1546	It decouples the coordination of the interaction among applications from the applications themselves.	f	1	387
 1547	It improves transparency of location of service providers.	f	2	387
+1548	It encapsulates applications through well-defined interfaces, decouples the coordination of the interaction among applications from the applications themselves, and improves transparency of location of service providers.	f	3	387
 1549	There is a message passing connector between the `read` port of `Queue` and the `data points access` port of `WebApp`.	f	0	388
+1550	There is a interface delegation relation between the `read` port of `Queue` and the `query` port of `Carbon`.	f	1	388
 1551	There is a connector between the `producer` port of a `Queue` component and the `client` port of its `Carbon` component.	f	2	388
 1552	The `client` ports of `Carbon` and `WebApp` are connected to a `Client` component through the same connector instance.	f	3	388
 1553	Deployment style.	f	0	389
+1554	Implementation style.	f	1	389
 1555	Install style.	f	2	389
 1556	Work assignment style.	f	3	389
 1561	It applies layers to tiers.	f	0	391
+1562	Restrict the communication between components because, for instance, a group of components should be located in the same hardware.	f	1	391
 1563	Is an extension of the Client-Server architectural style.	f	2	391
 1564	Defines tiers as components.	f	3	391
 1569	Deployment style.	f	0	393
 1570	Implementation style.	f	1	393
+1571	Install style.	f	2	393
 1572	Work assignment style.	f	3	393
+1577	Memcached can be considered a sub-module of the Store Graphs module.	f	0	395
 1578	Memcached can be considered a sub-module of the Present Graphs module.	f	1	395
 1579	Memcached can be considered a direct sub-module of the top Graphite module.	f	2	395
 1580	Memcached is not a module.	f	3	395
+1589	Buffering can be considered a sub-module of the Store Graphs module.	f	0	398
 1590	Buffering can be considered a sub-module of the Present Graphs module.	f	1	398
-1808	Reliability and Security	f	3	452
 1591	Buffering can be considered a direct sub-module of the top Graphite module.	f	2	398
 1592	Buffering is not a module.	f	3	398
 1593	A work assignment view.	f	0	399
+1594	A deployment view.	f	1	399
 1595	An install view.	f	2	399
 1596	An implementation view.	f	3	399
+1601	Amazon Silk is more convenient for mobile devices because it does most of the computation in the cloud.	f	0	401
 1602	Google Chrome is more convenient for mobile devices because it has an optimized network stack that runs in any kind device.	f	1	401
 1603	Amazon Silk is more convenient for mobile devices because it customizes the number of threads that run in the device.	f	2	401
 1604	Google Chrome is more convenient for mobile devices because content delivery is optimized.	f	3	401
 1605	There is a ThousandParsec connector.	f	0	402
 1606	There is a Read/Write connector which encapsulates a redundant Repository.	f	1	402
+1607	There is a Read/Write connector which guarantees that players turns are not lost.	f	2	402
 1608	There is a Read/Write connector which guarantees that only the turns of the last two players may be lost.	f	3	402
 1609	Supports asynchronous communication to deal with disconnected mode.	f	0	403
 1610	Implements an event bus that allows the server to inform the client about new order recommendations.	f	1	403
 1611	May loose some of the changes done on the client component.	f	2	403
+1612	Has reduced reliability qualities.	f	3	403
 1613	The ConflictResolution module is part of the code executed by the : TableEditor component.	f	0	404
+1614	The ConflictResolution module is part of the code executed by the : Sheet component.	f	1	404
 1615	The code of the ConflictResolution module is executed by a broadcast connector that implements an eventbus between the SpreadSheet components.	f	2	404
 1616	The code of the ConflictResolution module is executed in a server component because it needs to be centralized.	f	3	404
 1617	An object oriented style is followed.	f	0	405
+1618	The business logic is organized around record sets.	f	1	405
 1619	Row Data Gateway is the most suitable data source pattern.	f	2	405
 1620	A Service Layer should be used to provide an interface for the presentation layer.	f	3	405
 1621	In Amazon Silk a request for a web page corresponds to a peer-to-peer interaction between all the web components containing the resources.	f	0	406
 1622	In Google Chrome a request for a web page is accomplished by a single access to the internet.	f	1	406
+1623	In Amazon Silk a request for a web page corresponds to requesting a service from the amazon cloud.	f	2	406
 1624	In Google Chrome a request for a web page aggregates the page on the background before it is sent to the client.	f	3	406
 1625	Should be described as a submodule of the RulesSet module.	f	0	407
+1626	Should be described as a submodule of but not included in the RulesSet subtree.	f	1	407
 1627	Should be described as a submodule of the Design module.	f	2	407
 1628	Should not be described as a module because it is a component.	f	3	407
 1633	The : TableEditor broadcasts the cursor position through the : Sheet.	f	0	409
-1601	Amazon Silk is more convenient for mobile devices because it does most of the computation in the cloud.	t	0	401
-1607	There is a Read/Write connector which guarantees that players turns are not lost.	t	2	402
-1612	Has reduced reliability qualities.	t	3	403
-1614	The ConflictResolution module is part of the code executed by the : Sheet component.	t	1	404
-1618	The business logic is organized around record sets.	t	1	405
-1623	In Amazon Silk a request for a web page corresponds to requesting a service from the amazon cloud.	t	2	406
-1626	Should be described as a submodule of but not included in the RulesSet subtree.	t	1	407
+1634	An interface delegation is missing in the picture to represent the : TableEditor broadcasting the cursor position through the Pub port.	f	1	409
 1635	The : Sheet broadcasts the cursor position through the Pub port.	f	2	409
 1636	The : TableEditor broadcasts the cursor position through its : StatusCallback port.	f	3	409
 1637	Are responsible for loading the objects they refer to.	f	0	410
 1638	Are responsible for the management of transactions, begin and end of transactions.	f	1	410
 1639	Contain the business logic.	f	2	410
+1640	May not even exist, only record sets are used.	f	3	410
+1641	Amazon Silk predicts accesses based on the information gathered for all Silk users.	f	0	411
 1642	Google Chrome uses a usability maintain system model tactic.	f	1	411
 1643	Amazon Silk predictions are constrained by the amount of information it can store about each user access.	f	2	411
 1644	Google Chrome predictions do not require storage in the client-side.	f	3	411
 1645	There is a ThousandParsec connector.	f	0	412
 1646	There is a Request/Reply connector.	f	1	412
+1647	There is a ThousandParsec connector which can be decomposed into a set of components and Request/Reply connectors.	f	2	412
 1648	There is an EventBus connector.	f	3	412
+1649	Was taken because HTML5 provides better portability qualities.	f	0	413
 1650	Was taken because Native applications provide better modifiability qualities.	f	1	413
 1651	Was taken because HTML5 provides better usability qualities.	f	2	413
 1652	Was taken because Native application provide better support for working offline.	f	3	413
+1653	The server implements the : Repository component and the : Broadcast connector.	f	0	414
 1654	The server implements the : Repository component.	f	1	414
 1655	The server implements the : Broadcast connector.	f	2	414
 1656	The server implements the SpreadSheet components	f	3	414
+1657	Table Data Gateway and Row Data Gateway.	f	0	415
 1658	Row Data Gateway and Active Record.	f	1	415
 1659	Row Data Gateway and Data Mapper.	f	2	415
 1660	Active Record and Data Mapper.	f	3	415
 1661	Amazon Silk explicitly caches pages on the browser to optimize accesses.	f	0	416
+1662	Google Chrome predictor takes into consideration the amount of available cache.	f	1	416
 1663	Amazon Silk cache is not shared between different users of the service to support confidentiality.	f	2	416
 1664	Google Chrome cache is shared among the different users of a desktop machine.	f	3	416
 1665	As a specialization of the RulesSet module.	f	0	417
 1666	As a submodule of the RulesSet module.	f	1	417
+1667	As a module but not included in the RulesSet subtree.	f	2	417
 1668	As a specialization of the Design module.	f	3	417
+1669	Two distinct unidirectional connectors.	f	0	418
 1670	A single bidirectional connector.	f	1	418
 1671	Three distinct unidirectional connectors.	f	2	418
 1672	A single unidirectional connector.	f	3	418
 1673	The Parser module is part of the code executed by the : TableEditor component.	f	0	419
+1674	The Parser module is part of the code executed by the : Sheet component.	f	1	419
 1675	The code of the Parser module is executed by a repository component, which is not represented in the view.	f	2	419
 1676	The code of the Parser module is executed by both, the : Sheet and the repository components (the latter is not visible in the view).	f	3	419
 1677	Table Data Gateway and Row Data Gateway.	f	0	420
 1678	Row Data Gateway and Active Record.	f	1	420
 1679	Row Data Gateway and Data Mapper.	f	2	420
+1680	Active Record and Data Mapper.	f	3	420
+1801	The stimulus is to integrate reports from a variety of test tools	f	0	451
 1802	The response is JUnit XML standard	f	1	451
 1803	The source of the stimulus is Sun	f	2	451
 1804	The measure of the response is a robust open-source community associated with it	f	3	451
 1805	Modifiability and Performance	f	0	452
 1806	Availability and Modifiability	f	1	452
+1807	Performance and Reliability	f	2	452
+1808	Reliability and Security	f	3	452
 1809	In the Deployment view, because the presentation component is now executing in a different place	f	0	453
 1810	In the component-and-connector view, because the connector between the web client and the web server has to change	f	1	453
 1811	In the Layer view, because the order of the layers will have to change	f	2	453
+1812	In the mapping between layers of the system and the components where they execute	f	3	453
 1813	The left part of the figure represents a three-layered architecture	f	0	454
 1814	The most relevant architectural style in the right part of the figure is shared-data	f	1	454
 1815	The system represented in the left part of the figure tends to be non-transactional	f	2	454
+1816	The system represented in the right part of the figure tends to have good modifiability	f	3	454
 1817	Service-oriented architecture to express how clients can access the services	f	0	455
 1818	Client-server to express how multiple clients can access the applications	f	1	455
+1819	Tiers to express that different applications define their own contexts	f	2	455
 1820	Decomposition to express the different responsibilities assigned to each application	f	3	455
 1821	We should always satisfy in the first place the requirements of more important stakeholders (such as the client)	f	0	456
 1822	If no order was established among them, we would not know from where should we start the design process	f	1	456
 1823	If one of the stakeholders complains that his requirement is not satisfied, we may explain to him that there were other more important requirements first	f	2	456
+1824	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	456
+1837	Retry	f	0	460
 1838	Active redundancy	f	1	460
 1839	Ignore faulty behaviour	f	2	460
 1840	Ping/Echo	f	3	460
 1841	Consider the requirements not realistic	f	0	461
 1842	Apply tactics of defer binding to allow the addition of the new sources of information in initialization time	f	1	461
+1843	Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders	f	2	461
 1844	Consider this requirement as a non architecturally significant requirement	f	3	461
 1845	Increasing performance and availability	f	0	462
 1846	Increasing availability and decreasing performance	f	1	462
 1847	Increasing performance and decreasing availability	f	2	462
+1848	Increasing performance, scalability and availability	f	3	462
 1849	Due to its configuration strategy Apache has better performance	f	0	463
 1850	Performance was the main concern of the design of the configuration strategy in Nginx	f	1	463
 1851	Apache emphasizes the usability quality for system administrators by allowing to split the configuration by different files	f	2	463
+1852	Nginx emphasizes the usability quality for system administrators by reducing the number or errors	f	3	463
 1853	It makes no sense to use views of the module viewtype, as they give only a static view of the system	f	0	464
 1854	You should use only views of the component-and-connector viewtype, which describe the dynamic aspects of the system	f	1	464
+1855	You may need to use views of the three viewtypes	f	2	464
 1856	The only views that are relevant to performance requirements are views of the Deployment style	f	3	464
 1857	The Work Assignment style	f	0	465
 1858	The Client-Server style	f	1	465
 1859	The Deployment style	f	2	465
+1860	The Communicating Processes style	f	3	465
 1865	The Peer-to-Peer style	f	0	467
+1866	The Pipes-and-filters style	f	1	467
 1867	The Client-Server style	f	2	467
 1868	The Publish-subscribe style	f	3	467
+1873	Launching a new process for processing each request is too expensive	f	0	469
 1874	Using threads ensures that the processing of each request is isolated from the remaining requests	f	1	469
 1875	With this approach they may use all of the available cores in multiprocessor machines	f	2	469
 1876	They are used for implementing enterprise applications that typically have complex domain logic and, by using threads, it is easier to reuse code from one request to another	f	3	469
 1877	An increase resource efficiency tactic	f	0	470
 1878	A schedule resources tactic	f	1	470
+1879	A multiple copies of computation tactic	f	2	470
 1880	A manage sampling rate tactic	f	3	470
 1881	A decomposition view which represent the module for compare-and-set	f	0	471
 1882	A client-server view with non-blocking connectors for the interaction between threads and core data structures	f	1	471
+1883	A communicating-processes view with non-blocking connectors for the interaction between threads and core data structures	f	2	471
 1884	A deployment view which allocate threads to the multi-cores	f	3	471
+1885	The solution where the application is responsible for the eviction has better availability	f	0	472
 1886	The solution where the cache is responsible for the eviction has better availability	f	1	472
 1887	The solution where the application is responsible for the eviction has better modifiability	f	2	472
 1888	The solution where the cache is responsible for the eviction has better performance	f	3	472
 1889	Performance	f	0	473
 1890	Interoperability	f	1	473
+1891	Reliability	f	2	473
 1892	Security	f	3	473
 1897	This law highlights the impact of the business on the architecture	f	0	475
+1898	This law can be seen as an example of the architecture influence cycle	f	1	475
 1899	This law states that architectures impact on the structure of the organization	f	2	475
 1900	This law does not apply to the design of architectures	f	3	475
 1901	Becomes unavailable for clients if there is a fault in the hardware of web server (srv-web)	f	0	476
 1902	Becomes unavailable for clients if there is a fault in the hardware of database server (srv-db)	f	1	476
 1903	Becomes unavailable for clients if there is a fault in the hardware of service server (srv-opc)	f	2	476
+1904	Becomes unavailable for banks if there is a fault in the hardware of service server (srv-opc)	f	3	476
 1905	Performance is a quality that you have to address at the end of the development process	f	0	477
 1906	There is no system which can have good performance and be easily maintainable	f	1	477
+1907	We have to distinguish architectural performance from opportunistic performance	f	2	477
 1908	The system performance quality has impact on the performance of the execution of tests	f	3	477
 1917	They are both modules	f	0	480
+1918	They are both components	f	1	480
 1919	The *Request Node* is a component and the *Cache* is a module	f	2	480
 1920	The *Request Node* is a module and the *Cache* is a component	f	3	480
+2049	By interleaving the various processing phases of each request in a sequential process	f	0	513
 2050	By executing in parallel each of the phases of the pipeline corresponding to the processing of a request	f	1	513
 2051	By executing in parallel the processing of the various requests	f	2	513
 2052	By processing completely each request before moving to the next one, in a sequential process	f	3	513
+2053	You need to change the decomposition view to represent modules with the responsibilities associated with the DSL	f	0	514
 2054	You need to design a client-server view representing the interaction between the DSL and the servers that execute its commands	f	1	514
 2055	You need to design an implementation view to allow system administrators configure the builds	f	2	514
 2056	You do not need to change the views because the DSL does not have any architectural impact	f	3	514
 2057	A uses view which represent modules for the externalizers	f	0	515
 2058	A client-server view which represent the byte stream for transmission across a network	f	1	515
 2059	A connector that has the serialization and de-serialization speed qualities	f	2	515
-2436	The library approach does not build a cluster.	f	3	609
+2060	A decomposition view which contains the serialization/de-serilization modules	f	3	515
+2065	The main quality of the system in the right part of the figure is scalability	f	0	517
 2066	The main quality of the system in the left part of the figure is scalability	f	1	517
 2067	The main quality of the system in the right part of the figure is ease of development	f	2	517
 2068	The main quality of the system in the left part of the figure is to promote cross-functional teams	f	3	517
 2069	Data model to express the stored data formats	f	0	518
+2070	Decomposition to express the services interfaces	f	1	518
 2071	Aspects to express the evolution of service interfaces	f	2	518
 2072	Publish-subscribe to express how data is shared between services	f	3	518
 2073	Performance because all requests will be processed faster	f	0	519
+2074	Performance because it allows the processing of more requests per unit of time	f	1	519
 2075	Availability because even if PartB1 is not available partB2 can be provided	f	2	519
 2076	Reliability because a single correct read is used to responde to several requests	f	3	519
 2085	Is useful only if done (even if only partially) before the system's implementation is concluded, given that the architecture is used for restricting the implementation	f	0	522
 2086	Is useful only if done (even if only partially) before the system's implementation is concluded, because if the system is already implemented, its implementation uniquely determines the architecture	f	1	522
 2087	Is useful only if done (even if only partially) before the system passes all of the acceptance tests by the client, given that no more requirements changes will take place after that time	f	2	522
+2088	Is useful even if the implementation is concluded and the system has entered the maintenance phase	f	3	522
+2089	The most important requirements (both functional and qualities) that the system must achieve	f	0	523
 2090	The components that manage the communication between the remaining elements in the system	f	1	523
 2091	The stakeholders that drive the development of the system	f	2	523
 2239	The design of a reusable interface is the stimulus.	f	2	560
@@ -1476,576 +1765,751 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 2097	Communicating processes	f	0	525
 2098	Communicating processes and shared-data	f	1	525
 2099	Communicating processes, shared-data and service-oriented architecture	f	2	525
+2100	Communicating processes, shared-data, service-oriented architecture, and peer-to-peer	f	3	525
 2101	A module may contain code from different components	f	0	526
+2102	A component may execute code from different modules	f	1	526
 2103	A module may execute code from different components	f	2	526
 2104	A component may contain code from different modules	f	3	526
 2105	They describe general requirements that all systems should try to satisfy	f	0	527
 2106	They allow us to build a more robust architecture that satisfies less specific requirements, which address a wider range of situations that may happen in the system	f	1	527
 2107	They identify the most important requirements that the system should satisfy	f	2	527
+2108	They guide us in the requirement elicitation process with the system's stakeholders	f	3	527
 2109	There is a high level of communication between the several modules, and this will cause the system to have a low performance	f	0	528
 2110	It is not possible to install the system in more than one machine	f	1	528
+2111	It is not possible to develop and to test the system incrementally	f	2	528
 2112	It is very hard to explain what the system does, because we need to understand all the execution fluxes	f	3	528
 2121	The Peer-to-Peer style	f	0	531
 2122	The Client-Server style	f	1	531
+2123	The Shared-Data style	f	2	531
 2124	The Publish-subscribe style	f	3	531
 2125	The Shared data style	f	0	532
 2126	The Pipes-and-filters style	f	1	532
 2127	The Peer-to-Peer style	f	2	532
+2128	The Communicating Processes style	f	3	532
 2129	Ping/Echo	f	0	533
 2130	Heartbeat	f	1	533
+2131	Voting	f	2	533
 2132	Removal from Service	f	3	533
 2137	Launch a new process for processing each request	f	0	535
 2138	Spawn a new thread for processing each request	f	1	535
+2139	Put the requests into a queue and schedule their processing	f	2	535
 2140	Buy a server with high processing power	f	3	535
 2141	A Deployment view	f	0	536
 2142	A Component-and-Connector view	f	1	536
 2143	A Uses view	f	2	536
+2144	A Decomposition view	f	3	536
 2145	Increasing performance and availability	f	0	537
 2146	Increasing availability and decreasing performance	f	1	537
+2147	Increasing performance and decreasing availability	f	2	537
 2148	Increasing scalability and availability	f	3	537
 2149	Make a business case for the system	f	0	538
+2150	Understand the architecturally significant requirements	f	1	538
 2151	The system design	f	2	538
 2152	Documenting and communicating the architecture	f	3	538
 2153	Modifiability	f	0	539
 2154	Availability	f	1	539
 2155	Testability	f	2	539
+2156	Interoperability	f	3	539
 2157	Performance	f	0	540
+2158	Modifiability	f	1	540
 2159	Usability	f	2	540
 2160	Security	f	3	540
 2240	The data input to the system is the stimulus.	f	3	560
 2181	Should be avoided because scenarios should describe very concrete situations.	f	0	546
+2182	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, etc.	f	1	546
 2183	Can omit some of the elements like, for instance, the environment, if they are not relevant for the general scenario.	f	2	546
 2184	Is a very reusable scenario that can be used in many different concrete situations.	f	3	546
 2185	Can be applied to any kind of availability scenario.	f	0	547
+2186	Is useful to support scenarios where the stimulus is an omission.	f	1	547
 2187	Guarantees that the system will not become unavailable.	f	2	547
 2188	Reduces the availability scenario response time because the request occurs twice.	f	3	547
 2189	The business aspects of the system are for business architects, not the software architects.	f	0	548
 2190	Dealing with the technological aspects of the system should be delayed to the implementation stage of development.	f	1	548
 2191	The modeling of a system is not part of the software architect duties.	f	2	548
+2192	The level of abstraction of the system an architect works may vary.	f	3	548
 2193	Martin Fowler disagrees with this definition because we should delay the design decisions and focus on features first.	f	0	549
+2194	Martin Fowler complains about this definition because the early decisions are not necessarily the right ones.	f	1	549
 2195	Martin Fowler complains about this definition because architecture should stress flexibility which can only be necessary later.	f	2	549
 2196	Martin Fowler disagrees with this definition because to design an architecture it is not necessary to make any decision.	f	3	549
 2197	This view highlights the availability of the system.	f	0	550
 2198	This view highlights the performance of the `Image File Storage`.	f	1	550
+2199	This view highlights the different performance levels for `upload` and `dowload` operations.	f	2	550
 2200	This view highlights the scalability of `upload` and `dowload` operations.	f	3	550
 2225	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business.	f	0	557
 2226	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the project.	f	1	557
+2227	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business and project.	f	2	557
 2228	This is a case of an architectural influence cycle without feedback.	f	3	557
 2229	This view highlights the security of the system.	f	0	558
 2230	This view highlights the scalability of `upload` and `dowload` operations.	f	1	558
 2231	This view highlights the scalability of storage.	f	2	558
+2232	This view highlights the scalability of `upload` and `dowload` operations, and of storage.	f	3	558
 2233	This shared understanding can be represented by a set of architectural views.	f	0	559
+2234	This shared understanding includes the architecturally significant requirements.	f	1	559
 2235	The system algorithms should be part of the shared understanding.	f	2	559
 2236	The shared understanding describes the system from a high-level perspective.	f	3	559
+2237	The exchange of information is the stimulus.	f	0	560
 2238	The request to adapt an interface is the stimulus.	f	1	560
 2261	This view highlights the availability of the `Image File Storage`.	f	0	566
+2262	This view highlights the performance of the `download` operations.	f	1	566
 2263	This view highlights the performance of `upload` operations.	f	2	566
 2264	This view highlights the scalability of `upload` and `dowload` operations.	f	3	566
 2269	Design an architectural solution together with the stakeholders to be sure that everybody agrees on the resolution of conflits.	f	0	568
 2270	Solve the conflicts between requirements by deciding on the best trad-offs the system should support.	f	1	568
+2271	Facilitate the communication among the stakeholders such that they can decide on what are the architecturally significant requirements.	f	2	568
 2272	Design an architecture that supports all the conflicting requirements and present it to the stakeholders.	f	3	568
 2273	The set of structures is needed to support different levels of performance for the system.	f	0	569
+2274	To reason about a system is to verify whether the architecturally significant requirements are considered by the architecture.	f	1	569
 2275	The hardware is an example of a software element.	f	2	569
 2276	There isn't any relation between the properties of the software elements and the ability to reason about the system.	f	3	569
+2277	Active redundancy can be used together with a voting tactic to detect and recover from faults.	f	0	570
 2278	These tactics are used to prevent the occurence of a fault.	f	1	570
 2279	Spare guarantees immediate recover.	f	2	570
 2280	Passive redundancy does not work with non-deterministic behavior of request's execution.	f	3	570
 2301	It describes an availability scenario because the configuration allows to define redundant virtual servers.	f	0	576
 2302	It describes a scalability scenario because it is possible to increment the size of the configuration at a linear cost.	f	1	576
+2303	It describes a usability scenario where the stimulus is reduce the number of errors when configuring the system.	f	2	576
 2304	It describes a modifiability scenario because of the cost associated with maintaining the configuration.	f	3	576
+2305	In each iteration one or more architecturally significant requirements are used to decompose a software element of the system design.	f	0	577
 2306	The architect cannot backtrack the decomposition decisions she made.	f	1	577
 2307	During the design process the number of architecturally significant requirements cannot change.	f	2	577
 2308	Contraints cannot be used as requirements for the decomposition process.	f	3	577
 2313	It describes a performance scenario where the stimulus is the request of a custom graph.	f	0	579
 2314	The scenario is supported by a manage sampling rate tactic because several requests to the same graph return the same result.	f	1	579
 2315	It describes a usability scenario where the source of stimulus is a non-technical user.	f	2	579
+2316	A support user initiative tactic based on the definition of a language is used to achieve this scenario.	f	3	579
 2317	Has as main goal the reduction of the modules' size.	f	0	580
 2318	Results in the creation of a third module that does not have to change when any of the original modules are changed.	f	1	580
 2319	Increases the cohesion between the two modules.	f	2	580
+2320	Cannot be used together with the Reduce Overhead performance tactic.	f	3	580
 2341	Introduce concurrency.	f	0	586
 2342	Increase resources.	f	1	586
+2343	Schedule resources.	f	2	586
 2344	Maintain multiple copies of computation.	f	3	586
 2345	This is a performance scenario because the stimulus is an input, *launches several instances of the system*.	f	0	587
+2346	This is a modifiability scenario which has a defer binding tactic.	f	1	587
 2347	This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.	f	2	587
 2348	This is a modifiability scenario and its environment design time.	f	3	587
+2349	Bound execution times, bound queue sizes, and increase resources.	f	0	588
 2350	Bound execution times, and increase resources.	f	1	588
 2351	Manage sampling rate, bound queue sizes, and increase resources.	f	2	588
 2352	Bound queue sizes, and increase resources.	f	3	588
 2353	Only the scenarios that have high architectural impact and high business value should appear in the tree.	f	0	589
 2354	A scenario for a power outage should have a low business value because the fault is temporary.	f	1	589
 2355	A scenario for a 24 hours x 7 days availability of the system should appear as a leaf of the utility tree.	f	2	589
+2356	The utility tree covers all the significant qualities the system has to address.	f	3	589
 2357	Manage sampling rate.	f	0	590
 2358	Limit event response.	f	1	590
 2359	Prioritize events.	f	2	590
+2360	Maintain multiple copies of computation.	f	3	590
 2381	This decision does not have any impact on the architecture.	f	0	596
 2382	This decision corresponds to a constraint requirement.	f	1	596
 2383	This decision needs to be made concrete by an interoperability scenario.	f	2	596
+2384	This decision is not a consequence of the Fénix business case.	f	3	596
 2385	It describes a reliability scenario because the data points for each metric will be split between a buffer and disk.	f	0	597
 2386	It describes a performance scenario for the execution of reads.	f	1	597
+2387	The tactic used to solve the problem is based in the fact that data points are appended to the end of the metric file.	f	2	597
 2388	The tactic used to solve the problem is not manage sampling rate because there isn't any loss of data points.	f	3	597
 2389	Increase resource efficiency.	f	0	598
+2390	Increase resources.	f	1	598
 2391	Increase resource efficiency and Increase resources.	f	2	598
 2392	Increase resources and Maintain multiple copies of computation.	f	3	598
 2393	A security scenario because it allows the introduction of filters to encrypt the messages.	f	0	599
 2394	A availability scenario because it allows the introduction of load balancers.	f	1	599
+2395	A modifiability scenario where defer binding occurs at compile time.	f	2	599
 2396	A usability scenario because developers can extend the system without having to modify the nginx core.	f	3	599
 2397	A low cost of change may imply a high cost of development.	f	0	600
 2398	A low cost of change implies a low cost of development, because changing the code is part of development.	f	1	600
+2399	There is no relation between the cost of change and the cost of development.	f	2	600
 2400	A high cost of change occurs if it is necessary to defer the binding of what needs to be changed.	f	3	600
 2421	A client-server style.	f	0	606
 2422	A shared-data style.	f	1	606
+2423	Both, client-server and shared-data styles.	f	2	606
 2424	A blackboard style.	f	3	606
 2425	Passive redundancy.	f	0	607
 2426	Active redundancy.	f	1	607
 2427	Voting.	f	2	607
+2428	Maintain multiples copies of computation.	f	3	607
 2429	Its main goal is to establish the reusability qualities of the architecture.	f	0	608
 2430	Project managers are not interested in views that use this style because it lacks the necessary level of detail.	f	1	608
 2431	Incremental development is a criteria that drives the design of views of this type.	f	2	608
+2432	There should be at least one view of the system using this architectural style.	f	3	608
 2433	The library approach allows non-java applications.	f	0	609
+2434	The server approach can scale independently of the number of applications.	f	1	609
 2435	The server approach implements a local cache.	f	2	609
+2436	The library approach does not build a cluster.	f	3	609
 2437	A component cannot be decomposed into a set of components and connectors.	f	0	610
 2438	A connector cannot be decomposed into a set of components and connectors.	f	1	610
+2439	A connector embodies a communication protocol.	f	2	610
 2440	A component can only have a single type of port.	f	3	610
-2423	Both, client-server and shared-data styles.	t	2	606
-2428	Maintain multiples copies of computation.	t	3	607
-2432	There should be at least one view of the system using this architectural style.	t	3	608
+2473	Schedule resources.	f	0	619
 2474	Introduce concurrency.	f	1	619
 2475	Tailor interface.	f	2	619
 2476	Increase resources.	f	3	619
 2477	Modifiability.	f	0	620
 2478	Availability.	f	1	620
 2479	Performance.	f	2	620
+2480	Scalability.	f	3	620
 2501	The Merge component executes the module merge.	f	0	626
+2502	The Merge component executes the modules merge and stdio.	f	1	626
 2503	The module main is executed in the Merge component.	f	2	626
 2504	The Pipe connectors do not execute any module.	f	3	626
+2505	Performance.	f	0	627
 2506	Availability.	f	1	627
 2507	Modifiability.	f	2	627
 2508	Reliability.	f	3	627
 2509	Modifiability, because the Data Accessors do not depend on the data model.	f	0	628
+2510	Scalability of read requests, because it is easy add more repositories to where reads are distributed, though there may be some level of inconsistency.	f	1	628
 2511	Scalability of write requests, because a transactional system will synchronize the writes among the several repositories.	f	2	628
 2512	Confidentially of data, because it can be replicated in several repositories.	f	3	628
+2513	Interoperability.	f	0	629
 2514	Usability.	f	1	629
 2515	Performance.	f	2	629
 2516	Modifiability.	f	3	629
 2541	A decomposition view.	f	0	636
 2542	A view of the component-and-connector viewtype.	f	1	636
 2543	A view of the component-and-connector viewtype and a deployment view.	f	2	636
+2544	A decomposition view, a view of the component-and-connector viewtype and a deployment view.	f	3	636
+2549	Client-server.	f	0	638
 2550	Peer-to-peer.	f	1	638
 2551	Master-slave.	f	2	638
 2552	Pipe-and-filter.	f	3	638
 2553	Peer-to-peer.	f	0	639
 2554	Shared-data where the Buildbot is the data accessor.	f	1	639
+2555	Client-server where the Buildbot is the client.	f	2	639
 2556	Client-server where the Buildbot is the server.	f	3	639
 2581	Decomposition.	f	0	646
 2582	Generalization.	f	1	646
+2583	Decomposition and Generalization.	f	2	646
 2584	Peer-to-peer.	f	3	646
 2589	It assigns modules to the hardware.	f	0	648
 2590	It cannot assign software elements to virtual servers because they are not hardware.	f	1	648
 2591	For each set of software elements there is a single possible assignment to hardwre.	f	2	648
+2592	It is useful for system administrators.	f	3	648
+2593	Publish-subscribe.	f	0	649
 2594	Client-server.	f	1	649
 2595	Shared-date.	f	2	649
 2596	Generalization.	f	3	649
 2597	Client-server to represent performance.	f	0	650
+2598	Tiers to represent scalability.	f	1	650
 2599	Service-oriented architecture to represent interoperability.	f	2	650
 2600	Shared-data to represent modifiability.	f	3	650
 2621	The data-shared architectural style is not applied because data is encapsulated inside services.	f	0	656
+2622	The sharing of data is done using a service-oriented architecture.	f	1	656
 2623	Modifiability is not a concern of their architecture.	f	2	656
 2624	The decouple of data formats does not support scalability because of the transactional properties.	f	3	656
 2625	Peer-to-peer.	f	0	657
 2626	Shared-data where the Dashboard is the repository.	f	1	657
 2627	Client-server where the Dashboard is the client.	f	2	657
+2628	Client-server where the Dashboard is the server.	f	3	657
 2637	Client-server.	f	0	660
+2638	Communicating processes.	f	1	660
 2639	Peer-to-peer.	f	2	660
 2640	Shared-data.	f	3	660
 2777	Work Assignment views	f	0	695
 2778	Generalization views	f	1	695
 2779	Deployment views	f	2	695
+2780	Implementation views	f	3	695
+2781	Communicating Processes	f	0	696
 2782	Client-Server	f	1	696
 2783	Peer-to-Peer	f	2	696
 2784	Uses	f	3	696
+2785	Typically have a software architecture that results from the common knowledge about the system that is shared among the team members	f	0	697
 2861	Different stakeholders are interested in different views of the system	f	0	716
 2786	Do not have a software architecture, because in agile methodologies there is no architectural design phase	f	1	697
 2787	Do not have a software architecture, because the practice of refactoring allows changing every part of the system easily	f	2	697
 2788	May have a software architecture, but that architecture is not known because it was neither designed nor documented	f	3	697
 2789	However, functional requirements do not have any impact on the architecture because the systemic qualities of an architecture are non-functional	f	0	698
 2790	The functional requirements have a large impact on the definition of views of the component-and-connector viewtype because each component executes a functionality	f	1	698
+2791	The functional requirements have a large impact on the definition of views of the module viewtype because they are used to define the high cohesion and low coupling of modules	f	2	698
 2792	The functional requirements can be considered as constraints on the software architecture design	f	3	698
 2793	The stimulus is incorrect response	f	0	699
 2794	The artefact is the load balancer	f	1	699
+2795	The response is not correctly stated	f	2	699
 2796	The quality it addresses is interoperability	f	3	699
+2801	Performance	f	0	701
 2802	Usability	f	1	701
 2803	Availability	f	2	701
 2804	Modifiability	f	3	701
+2805	Manage sampling rate	f	0	702
 2806	Limit event response	f	1	702
 2807	Reduce overhead	f	2	702
 2808	Bound execution times	f	3	702
 2809	Have high throughput	f	0	703
 2810	Have low latency	f	1	703
 2811	Allow many simultaneous users	f	2	703
+2812	May be easily changed to increase their performance	f	3	703
 2817	Per-to-peer	f	0	705
 2818	Shared-data	f	1	705
 2819	Communicating processes	f	2	705
+2820	Publish-subscribe	f	3	705
+2821	The stimulus is an omission and the tactic is retry	f	0	706
 2822	The stimulus is a crash and the tactic is retry	f	1	706
 2823	The stimulus is an incorrect timing and the tactic is ignore faulty behaviour	f	2	706
 2824	The stimulus is incorrect response and the tactic is voting	f	3	706
 2829	The quality being addressed is performance and the tactic multiple copies of data	f	0	708
 2830	The quality being addressed is performance and the tactic multiple copies of computation	f	1	708
+2831	The quality being addressed is performance and the tactics multiple copies of data and multiple copies of computation	f	2	708
 2832	The quality being addressed is availability and the tactic passive redundancy	f	3	708
+2833	Tiers style	f	0	709
 2834	Client-server style	f	1	709
 2835	Shared-data style	f	2	709
 2836	Pipe-and-filter style	f	3	709
 2841	The shared-data architectural style is not applied because data is encapsulated inside services	f	0	711
+2842	The sharing of data is done using a service-oriented architecture	f	1	711
 2843	Modifiability is not a concern of their architecture	f	2	711
 2844	The decouple of data formats does not support scalability because of the transactional properties	f	3	711
 2845	an ACID transaction occurs in all the involved applications	f	0	712
 2846	a two-phase commit protocol takes place between the involved applications	f	1	712
 2847	a ACID transaction occurs in each of the involved applications, but we can not infer which transaction occurs first	f	2	712
+2848	an ACID transaction occurs in the invoked application and ACID transactions in the other involved applications will eventually occur later	f	3	712
 2849	The access to two different aggregate instances in the context of the same request does not hinder scalability	f	0	713
 2850	This is the solution followed by Twitter client applications	f	1	713
 2851	It describes the typical behavior of a microservices system	f	2	713
+2852	To support high scalability the request of `User 1` needs to be decomposed into a request to only one of the aggregate instances and the processing in the other aggregate occurs in the background	f	3	713
+2853	We must use various different views, both of the component-and-connector and the allocation viewtypes	f	0	714
 2854	We just have to show, through component-and-connector views, that the system maintains replicas of the data in different components	f	1	714
 2855	We just have to show, through Deployment views, that the *DataNode* component executes in more than one machine of the cluster	f	2	714
 2856	We just have to show, through Decomposition views, that there are modules responsible for the replication of file blocks	f	3	714
 2857	Active replication and passive replication	f	0	715
 2858	Active replication, passive replication, and spare	f	1	715
+2859	Passive replication and spare	f	2	715
 2860	Quorum, active replication, and passive replication	f	3	715
-2801	Performance	t	0	701
-2805	Manage sampling rate	t	0	702
-2812	May be easily changed to increase their performance	t	3	703
-2820	Publish-subscribe	t	3	705
 2862	A single view would be too simplistic	f	1	716
 2863	The views describe different aspects of the system	f	2	716
+2864	All of the above	f	3	716
+3001	The stimulus is to port the system to a new browser	f	0	751
 3002	The environment is build time	f	1	751
 3003	The response is 5 person/month	f	2	751
 3004	To implement the above scenario it is necessary to apply a runtime defer binding tactic	f	3	751
 3005	Split module	f	0	752
+3006	Increase semantic coherence	f	1	752
 3007	Restrict dependencies	f	2	752
 3008	Defer binding	f	3	752
 3009	Essential to ensure the system scalability	f	0	753
+3010	Essential to reduce costs whenever there is a fault in a hardware element	f	1	753
 3011	Essential to ensure the system portability	f	2	753
 3012	Essential to facilitate the integration with legacy systems	f	3	753
+3013	Because this tactic simplifies the addition and removal of DataNodes	f	0	754
 3014	But they could have used the ping tactic instead without adding any overhead to the NameNode	f	1	754
 3015	But the exceptions tactic could have been used as well	f	2	754
 3016	To inform other DataNodes about their availability	f	3	754
 3017	Is a high-level view of the system with the purpose of understanding what are the system's goals and features	f	0	755
+3018	Is composed of things such as code units, runtime elements, hardware, and people, together with the relationships among them	f	1	755
 3019	Is a set of guidelines that the developing team should follow in the development of the system	f	2	755
 3020	Is a set of diagrams that show the runtime elements of the system and their relationships	f	3	755
+3021	Describing what are the qualities that the system should possess	f	0	756
 3022	Describing a set of steps that a user of the system must perform to accomplish some task	f	1	756
 3023	Describing a use case for the system that makes clear what should be the system's responses to each of the user's inputs	f	2	756
 3024	Describing the system's features by way of different usage scenarios for it, in which users play the role of actors	f	3	756
 3025	The scenario is not correct	f	0	757
+3026	The scenario is correct but it does not describe whether the request the servers fails to respond to succeeds or fails	f	1	757
 3027	The scenario is correct but it is not clear what is the artefact	f	2	757
 3028	The scenario is not completely correct because it contains two responses	f	3	757
 3029	Only in the Deployment view	f	0	758
 3030	Only in the Decomposition view	f	1	758
 3031	Only in a component-and-connector view	f	2	758
+3032	Both in a component-and-connector and the Deployment views	f	3	758
+3033	Performance	f	0	759
 3034	Availability	f	1	759
 3035	Modifiability	f	2	759
 3036	Reliability	f	3	759
 3037	Manage sampling rate	f	0	760
 3038	Limit event response	f	1	760
 3039	Reduce overhead	f	2	760
+3040	Bound execution times	f	3	760
 3041	The presentation logic layer, domain logic layer, and data access layer	f	0	761
 3042	The traditional web applications, the mashups, and the rich internet applications (RIAs)	f	1	761
+3043	The web browser, o web server, and the data base	f	2	761
 3044	The web services layer, the domain logic layer, and the data access layer	f	3	761
 3045	It enforces the use of a single implementation language among all applications	f	0	762
 3046	The orchestration is in charge of improving the transparent location of service providers	f	1	762
 3047	The enterprise service bus coordinates the execution of several services	f	2	762
+3048	It decouples applications developed for different organizations	f	3	762
 3049	Work assignment view	f	0	763
+3050	Install view	f	1	763
 3051	Implementation view	f	2	763
 3052	Deployment view	f	3	763
 3053	Write a single scenario on performance	f	0	764
+3054	Write two scenarios on performance	f	1	764
 3055	Write a scenario on performance and a scenario on interoperability	f	2	764
 3056	Write a single scenario on interoperability	f	3	764
 3057	Module viewtype	f	0	765
+3058	Component-and-connector viewtype	f	1	765
 3059	Install architectural style of the allocation viewtype	f	2	765
 3060	It is not necessary to represent this behavior because it does not describe any qualities	f	3	765
+3065	A module view	f	0	767
 3066	A component-and-connector view	f	1	767
 3067	An allocation view	f	2	767
 3068	They are not represented by a view	f	3	767
+3069	The Decomposition and the Work Assignment styles	f	0	768
 3070	The Decomposition and the Layers styles	f	1	768
 3071	The Decomposition and the Uses styles	f	2	768
 3072	The Decomposition and the SOA styles	f	3	768
 3073	The Decomposition style	f	0	769
 3074	The Deployment style	f	1	769
+3075	The Uses style	f	2	769
 3076	The Work-assignment style	f	3	769
+3077	The Generalization style	f	0	770
 3078	The Uses style	f	1	770
 3079	The Layers style	f	2	770
 3080	The Aspects style	f	3	770
+3085	Use a passive redundancy tactic in the OPC (Order Processing Center)	f	0	772
 3086	Use a passive redundancy tactic in the Consumer Web site	f	1	772
 3087	Use an active redundancy tactic in the OPC (Order Processing Center) 	f	2	772
 3088	Use an active redundancy tactic in the Consumer Web site	f	3	772
+3089	The decomposition view to include a module for the synchronization responsibilities	f	0	773
 3090	The uses view to represent how the mobile device uses the Catalog application	f	1	773
 3091	The layered view to include a layer for each type of device	f	2	773
 3092	The domain layer of the layered style to represent the types of devices	f	3	773
 3097	The file transfers follows the same path of nodes used to identify where the file was located	f	0	775
 3098	The peer initiating the request for a file needs to know where the file is located	f	1	775
 3099	If a peer providing a file crashes it is necessary to restart downloading the file from the begin	f	2	775
+3100	The price for high scalability and availability is the need to have several replicas of the files to be shared	f	3	775
 3105	All functionalities can be transactional	f	0	777
+3106	Only a small set of functionalities are transactional	f	1	777
 3107	It is not necessary to have transactional properties because all data is in memory	f	2	777
 3108	Only the isolation property of transactions is supported	f	3	777
 3109	When an event is published to the distributed log, the order of delivery to the different subscribing applications is predefined	f	0	778
-3033	Performance	t	0	759
 3110	When two events are published to the distributed log they are delivered to the different subscribing applications in the same order	f	1	778
+3111	The distributed log guarantees that events will be delivered only once	f	2	778
 3112	The distributed log may not deliver some of the events that are published to their subscribers	f	3	778
 3113	It allows high scalability because the data model has only four entities	f	0	779
+3114	It allows high scalability because it is possible the implement transactions associated to each one of the aggregates	f	1	779
 3115	It allows high scalability because the only synchronized access is to the `ProductId`, so it requires a single contention point	f	2	779
 3116	It does not allow high scalability	f	3	779
+3117	Implementation	f	0	780
 3118	Work assignment	f	1	780
 3119	Decomposition	f	2	780
 3120	None, because this description does not describe any architectural aspect of the system	f	3	780
 3141	When a new block is created, the first replica is written in the node where the writer is located, to improve availability	f	0	786
 3142	When a new block is created, the second replica is not stored in the same rack than the first replica to increase the availability when a Data Node fails	f	1	786
 3143	When a new block is created, the third replica is stored in the same rack than the second replica to improve the performance of reads	f	2	786
+3144	When a read occurs, the client, if it is located in the cluster, receives a list of the DataNodes where the replicas are, ordered by its closeness to the client, to improve performance of reads	f	3	786
 3145	Depends mostly on the system's functional requirements	f	0	787
 3146	Depends more on the architect's experience than on anything else	f	1	787
 3147	Should not depend on the skills of the developing team	f	2	787
+3148	None of the above	f	3	787
 3149	Describes a concrete quality that a particular system has to implement	f	0	788
+3150	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, response, etc	f	1	788
 3151	Can omit some of the elements like, for instance, the environment, if they are not relevant for the general scenario	f	2	788
 3152	Is a very reusable scenario that can be effectively used in many different concrete situations	f	3	788
 3153	The writing of a tweet is a synchronous process where different users have a consistent view of the sequence of tweets	f	0	789
 3154	A tweet is written in each one of the Twitter's servers	f	1	789
+3155	The tweet unique ID is written in the home timeline of each one of the writer's followers	f	2	789
 3156	The tweet content is written in the home timeline of each one of the writer's followers	f	3	789
 3157	This solution optimizes the performance in terms of the latency of each request	f	0	790
 3158	This solution allows an "infinite"increase of the number clients by allowing the inclusion of more Request Nodes	f	1	790
 3159	This solution continues to provide service even if a crash occurs in the Data server	f	2	790
+3160	This solution optimizes the performance in terms of the throughput of processed requests	f	3	790
 3181	The periodic rebuild of the checkpoint is done to increase the availability of the NameNode	f	0	796
 3182	The advantage of running the CheckpointNode in a different host is to not degrade the availability of the NameNode during checkpoint construction	f	1	796
 3183	The periodic rebuild of the checkpoint improves the performance of the NameNode during normal operation	f	2	796
+3184	The periodic rebuild of the checkpoint improves the performance of the NameNode during its initialization	f	3	796
 3185	A non-functional requirement a system has to achieve	f	0	797
+3186	How to control the response to one or more stimulus	f	1	797
 3187	What should be the system response in the occurrence of a stimulus	f	2	797
 3188	A decomposition of the system that fulfills an architectural quality	f	3	797
 3189	The search timeline is the most important business use case for Twitter	f	0	798
+3190	The ingestion process includes tokenizing of the tweet to include in an index	f	1	798
 3191	The Early Bird server contains the tweet content	f	2	798
 3192	The write in the Early Bird server is synchronous, only when it finishes does the user receives the feedback of a successful post	f	3	798
 3193	This is right because if you don't the project fails	f	0	799
 3194	This is wrong because you can easily change these decisions during the project lifetime	f	1	799
+3195	This is right but you cannot be completely sure whether the decisions are the right ones	f	2	799
 3196	This is wrong because it is against the agile way of thinking the software development process	f	3	799
 3197	This solution assures a consistency view to the clients of the data that is written	f	0	800
 3198	In this solution the clients invocations have to be synchronous	f	1	800
 3199	In this solution the tasks in the queue need to be sequentially processed, only when a task is finished can another start to be processed	f	2	800
+3200	This solution allows the dimensioning of the number of activities (threads or processes) that run in the server, taking into consideration the server's hardware capacity, in order to have a efficient usage of the server's CPU	f	3	800
 3225	Performance	f	0	807
 3226	Interoperability	f	1	807
+3227	Availability (Reliability)	f	2	807
 3228	Security	f	3	807
+3229	Performance and availability qualities	f	0	808
 3230	Performance qualities only	f	1	808
 3231	Availability qualities only	f	2	808
 3232	Performance and security qualities	f	3	808
 3233	Can be applied to any kind stimulus in availability scenarios	f	0	809
+3234	Is useful to support scenarios where the stimulus is an omission	f	1	809
 3235	Can guarantee that the system will not become unavailable	f	2	809
 3236	When applied it increases the latency of the availability scenario's response time	f	3	809
 3237	Have high throughput	f	0	810
 3238	Have low latency	f	1	810
 3239	Allow many simultaneous users	f	2	810
-3227	Availability (Reliability)	t	2	807
-3229	Performance and availability qualities	t	0	808
-3234	Is useful to support scenarios where the stimulus is an omission	t	1	809
-3240	May be easily changed to increase their storage capacity	t	3	810
+3240	May be easily changed to increase their storage capacity	f	3	810
 3261	Encapsulate the module such that the clients of the module should not be aware of the remote invocations	f	0	816
+3262	Use an intermediary that contains all the code associated with the remote invocation separating it from the modules' business logic	f	1	816
 3263	Refactor the common parts between the business logic and the remote invocation	f	2	816
 3264	Increase the semantic coherence between the business logic code and the remote invocation code	f	3	816
 3269	The system would respond faster to all the clients' requests	f	0	818
 3270	The performance of the system would not change	f	1	818
+3271	The system would respond faster to requests about file locations	f	2	818
 3272	The system would respond faster to requests made by DataNodes to update the metadata	f	3	818
 3277	The Ping/Echo tactic	f	0	820
 3278	The Heartbeat tactic	f	1	820
+3279	The Voting tactic	f	2	820
 3280	The Removal from Service tactic	f	3	820
 3313	This means that in this software system it is not possible to modularize each responsibility in a cohesive module	f	0	829
 3314	She should define finer-grained modules where she splits the unassigned responsibility	f	1	829
+3315	She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules	f	2	829
 3316	She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules	f	3	829
 3345	A change to the uses view to represent that friends can use each other catalog	f	0	837
 3346	A change of the layered view to support different presentations, one for each friend	f	1	837
 3347	A change of the decomposition view to include a set of new modules with the responsibilities associated with the access control	f	2	837
+3348	A new aspect view that includes a module with the responsibilities associated with the access control and that crosscuts some of the other modules	f	3	837
 3357	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure	f	0	840
 3358	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure	f	1	840
 3359	It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database	f	2	840
+3360	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data	f	3	840
 3381	Service-oriented architecture, and Client-server	f	0	846
 3382	Service-oriented architecture, and Shared-data	f	1	846
 3383	Service-oriented architecture, Shared-data, and Peer-to-peer	f	2	846
+3384	Service-oriented architecture, Shared-data, Peer-to-peer, and Client-server	f	3	846
 3389	Represent the hardware infrastructure that allows components to communicate with each other	f	0	848
+3390	May, on another view of the system, be represented by a set of components and connectors	f	1	848
 3391	Represent the dependency relations that exist among the various components	f	2	848
 3392	Represent the control flow during an execution of the system	f	3	848
 3421	Tiers	f	0	856
 3422	Tiers, and Shared-data	f	1	856
 3423	Tiers, Shared-data, and Service-oriented architecture	f	2	856
+3424	Tiers, Shared-data, Service-oriented architecture, and Client-server	f	3	856
+3425	A component can subscribe to events	f	0	857
 3426	It is always guaranteed that all the published events are received by their subscribing components	f	1	857
 3427	The events should be delivered by the same order they are sent	f	2	857
 3428	The set of events types are predefined at initialization time	f	3	857
 3429	Shared-data and Communicating-Processes	f	0	858
 3430	Communicating-Processes	f	1	858
 3431	Tiers	f	2	858
+3432	Client-Server and Shared-data	f	3	858
 3437	A Module viewtype view	f	0	860
 3438	A Allocation viewtype view	f	1	860
+3439	A Communicating processes view	f	2	860
 3440	A Install view	f	3	860
 3521	Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.	f	0	881
 3522	It is preferable to only design views that do not use complex connectors to increase understandability.	f	1	881
+3523	If there is some technology available that implements the complex connectors it is not necessary to document their decomposition.	f	2	881
 3524	Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them.	f	3	881
+3529	Decomposition.	f	0	883
 3530	Aspects.	f	1	883
 3531	Layered.	f	2	883
 3532	Data model.	f	3	883
 3533	This solution optimizes the performance in terms of the latency of each request.	f	0	884
 3534	This solution allows an "infinite"increase of the number clients by allowing the inclusion of more Request Nodes.	f	1	884
 3535	This solution continues to provide service even if a crash occurs in the Data server.	f	2	884
+3536	This solution optimizes the performance in terms of the throughput of processed requests.	f	3	884
 3537	Incorporate in the organization's core business the goals of a software house.	f	0	885
 3538	Do in-house development.	f	1	885
+3539	Integrate the development of the software system with the organization's business goals.	f	2	885
 3540	Reimplement all the information systems of the organization	f	3	885
 3541	A failure.	f	0	886
 3542	An error.	f	1	886
+3543	A fault.	f	2	886
 3544	An input.	f	3	886
 3545	Stochastic event.	f	0	887
 3546	Overload.	f	1	887
 3547	Change level of service.	f	2	887
+3548	Throughput.	f	3	887
 3549	Split module.	f	0	888
 3550	Use an intermediary.	f	1	888
+3551	Restrict dependencies.	f	2	888
 3552	Refactor.	f	3	888
 3553	Decomposition style.	f	0	889
+3554	Uses style.	f	1	889
 3555	Generalization style.	f	2	889
 3556	Layered style.	f	3	889
 3557	The Decomposition style.	f	0	890
 3558	The Decomposition and Uses styles.	f	1	890
 3559	The Layered style.	f	2	890
+3560	The Generalization and Decomposition styles.	f	3	890
 3561	An aggregate can contain a large number of instances.	f	0	891
+3562	An aggregate is usually loaded in its entirety from the database.	f	1	891
 3563	An aggregate has runtime references to other aggregates.	f	2	891
 3564	An aggregate is cluster of domain classes.	f	3	891
 3565	Each service can be developed and deployed independently	f	0	892
 3566	Easier to scale development	f	1	892
 3567	Eliminates any long-term commitment to a technology stack	f	2	892
+3568	Testing is easier	f	3	892
 3569	Aggregate.	f	0	893
 3570	Maintain user model.	f	1	893
 3571	Maintain task model.	f	2	893
+3572	Maintain system model.	f	3	893
+3573	This view shows that if is possible to scale differently the `web tier` from the `EJB tier`.	f	0	894
 3574	This view shows that the `Adventure Builder Catalog DB` and the `OPC` components should be deployed in the same hardware.	f	1	894
 3575	This view **does not** show that the `Adventure Builder Catalog DB` and the `OPC` components can execute behind a firewall.	f	2	894
 3576	This view **does not** show that the access to the `web tier` has some security qualities.	f	3	894
 3577	Pipe-and-filter.	f	0	895
 3578	Maintain multiple copies of data.	f	1	895
+3579	Maintain multiple copies of computation.	f	2	895
 3580	Introduce concurrency.	f	3	895
 3581	Ignore faulty behaviour tactic	f	0	896
 3582	Ping-and-echo tactic	f	1	896
 3583	Active redundancy tactic	f	2	896
+3584	Retry tactic	f	3	896
 3585	Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together.	f	0	897
+3586	The project manager uses this view to get advice on the incremental development of the system.	f	1	897
 3587	The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences.	f	2	897
 3588	There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic.	f	3	897
+3593	Analysing the performance of the system.	f	0	899
 3594	Planning incremental releases of the system.	f	1	899
 3595	Estimating the effort needed to implement the system.	f	2	899
 3596	Analysing the system's portability and reusability.	f	3	899
 3597	All layers are mapped to the application server component.	f	0	900
-4355	Estimating the effort needed to implement the system	f	2	1089
 3598	The presentation and domain logic layers are mapped to the application server component and the data access layer to the repository component.	f	1	900
 3599	The presentation layer is mapped to the browser component and the other two layers are mapped to the application server component.	f	2	900
+3600	All layers are mapped to the browser component where the data access layer will contains, besides a module to access a local repository, modules to access external services.	f	3	900
 3681	It would reduce the scalability for updates of different orders for the same customer.	f	0	921
 3682	Two users would conflict if they attempt to edit different orders for the same customer.	f	1	921
 3683	As the number of orders grows it will be increasingly expensive to load the aggregate.	f	2	921
+3684	All the above.	f	3	921
+3685	Increase competence set.	f	0	922
 3686	Shadow.	f	1	922
 3687	Voting.	f	2	922
 3688	Ignore faulty behavior.	f	3	922
 3689	Increase resources.	f	0	923
+3690	Reduce overhead.	f	1	923
 3691	Bound queue sizes.	f	2	923
 3692	Introduce concurrency.	f	3	923
 3693	We do not need a view of the module viewtype because it is about the runtime properties of the system.	f	0	924
 3694	We do not need a view of the allocation viewtype because deployment is automated.	f	1	924
 3695	The component-and-connector view should emphasize the performance qualities of systems following the microservices architecture.	f	2	924
+3696	It is necessary to use views of the three viewtypes.	f	3	924
 3705	Usability and Performance.	f	0	927
+3706	Usability.	f	1	927
 3707	Performance.	f	2	927
 3708	Modifiability.	f	3	927
 3709	It assigns components and connectors to people and teams.	f	0	928
+3710	It is useful for the project managers.	f	1	928
 3711	It does not consider the software that is outsourced.	f	2	928
 3712	It allows to estimate the cost of hardware.	f	3	928
 3713	Performance.	f	0	929
 3714	Availability for incorrect responses from the Image File Storage component.	f	1	929
+3715	Performance and Availability for crashes of the Image File Storage component.	f	2	929
 3716	Performance and Availability for incorrect responses from the Image File Storage component.	f	3	929
 3717	One.	f	0	930
 3718	Two.	f	1	930
 3719	Three.	f	2	930
+3720	Four.	f	3	930
 3721	The cost of the modification.	f	0	931
 3722	That the integration of a new source will not have any impact on the other modules of the Catalog of DVDs.	f	1	931
+3723	That the impact of integrating a new source is controlled by the interface of *Import DVD Info* Module.	f	2	931
 3724	That the modification can occur at runtime.	f	3	931
 3729	The Decomposition style.	f	0	933
 3730	The Client-Server style.	f	1	933
+3731	The Service Oriented Architecture style.	f	2	933
 3732	The Communicating Processes style.	f	3	933
 3733	This view shows that the processing of orders is done synchronously.	f	0	934
+3734	This view shows that the processing of tracking requests is done synchronously.	f	1	934
 3735	This view shows that bank debits are done asynchronously.	f	2	934
 3736	This view shows that the responses from the providers are processed synchronously.	f	3	934
 3741	Pipe-and-filter and tiers.	f	0	936
 3742	Shared-data and publish-subscribe.	f	1	936
 3743	Pipe-and-filter and publish-subscribe.	f	2	936
+3744	Pipe-and-filter and shared-data.	f	3	936
 3745	Guarantees that the redundant data in the client and the server is always synchronized.	f	0	937
 3746	Implements an event bus that allows the server to inform the client about new order recommendations.	f	1	937
+3747	Do not loose the changes done on the client component if the server is not available.	f	2	937
 3748	It completely hides the server faults from the Pad user.	f	3	937
+3749	Split module.	f	0	938
 3750	Abstract common services.	f	1	938
 3751	Restrict dependencies.	f	2	938
 3752	Encapsulation.	f	3	938
 3757	The *config* module is not used in the implementation of any component.	f	0	940
 3758	The *main* module is used in the implementation of all components.	f	1	940
+3759	The connectors only use the *stdio* module for their implementation.	f	2	940
 3760	The *Split* component uses the *to_lower* module for its implementation	f	3	940
 3781	The result of decisions that are made at the "upper floors" of the organization	f	0	946
 3782	The sole decision of an architect	f	1	946
+3783	A common understanding to be achieve among all the system stakeholders	f	2	946
 3784	A set of software elements and their relations	f	3	946
 3785	The source of stimulus is the FenixEDU system	f	0	947
 3786	The stimulus is periodic	f	1	947
 3787	The environment is overloaded	f	2	947
+3788	The measure of the response is throughput	f	3	947
 3789	Commercial	f	0	948
 3790	Technical	f	1	948
+3791	Project	f	2	948
 3792	Professional	f	3	948
 3793	Availability of the Image Write Service, whenever one of the Image Write Service components crashes	f	0	949
+3794	Scalability of the Image File Storage in terms of the storage capacity	f	1	949
 3795	Availability of the Image File Storage, whenever the Image File Storage component crashes	f	2	949
 3796	Performance of the Image Write Service	f	3	949
 3797	Availability whenever the server running the tasks crashes, the tasks are restarted and eventually finished	f	0	950
 3798	Performance of the tasks execution, scheduling of tasks can be optimized for the particular context of the system	f	1	950
 3799	Performance of the services being executed by the clients, they can execute other actions while waiting for the response	f	2	950
+3800	Simple programming model, the clients only need to concern about the business logic of the application, the remote services are transparent	f	3	950
 3821	The synchronous solution requires less memory than asynchronous solution	f	0	956
+3822	The asynchronous solution can support a larger number of simultaneous requests	f	1	956
 3823	In the synchronous solution a task can be associated, during its execution, with different execution entities, e.g. thread	f	2	956
 3824	In the asynchronous solution a task is always associated, during its execution, with the same execution entity, e.g. thread	f	3	956
 3825	Interoperability is a quality that as lower priority than performance	f	0	957
 3826	Scalability should be the quality to be achieved first by any architecture	f	1	957
 3827	That the use of XML technology for interoperability is not a correct decision	f	2	957
+3828	None of the above	f	3	957
 3829	Performance	f	0	958
 3830	Availability	f	1	958
+3831	Modifiability	f	2	958
 3832	Time to market	f	3	958
 3833	The number of Image Write Service components should be the same of the number Image Retrieval Service components	f	0	959
 3834	The hardware where of Image Write Service components execute should have the same capabilities of the hardware where Image Retrieval Service components run	f	1	959
 3835	Both components, the Image Write Service and the Image Retrieval Service, should be designed using an synchronous model of interactions, where a thread is associated with each request	f	2	959
+3836	The separation of write and retrieval services allows them do scale independently	f	3	959
 3837	Introduce concurrency	f	0	960
+3838	Limit event response	f	1	960
 3839	Maintain multiple copies of data	f	2	960
 3840	Schedule resources	f	3	960
 3861	In the synchronous solution only some of the tasks that are being executed are lost and they have to be resubmitted by the client	f	0	966
-4356	Analysing the system's portability and reusability	f	3	1089
 3862	In the asynchronous solution the tasks that are being executed are lost and they have to be resubmitted by the client	f	1	966
+3863	In the asynchronous solution it is possible to provide an implement where the tasks being executed are finished without requiring the client to resubmitted them	f	2	966
 3864	In the synchronous solution the tasks being executed are finished without requiring the client to resubmitted them	f	3	966
+3865	Provides the quality of availability	f	0	967
 3866	Provides the quality of performance	f	1	967
 3867	Provides the quality of modifiability	f	2	967
 3868	Does not provide any additional quality	f	3	967
 3869	The need to use a two-phase commit protocol	f	0	968
 3870	The need to have a tight integration of the development teams	f	1	968
+3871	The need to have eventual consistency and compensating operations	f	2	968
 3872	The need to deploy all the microservices simultaneously	f	3	968
 3873	Manage sampling rate	f	0	969
 3874	Bound execution times	f	1	969
+3875	Maintain multiple copies of computation	f	2	969
 3876	Increase resource efficiency	f	3	969
+3877	Time to market is the most important impact of cloud computing in an architecture	f	0	970
 3878	Reduction of cost is the most important impact of cloud computing in an architecture	f	1	970
 3879	Cloud computing has impact on the business but it is not an architectural aspect	f	2	970
 3880	Using cloud computing we cannot delay some architectural decisions	f	3	970
 3901	Its main goal is to establish the reusability qualities of the architecture.	f	0	976
 3902	Project managers are not interested in views that use this style because it lacks the necessary level of detail.	f	1	976
 3903	Views of this type are mostly useful to guide the testing of the system.	f	2	976
+3904	There should be at least one view of the system using this architectural style.	f	3	976
 3905	Task Model tactics.	f	0	977
 3906	System Model tactics.	f	1	977
+3907	performance tactics.	f	2	977
 3908	User Model tactics.	f	3	977
 3913	Has as main goal the reduction of the modules' size.	f	0	979
 3914	Results in the creation of a third module that makes the original modules independent.	f	1	979
 3915	Increases the cohesion between the two modules.	f	2	979
+3916	May conflict with the Reduce Overhead performance tactic.	f	3	979
 3917	Results from a utility tree for performance.	f	0	980
 3918	Results from a single availability scenario.	f	1	980
 3919	Results from the application of a single ADD iteration.	f	2	980
+3920	Results from the application of several ADD iterations.	f	3	980
 3945	Programming, if the components execute modules developed by different teams.	f	0	987
 3946	Hardware, if there is hardware redundancy.	f	1	987
 3947	Operating Systems, if redundant components execute on top of different operating systems..	f	2	987
+3948	All the previous options.	f	3	987
 3953	This is a performance scenario and the measure of the response is 10 minutes latency.	f	0	989
+3954	This is a modifiability scenario which has a defer binding tactic.	f	1	989
 3955	This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.	f	2	989
 3956	This is a modifiability scenario and its environment design time.	f	3	989
 3985	Each view contains a single architectural style.	f	0	997
 3986	Views need to contain more than one architectural style.	f	1	997
 3987	A view may not contain any architectural style.	f	2	997
+3988	None of the above.	f	3	997
+3989	The quality addressed is availability and transactions tactic is required to solve the problem.	f	0	998
 3990	The quality addressed is performance and a limit event response is required to solve the problem.	f	1	998
 3991	The quality addressed is availability and a voting design tactic is required to solve the problem.	f	2	998
 3992	The quality addressed is performance and a maintain multiple copies of data design tactic is required to solve the problem.	f	3	998
+3997	A low cost of change may imply a high cost of development.	f	0	1000
 3998	A low cost of change implies a low cost of development, because changing the code is part of development.	f	1	1000
 3999	There is no relation between the cost of change and the cost of development.	f	2	1000
 4000	The cost of change is higher if it occurs at runtime.	f	3	1000
@@ -2053,890 +2517,426 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4021	Service-oriented architecture, and Client-server.	f	0	1006
 4022	Service-oriented architecture, and Shared-data.	f	1	1006
 4023	Service-oriented architecture, Shared-data, and Client-server.	f	2	1006
+4024	Service-oriented architecture, Shared-data, Client-server and Peer-to-peer.	f	3	1006
 4025	The Aspects style.	f	0	1007
 4026	The Generalisation style.	f	1	1007
+4027	The Decomposition style.	f	2	1007
 4028	The Shared-data style.	f	3	1007
 4033	But when the filters are executed sequentially the composition power is reduced.	f	0	1009
+4034	Which improves modifiability, because filters are decoupled through pipes.	f	1	1009
 4035	But the size of buffers may reduce the composition power.	f	2	1009
 4036	And filters do not have to agree on the data formats.	f	3	1009
 4037	The view does not address the scenario	f	0	1010
 4038	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module.	f	1	1010
+4039	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	f	2	1010
 4040	The view addresses the scenario because the `Consumer Website` module does not use the interfaces a new business partner has to implement.	f	3	1010
+4061	If the OPC crashes the Consumer Website can continue to provide service in degraded mode.	f	0	1016
 4062	If the OPC crashes the Consumer Website can continue to provide service in normal mode.	f	1	1016
 4063	If the Adventure Catalog BD crashes the Consumer Website can continue to present the Adventure Builder offers.	f	2	1016
 4064	If a Bank component is not available the OPC cannot continue to provide service.	f	3	1016
+4065	A component can subscribe to events.	f	0	1017
 4066	All the published events are received by their subscribing components.	f	1	1017
 4067	The events should be received by the same order they are sent.	f	2	1017
 4068	The set of events types are predefined at initialization time.	f	3	1017
 4069	The Decomposition style.	f	0	1018
 4070	The Generalisation style.	f	1	1018
+4071	The Uses style.	f	2	1018
 4072	The Aspects style.	f	3	1018
 4077	The type of a connector does not depend on the type of its roles.	f	0	1020
 4078	Components of different types may have ports of the same type.	f	1	1020
 4079	The attachment is a runtime relation which dynamically manages type compliance.	f	2	1020
+4080	The attachment between components and connectors only depends on their ports and roles types.	f	3	1020
 4101	Client-server.	f	0	1026
+4102	Publish-subscribe.	f	1	1026
 4103	Shared-data.	f	2	1026
 4104	Peer-to-peer.	f	3	1026
+4105	Layer 1.	f	0	1027
 4106	Layer 4.	f	1	1027
 4107	In a layered architecture all layers are equally modifiable.	f	2	1027
 4108	Modifiability is not made easier by a layered architecture.	f	3	1027
+4109	The view does not address the scenario	f	0	1028
 4110	The view addresses the scenario because the uses relation between the `Consumer Website` module and the `OpcApp` module has the require properties.	f	1	1028
 4111	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	f	2	1028
 4112	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules.	f	3	1028
-4357	Client-server and Repository.	f	0	1090
 4113	The file transfer has to follow the same path of nodes used to identify where the file was located.	f	0	1029
 4114	The peer initiating the request for a file needs to know where the file is located.	f	1	1029
 4115	If a peer providing a file crashes the file will not be downloaded.	f	2	1029
+4116	The price for high scalability and availability is the need to have several replicas of the files to be shared.	f	3	1029
 4117	Modifiability.	f	0	1030
+4118	Availability and Performance.	f	1	1030
 4119	Testability and Modifiability.	f	2	1030
 4120	Maintainability and Availability.	f	3	1030
+4141	A performance scenario associated with the throughput of writing data points to disk.	f	0	1036
 4142	A performance scenario associated with the latency of writing data points to disk.	f	1	1036
 4143	An availability scenario associated with a fault in the *Carbon* component.	f	2	1036
 4144	A usability scenario.	f	3	1036
 4145	Simplifies the evolution of the event schema.	f	0	1037
 4146	Simplifies the query operations in the event store.	f	1	1037
+4147	Allows the querying of a past state.	f	2	1037
 4148	Provides a programming model developers are familiar with.	f	3	1037
 4153	The decomposition was driven by a defer binding tactic.	f	0	1039
 4154	The decomposition was driven by a quality that is supported by a restrict dependencies tactic.	f	1	1039
+4155	The decomposition was driven by a split module tactic.	f	2	1039
 4156	The decomposition was driven by a quality that is supported by an encapsulate tactic.	f	3	1039
+4157	HTML5 provides better portability qualities.	f	0	1040
 4158	Native applications provide better modifiability qualities.	f	1	1040
 4159	HTML5 provides better usability qualities.	f	2	1040
 4160	Native applications provide better support for working offline.	f	3	1040
 4181	A modifiability scenario the *Graphite* system.	f	0	1046
 4182	A usability scenario of the *Graphite* system.	f	1	1046
 4183	A performance scenario of the *Graphite* system.	f	2	1046
+4184	An availability scenario of the *Graphite* system.	f	3	1046
 4185	A request for a web page corresponds to a peer-to-peer interaction between all the web components containing the resources.	f	0	1047
 4186	Web pages are explicitly cached on the browser to optimize accesses.	f	1	1047
+4187	A request for a web page corresponds to requesting a service from the amazon cloud.	f	2	1047
 4188	It is possible to customize the number of threads that run in the mobile device.	f	3	1047
 4189	She should decide to use a microservices architecture to improve the scalability of the system.	f	0	1048
 4190	She should decide to use a modular monolith architecture to reduce the cost of development, because developers will not need to define intermediate states for the transactional execution of the business logic.	f	1	1048
+4191	She should try to split the system in parts in order to isolate the complex business logic and use the two architectural approaches accordingly.	f	2	1048
 4192	She should give up because it is not possible to have the two approaches in a singe architecture.	f	3	1048
 4193	Dynamic Reconfiguration.	f	0	1049
 4194	Tiers.	f	1	1049
+4195	Communicating Processes.	f	2	1049
 4196	Install.	f	3	1049
 4197	The view illustrates the achievement of a security scenario.	f	0	1050
 4198	The view illustrates the achievement of a performance scenario.	f	1	1050
 4199	The view results from the implementation of a support user initiative tactic.	f	2	1050
+4200	The view results from the implementation of a support system initiative tactic.	f	3	1050
 4221	Performance was traded for easy of development to reduce the overall development costs.	f	0	1056
+4222	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	f	1	1056
 4223	Performance was traded for the availability quality.	f	2	1056
 4224	An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe.	f	3	1056
 4225	A deployment view.	f	0	1057
 4226	A work assignment view.	f	1	1057
+4227	A deployment and a work assignment view.	f	2	1057
 4228	A install view.	f	3	1057
 4229	This generalization was driven by a split module tactic.	f	0	1058
 4230	This view fulfills an availability scenario, which defines the expected behavior whenever an external source is not available.	f	1	1058
+4231	This view fulfills a modifiability scenario, which states about the cost of adding a new source of information to the system.	f	2	1058
 4232	This view fulfills a modifiability scenario, which states that it should be easy to support the system in new software platforms, e.g. *Windows* or *OS X* .	f	3	1058
 4233	A modifiability scenario the *Graphite* system.	f	0	1059
 4234	A usability scenario of the *Graphite* system.	f	1	1059
 4235	A single performance scenario of the *Graphite* system.	f	2	1059
+4236	At least two performance scenarios of the *Graphite* system.	f	3	1059
 4237	Does not allow optimizations according to the type of query.	f	0	1060
 4238	Does not support independent scalability according to the type of operation.	f	1	1060
+4239	Reads may not be consistent with the most recent write.	f	2	1060
 4240	Querying the event sourcing becomes more complex.	f	3	1060
 4828	Publish-Subscribe.	f	3	1207
+4321	Modifiability.	f	0	1081
 4322	Usability.	f	1	1081
 4323	Security.	f	2	1081
 4324	Availability.	f	3	1081
 4325	A view of the Data Model style	f	0	1082
 4326	A view of the Layers style	f	1	1082
+4327	A view of the Decomposition style	f	2	1082
 4328	A view of the Uses style	f	3	1082
 4329	By changing the commonalities that are in the children.	f	0	1083
 4330	Because the *is-a* relation does not allow reuse of implementation.	f	1	1083
 4331	By adding, removing, or changing children.	f	2	1083
+4332	By changing a parent, which will automatically change all the children that inherit from it.	f	3	1083
+4333	With a component-and-connector view, where the *load balancer* is a component of the system	f	0	1084
 4334	With a Deployment view, where the *load balancer* is part of the communication infra-structure used to execute the system	f	1	1084
 4335	With a Uses view, representing the existing dependencies between the *load balancer* and the services that it uses	f	2	1084
 4336	With a Layers view, where the *load balancer* creates an abstraction layer between who makes the request and who provides the service	f	3	1084
 4337	It implements a maintain multiple copies of computation tactic.	f	0	1085
+4338	It supports the concurrent access of data accessors.	f	1	1085
 4339	It supports the access to persistent information.	f	2	1085
 4340	It implements a maintain multiple copies of data tactic.	f	3	1085
+4341	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability	f	0	1086
 4342	The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better availability	f	1	1086
 4343	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better modifiability	f	2	1086
 4344	The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better performance	f	3	1086
 4345	A change to the uses view to represent that friends can use each other catalog.	f	0	1087
 4346	A change of the layered view to support different presentations, one for each friend.	f	1	1087
 4347	A change of the decomposition view to include the responsibilities associated with the access control.	f	2	1087
+4348	A new aspect view to include the responsibilities associated with the access control.	f	3	1087
 4349	The Shared Data style	f	0	1088
 4350	The Pipes-and-filters style	f	1	1088
+4351	The Publish-subscribe style	f	2	1088
 4352	The Client-Server style	f	3	1088
+4353	Analysing the performance of the system	f	0	1089
 4354	Planning incremental releases of the system	f	1	1089
+4355	Estimating the effort needed to implement the system	f	2	1089
+4356	Analysing the system's portability and reusability	f	3	1089
+4357	Client-server and Repository.	f	0	1090
 4358	Repository and Publish-subscribe.	f	1	1090
 4359	Publish-subscribe and Repository.	f	2	1090
+4360	Client-server, Repository and Publish-subscribe.	f	3	1090
 4361	Interoperability	f	0	1091
 4362	Modifiability	f	1	1091
 4363	Performance	f	2	1091
+4364	Security	f	3	1091
 4365	but this reduces reliability because de webapp components do not access the most recent data	f	0	1092
 4366	but it reduces performance, anyway, because the buffer components easily overflow	f	1	1092
+4367	and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data	f	2	1092
 4368	and it improves security because the buffer is protected agains attacks	f	3	1092
 4369	A *web services* architecture	f	0	1093
 4370	A Client-Server architecture, where the *mashup* is the client and the various sources are the servers	f	1	1093
+4371	A layered architecture, where the access to the various sources is the responsibility of the bottommost layer	f	2	1093
 4372	A Publish-Subscribe architecture, where the various sources publish events with the changes made and the *mashup* subscribes those events	f	3	1093
+4373	Schedule Resources	f	0	1094
 4374	Increase Resources	f	1	1094
 4375	Introduce Concurrency	f	2	1094
 4376	Maintain Multiple Copies of Computation	f	3	1094
+4377	Maintain system model tactic.	f	0	1095
 4378	Support user initiative tactic.	f	1	1095
 4379	Maintain multiple copies of data tactic.	f	2	1095
 4380	Conflict detection tactic.	f	3	1095
 4381	Performance was traded for easy of development.	f	0	1096
+4382	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	f	1	1096
 4383	Performance was traded for the modifiability quality.	f	2	1096
 4384	An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe.	f	3	1096
 4385	This decomposition is the only possible of the original domain model.	f	0	1097
+4386	This decomposition implies that, in average, customers are going to have a large number of orders.	f	1	1097
 4387	This decomposition implies that products will frequently change their unique identification.	f	2	1097
 4388	All the above.	f	3	1097
 4389	These tactics cannot be applied in conjunction with the self-test tactic.	f	0	1098
 4390	These tactics are used to prevent the occurrence of a fault.	f	1	1098
+4391	Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.	f	2	1098
 4392	In ping/echo the components have the initiative to start the interaction.	f	3	1098
 4393	Only views of the component-and-connector viewtype are needed	f	0	1099
+4394	All viewtypes may be necessary	f	1	1099
 4395	Only views of the component-and-connector viewtype and allocation viewtype are needed	f	2	1099
 4396	Views of the module viewtype are not needed	f	3	1099
 4397	When the environment is design time it means that the change should be done before the system enters into production	f	0	1100
 4398	When the environment is build time it means that it is necessary to codify a new module that is added by rebuilding the system	f	1	1100
+4399	When the environment is initiation time it means that it is necessary to restart the system for the change to take effect	f	2	1100
 4400	When the environment is runtime the cost of doing the change is higher than in the other environments	f	3	1100
+4481	Can use the operations defined in any of the system's modules	f	0	1121
 4482	Can use the operations defined in the lower layer, but not the ones defined inthe upper layer	f	1	1121
 4483	Can use the operations defined in the upper layer, but not the ones defined inthe lower layer	f	2	1121
 4484	Should use some operation defined in the lower layer	f	3	1121
 4489	It corresponds to a particular case of a specialization in a generalization view.	f	0	1123
 4490	It represents a relation between a connector's role and a port of one of its internal components.	f	1	1123
+4491	It represents a relation between a component's port and a port of one of its internal components.	f	2	1123
 4492	It represents a relation between a component's port and a connector's role.	f	3	1123
+4493	To facilitate the interaction among heterogeneous components that use distinct communication protocols	f	0	1124
 4494	To promote the use of a common communication protocol for all the remaining components of the system	f	1	1124
 4495	To increase the performance of the interaction between the components of the system	f	2	1124
 4496	To create a strong coupling between the various services provided by the organization	f	3	1124
 4497	When a peer connects to the network it establishes connections with all other peers in the network	f	0	1125
+4498	The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used	f	1	1125
 4499	When a peer receives a connection it sends all its files to the peer connecting it	f	2	1125
 4500	The behavior described in the sentence can be represented in a view where the tier architectural style is used	f	3	1125
 4501	The development team is the main stakeholder interesting in these views.	f	0	1126
 4502	It assigns modules to files.	f	1	1126
 4503	It is completely independent of the deployment architectural style.	f	2	1126
+4504	It helps on the configuration of systems.	f	3	1126
+4505	The presentation logic layer and how it relates with the underlying layer changed	f	0	1127
 4506	The style of the connector used to represent the interaction between the browser and the web server changed	f	1	1127
 4507	The browser is now a component of a different type	f	2	1127
 4508	That evolution did not have any consequences on the software architecture of a web application	f	3	1127
 4509	Prevent a fault in hardware.	f	0	1128
 4510	Prevent a fault in software.	f	1	1128
 4511	Prevent a fault in a process.	f	2	1128
+4512	Detect a fault.	f	3	1128
 4513	Manage sampling rate	f	0	1129
+4514	Limit event response	f	1	1129
 4515	Prioritize events	f	2	1129
 4516	Bound execution time	f	3	1129
 4517	Split module	f	0	1130
 4518	Encapsulate	f	1	1130
+4519	Restrict dependencies	f	2	1130
 4520	Defer binding	f	3	1130
+4521	It would reduce the scalability for updates of different orders for the same customer.	f	0	1131
 4522	Two users would not conflict if they attempt to edit different orders for the same customer.	f	1	1131
 4523	The increase of the number of orders would not have impact on the load the aggregate.	f	2	1131
 4524	All the above.	f	3	1131
 4525	Does not allow optimizations according to the type of query.	f	0	1132
 4526	Does not support independent scalability according to the type of operation.	f	1	1132
+4527	Reads may not be consistent with the most recent write.	f	2	1132
 4528	Does not support joins.	f	3	1132
 4529	A module contains the code that executes in a single component and a component executes the code of a single module	f	0	1133
 4530	A module contains the code that can execute in several components and a component executes the code of a single module	f	1	1133
 4531	A module contains the code that executes in a single component and a component can execute the code of several modules	f	2	1133
+4532	A module contains the code that can execute in several components and a component can execute the code of several modules	f	3	1133
+4533	Manage sampling rate	f	0	1134
 4534	Limit event response	f	1	1134
 4535	Prioritize events	f	2	1134
 4536	Bound execution times	f	3	1134
+4537	The layered view to deal with the aspects of portability.	f	0	1135
 4538	The uses view to show the coupling between the different platforms.	f	1	1135
 4539	The uses view to show the uses relationships between the different platforms.	f	2	1135
 4540	The data model view to represent each one of the platforms.	f	3	1135
 4541	The view does not address the scenario	f	0	1136
-4195	Communicating Processes.	t	2	1049
+4542	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module to allow the execution of the `Consumer Website` module in a component that can have multiple copies of computation	f	1	1136
 4543	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement	f	2	1136
 4544	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules	f	3	1136
 4545	Task Model	f	0	1137
 4546	System Model	f	1	1137
+4547	Performance	f	2	1137
 4548	User Model	f	3	1137
 4549	Usability e Modifiability	f	0	1138
+4550	Performance e Usability	f	1	1138
 4551	Availability e Usability	f	2	1138
 4552	Availability e Performance	f	3	1138
 4553	A module view of the decomposition style.	f	0	1139
+4554	A module view of the data model style.	f	1	1139
 4555	A component-and-connector view of the service-oriented architecture style.	f	2	1139
 4556	A module view of the uses style.	f	3	1139
 4557	Suffered from featuritis, because the architect decided to delay the difficult parts for latter in the development.	f	0	1140
 4558	Did not suffer from featuritis.	f	1	1140
+4559	Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.	f	2	1140
 4560	Suffered from featuritis, but it had no impact on the final development.	f	3	1140
 4621	Usability and Performance	f	0	1156
+4622	Usability	f	1	1156
 4623	Performance	f	2	1156
 4624	Testability	f	3	1156
 4625	Performance	f	0	1157
 4626	Security	f	1	1157
+4627	Performance and security	f	2	1157
 4628	Security and modifiability	f	3	1157
 4629	Performance	f	0	1158
 4630	Availability	f	1	1158
 4631	Usability	f	2	1158
+4632	Monitorability	f	3	1158
+4633	Manage sampling rate	f	0	1159
 4634	Limit event response	f	1	1159
 4635	Introduce concurrency	f	2	1159
 4637	Maintain multiple copies of data	f	0	1160
+4638	Maintain multiple copies of computation	f	1	1160
 4639	Bound execution times	f	2	1160
 4640	Reduce overhead	f	3	1160
 4701	Performance.	f	0	1176
 4702	Interoperability.	f	1	1176
+4703	Availability.	f	2	1176
 4704	Security.	f	3	1176
 4705	Limit event response	f	0	1177
 4706	Maintain multiple copies of computation	f	1	1177
 4707	Maintain multiple copies of data	f	2	1177
+4708	Schedule resources	f	3	1177
 4709	Component	f	0	1178
 4710	Module	f	1	1178
+4711	Component and Module	f	2	1178
 4712	None of the above	f	3	1178
 4713	Manage sampling rate	f	0	1179
 4714	Limit event response	f	1	1179
+4715	Maintain multiple copies of data	f	2	1179
 4716	Maintain multiple copies of computation	f	3	1179
+4717	Limit event response	f	0	1180
 4718	Schedule resources	f	1	1180
 4719	Bound execution times	f	2	1180
 4720	Increase resource efficiency	f	3	1180
+4741	Limit access.	f	0	1186
 4742	Increase resources.	f	1	1186
 4743	Increase resource efficiency.	f	2	1186
 4744	Maintain multiple copies of data.	f	3	1186
 4745	Manage sampling rate tactic.	f	0	1187
+4746	Increase resource efficiency tactic.	f	1	1187
 4747	Introduce concurrency tactic.	f	2	1187
 4748	Schedule resources tactic.	f	3	1187
 4749	When the modification should occur.	f	0	1188
 4750	The features that will be implemented.	f	1	1188
+4751	The new defects introduced.	f	2	1188
 4752	Defer binding.	f	3	1188
 4753	Is driven by functional requirements.	f	0	1189
 4754	Is done in a single step, after all the tactics were identified.	f	1	1189
 4755	Is a top-down process where a initial decomposition is chosen and it is successively decomposed without changing the initial decisions.	f	2	1189
+4756	Is an iterative process where architectural designs are proposed as hypothesis and tested.	f	3	1189
 4757	Is applied only once at the beginning of the architectural design process.	f	0	1190
+4758	Is applied at the begin of the architectural design process but may be necessary to redo it later.	f	1	1190
 4759	Is mostly driven by the security attribute quality.	f	2	1190
 4760	Follows a bottom-up decomposition process of the system.	f	3	1190
 4781	Ping/Echo.	f	0	1196
 4782	Retry.	f	1	1196
+4783	Voting.	f	2	1196
 4784	Passive Redundancy.	f	3	1196
+4785	This ASR can easily be supported by the architecture because it has little effect in the architecture.	f	0	1197
 4786	This ASR requires a specific architectural design because it profoundly affects the architecture.	f	1	1197
 4787	The cost of meeting the ASR after development starts is too high.	f	2	1197
 4788	Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture.	f	3	1197
+4789	The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.	f	0	1198
 4790	The invoked function may not have any input parameter.	f	1	1198
 4791	The invoked function may not have any output parameter.	f	2	1198
 4792	The invoked function may not have both any input parameter nor any output parameter.	f	3	1198
 4793	Maintain multiple copies of data tactic.	f	0	1199
 4794	Introduce concurrence tactic.	f	1	1199
 4795	Increase resource efficiency tactic.	f	2	1199
+4796	Schedule resources tactic.	f	3	1199
 4797	Maintain task model	f	0	1200
 4798	Maintain user model	f	1	1200
+4799	Maintain system model	f	2	1200
 4800	Aggregate	f	3	1200
 4821	Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.	f	0	1206
 4822	It is preferable to only design views that do not use complex connectors to increase understandability.	f	1	1206
+4823	If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.	f	2	1206
 4824	Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them.	f	3	1206
 4825	Peer-to-Peer.	f	0	1207
+4826	Pipe-and-Filter.	f	1	1207
 4827	Client-Server.	f	2	1207
-4823	If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.	t	2	1206
-4826	Pipe-and-Filter.	t	1	1207
+4829	The main quality this style addresses is interoperability.	f	0	1208
 4830	It cannot be applied when the system includes legacy systems.	f	1	1208
 4831	Its enterprise service bus cannot support asynchronous communication between the components.	f	2	1208
 4832	The typical communication pattern is point-to-point.	f	3	1208
 4833	The modules inside a layer cannot use other modules in the same layer	f	0	1209
 4834	A layer cannot call the layer above	f	1	1209
+4835	Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer	f	2	1209
 4836	It is possible to have a circular allowed-to-use relationship between several layers	f	3	1209
+4837	If there are performance requirements concerning the access to data, then the level of detail should be physical	f	0	1210
 4838	It should always consider the physical detail level	f	1	1210
 4839	The logical detail level should only be used when the target of implementation is a relational database	f	2	1210
 4840	Only the conceptual level is required, the other two levels of detail are optional	f	3	1210
 4861	Applies layers to tiers.	f	0	1216
+4862	Restricts the communication between components because, for instance, a group of components should be located in the same hardware.	f	1	1216
 4863	Is an extension of the Client-Server architectural style.	f	2	1216
 4864	Defines tiers as components.	f	3	1216
 4865	It imposes restrictions on which uses relationships may exist between the system's modules	f	0	1217
 4866	It makes it easier to create generalization relationships between the system's modules	f	1	1217
+4867	It separates in new modules responsibilities that were spread over various of the system's modules	f	2	1217
 4868	It allows the decomposition of each of the system's modules into finer grained modules	f	3	1217
 4869	All the peers are equal.	f	0	1218
 4870	Any peer can access any other peer.	f	1	1218
 4871	Peers are only used to share files.	f	2	1218
+4872	The interaction between peers is symmetric.	f	3	1218
 4873	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.	f	0	1219
 4874	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.	f	1	1219
 4875	It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database.	f	2	1219
+4876	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data.	f	3	1219
+4877	A component is an instance and a view can have several instances of the same component type.	f	0	1220
 4878	A component type is made of a single architectural style.	f	1	1220
 4879	Only components can be associated with application-specific types.	f	2	1220
 4880	A component-and-connector view can only use a single architectural style.	f	3	1220
 4901	One view of the component-and-connector viewtype and another of the deployment style.	f	0	1226
+4902	A single view of the communicating processes style.	f	1	1226
 4903	Two views of the communicating processes style.	f	2	1226
 4904	A view of the aspects style.	f	3	1226
 4905	The aggregates publishes the event in a message broker and subscribes to the published event.	f	0	1227
 4906	Using the database of the aggregate as a temporary message queue.	f	1	1227
 4907	Using event sourcing.	f	2	1227
+4908	All of the above.	f	3	1227
 4909	A deployment view.	f	0	1228
 4910	A work assignment view.	f	1	1228
+4911	A deployment and a work assignment view.	f	2	1228
 4912	A install view.	f	3	1228
 4913	The layered view to support a new specific layer for the customization of the catalog.	f	0	1229
 4914	The layered view to accommodate a new layer for each kind of catalog, which other layers may use.	f	1	1229
 4915	The data model view in order to define entities for each kind of catalog.	f	2	1229
+4916	The data model view in order to define generic entities that can be customized for different kinds of catalogs.	f	3	1229
+4917	Client-server.	f	0	1230
 4918	Communicating Processes.	f	1	1230
 4919	Repository.	f	2	1230
 4920	Pipes-and-Filters.	f	3	1230
 4941	Client-server.	f	0	1236
+4942	Communicating Processes.	f	1	1236
 4943	Repository.	f	2	1236
 4944	Pipes-and-Filters.	f	3	1236
 4945	The communicating processes style.	f	0	1237
+4946	The communicating processes style and the dynamic reconfiguration style.	f	1	1237
 4947	The communicating processes style and the pipes-and-filters style.	f	2	1237
 4948	The dynamic reconfiguration style.	f	3	1237
 4949	The communicating processes.	f	0	1238
 4950	Pipes-and-filters.	f	1	1238
+4951	Publish-subscribe.	f	2	1238
 4952	Dynamic reconfiguration.	f	3	1238
 4953	Components are allocated to persons and teams.	f	0	1239
+4954	Modules are allocated to persons and teams.	f	1	1239
 4955	Components and modules are allocated to persons and teams.	f	2	1239
 4956	None of the above.	f	3	1239
+4957	The decomposition view to include a module for the synchronization responsibilities.	f	0	1240
 4958	The uses view to represent how the mobile device uses the Catalog application.	f	1	1240
 4959	The layered view to include a layer for each type of device.	f	2	1240
 4960	The domain layer of the layered style to represent the types of devices.	f	3	1240
-6	Should be captured in scenarios, as the requirements for quality attributes, and be taken into account in the design of the software architecture	t	1	2
-9	The *decomposition* and *uses* styles, which allow us to show how dependent a certain module is of other parts of the system	t	0	3
-16	To replace the machine used to run the server component by a more powerful machine that meets the new performance requirements, keeping only a server component running	t	3	4
-20	Even though each viewtype addresses different aspects of a system, there are relationships among all of them	t	3	5
-31	A subset of the requirements that correspond to the most important business goals, regardless of whether they have conflicts among them or not	t	2	8
-33	The *Peer-to-Peer* style	t	0	9
-40	The *Shared data* style	t	3	10
-44	This change manifests itself on the relationship between the system's modules and components	t	3	11
-45	The *Communicating Processes* style	t	0	12
-51	*Decomposition* and *Implementation* views	t	2	13
-54	*Decomposition* and *Uses* views	t	1	14
-59	The *Layers* style	t	2	15
-64	the *Deployment* and *Layers* styles	t	3	16
-66	Views of the Module viewtype	t	1	17
-69	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	t	0	18
-76	To keep a record of changes made to the data during a business transaction and to coordinate the writing of these changes to the database	t	3	19
-79	To prevent data inconsistencies when there are multiple accesses within the same business operation to the same entity	t	2	20
-83	Stakeholders do not mind if two simultaneous reads on the same file by two different applications may return different values	t	2	21
-86	The availability quality is more important, thus performance is addressed afterwards and depends on the tactics used for availability	t	1	22
-91	Passive replication and spare	t	2	23
-94	State Resynchronization	t	1	24
-97	Authenticate users and authorize users	t	0	25
-108	That provides a set of complete and cohesive services	t	3	27
-111	But it needs to be complemented, for each uses relationship, with the level of coupling	t	2	28
-113	The call's results may not have impact on the correct execution of the caller module	t	0	29
-120	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	30
-123	The Peer-to-Peer style	t	2	31
-125	A Client-Server architecture, where the DataNode is the Client and the NameNode is the Server	t	0	32
-132	The availability guarantee may be given by the usage of an adequate connector between the HDFS Client and the DataNodes	t	3	33
-134	The Communicating Processes style	t	1	34
-141	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	t	0	36
-147	That is the recommended solution if there is a control flow that involves the choreography of both components	t	2	37
-162	Essential to reduce costs whenever there is a fault in a hardware element	t	1	41
-167	Allows the creation of checkpoints using the information that it gradually receives from the *NameNode*	t	2	42
-169	Performance and availability qualities	t	0	43
-173	Increases the system modifiability whenever it is necessary to change the placement policy	t	0	44
-178	But it would imply an *overhead* in the *NameNode*	t	1	45
-183	This script is a module that implements a modifiability tactic	t	2	46
-188	Availability and security	t	3	47
-193	Means that it may be difficult to design incremental testing	t	0	49
-197	Is that the *Allowed to Use* relation defines a restriction for the possible *Uses* relations between modules belonging to different layers	t	0	50
-203	Using a view of the component-and-connector viewtype	t	2	51
-215	The application continues to have a three-tiered architecture, where one of the tiers is now the HDFS system	t	2	54
-220	The Client Server style	t	3	55
-222	May affect the data access layer because each pattern puts different requirements on the interface of that layer	t	1	56
-228	All components may execute in all machines	t	3	57
-239	We may need views of the component-and-connector viewtype and of the Deployment style	t	2	60
-244	The researchers, because they wanted to use the system to validate their research	t	3	61
-245	As modules of the system	t	0	62
-252	Satisfied usability requirements of the system	t	3	63
-255	The portability, because the RTS creates an abstraction layer that hides some of the details of the operating system	t	2	64
-259	To facilitate changing the phases used in the compilation process, thereby making the compiler more modifiable	t	2	65
-264	It allows the development of systems with Peer-to-Peer, Client-Server, or Publish-Subscribe architectures	t	3	66
-267	The Deployment style	t	2	67
-270	Facilitates the addition of new messaging patterns	t	1	68
-274	To increase the throughput of the system when it is overloaded	t	1	69
-279	The Communicating Processes style	t	2	70
-284	To allow more simultaneous connections than Apache	t	3	71
-286	They wanted to have a more efficient use of the computational resources	t	1	72
-295	To make the system faster	t	2	74
-298	The Communicating Processes style	t	1	75
-304	Increases both the availability and the capacity	t	3	76
-307	In the Component-and-Connector view, because components and connectors need to be changed	t	2	77
-312	Increasing the fault tolerance of the system	t	3	78
-316	The execution of the previously existing layers is split between the two new tiers, and new intermediate layers may be needed	t	3	79
-322	The domain logic layer was implemented with the Transaction Script pattern	t	1	81
-327	The Uses style	t	2	82
-344	The Decomposition style	t	3	86
-345	In the Deployment view	t	0	87
-351	To allow testing and validating the software architecture in the early development stages	t	2	88
-359	Typically gives rise to more modules than what we would have if not using this style	t	2	90
-363	To launch a worker thread for each core, to maximize the core usage and to minimize the need for synchronization among threads	t	2	91
-368	Module and component-and-connector views	t	3	92
-371	It has less performance, because the *broker* introduces greater latency in the communication	t	2	93
-373	Views of the Generalization style	t	0	94
-377	Usability	t	0	95
-384	The Communicating Processes style	t	3	96
-387	The Shared data style	t	2	97
-391	Each *worker* is responsible for various connections, processing all requests from those connections	t	2	98
-393	By interleaving the various processing phases of each request in a sequential process	t	0	99
-400	Be able to reduce the amount of memory needed for each connection	t	3	100
-431	The Peer-to-Peer style	t	2	108
-433	The performance decreases	t	0	109
-443	To move from an anemic domain model to a rich domain model	t	2	111
-448	Views of the Component-and-Connector and Allocation viewtypes	t	3	112
-462	The Client-Server style	t	1	116
-472	None of the other options solves the problem	t	3	118
-473	The presentation logic layer and how it relates with the underlying layer changed	t	0	119
-478	A grouping of components	t	1	120
-485	Maintain Multiple Copies of Computation	t	0	122
-493	Performance, availability, and usability	t	0	124
-497	Client-Server e Repository	t	0	125
-501	By using a Timestamp tactic	t	0	126
-506	May stop accepting writes	t	1	127
-509	Increase Resource Efficiency	t	0	128
-515	Limit Access	t	2	129
-517	Introduce Concurrency	t	0	130
-523	Dynamic Creation and Destruction	t	2	131
-528	It does not depend on a proprietary service	t	3	132
-532	It can change during the execution of each instance of Chrome	t	3	133
-533	Maintain User Model tactic	t	0	134
-540	Limitations of the concurrent access to files	t	3	135
-541	Increase the modifiability quality, because the new user interface was implemented using the REST interface	t	0	136
-548	An object tree to simplify the processing of each filter	t	3	137
-551	Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order	t	2	138
-555	Dynamic Creation and Destruction	t	2	139
-560	All the previous options	t	3	140
-562	Differ on the emphasis on production and development phases of the software process	t	1	141
-568	Modifiability and Performance	t	3	142
-569	Defer Binding	t	0	143
-575	Both, pessimistic and optimistic, concurrency control policies can be used	t	2	144
-581	Detect and Recover from the attack	t	0	146
-590	Only depend on the type of events	t	1	148
-596	They are not implemented by a usability tactic	t	3	149
-603	Reliability	t	2	151
-615	Prioritize performance and availability over functionality	t	2	154
-620	Passive Redundancy and Maintain Multiple Copies of Computation	t	3	155
-622	By the load balancer	t	1	156
-627	Degradation	t	2	157
-631	Increase Resources Efficiency	t	2	158
-636	Security, Performance, Usability and Mobility	t	3	159
-642	The *browser* needs to make less requests to the server	t	1	161
-646	Communicating-Processes	t	1	162
-649	Uses the Introduce Concurrency tactic	t	0	163
-658	External applications can administrate the GNU Mailman mailing lists	t	1	165
-663	Pipes-and-Filters	t	2	166
-665	Data Model	t	0	167
-669	The quality of Performance	t	0	168
-673	Security	t	0	169
-679	Module and Component-and-Connector	t	2	170
-681	Modifiability and Interoperability	t	0	171
-686	Aspects	t	1	172
-690	User Model	t	1	173
-696	It is necessary that each object has a unique identifier	t	3	174
-700	Exception Detection	t	3	175
-704	In what concerns the notification, the Model module does not use the Observer module	t	3	176
-707	There isn't any predefined order to design Uses and Layered views	t	2	177
-711	May contain several architectural styles, but only if they are of the same viewtype	t	2	178
-715	Once applied in a view may be necessary to change the Decomposition view	t	2	179
-717	It is an advantage for programmers that the transactional behavior is transparently provided	t	0	180
-842	The Domain Model pattern to reduce the interface of the Domain Logic layer to a controlled set.	t	1	211
-847	The Domain Model pattern.	t	2	212
-853	The Requirements function is part of the Design module.	t	0	214
-857	A Condition Monitoring tactic for the Availability quality.	t	0	215
-863	The stimulus for scenarios of the Security quality.	t	2	216
-871	The environment is design time.	t	2	218
-876	Increase resource efficiency.	t	3	219
-877	Create a decomposition where there is a module corresponding to the Windows OS and another one for the Mac OS X, each one responsible for containing the OS-specific code.	t	0	220
-885	We have to use a Repository component-and-connector style.	t	0	222
-890	Client-server in the first case and Peer-to-peer in the second.	t	1	223
-896	Is driven by a trade-off among the stakeholders needs.	t	3	224
-898	May be responsible for the Performitis problems of architectures.	t	1	225
-908	The location information is correctly included with a probability of 99.99% is the response measure.	t	3	227
-916	A data model view and a component-and-connector view using a shared-data style.	t	3	229
-919	Shared-data style.	t	2	230
-922	The domain only needs CRUD (Create, Read, Update, and Delete) operations.	t	1	231
-925	It is necessary to design two deployment views, one for each deployment option.	t	0	232
-931	Increase resource efficiency tactic for performance, because it reduces the need of upfront calculus/computation on new clients.	t	2	233
-934	The server propagates local commands and cursor movements to the clients, and keeps the snapshots for the initialization of new clients.	t	1	234
-939	Testability and Modifiability.	t	2	235
-1088	All of the above	t	3	272
-1090	The Active Record pattern	t	1	273
-1097	Ping-and-echo requires the availability monitor to know the addresses of the components it is monitoring	t	0	275
-1104	It is necessary to use the encrypt data tactic to encrypt the information on the client web browser, before it is send to the web server	t	3	276
-1112	A scenario for usability associated with a support user initiative tactic	t	3	278
-1113	Multiple copies of computation	t	0	279
-1117	Decomposition view	t	0	280
-1124	To talk with the people that developed the system to know what they did and why they did it	t	3	281
-1127	Architecture is the design that gets harder to change as development progresses	t	2	282
-1132	None of the above	t	3	283
-1133	Represent different architectural qualities and they may not be all represented in a single view	t	0	284
-1140	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	285
-1143	Both, a module and a component	t	2	286
-1147	Generalisation to represent an abstraction common to all interfaces and keep API-specific details in child modules	t	2	287
-1151	Development because it is not possible to do incremental development	t	2	288
-1153	Performance, because it describes what is the response to REST API calls	t	0	289
-1158	Increase resource efficiency tactic	t	1	290
-1163	Testability, because of the logic complexity	t	2	291
-1172	A communication processes style	t	3	293
-1174	It is necessary to change the connector between the web clients and the web servers, in the component-and-connector view, to show the semantics that is provided by the load-balancer	t	1	294
-1178	They have to process very large amounts of data in each request	t	1	295
-1189	A generalisation architectural style	t	0	298
-1195	Subscribes to cursor position events	t	2	299
-1200	All of the above	t	3	300
-1213	This shared understanding is what distinguishes architecture from design.	t	0	304
-1221	Frank Buschmann is referring to some possible consequences of the modifiability quality.	t	0	306
-1228	A solution for any quality in isolation may lead to a biased architecture.	t	3	307
-1239	Is focused on creating common generalizations of several systems.	t	2	310
-1244	To break such misunderstanding and mistrust the architecture has to make explicit the stakeholders needs.	t	3	311
-1247	Is a baseline architecture that allows to experiment with the most significant architectural requirements.	t	2	312
-1259	Are unable to distinguish architecture from design.	t	2	315
-1262	A solution to this problem is to prioritize the system qualities.	t	1	316
-1268	Professional and Technical Contexts.	t	3	317
-1274	Availability and Performance.	t	1	319
-1278	Tries to guarantee that the final system will have the qualities aimed by the architecture.	t	1	320
-1282	Availability.	t	1	321
-1287	Can be used as the source of a stimulus in a scenario.	t	2	322
-1291	Is a design tactic for a scenario where the source of stimulus are technical users.	t	2	323
-1295	Limit exposure.	t	2	324
-1304	The stimulus and the response should be always present.	t	3	326
-1309	The quality addressed is availability.	t	0	328
-1315	Verify message integrity.	t	2	329
-1318	Introduce concurrency.	t	1	330
-1323	Interoperability.	t	2	331
-1328	Exception prevention.	t	3	332
-1329	A Maintain Multiple Copies of Computation design tactic in Carbon.	t	0	333
-1335	Separate entities, to allow the use of more strict tactics on the sensitive data.	t	2	334
-1337	Maintain user model tactic.	t	0	335
-1342	May be associated to other tactics to deal with a single stimulus.	t	1	336
-1345	This situation corresponds to the use of the degradation availability tactic.	t	0	337
-1350	The quality addressed is modifiability.	t	1	338
-1355	Detect and Recover.	t	2	339
-1372	Usability.	t	3	343
-1373	Interoperability.	t	0	344
-1381	Business scenario.	t	0	346
-1390	Modifiability.	t	1	348
-1396	Support system initiative.	t	3	349
-1400	Allows to identify modules for which the development team does not have the required implementation competences.	t	3	350
-1404	Contains the business value and the architectural impact of architecturally significant requirements.	t	3	351
-1407	The architect have to decide on the cost/benefit of designing an architecture that supports this ASR.	t	2	352
-1411	Availability.	t	2	353
-1415	Availability.	t	2	354
-1421	Business scenario.	t	0	356
-1442	Applying the decomposition style to some of the modules in the loop chain.	t	1	361
-1449	Limit exposure.	t	0	363
-1456	The attachment between components and connectors only depends on their ports and roles types.	t	3	364
-1468	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance issues of the access to data.	t	3	367
-1471	Increase resource efficiency.	t	2	368
-1476	The required quality associated with the connector is supported by existing and well-know technology.	t	3	369
-1477	She can define a variant of this style with asynchronous communication by allowing the client to register callbacks that the server calls at specific times.	t	0	370
-1483	Allows incremental development because the possible increments of functionally can be inferred from use dependencies.	t	2	371
-1485	Relates a view of the Uses style with a view of the Data Model style.	t	0	372
-1489	Multiple copies of computation and Passive redundancy tactics.	t	0	373
-1495	A module interface cannot be replicated but component ports can.	t	2	374
-1498	It is possible to have redundant servers.	t	1	375
-1508	Condition monitoring.	t	3	377
-1509	It is possible to integrate a new data accessor without changing the other data accessors.	t	0	378
-1520	This means that the modules inside a layer are likely to be ported to a new application together.	t	3	380
-1527	Can use a Service Registry to improve transparency of location of service providers.	t	2	382
-1529	In the view there are multiple instances of the `Queue` component.	t	0	383
-1548	It encapsulates applications through well-defined interfaces, decouples the coordination of the interaction among applications from the applications themselves, and improves transparency of location of service providers.	t	3	387
-1550	There is a interface delegation relation between the `read` port of `Queue` and the `query` port of `Carbon`.	t	1	388
-1554	Implementation style.	t	1	389
-1562	Restrict the communication between components because, for instance, a group of components should be located in the same hardware.	t	1	391
-1571	Install style.	t	2	393
-1577	Memcached can be considered a sub-module of the Store Graphs module.	t	0	395
-1589	Buffering can be considered a sub-module of the Store Graphs module.	t	0	398
-1594	A deployment view.	t	1	399
-1634	An interface delegation is missing in the picture to represent the : TableEditor broadcasting the cursor position through the Pub port.	t	1	409
-1640	May not even exist, only record sets are used.	t	3	410
-1641	Amazon Silk predicts accesses based on the information gathered for all Silk users.	t	0	411
-1647	There is a ThousandParsec connector which can be decomposed into a set of components and Request/Reply connectors.	t	2	412
-1649	Was taken because HTML5 provides better portability qualities.	t	0	413
-1653	The server implements the : Repository component and the : Broadcast connector.	t	0	414
-1657	Table Data Gateway and Row Data Gateway.	t	0	415
-1662	Google Chrome predictor takes into consideration the amount of available cache.	t	1	416
-1667	As a module but not included in the RulesSet subtree.	t	2	417
-1669	Two distinct unidirectional connectors.	t	0	418
-1674	The Parser module is part of the code executed by the : Sheet component.	t	1	419
-1680	Active Record and Data Mapper.	t	3	420
-1801	The stimulus is to integrate reports from a variety of test tools	t	0	451
-1807	Performance and Reliability	t	2	452
-1812	In the mapping between layers of the system and the components where they execute	t	3	453
-1816	The system represented in the right part of the figure tends to have good modifiability	t	3	454
-1819	Tiers to express that different applications define their own contexts	t	2	455
-1824	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	456
-1837	Retry	t	0	460
-1843	Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders	t	2	461
-1848	Increasing performance, scalability and availability	t	3	462
-1852	Nginx emphasizes the usability quality for system administrators by reducing the number or errors	t	3	463
-1855	You may need to use views of the three viewtypes	t	2	464
-1860	The Communicating Processes style	t	3	465
-1866	The Pipes-and-filters style	t	1	467
-1873	Launching a new process for processing each request is too expensive	t	0	469
-1879	A multiple copies of computation tactic	t	2	470
-1883	A communicating-processes view with non-blocking connectors for the interaction between threads and core data structures	t	2	471
-1885	The solution where the application is responsible for the eviction has better availability	t	0	472
-1891	Reliability	t	2	473
-1898	This law can be seen as an example of the architecture influence cycle	t	1	475
-1904	Becomes unavailable for banks if there is a fault in the hardware of service server (srv-opc)	t	3	476
-1907	We have to distinguish architectural performance from opportunistic performance	t	2	477
-1918	They are both components	t	1	480
-2049	By interleaving the various processing phases of each request in a sequential process	t	0	513
-2053	You need to change the decomposition view to represent modules with the responsibilities associated with the DSL	t	0	514
-2060	A decomposition view which contains the serialization/de-serilization modules	t	3	515
-2065	The main quality of the system in the right part of the figure is scalability	t	0	517
-2070	Decomposition to express the services interfaces	t	1	518
-2074	Performance because it allows the processing of more requests per unit of time	t	1	519
-2088	Is useful even if the implementation is concluded and the system has entered the maintenance phase	t	3	522
-2089	The most important requirements (both functional and qualities) that the system must achieve	t	0	523
-2100	Communicating processes, shared-data, service-oriented architecture, and peer-to-peer	t	3	525
-2102	A component may execute code from different modules	t	1	526
-2108	They guide us in the requirement elicitation process with the system's stakeholders	t	3	527
-2111	It is not possible to develop and to test the system incrementally	t	2	528
-2123	The Shared-Data style	t	2	531
-2128	The Communicating Processes style	t	3	532
-2131	Voting	t	2	533
-2139	Put the requests into a queue and schedule their processing	t	2	535
-2144	A Decomposition view	t	3	536
-2147	Increasing performance and decreasing availability	t	2	537
-2150	Understand the architecturally significant requirements	t	1	538
-2156	Interoperability	t	3	539
-2158	Modifiability	t	1	540
-2182	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, etc.	t	1	546
-2186	Is useful to support scenarios where the stimulus is an omission.	t	1	547
-2192	The level of abstraction of the system an architect works may vary.	t	3	548
-2194	Martin Fowler complains about this definition because the early decisions are not necessarily the right ones.	t	1	549
-2199	This view highlights the different performance levels for `upload` and `dowload` operations.	t	2	550
-2227	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business and project.	t	2	557
-2232	This view highlights the scalability of `upload` and `dowload` operations, and of storage.	t	3	558
-2234	This shared understanding includes the architecturally significant requirements.	t	1	559
-2237	The exchange of information is the stimulus.	t	0	560
-2262	This view highlights the performance of the `download` operations.	t	1	566
-2271	Facilitate the communication among the stakeholders such that they can decide on what are the architecturally significant requirements.	t	2	568
-2274	To reason about a system is to verify whether the architecturally significant requirements are considered by the architecture.	t	1	569
-2277	Active redundancy can be used together with a voting tactic to detect and recover from faults.	t	0	570
-2303	It describes a usability scenario where the stimulus is reduce the number of errors when configuring the system.	t	2	576
-2305	In each iteration one or more architecturally significant requirements are used to decompose a software element of the system design.	t	0	577
-2316	A support user initiative tactic based on the definition of a language is used to achieve this scenario.	t	3	579
-2320	Cannot be used together with the Reduce Overhead performance tactic.	t	3	580
-2343	Schedule resources.	t	2	586
-2346	This is a modifiability scenario which has a defer binding tactic.	t	1	587
-2349	Bound execution times, bound queue sizes, and increase resources.	t	0	588
-2356	The utility tree covers all the significant qualities the system has to address.	t	3	589
-2360	Maintain multiple copies of computation.	t	3	590
-2384	This decision is not a consequence of the Fénix business case.	t	3	596
-2387	The tactic used to solve the problem is based in the fact that data points are appended to the end of the metric file.	t	2	597
-2390	Increase resources.	t	1	598
-2395	A modifiability scenario where defer binding occurs at compile time.	t	2	599
-2399	There is no relation between the cost of change and the cost of development.	t	2	600
-2434	The server approach can scale independently of the number of applications.	t	1	609
-2439	A connector embodies a communication protocol.	t	2	610
-2473	Schedule resources.	t	0	619
-2480	Scalability.	t	3	620
-2502	The Merge component executes the modules merge and stdio.	t	1	626
-2505	Performance.	t	0	627
-2510	Scalability of read requests, because it is easy add more repositories to where reads are distributed, though there may be some level of inconsistency.	t	1	628
-2513	Interoperability.	t	0	629
-2544	A decomposition view, a view of the component-and-connector viewtype and a deployment view.	t	3	636
-2549	Client-server.	t	0	638
-2555	Client-server where the Buildbot is the client.	t	2	639
-2583	Decomposition and Generalization.	t	2	646
-2592	It is useful for system administrators.	t	3	648
-2593	Publish-subscribe.	t	0	649
-2598	Tiers to represent scalability.	t	1	650
-2622	The sharing of data is done using a service-oriented architecture.	t	1	656
-2628	Client-server where the Dashboard is the server.	t	3	657
-2638	Communicating processes.	t	1	660
-2780	Implementation views	t	3	695
-2781	Communicating Processes	t	0	696
-2785	Typically have a software architecture that results from the common knowledge about the system that is shared among the team members	t	0	697
-2791	The functional requirements have a large impact on the definition of views of the module viewtype because they are used to define the high cohesion and low coupling of modules	t	2	698
-2795	The response is not correctly stated	t	2	699
-2821	The stimulus is an omission and the tactic is retry	t	0	706
-2831	The quality being addressed is performance and the tactics multiple copies of data and multiple copies of computation	t	2	708
-2833	Tiers style	t	0	709
-2842	The sharing of data is done using a service-oriented architecture	t	1	711
-2848	an ACID transaction occurs in the invoked application and ACID transactions in the other involved applications will eventually occur later	t	3	712
-2852	To support high scalability the request of `User 1` needs to be decomposed into a request to only one of the aggregate instances and the processing in the other aggregate occurs in the background	t	3	713
-2853	We must use various different views, both of the component-and-connector and the allocation viewtypes	t	0	714
-2859	Passive replication and spare	t	2	715
-2864	All of the above	t	3	716
-3001	The stimulus is to port the system to a new browser	t	0	751
-3006	Increase semantic coherence	t	1	752
-3010	Essential to reduce costs whenever there is a fault in a hardware element	t	1	753
-3013	Because this tactic simplifies the addition and removal of DataNodes	t	0	754
-3018	Is composed of things such as code units, runtime elements, hardware, and people, together with the relationships among them	t	1	755
-3021	Describing what are the qualities that the system should possess	t	0	756
-3026	The scenario is correct but it does not describe whether the request the servers fails to respond to succeeds or fails	t	1	757
-3032	Both in a component-and-connector and the Deployment views	t	3	758
-3040	Bound execution times	t	3	760
-3043	The web browser, o web server, and the data base	t	2	761
-3048	It decouples applications developed for different organizations	t	3	762
-3050	Install view	t	1	763
-3054	Write two scenarios on performance	t	1	764
-3058	Component-and-connector viewtype	t	1	765
-3065	A module view	t	0	767
-3069	The Decomposition and the Work Assignment styles	t	0	768
-3075	The Uses style	t	2	769
-3077	The Generalization style	t	0	770
-3085	Use a passive redundancy tactic in the OPC (Order Processing Center)	t	0	772
-3089	The decomposition view to include a module for the synchronization responsibilities	t	0	773
-3100	The price for high scalability and availability is the need to have several replicas of the files to be shared	t	3	775
-3106	Only a small set of functionalities are transactional	t	1	777
-3111	The distributed log guarantees that events will be delivered only once	t	2	778
-3114	It allows high scalability because it is possible the implement transactions associated to each one of the aggregates	t	1	779
-3117	Implementation	t	0	780
-3144	When a read occurs, the client, if it is located in the cluster, receives a list of the DataNodes where the replicas are, ordered by its closeness to the client, to improve performance of reads	t	3	786
-3148	None of the above	t	3	787
-3150	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, response, etc	t	1	788
-3155	The tweet unique ID is written in the home timeline of each one of the writer's followers	t	2	789
-3160	This solution optimizes the performance in terms of the throughput of processed requests	t	3	790
-3184	The periodic rebuild of the checkpoint improves the performance of the NameNode during its initialization	t	3	796
-3186	How to control the response to one or more stimulus	t	1	797
-3190	The ingestion process includes tokenizing of the tweet to include in an index	t	1	798
-3195	This is right but you cannot be completely sure whether the decisions are the right ones	t	2	799
-3200	This solution allows the dimensioning of the number of activities (threads or processes) that run in the server, taking into consideration the server's hardware capacity, in order to have a efficient usage of the server's CPU	t	3	800
-3262	Use an intermediary that contains all the code associated with the remote invocation separating it from the modules' business logic	t	1	816
-3271	The system would respond faster to requests about file locations	t	2	818
-3279	The Voting tactic	t	2	820
-3315	She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules	t	2	829
-3348	A new aspect view that includes a module with the responsibilities associated with the access control and that crosscuts some of the other modules	t	3	837
-3360	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data	t	3	840
-3384	Service-oriented architecture, Shared-data, Peer-to-peer, and Client-server	t	3	846
-3390	May, on another view of the system, be represented by a set of components and connectors	t	1	848
-3424	Tiers, Shared-data, Service-oriented architecture, and Client-server	t	3	856
-3425	A component can subscribe to events	t	0	857
-3432	Client-Server and Shared-data	t	3	858
-3439	A Communicating processes view	t	2	860
-3523	If there is some technology available that implements the complex connectors it is not necessary to document their decomposition.	t	2	881
-3529	Decomposition.	t	0	883
-3536	This solution optimizes the performance in terms of the throughput of processed requests.	t	3	884
-3539	Integrate the development of the software system with the organization's business goals.	t	2	885
-3543	A fault.	t	2	886
-3548	Throughput.	t	3	887
-3551	Restrict dependencies.	t	2	888
-3554	Uses style.	t	1	889
-3560	The Generalization and Decomposition styles.	t	3	890
-3562	An aggregate is usually loaded in its entirety from the database.	t	1	891
-3568	Testing is easier	t	3	892
-3572	Maintain system model.	t	3	893
-3573	This view shows that if is possible to scale differently the `web tier` from the `EJB tier`.	t	0	894
-3579	Maintain multiple copies of computation.	t	2	895
-3584	Retry tactic	t	3	896
-3586	The project manager uses this view to get advice on the incremental development of the system.	t	1	897
-3593	Analysing the performance of the system.	t	0	899
-3600	All layers are mapped to the browser component where the data access layer will contains, besides a module to access a local repository, modules to access external services.	t	3	900
-3684	All the above.	t	3	921
-3685	Increase competence set.	t	0	922
-3690	Reduce overhead.	t	1	923
-3696	It is necessary to use views of the three viewtypes.	t	3	924
-3706	Usability.	t	1	927
-3710	It is useful for the project managers.	t	1	928
-3715	Performance and Availability for crashes of the Image File Storage component.	t	2	929
-3720	Four.	t	3	930
-3723	That the impact of integrating a new source is controlled by the interface of *Import DVD Info* Module.	t	2	931
-3731	The Service Oriented Architecture style.	t	2	933
-3734	This view shows that the processing of tracking requests is done synchronously.	t	1	934
-3744	Pipe-and-filter and shared-data.	t	3	936
-3747	Do not loose the changes done on the client component if the server is not available.	t	2	937
-3749	Split module.	t	0	938
-3759	The connectors only use the *stdio* module for their implementation.	t	2	940
-3783	A common understanding to be achieve among all the system stakeholders	t	2	946
-3788	The measure of the response is throughput	t	3	947
-3791	Project	t	2	948
-3794	Scalability of the Image File Storage in terms of the storage capacity	t	1	949
-3800	Simple programming model, the clients only need to concern about the business logic of the application, the remote services are transparent	t	3	950
-3822	The asynchronous solution can support a larger number of simultaneous requests	t	1	956
-3828	None of the above	t	3	957
-3831	Modifiability	t	2	958
-3836	The separation of write and retrieval services allows them do scale independently	t	3	959
-3838	Limit event response	t	1	960
-3863	In the asynchronous solution it is possible to provide an implement where the tasks being executed are finished without requiring the client to resubmitted them	t	2	966
-3865	Provides the quality of availability	t	0	967
-3871	The need to have eventual consistency and compensating operations	t	2	968
-3875	Maintain multiple copies of computation	t	2	969
-3877	Time to market is the most important impact of cloud computing in an architecture	t	0	970
-3904	There should be at least one view of the system using this architectural style.	t	3	976
-3907	performance tactics.	t	2	977
-3916	May conflict with the Reduce Overhead performance tactic.	t	3	979
-3920	Results from the application of several ADD iterations.	t	3	980
-3948	All the previous options.	t	3	987
-3954	This is a modifiability scenario which has a defer binding tactic.	t	1	989
-3988	None of the above.	t	3	997
-3989	The quality addressed is availability and transactions tactic is required to solve the problem.	t	0	998
-3997	A low cost of change may imply a high cost of development.	t	0	1000
-4024	Service-oriented architecture, Shared-data, Client-server and Peer-to-peer.	t	3	1006
-4027	The Decomposition style.	t	2	1007
-4034	Which improves modifiability, because filters are decoupled through pipes.	t	1	1009
-4039	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	t	2	1010
-4061	If the OPC crashes the Consumer Website can continue to provide service in degraded mode.	t	0	1016
-4065	A component can subscribe to events.	t	0	1017
-4071	The Uses style.	t	2	1018
-4080	The attachment between components and connectors only depends on their ports and roles types.	t	3	1020
-4102	Publish-subscribe.	t	1	1026
-4105	Layer 1.	t	0	1027
-4109	The view does not address the scenario	t	0	1028
-4116	The price for high scalability and availability is the need to have several replicas of the files to be shared.	t	3	1029
-4118	Availability and Performance.	t	1	1030
-4141	A performance scenario associated with the throughput of writing data points to disk.	t	0	1036
-4147	Allows the querying of a past state.	t	2	1037
-4155	The decomposition was driven by a split module tactic.	t	2	1039
-4157	HTML5 provides better portability qualities.	t	0	1040
-4184	An availability scenario of the *Graphite* system.	t	3	1046
-4187	A request for a web page corresponds to requesting a service from the amazon cloud.	t	2	1047
-4191	She should try to split the system in parts in order to isolate the complex business logic and use the two architectural approaches accordingly.	t	2	1048
-4200	The view results from the implementation of a support system initiative tactic.	t	3	1050
-4504	It helps on the configuration of systems.	t	3	1126
-4222	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	t	1	1056
-4227	A deployment and a work assignment view.	t	2	1057
-4231	This view fulfills a modifiability scenario, which states about the cost of adding a new source of information to the system.	t	2	1058
-4236	At least two performance scenarios of the *Graphite* system.	t	3	1059
-4239	Reads may not be consistent with the most recent write.	t	2	1060
-4321	Modifiability.	t	0	1081
-4327	A view of the Decomposition style	t	2	1082
-4332	By changing a parent, which will automatically change all the children that inherit from it.	t	3	1083
-4333	With a component-and-connector view, where the *load balancer* is a component of the system	t	0	1084
-4338	It supports the concurrent access of data accessors.	t	1	1085
-4341	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability	t	0	1086
-4348	A new aspect view to include the responsibilities associated with the access control.	t	3	1087
-4351	The Publish-subscribe style	t	2	1088
-4353	Analysing the performance of the system	t	0	1089
-4360	Client-server, Repository and Publish-subscribe.	t	3	1090
-4364	Security	t	3	1091
-4367	and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data	t	2	1092
-4371	A layered architecture, where the access to the various sources is the responsibility of the bottommost layer	t	2	1093
-4373	Schedule Resources	t	0	1094
-4377	Maintain system model tactic.	t	0	1095
-4382	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	t	1	1096
-4386	This decomposition implies that, in average, customers are going to have a large number of orders.	t	1	1097
-4391	Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.	t	2	1098
-4394	All viewtypes may be necessary	t	1	1099
-4399	When the environment is initiation time it means that it is necessary to restart the system for the change to take effect	t	2	1100
-4481	Can use the operations defined in any of the system's modules	t	0	1121
-4491	It represents a relation between a component's port and a port of one of its internal components.	t	2	1123
-4493	To facilitate the interaction among heterogeneous components that use distinct communication protocols	t	0	1124
-4498	The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used	t	1	1125
-4505	The presentation logic layer and how it relates with the underlying layer changed	t	0	1127
-4512	Detect a fault.	t	3	1128
-4514	Limit event response	t	1	1129
-4519	Restrict dependencies	t	2	1130
-4521	It would reduce the scalability for updates of different orders for the same customer.	t	0	1131
-4527	Reads may not be consistent with the most recent write.	t	2	1132
-4532	A module contains the code that can execute in several components and a component can execute the code of several modules	t	3	1133
-4533	Manage sampling rate	t	0	1134
-4537	The layered view to deal with the aspects of portability.	t	0	1135
-4542	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module to allow the execution of the `Consumer Website` module in a component that can have multiple copies of computation	t	1	1136
-4547	Performance	t	2	1137
-4550	Performance e Usability	t	1	1138
-4554	A module view of the data model style.	t	1	1139
-4559	Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.	t	2	1140
-4622	Usability	t	1	1156
-4627	Performance and security	t	2	1157
-4632	Monitorability	t	3	1158
-4633	Manage sampling rate	t	0	1159
-4638	Maintain multiple copies of computation	t	1	1160
-4703	Availability.	t	2	1176
-4708	Schedule resources	t	3	1177
-4711	Component and Module	t	2	1178
-4715	Maintain multiple copies of data	t	2	1179
-4717	Limit event response	t	0	1180
-4741	Limit access.	t	0	1186
-4746	Increase resource efficiency tactic.	t	1	1187
-4751	The new defects introduced.	t	2	1188
-4756	Is an iterative process where architectural designs are proposed as hypothesis and tested.	t	3	1189
-4758	Is applied at the begin of the architectural design process but may be necessary to redo it later.	t	1	1190
-4783	Voting.	t	2	1196
-4785	This ASR can easily be supported by the architecture because it has little effect in the architecture.	t	0	1197
-4789	The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.	t	0	1198
-4796	Schedule resources tactic.	t	3	1199
-4799	Maintain system model	t	2	1200
-4829	The main quality this style addresses is interoperability.	t	0	1208
-4835	Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer	t	2	1209
-4837	If there are performance requirements concerning the access to data, then the level of detail should be physical	t	0	1210
-4862	Restricts the communication between components because, for instance, a group of components should be located in the same hardware.	t	1	1216
-4867	It separates in new modules responsibilities that were spread over various of the system's modules	t	2	1217
-4872	The interaction between peers is symmetric.	t	3	1218
-4876	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data.	t	3	1219
-4877	A component is an instance and a view can have several instances of the same component type.	t	0	1220
-4902	A single view of the communicating processes style.	t	1	1226
-4908	All of the above.	t	3	1227
-4911	A deployment and a work assignment view.	t	2	1228
-4916	The data model view in order to define generic entities that can be customized for different kinds of catalogs.	t	3	1229
-4917	Client-server.	t	0	1230
-4942	Communicating Processes.	t	1	1236
-4946	The communicating processes style and the dynamic reconfiguration style.	t	1	1237
-4951	Publish-subscribe.	t	2	1238
-4954	Modules are allocated to persons and teams.	t	1	1239
-4957	The decomposition view to include a module for the synchronization responsibilities.	t	0	1240
 \.
 
 
@@ -3245,8 +3245,46 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 298	\N	98	44	25
 299	\N	98	11	25
 300	\N	98	34	25
+7188	\N	2091	592	238
+7189	\N	2091	593	238
+4500	\N	2091	535	192
+7147	\N	2092	583	238
+7154	\N	2092	585	238
+7155	\N	2092	564	238
+7164	\N	2092	568	238
+7170	\N	2092	589	238
+7179	\N	2092	575	238
+7183	\N	2092	591	238
+7196	\N	2092	596	238
+4475	\N	2092	493	192
+4486	\N	2092	524	192
+4490	\N	2092	527	192
+4502	\N	2092	508	192
+4503	\N	2092	509	192
+4505	\N	2092	130	192
 318	\N	\N	4	26
+4506	\N	2092	510	192
+4507	\N	2092	538	192
+301	\N	3013	475	26
+302	\N	3013	1	26
+304	\N	3013	26	26
+305	\N	3013	35	26
+307	\N	3013	2	26
+308	\N	3013	476	26
+309	\N	3013	29	26
+310	\N	3013	16	26
 349	\N	\N	22	26
+311	\N	3013	473	26
+312	\N	3013	36	26
+314	\N	3013	30	26
+315	\N	3013	3	26
+316	\N	3013	17	26
+317	\N	3013	37	26
+320	\N	3013	18	26
+321	\N	3013	41	26
+322	\N	3013	24	26
+326	\N	3013	25	26
+327	\N	3013	478	26
 361	\N	108	475	27
 362	\N	107	1	27
 363	\N	106	482	27
@@ -3727,18 +3765,66 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 838	\N	133	44	34
 839	\N	133	11	34
 840	\N	\N	34	34
+328	\N	3013	6	26
+329	\N	3013	479	26
+331	\N	3013	485	26
+333	\N	3013	13	26
+334	\N	3013	31	26
+350	\N	3013	32	26
+336	\N	3015	480	26
+337	\N	3015	42	26
+339	\N	3015	40	26
+345	\N	3015	21	26
+346	\N	3015	486	26
+351	\N	3015	8	26
+353	\N	3015	28	26
+355	\N	3015	23	26
+356	\N	3015	10	26
 856	\N	\N	17	35
+303	\N	3014	482	26
+306	\N	3014	483	26
+313	\N	3014	472	26
+319	\N	3014	477	26
+324	\N	3014	12	26
+325	\N	3014	5	26
+330	\N	3014	45	26
+332	\N	3014	7	26
 865	\N	\N	5	35
+335	\N	3014	474	26
+323	\N	3016	484	26
 868	\N	\N	6	35
+338	\N	3016	19	26
+340	\N	3016	14	26
+341	\N	3016	20	26
+342	\N	3016	27	26
 873	\N	\N	13	35
+343	\N	3016	38	26
+344	\N	3016	39	26
+347	\N	3016	15	26
 877	\N	\N	42	35
+348	\N	3016	43	26
+352	\N	3016	481	26
+354	\N	3016	9	26
 881	\N	\N	20	35
 882	\N	\N	27	35
+357	\N	3016	33	26
+358	\N	3016	44	26
+359	\N	3016	11	26
+360	\N	3016	34	26
+2576	\N	3432	105	152
 888	\N	\N	43	35
+2577	\N	3432	106	152
 890	\N	\N	32	35
 891	\N	\N	8	35
+2578	\N	3432	107	152
+2579	\N	3432	108	152
+2580	\N	3432	109	152
 895	\N	\N	23	35
+2581	\N	3432	110	152
+2582	\N	3432	111	152
+2583	\N	3432	95	152
 899	\N	\N	11	35
+2584	\N	3432	86	152
 901	\N	141	475	36
 902	\N	142	1	36
 903	\N	141	482	36
@@ -3859,119 +3945,6 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 1018	\N	146	44	37
 1019	\N	145	11	37
 1020	\N	148	34	37
-1034	\N	\N	30	38
-1037	\N	\N	37	38
-1038	\N	\N	4	38
-1045	\N	\N	5	38
-1050	\N	\N	45	38
-1060	\N	\N	14	38
-1070	\N	\N	32	38
-7178	\N	2089	551	238
-7180	\N	2089	598	238
-7182	\N	2089	133	238
-7184	\N	2089	577	238
-7185	\N	2089	599	238
-7186	\N	2089	578	238
-7187	\N	2089	552	238
-7190	\N	2089	594	238
-7191	\N	2089	579	238
-7192	\N	2089	600	238
-7193	\N	2089	595	238
-7195	\N	2089	553	238
-1096	\N	\N	17	39
-7197	\N	2089	580	238
-7198	\N	2089	581	238
-7161	\N	2091	548	238
-7181	\N	2091	576	238
-7188	\N	2091	592	238
-7189	\N	2091	593	238
-7147	\N	2092	583	238
-7154	\N	2092	585	238
-1105	\N	\N	5	39
-7155	\N	2092	564	238
-7164	\N	2092	568	238
-7170	\N	2092	589	238
-7179	\N	2092	575	238
-7183	\N	2092	591	238
-7196	\N	2092	596	238
-4502	\N	2092	508	192
-1113	\N	\N	13	39
-4503	\N	2092	509	192
-4505	\N	2092	130	192
-4506	\N	2092	510	192
-4507	\N	2092	538	192
-1136	\N	\N	10	39
-301	\N	3013	475	26
-302	\N	3013	1	26
-304	\N	3013	26	26
-305	\N	3013	35	26
-307	\N	3013	2	26
-308	\N	3013	476	26
-309	\N	3013	29	26
-310	\N	3013	16	26
-311	\N	3013	473	26
-312	\N	3013	36	26
-314	\N	3013	30	26
-315	\N	3013	3	26
-316	\N	3013	17	26
-317	\N	3013	37	26
-320	\N	3013	18	26
-321	\N	3013	41	26
-322	\N	3013	24	26
-326	\N	3013	25	26
-327	\N	3013	478	26
-328	\N	3013	6	26
-329	\N	3013	479	26
-331	\N	3013	485	26
-333	\N	3013	13	26
-334	\N	3013	31	26
-350	\N	3013	32	26
-336	\N	3015	480	26
-337	\N	3015	42	26
-339	\N	3015	40	26
-345	\N	3015	21	26
-346	\N	3015	486	26
-351	\N	3015	8	26
-353	\N	3015	28	26
-355	\N	3015	23	26
-356	\N	3015	10	26
-303	\N	3014	482	26
-306	\N	3014	483	26
-313	\N	3014	472	26
-319	\N	3014	477	26
-324	\N	3014	12	26
-325	\N	3014	5	26
-330	\N	3014	45	26
-332	\N	3014	7	26
-335	\N	3014	474	26
-323	\N	3016	484	26
-338	\N	3016	19	26
-340	\N	3016	14	26
-341	\N	3016	20	26
-342	\N	3016	27	26
-343	\N	3016	38	26
-344	\N	3016	39	26
-347	\N	3016	15	26
-1190	\N	\N	32	40
-348	\N	3016	43	26
-352	\N	3016	481	26
-354	\N	3016	9	26
-1194	\N	\N	9	40
-357	\N	3016	33	26
-1196	\N	\N	10	40
-358	\N	3016	44	26
-359	\N	3016	11	26
-360	\N	3016	34	26
-2576	\N	3432	105	152
-2577	\N	3432	106	152
-2578	\N	3432	107	152
-2579	\N	3432	108	152
-2580	\N	3432	109	152
-2581	\N	3432	110	152
-2582	\N	3432	111	152
-1207	\N	\N	46	121
-2583	\N	3432	95	152
-2584	\N	3432	86	152
 2589	\N	3432	114	152
 2590	\N	3432	92	152
 2568	\N	3432	100	152
@@ -3985,21 +3958,23 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 2595	\N	3432	118	152
 2596	\N	3432	97	152
 2599	\N	3432	121	152
+1034	\N	\N	30	38
 2600	\N	3432	122	152
-1224	\N	\N	47	121
 2601	\N	3432	123	152
+1037	\N	\N	37	38
+1038	\N	\N	4	38
 2602	\N	3432	124	152
 2603	\N	3432	98	152
 2604	\N	3432	125	152
 2605	\N	3432	93	152
 2606	\N	3432	126	152
 2607	\N	3432	127	152
+1045	\N	\N	5	38
 2609	\N	3432	94	152
 2610	\N	3432	129	152
 2566	\N	3429	99	152
-1235	\N	\N	48	121
 2570	\N	3429	91	152
-1237	\N	\N	49	121
+1050	\N	\N	45	38
 2585	\N	3429	112	152
 2586	\N	3429	113	152
 2588	\N	3429	96	152
@@ -4007,6 +3982,36 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 2608	\N	3429	128	152
 2594	\N	3429	117	152
 2597	\N	3429	119	152
+2567	\N	3431	90	152
+2593	\N	3431	116	152
+1060	\N	\N	14	38
+7016	\N	4558	554	236
+7027	\N	4558	597	236
+7029	\N	4557	562	236
+7017	\N	4559	582	236
+7018	\N	4559	555	236
+7019	\N	4559	556	236
+7020	\N	4559	557	236
+7021	\N	4559	545	236
+7022	\N	4559	558	236
+1070	\N	\N	32	38
+7023	\N	4559	559	236
+7024	\N	4559	546	236
+7025	\N	4559	583	236
+7026	\N	4559	560	236
+7028	\N	4559	561	236
+7030	\N	4559	584	236
+1096	\N	\N	17	39
+1105	\N	\N	5	39
+1113	\N	\N	13	39
+1136	\N	\N	10	39
+1190	\N	\N	32	40
+1194	\N	\N	9	40
+1196	\N	\N	10	40
+1207	\N	\N	46	121
+1224	\N	\N	47	121
+1235	\N	\N	48	121
+1237	\N	\N	49	121
 1245	\N	\N	50	122
 1246	\N	\N	51	122
 1247	\N	\N	52	122
@@ -4051,24 +4056,7 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 1286	\N	\N	68	122
 1287	\N	\N	69	122
 1288	\N	487	77	122
-2567	\N	3431	90	152
-2593	\N	3431	116	152
-7016	\N	4558	554	236
-7027	\N	4558	597	236
-7029	\N	4557	562	236
-7017	\N	4559	582	236
-7018	\N	4559	555	236
-7019	\N	4559	556	236
-7020	\N	4559	557	236
-7021	\N	4559	545	236
-7022	\N	4559	558	236
 1300	\N	\N	59	123
-7023	\N	4559	559	236
-7024	\N	4559	546	236
-7025	\N	4559	583	236
-7026	\N	4559	560	236
-7028	\N	4559	561	236
-7030	\N	4559	584	236
 1333	\N	493	50	124
 1334	\N	493	51	124
 1335	\N	493	52	124
@@ -7608,13 +7596,6 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 7167	\N	2089	550	238
 7168	\N	2089	588	238
 7169	\N	2089	132	238
-7171	\N	2089	571	238
-7172	\N	2089	131	238
-7173	\N	2089	572	238
-7174	\N	2089	573	238
-7175	\N	2089	574	238
-7176	\N	2089	134	238
-7177	\N	2089	590	238
 7031	\N	4558	563	236
 7032	\N	4558	585	236
 7035	\N	4558	586	236
@@ -14732,6 +14713,27 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 4010	\N	4557	533	183
 4018	\N	4557	537	183
 3997	\N	4560	496	183
+4000	\N	4560	524	183
+3979	\N	4559	512	183
+3980	\N	4559	513	183
+3981	\N	4559	514	183
+3982	\N	4559	515	183
+3984	\N	4559	517	183
+3985	\N	4559	492	183
+3986	\N	4559	518	183
+3987	\N	4559	505	183
+3988	\N	4559	502	183
+3989	\N	4559	493	183
+3992	\N	4559	507	183
+3993	\N	4559	494	183
+3994	\N	4559	520	183
+3995	\N	4559	495	183
+3996	\N	4559	521	183
+3998	\N	4559	522	183
+3999	\N	4559	523	183
+4005	\N	4559	528	183
+4006	\N	4559	529	183
+4007	\N	4559	530	183
 3880	\N	894	502	181
 3916	\N	894	503	181
 3923	\N	894	504	181
@@ -14839,27 +14841,6 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 3954	\N	898	531	182
 3959	\N	898	499	182
 3972	\N	898	501	182
-4000	\N	4560	524	183
-3979	\N	4559	512	183
-3980	\N	4559	513	183
-3981	\N	4559	514	183
-3982	\N	4559	515	183
-3984	\N	4559	517	183
-3985	\N	4559	492	183
-3986	\N	4559	518	183
-3987	\N	4559	505	183
-3988	\N	4559	502	183
-3989	\N	4559	493	183
-3992	\N	4559	507	183
-3993	\N	4559	494	183
-3994	\N	4559	520	183
-3995	\N	4559	495	183
-3996	\N	4559	521	183
-3998	\N	4559	522	183
-3999	\N	4559	523	183
-4005	\N	4559	528	183
-4006	\N	4559	529	183
-4007	\N	4559	530	183
 4009	\N	4559	532	183
 4011	\N	4559	534	183
 4012	\N	4559	498	183
@@ -15195,10 +15176,6 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 4517	\N	2089	504	192
 4518	\N	2089	544	192
 4472	\N	2091	518	192
-4500	\N	2091	535	192
-4475	\N	2092	493	192
-4486	\N	2092	524	192
-4490	\N	2092	527	192
 4627	\N	877	512	195
 4630	\N	877	515	195
 4631	\N	877	516	195
@@ -24855,6 +24832,29 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 21730	\N	4908	1556	1225
 21822	\N	4947	466	1234
 21830	\N	4948	1569	1234
+7171	\N	2089	571	238
+7172	\N	2089	131	238
+7173	\N	2089	572	238
+7174	\N	2089	573	238
+7175	\N	2089	574	238
+7176	\N	2089	134	238
+7177	\N	2089	590	238
+7178	\N	2089	551	238
+7180	\N	2089	598	238
+7182	\N	2089	133	238
+7184	\N	2089	577	238
+7185	\N	2089	599	238
+7186	\N	2089	578	238
+7187	\N	2089	552	238
+7190	\N	2089	594	238
+7191	\N	2089	579	238
+7192	\N	2089	600	238
+7193	\N	2089	595	238
+7195	\N	2089	553	238
+7197	\N	2089	580	238
+7198	\N	2089	581	238
+7161	\N	2091	548	238
+7181	\N	2091	576	238
 \.
 
 
@@ -24863,57 +24863,163 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 --
 
 COPY public.questions (id, active, content, number, number_of_answers, number_of_correct, title) FROM stdin;
+71	t	The main architectural driver for the nginx system was	71	0	0	nginxFirstADINGLES
+316	t	Frank Buschmann states that:  \n>"Architects use flexibility as a cover for uncertainty."  \n  \n	316	0	0	Prioritize
+317	t	In his article *On Hammers and Nails, and Falling in Love with Technology and Design* what is the main type of influence on the architecture?	317	0	0	HammersNails
+610	t	Consider the Component-and-Connector viewtype	610	0	0	ComponentAndConnectorOne
+301	t	Frank Buschmann states that:  \n>"Featuritis is the tendency to trade functional coverage for quality - the more functions the earlier they're delivered, the better."  \n  \n	301	0	0	Featuritis
+303	t	On the course slides you can find the following definition of architecture:  \n>"The software architecture of a program or computing system is the structure or structures of the system, which comprise software elements, the externally visible properties of those elements, and the relationships among them."  \n  \nHowever, in the book you can find another definition:  \n>"The software architecture of a system is the set of structures needed to reason about the system, which comprise the software elements, relations among them, and the properties of both."  \n  \n	303	0	0	ArchitectureDefinition
+304	t	Martin Fowler, *Who Needs and Architect?*, cites Ralph Johnson sentence:  \n>"In most successful software projects, the expert developers working on that project have a shared understanding of the system design. This shared understanding is called architecture."  \n  \n	304	0	0	SharedUnderstanding
+306	t	Frank Buschmann states that:  \n>"Overly flexible systems are hard to configure, and when they're finally configured, they lack qualities like performance or security."  \n  \n	306	0	0	Flexibilitis
+307	t	In his article, *Featuritis, Performitis, and Other Deseases*, Frank Buschmann claims that:	307	0	0	FeaturitisPerformitisFlexibilities
+308	t	In wikipedia you can find the following fragment of a definition:  \n>"An individual software component is a software package, or a module that encapsulates a set of related functions."  \n  \nAccording to the definitions taught in the course the above *individual software component* corresponds to:	308	0	0	ComponentvsModule
+310	t	Frank Buschmann, *Introducing the Pragmatic Architect*, defines the *architecture astronauts*. This kind of architect	310	0	0	ArchitectAstronauts
+311	t	Frank Buschmann states that:  \n>"There's only one escape from such situations: architects must actively break the cycle of mutual misunderstanding and mistrust!"  \n  \n	311	0	0	Explicit
+312	t	The *Walking Skeleton* referred in Frank Buschmann's article, *Featuritis, Performitis, and Other Deseases*:	312	0	0	WalkingSkeleton
+313	t	In the Java documentation you can find:  \n>"`public abstract class Component`\\*`extends Object`\\*`implements ImageObserver, MenuContainer, Serializable`"  \n  \nClass `Component` is:	313	0	0	ComponentvsModuleTwo
+315	t	Frank Buschmann, *Introducing the Pragmatic Architect*, defines the *architecture dwarves*. These kind of architects	315	0	0	ArchitectDwarves
+401	t	When comparing Amazon Silk with Google Chrome in the context of mobile devices	401	0	0	SilkMobileDevices
+402	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a proposal of application-specific types for the architectural components, where the names of the ports are missing. Between the GameServer and Repository component   \n![image][image]  \n	402	0	0	ThousandParsecReadWriteConnector
+403	t	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	403	0	0	OrderPadReliability
+404	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A ConflictResolution module is used when local commands conflict with remote commands.   \n![image][image]  \n	404	0	0	SocialCalcConflictResolution
+405	t	When the domain logic is organized using a Table Module pattern	405	0	0	LogicAccessTableModule
+406	t	When comparing Amazon Silk with Google Chrome	406	0	0	SilkConnections
+407	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The ThousandParsec protocol   \n![image][image]  \n	407	0	0	ThousandParsecModule
+409	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. It can be read in the case description: *A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.*   \n![image][image]  \n	409	0	0	SocialCalcRemoteCursor
+410	t	When the domain logic is organized using a Transaction Script pattern the domain objects	410	0	0	LogicAccessTransactionScriptDomainObjects
+411	t	When comparing Amazon Silk with Google Chrome in the context of the prediction of pages the user is going to access	411	0	0	SilkPredictor
+412	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a proposal of application-specific types for the architectural components, where the names of the ports are missing. Between the GameClient and GameServer components   \n![image][image]  \n	412	0	0	ThousandParsecTPConnector
+413	t	Consider the architecture of the Morrison's OrderPad. The decision between the use of a Native application or HTML5 on the implementation of the client in the Pad	413	0	0	OrderPadPortability
+557	t	Suppose that after designing a successful architecture for a particular client the software house management decides to create a cross-functional internal department to start providing products for this particular segment of the market.	557	0	0	ArchitecturalInfluenceCycle
+606	t	When describing their system people refer to a part of it as containing a database server. Applying the component-and-connector styles learned in the course we can say that this system uses	606	0	0	CCStyleOne
+607	t	In the Continuous Integration case study can be read  \n>"The space of architectures for continuous integration systems seems to be dominated by two extremes: master/slave architectures, in which a central server directs and controls remote builds; and reporting architectures, in which a central server aggregates build reports contributed by clients. All of the continuous integration systems of which we are aware have chosen some combination of features from these two architectures."  \n  \nThe tactic that is referred in both architectures is	607	0	0	ContinuousIntegrationOne
+608	t	Consider the Decomposition architectural style of the Module viewtype	608	0	0	ModuleViewtypeOne
+609	t	The Infinispan system can be used as a library, in which case it is embedded into a Java application, or as a server, in which case it is a remote data grid.	609	0	0	InfinispanOne
+1081	t	The quality that is more relevant to views of the module viewtype is:	1081	0	0	ModuleViewTypeOne
+701	t	Consider the following fragment of the *MediaWiki* system description:  \n*To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs*  \nThe *ResourceLoader* supports a quality	701	0	0	MWResourceLoaderTacticEEEN
+702	t	In which performance tactic it may occur that not all the inputs are processed	702	0	0	PerfomanceTacticOne
+703	t	Several of the cases studied in this course had scalability requirements. That means that those systems should be designed in such a way that they	703	0	0	ScalabilityINGLES
+705	t	Consider the following architectural view of the Adventure Builder system, designed around the Order Processing Center   \n![image][image]  \n The views **does not** use the architectural style	705	0	0	AdventureBuilderThree
+706	t	Consider the following requirement for availability of the Adventure Builder system  \n>"The Consumer Web site sent a purchase order request to the order processing center (OPC). The OPC processed that request but didn't reply to Consumer Web site within five seconds, so the Consumer Web site resends the request to the OPC."  \n  \nIf we represent this requirement as a scenario	706	0	0	AdventureBuilderFive
+807	t	In the Graphite system the component *carbon* provides to *webapp* components an access interface to the *buffers* in order to improve the quality of	807	0	0	GraphiteScenarioTacticsOne
+808	t	In the HDFS system when the *CheckpointNode* and the *NameNode* are deployed in different nodes, the *CheckpointNode* provides:	808	0	0	HadoopCheckpoint
+897	t	Consider the Uses architectural style of the Module viewtype	897	0	0	Layered
+1099	t	To analyse the performance of a system	1099	0	0	PerformanceOne
+1128	t	A voting tactic can be used to	1128	0	0	AvailabilityTwo
+63	t	One of the most important decisions during the development of the Glasgow Haskell Compiler was to perform the type-checking before the desugaring of an Haskell program into a program in the Core language (*type-check-before-desugar*). This design decision	63	0	0	GHCDesugaringINGLES
 2	t	There are other factors that affect the development of a software system, besides its functional requirements and quality attributes. For example, factors such as budget or available time. These factors	2	0	0	AtrQualNegocio
 3	t	Suppose that you are developing a new software system and that you want some part of the system's functionality to be easily reusable in future systems. Which of the following architectural styles are more suitable to show that the system architecture meets this requirement.	3	0	0	Reutilizar
+4	t	Suppose you have a system with a client-server architecture that was designed to support the simultaneous existence of at most 100 clients, without specific requirements for availability. The solution adopted and put into operation four years ago is a single server component to which all clients connect to. This solution satisfies the initial requirements but with the recent increase in the maximum number of clients to 200, the system no longer has acceptable performance. Not knowing anything else about the system's architecture, which solution do you propose to solve the system's performance problems?	4	0	0	AumentarDesempenhoClienteServidor
+5	t	According to the SEI model, there are three different architectural viewtypes that are usually necessary to describe completely a software architecture.	5	0	0	TresTiposVista
+8	t	The requirements for complex systems are usually very numerous and conflicting among them, making it impossible to satisfy all the requirements in a given implementation of the system. Therefore, the recommended process for making the design of a software architecture involves the identification of the *architectural drivers* that will shape the design of architecture. These *architectural drivers* should be chosen so that they are	8	0	0	ArchitecturalDrivers
+9	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user can use a program such as Microsoft Outlook or Mozilla Thunderbird, generically designed a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs (for example, when there are forwards or aliases configured, or when the MTA that receives the message is not the ultimately responsible for the email address of the recipient). Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MTAs?	9	0	0	ArqEmailMTA
+10	t	Considering yet the example of the email system, MUAs are used not only to compose and to send messages, but also for users to read the email messages sent to them. For this, the MUAs have to get those messages from the component that stores them to show them to the user. Two different ways of doing this is by using the POP and IMAP protocols. In the first case, messages are moved from the POP server to the user's computer. In second case, the messages are always stored on the IMAP server, allowing the user to access email from different computers, as long as they are able to connect to the same IMAP server. Which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUAs and a IMAP server?	10	0	0	ArqEmailIMAP
+11	t	The recent developments in web applications that made them provide a richer user interface led to a change in its architecture: part of the application's computation has to be done in the web browser used by users to access the application. How is this change in the architecture manifested in the different types of views that describe the software architecture of a web application?	11	0	0	AlteracaoWebDois
+12	t	Given the complexity of building a good automatic Chess player, programs that play chess usually make use of existing chess engines, as shown by the following excerpt from Wikipedia:  \n>"A chess engine is a computer program that can play the game of chess. Most chess engines do not have their own graphical user interface (GUI) but are rather console applications that communicate with a GUI such as XBoard (Linux) and WinBoard (Windows) via a standard protocol."  \n  \nIn the web page for XBoard, we may read the following:  \n>"XBoard is a graphical user interface for chess [...]. It displays a chessboard on the screen, accepts moves made with the mouse, and loads and saves games in Portable Game Notation (PGN). It serves as a front-end for many different chess services, including:  \n-  Chess engines that will run on your machine and play a game against you or help you analyze, such as GNU Chess, Crafty, or many others.  \n-  [...]  \n"  \n  \nGiven the above information on XBoard, chess engines, and how they interact at runtime, which of the following architectural styles best represents the of architecture of a software system based on XBoard and one of the engines?	12	0	0	XBoardChess
+13	t	Suppose that you join the development team of a very large software system, and that you are assigned some tasks to change some existing features. Which of the following architectural views would be, in principle, more useful to you to perform those tasks quickly?	13	0	0	AlterarFuncionalidadesExistentes
+14	t	Consider the following excerpt from the Wikipedia page on *black-box testing*:  \n>"Black-box testing is a method of software testing that tests the functionality of an application as opposed to its internal structures or workings. Specific knowledge of the application's code/internal structure and programming knowledge in general is not required. Test cases are built around specifications and requirements, i.e., what the application is supposed to do."  \n  \nAssuming that you belong to the team testing a complex system and that you are responsible for performing black box tests on the system, which of the following architectural views of the system would be most useful to you?	14	0	0	BlackBoxTesting
+15	t	Consider an enterprise application that needs to keep its data persistently, but for which no one knows yet what is the volume of information that will be handled by the application. Therefore, the system's architect intends to develop the system such that it is possible to change easily the relational database (RDBMS) component used to store the application's data, replacing it with an RDBMS from another manufacturer. Given that this is a common requirement, the recommended software architecture for such applications fulfills this requirement by using a particular architectural style. Which style is it?	15	0	0	TrocarBDCamadas
+16	t	Suppose that you decided to use the Google App Engine (GAE) in the development of a web application. The GAE is described in the Wikipedia as follows:  \n>"Google App Engine is a platform for developing and hosting web applications in Google-managed data centers. Google App Engine is cloud computing technology. It virtualizes applications across multiple servers and data centers. [...] Google App Engine is free up to a certain level of used resources. Fees are charged for additional storage, bandwidth, or CPU cycles required by the application."  \n  \nOn the other hand, the GAE documentation reads the following:  \n>"With App Engine, you can build web applications using standard Java technologies and run them on Google's scalable infrastructure. The Java environment provides a Java 6 JVM, a Java Servlets interface, and support for standard interfaces to the App Engine scalable datastore and services, such as JDO, JPA, JavaMail, and JCache. Standards support makes developing your application easy and familiar, and also makes porting your application to and from your own servlet environment straightforward."  \n  \nTaking into account these two perspectives on the GAE, which architectural styles are more appropriate to represent the use of GAE in the software architecture of your web application?	16	0	0	GoogleAppEngine
+17	t	The Eclipse IDE is an open source application written in Java, and is extensible through the use of plug-ins. In the document that describes the existing plug-ins architecture in Eclipse, we may read the following:  \n>"A plug-in in Eclipse is a component that provides a certain type of service within the context of the Eclipse workbench. [...] The plug-in class provides configuration and management support for the plug-in. A plug-in class in Eclipse must extend `org.eclipse.core.runtime.Plugin`, which is an abstract class that provides generic facilities for managing plug-ins."  \n  \nConsidering the model and terminology used in the course to describe a software architecture, what kind of views are more appropriate to represent the plug-ins architecture of Eclipse described above?	17	0	0	PluginsEclipse
+18	t	When someone uses the Domain Model pattern to implement the domain logic layer of an enterprise application, it is common to use also the Service Layer pattern. The Service Layer pattern is used in these cases	18	0	0	ServiceLayer
+19	t	The Unit of Work pattern is often used in enterprise applications	19	0	0	UnitOfWork
+20	t	The Identity Map pattern is typically used in enterprise applications	20	0	0	IdentityMap
+21	t	The scalability quality is achieved in the Hadoop system only because	21	0	0	HadoopEscalabilidadePossivelINGLES
+22	t	In the Hadoop system:	22	0	0	HadoopDisponibilidadeDesempenhoINGLES
+23	t	In the Hadoop system the fault recovery tactics are:	23	0	0	HadoopTacticasRecuperacaoFaltasINGLES
+24	t	In the Hadoop system the tactics used to reintroduce a DataNode after its failure are:	24	0	0	HadoopTacticasRecuperacaoFaltasDoisINGLES
+25	t	The security tactics used in The Hadoop system deployed at Yahoo! are:	25	0	0	HadoopTacticasSegurancaINGLES
+27	t	A layer, in the layers architectural style, is a module:	27	0	0	ModulosCamadasINGLES
+28	t	The uses architectural style allows to assess the impact of changes in modules	28	0	0	UtilizacaoImpactoAlteracoesINGLES
+29	t	In the uses architectural style a call does not necessarily correspond to a uses relationship because:	29	0	0	UtilizacaoNotificaINGLES
+30	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architectural drivers*. These architectural drivers should be sorted according to their importance for the system's stakeholders because	30	0	0	UtilizacaoNotificaDoisINGLES
+31	t	In the HDFS system, the main responsibility of the DataNode component is to store the data blocks corresponding to the client's files, and usually there are several instances of this component on each system. The architectural style that best describes the interaction pattern among the various instances of DataNode is	31	0	0	HadoopInteraccaoDataNodesINGLES
+32	t	According to Section 8.2.3, the NameNode component issues commands to the DataNodes so that they execute some operations on their blocks, whereas DataNodes have to send reports regularly to the NameNode. The architecture that best describes how these two types of components interact in the HDFS system is	32	0	0	HadoopInteraccaoNameNodeDataNodesINGLES
+33	t	Imagine that you intend to describe how a client reads a file from an HDFS system while supporting sporadic failures in the hardware of some DataNodes, but without affecting the availability of the system. To accomplish that, you want to use a component-and-connector view containing only two types of components: the HDFS Client, and the DataNode.	33	0	0	HadoopNameNodeComoConectorINGLES
+34	t	The last paragraph of Section 8.2.2 describes the solution used by the NameNode to obtain a certain level of performance while writing to disk. Which architectural style is more adequate to represent the solution used?	34	0	0	HadoopNameNodeThreadsINGLES
+36	t	When someone uses the Domain Model pattern to implement the domain logic layer of an enterprise application, it is common to use also the Service Layer pattern. The Service Layer pattern is used in these cases	36	0	0	ServiceLayerINGLES
+37	t	Imagine that you are developing an architectural view where you are using the Shared Data style and that a member of your team proposes that two of Data Accessors communicate directly between them. In your opinion	37	0	0	SharedDataAccessorsDirectINGLES
+62	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"At the highest level, GHC can be divided into three distinct chunks:  \n-  The compiler itself.  \n-  The Boot Libraries.  \n-  The Runtime System (RTS).  \n"  \n  \nWhat is the most architecturally correct way of classifying the three *chunks* that this text refers to?	62	0	0	GHCChunksINGLES
+41	t	From the stakeholders perspective the use of low cost servers to build the clusters is:	41	0	0	HadoopStakeholdersEurosINGLES
+42	t	In the Hadoop system the use of a *BackupNode* instead of a *CheckpointNode*:	42	0	0	HadoopCheckpointBackupNodeINGLES
+43	t	In the Hadoop system when the *CheckpointNode* and the *NameNode* are deployed in different nodes, the *CheckpointNode* provides:	43	0	0	HadoopCheckpointINGLES
+44	t	The Hadoop system support of different block placement policies:	44	0	0	HadoopPoliticaLocalizacaoReplicasINGLES
+45	t	In the Hadoop system, during normal operation, *NameNode* could use a ping tactic to know whether *DataNodes* are available	45	0	0	HadoopPingINGLES
+46	t	Knowing the deployment structure in the Hadoop system is critical to the effective system operation. Therefore, for each deployment, the administrator can configure a script that returns a node's rack identification given a node's address (see section 8.3.2).	46	0	0	HadoopInstalacaoINGLES
+47	t	The *Checkpoint/rollback* tactic is a tactic for	47	0	0	TacticaCheckpointRollbackINGLES
+49	t	A view of the *Uses* style that contains a loop in the uses relationships	49	0	0	UsaCircularINGLES
+50	t	The main difference between the *Uses* relation of the Uses style and the *Allowed to Use* relation of the Layers style	50	0	0	UsaPodeUsarINGLES
 51	t	The third paragraph of section 8.3.1 describes the buffering mechanism used by an HDFS client when it is writing to a file. How would you describe this mechanism using an architectural view?	51	0	0	HadoopFileWriteBufferedINGLES
 54	t	Suppose that you are implementing a web application and that you decided to use an HDFS system to store the data of your application---that is, your web application will be a client of the HDFS system. How does this decision affects the architecture of your web application?	54	0	0	HadoopComoDatabaseINGLES
 55	t	Considering the description of the *CheckpointNode* made in Section~8.2.5, which architectural style best represents the interaction between the *CheckpointNode* and the *NameNode* components?	55	0	0	HadoopCheckpointNodeINGLES
+56	t	*Domain Model* and *Transaction Script* are two of the existing patterns to implement the domain logic layer of an enterprise application. Choosing one or the other	56	0	0	DomainModelINGLES
 57	t	Which of the following sentences best captures the restrictions regarding which components may execute in which machines in the Deployment style?	57	0	0	RelacaoComponentesMaquinasINGLES
 60	t	Suppose that you are designing the software architecture for an enterprise application that has security requirements about the confidentiality of some of its data. To show to the stakeholders that your system satisfies the security requirements you have to use views of which architectural style?	60	0	0	SegurancaINGLES
-171	t	The architecturally significant requirements of the third architecture of Fénix are	171	0	0	FenixThreeEN
+61	t	Two of the *stakeholders* for the Glasgow Haskell Compiler were the UK government and the researchers that want to do research on functional programming languages. Which of these *stakeholders* had a more significant influence in the software architecture of the system?	61	0	0	GHCStakeholdersINGLES
+64	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"The Runtime System is a library of mostly C code that is linked into every Haskell program. It provides the support infrastructure needed for running the compiled Haskell code, including the following main components:  \n-  Memory management, including a parallel, generational, garbage collector;  \n-  Thread management and scheduling;  \n-  The primitive operations provided by GHC;  \n-  A bytecode interpreter and dynamic linker for GHCi.  \n"  \n  \nWhich system qualities are improved by the design decision of creating the Runtime System, described above?	64	0	0	GHCRTSINGLES
 65	t	Like many other compilers, the compilation of an Haskell program with the Glasgow Haskell Compiler uses the Pipe-and-Filter style, creating a *pipeline* composed of several compilation phases. The goal of using this architectural style in GHC is	65	0	0	GHCPipeAndFilterINGLES
+66	t	Which of the following sentences better describes the ZeroMQ system?	66	0	0	ZeroMQAppsINGLES
 67	t	According to the document that describes ZeroMQ:  \n>"The idea was to launch one worker thread per CPU core---having two threads sharing the same core would only mean a lot of context switching for no particular advantage."  \n  \nWhich architectural style is more adequate to represent the information presented above?	67	0	0	ZeroMQWorkersPerCoreINGLES
 68	t	According to the document that describes ZeroMQ:  \n>"Messaging patterns form a layer (the so-called "scalability layer") on top of the transport layer (TCP and friends). Individual messaging patterns are implementations of this layer."  \n  \nWhat is the main advantage of this layered architecture adopted by ZeroMQ?	68	0	0	ZeroMQMessagingPatternsINGLES
 69	t	ZeroMQ uses dynamic batching to control the performance of the system. The goal of this approach is	69	0	0	ZeroMQBatchingINGLES
 70	t	According to the document that describes ZeroMQ:  \n>"ØMQ uses a lock-free queue in pipe objects to pass messages between the user's threads and ØMQ's worker threads. There are two interesting aspects to how ØMQ uses the lock-free queue. First, each queue has exactly one writer thread and exactly one reader thread. If there's a need for 1-to-N communication, multiple queues are created. Given that this way the queue doesn't have to take care of synchronising the writers (there's only one writer) or readers (there's only one reader) it can be implemented in an extra-efficient way."  \n  \nThe architectural style that better represents the interaction pattern described above is	70	0	0	ZeroMQLockFreeINGLES
 72	t	According to the document that describes nginx:  \n>"Traditional process- or thread-based models of handling concurrent connections involve handling each connection with a separate process or thread, and blocking on network or input/output operations. nginx followed a different model. It was actually inspired by the ongoing development of advanced event-based mechanisms in a variety of operating systems. What resulted is a modular, event-driven, asynchronous, single-threaded, non-blocking architecture which became the foundation of nginx code."  \n  \nThe decision of turning nginx into an *event-driven*, *asynchronous*, *single-threaded*, and *non-blocking* system was made because	72	0	0	nginxEventDrivenINGLES
-211	t	The Service Layer pattern is typically used in conjunction with	211	0	0	ServiceLayer
-212	t	The Active Record pattern is best used when we are also using	212	0	0	ActiveRecord
-215	t	Checksum is a technic that it is often used in architectural design. It can be used as	215	0	0	Checksum
+74	t	According to the document that describes nginx:  \n>"While handling a variety of actions associated with accepting, processing and managing network connections and content retrieval, nginx uses event notification mechanisms and a number of disk I/O performance enhancements in Linux, Solaris and BSD-based operating systems, like kqueue, epoll, and event ports. The goal is to provide as many hints to the operating system as possible, in regards to obtaining timely asynchronous feedback for inbound and outbound traffic, disk operations, reading from or writing to sockets, timeouts and so on."  \n  \nThe goal of this approach used in the development of nginx was	74	0	0	nginxOSOptimizationsINGLES
+75	t	According to the document that describes nginx:  \n>"Traditional process- or thread-based models of handling concurrent connections involve handling each connection with a separate process or thread, and blocking on network or input/output operations."  \n  \nThe architectural style that better describes the model presented above for processing requests is	75	0	0	nginxProcessThreadINGLES
+76	t	According to the document that describes the architecture of web services (attached at the end of this document), one of the approaches introduced in Section~1.2 is *partitioning*, shown in Figure~1.4. The use of *partitioning*	76	0	0	WebPartioningINGLES
+77	t	Considering again the case of the previous question, compare the architectures sketched in Figure~1.3 and Figure~1.4. The difference between the two shows	77	0	0	WebPartitioningDoisINGLES
+78	t	Consider again the architecture shown in Figure~1.3, where redundancy was introduced into the system. In this particular case, introducing redundancy into the architecture has the goal of	78	0	0	WebRedundancyINGLES
+79	t	The typical software architecture of an enterprise application is composed of three tiers and three layers. Yet, we may have variations of this architecture. For instance, by separating the middle tier in two tiers. In this case, which other changes exist on the architecture that are related with the layers?	79	0	0	ThreeVsFourTiersINGLES
+81	t	The first architecture of the Fénix system, corresponding to its first years of development, could be described as a three-layered architecture, typical of an enterprise application. One of those layers was the *domain logic* layer. Which of the following sentences best describes the Fénix architecture in what concerns that layer?	81	0	0	DomainLogicFenixINGLES
+570	t	Considering the availability architectural quality and the tactics of active redundancy, passive redundancy, and spare	570	0	0	RestartInRedundancy
+82	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	82	0	0	IncrementalReleasesINGLES
+86	t	The web page that describes the architecture of Chromium OS (an open source project to implement a new operating system) starts like this:  \n>"Chromium OS consists of three major components:  \n-  The Chromium-based browser and the window manager  \n-  System-level software and user-land services: the kernel, drivers, connection manager, and so on  \n-  Firmware  \n"  \n  \nConsidering this brief description of the software architecture of Chromium OS, which architectural style is more adequate to represent it?	86	0	0	ChromiumDecompositionINGLES
+87	t	Suppose that, to satisfy a security requirement related with possible attacks coming from users that access your system through the Internet, you want to use the tactic named *Limit Exposure*. How does the use of that tactic manifests in the architectural views of your system?	87	0	0	SecurityINGLES
+88	t	One of the best practices in the design of a software architecture is to create a skeleton system. What is its purpose?	88	0	0	SkeletonSystemINGLES
+90	t	The Aspects style was introduced recently as a new style of the module viewtype. Using this style in the software architecture of a system	90	0	0	AspectsINGLES
 91	t	According to the document that describes ZeroMQ:  \n>"One of the requirements for ØMQ was to take advantage of multi-core boxes; in other words, to scale the throughput linearly with the number of available CPU cores."  \n  \nTo satisfy this requirement, the solution adopted by ZeroMQ was	91	0	0	ZeroMQScaleMulticoreINGLES
-224	t	The software architecture of a system	224	0	0	ArchitectureInfluenceCycle
+92	t	Knowing that in the document describing ZeroMQ there is the following statement:  \n>"ØMQ is a library, not a messaging server."  \n  \nWhich views are needed to describe the software architecture of ZeroMQ?	92	0	0	ZeroMQAsLibraryINGLES
 93	t	According to the document that describes ZeroMQ:  \n>"It took us several years working on AMQP protocol [...] to realise that there's something wrong with the classic client/server model of smart messaging server (broker) and dumb messaging clients."  \n  \nWhat is the main problem, according to the authors, of the *broker*-based model?	93	0	0	ZeroMQBrokerINGLES
 94	t	According to the document that describes ZeroMQ:  \n>"The objects that handle data transfer are composed of two parts: the session object is responsible for interacting with the ØMQ socket, and the engine object is responsible for communication with the network. There's only one kind of the session object, but there's a different engine type for each underlying protocol ØMQ supports. Thus, we have TCP engines, IPC engines, PGM engines, etc. The set of engines is extensible---in the future we may choose to implement, say, a WebSocket engine or an SCTP engine."  \n  \nSupposing that the code implementing the *session object* does not need to be changed when a new type of *engine* is added to the system, which architectural views are better to show this extensibility aspect of the system?	94	0	0	ZeroMQExtensibleEnginesINGLES
-4	t	Suppose you have a system with a client-server architecture that was designed to support the simultaneous existence of at most 100 clients, without specific requirements for availability. The solution adopted and put into operation four years ago is a single server component to which all clients connect to. This solution satisfies the initial requirements but with the recent increase in the maximum number of clients to 200, the system no longer has acceptable performance. Not knowing anything else about the system's architecture, which solution do you propose to solve the system's performance problems?	4	0	0	AumentarDesempenhoClienteServidor
-42	t	In the Hadoop system the use of a *BackupNode* instead of a *CheckpointNode*:	42	0	0	HadoopCheckpointBackupNodeINGLES
-5	t	According to the SEI model, there are three different architectural viewtypes that are usually necessary to describe completely a software architecture.	5	0	0	TresTiposVista
-8	t	The requirements for complex systems are usually very numerous and conflicting among them, making it impossible to satisfy all the requirements in a given implementation of the system. Therefore, the recommended process for making the design of a software architecture involves the identification of the *architectural drivers* that will shape the design of architecture. These *architectural drivers* should be chosen so that they are	8	0	0	ArchitecturalDrivers
-18	t	When someone uses the Domain Model pattern to implement the domain logic layer of an enterprise application, it is common to use also the Service Layer pattern. The Service Layer pattern is used in these cases	18	0	0	ServiceLayer
 95	t	According to the document that describes ZeroMQ:  \n>"In early versions of ØMQ the API was based on AMQP's model of exchanges and queues. I spent the end of 2009 rewriting it almost from scratch to use the BSD Socket API instead."  \n  \nWhich requirements were targeted by this change in the system?	95	0	0	ZeroMQBSDSocketsINGLES
 96	t	According to the document that describes nginx:  \n>"nginx runs several processes in memory; there is a single master process and several worker processes. There are also a couple of special purpose processes, specifically a cache loader and cache manager. All processes are single-threaded in version 1.x of nginx. All processes primarily use shared-memory mechanisms for inter-process communication."  \n  \nAssuming that you want to highlight how the various nginx processes communicate among themselves, which architectural style is more adequate to represent the above information?	96	0	0	nginxProcessesINGLES
 97	t	In the continuation of the description presented in the previous question, later in the document there is this passage:  \n>"Caching in nginx is implemented in the form of hierarchical data storage on a filesystem. Cache keys are configurable, and different request-specific parameters can be used to control what gets into the cache. Cache keys and cache metadata are stored in the shared memory segments, which the cache loader, cache manager and workers can access."  \n  \nWhich architectural style is more adequate to represent the use of cache in nginx?	97	0	0	nginxCachingINGLES
 98	t	As mentioned in the previous questions, the use of *workers* is one of the crucial elements in the software architecture of nginx. Which of the following sentences best describes how *workers* work in nginx?	98	0	0	nginxWorkersINGLES
 99	t	Given that a *worker* processes various requests during its life, how does it do it?	99	0	0	nginxWorkerParallelINGLES
+568	t	Very often, when a software architecture is being designed, conflicting requirements are identified, like between security and availability. The role of the software architect is to	568	0	0	Diplomat
 100	t	The main *architectural driver* for the nginx system was to solve the *C10K problem*: being able to maintain 10.000 simultaneous connections with a single server running on conventional hardware. For this o happen, nginx must	100	0	0	nginxCTenKProblemINGLES
 101	t	The document describing the Glasgow Haskell Compiler presents two design decisions about the development of the *Runtime System*. The first of those decisions is described like this:  \n>"The garbage collector is built on top of a block layer that manages memory in units of blocks, where a block is a multiple of 4 KB in size. The block layer has a very simple API: [...]. This is the only API used by the garbage collector for allocating and deallocating memory. Blocks of memory are allocated with `allocGroup` and freed with `freeGroup`."  \n  \nWhich architectural style is more adequate to represent this design decision?	101	0	0	GHCBlockLayerINGLES
+102	t	What was the main goal of the GHC's authors that led them to the design decision described in the previous question?	102	0	0	GHCBlockLayerQualitiesINGLES
 103	t	Some of the *architectural drivers* of the Glasgow Haskell Compiler are related with the system's extensibility, and one of the solutions adopted by its authors to provide that extensibility was the introduction of *user-defined rewrite rules*, described in the document as follows:  \n>"The core of GHC is a long sequence of optimisation passes, each of which performs some semantics-preserving transformation, `Core` into `Core`. But the author of a library defines functions that often have some non-trivial, domain-specific transformations of their own, ones that cannot possibly be predicted by GHC. So GHC allows library authors to define rewrite rules that are used to rewrite the program during optimisation. In this way, programmers can, in effect, extend GHC with domain-specific optimisations."  \n  \nHow does this solution manifests in the software architecture of the system?	103	0	0	GHCRewriteRulesINGLES
-1236	t	In Graphite system the *receiver* and the *writer threads* support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style	1236	0	0	GraphiteCommunicationProcesses
-1239	t	The Work-assignment is an architectural style of the allocation viewtype, where	1239	0	0	WorkAssignment
-9	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user can use a program such as Microsoft Outlook or Mozilla Thunderbird, generically designed a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs (for example, when there are forwards or aliases configured, or when the MTA that receives the message is not the ultimately responsible for the email address of the recipient). Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MTAs?	9	0	0	ArqEmailMTA
-10	t	Considering yet the example of the email system, MUAs are used not only to compose and to send messages, but also for users to read the email messages sent to them. For this, the MUAs have to get those messages from the component that stores them to show them to the user. Two different ways of doing this is by using the POP and IMAP protocols. In the first case, messages are moved from the POP server to the user's computer. In second case, the messages are always stored on the IMAP server, allowing the user to access email from different computers, as long as they are able to connect to the same IMAP server. Which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUAs and a IMAP server?	10	0	0	ArqEmailIMAP
-11	t	The recent developments in web applications that made them provide a richer user interface led to a change in its architecture: part of the application's computation has to be done in the web browser used by users to access the application. How is this change in the architecture manifested in the different types of views that describe the software architecture of a web application?	11	0	0	AlteracaoWebDois
-41	t	From the stakeholders perspective the use of low cost servers to build the clusters is:	41	0	0	HadoopStakeholdersEurosINGLES
-43	t	In the Hadoop system when the *CheckpointNode* and the *NameNode* are deployed in different nodes, the *CheckpointNode* provides:	43	0	0	HadoopCheckpointINGLES
-44	t	The Hadoop system support of different block placement policies:	44	0	0	HadoopPoliticaLocalizacaoReplicasINGLES
-47	t	The *Checkpoint/rollback* tactic is a tactic for	47	0	0	TacticaCheckpointRollbackINGLES
 104	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"As the popularity of the Haskell language has grown, there has been an increasing need for tools and infrastructure that understand Haskell source code, and GHC of course contains a lot of the functionality necessary for building these tools: a Haskell parser, abstract syntax, type checker and so on. With this in mind, we made a simple change to GHC: rather than building GHC as a monolithic program, we build GHC as a library, that is then linked with a small Main module to make the GHC executable itself, but also shipped in library form so that users can call it from their own programs. At the same time we built an API to expose GHC's functionality to clients."  \n  \nWhich architectural diagram is more adequate to represent the information presented above?	104	0	0	GHCAsLibraryINGLES
-1240	t	Consider the module viewtype views of the Catalog of DVD application. The architect knows about a new requirement  \n>"To support iPhone, iPad, Android versions with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	1240	0	0	DVDCatalogMobile
-12	t	Given the complexity of building a good automatic Chess player, programs that play chess usually make use of existing chess engines, as shown by the following excerpt from Wikipedia:  \n>"A chess engine is a computer program that can play the game of chess. Most chess engines do not have their own graphical user interface (GUI) but are rather console applications that communicate with a GUI such as XBoard (Linux) and WinBoard (Windows) via a standard protocol."  \n  \nIn the web page for XBoard, we may read the following:  \n>"XBoard is a graphical user interface for chess [...]. It displays a chessboard on the screen, accepts moves made with the mouse, and loads and saves games in Portable Game Notation (PGN). It serves as a front-end for many different chess services, including:  \n-  Chess engines that will run on your machine and play a game against you or help you analyze, such as GNU Chess, Crafty, or many others.  \n-  [...]  \n"  \n  \nGiven the above information on XBoard, chess engines, and how they interact at runtime, which of the following architectural styles best represents the of architecture of a software system based on XBoard and one of the engines?	12	0	0	XBoardChess
-13	t	Suppose that you join the development team of a very large software system, and that you are assigned some tasks to change some existing features. Which of the following architectural views would be, in principle, more useful to you to perform those tasks quickly?	13	0	0	AlterarFuncionalidadesExistentes
 105	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"Once the `Core` program has been optimised, the process of code generation begins. The code generator first converts the `Core` into a language called `STG`, which is essentially just `Core` annotated with more information required by the code generator. Then, `STG` is translated to `Cmm`, a low-level imperative language with an explicit stack. From here, the code takes one of three routes:  \n-  Native code generation: [...]  \n-  LLVM code generation: [...]  \n-  C code generation: [...]  \n"  \n  \nThat is, GHC may use one of three alternative code generators, which have different qualities (omitted in the excerpt presented above). Supposing that you want to present an architectural diagram to represent the description presented above, which one seems more adequate?	105	0	0	GHCCodeGenerationINGLES
+106	t	Consider the Figure~1.8 in the document that describes the use of caches in web services (see annex). In that Figure, there is a rectangle with the name *Cache* within another rectangle with the name *Request Node*. Taking into account the description made in the text and the goal of that Figure, those rectangles correspond to which type of software elements?	106	0	0	WebCacheModuleINGLES
 107	t	Consider the change in the architecture introduced from Figure~1.9 to Figure~1.10 in the document that describes the use of caches in web services (see annex). That change has the goal and the consequence of, respectively	107	0	0	WebCacheGlobalINGLES
-167	t	Consider the following fragment of GNU Mailman case study:  \n*Email messages can act as containers for other types of data, as defined in the various MIME standards. A container message part can encode an image, some audio, or just about any type of binary or text data, including other container parts.*  \nThe architectural style that is more accurate to describe this transcription is	167	0	0	GMDataModelEN
+108	t	Consider the paragraph marked with the number 1 in the document that describes the use of caches in web services (see annex), where the concept of *distributed cache* is introduced. Which architectural style better represents the interaction pattern that exists among the various request nodes?	108	0	0	WebDistributedCacheINGLES
+109	t	Consider the paragraph marked with the number 2 in the document that describes the use of caches in web services (see annex), where the failure of a node in the distributed cache is discussed. When that happens, what are the consequences for the system?	109	0	0	WebMissingCacheNodeINGLES
+111	t	One of the major changes introduced in the software architecture of the Fénix system, compared to its first architecture, was	111	0	0	DomainLogicFenixINGLES
+112	t	Several of the cases studied in this course had performance requirements. Which architectural views are typically needed to show that those requirements are satisfied?	112	0	0	PerformanceINGLES
+116	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUA and the MTA?	116	0	0	ArqEmailMUAMTAINGLES
+118	t	Suppose that you are developing a web application that keeps in a database some information that is introduced by the users and that one of the requirements is that the information should be kept confidential, such that no one but the author of the information should be able to see it (but the author may access that information whenever he wants it). How would you satisfy this requirement?	118	0	0	SecurityINGLES
+119	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	119	0	0	WebEvolutionINGLES
+120	t	One of the terms often used to describe the software architecture of a system is the term *tier*, being common, for instance, to talk about *multi-tier* systems. Taking into account the various types of software elements that compose a software architecture, a *tier* is	120	0	0	TiersINGLES
+122	t	In the Graphite system the component *carbon-relay* implements a tactic	122	0	0	GPCarbonRelayINGLES
+124	t	Which are the most significant qualities of the MediaWiki system?	124	0	0	MWQualitiesINGLES
+125	t	The architectural styles which are more suitable to describe the MediaWiki system from the end user viewpoint are	125	0	0	MWArchitecuralStyleINGLES
+126	t	The MediaWiki system tries to enforce a reliability criteria that all the changes done by a writer are consistently visualized in her subsequent reads	126	0	0	MWReliabilityTacticsINGLES
+127	t	The MediaWiki system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria the load balancer	127	0	0	MWReliabilityReadsImplementationINGLES
+128	t	Consider the following fragment of the MediaWiki system description:  \n*To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.*  \nThe *ResourceLoader* implements a tactic	128	0	0	MWResourceLoaderTacticINGLES
+129	t	In Chrome, to accomplish the security quality, the Browser Process implements a tactic	129	0	0	CHSecurityQualityINGLES
+130	t	In Chrome it is possible to associate a Renderer Process to each Tab, which results in the increase of performance due to a tactic of	130	0	0	CHPerformanceQualityINGLES
+131	t	In the description of the Chrome case you can read:  \n*On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.*  \nThis description can be represented by a view of viewtype Component-and-Connector using the architectural style	131	0	0	CHMobilityArchitecturalStyleINGLES
+132	t	An advantage of Chrome when compared with Amazon Silk is	132	0	0	CHAmazonSilkTwoEN
+133	t	One of the qualities of Chrome is the execution of the JavaScript code inside a process, which allows the isolation against possible interferences between the execution of JavaScript programs that are loaded from different sites. The isolation level	133	0	0	CHSecurityLevelEN
+134	t	In the description of the Chrome case study you can read:  \n*Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.*  \nThis description refers to	134	0	0	CHOmniboxTacticsEN
+135	t	Consider the following fragment of GNU Mailman  \n*In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called __dict__. So saving a mailing list object then is simply a matter of pickling its __dict__ to a file, and loading it just involves reading the pickle from the file and reconstituting its __dict__.*  \nAlthough simple, this solution resulted in several problems which had a negative impact on performance. This is due to:	135	0	0	GMPicklePerformanceEN
+136	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed:	136	0	0	GMRestModularityEN
+137	t	Consider the following fragment of GNU Mailman case study:  \n*Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.*  \nThe Pipes-and-Filters architectural style is used in the handling of messages. In this context the data type which is sent among the filters is	137	0	0	GMPipesFiltersDataEN
 138	t	In the description of the GNU Mailman case study it is proposed a solution that, when there are several queue runners executing on the same queue, the delivery of messages is done according to arrival order (FIFO).  \n*There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.*  \nThe proposed solution	138	0	0	GMReliabilityFIFOEN
+139	t	The function of Master Runner component of GNU Mailman can be represented using an architecture style of	139	0	0	GMMasterRunnerEN
 140	t	In Mailman 3 messages are still being persistently stored using pickle because	140	0	0	GMMessagesPersistenceEN
 141	t	The Install and Implementation architectural styles	141	0	0	InstallImplementationStylesEN
 142	t	The architecturally significant qualities of the second Fénix architecture are:	142	0	0	FenixTwoEN
@@ -24926,212 +25032,41 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 154	t	The design of the MediaWiki architecture was constrained the requirement that the solution should have relatively low cost. Due to this restriction it was taken the architectural decision of	154	0	0	MWLowCostEN
 155	t	Consider a Component-and-Connector architectural view of the MediaWiki system where all the clients are connected to a server through a request-reply connector. This connector implements the tactics	155	0	0	MWTacticsEN
 156	t	The MediaWiki system tries to enforce a reliability criteria that all the changes done by a writer are consistently visualized in her subsequent reads. This criteria is implemented	156	0	0	MWReliabilityImplementationEN
-14	t	Consider the following excerpt from the Wikipedia page on *black-box testing*:  \n>"Black-box testing is a method of software testing that tests the functionality of an application as opposed to its internal structures or workings. Specific knowledge of the application's code/internal structure and programming knowledge in general is not required. Test cases are built around specifications and requirements, i.e., what the application is supposed to do."  \n  \nAssuming that you belong to the team testing a complex system and that you are responsible for performing black box tests on the system, which of the following architectural views of the system would be most useful to you?	14	0	0	BlackBoxTesting
-15	t	Consider an enterprise application that needs to keep its data persistently, but for which no one knows yet what is the volume of information that will be handled by the application. Therefore, the system's architect intends to develop the system such that it is possible to change easily the relational database (RDBMS) component used to store the application's data, replacing it with an RDBMS from another manufacturer. Given that this is a common requirement, the recommended software architecture for such applications fulfills this requirement by using a particular architectural style. Which style is it?	15	0	0	TrocarBDCamadas
-87	t	Suppose that, to satisfy a security requirement related with possible attacks coming from users that access your system through the Internet, you want to use the tactic named *Limit Exposure*. How does the use of that tactic manifests in the architectural views of your system?	87	0	0	SecurityINGLES
 157	t	The MediaWiki system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria it is implemented a tactic of	157	0	0	MWReliabilityReadsTacticEN
 158	t	In the description of MediaWiki system we can read:  \n*The first revision of the blob is stored in full, and following revisions to the same page are stored as diffs relative to the previous revision; the blobs are then gzipped. Because the revisions are grouped per page, they tend to be similar, so the diffs are relatively small and gzip works well. The compression ratio achieved on Wikimedia sites nears 98%.*  \nThis description refers to a tactic of	158	0	0	MWVerBlobTacticEN
 159	t	Chrome, as described in the case study, was designed to support the accomplish the following architectural qualities:	159	0	0	CHQualitiesEN
 161	t	An advantage of Amazon Silk when compared with Chrome is	161	0	0	CHAmazonSilkEN
 162	t	An architectural view of the Component-and-Connector viewtype that describes the interactions within the Renderer Process component of Chrome, uses the architectural style	162	0	0	CHRenderStyleEN
-416	t	When comparing Amazon Silk with Google Chrome	416	0	0	SilkCaching
+163	t	In some situations Chrome prerenders a page. To do it	163	0	0	CHPrerenderTacticsEN
+165	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed increased interoperability because	165	0	0	GMRestInteroperabilityEN
 166	t	Consider the following fragment of GNU Mailman case study:  \n*Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.*  \nThe architectural style that is more accurate to describe the flexible processing of messages is	166	0	0	GMPipesFiltersEN
+167	t	Consider the following fragment of GNU Mailman case study:  \n*Email messages can act as containers for other types of data, as defined in the various MIME standards. A container message part can encode an image, some audio, or just about any type of binary or text data, including other container parts.*  \nThe architectural style that is more accurate to describe this transcription is	167	0	0	GMDataModelEN
+168	t	Consider the following transcription of the GNU Mailman system:  \n*...Mailman supports running more than one runner process per queue directory...*  \nIt has the goal to support	168	0	0	GMPerformanceEN
 169	t	Consider the following description of the GNU Mailman system:  \n*VERP stands for Variable Envelope Return Path, and it is a well-known technique that mailing lists use to unambiguously determine bouncing recipient addresses. When an address on a mailing list is no longer active, the recipient's mail server will send a notification back to the sender. In the case of a mailing list, you want this bounce to go back to the mailing list, not to the original author of the message; the author can't do anything about the bounce, and worse, sending the bounce back to the author can leak information about who is subscribed to the mailing list. When the mailing list gets the bounce, however, it can do something useful, such as disable the bouncing address or remove it from the list's membership.*  \nThis transcription describes the quality(ies) of	169	0	0	GMReliabilityBounceEN
 170	t	Consider the following description of the GNU Mailman system:  \n*There is a core Mailman class called Switchboard which provides an interface for enqueuing (i.e., writing) and dequeuing (i.e., reading) the message object tree and metadata dictionary to files in a specific queue directory. Every queue directory has at least one switchboard instance, and every queue runner instance has exactly one switchboard.*  \nThis transcription contains relevant information for viewtypes of	170	0	0	GMSwitchboardEN
+171	t	The architecturally significant requirements of the third architecture of Fénix are	171	0	0	FenixThreeEN
+172	t	In the Fénix first architecture it was common programmers forget to lock objects in the context of transactions. A solution for this problem can be architecturally described using a view of the architectural style	172	0	0	FenixOneEN
 173	t	The internationalization of the user interface is supported by the tactic(s)	173	0	0	InternationalizationTacticsEN
 174	t	To implement the Identity Map pattern	174	0	0	IdentityMapEN
 175	t	In defensive programming the programmer checks that the conditions under which modules are invoked comply with their specification, and if they don't an exception is raised to avoid failure propagation. When defensive programming is followed, in the context of availability quality, we are using a tactic of	175	0	0	AvailabilityDefensiveEN
 176	t	In the Observer design pattern, where the model invokes a notification method on all its observers whenever it is changed, can be said, in what concerns the Uses relation of the Uses architectural style, that	176	0	0	ObserverUsesEN
-16	t	Suppose that you decided to use the Google App Engine (GAE) in the development of a web application. The GAE is described in the Wikipedia as follows:  \n>"Google App Engine is a platform for developing and hosting web applications in Google-managed data centers. Google App Engine is cloud computing technology. It virtualizes applications across multiple servers and data centers. [...] Google App Engine is free up to a certain level of used resources. Fees are charged for additional storage, bandwidth, or CPU cycles required by the application."  \n  \nOn the other hand, the GAE documentation reads the following:  \n>"With App Engine, you can build web applications using standard Java technologies and run them on Google's scalable infrastructure. The Java environment provides a Java 6 JVM, a Java Servlets interface, and support for standard interfaces to the App Engine scalable datastore and services, such as JDO, JPA, JavaMail, and JCache. Standards support makes developing your application easy and familiar, and also makes porting your application to and from your own servlet environment straightforward."  \n  \nTaking into account these two perspectives on the GAE, which architectural styles are more appropriate to represent the use of GAE in the software architecture of your web application?	16	0	0	GoogleAppEngine
-102	t	What was the main goal of the GHC's authors that led them to the design decision described in the previous question?	102	0	0	GHCBlockLayerQualitiesINGLES
-106	t	Consider the Figure~1.8 in the document that describes the use of caches in web services (see annex). In that Figure, there is a rectangle with the name *Cache* within another rectangle with the name *Request Node*. Taking into account the description made in the text and the goal of that Figure, those rectangles correspond to which type of software elements?	106	0	0	WebCacheModuleINGLES
 177	t	Consider the Uses and Layered architectural styles.	177	0	0	UsesLayersEN
 178	t	An architectural view	178	0	0	SeveralStylesViewEN
 179	t	The Uses architectural style	179	0	0	ApplyUsesEN
 180	t	In a enterprise-wide system, like Fénix system,	180	0	0	EnterpriseWideEN
+211	t	The Service Layer pattern is typically used in conjunction with	211	0	0	ServiceLayer
+212	t	The Active Record pattern is best used when we are also using	212	0	0	ActiveRecord
 214	t	Consider the architectural views for the ThousandParsec system. In the case description can be read:  \n>"The Requirements function verifies that each component added to the design conforms to the rules of other previously added components."  \n  \nThe following diagram depicts a fragment of a proposal for the decomposition view of the system.   \n![image][image]  \n	214	0	0	ThounsandParsecView
+215	t	Checksum is a technic that it is often used in architectural design. It can be used as	215	0	0	Checksum
 216	t	An attack is	216	0	0	Attack
 218	t	In the description of the Thousand Parsec case study can be read:  \n>"A ruleset designer thus has the ability to create new object types or store additional information in the existing object types as required by the ruleset, allowing for virtually unlimited extensibility in terms of the available physical objects in the game."  \n  \nThis excerpt can be represented as a modifiability scenario where	218	0	0	ThousandParsecTactics
 219	t	In the description of the Git case study can be read:  \n>"Git tackles the storage space problem by packing objects in a compressed format, using an index file which points to offsets to locate specific objects in the corresponding packed file."  \n  \nThe tactic addressed in this fragments is:	219	0	0	GitTactics
 220	t	Assume that one of the requirements for a graphical chess game is that it should be able to run both in Microsoft's Windows and Apple's Mac OS X operating systems. A good solution for this system would:	220	0	0	Layered
 222	t	A requirement for a chess game is that it keeps a table with the best scores obtained in the game. Naturally, this information should be kept between two different executions of the system. Assuming that the game is a web-based application, then	222	0	0	Repository
-316	t	Frank Buschmann states that:  \n>"Architects use flexibility as a cover for uncertainty."  \n  \n	316	0	0	Prioritize
-278	t	In the description of the ThousandParsec case study can be read:  \n>"The Thousand Parsec Component Language (TPCL) exists to allow clients to create designs locally without server interaction - allowing for instant feedback about the properties, makeup, and validity of the designs."  \n  \nFrom this sentence can be written	278	0	0	ThousandParsecScenario
-279	t	In the description of GitHub case study can be read  \n>"Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of fileservers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD."  \n  \nIn this description we can find the application of tactics like	279	0	0	GitTactic
-280	t	Views of the module viewtype can be used to support requirements traceability analysis, determine how the functional requirements of a system are supported. This is represented by	280	0	0	ModuleTraceability
-281	t	Assuming that you were asked to document the software architecture of an existing (and already developed) system, the best thing for you to do would be	281	0	0	ArchitectureKnowledge
-17	t	The Eclipse IDE is an open source application written in Java, and is extensible through the use of plug-ins. In the document that describes the existing plug-ins architecture in Eclipse, we may read the following:  \n>"A plug-in in Eclipse is a component that provides a certain type of service within the context of the Eclipse workbench. [...] The plug-in class provides configuration and management support for the plug-in. A plug-in class in Eclipse must extend `org.eclipse.core.runtime.Plugin`, which is an abstract class that provides generic facilities for managing plug-ins."  \n  \nConsidering the model and terminology used in the course to describe a software architecture, what kind of views are more appropriate to represent the plug-ins architecture of Eclipse described above?	17	0	0	PluginsEclipse
-282	t	Ralph Johnson says that  \n>"Architecture is the decisions that you wish you could get right early in a project."  \n  \nThis sentence reflects the fact that	282	0	0	ArchitectureEvolution
-283	t	Marquardt characterizes performitis as:  \n>"Each part of the system is directly influenced by local performance tuning measures. There is no global performance strategy, or it ignores other qualities of the system such as testability and maintainability."  \n  \nThis means that	283	0	0	Performitis
-284	t	The software architecture of a system is usually represented through several views because we need to	284	0	0	ArchitecturalViews
-285	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecturally significant requirements*. These architecturally significant requirements should be sorted according to their importance for the system's stakeholders because	285	0	0	ArchitecturallySignificantRequirements
-286	t	On the web page of Memcached can be read:  \n>"..., high-performance, distributed memory object caching system, generic in nature, but intended for use in speeding up dynamic web applications by alleviating database load."  \n  \nAccording to this information, Memcached is	286	0	0	ModueComponent
-287	t	You have to develop an application that collects news from different web sources and process that information to present a digest to the application users. The different sources provide similar information through different interfaces (APIs). Additionally, the new sources may change the interfaces, for instance to enhance their service. Which architectural style can be used to represent this requirements?	287	0	0	GeneralizationInterfaces
-288	t	When designing the architecture for a system the architect realises that most of the modules have bidirectional uses relationships. This has impact on	288	0	0	UsesIncremental
-289	t	In the description of EtherCalc case study can be read  \n>"Because all jsdom code runs in a single thread, subsequent REST API calls are blocked until the previous command's rendering completes. Under high concurrency, this queue eventually triggered a latent bug that ultimately resulted in server lock-up."  \n  \nThe above sentence is related to a quality for	289	0	0	EtherCalcPerformance
-290	t	In the description of EtherCalc case study can be read  \n>"So, we removed jsdom from the RenderSheet function, re-implemented a minimal DOM in 20 lines of LiveScript for HTML export, then ran the profiler again. Much better! We have improved throughput by a factor of 4, HTML exporting is 20 times faster, and the lock-up problem is gone."  \n  \nThe above sentence describes a	290	0	0	EtherCalcTactic
-317	t	In his article *On Hammers and Nails, and Falling in Love with Technology and Design* what is the main type of influence on the architecture?	317	0	0	HammersNails
-291	t	In the description of EtherCalc case study can be read how the architect tried to increase the performance in a multi-core context  \n>"Is there a way to make use of all those spare CPUs in the multi-tenant server? For other Node.js services running on multi-core hosts, we utilized a pre-forking cluster server that creates a process for each CPU. However, while EtherCalc does support multi-server scaling with Redis, the interplay of Socket.io clustering with RedisStore in a single server would have massively complicated the logic, making debugging much more difficult."  \n  \nThis possible solution has impact on the	291	0	0	EtherCalcTestability
-293	t	In the description of EtherCalc case study can be read how the architect increased the performance in a multi-core context  \n>"Instead of pre-forking a fixed number of processes, we sought a way to create one background thread for each server-side spreadsheet, thereby distributing the work of command execution among all CPU cores."  \n  \nWhich is represented by the diagram  \n  \n![image][image]  \n The above diagram, describing a server spreadsheet, can be represented using	293	0	0	EtherCalcViews
-294	t	To increase the availability of a web application it is possible to use a load-balancer between the clients and the servers that detects server failures and transparently redirects the requests to the servers that are functioning properly. To represent this architecture	294	0	0	LoadBalancer
-295	t	One way to increase the performance of a 3-tier enterprise application (with the standard separation in the web client, web server, and database tiers) is to replicate the web server tier and to add a load-balancer between the web clients and the web servers. Unfortunately, for some enterprise applications that option is not enough (or does not work at all), because	295	0	0	ThreeTiers
-298	t	In the description of ThousandParsec case study can be read  \n>"The flagship server, tpserver-cpp, provides an abstract persistence interface and a modular plugin system to allow for various database back ends."  \n  \nThis above sentence can be diagrammatically represented using	298	0	0	ThousandParsecPersistence
-300	t	In the description of GitHub case study can be read  \n>"For requests to the main website, the load balancer ships your request off to one of the four frontend machines. Each of these is an 8 core, 16GB RAM bare metal server. Their names are fe1, ..., fe4. Nginx accepts the connection and sends it to a Unix domain socket upon which sixteen Unicorn worker processes are selecting. One of these workers grabs the request and runs the Rails code necessary to fulfill it."  \n  \nTo represent the above description it is necessary to use	300	0	0	GitHubViews
-19	t	The Unit of Work pattern is often used in enterprise applications	19	0	0	UnitOfWork
-20	t	The Identity Map pattern is typically used in enterprise applications	20	0	0	IdentityMap
-21	t	The scalability quality is achieved in the Hadoop system only because	21	0	0	HadoopEscalabilidadePossivelINGLES
-22	t	In the Hadoop system:	22	0	0	HadoopDisponibilidadeDesempenhoINGLES
-23	t	In the Hadoop system the fault recovery tactics are:	23	0	0	HadoopTacticasRecuperacaoFaltasINGLES
-24	t	In the Hadoop system the tactics used to reintroduce a DataNode after its failure are:	24	0	0	HadoopTacticasRecuperacaoFaltasDoisINGLES
-25	t	The security tactics used in The Hadoop system deployed at Yahoo! are:	25	0	0	HadoopTacticasSegurancaINGLES
-27	t	A layer, in the layers architectural style, is a module:	27	0	0	ModulosCamadasINGLES
-28	t	The uses architectural style allows to assess the impact of changes in modules	28	0	0	UtilizacaoImpactoAlteracoesINGLES
-29	t	In the uses architectural style a call does not necessarily correspond to a uses relationship because:	29	0	0	UtilizacaoNotificaINGLES
-30	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architectural drivers*. These architectural drivers should be sorted according to their importance for the system's stakeholders because	30	0	0	UtilizacaoNotificaDoisINGLES
-301	t	Frank Buschmann states that:  \n>"Featuritis is the tendency to trade functional coverage for quality - the more functions the earlier they're delivered, the better."  \n  \n	301	0	0	Featuritis
-303	t	On the course slides you can find the following definition of architecture:  \n>"The software architecture of a program or computing system is the structure or structures of the system, which comprise software elements, the externally visible properties of those elements, and the relationships among them."  \n  \nHowever, in the book you can find another definition:  \n>"The software architecture of a system is the set of structures needed to reason about the system, which comprise the software elements, relations among them, and the properties of both."  \n  \n	303	0	0	ArchitectureDefinition
-304	t	Martin Fowler, *Who Needs and Architect?*, cites Ralph Johnson sentence:  \n>"In most successful software projects, the expert developers working on that project have a shared understanding of the system design. This shared understanding is called architecture."  \n  \n	304	0	0	SharedUnderstanding
-349	t	In the description of the Thousand Parsec case study can be read:  \n>"Next, the player is prompted to configure options for the ruleset and server, with sane defaults pulled from the metadata. Finally, if any compatible AI clients are installed, the player is prompted to configure one or more of them to play against."  \n  \nThe tactic referred in the fragments is	349	0	0	ThounsandParsecSystemInitiative
-350	t	A criteria for the the application of the Decomposition architectural style of the Module viewtype is Build-vs-Buy decisions. The application of the criteria	350	0	0	DecompositionBuilvsBuy
-353	t	In the description of the SocialCalc case study can be read:  \n>"If users A and B simultaneously perform an operation affecting the same cells, then receive and execute commands broadcast from the other user, they will end up in different states."  \n  \nFrom this fragment can be identified a scenario for	353	0	0	SocialCalcAvailability
-354	t	In the description of the Thousand Parsec case study can be read:  \n>"Turns also have a time limit imposed by the server, so that slow or unresponsive players cannot hold up a game."  \n  \nFrom this fragment can be identified a scenario for	354	0	0	ThounsandParsecAvailability
-356	t	In the context of the FenixEdu case study the following scenario was identified.  \n>"The management intends that the system should be available to all users, even after offices close and classes finish because students may need courses material to study 24X7 and faculty and administrative staff may want to work from home."  \n  \nThis is a	356	0	0	BusinessScenarioTwo
-559	t	In his article *Who Needs an Architect?* Martin Fowler refers to the following architecture definition  \n>"*the expert developers working on that project have a shared understanding of the system design*"  \n  \n	559	0	0	SharedUnderstanding
-393	t	An important stage of the development of any system is its build into the set of executable files. A suitable architectural style which helps on the definition of the build process is	393	0	0	InstallStyle
-395	t	Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.   \n![image][image]  \n	395	0	0	GraphiteDecompositionMemcached
-398	t	Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Buffering is a library used to temporarily store incoming data point.   \n![image][image]  \n	398	0	0	GraphiteDecompositionBuffering
-31	t	In the HDFS system, the main responsibility of the DataNode component is to store the data blocks corresponding to the client's files, and usually there are several instances of this component on each system. The architectural style that best describes the interaction pattern among the various instances of DataNode is	31	0	0	HadoopInteraccaoDataNodesINGLES
-32	t	According to Section 8.2.3, the NameNode component issues commands to the DataNodes so that they execute some operations on their blocks, whereas DataNodes have to send reports regularly to the NameNode. The architecture that best describes how these two types of components interact in the HDFS system is	32	0	0	HadoopInteraccaoNameNodeDataNodesINGLES
-33	t	Imagine that you intend to describe how a client reads a file from an HDFS system while supporting sporadic failures in the hardware of some DataNodes, but without affecting the availability of the system. To accomplish that, you want to use a component-and-connector view containing only two types of components: the HDFS Client, and the DataNode.	33	0	0	HadoopNameNodeComoConectorINGLES
-34	t	The last paragraph of Section 8.2.2 describes the solution used by the NameNode to obtain a certain level of performance while writing to disk. Which architectural style is more adequate to represent the solution used?	34	0	0	HadoopNameNodeThreadsINGLES
-36	t	When someone uses the Domain Model pattern to implement the domain logic layer of an enterprise application, it is common to use also the Service Layer pattern. The Service Layer pattern is used in these cases	36	0	0	ServiceLayerINGLES
-37	t	Imagine that you are developing an architectural view where you are using the Shared Data style and that a member of your team proposes that two of Data Accessors communicate directly between them. In your opinion	37	0	0	SharedDataAccessorsDirectINGLES
-45	t	In the Hadoop system, during normal operation, *NameNode* could use a ping tactic to know whether *DataNodes* are available	45	0	0	HadoopPingINGLES
-46	t	Knowing the deployment structure in the Hadoop system is critical to the effective system operation. Therefore, for each deployment, the administrator can configure a script that returns a node's rack identification given a node's address (see section 8.3.2).	46	0	0	HadoopInstalacaoINGLES
-49	t	A view of the *Uses* style that contains a loop in the uses relationships	49	0	0	UsaCircularINGLES
-50	t	The main difference between the *Uses* relation of the Uses style and the *Allowed to Use* relation of the Layers style	50	0	0	UsaPodeUsarINGLES
-56	t	*Domain Model* and *Transaction Script* are two of the existing patterns to implement the domain logic layer of an enterprise application. Choosing one or the other	56	0	0	DomainModelINGLES
-61	t	Two of the *stakeholders* for the Glasgow Haskell Compiler were the UK government and the researchers that want to do research on functional programming languages. Which of these *stakeholders* had a more significant influence in the software architecture of the system?	61	0	0	GHCStakeholdersINGLES
-62	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"At the highest level, GHC can be divided into three distinct chunks:  \n-  The compiler itself.  \n-  The Boot Libraries.  \n-  The Runtime System (RTS).  \n"  \n  \nWhat is the most architecturally correct way of classifying the three *chunks* that this text refers to?	62	0	0	GHCChunksINGLES
-63	t	One of the most important decisions during the development of the Glasgow Haskell Compiler was to perform the type-checking before the desugaring of an Haskell program into a program in the Core language (*type-check-before-desugar*). This design decision	63	0	0	GHCDesugaringINGLES
-82	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	82	0	0	IncrementalReleasesINGLES
-64	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"The Runtime System is a library of mostly C code that is linked into every Haskell program. It provides the support infrastructure needed for running the compiled Haskell code, including the following main components:  \n-  Memory management, including a parallel, generational, garbage collector;  \n-  Thread management and scheduling;  \n-  The primitive operations provided by GHC;  \n-  A bytecode interpreter and dynamic linker for GHCi.  \n"  \n  \nWhich system qualities are improved by the design decision of creating the Runtime System, described above?	64	0	0	GHCRTSINGLES
-66	t	Which of the following sentences better describes the ZeroMQ system?	66	0	0	ZeroMQAppsINGLES
-71	t	The main architectural driver for the nginx system was	71	0	0	nginxFirstADINGLES
-452	t	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \n  \nFrom the description we can infer a trade-off between the qualities of	452	0	0	InfinispanScenariosTacticsOne
-74	t	According to the document that describes nginx:  \n>"While handling a variety of actions associated with accepting, processing and managing network connections and content retrieval, nginx uses event notification mechanisms and a number of disk I/O performance enhancements in Linux, Solaris and BSD-based operating systems, like kqueue, epoll, and event ports. The goal is to provide as many hints to the operating system as possible, in regards to obtaining timely asynchronous feedback for inbound and outbound traffic, disk operations, reading from or writing to sockets, timeouts and so on."  \n  \nThe goal of this approach used in the development of nginx was	74	0	0	nginxOSOptimizationsINGLES
-75	t	According to the document that describes nginx:  \n>"Traditional process- or thread-based models of handling concurrent connections involve handling each connection with a separate process or thread, and blocking on network or input/output operations."  \n  \nThe architectural style that better describes the model presented above for processing requests is	75	0	0	nginxProcessThreadINGLES
-76	t	According to the document that describes the architecture of web services (attached at the end of this document), one of the approaches introduced in Section~1.2 is *partitioning*, shown in Figure~1.4. The use of *partitioning*	76	0	0	WebPartioningINGLES
-77	t	Considering again the case of the previous question, compare the architectures sketched in Figure~1.3 and Figure~1.4. The difference between the two shows	77	0	0	WebPartitioningDoisINGLES
-78	t	Consider again the architecture shown in Figure~1.3, where redundancy was introduced into the system. In this particular case, introducing redundancy into the architecture has the goal of	78	0	0	WebRedundancyINGLES
-79	t	The typical software architecture of an enterprise application is composed of three tiers and three layers. Yet, we may have variations of this architecture. For instance, by separating the middle tier in two tiers. In this case, which other changes exist on the architecture that are related with the layers?	79	0	0	ThreeVsFourTiersINGLES
-81	t	The first architecture of the Fénix system, corresponding to its first years of development, could be described as a three-layered architecture, typical of an enterprise application. One of those layers was the *domain logic* layer. Which of the following sentences best describes the Fénix architecture in what concerns that layer?	81	0	0	DomainLogicFenixINGLES
-86	t	The web page that describes the architecture of Chromium OS (an open source project to implement a new operating system) starts like this:  \n>"Chromium OS consists of three major components:  \n-  The Chromium-based browser and the window manager  \n-  System-level software and user-land services: the kernel, drivers, connection manager, and so on  \n-  Firmware  \n"  \n  \nConsidering this brief description of the software architecture of Chromium OS, which architectural style is more adequate to represent it?	86	0	0	ChromiumDecompositionINGLES
-88	t	One of the best practices in the design of a software architecture is to create a skeleton system. What is its purpose?	88	0	0	SkeletonSystemINGLES
-90	t	The Aspects style was introduced recently as a new style of the module viewtype. Using this style in the software architecture of a system	90	0	0	AspectsINGLES
-92	t	Knowing that in the document describing ZeroMQ there is the following statement:  \n>"ØMQ is a library, not a messaging server."  \n  \nWhich views are needed to describe the software architecture of ZeroMQ?	92	0	0	ZeroMQAsLibraryINGLES
-108	t	Consider the paragraph marked with the number 1 in the document that describes the use of caches in web services (see annex), where the concept of *distributed cache* is introduced. Which architectural style better represents the interaction pattern that exists among the various request nodes?	108	0	0	WebDistributedCacheINGLES
-109	t	Consider the paragraph marked with the number 2 in the document that describes the use of caches in web services (see annex), where the failure of a node in the distributed cache is discussed. When that happens, what are the consequences for the system?	109	0	0	WebMissingCacheNodeINGLES
-111	t	One of the major changes introduced in the software architecture of the Fénix system, compared to its first architecture, was	111	0	0	DomainLogicFenixINGLES
-112	t	Several of the cases studied in this course had performance requirements. Which architectural views are typically needed to show that those requirements are satisfied?	112	0	0	PerformanceINGLES
-272	t	Compared to the Transaction Script pattern, the Domain Logic pattern has a higher initial cost of adoption. That is, it is harder to start with the Domain Logic pattern than with the Transaction Script pattern. The reason for this is that the Domain Logic pattern	272	0	0	TransactionScript
-610	t	Consider the Component-and-Connector viewtype	610	0	0	ComponentAndConnectorOne
-399	t	An architect needs to show that a security tactic of limit exposure will be effectively provided by the executing system. Therefore, she decides to design	399	0	0	DeploymentStyleLimitExposure
-402	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a proposal of application-specific types for the architectural components, where the names of the ports are missing. Between the GameServer and Repository component   \n![image][image]  \n	402	0	0	ThousandParsecReadWriteConnector
-403	t	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	403	0	0	OrderPadReliability
-404	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A ConflictResolution module is used when local commands conflict with remote commands.   \n![image][image]  \n	404	0	0	SocialCalcConflictResolution
-405	t	When the domain logic is organized using a Table Module pattern	405	0	0	LogicAccessTableModule
-406	t	When comparing Amazon Silk with Google Chrome	406	0	0	SilkConnections
-407	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The ThousandParsec protocol   \n![image][image]  \n	407	0	0	ThousandParsecModule
-626	t	Consider the two following views   \n![image][image]  \n	626	0	0	ComponentAndConnectorThree
-451	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nConsider that a scenario is written from the above sentence	451	0	0	ContinousIntegrationScenariosTacticsOne
-455	t	Consider the following excerpt about the Amazon system  \n>"Over time, this grew into hundreds of services and a number of application servers that aggregate the information from the services. The application that renders the Amazon.com Web pages is one such application server, but so are the applications that serve the Web-services interface, the customer service application, the seller interface, and the many third-party Web sites that run on our platform."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	455	0	0	AmazonOne
-456	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecture significant requirements*. These requirements should be sorted according to their importance for the system's stakeholders because	456	0	0	DesigningArchitectureOne
-648	t	Consider the deployment architectural style of the allocation viewtype.	648	0	0	AllocationTwo
-460	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to deal with faults of type *omission* in your system, which tactic is more adequate?	460	0	0	AvailabilityOne
-116	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUA and the MTA?	116	0	0	ArqEmailMUAMTAINGLES
-118	t	Suppose that you are developing a web application that keeps in a database some information that is introduced by the users and that one of the requirements is that the information should be kept confidential, such that no one but the author of the information should be able to see it (but the author may access that information whenever he wants it). How would you satisfy this requirement?	118	0	0	SecurityINGLES
-299	t	Consider the (partial) component-and-connector view for the :SpreasdSheet component of the SocialCalc system   \n![image][image]  \n The sub1 port	299	0	0	SocialCalcBroadcastEvents
-461	t	Consider that an architect needs to design a system which interacts with two external sources of information, and it has to import some of the information to store it in the system's internal database. The stakeholders inform him that it will be necessary to include new sources of information in the future, besides the two already identified, but they cannot precisely define which they are. This changes will occur after the first version of the system is in production. Additionally, the stakeholders define a short period of time to integrate a new source of information. Given this requirements the architect should	461	0	0	ModifiabilityOneOne
-462	t	Consider the change in the architecture associated with the use of caches in web services shown in the figure   \n![image][image]  \n That change has the goal and the consequence of, respectively	462	0	0	PerformanceOneOne
-463	t	Consider the following excerpt from Nginx case study  \n>"nginx configuration is kept in a number of plain text files which typically reside in /usr/local/etc/nginx or /etc/nginx. The main configuration file is usually called nginx.conf. To keep it uncluttered, parts of the configuration can be put in separate files which can be automatically included in the main one. However, it should be noted here that nginx does not currently support Apache-style distributed configurations (i.e., .htaccess files). All of the configuration relevant to nginx web server behavior should reside in a centralized set of configuration files."  \n  \nWhen comparing the configuration in Nginx with the configuration in Apache we can say that	463	0	0	NginxScenariosTacticsOne
-464	t	Suppose that there are certain performance requirements for a system, and that you want to show to the stakeholders of the system that the software architecture that you designed meet those requirements. To do this	464	0	0	ComponentConnectorOne
-465	t	Suppose that you are designing the software architecture for an enterprise application that has requirements about the maximum response time for a certain type of requests. Moreover, assume that those requests arrive at the system periodically, whereas the remaining requests have an unpredictable frequency. Finally, assume that your system will have a single server that will be executing on a predefined machine with a 12-core AMD processor. To show to the stakeholders that your system satisfies the performance requirements you have to use views of which architectural style?	465	0	0	RepositoryClientServerOne
-467	t	Imagine that you want to develop a system that is to be used in email servers, whose goal is to allow changing the emails that are received by the server (for example, to remove potential viruses or URLs linking to phishing sites). The goal is that the server feeds each received email through this system before processing it (e.g., forward it to another server, or store it locally). The system is supposed to be easily modifiable, to support new types of email transformations. Which architectural style is the most adequate to satisfy these requirements?	467	0	0	SOAPipesFiltersOne
-469	t	Web servers implemented in Java, such as the Tomcat web server, typically use a thread-based model for processing requests. That is, they process each request on a different thread within the same JVM process, rather than on a different process. One of the reasons for this is that	469	0	0	nginxOne
-470	t	Consider the following architectural view of the Pony-Build system as described in the Continous integration case study   \n![image][image]  \n According to this view the quality of performance is achieved through	470	0	0	ContinousIntegrationViewsOne
-119	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	119	0	0	WebEvolutionINGLES
-969	t	Which of the following tactics is not related with the control of resource demand	969	0	0	PerformanceTacticsTwo
-120	t	One of the terms often used to describe the software architecture of a system is the term *tier*, being common, for instance, to talk about *multi-tier* systems. Taking into account the various types of software elements that compose a software architecture, a *tier* is	120	0	0	TiersINGLES
-122	t	In the Graphite system the component *carbon-relay* implements a tactic	122	0	0	GPCarbonRelayINGLES
-124	t	Which are the most significant qualities of the MediaWiki system?	124	0	0	MWQualitiesINGLES
-125	t	The architectural styles which are more suitable to describe the MediaWiki system from the end user viewpoint are	125	0	0	MWArchitecuralStyleINGLES
-322	t	A heartbeat monitor	322	0	0	PingEcho
-351	t	A utility tree	351	0	0	UtilityTree
-471	t	In the Infinispan case study can be read  \n>"Infinispan's core data structures make use of software transactional memory techniques for concurrent access to shared data. This minimizes the need for explicit locks, mutexes and other forms of synchronization, preferring techniques like compare-and-set operations within a loop to achieve correctness when updating shared data structures. Such techniques have been proven to improve CPU utilization in multi-core and SMP systems, and despite the increased code complexity, has paid off in overall performance when under load."  \n  \nThese properties of Infinispan can be represented by	471	0	0	InfinispanViewsOne
-472	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study about two different possible implementations of a global cache  \n>"The majority of applications leveraging global caches tend to use the first type, where the cache itself manages eviction and fetching data to prevent a flood of requests for the same data from the clients. However, there are some cases where the second implementation makes more sense. For example, if the cache is being used for very large files, a low cache hit percentage would cause the cache buffer to become overwhelmed with cache misses; in this situation it helps to have a large percentage of the total data set (or hot data set) in the cache."  \n  \n	472	0	0	ScalableArchitectureOne
-473	t	In the Graphite system the component *carbon* provides to *webapp* components an access interface to the *buffers* in order to improve the quality of	473	0	0	GraphiteScenarioTacticsOne
-475	t	Consider the following sentence by Melvin Conways, also known as Conway's Law  \n>"organizations which design systems ... are constrained to produce designs which are copies of the communication structures of these organizations"  \n  \n	475	0	0	ArchitectureInfluenceCycleOne
-476	t	Consider the following architectural view of the Adventure Builder system   \n![image][image]  \n According to this view the stakeholders can see that the Adventure Builder system	476	0	0	AdventureBuilderOne
-477	t	Frank Buschmann cites the characterization Marquardt does of Performitis:  \n>"Each part of the system is directly influenced by local performance tuning measures. There is no global performance strategy, or it ignores other qualities of the system as testability and maintainability."  \n  \nFrom this problem you can conclude that:	477	0	0	RequirementsOne
-480	t	Consider the Figure that describes the use of caches in web services.   \n![image][image]  \n In that Figure, there is a rectangle with the name *Cache* within another rectangle with the name *Request Node*. Taking into account the description made in the text and the goal of that Figure, those rectangles correspond to which type of software elements?	480	0	0	ModuleComponentOne
-557	t	Suppose that after designing a successful architecture for a particular client the software house management decides to create a cross-functional internal department to start providing products for this particular segment of the market.	557	0	0	ArchitecturalInfluenceCycle
-514	t	In the Continous integration case study can be read about future features for Pony-Build  \n>"Currently, each continuous integration system reinvents the wheel by providing its own build configuration language, which is manifestly ridiculous; there are fewer than a dozen commonly used build systems, and probably only a few dozen test runners. Nonetheless, each CI system has a new and different way of specifying the build and test commands to be run. In fact, this seems to be one of the reasons why so many basically identical CI systems exist: each language and community implements their own configuration system, tailored to their own build and test systems, and then layers on the same set of features above that system. Therefore, building a domain-specific language (DSL) capable of representing the options used by the few dozen commonly used build and test tool chains would go a long way toward simplifying the CI landscape."  \n  \nSuppose that you are the architect that has to change the architecture to accomodate this new feature. Therefore, as an architect	514	0	0	ContinousIntegrationViewsTwo
-126	t	The MediaWiki system tries to enforce a reliability criteria that all the changes done by a writer are consistently visualized in her subsequent reads	126	0	0	MWReliabilityTacticsINGLES
-127	t	The MediaWiki system tries to guarantee a reliability criteria where all information is available to be read by any reader in less than 30 seconds after being written. To achieve this criteria the load balancer	127	0	0	MWReliabilityReadsImplementationINGLES
-128	t	Consider the following fragment of the MediaWiki system description:  \n*To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs.*  \nThe *ResourceLoader* implements a tactic	128	0	0	MWResourceLoaderTacticINGLES
-129	t	In Chrome, to accomplish the security quality, the Browser Process implements a tactic	129	0	0	CHSecurityQualityINGLES
-130	t	In Chrome it is possible to associate a Renderer Process to each Tab, which results in the increase of performance due to a tactic of	130	0	0	CHPerformanceQualityINGLES
-352	t	Consider an architecturally significant requirement (ASR) that has a high impact on the architecture but a low business value	352	0	0	HighBusinessValue
-606	t	When describing their system people refer to a part of it as containing a database server. Applying the component-and-connector styles learned in the course we can say that this system uses	606	0	0	CCStyleOne
-337	t	Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.	337	0	0	Degradation
-790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
-518	t	Consider the following excerpt about the Amazon system  \n>"Mainly, I think service orientation has helped us there. The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats. You could dictate a rigorous single format, but that would not be realistic if you are in Amazon's platform business. We have to make sure that the platform can be extended by our customers to meet their needs."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	518	0	0	AmazonTwo
-519	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study  \n>"Employing such a strategy maximizes data locality for the requests, which can result in decreased request latency. For example, let's say a bunch of nodes request parts of B: partB1, partB2, etc. We can set up our proxy to recognize the spatial locality of the individual requests, collapsing them into a single request and returning only bigB, greatly minimizing the reads from the data origin."  \n  \nThe quality that is achieved with this tactic is	519	0	0	ScalableArchitectureTwo
-523	t	The architecturally significant requirements are important in the process of creating the software architecture for a system because they are	523	0	0	RequirementsTwo
-525	t	Consider the following architectural view of the Adventure Builder system   \n![image][image]  \n In this component-and-connector view the interactions the interactions between components follow the architectural style(s)	525	0	0	AdventureBuilderTwo
-526	t	Which of the following phrases best describe the relationship between modules and components?	526	0	0	ModuleComponentTwo
-527	t	General scenarios play an important role in the development of a software architecture because	527	0	0	ScenariosTacticsTwo
-528	t	Suppose that in the process of designing a system's software architecture you come to the conclusion that there are uses relations in both directions in almost all of the system's modules. This means that	528	0	0	UsesGeneralizationTwo
-531	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MTA and the servers IMAP and POP?	531	0	0	RepositoryClientServerTwo
-131	t	In the description of the Chrome case you can read:  \n*On Android devices, Chrome leverages the same multi-process architecture as the desktop version - there is a browser process, and one or more renderer processes. The one difference is that due to memory constraints of the mobile device, Chrome may not be able to run a dedicated renderer for each open tab. Instead, Chrome determines the optimal number of renderer processes based on available memory, and other constraints of the device, and shares the renderer process between the multiple tabs.*  \nThis description can be represented by a view of viewtype Component-and-Connector using the architectural style	131	0	0	CHMobilityArchitecturalStyleINGLES
-132	t	An advantage of Chrome when compared with Amazon Silk is	132	0	0	CHAmazonSilkTwoEN
-133	t	One of the qualities of Chrome is the execution of the JavaScript code inside a process, which allows the isolation against possible interferences between the execution of JavaScript programs that are loaded from different sites. The isolation level	133	0	0	CHSecurityLevelEN
-134	t	In the description of the Chrome case study you can read:  \n*Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.*  \nThis description refers to	134	0	0	CHOmniboxTacticsEN
-135	t	Consider the following fragment of GNU Mailman  \n*In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called __dict__. So saving a mailing list object then is simply a matter of pickling its __dict__ to a file, and loading it just involves reading the pickle from the file and reconstituting its __dict__.*  \nAlthough simple, this solution resulted in several problems which had a negative impact on performance. This is due to:	135	0	0	GMPicklePerformanceEN
-382	t	The Service-Oriented Architecture style	382	0	0	SOAClientServerPeertoPeer
-383	t	Consider the following application-specific types that were defined for a component-and-connector view that depicts the components within `Carbon` component.   \n![image][image]  \n	383	0	0	GraphiteCarbon
-387	t	The Service-Oriented Architecture style improves modifiability because	387	0	0	SOAQualities
-532	t	Consider the following excerpt from the tutorial on the Hadoop MapReduce:  \n>"Hadoop MapReduce is a software framework for easily writing applications which process vast amounts of data (multi-terabyte data-sets) in-parallel on large clusters (thousands of nodes) of commodity hardware in a reliable, fault-tolerant manner. A MapReduce job usually splits the input data-set into independent chunks which are processed by the map tasks in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the reduce tasks. Typically both the input and the output of the job are stored in a file-system. The framework takes care of scheduling tasks, monitoring them and re-executes the failed tasks."  \n  \nWhich architectural style of the component-and-connector viewtype is more adequate to describe how the MapReduce works, taking into account its main advantages in solving a problem?	532	0	0	TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo
-533	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	533	0	0	AvailabilityTwo
-751	t	Consider the following modifiability scenario  \n>"The effort necessary to successfully port the system to execute in a new browser should not be higher than 5 person/month."  \n  \n	751	0	0	ModifiabilityScenario
-607	t	In the Continuous Integration case study can be read  \n>"The space of architectures for continuous integration systems seems to be dominated by two extremes: master/slave architectures, in which a central server directs and controls remote builds; and reporting architectures, in which a central server aggregates build reports contributed by clients. All of the continuous integration systems of which we are aware have chosen some combination of features from these two architectures."  \n  \nThe tactic that is referred in both architectures is	607	0	0	ContinuousIntegrationOne
-608	t	Consider the Decomposition architectural style of the Module viewtype	608	0	0	ModuleViewtypeOne
-136	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed:	136	0	0	GMRestModularityEN
-137	t	Consider the following fragment of GNU Mailman case study:  \n*Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.*  \nThe Pipes-and-Filters architectural style is used in the handling of messages. In this context the data type which is sent among the filters is	137	0	0	GMPipesFiltersDataEN
-139	t	The function of Master Runner component of GNU Mailman can be represented using an architecture style of	139	0	0	GMMasterRunnerEN
-163	t	In some situations Chrome prerenders a page. To do it	163	0	0	CHPrerenderTacticsEN
-165	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed increased interoperability because	165	0	0	GMRestInteroperabilityEN
-168	t	Consider the following transcription of the GNU Mailman system:  \n*...Mailman supports running more than one runner process per queue directory...*  \nIt has the goal to support	168	0	0	GMPerformanceEN
-172	t	In the Fénix first architecture it was common programmers forget to lock objects in the context of transactions. A solution for this problem can be architecturally described using a view of the architectural style	172	0	0	FenixOneEN
 223	t	An email client such as Mozilla's Thunderbird or Microsoft's Outlook allows a user both to read the emails that were sent to him and to send new emails to other people. To do that, the email client connects to other components (one or more): some of these components keep the user's mailboxes with all the emails that were sent to him, whereas other components know how to forward the emails sent by the user to their final destinations (associated with a new set of destinations). In either case, it is always the email client that makes a request to the other components, but whereas in the first case the email client receives all the information about the user's emails, in the second case only a success or failure error code is returned. The architectural patterns that best describe the interactions between the components from the client to the final destinations	223	0	0	PeerToPeer
+224	t	The software architecture of a system	224	0	0	ArchitectureInfluenceCycle
 225	t	Frank Buschmann, *Introducing the Pragmatic Architect*, defines the *techno-geeks* architects. This kind of architect	225	0	0	TechoGeeks
 227	t	Consider the following scenario  \n>"Our vehicle information system send our current location to the traffic monitoring system. The traffic monitoring system combines our location with other information, overlays this information on a Google Map, and broadcasts it. Our location information is correctly included with a probability of 99.99%."  \n  \n	227	0	0	Scenario
-453	t	With the evolution of the web application technologies, it is now possible to develop web applications with a user interface similar to the interface of desktop applications. Yet, for this to happen, part of the code that was executing in the web server is now executing in the web browser. How does this change manifests in the software architecture of the system?	453	0	0	WebTwoOne
-454	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	454	0	0	MicroservicesArchitectureOne
-609	t	The Infinispan system can be used as a library, in which case it is embedded into a Java application, or as a server, in which case it is a remote data grid.	609	0	0	InfinispanOne
-797	t	An architectural tactic for a system describes	797	0	0	ArchitecturalTactics
-628	t	Consider the shared-data style. Which of the following qualities does it support?	628	0	0	CCStyleThree
-629	t	In the Continuous Integration case study can be read  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools."  \n  \nThe referred quality is	629	0	0	ContinuousIntegrationThree
-636	t	Consider the following distinction between Monoliths and Microservices made by Matin Fowler   \n![image][image]  \n If we try to map this figure into a set of views we will need.	636	0	0	MicroAndAmazonOne
-638	t	Consider the Infinispan system when it is configured as a remote data grid. The relation between the Applications and the Grid is	638	0	0	InfinispanOne
-639	t	Consider the following representation of the Buildbot system.   \n![image][image]  \n The architecture style between the Buildbot Master and the Clients is:	639	0	0	JenkinsOne
-646	t	In the description of Infinispan system can be read  \n>"Infinispan supports several pluggable cache stores-adapters that can be used to persist data to disk or any form of secondary storage. The current default implementation is a simplistic hash bucket and linked list implementation, where each hash bucket is represented by a file on the filesystem. While easy to use and configure, this isn't the best-performing implementation."  \n  \nThe architectural style(s) that should be used to illustrate the sentence is (are)	646	0	0	InfinispanTwo
-517	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	517	0	0	MicroservicesArchitectureTwo
-649	t	In the Continuous Integration case can be read  \n>"Build notification: The outcomes of builds generally need to be communicated to interested clients, either via pull (Web, RSS, RPC, etc.) or push notification (e-mail, Twitter, etc.) This can include notification of all builds, or only failed builds, or builds that haven't been executed within a certain period."  \n  \nThe architectural style used in push notifications is	649	0	0	JenkinsTwo
-650	t	Consider the following representation of Amazon's architecture (sorry for the figure's layout: **save trees**)   \n![image][image]  \n What is the most relevant architecture style that is used in this figure?	650	0	0	MicroAndAmazonTwo
-656	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	656	0	0	MicroAndAmazonThree
-657	t	Consider the following representation of the CDash system   \n![image][image]  \n The architecture style between the Dashboard and the Clients is:	657	0	0	JenkinsThree
 229	t	Consider the architectural views for the SocialCalc system. In the case description can be read:  \n>"The save format is in standard MIME multipart/mixed format, consisting of four text/plain; charset=UTF-8 parts, each part containing  \n-delimited text with colon-delimited data fields. The parts are... This format is designed to be human-readable, as well as being relatively easy to generate programmatically. This makes it possible for Drupal's Sheetnode plugin to use PHP to convert between this format and other popular spreadsheet formats, such as Excel (.xls) and OpenDocument (.ods)."  \n  \nFrom the above excerpt can be inferred the need to have	229	0	0	SocialCalcView
 230	t	The architectural style that best represents the runtime execution of a system Git installed for a small group of developers is	230	0	0	GitViews
 231	t	In the OrderPad system they have decided to use a Row Data Gateway data access pattern because	231	0	0	OrderPad
@@ -25139,27 +25074,37 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 233	t	In EtherCalc initial prototype clients send their local commands and snapshots to the server, which result on redundant information on the server about the state of the spreadsheet. This redundancy is an application of	233	0	0	EtherCalcRedundancy
 234	t	In EtherCalc initial prototype clients send their local commands, cursor movements and snapshots to the server.	234	0	0	EtherCalcSnapshotPerformance
 235	t	In the EtherCalc case description can be read  \n>"The in-browser SocialCalc engine is written in JavaScript. We considered translating that logic into Perl, but that would have carried the steep cost of maintaining two code bases."  \n  \nThe excerpt is referring to a quality of	235	0	0	EtherCalcModifiabilityTestability
+287	t	You have to develop an application that collects news from different web sources and process that information to present a digest to the application users. The different sources provide similar information through different interfaces (APIs). Additionally, the new sources may change the interfaces, for instance to enhance their service. Which architectural style can be used to represent this requirements?	287	0	0	GeneralizationInterfaces
+272	t	Compared to the Transaction Script pattern, the Domain Logic pattern has a higher initial cost of adoption. That is, it is harder to start with the Domain Logic pattern than with the Transaction Script pattern. The reason for this is that the Domain Logic pattern	272	0	0	TransactionScript
 273	t	Ruby on Rails is a popular full-stack framework for building web applications. One of the elements of this framework is the **model**, which is described in the Rails documentation in the following way:  \n>"A model represents the information (data) of the application and the rules to manipulate that data. In the case of Rails, models are primarily used for managing the rules of interaction with a corresponding database table. In most cases, one table in your database will correspond to one model in your application. The bulk of your application's business logic will be concentrated in the models."  \n  \nGiven this description, the Rails' model is best described as an instance of	273	0	0	ActiveRecordRuby
 275	t	Ping-and-echo and Heartbeat are two availability tactics to detect faults.	275	0	0	AvailabilityPingEchoHeartbeat
 276	t	Consider that when designing the architecture of a web application, the architect intends to guarantee of the confidentiality of persistent data in face of an attack from a system administrator.	276	0	0	SecurityDatabase
-306	t	Frank Buschmann states that:  \n>"Overly flexible systems are hard to configure, and when they're finally configured, they lack qualities like performance or security."  \n  \n	306	0	0	Flexibilitis
-307	t	In his article, *Featuritis, Performitis, and Other Deseases*, Frank Buschmann claims that:	307	0	0	FeaturitisPerformitisFlexibilities
-308	t	In wikipedia you can find the following fragment of a definition:  \n>"An individual software component is a software package, or a module that encapsulates a set of related functions."  \n  \nAccording to the definitions taught in the course the above *individual software component* corresponds to:	308	0	0	ComponentvsModule
-310	t	Frank Buschmann, *Introducing the Pragmatic Architect*, defines the *architecture astronauts*. This kind of architect	310	0	0	ArchitectAstronauts
-311	t	Frank Buschmann states that:  \n>"There's only one escape from such situations: architects must actively break the cycle of mutual misunderstanding and mistrust!"  \n  \n	311	0	0	Explicit
-312	t	The *Walking Skeleton* referred in Frank Buschmann's article, *Featuritis, Performitis, and Other Deseases*:	312	0	0	WalkingSkeleton
-313	t	In the Java documentation you can find:  \n>"`public abstract class Component`\\*`extends Object`\\*`implements ImageObserver, MenuContainer, Serializable`"  \n  \nClass `Component` is:	313	0	0	ComponentvsModuleTwo
-315	t	Frank Buschmann, *Introducing the Pragmatic Architect*, defines the *architecture dwarves*. These kind of architects	315	0	0	ArchitectDwarves
+278	t	In the description of the ThousandParsec case study can be read:  \n>"The Thousand Parsec Component Language (TPCL) exists to allow clients to create designs locally without server interaction - allowing for instant feedback about the properties, makeup, and validity of the designs."  \n  \nFrom this sentence can be written	278	0	0	ThousandParsecScenario
+279	t	In the description of GitHub case study can be read  \n>"Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of fileservers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD."  \n  \nIn this description we can find the application of tactics like	279	0	0	GitTactic
+280	t	Views of the module viewtype can be used to support requirements traceability analysis, determine how the functional requirements of a system are supported. This is represented by	280	0	0	ModuleTraceability
+281	t	Assuming that you were asked to document the software architecture of an existing (and already developed) system, the best thing for you to do would be	281	0	0	ArchitectureKnowledge
+282	t	Ralph Johnson says that  \n>"Architecture is the decisions that you wish you could get right early in a project."  \n  \nThis sentence reflects the fact that	282	0	0	ArchitectureEvolution
+283	t	Marquardt characterizes performitis as:  \n>"Each part of the system is directly influenced by local performance tuning measures. There is no global performance strategy, or it ignores other qualities of the system such as testability and maintainability."  \n  \nThis means that	283	0	0	Performitis
+284	t	The software architecture of a system is usually represented through several views because we need to	284	0	0	ArchitecturalViews
+285	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecturally significant requirements*. These architecturally significant requirements should be sorted according to their importance for the system's stakeholders because	285	0	0	ArchitecturallySignificantRequirements
+286	t	On the web page of Memcached can be read:  \n>"..., high-performance, distributed memory object caching system, generic in nature, but intended for use in speeding up dynamic web applications by alleviating database load."  \n  \nAccording to this information, Memcached is	286	0	0	ModueComponent
+288	t	When designing the architecture for a system the architect realises that most of the modules have bidirectional uses relationships. This has impact on	288	0	0	UsesIncremental
+289	t	In the description of EtherCalc case study can be read  \n>"Because all jsdom code runs in a single thread, subsequent REST API calls are blocked until the previous command's rendering completes. Under high concurrency, this queue eventually triggered a latent bug that ultimately resulted in server lock-up."  \n  \nThe above sentence is related to a quality for	289	0	0	EtherCalcPerformance
+290	t	In the description of EtherCalc case study can be read  \n>"So, we removed jsdom from the RenderSheet function, re-implemented a minimal DOM in 20 lines of LiveScript for HTML export, then ran the profiler again. Much better! We have improved throughput by a factor of 4, HTML exporting is 20 times faster, and the lock-up problem is gone."  \n  \nThe above sentence describes a	290	0	0	EtherCalcTactic
+291	t	In the description of EtherCalc case study can be read how the architect tried to increase the performance in a multi-core context  \n>"Is there a way to make use of all those spare CPUs in the multi-tenant server? For other Node.js services running on multi-core hosts, we utilized a pre-forking cluster server that creates a process for each CPU. However, while EtherCalc does support multi-server scaling with Redis, the interplay of Socket.io clustering with RedisStore in a single server would have massively complicated the logic, making debugging much more difficult."  \n  \nThis possible solution has impact on the	291	0	0	EtherCalcTestability
+293	t	In the description of EtherCalc case study can be read how the architect increased the performance in a multi-core context  \n>"Instead of pre-forking a fixed number of processes, we sought a way to create one background thread for each server-side spreadsheet, thereby distributing the work of command execution among all CPU cores."  \n  \nWhich is represented by the diagram  \n  \n![image][image]  \n The above diagram, describing a server spreadsheet, can be represented using	293	0	0	EtherCalcViews
+294	t	To increase the availability of a web application it is possible to use a load-balancer between the clients and the servers that detects server failures and transparently redirects the requests to the servers that are functioning properly. To represent this architecture	294	0	0	LoadBalancer
+295	t	One way to increase the performance of a 3-tier enterprise application (with the standard separation in the web client, web server, and database tiers) is to replicate the web server tier and to add a load-balancer between the web clients and the web servers. Unfortunately, for some enterprise applications that option is not enough (or does not work at all), because	295	0	0	ThreeTiers
+298	t	In the description of ThousandParsec case study can be read  \n>"The flagship server, tpserver-cpp, provides an abstract persistence interface and a modular plugin system to allow for various database back ends."  \n  \nThis above sentence can be diagrammatically represented using	298	0	0	ThousandParsecPersistence
+299	t	Consider the (partial) component-and-connector view for the :SpreasdSheet component of the SocialCalc system   \n![image][image]  \n The sub1 port	299	0	0	SocialCalcBroadcastEvents
+300	t	In the description of GitHub case study can be read  \n>"For requests to the main website, the load balancer ships your request off to one of the four frontend machines. Each of these is an 8 core, 16GB RAM bare metal server. Their names are fe1, ..., fe4. Nginx accepts the connection and sends it to a Unix domain socket upon which sixteen Unicorn worker processes are selecting. One of these workers grabs the request and runs the Rails code necessary to fulfill it."  \n  \nTo represent the above description it is necessary to use	300	0	0	GitHubViews
 319	t	The quality(ies) that is(are) more relevant to views of the component-and-connector viewtype is(are):	319	0	0	ComponentViewType
 320	t	The *Ensuring that the implementation conforms to the architecture* step of how to create an architecture	320	0	0	CreateArchitectureTwo
 321	t	Consider the following scenario  \n>"When writing to the database the system receives an exception about a write failure. The system should stop interacting with data base and write a log message."  \n  \nThe quality addressed by this scenario is	321	0	0	AvailabilityScenario
+322	t	A heartbeat monitor	322	0	0	PingEcho
 323	t	Human-editable URL API for creating graphs is a usability design tactic used in the Graphite system. This tactic	323	0	0	GraphiteTechnicaAndNonTechnicalUsers
 324	t	Having a single point of access to an intranet is a security tactic of	324	0	0	Firewall
 326	t	In a quality scenario	326	0	0	Scenario
-513	t	In Nginx, given that a *worker* processes various requests during its life, how does it do it?	513	0	0	nginxTwo
-660	t	In the description of Infinispan system can be read  \n>"When dealing with thread pools to process such asynchronous tasks, there is always a context switching overhead. That threads are not cheap resources is also noteworthy. Allocating appropriately sized and configured thread pools is important to any installation making use of any of the asynchronous features of Infinispan."  \n  \nThe architectural style that should be used to illustrate the sentence is	660	0	0	InfinispanThree
-1081	t	The quality that is more relevant to views of the module viewtype is:	1081	0	0	ModuleViewTypeOne
-696	t	The Chromium is a web browser that introduced an innovative architecture. In the Chromium description we can read:  \n>"We use separate processes for browser tabs to protect the overall application from bugs and glitches in the rendering engine. We also restrict access from each rendering engine process to others and to the rest of the system. In some ways, this brings to web browsing the benefits that memory protection and access control brought to operating systems. We refer to the main process that runs the UI and manages tab and plugin processes as the "browser process" or "browser." Likewise, the tab-specific processes are called "render processes" or "renderers." The renderers use the WebKit open-source layout engine for interpreting and laying out HTML."  \n  \nWhich architectural style should we use to represent this aspect of Chromium?	696	0	0	ArqChrome
 328	t	In the Graphite system description can be read:  \n>"We've got 600,000 metrics that update every minute and we're assuming our storage can only keep up with 60,000 write operations per minute. This means we will have approximately 10 minutes worth of data sitting in carbon's queues at any given time. To a user this means that the graphs they request from the Graphite webapp will be missing the most recent 10 minutes of data."  \n  \n	328	0	0	GraphiteReliability
 329	t	In the Fenix system a checksum is associated to a set of grades. This is an application of the tactic	329	0	0	VerifyMessageIntegrity
 330	t	In the Chrome system the following tactic is used to improve performance	330	0	0	ChromePerformance
@@ -25167,26 +25112,22 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 332	t	In wikipedia you can find the following definition:  \n>"The garbage collector, or just collector, attempts to reclaim garbage, or memory occupied by objects that are no longer in use by the program."  \n  \nThe garbage collector is a component that implements an availability tactic of	332	0	0	GarbageCollector
 333	t	To reduce the backend load (writes) the Graphite system uses	333	0	0	GraphiteBackend
 334	t	In a system where there are sensitive data an appropriate tactic to be used is	334	0	0	SeparateEntities
-546	t	A general scenario for a quality attribute	546	0	0	GeneralScenario
-697	t	Consider that a software development team uses an agile methodology such as XP (Extreme Programming), where no documentation is produced. Then, the systems developed by that team	697	0	0	SoftwareArchitectureOne
-699	t	Consider the following scenario  \n>"If one of the application servers fails to respond when the system is in its normal operation state, the load balancer should redirect requests to another application server."  \n  \n	699	0	0	AvailabilityScenarioOne
-708	t	Consider the following description of the behavior of Twitter ingestion mechanisms  \n>"Write. when a tweet comes in there's an O(n) process to write to Redis clusters, where n is the number of people following you. Painful for Lady Gaga and Barack Obama where they are doing 10s of millions of inserts across the cluster. All the Redis clusters are backing disk, the Flock cluster stores the user timeline to disk, but usually timelines are found in RAM in the Redis cluster."  \n  \n	708	0	0	TwitterOne
-709	t	Consider the following description of the behavior of Twitter  \n>"Solution is a write based fanout approach. Do a lot of processing when tweets arrive to figure out where tweets should go. This makes read time access fast and easy. Don't do any computation on reads. With all the work being performed on the write path ingest rates are slower than the read path, on the order of 4000 QPS."  \n  \nTo describe the performance quality of this behavior, and considering that the number of reads is much higher than the number of writes, we need to have a view that includes	709	0	0	TwitterThree
-711	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	711	0	0	MicroAndAmazonThree
-714	t	One of the key requirements for the HDFS system is that the data stored in the system remains available, even in the presence of various types of failures (non simultaneous) in the hardware in which the system executes. To show that the system satisfies this requirement	714	0	0	HadoopDisponibilidadeDadosINGLES
-716	t	The documentation of the software architecture for a system is often composed of several views, because	716	0	0	SecondEEEN
-768	t	Suppose that you are developing a software architecture for a new large scale system and that you intend to resort extensively to third party subcontractors for the development of various parts of the system. Which architectural styles are most useful to plan the development of the system in this case?	768	0	0	SubcontractorsINGLES
-765	t	Consider the following description of the behavior of Twitter ingestion mechanisms  \n>"Write. when a tweet comes in there's an O(n) process to write to Redis clusters, where n is the number of people following you. Painful for Lady Gaga and Barack Obama where they are doing 10s of millions of inserts across the cluster. All the Redis clusters are backing disk, the Flock cluster stores the user timeline to disk, but usually timelines are found in RAM in the Redis cluster."  \n  \nThe view that represents this behavior should be of the	765	0	0	TwitterFour
-752	t	The main tactic associated with the aspects architectural style is:	752	0	0	AspectsTactics
 335	t	In the description of the Chrome system can be read  \n>"As the user types, the Omnibox automatically proposes an action, which is either a URL based on your navigation history, or a search query."  \n  \nThe above sentence refers to	335	0	0	ChromeUsability
 336	t	An architectural tactic	336	0	0	Tactics
-380	t	According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.	380	0	0	LayeredVirtualMachine
+337	t	Consider a enterprise web system, which provides services both on the company's intranet and to the company's clients on the internet, that when under a denial of service attack decides to stop providing internet services.	337	0	0	Degradation
 338	t	In the Graphite system description can be read:  \n>"Making multiple Graphite servers appear to be a single system from a user perspective isn't terribly difficult, at least for a naive implementation."  \n  \n	338	0	0	GraphiteModifiability
 339	t	In a system where the source of attacks can be internal, from authorized users, the appropriate tactics to be used are	339	0	0	InternalAttack
 343	t	In the description of the SocialCalc case study can be read:  \n>"Even with race conditions resolved, it is still suboptimal to accidentally overwrite the cell another user is currently editing. A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on."  \n  \nFrom this fragment can be identified a scenario for	343	0	0	SocialCalcUsability
 344	t	In the description of the Thousand Parsec case study can be read:  \n>"Finding a public Thousand Parsec server to play on is much like locating a lone stealth scout in deep space - a daunting prospect if one doesn't know where to look. Fortunately, public servers can announce themselves to a metaserver, whose location, as a central hub, should ideally be well-known to players."  \n  \nFrom this fragment can be identified a scenario for	344	0	0	ThounsandParsecInteroperability
 346	t	In the context of the FenixEdu case study the following scenario was identified.  \n>"The school management pretends that all the members of the school, students, administrative staff, faculty and management should be able to use the system to perform their activities efficiently without requiring the installation of any client software or a long learning process."  \n  \nThis is a	346	0	0	BusinessScenarioOne
 348	t	In the description of the SocialCalc case study can be read:  \n>"To make this work across browsers and operating systems, we use the Web::Hippie4 framework, a high-level abstraction of JSON-over-WebSocket with convenient jQuery bindings."  \n  \nFrom this fragment can be identified a scenario for	348	0	0	SocialCalcModifiability
+349	t	In the description of the Thousand Parsec case study can be read:  \n>"Next, the player is prompted to configure options for the ruleset and server, with sane defaults pulled from the metadata. Finally, if any compatible AI clients are installed, the player is prompted to configure one or more of them to play against."  \n  \nThe tactic referred in the fragments is	349	0	0	ThounsandParsecSystemInitiative
+350	t	A criteria for the the application of the Decomposition architectural style of the Module viewtype is Build-vs-Buy decisions. The application of the criteria	350	0	0	DecompositionBuilvsBuy
+351	t	A utility tree	351	0	0	UtilityTree
+352	t	Consider an architecturally significant requirement (ASR) that has a high impact on the architecture but a low business value	352	0	0	HighBusinessValue
+353	t	In the description of the SocialCalc case study can be read:  \n>"If users A and B simultaneously perform an operation affecting the same cells, then receive and execute commands broadcast from the other user, they will end up in different states."  \n  \nFrom this fragment can be identified a scenario for	353	0	0	SocialCalcAvailability
+354	t	In the description of the Thousand Parsec case study can be read:  \n>"Turns also have a time limit imposed by the server, so that slow or unresponsive players cannot hold up a game."  \n  \nFrom this fragment can be identified a scenario for	354	0	0	ThounsandParsecAvailability
+356	t	In the context of the FenixEdu case study the following scenario was identified.  \n>"The management intends that the system should be available to all users, even after offices close and classes finish because students may need courses material to study 24X7 and faculty and administrative staff may want to work from home."  \n  \nThis is a	356	0	0	BusinessScenarioTwo
 359	t	In the description of the Thousand Parsec case study can be read:  \n>"Besides often running far longer than the circadian rhythms of the players' species, during this extended period the server process might be prematurely terminated for any number of reasons. To allow players to pick up a game where they left off, Thousand Parsec servers provide persistence by storing the entire state of the universe (or even multiple universes) in a database."  \n  \nThe tactic referred in the fragments is	359	0	0	ThounsandParsecRollback
 361	t	Consider a view of the module viewtype where there is a uses loop, a cycle of uses dependences between several modules. It may be possible to break the dependence cycle by	361	0	0	UsesCycles
 363	t	In the description of the GitHub case study can be read:  \n>"Of course, allowing arbitrary execution of commands is unsafe, so SSH includes the ability to restrict what commands can be executed. In a very simple case, you can restrict execution to git-shell which is included with Git. All this script does is check the command that you're trying to execute and ensure that it's one of git upload-pack, git receive-pack, or git upload-archive."  \n  \nThe tactic addressed in this fragments is:	363	0	0	GitHubSecurity
@@ -25197,83 +25138,88 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 370	t	In the client-server architectural style the request/reply connector is synchronous. Consider an architect that wants to describe an asynchronous interaction between clients and servers.	370	0	0	ClientServerSynchronous
 371	t	The Uses architectural style of the Module viewtype	371	0	0	UsesFor
 372	t	A CRUD matrix, which indicates whether each module creates, reads, updates, or deletes data (CRUD, for short) from each data entity. The CRUD matrix	372	0	0	UsesDataModel
-753	t	In the HDFS system, in the stakeholders perspective, the use of low cost servers to build the clusters is:	753	0	0	HadoopStakeholdersEurosINGLES
-764	t	Consider the following description of the behavior of Twitter  \n>"Solution is a write based fanout approach. Do a lot of processing when tweets arrive to figure out where tweets should go. This makes read time access fast and easy. Don't do any computation on reads. With all the work being performed on the write path ingest rates are slower than the read path, on the order of 4000 QPS."  \n  \nTo describe this behavior we need to	764	0	0	TwitterTwo
-767	t	When designing an architecture requirements can be split into functional, quality attributes, and constraints. Functional requirements have impact on:	767	0	0	FunctionalModule
 373	t	In the description of the GitHub case study can be read:  \n>"Once the Smoke proxy has determined the user's route, it establishes a transparent proxy to the proper file server. We have four pairs of file servers. Their names are fs1a, fs1b, ..., fs4a, fs4b. These are 8 core, 16GB RAM bare metal servers, each with six 300GB 15K RPM SAS drives arranged in RAID 10. At any given time one server in each pair is active and the other is waiting to take over should there be a fatal failure in the master. All repository data is constantly replicated from the master to the slave via DRBD."  \n  \nThe four pairs of file servers implement:	373	0	0	GitHubComputationRedundancy
 374	t	Consider the concepts of module interface and component port.	374	0	0	ComponentPorts
 375	t	The client-server architectural style provides availability because	375	0	0	ClientServerAvailability
 377	t	In the description of the Git case study can be read how to deal with the corruption of pack files in the context of the availability quality:  \n>"If an object was only copied partially or another form of data corruption occurred, recalculating the SHA of the current object will identify such corruption."  \n  \nThe tactic addressed in this fragments is:	377	0	0	GitConditionMonitoring
 378	t	The repository architectural style provides modifiability because	378	0	0	RepositoryModifiability
+380	t	According to the definition of the Layered architectural style, each layer represents a grouping of modules that offers a cohesive set of services.	380	0	0	LayeredVirtualMachine
+382	t	The Service-Oriented Architecture style	382	0	0	SOAClientServerPeertoPeer
+383	t	Consider the following application-specific types that were defined for a component-and-connector view that depicts the components within `Carbon` component.   \n![image][image]  \n	383	0	0	GraphiteCarbon
+387	t	The Service-Oriented Architecture style improves modifiability because	387	0	0	SOAQualities
 388	t	Consider the following application-specific types. Note that `Queue` components are within the `Carbon` components. In a view that contains components of these three types   \n![image][image]  \n	388	0	0	GraphiteDataPointSocket
 389	t	An architecture can also be represented by the set of files which contains its modules code. A suitable architectural style to represent this set of files is	389	0	0	ImplementationStyle
 391	t	The Tiers architectural style	391	0	0	Tiers
-401	t	When comparing Amazon Silk with Google Chrome in the context of mobile devices	401	0	0	SilkMobileDevices
-409	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. It can be read in the case description: *A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on.*   \n![image][image]  \n	409	0	0	SocialCalcRemoteCursor
-410	t	When the domain logic is organized using a Transaction Script pattern the domain objects	410	0	0	LogicAccessTransactionScriptDomainObjects
-411	t	When comparing Amazon Silk with Google Chrome in the context of the prediction of pages the user is going to access	411	0	0	SilkPredictor
-412	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a proposal of application-specific types for the architectural components, where the names of the ports are missing. Between the GameClient and GameServer components   \n![image][image]  \n	412	0	0	ThousandParsecTPConnector
-413	t	Consider the architecture of the Morrison's OrderPad. The decision between the use of a Native application or HTML5 on the implementation of the client in the Pad	413	0	0	OrderPadPortability
+393	t	An important stage of the development of any system is its build into the set of executable files. A suitable architectural style which helps on the definition of the build process is	393	0	0	InstallStyle
+395	t	Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.   \n![image][image]  \n	395	0	0	GraphiteDecompositionMemcached
+398	t	Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Buffering is a library used to temporarily store incoming data point.   \n![image][image]  \n	398	0	0	GraphiteDecompositionBuffering
+399	t	An architect needs to show that a security tactic of limit exposure will be effectively provided by the executing system. Therefore, she decides to design	399	0	0	DeploymentStyleLimitExposure
 414	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the system. According to this representation   \n![image][image]  \n	414	0	0	SocialCalcServer
 415	t	When the domain logic is organized using a Transaction Script pattern the most suitable data source patterns are	415	0	0	LogicAccessTransactionScript
+416	t	When comparing Amazon Silk with Google Chrome	416	0	0	SilkCaching
 417	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The AI players should be described   \n![image][image]  \n	417	0	0	ThousandParsecAI
 418	t	Consider the architecture of the Morrison's OrderPad. The final interaction between the OrderPadDatabase component and Mainframe component is supported by	418	0	0	OrderPadMainframeConnector
 419	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A Parser module is used when loading a file   \n![image][image]  \n	419	0	0	SocialCalcParser
 420	t	When the domain logic is organized using a Domain Model pattern the most suitable data source patterns are	420	0	0	LogicAccessDomainModel
-558	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	558	0	0	ImageHostingScalability
-695	t	Consider the following excerpt from the Wikipedia page on *white-box testing*:  \n>"White-box testing is a method of testing software that tests internal structures or workings of an application, as opposed to its functionality. In white-box testing an internal perspective of the system (including the module's code), as well as programming skills, are required and used to design test cases. The tester chooses inputs to exercise paths through the code and determine the appropriate outputs."  \n  \nAssuming that you belong to the team testing a complex system and that you are responsible for performing white box tests on the system, which of the following architectural views of the system would be most useful to you?	695	0	0	WhiteBoxTestingINGLES
-698	t	The requirements impact on how an architecture is designed	698	0	0	RequirementsImpact
-770	t	According to the document that describes nginx:  \n>"nginx's modular architecture generally allows developers to extend the set of web server features without modifying the nginx core. nginx modules come in slightly different incarnations, namely core modules, event modules, phase handlers, protocols, variable handlers, filters, upstreams and load balancers. [...] Event modules provide a particular OS-dependent event notification mechanism like kqueue or epoll. Protocol modules allow nginx to communicate through HTTPS, TLS/SSL, SMTP, POP3 and IMAP."  \n  \nWhich architectural style is more adequate to represent the information presented above?	770	0	0	nginxModuleTypesINGLES
-772	t	Consider the following requirement for availability of the Adventure Builder system  \n>"The Consumer Web site is available to the user 24x7. If an instance of OPC application fails, the fault is detected and the system administrator is notified in 30 seconds; the system continues taking order requests; another OPC instance is automatically created; and data remains in consistent state."  \n  \nIn order to support this quality it is necessary to	772	0	0	AdventureBuilderSix
-773	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"To support iPhone/iPad/Android version with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	773	0	0	DVDCatalogMobile
-778	t	Consider the following representation of a system following a microservices architecture,   \n![image][image]  \n	778	0	0	BoundedContextTwo
-959	t	Consider the following figure that presents an architectural view of an *Image Hosting Application*.   \n![image][image]  \n	959	0	0	ReadsAndWrites
-893	t	Consider the following usability scenario of the Catalog of DVDs case study  \n>"The user intends to have up-to-date info about the movies and the system informs the user that the existing sources have new information about one of his DVDs, which helps to maintain an up-to-date catalog."  \n  \nThe tactic used to fulfill this scenario is	893	0	0	DVDOne
-895	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view provides a solution that uses the following tactic	895	0	0	PulseOne
-896	t	In the description of architecture of the OrderPad case study it can be read that the updates the user does on the OrderPad when it is offline are not lost. This availability quality is achieved through a	896	0	0	OrderPadOne
-899	t	In the software architecture of a system, the Deployment architectural style of the allocation viewtype is best suited for	899	0	0	Deployment
-900	t	Consider a web application that was implemented using three layers: presentation, domain logic, and data access. How are these layers mapped into the components if it is a rich interface application.	900	0	0	WebAppsOne
-933	t	Suppose that you are developing the software architecture of a new system for an organization composed of several organizational units, each one with its own information systems, which have been developed independently of each other over the course of several years and depending on the particular needs of each unit. Your system has the goal of integrating the various existing systems, providing in this way not only a unified view of how the organization works, but also allowing the creation of new processes within the organization that involve more than one unit. Which architectural style is better suited to design such a system?	933	0	0	SOA
-936	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view applies the following architectural styles	936	0	0	PulseTwo
-937	t	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	937	0	0	OrderPadTwo
-938	t	One of the advantages of having views of the module viewtype is that they allow to do a traceability analysis of requirements, how the functional requirements of the system are supported by module responsibilities. The modifiability tactic that is involved in this mapping is	938	0	0	ModuleViewtypeExamTwo
-940	t	Considered the following two views of a system that receive a stream of character and produce the same stream where the characters are alternately uppercase and lowercase.   \n![image][image]  \n	940	0	0	ComponentAndConnectorViewtypeTwo
-946	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"Finding the appropriate context requires the architect to visit many floors of the organization."  \n  \nThis sentence reflects the fact that an architecture is	946	0	0	ElevatorCommon
-947	t	Consider the following scenario for performance  \n>"During the enrollment period the FenixEDU system should be able to completely enroll 5.000 students in less than 30 minutes."  \n  \n	947	0	0	PerformanceSenario
-997	t	A software system is usually described using different architectural views	997	0	0	ArchitecturalViews
-1000	t	Consider the modifiability quality and the cost of change.	1000	0	0	ModifiabilityThree
-1009	t	The Pipe-and-Filter style allows composition of filters	1009	0	0	PipeFilterComposition
+465	t	Suppose that you are designing the software architecture for an enterprise application that has requirements about the maximum response time for a certain type of requests. Moreover, assume that those requests arrive at the system periodically, whereas the remaining requests have an unpredictable frequency. Finally, assume that your system will have a single server that will be executing on a predefined machine with a 12-core AMD processor. To show to the stakeholders that your system satisfies the performance requirements you have to use views of which architectural style?	465	0	0	RepositoryClientServerOne
+451	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nConsider that a scenario is written from the above sentence	451	0	0	ContinousIntegrationScenariosTacticsOne
+452	t	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \n  \nFrom the description we can infer a trade-off between the qualities of	452	0	0	InfinispanScenariosTacticsOne
+453	t	With the evolution of the web application technologies, it is now possible to develop web applications with a user interface similar to the interface of desktop applications. Yet, for this to happen, part of the code that was executing in the web server is now executing in the web browser. How does this change manifests in the software architecture of the system?	453	0	0	WebTwoOne
+454	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	454	0	0	MicroservicesArchitectureOne
+455	t	Consider the following excerpt about the Amazon system  \n>"Over time, this grew into hundreds of services and a number of application servers that aggregate the information from the services. The application that renders the Amazon.com Web pages is one such application server, but so are the applications that serve the Web-services interface, the customer service application, the seller interface, and the many third-party Web sites that run on our platform."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	455	0	0	AmazonOne
+456	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecture significant requirements*. These requirements should be sorted according to their importance for the system's stakeholders because	456	0	0	DesigningArchitectureOne
+460	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to deal with faults of type *omission* in your system, which tactic is more adequate?	460	0	0	AvailabilityOne
+461	t	Consider that an architect needs to design a system which interacts with two external sources of information, and it has to import some of the information to store it in the system's internal database. The stakeholders inform him that it will be necessary to include new sources of information in the future, besides the two already identified, but they cannot precisely define which they are. This changes will occur after the first version of the system is in production. Additionally, the stakeholders define a short period of time to integrate a new source of information. Given this requirements the architect should	461	0	0	ModifiabilityOneOne
+462	t	Consider the change in the architecture associated with the use of caches in web services shown in the figure   \n![image][image]  \n That change has the goal and the consequence of, respectively	462	0	0	PerformanceOneOne
+463	t	Consider the following excerpt from Nginx case study  \n>"nginx configuration is kept in a number of plain text files which typically reside in /usr/local/etc/nginx or /etc/nginx. The main configuration file is usually called nginx.conf. To keep it uncluttered, parts of the configuration can be put in separate files which can be automatically included in the main one. However, it should be noted here that nginx does not currently support Apache-style distributed configurations (i.e., .htaccess files). All of the configuration relevant to nginx web server behavior should reside in a centralized set of configuration files."  \n  \nWhen comparing the configuration in Nginx with the configuration in Apache we can say that	463	0	0	NginxScenariosTacticsOne
+464	t	Suppose that there are certain performance requirements for a system, and that you want to show to the stakeholders of the system that the software architecture that you designed meet those requirements. To do this	464	0	0	ComponentConnectorOne
+467	t	Imagine that you want to develop a system that is to be used in email servers, whose goal is to allow changing the emails that are received by the server (for example, to remove potential viruses or URLs linking to phishing sites). The goal is that the server feeds each received email through this system before processing it (e.g., forward it to another server, or store it locally). The system is supposed to be easily modifiable, to support new types of email transformations. Which architectural style is the most adequate to satisfy these requirements?	467	0	0	SOAPipesFiltersOne
+469	t	Web servers implemented in Java, such as the Tomcat web server, typically use a thread-based model for processing requests. That is, they process each request on a different thread within the same JVM process, rather than on a different process. One of the reasons for this is that	469	0	0	nginxOne
+470	t	Consider the following architectural view of the Pony-Build system as described in the Continous integration case study   \n![image][image]  \n According to this view the quality of performance is achieved through	470	0	0	ContinousIntegrationViewsOne
+471	t	In the Infinispan case study can be read  \n>"Infinispan's core data structures make use of software transactional memory techniques for concurrent access to shared data. This minimizes the need for explicit locks, mutexes and other forms of synchronization, preferring techniques like compare-and-set operations within a loop to achieve correctness when updating shared data structures. Such techniques have been proven to improve CPU utilization in multi-core and SMP systems, and despite the increased code complexity, has paid off in overall performance when under load."  \n  \nThese properties of Infinispan can be represented by	471	0	0	InfinispanViewsOne
+472	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study about two different possible implementations of a global cache  \n>"The majority of applications leveraging global caches tend to use the first type, where the cache itself manages eviction and fetching data to prevent a flood of requests for the same data from the clients. However, there are some cases where the second implementation makes more sense. For example, if the cache is being used for very large files, a low cache hit percentage would cause the cache buffer to become overwhelmed with cache misses; in this situation it helps to have a large percentage of the total data set (or hot data set) in the cache."  \n  \n	472	0	0	ScalableArchitectureOne
+473	t	In the Graphite system the component *carbon* provides to *webapp* components an access interface to the *buffers* in order to improve the quality of	473	0	0	GraphiteScenarioTacticsOne
+475	t	Consider the following sentence by Melvin Conways, also known as Conway's Law  \n>"organizations which design systems ... are constrained to produce designs which are copies of the communication structures of these organizations"  \n  \n	475	0	0	ArchitectureInfluenceCycleOne
+476	t	Consider the following architectural view of the Adventure Builder system   \n![image][image]  \n According to this view the stakeholders can see that the Adventure Builder system	476	0	0	AdventureBuilderOne
+477	t	Frank Buschmann cites the characterization Marquardt does of Performitis:  \n>"Each part of the system is directly influenced by local performance tuning measures. There is no global performance strategy, or it ignores other qualities of the system as testability and maintainability."  \n  \nFrom this problem you can conclude that:	477	0	0	RequirementsOne
+480	t	Consider the Figure that describes the use of caches in web services.   \n![image][image]  \n In that Figure, there is a rectangle with the name *Cache* within another rectangle with the name *Request Node*. Taking into account the description made in the text and the goal of that Figure, those rectangles correspond to which type of software elements?	480	0	0	ModuleComponentOne
+513	t	In Nginx, given that a *worker* processes various requests during its life, how does it do it?	513	0	0	nginxTwo
+569	t	The definition of software architecture, on the course book, is  \n>"*The software architecture of a system is the set of structures needed to reason about the system, which comprise software elements, relations among them, and properties of both.*"  \n  \nAccording to this definition	569	0	0	ASDefinition
+514	t	In the Continous integration case study can be read about future features for Pony-Build  \n>"Currently, each continuous integration system reinvents the wheel by providing its own build configuration language, which is manifestly ridiculous; there are fewer than a dozen commonly used build systems, and probably only a few dozen test runners. Nonetheless, each CI system has a new and different way of specifying the build and test commands to be run. In fact, this seems to be one of the reasons why so many basically identical CI systems exist: each language and community implements their own configuration system, tailored to their own build and test systems, and then layers on the same set of features above that system. Therefore, building a domain-specific language (DSL) capable of representing the options used by the few dozen commonly used build and test tool chains would go a long way toward simplifying the CI landscape."  \n  \nSuppose that you are the architect that has to change the architecture to accomodate this new feature. Therefore, as an architect	514	0	0	ContinousIntegrationViewsTwo
 515	t	In the Infinispan case study can be read  \n>"Infinispan uses its own serialization scheme, where full class definitions are not written to the stream. Instead, magic numbers are used for known types where each known type is represented by a single byte. This greatly improves not just serialization and de-serialization speed qualities, but also produces a much more compact byte stream for transmission across a network. An externalizer is registered for each known data type, registered against a magic number. This externalizer contains the logic to convert object to bytes and vice versa."  \n  \nThese properties of Infinispan can be represented by	515	0	0	InfinispanViewsTwo
+517	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	517	0	0	MicroservicesArchitectureTwo
+518	t	Consider the following excerpt about the Amazon system  \n>"Mainly, I think service orientation has helped us there. The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats. You could dictate a rigorous single format, but that would not be realistic if you are in Amazon's platform business. We have to make sure that the platform can be extended by our customers to meet their needs."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	518	0	0	AmazonTwo
+519	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study  \n>"Employing such a strategy maximizes data locality for the requests, which can result in decreased request latency. For example, let's say a bunch of nodes request parts of B: partB1, partB2, etc. We can set up our proxy to recognize the spatial locality of the individual requests, collapsing them into a single request and returning only bigB, greatly minimizing the reads from the data origin."  \n  \nThe quality that is achieved with this tactic is	519	0	0	ScalableArchitectureTwo
 522	t	Designing the software architecture for a complex system	522	0	0	ArchitectureInfluenceCycleTwo
+523	t	The architecturally significant requirements are important in the process of creating the software architecture for a system because they are	523	0	0	RequirementsTwo
+525	t	Consider the following architectural view of the Adventure Builder system   \n![image][image]  \n In this component-and-connector view the interactions the interactions between components follow the architectural style(s)	525	0	0	AdventureBuilderTwo
+526	t	Which of the following phrases best describe the relationship between modules and components?	526	0	0	ModuleComponentTwo
+527	t	General scenarios play an important role in the development of a software architecture because	527	0	0	ScenariosTacticsTwo
+528	t	Suppose that in the process of designing a system's software architecture you come to the conclusion that there are uses relations in both directions in almost all of the system's modules. This means that	528	0	0	UsesGeneralizationTwo
+531	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MTA and the servers IMAP and POP?	531	0	0	RepositoryClientServerTwo
+566	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	566	0	0	ImageHostingReads
+532	t	Consider the following excerpt from the tutorial on the Hadoop MapReduce:  \n>"Hadoop MapReduce is a software framework for easily writing applications which process vast amounts of data (multi-terabyte data-sets) in-parallel on large clusters (thousands of nodes) of commodity hardware in a reliable, fault-tolerant manner. A MapReduce job usually splits the input data-set into independent chunks which are processed by the map tasks in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the reduce tasks. Typically both the input and the output of the job are stored in a file-system. The framework takes care of scheduling tasks, monitoring them and re-executes the failed tasks."  \n  \nWhich architectural style of the component-and-connector viewtype is more adequate to describe how the MapReduce works, taking into account its main advantages in solving a problem?	532	0	0	TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo
+533	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	533	0	0	AvailabilityTwo
 535	t	Web servers typically receive requests from different users concurrently (that is, either different users make requests simultaneously or they make them fast enough that it is not possible for the web server to answer one request from one user before receiving another request from another user). To process all the requests, web servers may use different implementation strategies. Assuming that we want to develop a web server to serve only static pages with more or less the same size to a set of clients on the same LAN network as the server, which of the following strategies would be better?	535	0	0	NginxScenariosTacticsTwo
 536	t	Suppose that in the development of an enterprise application (which needs to access a database) it was decided to use the Hibernate framework to simplify the development of the data access code. Which architectural view is the most adequate to represent this decision?	536	0	0	ModuleViewtypeTwoOne
 537	t	Consider the change in the architecture associated with the use of caches in web services shown in the figure   \n![image][image]  \n Taking into consideration that this change involves adding a server, which has a larger storage capacity than the request Nodes, that change has the impact of	537	0	0	PerformanceTwoOne
 538	t	During the different steps on how to create an architecture, the precise specification of architecture quality attributes is initially relevant to	538	0	0	DesigningArchitectureTwo
 539	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nThe quality of Jenkins that is emphasized in the above sentence is	539	0	0	ContinousIntegrationScenariosTacticsTwo
 540	t	In the Infinispan case study can be read  \n>"Infinispan supports several pluggable cache stores-adapters that can be used to persist data to disk or any form of secondary storage. The current default implementation is a simplistic hash bucket and linked list implementation, where each hash bucket is represented by a file on the filesystem. While easy to use and configure, this isn't the best-performing implementation."  \n  \nThe main architectural quality addressed in the above excerpt is	540	0	0	InfinispanScenariosTacticsTwo
+546	t	A general scenario for a quality attribute	546	0	0	GeneralScenario
 547	t	Considering the availability architectural quality, the tactic of retry	547	0	0	OmissionRetry
 548	t	According to Frank Buschmann in the article *Introducing the Pragmatic Architect*	548	0	0	PragmaticArchitect
 549	t	In his article *Who Needs an Architect?* Martin Fowler refers to the following architecture definition  \n>"*architecture is the set of design decisions that must be made early in a project*"  \n  \n	549	0	0	EarlydDecisions
 550	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	550	0	0	ImageHostingPerformance
+558	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	558	0	0	ImageHostingScalability
+559	t	In his article *Who Needs an Architect?* Martin Fowler refers to the following architecture definition  \n>"*the expert developers working on that project have a shared understanding of the system design*"  \n  \n	559	0	0	SharedUnderstanding
 560	t	In a scenario for interoperability	560	0	0	InteroperabilityStimulus
-566	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	566	0	0	ImageHostingReads
-568	t	Very often, when a software architecture is being designed, conflicting requirements are identified, like between security and availability. The role of the software architect is to	568	0	0	Diplomat
-569	t	The definition of software architecture, on the course book, is  \n>"*The software architecture of a system is the set of structures needed to reason about the system, which comprise software elements, relations among them, and properties of both.*"  \n  \nAccording to this definition	569	0	0	ASDefinition
-570	t	Considering the availability architectural quality and the tactics of active redundancy, passive redundancy, and spare	570	0	0	RestartInRedundancy
 576	t	Consider the following fragment in the description of the nginx case study.  \n>"nginx's configuration system was inspired by Igor Sysoev's experiences with Apache. His main insight was that a scalable configuration system is essential for a web server. The main scaling problem was encountered when maintaining large complicated configurations with lots of virtual servers, directories, locations and datasets. In a relatively big web setup it can be a nightmare if not done properly both at the application level and by the system engineer himself."  \n  \n	576	0	0	NginxOne
 577	t	The Attribute-Driven Design method is characterized by	577	0	0	BusinessToDesignOne
 579	t	Consider the following fragment in the description of the Graphite system:  \n>"The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response."  \n  \n	579	0	0	GraphiteOne
 580	t	The modifiability tactic Use an Intermediary between two modules	580	0	0	ModifiabilityOne
 586	t	In the description of the nginx case study we can read:  \n>"nginx is event-based, so it does not follow Apache's style of spawning new processes or threads for each web page request. The end result is that even as load increases, memory and CPU usage remain manageable. nginx can now deliver tens of thousands of concurrent connections on a server with typical hardware."  \n  \nThe tactic nginx follows to achieve tens of thousands of concurrent connections is	586	0	0	NginxTwo
 587	t	Consider the following scenario: *A system administrator simultaneously launches several instances of the system, each one using a different database, and is able to do it in less than 10 minutes.*	587	0	0	ModifiabilityTwo
-769	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	769	0	0	UsesStyle
-775	t	The Peer-to-Peer architectural style provides high scalability and availability. In the context of a file sharing system	775	0	0	PeerToPeerSpace
-777	t	In world-wide systems like Facebook or Amazon,	777	0	0	WorldWideEN
-967	t	Consider the following figure that presents an architectural view of an *Image Hosting Application*.   \n![image][image]  \n The replication between the Image File Storage *n* and Image File Storage *nb*	967	0	0	DataStorageAvailability
-1027	t	In a layered architecture composed by four layers, where the topmost layer is the layer number 1 and the bottommost layer is the layer number 4, which of the layers is more modifiable?	1027	0	0	LayeredAspectsDataModelOne
-977	t	The *Composer UI* component of Graphite system, described as - *Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL* - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback whenever she clicks on a option. To do so, the architecture needs to include	977	0	0	GraphiteComposerUIPerformance
-980	t	When applying Attribute-Driven Design (ADD) to the FenixEdu system the creation of a view where there are redundant web servers, load balancers and database servers	980	0	0	FenixADD
-987	t	The availability quality can be supported by a voting tactic in order to identify faults of	987	0	0	AvailabilityVotingSecond
 588	t	Consider the following fragment in the description of the Graphite system:  \n>"To avoid this kind of catastrophe, I added several features to carbon including configurable limits on how many data points can be queued and rate-limits on how quickly various whisper operations can be performed. These features can protect carbon from spiraling out of control and instead impose less harsh effects like dropping some data points or refusing to accept more data points. However, proper values for those settings are system-specific and require a fair amount of testing to tune. They are useful but they do not fundamentally solve the problem. For that, we'll need more hardware."  \n  \nThe performance tactics referred in the above description are:	588	0	0	GraphiteTwo
 589	t	Architecturally significant requirements (ASR) are captured in a utility tree where each one of the ASRs are classified in terms of its architectural impact and business value.	589	0	0	BusinessToDesignTwo
 590	t	The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time	590	0	0	PerformanceTwo
@@ -25284,15 +25230,37 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 600	t	Consider the modifiability quality and the cost of change.	600	0	0	ModifiabilityThree
 619	t	In the Continuous Integration case study can be read  \n>"External resource coordination: Integration tests may depend on non-local resources such as a staging database or a remote web service. The CI system may therefore need to coordinate builds between multiple machines to organize access to these resources."  \n  \nThe referred tactic is	619	0	0	ContinuousIntegrationTwo
 620	t	In the Infinispan case study can be read  \n>"This allows applications to theoretically address an unlimited amount of in-memory storage as nodes are added to the cluster, increasing overall capacity."  \n  \nThe quality that is referred is	620	0	0	InfinispanTwo
+626	t	Consider the two following views   \n![image][image]  \n	626	0	0	ComponentAndConnectorThree
 627	t	In the Infinispan case study can be read  \n>"Before putting data on the network, application objects need to be serialized into bytes so that they can be pushed across a network, into the grid, and then again between peers. The bytes then need to be de-serialized back into application objects, when read by the application. In most common configurations, about 20% of the time spent in processing a request is spent in serialization and de-serialization."  \n  \nThe above description can motivate a scenario for	627	0	0	InfinispanThree
-701	t	Consider the following fragment of the *MediaWiki* system description:  \n*To optimize the delivery of JavaScript and CSS assets, the ResourceLoader module was developed to optimize delivery of JS and CSS. Started in 2009, it was completed in 2011 and has been a core feature of MediaWiki since version 1.17. ResourceLoader works by loading JS and CSS assets on demand, thus reducing loading and parsing time when features are unused, for example by older browsers. It also minifies the code, groups resources to save requests, and can embed images as data URIs*  \nThe *ResourceLoader* supports a quality	701	0	0	MWResourceLoaderTacticEEEN
-702	t	In which performance tactic it may occur that not all the inputs are processed	702	0	0	PerfomanceTacticOne
-703	t	Several of the cases studied in this course had scalability requirements. That means that those systems should be designed in such a way that they	703	0	0	ScalabilityINGLES
-705	t	Consider the following architectural view of the Adventure Builder system, designed around the Order Processing Center   \n![image][image]  \n The views **does not** use the architectural style	705	0	0	AdventureBuilderThree
-706	t	Consider the following requirement for availability of the Adventure Builder system  \n>"The Consumer Web site sent a purchase order request to the order processing center (OPC). The OPC processed that request but didn't reply to Consumer Web site within five seconds, so the Consumer Web site resends the request to the OPC."  \n  \nIf we represent this requirement as a scenario	706	0	0	AdventureBuilderFive
+628	t	Consider the shared-data style. Which of the following qualities does it support?	628	0	0	CCStyleThree
+629	t	In the Continuous Integration case study can be read  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools."  \n  \nThe referred quality is	629	0	0	ContinuousIntegrationThree
+636	t	Consider the following distinction between Monoliths and Microservices made by Matin Fowler   \n![image][image]  \n If we try to map this figure into a set of views we will need.	636	0	0	MicroAndAmazonOne
+638	t	Consider the Infinispan system when it is configured as a remote data grid. The relation between the Applications and the Grid is	638	0	0	InfinispanOne
+639	t	Consider the following representation of the Buildbot system.   \n![image][image]  \n The architecture style between the Buildbot Master and the Clients is:	639	0	0	JenkinsOne
+646	t	In the description of Infinispan system can be read  \n>"Infinispan supports several pluggable cache stores-adapters that can be used to persist data to disk or any form of secondary storage. The current default implementation is a simplistic hash bucket and linked list implementation, where each hash bucket is represented by a file on the filesystem. While easy to use and configure, this isn't the best-performing implementation."  \n  \nThe architectural style(s) that should be used to illustrate the sentence is (are)	646	0	0	InfinispanTwo
+648	t	Consider the deployment architectural style of the allocation viewtype.	648	0	0	AllocationTwo
+649	t	In the Continuous Integration case can be read  \n>"Build notification: The outcomes of builds generally need to be communicated to interested clients, either via pull (Web, RSS, RPC, etc.) or push notification (e-mail, Twitter, etc.) This can include notification of all builds, or only failed builds, or builds that haven't been executed within a certain period."  \n  \nThe architectural style used in push notifications is	649	0	0	JenkinsTwo
+650	t	Consider the following representation of Amazon's architecture (sorry for the figure's layout: **save trees**)   \n![image][image]  \n What is the most relevant architecture style that is used in this figure?	650	0	0	MicroAndAmazonTwo
+656	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	656	0	0	MicroAndAmazonThree
+657	t	Consider the following representation of the CDash system   \n![image][image]  \n The architecture style between the Dashboard and the Clients is:	657	0	0	JenkinsThree
+660	t	In the description of Infinispan system can be read  \n>"When dealing with thread pools to process such asynchronous tasks, there is always a context switching overhead. That threads are not cheap resources is also noteworthy. Allocating appropriately sized and configured thread pools is important to any installation making use of any of the asynchronous features of Infinispan."  \n  \nThe architectural style that should be used to illustrate the sentence is	660	0	0	InfinispanThree
+695	t	Consider the following excerpt from the Wikipedia page on *white-box testing*:  \n>"White-box testing is a method of testing software that tests internal structures or workings of an application, as opposed to its functionality. In white-box testing an internal perspective of the system (including the module's code), as well as programming skills, are required and used to design test cases. The tester chooses inputs to exercise paths through the code and determine the appropriate outputs."  \n  \nAssuming that you belong to the team testing a complex system and that you are responsible for performing white box tests on the system, which of the following architectural views of the system would be most useful to you?	695	0	0	WhiteBoxTestingINGLES
+696	t	The Chromium is a web browser that introduced an innovative architecture. In the Chromium description we can read:  \n>"We use separate processes for browser tabs to protect the overall application from bugs and glitches in the rendering engine. We also restrict access from each rendering engine process to others and to the rest of the system. In some ways, this brings to web browsing the benefits that memory protection and access control brought to operating systems. We refer to the main process that runs the UI and manages tab and plugin processes as the "browser process" or "browser." Likewise, the tab-specific processes are called "render processes" or "renderers." The renderers use the WebKit open-source layout engine for interpreting and laying out HTML."  \n  \nWhich architectural style should we use to represent this aspect of Chromium?	696	0	0	ArqChrome
+697	t	Consider that a software development team uses an agile methodology such as XP (Extreme Programming), where no documentation is produced. Then, the systems developed by that team	697	0	0	SoftwareArchitectureOne
+698	t	The requirements impact on how an architecture is designed	698	0	0	RequirementsImpact
+699	t	Consider the following scenario  \n>"If one of the application servers fails to respond when the system is in its normal operation state, the load balancer should redirect requests to another application server."  \n  \n	699	0	0	AvailabilityScenarioOne
+708	t	Consider the following description of the behavior of Twitter ingestion mechanisms  \n>"Write. when a tweet comes in there's an O(n) process to write to Redis clusters, where n is the number of people following you. Painful for Lady Gaga and Barack Obama where they are doing 10s of millions of inserts across the cluster. All the Redis clusters are backing disk, the Flock cluster stores the user timeline to disk, but usually timelines are found in RAM in the Redis cluster."  \n  \n	708	0	0	TwitterOne
+709	t	Consider the following description of the behavior of Twitter  \n>"Solution is a write based fanout approach. Do a lot of processing when tweets arrive to figure out where tweets should go. This makes read time access fast and easy. Don't do any computation on reads. With all the work being performed on the write path ingest rates are slower than the read path, on the order of 4000 QPS."  \n  \nTo describe the performance quality of this behavior, and considering that the number of reads is much higher than the number of writes, we need to have a view that includes	709	0	0	TwitterThree
+711	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	711	0	0	MicroAndAmazonThree
 712	t	Consider the following representation of a system following a microservices architecture,   \n![image][image]  \n After an invocation through the REST API	712	0	0	BoundedContextOne
 713	t	Consider the following figure   \n![image][image]  \n	713	0	0	DomainDesignOne
+790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
+714	t	One of the key requirements for the HDFS system is that the data stored in the system remains available, even in the presence of various types of failures (non simultaneous) in the hardware in which the system executes. To show that the system satisfies this requirement	714	0	0	HadoopDisponibilidadeDadosINGLES
 715	t	In the HDFS system the fault recovery tactics are:	715	0	0	HadoopTacticasRecuperacaoFaltasINGLES
+716	t	The documentation of the software architecture for a system is often composed of several views, because	716	0	0	SecondEEEN
+751	t	Consider the following modifiability scenario  \n>"The effort necessary to successfully port the system to execute in a new browser should not be higher than 5 person/month."  \n  \n	751	0	0	ModifiabilityScenario
+752	t	The main tactic associated with the aspects architectural style is:	752	0	0	AspectsTactics
+753	t	In the HDFS system, in the stakeholders perspective, the use of low cost servers to build the clusters is:	753	0	0	HadoopStakeholdersEurosINGLES
 754	t	In HDFS, during normal operation DataNodes use the heartbeat tactic	754	0	0	HadoopHeartbeatINGLES
 755	t	The software architecture of a system	755	0	0	SoftwareArchitectureTwo
 756	t	As part of the process of creating an architecture, we talked about a framework for capturing some of the requirements for a system. In this context, **concrete scenarios** are used for	756	0	0	ConcreteScenarios
@@ -25303,6 +25271,17 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 761	t	Currently, the most popular architecture for an enterprise application is composed of 3 tiers. The three tiers are	761	0	0	TresTiersINGLES
 762	t	The Service-Oriented Architecture style improves interoperability because	762	0	0	SOAInteroperability
 763	t	Consider a system that will require a significative configuration effort during deployment, because it provides several variations of the same functionalities and it is necessary to choose which functionalities better fit in each case. The most helpful architectural view for this situation is	763	0	0	InstallView
+764	t	Consider the following description of the behavior of Twitter  \n>"Solution is a write based fanout approach. Do a lot of processing when tweets arrive to figure out where tweets should go. This makes read time access fast and easy. Don't do any computation on reads. With all the work being performed on the write path ingest rates are slower than the read path, on the order of 4000 QPS."  \n  \nTo describe this behavior we need to	764	0	0	TwitterTwo
+765	t	Consider the following description of the behavior of Twitter ingestion mechanisms  \n>"Write. when a tweet comes in there's an O(n) process to write to Redis clusters, where n is the number of people following you. Painful for Lady Gaga and Barack Obama where they are doing 10s of millions of inserts across the cluster. All the Redis clusters are backing disk, the Flock cluster stores the user timeline to disk, but usually timelines are found in RAM in the Redis cluster."  \n  \nThe view that represents this behavior should be of the	765	0	0	TwitterFour
+767	t	When designing an architecture requirements can be split into functional, quality attributes, and constraints. Functional requirements have impact on:	767	0	0	FunctionalModule
+768	t	Suppose that you are developing a software architecture for a new large scale system and that you intend to resort extensively to third party subcontractors for the development of various parts of the system. Which architectural styles are most useful to plan the development of the system in this case?	768	0	0	SubcontractorsINGLES
+769	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	769	0	0	UsesStyle
+770	t	According to the document that describes nginx:  \n>"nginx's modular architecture generally allows developers to extend the set of web server features without modifying the nginx core. nginx modules come in slightly different incarnations, namely core modules, event modules, phase handlers, protocols, variable handlers, filters, upstreams and load balancers. [...] Event modules provide a particular OS-dependent event notification mechanism like kqueue or epoll. Protocol modules allow nginx to communicate through HTTPS, TLS/SSL, SMTP, POP3 and IMAP."  \n  \nWhich architectural style is more adequate to represent the information presented above?	770	0	0	nginxModuleTypesINGLES
+772	t	Consider the following requirement for availability of the Adventure Builder system  \n>"The Consumer Web site is available to the user 24x7. If an instance of OPC application fails, the fault is detected and the system administrator is notified in 30 seconds; the system continues taking order requests; another OPC instance is automatically created; and data remains in consistent state."  \n  \nIn order to support this quality it is necessary to	772	0	0	AdventureBuilderSix
+773	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"To support iPhone/iPad/Android version with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	773	0	0	DVDCatalogMobile
+775	t	The Peer-to-Peer architectural style provides high scalability and availability. In the context of a file sharing system	775	0	0	PeerToPeerSpace
+777	t	In world-wide systems like Facebook or Amazon,	777	0	0	WorldWideEN
+778	t	Consider the following representation of a system following a microservices architecture,   \n![image][image]  \n	778	0	0	BoundedContextTwo
 779	t	Consider the following data model   \n![image][image]  \n	779	0	0	DomainDesignTwo
 780	t	The Chromium is a web browser that introduced an innovative architecture. In the Chromium description we can read:  \n>"Chromium is a large and complex cross-platform product. We try to share as much code as possible between platforms, while implementing the UI and OS integration in the most appropriate way for each. While this gives a better user experience, it adds extra complexity to the code. This document describes the recommended practices for keeping such cross-platform code clean. We use a variety of different file naming suffixes to indicate when a file should be used:  \n-  Windows files use the `_win` suffix.  \n-  Cocoa (Mac UI) files use the `_cocoa` suffix, and lower-level Mac files use the `_mac` suffix.  \n-  Linux files use `_linux` for lower-level files, `_gtk` for GTK-specific files, and `_x` for X Windows (with no GTK) specific files.  \n-  Posix files shared between Mac and Linux use the `_posix` suffix.  \n-  Files for Chrome's ''Views'' UI (on Windows and experimental GTK) layout system use the `_views` suffix.  \nThe separate front-ends of the browser are contained in their own directories:  \n-  Windows Views (and the experimental GTK-views):`chrome/browser/ui/views`  \n-  Linux GTK: `chrome/browser/gtk`  \n-  Mac: `chrome/browser/cocoa`  \n"  \n  \nWhich architectural style should we use to represent this aspect of Chromium?	780	0	0	ChromeMultiPlatform
 786	t	Consider the following figure that presents the Hadoop cluster topology.   \n![image][image]  \n	786	0	0	HadoopCluster
@@ -25310,14 +25289,10 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 788	t	A general scenario for a quality attribute	788	0	0	GeneralScenario
 789	t	In the description of the Twitter system we can read:  \n>"Twitter is optimized to be highly available on the read path on the home timeline. Read path is in the 10s of milliseconds."  \n  \nThis is achieved because:	789	0	0	TwitterScaleOne
 796	t	In the description of Hadoop we can red.  \n>"The CheckpointNode periodically combines the existing checkpoint and journal to create a new checkpoint and an empty journal. The CheckpointNode usually runs on a different host from the NameNode since it has the same memory requirements as the NameNode."  \n  \n	796	0	0	HadoopCreateFile
+797	t	An architectural tactic for a system describes	797	0	0	ArchitecturalTactics
 798	t	In the description of the Twitter system we can read:  \n>"On the search timeline: Write. when a tweet comes in and hits the Ingester only one Early Bird machine is hit. Write time path is O(1). A single tweet is ingested in under 5 seconds between the queuing and processing to find the one Early Bird to write it to."  \n  \n	798	0	0	TwitterScaleTwo
 799	t	In his article, *Who Needs and Architect?*, Martin Fowler cites Ralph Johnson definition:  \n>"Architecture is the set of decisions that must be made early in a project."  \n  \nIn his opinion:	799	0	0	EarlyDecisions
 800	t	Consider the following figure that presents a Queue where client applications write their requests to be served by a server.   \n![image][image]  \n	800	0	0	Queues
-922	t	An availability tactic to prevent faults is	922	0	0	AvailabilityTwo
-989	t	Consider the following scenario: *A system administrator adds more copies of computation of the system, each one using a different database, and is able to do it in less than 10 minutes.*	989	0	0	ModifiabilityTwo
-998	t	In the Graphite system description can be read:  \n>"We've got 600,000 metrics that update every minute and we're assuming our storage can only keep up with 60,000 write operations per minute. This means we will have approximately 10 minutes worth of data sitting in carbon's queues at any given time. To a user this means that the graphs they request from the Graphite webapp will be missing the most recent 10 minutes of data."  \n  \n	998	0	0	GraphiteReliability
-807	t	In the Graphite system the component *carbon* provides to *webapp* components an access interface to the *buffers* in order to improve the quality of	807	0	0	GraphiteScenarioTacticsOne
-808	t	In the HDFS system when the *CheckpointNode* and the *NameNode* are deployed in different nodes, the *CheckpointNode* provides:	808	0	0	HadoopCheckpoint
 809	t	Considering the availability architectural quality, the tactic of retry	809	0	0	OmissionRetry
 810	t	Several of the cases studied in this course have scalability requirements. That means that those systems should be designed in such a way that they	810	0	0	Scalability
 816	t	Consider that a module, that contains a complex business logic, needs to invoke a remote entity using a particular communication protocol and it is needs to manage the invocation, like deal with the possible errors, delays and omissions in the invocation, transform the data before sending it, etc. Which tactic should be applied for a scenario where there will be changes in the communication protocol. Note that the business logic comprises a set of functionalities that is independent of the remote invocation technological aspects.	816	0	0	ModifiabilityTwo
@@ -25331,6 +25306,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 856	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n In this view the following architectural styles are used	856	0	0	AdventureBuilderTwo
 857	t	In the Publish-Subscribe architectural style	857	0	0	PublishSubscribe
 858	t	A high-level component-and-connect view of Graphite system can be designed using only the architectural style(s)	858	0	0	GraphiteViewsTwo
+928	t	Consider the Work Assignment architectural style of the allocation viewtype.	928	0	0	WorkAssigment
 860	t	The Java web servers, like Tomcat, use threads to process requests. For each request they create (or reuse) a thread to process it. To draw a architectural view that describes this behaviour we should use	860	0	0	CommunicationProcesses
 881	t	In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.	881	0	0	ComponentAndConnectorViewtypeOne
 883	t	Consider the following fragment in the description of the Graphite system.  \n>"The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response."  \n  \nTo describe this scenario it should be designed a view that applies the following architectural style	883	0	0	GraphiteOne
@@ -25340,40 +25316,66 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 887	t	A response measure of a performance scenario is	887	0	0	PerformanceOne
 888	t	The layered architectural style applies the modifiability architectural tactic of	888	0	0	ModifiabilityExamOne
 889	t	One of the advantages of having views of the module viewtype is that they allow to do an impact analysis to predict the effect of modifying the system. The architectural style of the module viewtype which provides richer information for this impact analysis is	889	0	0	ModuleViewtypeExamOne
+950	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server.   \n![image][image]  \n This solution **does not** provide the following quality:	950	0	0	QueuesQualities
 890	t	Consider that a chess game should provide an automatic and intelligent chess player, and that to implement that player we will use some of the many chess engines already available in the market. Moreover, the system should allow the user to choose which engine to use for each new game. Given these requirements, which of the architectural styles from the module viewtype are best suited to satisfy them?	890	0	0	DecompositionGeneralization
 891	t	In a microservices architecture, aggregates are used as a unit of processing	891	0	0	AggregateOne
 892	t	Consider the Microservice architectural style. Which of the following sentences **does not** describe an advantage of microservices?	892	0	0	MicroservicesExamOne
+893	t	Consider the following usability scenario of the Catalog of DVDs case study  \n>"The user intends to have up-to-date info about the movies and the system informs the user that the existing sources have new information about one of his DVDs, which helps to maintain an up-to-date catalog."  \n  \nThe tactic used to fulfill this scenario is	893	0	0	DVDOne
 894	t	Consider the following view of the Adventure Builder case study that applies the tiers architectural style   \n![image][image]  \n	894	0	0	AdventureBuilderOne
-897	t	Consider the Uses architectural style of the Module viewtype	897	0	0	Layered
+895	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view provides a solution that uses the following tactic	895	0	0	PulseOne
+896	t	In the description of architecture of the OrderPad case study it can be read that the updates the user does on the OrderPad when it is offline are not lost. This availability quality is achieved through a	896	0	0	OrderPadOne
+899	t	In the software architecture of a system, the Deployment architectural style of the allocation viewtype is best suited for	899	0	0	Deployment
+900	t	Consider a web application that was implemented using three layers: presentation, domain logic, and data access. How are these layers mapped into the components if it is a rich interface application.	900	0	0	WebAppsOne
 921	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate   \n![image][image]  \n	921	0	0	AggregateTwo
+922	t	An availability tactic to prevent faults is	922	0	0	AvailabilityTwo
 923	t	A performance tactic to control resource demand is	923	0	0	PerformanceTwo
 924	t	Consider the following definition of Microservice architectural style by Martin Fowler  \n>"The microservice architectural style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by fully automated deployment machinery. There is a bare minimum of centralized management of these services, which may be written in different programming languages and use different data storage technologies."  \n  \nTo represent an architecture based on Microservices	924	0	0	MicroservicesExamTwo
 927	t	Which quality, or qualities, of the Graphite system are described by the sentence: *Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.*	927	0	0	GraphiteTwo
-928	t	Consider the Work Assignment architectural style of the allocation viewtype.	928	0	0	WorkAssigment
 929	t	Consider the following figure that presents a Image Hosting System.   \n![image][image]  \n By adding another Image File Storage component, which contains a redundant copy of the data and provides read access to the clients, but without guaranteeing a ACID transactional behavior between reads and writes, it improves the quality(ies) of	929	0	0	ScalableArchitectureOne
 930	t	Consider a web application that supports several types of user interface, e.g., web, mobile, etc. If it has to process a high volume of requests, which depend on the type of user interface, and a multi-tier architecture is followed. How many tiers should be used?	930	0	0	WebAppsTwo
 931	t	Consider the following generalization view of the Catalog of DVD case study to fulfill a modifiability scenario   \n![image][image]  \n From this view the stakeholders can infer	931	0	0	DVDTwo
+933	t	Suppose that you are developing the software architecture of a new system for an organization composed of several organizational units, each one with its own information systems, which have been developed independently of each other over the course of several years and depending on the particular needs of each unit. Your system has the goal of integrating the various existing systems, providing in this way not only a unified view of how the organization works, but also allowing the creation of new processes within the organization that involve more than one unit. Which architectural style is better suited to design such a system?	933	0	0	SOA
 934	t	Consider the following view of the Adventure Builder case study   \n![image][image]  \n	934	0	0	AdventureBuilderTwo
+936	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view applies the following architectural styles	936	0	0	PulseTwo
+937	t	Consider the architecture of the Morrison's OrderPad. The connector between the client component, executing in the Pad, and the server component, executing in the OrderPadDatabase	937	0	0	OrderPadTwo
+938	t	One of the advantages of having views of the module viewtype is that they allow to do a traceability analysis of requirements, how the functional requirements of the system are supported by module responsibilities. The modifiability tactic that is involved in this mapping is	938	0	0	ModuleViewtypeExamTwo
+940	t	Considered the following two views of a system that receive a stream of character and produce the same stream where the characters are alternately uppercase and lowercase.   \n![image][image]  \n	940	0	0	ComponentAndConnectorViewtypeTwo
+946	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"Finding the appropriate context requires the architect to visit many floors of the organization."  \n  \nThis sentence reflects the fact that an architecture is	946	0	0	ElevatorCommon
+947	t	Consider the following scenario for performance  \n>"During the enrollment period the FenixEDU system should be able to completely enroll 5.000 students in less than 30 minutes."  \n  \n	947	0	0	PerformanceSenario
 948	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"The microservice approach to division ..., splitting up into services organized around business capability. Such services take a broad-stack implementation of software for that business area, including user-interface, persistent storage, and any external collaborations. Consequently the teams are cross-functional, including the full range of skills required for the development: user-experience, database, and project management."  \n  \nConsidering the architecture influence cycle, which influence factor it is being considered?	948	0	0	MicroservicesProject
 949	t	Consider the following figure that presents an architectural view of an *Image Hosting Application* which resulted from the enrichment of another architectural view by adding another *Image File Storage* pair, in the figure they are distinguished by 1 and 2.   \n![image][image]  \n Which quality results from this enrichment, that was not provided by the previous version of the architecture?	949	0	0	ScalablePartitioning
-950	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server.   \n![image][image]  \n This solution **does not** provide the following quality:	950	0	0	QueuesQualities
+1198	t	A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because	1198	0	0	UsesCalls
 956	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server (asynchronous) and compare with another architectural design (synchronous) where a thread is associated with each request.   \n![image][image]  \n	956	0	0	QueuesSyncAndAsync
 957	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"Once a developer approached our architecture team with an application that had "significant scalability demands". A quick look at the architecture diagram revealed numerous components communicating via XML messages. When I pointed out that this may be the very reason for the performance concerns, I was quickly informed that this was an architecture decision and couldn't be changed. Assuming the architects are smart and well-intentioned, they may have thought about interoperability when they made this decision but may be unaware of the negative impact on run-time performance and development velocity."  \n  \nFrom this sentence we can conclude that	957	0	0	ElevatorInteroperability
 958	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"As well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams."  \n  \nWhich is not necessarily an advantage of being independently deployable and scalable?	958	0	0	MicroservicesModularity
+959	t	Consider the following figure that presents an architectural view of an *Image Hosting Application*.   \n![image][image]  \n	959	0	0	ReadsAndWrites
 960	t	Which of the following tactics is not related with the management of resources	960	0	0	PerformanceTacticsOne
 966	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server (asynchronous) and compare with another architectural design (synchronous) where a thread is associated with each request.   \n![image][image]  \n Consider a situation where the server that processes the tasks crashes	966	0	0	QueuesCrash
+967	t	Consider the following figure that presents an architectural view of an *Image Hosting Application*.   \n![image][image]  \n The replication between the Image File Storage *n* and Image File Storage *nb*	967	0	0	DataStorageAvailability
 968	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"Decentralizing responsibility for data across microservices has implications for managing updates. The common approach to dealing with updates has been to use transactions to guarantee consistency when updating multiple resources. This approach is often used within monoliths."  \n  \nWhat is the impact of decentralizing responsibility for data across microservices?	968	0	0	MicroservicesConsistency
+969	t	Which of the following tactics is not related with the control of resource demand	969	0	0	PerformanceTacticsTwo
 970	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"A lot of large companies have discovered the benefits of cloud computing but see it mainly as an infrastructure topic. I feel that's misguided: being able to get compute resources more quickly and cheaply is useful, but the real business benefit lies in a fully automated tool chain that minimizes the time in which a normal code change can go into production. Not quite coincidentally, this is my favorite definition of DevOps."  \n  \nIn the author's opinion	970	0	0	ElevatorDevops
 976	t	Consider the Decomposition architectural style of the Module viewtype	976	0	0	ModuleViewtypeOne
+977	t	The *Composer UI* component of Graphite system, described as - *Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL* - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback whenever she clicks on a option. To do so, the architecture needs to include	977	0	0	GraphiteComposerUIPerformance
 979	t	The modifiability tactic Use an Intermediary between two modules	979	0	0	ModifiabilityOne
-1017	t	In the Publish-Subscribe architectural style	1017	0	0	PublishSubscribe
+980	t	When applying Attribute-Driven Design (ADD) to the FenixEdu system the creation of a view where there are redundant web servers, load balancers and database servers	980	0	0	FenixADD
+987	t	The availability quality can be supported by a voting tactic in order to identify faults of	987	0	0	AvailabilityVotingSecond
+989	t	Consider the following scenario: *A system administrator adds more copies of computation of the system, each one using a different database, and is able to do it in less than 10 minutes.*	989	0	0	ModifiabilityTwo
+997	t	A software system is usually described using different architectural views	997	0	0	ArchitecturalViews
+998	t	In the Graphite system description can be read:  \n>"We've got 600,000 metrics that update every minute and we're assuming our storage can only keep up with 60,000 write operations per minute. This means we will have approximately 10 minutes worth of data sitting in carbon's queues at any given time. To a user this means that the graphs they request from the Graphite webapp will be missing the most recent 10 minutes of data."  \n  \n	998	0	0	GraphiteReliability
+1000	t	Consider the modifiability quality and the cost of change.	1000	0	0	ModifiabilityThree
 1006	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n In this view the following architectural styles are used	1006	0	0	AdventureBuilderComponentAndConnectorOne
 1007	t	Suppose that in the development of an enterprise application (which needs to access a database) it was decided to use the FenixFramework library to simplify the development of the data access code. Which architectural style is the most adequate to represent this decision?	1007	0	0	ModuleStylesOne
+1009	t	The Pipe-and-Filter style allows composition of filters	1009	0	0	PipeFilterComposition
 1010	t	Consider the following modifiability scenario for the Adventure Builder system  \n>"A new business partner (airline, lodging, or activity provider) that uses its own web services interface is added to the system in no more than 10 person-days of effort for the implementation. The business goal is easy integration with new business partners."  \n  \nand the following architectural view   \n![image][image]  \n	1010	0	0	AdventureBuilderModuleOne
+1131	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate  \n![image][image]  \n	1131	0	0	AggregatesTwo
+1237	t	In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use	1237	0	0	ChromeDynamicReconfiguration
 1016	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n In this view it is possible to reason that	1016	0	0	AdventureBuilderComponentAndConnectorSecond
+1017	t	In the Publish-Subscribe architectural style	1017	0	0	PublishSubscribe
 1018	t	Which architectural style is adequate for planning incremental releases?	1018	0	0	UsesOne
 1020	t	A connector may be attached to components of different types because	1020	0	0	ConnectorAttach
 1026	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n This view **does not** apply the architectural style	1026	0	0	AdventureBuilderComponentAndConnectorThird
+1027	t	In a layered architecture composed by four layers, where the topmost layer is the layer number 1 and the bottommost layer is the layer number 4, which of the layers is more modifiable?	1027	0	0	LayeredAspectsDataModelOne
 1028	t	Consider the following availability scenario for the Adventure Builder system  \n>"The Consumer Web site is available to the user 24x7. If an instance of OPC application fails, the fault is detected and the system administrator is notified in 30 seconds; the system continues taking order requests; another OPC instance is created; and data remains in consistent state."  \n  \nand the following architectural view   \n![image][image]  \n	1028	0	0	AdventureBuilderModuleTwo
 1029	t	The Peer-to-Peer architectural style provides high scalability and availability. In the context of a file sharing system	1029	0	0	PeerToPeerSpace
 1030	t	The quality(ies) that is(are) more relevant to views of the component-and-connector viewtype is(are):	1030	0	0	ComponentViewType
@@ -25385,8 +25387,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1047	t	In the Amazon Silk browser	1047	0	0	Silk
 1048	t	Suppose that an architect needs to decide whether to follow a modular monolith architecture or a microservices architecture for a new large system. The system to be developed has a complex logic and high volume of requests.	1048	0	0	MicroservicesTwo
 1049	t	In the web page of the NGINX HTTP server can be read  \n>"NGINX is a free, open-source, high-performance HTTP server and reverse proxy, as well as an IMAP/POP3 proxy server. (...) Unlike traditional servers, NGINX doesn't rely on threads to handle requests. Instead it uses a much more scalable event-driven (asynchronous) architecture. This architecture uses small, but more importantly, predictable amounts of memory under load."  \n  \nAccording to the above description the most adequate architectural style to represent the performance qualities of NGINX is	1049	0	0	CommunicatingProcesses
-1093	t	One of the evolutions in the development of web applications was the appearance of *mashups*, which are described in Wikipedia as follows:  \n>"In web development, a mashup is a web page or application that uses and combines data, presentation or functionality from two or more sources to create new services."  \n  \nKnowing that the sources used by *mashups* do not know about the existence of the *mashups* and that they change frequently, forcing the adaptation of the *mashups* to accommodate those changes, what is the best architecture to minimize the effects of those changes?	1093	0	0	WebApplicationsOne
-1094	t	In the description of Chrome case study we can read:  \n*Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.*  \nThe *Resource Dispatcher* contributes to the performance quality because it implements a tactic of	1094	0	0	ChromeOne
 1050	t	Consider the following decomposition views of the Catalog of DVD case study were the *Autocomplete* module is implemented in javascript and executes in a browser.   \n![image][image]  \n	1050	0	0	DVDAutocomplete
 1056	t	Consider the architecture of the Morrison's OrderPad. In the description of the system can be read:  \n>"The pilot version included some architectural short-cuts that would not work with the full complement of stores. One of these was using a file-transfer to send data to the mainframe rather than MQ, which wouldn't perform well once many stores were active."  \n  \nThis approach means that	1056	0	0	OrderPadIterative
 1057	t	Consider a stakeholder that is particularly concerned about the total cost of the project. When it comes to describing the system using allocation viewtypes is interested in	1057	0	0	AllocationStylesCost
@@ -25397,8 +25397,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1083	t	The Generalization architectural style of the module viewtype can be use to support the evolution of a system	1083	0	0	ModuleStyleThree
 1084	t	According to the document that describes the architecture of web services:  \n>"Another critical piece of any distributed system is a load balancer. Load balancers are a principal part of any architecture, as their role is to distribute load across a set of nodes responsible for servicing requests. This allows multiple nodes to transparently service the same function in a system. Their main purpose is to handle a lot of simultaneous connections and route those connections to one of the request nodes, allowing the system to scale to service more requests by just adding nodes."  \n  \nBased on this description, what is the best way to represent the architecture of a system that is using a *load balancer*?	1084	0	0	ComponentAndConnectorViewtypeOne
 1085	t	The repository architectural style provides performance because	1085	0	0	ComponentAndConnectorStyleOne
-1123	t	Consider the concept of interface delegation	1123	0	0	ComponentAndConnectorViewtypeTwo
-1128	t	A voting tactic can be used to	1128	0	0	AvailabilityTwo
 1086	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study about two different possible implementations of a global cache  \n>"There are two common forms of global caches (...), when a cached response is not found in the cache, the cache itself becomes responsible for retrieving the missing piece of data from the underlying store. (...) it is the responsibility of request nodes to retrieve any data that is not found in the cache."  \n  \n	1086	0	0	ScalableArchitectureOne
 1087	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"To allow the share of catalogs with family and friends, including some access control."  \n  \nThis requirement requires	1087	0	0	DVDCatalogOne
 1088	t	Typically, Instant Messaging clients have a window to list the contacts of the user, and show in that window the status of each contact (whether it is available, unavailable, busy, etc). Given that the status of a contact may be changed at any time, and that the contact's status is given by the Instant Messaging application of that contact, which architectural style represents best the interaction pattern between these components?	1088	0	0	ComponentAndConnectorStyleThree
@@ -25406,20 +25404,21 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1090	t	Command Query Responsibility Segregation (CQRS) technique uses the following architectural styles	1090	0	0	EventSourcingOne
 1091	t	Consider the following architectural view of the Adventure Builder system, designed around the Order Processing Center  \n![image][image]  \nThe views **does not** allow the reason about the quality of	1091	0	0	AdventureBuilderOne
 1092	t	In the Graphite system, in order to improve performance the component *carbon* do not write directly on disk, it uses a buffer instead:	1092	0	0	GraphiteOne
+1093	t	One of the evolutions in the development of web applications was the appearance of *mashups*, which are described in Wikipedia as follows:  \n>"In web development, a mashup is a web page or application that uses and combines data, presentation or functionality from two or more sources to create new services."  \n  \nKnowing that the sources used by *mashups* do not know about the existence of the *mashups* and that they change frequently, forcing the adaptation of the *mashups* to accommodate those changes, what is the best architecture to minimize the effects of those changes?	1093	0	0	WebApplicationsOne
+1094	t	In the description of Chrome case study we can read:  \n*Chrome maintains a single instance of the resource dispatcher, which is shared across all render processes, and runs within the browser kernel process.*  \nThe *Resource Dispatcher* contributes to the performance quality because it implements a tactic of	1094	0	0	ChromeOne
 1095	t	In the description of the SocialCalc case study can be read:  \n>"Therefore, on browsers with support for CSS3, we use the box-shadow property to represent multiple peer cursors in the same cell."  \n  \nThis corresponds to the application of	1095	0	0	SocialCalcOne
 1096	t	Consider the architecture of the Morrison's OrderPad. In the description of the system can be read:  \n>"One of these was using a file-transfer to send data to the mainframe rather than MQ, which wouldn't perform well once many stores were active."  \n  \nThis approach means that	1096	0	0	OrderPadOne
 1097	t	Consider the following decomposition of a domain model into 3 aggregates.  \n![image][image]  \n	1097	0	0	AggregatesOne
 1098	t	Considering the availability architectural quality and the tactics of ping/echo and heartbeat	1098	0	0	AvailabilityOne
-1099	t	To analyse the performance of a system	1099	0	0	PerformanceOne
 1100	t	In a modifiability scenario the environment can be characterized as design time, compile time, build time, initiation time, and runtime.	1100	0	0	ModifiabilityOne
 1121	t	Suppose that you are implementing a module in a system that has a two layered architecture. Knowing that your module belongs to the upper layer (assuming the usual notation for the layer style), this means that you	1121	0	0	ModuleStyleTwo
+1123	t	Consider the concept of interface delegation	1123	0	0	ComponentAndConnectorViewtypeTwo
 1124	t	In the Service Oriented Architecture style it is common to have a specialized component, named *Enterprise Service Bus* (ESB). The goal of using of an ESB in a system is	1124	0	0	ComponentAndConnectorStyleTwo
 1125	t	In the description of the Gnutella system can be read:  \n>"The topology of the system changes at runtime as peer components connect and disconnect to the network."  \n  \n	1125	0	0	ComponentAndConnectorStyleFour
 1126	t	Consider the install architectural style of the allocation viewtype.	1126	0	0	AllocationTwo
 1127	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	1127	0	0	WebApplicationsTwo
 1129	t	Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is	1129	0	0	PerformanceTwo
 1130	t	The main tactic associated with the layered architectural style is:	1130	0	0	ModifiabilityTwo
-1131	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate  \n![image][image]  \n	1131	0	0	AggregatesTwo
 1132	t	Consider the architectural solutions for microservices architectures that use the Command Query Responsibility Segregation (CQRS) technique in the context of Event Sourcing. This technique has the following disadvantage	1132	0	0	EventSourcingTwo
 1133	t	Consider the kind of relations between components and modules.	1133	0	0	ModuleViewTypeTwo
 1134	t	Consider the use of a proxy to collapse requests. This corresponds to a tactic of	1134	0	0	ScalableArchitectureTwo
@@ -25434,12 +25433,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1158	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"Microservice teams would expect to see (...) for each individual service such as dashboards showing up/down status and a variety of operational and business relevant metrics. Details on circuit breaker status, current throughput and latency are other examples we often encounter in the wild."  \n  \nWhich quality is being referred?	1158	0	0	MicroservicesMonitorability
 1159	t	In the description of the *How Netflix works* can be read:  \n>"The Netflix app or website determines what particular device you are using to watch, and fetches the exact file for that show meant to specially play on your particular device, with a particular video quality based on how fast your internet is at that moment."  \n  \nWhich corresponds to the application of the following tactic	1159	0	0	NetflixTacticsOne
 1160	t	To which performance tactic can a load balancer be associated?	1160	0	0	LoadBalancer
-1196	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	1196	0	0	AvailabilityVotingFirst
-1198	t	A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because	1198	0	0	UsesCalls
-1199	t	In the description of the Chrome system can be read  \n>"The goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available."  \n  \nThe above sentence refer to	1199	0	0	ChromePredictor
-1200	t	In the description of the SocialCalc case study can be read:  \n>"A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on."  \n  \nThis sentence describes a tactic for usability which is	1200	0	0	SocialCalcTacticsTwo
 1176	t	In the Graphite system the component *carbon* provides to *webapp* components an access interface to the *buffers* in order to improve the quality of	1176	0	0	GraphiteScenarioTacticsOne
-1208	t	Consider the Service-Oriented Architecture architectural style	1208	0	0	SOA
 1177	t	Which performance tactic is referred in the following description of Chrome?  \n>"The ability of the browser to optimize the order, priority, and latency of each network resource is one of the most critical contributors to the overall user experience. You may not be aware of it, but Chrome's network stack is, quite literally, getting smarter every day, trying to hide or decrease the latency cost of each resource: it learns likely DNS lookups, it remembers the topology of the web, it pre-connects to likely destination targets, and more. From the outside, it presents itself as a simple resource fetching mechanism, but from the inside it is an elaborate and a fascinating case study for how to optimize web performance and deliver the best experience to the user."  \n  \n	1177	0	0	ChromeTactics
 1178	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"As well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams."  \n  \nFor this description it is relevant to consider the software architecture concept(s) of	1178	0	0	MicroservicesModuleAndComponent
 1179	t	In the description of the *How Netflix works* can be read:  \n>"What CDNs basically do is, they take the original website and the media content it contains, and copy it across hundreds of servers spread all over the world. So when, say, you log in from Budapest, instead of connecting to the main Netflix server in the United States it will load a ditto copy of it from a CDN server that is the closest to Budapest."  \n  \nWhich corresponds to the application of the following tactic	1179	0	0	NetflixTacticsTwo
@@ -25449,9 +25443,13 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1188	t	A response measure of a modifiability scenario is	1188	0	0	ModifiabilityResponseMeasure
 1189	t	Designing an architecture	1189	0	0	IterativeDesign
 1190	t	The Decomposition architectural style of the Module viewtype	1190	0	0	Decomposition
+1196	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	1196	0	0	AvailabilityVotingFirst
 1197	t	Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value	1197	0	0	LowArchitecturalImpact
+1199	t	In the description of the Chrome system can be read  \n>"The goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available."  \n  \nThe above sentence refer to	1199	0	0	ChromePredictor
+1200	t	In the description of the SocialCalc case study can be read:  \n>"A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on."  \n  \nThis sentence describes a tactic for usability which is	1200	0	0	SocialCalcTacticsTwo
 1206	t	In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.	1206	0	0	ComponentAndConnectorOne
 1207	t	Consider that you intend to develop a system where it is necessary to change the emails received by the server (for instance, to remove potential virus or URLs for phishing sites). The goal is that each email is processed by this system before it is sent to other servers or it is stored locally. Additionally, the system should be easily modified to support new kinds of transformations. Which style is more suitable to satisfy these requirements?	1207	0	0	PipesFilters
+1208	t	Consider the Service-Oriented Architecture architectural style	1208	0	0	SOA
 1209	t	Consider the Layered architectural style of the Module viewtype	1209	0	0	Layered
 1210	t	The detail that can be used in a view of the Data Model viewtype can be conceptual, logical or physical.	1210	0	0	DataModelOne
 1216	t	The Tiers architectural style	1216	0	0	Tiers
@@ -25464,8 +25462,10 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1228	t	Consider a stakeholder that is particularly concerned about the total cost of the project. When it comes to describing the system using allocation viewtypes she is interested in	1228	0	0	AllocationStylesCost
 1229	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"The application should support other kinds of catalogs (CDs, games, books, ...)."  \n  \nThis requirement requires a change of	1229	0	0	DVDCatalogMeta
 1230	t	In Graphite system, in order to generate up-to-date graphs, the *WebApp* component interacts with the *Carbon* component. The interaction between these two components follows the architectural style	1230	0	0	GraphiteClientServer
+1236	t	In Graphite system the *receiver* and the *writer threads* support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style	1236	0	0	GraphiteCommunicationProcesses
 1238	t	Event Sourcing is a technique that use the following architectural style	1238	0	0	EventSourcing
-1237	t	In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use	1237	0	0	ChromeDynamicReconfiguration
+1239	t	The Work-assignment is an architectural style of the allocation viewtype, where	1239	0	0	WorkAssignment
+1240	t	Consider the module viewtype views of the Catalog of DVD application. The architect knows about a new requirement  \n>"To support iPhone, iPad, Android versions with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	1240	0	0	DVDCatalogMobile
 \.
 
 
@@ -27072,6 +27072,7 @@ COPY public.quiz_questions (id, sequence, question_id, quiz_id) FROM stdin;
 3	2	3	1
 4	3	4	1
 5	4	5	1
+26	5	754	2
 8	7	8	1
 9	8	9	1
 10	9	10	1
@@ -27098,10 +27099,9 @@ COPY public.quiz_questions (id, sequence, question_id, quiz_id) FROM stdin;
 32	11	32	2
 33	12	33	2
 34	13	34	2
+152	1	858	7
 36	15	36	2
 37	16	37	2
-26	5	754	2
-152	1	858	7
 41	0	41	3
 42	1	42	3
 43	2	43	3
@@ -28316,141 +28316,141 @@ COPY public.quiz_questions (id, sequence, question_id, quiz_id) FROM stdin;
 --
 
 COPY public.quizzes (id, generation_date, number, series, title, type, version, year) FROM stdin;
-101	\N	101	3	data-2017-test-3-test-31B	T	AB	2017
-102	\N	102	3	data-2017-test-3-test-32A	T	BA	2017
-103	\N	103	3	data-2017-test-3-test-32B	T	BB	2017
-104	\N	104	3	data-2017-test-3-test-33A	T	CA	2017
-105	\N	105	3	data-2017-test-3-test-33B	T	CB	2017
-106	\N	106	4	data-2017-test-4-test-41A	T	AA	2017
-107	\N	107	4	data-2017-test-4-test-41B	T	AB	2017
-108	\N	108	4	data-2017-test-4-test-42A	T	BA	2017
-109	\N	109	4	data-2017-test-4-test-42B	T	BB	2017
-110	\N	110	4	data-2017-test-4-test-43A	T	CA	2017
-111	\N	111	4	data-2017-test-4-test-43B	T	CB	2017
-112	\N	112	1	data-2018-20190111-Exam-exame-20190111-companion-A	E	A	2018
-113	\N	113	1	data-2018-20190111-Exam-exame-20190111-companion-B	E	B	2018
-114	\N	114	2	data-2018-20190129-Exam-exame-20190129-companion-A	E	A	2018
-115	\N	115	2	data-2018-20190129-Exam-exame-20190129-companion-B	E	B	2018
-116	\N	116	1	data-2018-test-1-test-11-A	T	AA	2018
-117	\N	117	1	data-2018-test-1-test-11-B	T	AB	2018
-118	\N	118	1	data-2018-test-1-test-11-C	T	AC	2018
-119	\N	119	1	data-2018-test-1-test-11-D	T	AD	2018
-120	\N	120	1	data-2018-test-1-test-12-A	T	BA	2018
-10	\N	10	2	data-2014-exam-exam20150127-exame-20150127-companion-A	E	A	2014
-11	\N	11	2	data-2014-exam-exam20150127-exame-20150127-companion-B	E	B	2014
-12	\N	12	1	data-2014-test-1-test-11A-17co╠Бpias	T	AA	2014
-13	\N	13	1	data-2014-test-1-test-12A-24co╠Бpias	T	BA	2014
-14	\N	14	1	data-2014-test-1-test-13A-17co╠Бpias	T	CA	2014
-15	\N	15	1	data-2014-test-1-test-14A-24co╠Бpias	T	DA	2014
-16	\N	16	2	data-2014-test-2-test-21A-18co╠Бpias	T	AA	2014
-17	\N	17	2	data-2014-test-2-test-22A-18co╠Бpias	T	BA	2014
-18	\N	18	2	data-2014-test-2-test-23A-18co╠Бpias	T	CA	2014
-19	\N	19	2	data-2014-test-2-test-24A-18co╠Бpias	T	DA	2014
-20	\N	20	3	data-2014-test-3-test-31A-18copias	T	AA	2014
-21	\N	21	3	data-2014-test-3-test-32A-18copias	T	BA	2014
-22	\N	22	3	data-2014-test-3-test-33A-18copias	T	CA	2014
-23	\N	23	3	data-2014-test-3-test-34A-18copias	T	DA	2014
-24	\N	24	4	data-2014-test-4-test-41A-17copias	T	AA	2014
-25	\N	25	4	data-2014-test-4-test-42A-16copias	T	BA	2014
-26	\N	26	4	data-2014-test-4-test-43A-16copias	T	CA	2014
-27	\N	27	4	data-2014-test-4-test-44A-18copias	T	DA	2014
-28	\N	28	5	data-2014-test-5-test-51A-17copias	T	AA	2014
-29	\N	29	5	data-2014-test-5-test-52A-16copias	T	BA	2014
-30	\N	30	5	data-2014-test-5-test-53A-16copias	T	CA	2014
-31	\N	31	5	data-2014-test-5-test-54A-18copias	T	DA	2014
-32	\N	32	6	data-2014-test-6-test-61A-17copias	T	AA	2014
-33	\N	33	6	data-2014-test-6-test-62A-16copias	T	BA	2014
-34	\N	34	6	data-2014-test-6-test-63A-16copias	T	CA	2014
-35	\N	35	6	data-2014-test-6-test-64A-18copias	T	DA	2014
-36	\N	36	1	data-2015-exams-20160108Exam-exame-20160108-companion-A	E	A	2015
-37	\N	37	1	data-2015-exams-20160108Exam-exame-20160108-companion-B	E	B	2015
-38	\N	38	2	data-2015-exams-20160126Exam-exame-20160126-companion-A	E	A	2015
-39	\N	39	2	data-2015-exams-20160126Exam-exame-20160126-companion-B	E	B	2015
-40	\N	40	1	data-2015-test-1-test-11A	T	AA	2015
-41	\N	41	1	data-2015-test-1-test-11B	T	AB	2015
-42	\N	42	1	data-2015-test-1-test-12A	T	BA	2015
-43	\N	43	1	data-2015-test-1-test-12B	T	BB	2015
-44	\N	44	1	data-2015-test-1-test-13A	T	CA	2015
-45	\N	45	1	data-2015-test-1-test-13B	T	CB	2015
-46	\N	46	2	data-2015-test-2-test-21A	T	AA	2015
-47	\N	47	2	data-2015-test-2-test-21B	T	AB	2015
-48	\N	48	2	data-2015-test-2-test-22A	T	BA	2015
-49	\N	49	2	data-2015-test-2-test-22B	T	BB	2015
-50	\N	50	2	data-2015-test-2-test-23A	T	CA	2015
-51	\N	51	2	data-2015-test-2-test-23B	T	CB	2015
-52	\N	52	3	data-2015-test-3-test-31A	T	AA	2015
-53	\N	53	3	data-2015-test-3-test-31B	T	AB	2015
-54	\N	54	3	data-2015-test-3-test-32A	T	BA	2015
-55	\N	55	3	data-2015-test-3-test-32B	T	BB	2015
-56	\N	56	3	data-2015-test-3-test-33A	T	CA	2015
-57	\N	57	3	data-2015-test-3-test-33B	T	CC	2015
-58	\N	58	4	data-2015-test-4-test-41A	T	AA	2015
-59	\N	59	4	data-2015-test-4-test-41B	T	AB	2015
-60	\N	60	4	data-2015-test-4-test-42A	T	BA	2015
-61	\N	61	4	data-2015-test-4-test-42B	T	BB	2015
-62	\N	62	4	data-2015-test-4-test-43A	T	CA	2015
-63	\N	63	4	data-2015-test-4-test-43B	T	CB	2015
-64	\N	64	1	data-2016-20170113Exam-exame-20170113-companion-A	E	A	2016
-65	\N	65	1	data-2016-20170113Exam-exame-20170113-companion-B	E	B	2016
-1	\N	1	1	data-2010-primeiro-exame-20110113-companion-en	E	A	2010
-2	\N	2	1	data-2011-exam1-exame-20120109-companion-en	E	A	2011
-3	\N	3	2	data-2011-exam2-exame-20120203-companion-en	E	A	2011
-4	\N	4	1	data-2012-exam1-exame-20130109-companion-en	E	A	2012
-5	\N	5	2	data-2012-exam2-exame-20130201-companion-en	E	A	2012
-6	\N	6	1	data-2013-exam1-exame-20140110-companion-en	E	A	2013
-7	\N	7	2	data-2013-exam2-exame-20140130-companion-en	E	A	2013
-8	\N	8	1	data-2014-exam-exam20150109-exame-20150109-companion-A	E	A	2014
-9	\N	9	1	data-2014-exam-exam20150109-exame-20150109-companion-B	E	B	2014
-66	\N	66	2	data-2016-20170131Exam-exame-20170131-companion-A	E	A	2016
-67	\N	67	2	data-2016-20170131Exam-exame-20170131-companion-B	E	B	2016
-68	\N	68	1	data-2016-test-1-test-11A	T	AA	2016
-69	\N	69	1	data-2016-test-1-test-11B	T	AB	2016
-70	\N	70	1	data-2016-test-1-test-12A	T	BA	2016
-71	\N	71	1	data-2016-test-1-test-12B	T	BB	2016
-72	\N	72	2	data-2016-test-2-test-21A	T	AA	2016
-73	\N	73	2	data-2016-test-2-test-21B	T	AB	2016
-74	\N	74	2	data-2016-test-2-test-22A	T	BA	2016
-75	\N	75	2	data-2016-test-2-test-22B	T	BB	2016
-76	\N	76	3	data-2016-test-3-test-31A	T	AA	2016
-77	\N	77	3	data-2016-test-3-test-31B	T	AB	2016
-78	\N	78	3	data-2016-test-3-test-32A	T	BA	2016
-79	\N	79	3	data-2016-test-3-test-32B	T	BB	2016
-80	\N	80	4	data-2016-test-4-test-41A	T	AA	2016
-81	\N	81	4	data-2016-test-4-test-41B	T	AB	2016
-82	\N	82	4	data-2016-test-4-test-42A	T	BA	2016
-83	\N	83	4	data-2016-test-4-test-42B	T	BB	2016
-84	\N	84	1	data-2017-20180112-Exam-exame-20180112-companion-A	E	A	2017
-85	\N	85	1	data-2017-20180112-Exam-exame-20180112-companion-B	E	B	2017
-86	\N	86	2	data-2017-20180130-Exam-exame-20180130-companion-A	E	A	2017
-87	\N	87	2	data-2017-20180130-Exam-exame-20180130-companion-B	E	B	2017
-88	\N	88	1	data-2017-test-1-test-11A	T	AA	2017
-89	\N	89	1	data-2017-test-1-test-11B	T	AB	2017
-90	\N	90	1	data-2017-test-1-test-12A	T	BA	2017
-91	\N	91	1	data-2017-test-1-test-12B	T	BB	2017
-92	\N	92	1	data-2017-test-1-test-13A	T	CA	2017
-93	\N	93	1	data-2017-test-1-test-13B	T	CB	2017
-94	\N	94	2	data-2017-test-2-test-21-A	T	AA	2017
-95	\N	95	2	data-2017-test-2-test-21-B	T	AB	2017
-96	\N	96	2	data-2017-test-2-test-22-A	T	BA	2017
-97	\N	97	2	data-2017-test-2-test-22-B	T	BB	2017
-98	\N	98	2	data-2017-test-2-test-23-A	T	CA	2017
-99	\N	99	2	data-2017-test-2-test-23-B	T	CB	2017
-100	\N	100	3	data-2017-test-3-test-31A	T	AA	2017
-121	\N	121	1	data-2018-test-1-test-12-B	T	BB	2018
-122	\N	122	1	data-2018-test-1-test-12-C	T	BC	2018
-123	\N	123	1	data-2018-test-1-test-12-D	T	BD	2018
-124	\N	124	2	data-2018-test-2-test-21-A	T	AA	2018
-125	\N	125	2	data-2018-test-2-test-21-B	T	AB	2018
-126	\N	126	2	data-2018-test-2-test-22-A	T	BA	2018
-127	\N	127	2	data-2018-test-2-test-22-B	T	BB	2018
-128	\N	128	3	data-2018-test-3-test-31-A	T	AA	2018
-129	\N	129	3	data-2018-test-3-test-31-B	T	AB	2018
-130	\N	130	3	data-2018-test-3-test-32-A	T	BA	2018
-131	\N	131	3	data-2018-test-3-test-32-B	T	BB	2018
-132	\N	132	4	data-2018-test-4-test-41-A	T	AA	2018
-133	\N	133	4	data-2018-test-4-test-41-B	T	AB	2018
-134	\N	134	4	data-2018-test-4-test-42-A	T	BA	2018
-135	\N	135	4	data-2018-test-4-test-42-B	T	BB	2018
+101	\N	101	3	data-2017-test-3-test-31B	TEST	AB	2017
+102	\N	102	3	data-2017-test-3-test-32A	TEST	BA	2017
+103	\N	103	3	data-2017-test-3-test-32B	TEST	BB	2017
+104	\N	104	3	data-2017-test-3-test-33A	TEST	CA	2017
+105	\N	105	3	data-2017-test-3-test-33B	TEST	CB	2017
+106	\N	106	4	data-2017-test-4-test-41A	TEST	AA	2017
+107	\N	107	4	data-2017-test-4-test-41B	TEST	AB	2017
+108	\N	108	4	data-2017-test-4-test-42A	TEST	BA	2017
+109	\N	109	4	data-2017-test-4-test-42B	TEST	BB	2017
+110	\N	110	4	data-2017-test-4-test-43A	TEST	CA	2017
+111	\N	111	4	data-2017-test-4-test-43B	TEST	CB	2017
+112	\N	112	1	data-2018-20190111-Exam-exame-20190111-companion-A	EXAM	A	2018
+113	\N	113	1	data-2018-20190111-Exam-exame-20190111-companion-B	EXAM	B	2018
+114	\N	114	2	data-2018-20190129-Exam-exame-20190129-companion-A	EXAM	A	2018
+115	\N	115	2	data-2018-20190129-Exam-exame-20190129-companion-B	EXAM	B	2018
+116	\N	116	1	data-2018-test-1-test-11-A	TEST	AA	2018
+117	\N	117	1	data-2018-test-1-test-11-B	TEST	AB	2018
+118	\N	118	1	data-2018-test-1-test-11-C	TEST	AC	2018
+119	\N	119	1	data-2018-test-1-test-11-D	TEST	AD	2018
+120	\N	120	1	data-2018-test-1-test-12-A	TEST	BA	2018
+1	\N	1	1	data-2010-primeiro-exame-20110113-companion-en	EXAM	A	2010
+2	\N	2	1	data-2011-exam1-exame-20120109-companion-en	EXAM	A	2011
+3	\N	3	2	data-2011-exam2-exame-20120203-companion-en	EXAM	A	2011
+4	\N	4	1	data-2012-exam1-exame-20130109-companion-en	EXAM	A	2012
+5	\N	5	2	data-2012-exam2-exame-20130201-companion-en	EXAM	A	2012
+6	\N	6	1	data-2013-exam1-exame-20140110-companion-en	EXAM	A	2013
+7	\N	7	2	data-2013-exam2-exame-20140130-companion-en	EXAM	A	2013
+8	\N	8	1	data-2014-exam-exam20150109-exame-20150109-companion-A	EXAM	A	2014
+9	\N	9	1	data-2014-exam-exam20150109-exame-20150109-companion-B	EXAM	B	2014
+10	\N	10	2	data-2014-exam-exam20150127-exame-20150127-companion-A	EXAM	A	2014
+11	\N	11	2	data-2014-exam-exam20150127-exame-20150127-companion-B	EXAM	B	2014
+12	\N	12	1	data-2014-test-1-test-11A-17co╠Бpias	TEST	AA	2014
+13	\N	13	1	data-2014-test-1-test-12A-24co╠Бpias	TEST	BA	2014
+14	\N	14	1	data-2014-test-1-test-13A-17co╠Бpias	TEST	CA	2014
+15	\N	15	1	data-2014-test-1-test-14A-24co╠Бpias	TEST	DA	2014
+16	\N	16	2	data-2014-test-2-test-21A-18co╠Бpias	TEST	AA	2014
+17	\N	17	2	data-2014-test-2-test-22A-18co╠Бpias	TEST	BA	2014
+18	\N	18	2	data-2014-test-2-test-23A-18co╠Бpias	TEST	CA	2014
+19	\N	19	2	data-2014-test-2-test-24A-18co╠Бpias	TEST	DA	2014
+20	\N	20	3	data-2014-test-3-test-31A-18copias	TEST	AA	2014
+21	\N	21	3	data-2014-test-3-test-32A-18copias	TEST	BA	2014
+22	\N	22	3	data-2014-test-3-test-33A-18copias	TEST	CA	2014
+23	\N	23	3	data-2014-test-3-test-34A-18copias	TEST	DA	2014
+24	\N	24	4	data-2014-test-4-test-41A-17copias	TEST	AA	2014
+25	\N	25	4	data-2014-test-4-test-42A-16copias	TEST	BA	2014
+26	\N	26	4	data-2014-test-4-test-43A-16copias	TEST	CA	2014
+27	\N	27	4	data-2014-test-4-test-44A-18copias	TEST	DA	2014
+28	\N	28	5	data-2014-test-5-test-51A-17copias	TEST	AA	2014
+29	\N	29	5	data-2014-test-5-test-52A-16copias	TEST	BA	2014
+30	\N	30	5	data-2014-test-5-test-53A-16copias	TEST	CA	2014
+31	\N	31	5	data-2014-test-5-test-54A-18copias	TEST	DA	2014
+32	\N	32	6	data-2014-test-6-test-61A-17copias	TEST	AA	2014
+33	\N	33	6	data-2014-test-6-test-62A-16copias	TEST	BA	2014
+34	\N	34	6	data-2014-test-6-test-63A-16copias	TEST	CA	2014
+35	\N	35	6	data-2014-test-6-test-64A-18copias	TEST	DA	2014
+36	\N	36	1	data-2015-exams-20160108Exam-exame-20160108-companion-A	EXAM	A	2015
+37	\N	37	1	data-2015-exams-20160108Exam-exame-20160108-companion-B	EXAM	B	2015
+38	\N	38	2	data-2015-exams-20160126Exam-exame-20160126-companion-A	EXAM	A	2015
+39	\N	39	2	data-2015-exams-20160126Exam-exame-20160126-companion-B	EXAM	B	2015
+40	\N	40	1	data-2015-test-1-test-11A	TEST	AA	2015
+41	\N	41	1	data-2015-test-1-test-11B	TEST	AB	2015
+42	\N	42	1	data-2015-test-1-test-12A	TEST	BA	2015
+43	\N	43	1	data-2015-test-1-test-12B	TEST	BB	2015
+44	\N	44	1	data-2015-test-1-test-13A	TEST	CA	2015
+45	\N	45	1	data-2015-test-1-test-13B	TEST	CB	2015
+46	\N	46	2	data-2015-test-2-test-21A	TEST	AA	2015
+47	\N	47	2	data-2015-test-2-test-21B	TEST	AB	2015
+48	\N	48	2	data-2015-test-2-test-22A	TEST	BA	2015
+49	\N	49	2	data-2015-test-2-test-22B	TEST	BB	2015
+50	\N	50	2	data-2015-test-2-test-23A	TEST	CA	2015
+51	\N	51	2	data-2015-test-2-test-23B	TEST	CB	2015
+52	\N	52	3	data-2015-test-3-test-31A	TEST	AA	2015
+53	\N	53	3	data-2015-test-3-test-31B	TEST	AB	2015
+54	\N	54	3	data-2015-test-3-test-32A	TEST	BA	2015
+55	\N	55	3	data-2015-test-3-test-32B	TEST	BB	2015
+56	\N	56	3	data-2015-test-3-test-33A	TEST	CA	2015
+57	\N	57	3	data-2015-test-3-test-33B	TEST	CC	2015
+58	\N	58	4	data-2015-test-4-test-41A	TEST	AA	2015
+59	\N	59	4	data-2015-test-4-test-41B	TEST	AB	2015
+60	\N	60	4	data-2015-test-4-test-42A	TEST	BA	2015
+61	\N	61	4	data-2015-test-4-test-42B	TEST	BB	2015
+62	\N	62	4	data-2015-test-4-test-43A	TEST	CA	2015
+63	\N	63	4	data-2015-test-4-test-43B	TEST	CB	2015
+64	\N	64	1	data-2016-20170113Exam-exame-20170113-companion-A	EXAM	A	2016
+65	\N	65	1	data-2016-20170113Exam-exame-20170113-companion-B	EXAM	B	2016
+66	\N	66	2	data-2016-20170131Exam-exame-20170131-companion-A	EXAM	A	2016
+67	\N	67	2	data-2016-20170131Exam-exame-20170131-companion-B	EXAM	B	2016
+68	\N	68	1	data-2016-test-1-test-11A	TEST	AA	2016
+69	\N	69	1	data-2016-test-1-test-11B	TEST	AB	2016
+70	\N	70	1	data-2016-test-1-test-12A	TEST	BA	2016
+71	\N	71	1	data-2016-test-1-test-12B	TEST	BB	2016
+72	\N	72	2	data-2016-test-2-test-21A	TEST	AA	2016
+73	\N	73	2	data-2016-test-2-test-21B	TEST	AB	2016
+74	\N	74	2	data-2016-test-2-test-22A	TEST	BA	2016
+75	\N	75	2	data-2016-test-2-test-22B	TEST	BB	2016
+76	\N	76	3	data-2016-test-3-test-31A	TEST	AA	2016
+77	\N	77	3	data-2016-test-3-test-31B	TEST	AB	2016
+78	\N	78	3	data-2016-test-3-test-32A	TEST	BA	2016
+79	\N	79	3	data-2016-test-3-test-32B	TEST	BB	2016
+80	\N	80	4	data-2016-test-4-test-41A	TEST	AA	2016
+81	\N	81	4	data-2016-test-4-test-41B	TEST	AB	2016
+82	\N	82	4	data-2016-test-4-test-42A	TEST	BA	2016
+83	\N	83	4	data-2016-test-4-test-42B	TEST	BB	2016
+84	\N	84	1	data-2017-20180112-Exam-exame-20180112-companion-A	EXAM	A	2017
+85	\N	85	1	data-2017-20180112-Exam-exame-20180112-companion-B	EXAM	B	2017
+86	\N	86	2	data-2017-20180130-Exam-exame-20180130-companion-A	EXAM	A	2017
+87	\N	87	2	data-2017-20180130-Exam-exame-20180130-companion-B	EXAM	B	2017
+88	\N	88	1	data-2017-test-1-test-11A	TEST	AA	2017
+89	\N	89	1	data-2017-test-1-test-11B	TEST	AB	2017
+90	\N	90	1	data-2017-test-1-test-12A	TEST	BA	2017
+91	\N	91	1	data-2017-test-1-test-12B	TEST	BB	2017
+92	\N	92	1	data-2017-test-1-test-13A	TEST	CA	2017
+93	\N	93	1	data-2017-test-1-test-13B	TEST	CB	2017
+94	\N	94	2	data-2017-test-2-test-21-A	TEST	AA	2017
+95	\N	95	2	data-2017-test-2-test-21-B	TEST	AB	2017
+96	\N	96	2	data-2017-test-2-test-22-A	TEST	BA	2017
+97	\N	97	2	data-2017-test-2-test-22-B	TEST	BB	2017
+98	\N	98	2	data-2017-test-2-test-23-A	TEST	CA	2017
+99	\N	99	2	data-2017-test-2-test-23-B	TEST	CB	2017
+100	\N	100	3	data-2017-test-3-test-31A	TEST	AA	2017
+121	\N	121	1	data-2018-test-1-test-12-B	TEST	BB	2018
+122	\N	122	1	data-2018-test-1-test-12-C	TEST	BC	2018
+123	\N	123	1	data-2018-test-1-test-12-D	TEST	BD	2018
+124	\N	124	2	data-2018-test-2-test-21-A	TEST	AA	2018
+125	\N	125	2	data-2018-test-2-test-21-B	TEST	AB	2018
+126	\N	126	2	data-2018-test-2-test-22-A	TEST	BA	2018
+127	\N	127	2	data-2018-test-2-test-22-B	TEST	BB	2018
+128	\N	128	3	data-2018-test-3-test-31-A	TEST	AA	2018
+129	\N	129	3	data-2018-test-3-test-31-B	TEST	AB	2018
+130	\N	130	3	data-2018-test-3-test-32-A	TEST	BA	2018
+131	\N	131	3	data-2018-test-3-test-32-B	TEST	BB	2018
+132	\N	132	4	data-2018-test-4-test-41-A	TEST	AA	2018
+133	\N	133	4	data-2018-test-4-test-41-B	TEST	AB	2018
+134	\N	134	4	data-2018-test-4-test-42-A	TEST	BA	2018
+135	\N	135	4	data-2018-test-4-test-42-B	TEST	BB	2018
 \.
 
 
@@ -28474,620 +28474,620 @@ COPY public.topics_questions (topics_id, questions_id) FROM stdin;
 -- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.users (id, name, role, username, year, number) FROM stdin;
-1	1,0	\N	\N	2011	1
-2	2,0	\N	\N	2011	2
-3	3,0	\N	\N	2011	3
-4	4,0	\N	\N	2011	4
-5	5,0	\N	\N	2011	5
-6	6,0	\N	\N	2011	6
-7	7,0	\N	\N	2011	7
-8	8,0	\N	\N	2011	8
-9	9,0	\N	\N	2011	9
-10	10,0	\N	\N	2011	10
-11	11,0	\N	\N	2011	11
-12	12,0	\N	\N	2011	12
-13	13,0	\N	\N	2011	13
-14	14,0	\N	\N	2011	14
-15	15,0	\N	\N	2011	15
-16	16,0	\N	\N	2011	16
-17	17,0	\N	\N	2011	17
-18	18,0	\N	\N	2011	18
-19	19,0	\N	\N	2011	19
-20	20,0	\N	\N	2011	20
-21	21,0	\N	\N	2011	21
-22	22,0	\N	\N	2011	22
-23	23,0	\N	\N	2011	23
-24	24,0	\N	\N	2011	24
-25	25,0	\N	\N	2011	25
-26	26,0	\N	\N	2011	26
-27	27,0	\N	\N	2011	27
-28	28,0	\N	\N	2011	28
-29	29,0	\N	\N	2011	29
-30	30,0	\N	\N	2011	30
-31	31,0	\N	\N	2011	31
-32	32,0	\N	\N	2011	32
-33	33,0	\N	\N	2011	33
-34	34,0	\N	\N	2011	34
-35	35,0	\N	\N	2011	35
-36	36,0	\N	\N	2011	36
-37	37,0	\N	\N	2011	37
-38	38,0	\N	\N	2011	38
-39	39,0	\N	\N	2011	39
-40	40,0	\N	\N	2011	40
-41	41,0	\N	\N	2011	41
-42	42,0	\N	\N	2011	42
-43	43,0	\N	\N	2011	43
-44	44,0	\N	\N	2011	44
-45	45,0	\N	\N	2011	45
-46	46,0	\N	\N	2011	46
-47	47,0	\N	\N	2011	47
-48	48,0	\N	\N	2011	48
-49	49,0	\N	\N	2011	49
-50	50,0	\N	\N	2011	50
-51	51,0	\N	\N	2011	51
-52	52,0	\N	\N	2011	52
-53	53,0	\N	\N	2011	53
-54	54,0	\N	\N	2011	54
-55	55,0	\N	\N	2011	55
-56	56,0	\N	\N	2011	56
-57	57,0	\N	\N	2011	57
-58	58,0	\N	\N	2011	58
-59	59,0	\N	\N	2011	59
-60	60,0	\N	\N	2011	60
-61	1,0	\N	\N	2013	61
-62	2,0	\N	\N	2013	62
-63	3,0	\N	\N	2013	63
-64	4,0	\N	\N	2013	64
-65	5,0	\N	\N	2013	65
-66	6,0	\N	\N	2013	66
-67	7,0	\N	\N	2013	67
-68	8,0	\N	\N	2013	68
-69	9,0	\N	\N	2013	69
-70	10,0	\N	\N	2013	70
-71	11,0	\N	\N	2013	71
-72	12,0	\N	\N	2013	72
-73	13,0	\N	\N	2013	73
-74	14,0	\N	\N	2013	74
-75	15,0	\N	\N	2013	75
-76	16,0	\N	\N	2013	76
-77	17,0	\N	\N	2013	77
-78	18,0	\N	\N	2013	78
-79	19,0	\N	\N	2013	79
-80	20,0	\N	\N	2013	80
-81	21,0	\N	\N	2013	81
-82	22,0	\N	\N	2013	82
-83	23,0	\N	\N	2013	83
-84	24,0	\N	\N	2013	84
-85	25,0	\N	\N	2013	85
-86	26,0	\N	\N	2013	86
-87	27,0	\N	\N	2013	87
-88	28,0	\N	\N	2013	88
-89	29,0	\N	\N	2013	89
-90	30,0	\N	\N	2013	90
-91	31,0	\N	\N	2013	91
-92	32,0	\N	\N	2013	92
-93	33,0	\N	\N	2013	93
-94	34,0	\N	\N	2013	94
-95	35,0	\N	\N	2013	95
-96	36,0	\N	\N	2013	96
-97	37,0	\N	\N	2013	97
-98	38,0	\N	\N	2013	98
-99	39,0	\N	\N	2013	99
-100	40,0	\N	\N	2013	100
-101	41,0	\N	\N	2013	101
-102	42,0	\N	\N	2013	102
-103	43,0	\N	\N	2013	103
-104	44,0	\N	\N	2013	104
-105	45,0	\N	\N	2013	105
-106	46,0	\N	\N	2013	106
-107	47,0	\N	\N	2013	107
-108	48,0	\N	\N	2013	108
-109	49,0	\N	\N	2013	109
-110	50,0	\N	\N	2013	110
-111	51,0	\N	\N	2013	111
-112	52,0	\N	\N	2013	112
-113	53,0	\N	\N	2013	113
-114	54,0	\N	\N	2013	114
-115	55,0	\N	\N	2013	115
-116	56,0	\N	\N	2013	116
-117	57,0	\N	\N	2013	117
-118	58,0	\N	\N	2013	118
-119	59,0	\N	\N	2013	119
-120	60,0	\N	\N	2013	120
-121	61,0	\N	\N	2013	121
-122	62,0	\N	\N	2013	122
-123	63,0	\N	\N	2013	123
-124	64,0	\N	\N	2013	124
-125	65,0	\N	\N	2013	125
-126	66,0	\N	\N	2013	126
-127	67,0	\N	\N	2013	127
-128	68,0	\N	\N	2013	128
-129	69,0	\N	\N	2013	129
-130	70,0	\N	\N	2013	130
-131	71,0	\N	\N	2013	131
-132	72,0	\N	\N	2013	132
-133	73,0	\N	\N	2013	133
-134	74,0	\N	\N	2013	134
-135	75,0	\N	\N	2013	135
-136	76,0	\N	\N	2013	136
-137	77,0	\N	\N	2013	137
-138	78,0	\N	\N	2013	138
-139	79,0	\N	\N	2013	139
-140	80,0	\N	\N	2013	140
-141	81,0	\N	\N	2013	141
-142	82,0	\N	\N	2013	142
-143	83,0	\N	\N	2013	143
-144	84,0	\N	\N	2013	144
-145	85,0	\N	\N	2013	145
-146	86,0	\N	\N	2013	146
-147	87,0	\N	\N	2013	147
-148	88,0	\N	\N	2013	148
-149	89,0	\N	\N	2013	149
-150	1,0	\N	\N	2014	150
-151	2,0	\N	\N	2014	151
-152	3,0	\N	\N	2014	152
-153	5,0	\N	\N	2014	153
-154	6,0	\N	\N	2014	154
-155	7,0	\N	\N	2014	155
-156	12,0	\N	\N	2014	156
-157	15,0	\N	\N	2014	157
-158	19,0	\N	\N	2014	158
-159	21,0	\N	\N	2014	159
-160	23,0	\N	\N	2014	160
-161	26,0	\N	\N	2014	161
-162	41,0	\N	\N	2014	162
-163	42,0	\N	\N	2014	163
-164	44,0	\N	\N	2014	164
-165	50,0	\N	\N	2014	165
-166	52,0	\N	\N	2014	166
-167	59,0	\N	\N	2014	167
-168	63,0	\N	\N	2014	168
-169	64,0	\N	\N	2014	169
-170	73,0	\N	\N	2014	170
-171	74,0	\N	\N	2014	171
-172	78,0	\N	\N	2014	172
-173	101,0	\N	\N	2014	173
-174	102,0	\N	\N	2014	174
-175	107,0	\N	\N	2014	175
-176	112,0	\N	\N	2014	176
-177	114,0	\N	\N	2014	177
-178	117,0	\N	\N	2014	178
-179	119,0	\N	\N	2014	179
-180	120,0	\N	\N	2014	180
-181	121,0	\N	\N	2014	181
-182	122,0	\N	\N	2014	182
-183	123,0	\N	\N	2014	183
-184	124,0	\N	\N	2014	184
-185	128,0	\N	\N	2014	185
-186	130,0	\N	\N	2014	186
-187	135,0	\N	\N	2014	187
-188	138,0	\N	\N	2014	188
-189	145,0	\N	\N	2014	189
-190	154,0	\N	\N	2014	190
-191	156,0	\N	\N	2014	191
-192	158,0	\N	\N	2014	192
-193	4,0	\N	\N	2014	193
-194	8,0	\N	\N	2014	194
-195	9,0	\N	\N	2014	195
-196	10,0	\N	\N	2014	196
-197	13,0	\N	\N	2014	197
-198	14,0	\N	\N	2014	198
-199	20,0	\N	\N	2014	199
-200	24,0	\N	\N	2014	200
-201	27,0	\N	\N	2014	201
-202	28,0	\N	\N	2014	202
-203	29,0	\N	\N	2014	203
-204	33,0	\N	\N	2014	204
-205	34,0	\N	\N	2014	205
-206	37,0	\N	\N	2014	206
-207	43,0	\N	\N	2014	207
-208	46,0	\N	\N	2014	208
-209	48,0	\N	\N	2014	209
-210	51,0	\N	\N	2014	210
-211	53,0	\N	\N	2014	211
-212	58,0	\N	\N	2014	212
-213	60,0	\N	\N	2014	213
-214	69,0	\N	\N	2014	214
-215	70,0	\N	\N	2014	215
-216	72,0	\N	\N	2014	216
-217	75,0	\N	\N	2014	217
-218	76,0	\N	\N	2014	218
-219	77,0	\N	\N	2014	219
-220	79,0	\N	\N	2014	220
-221	83,0	\N	\N	2014	221
-222	84,0	\N	\N	2014	222
-223	85,0	\N	\N	2014	223
-224	88,0	\N	\N	2014	224
-225	89,0	\N	\N	2014	225
-226	93,0	\N	\N	2014	226
-227	94,0	\N	\N	2014	227
-228	99,0	\N	\N	2014	228
-229	104,0	\N	\N	2014	229
-230	105,0	\N	\N	2014	230
-231	108,0	\N	\N	2014	231
-232	109,0	\N	\N	2014	232
-233	113,0	\N	\N	2014	233
-234	116,0	\N	\N	2014	234
-235	118,0	\N	\N	2014	235
-236	125,0	\N	\N	2014	236
-237	127,0	\N	\N	2014	237
-238	131,0	\N	\N	2014	238
-239	132,0	\N	\N	2014	239
-240	133,0	\N	\N	2014	240
-241	136,0	\N	\N	2014	241
-242	137,0	\N	\N	2014	242
-243	143,0	\N	\N	2014	243
-244	148,0	\N	\N	2014	244
-245	149,0	\N	\N	2014	245
-246	153,0	\N	\N	2014	246
-247	11,0	\N	\N	2014	247
-248	16,0	\N	\N	2014	248
-249	17,0	\N	\N	2014	249
-250	18,0	\N	\N	2014	250
-251	22,0	\N	\N	2014	251
-252	25,0	\N	\N	2014	252
-253	30,0	\N	\N	2014	253
-254	31,0	\N	\N	2014	254
-255	32,0	\N	\N	2014	255
-256	35,0	\N	\N	2014	256
-257	36,0	\N	\N	2014	257
-258	38,0	\N	\N	2014	258
-259	39,0	\N	\N	2014	259
-260	40,0	\N	\N	2014	260
-261	45,0	\N	\N	2014	261
-262	47,0	\N	\N	2014	262
-263	49,0	\N	\N	2014	263
-264	54,0	\N	\N	2014	264
-265	55,0	\N	\N	2014	265
-266	56,0	\N	\N	2014	266
-267	57,0	\N	\N	2014	267
-268	61,0	\N	\N	2014	268
-269	62,0	\N	\N	2014	269
-270	65,0	\N	\N	2014	270
-271	66,0	\N	\N	2014	271
-272	67,0	\N	\N	2014	272
-273	68,0	\N	\N	2014	273
-274	71,0	\N	\N	2014	274
-275	80,0	\N	\N	2014	275
-276	81,0	\N	\N	2014	276
-277	82,0	\N	\N	2014	277
-278	86,0	\N	\N	2014	278
-279	87,0	\N	\N	2014	279
-280	90,0	\N	\N	2014	280
-281	91,0	\N	\N	2014	281
-282	92,0	\N	\N	2014	282
-283	95,0	\N	\N	2014	283
-284	96,0	\N	\N	2014	284
-285	97,0	\N	\N	2014	285
-286	98,0	\N	\N	2014	286
-287	100,0	\N	\N	2014	287
-288	103,0	\N	\N	2014	288
-289	106,0	\N	\N	2014	289
-290	110,0	\N	\N	2014	290
-291	111,0	\N	\N	2014	291
-292	115,0	\N	\N	2014	292
-293	126,0	\N	\N	2014	293
-294	129,0	\N	\N	2014	294
-295	134,0	\N	\N	2014	295
-296	139,0	\N	\N	2014	296
-297	140,0	\N	\N	2014	297
-298	141,0	\N	\N	2014	298
-299	142,0	\N	\N	2014	299
-300	144,0	\N	\N	2014	300
-301	146,0	\N	\N	2014	301
-302	147,0	\N	\N	2014	302
-303	150,0	\N	\N	2014	303
-304	151,0	\N	\N	2014	304
-305	152,0	\N	\N	2014	305
-306	155,0	\N	\N	2014	306
-307	157,0	\N	\N	2014	307
-308	2,0	\N	\N	2015	308
-309	3,0	\N	\N	2015	309
-310	4,0	\N	\N	2015	310
-311	5,0	\N	\N	2015	311
-312	7,0	\N	\N	2015	312
-313	8,0	\N	\N	2015	313
-314	13,0	\N	\N	2015	314
-315	14,0	\N	\N	2015	315
-316	24,0	\N	\N	2015	316
-317	25,0	\N	\N	2015	317
-318	36,0	\N	\N	2015	318
-319	51,0	\N	\N	2015	319
-320	55,0	\N	\N	2015	320
-321	65,0	\N	\N	2015	321
-322	71,0	\N	\N	2015	322
-323	1,0	\N	\N	2015	323
-324	6,0	\N	\N	2015	324
-325	10,0	\N	\N	2015	325
-326	16,0	\N	\N	2015	326
-327	19,0	\N	\N	2015	327
-328	21,0	\N	\N	2015	328
-329	27,0	\N	\N	2015	329
-330	28,0	\N	\N	2015	330
-331	29,0	\N	\N	2015	331
-332	30,0	\N	\N	2015	332
-333	32,0	\N	\N	2015	333
-334	33,0	\N	\N	2015	334
-335	37,0	\N	\N	2015	335
-336	38,0	\N	\N	2015	336
-337	39,0	\N	\N	2015	337
-338	40,0	\N	\N	2015	338
-339	43,0	\N	\N	2015	339
-340	44,0	\N	\N	2015	340
-341	49,0	\N	\N	2015	341
-342	50,0	\N	\N	2015	342
-343	53,0	\N	\N	2015	343
-344	54,0	\N	\N	2015	344
-345	56,0	\N	\N	2015	345
-346	57,0	\N	\N	2015	346
-347	61,0	\N	\N	2015	347
-348	62,0	\N	\N	2015	348
-349	68,0	\N	\N	2015	349
-350	69,0	\N	\N	2015	350
-351	70,0	\N	\N	2015	351
-352	72,0	\N	\N	2015	352
-353	74,0	\N	\N	2015	353
-354	75,0	\N	\N	2015	354
-355	76,0	\N	\N	2015	355
-356	77,0	\N	\N	2015	356
-357	9,0	\N	\N	2015	357
-358	11,0	\N	\N	2015	358
-359	12,0	\N	\N	2015	359
-360	15,0	\N	\N	2015	360
-361	17,0	\N	\N	2015	361
-362	18,0	\N	\N	2015	362
-363	20,0	\N	\N	2015	363
-364	22,0	\N	\N	2015	364
-365	23,0	\N	\N	2015	365
-366	26,0	\N	\N	2015	366
-367	31,0	\N	\N	2015	367
-368	34,0	\N	\N	2015	368
-369	35,0	\N	\N	2015	369
-370	41,0	\N	\N	2015	370
-371	42,0	\N	\N	2015	371
-372	45,0	\N	\N	2015	372
-373	46,0	\N	\N	2015	373
-374	47,0	\N	\N	2015	374
-375	48,0	\N	\N	2015	375
-376	52,0	\N	\N	2015	376
-377	58,0	\N	\N	2015	377
-378	59,0	\N	\N	2015	378
-379	60,0	\N	\N	2015	379
-380	63,0	\N	\N	2015	380
-381	64,0	\N	\N	2015	381
-382	66,0	\N	\N	2015	382
-383	67,0	\N	\N	2015	383
-384	73,0	\N	\N	2015	384
-385	1,0	\N	\N	2016	385
-386	2,0	\N	\N	2016	386
-387	3,0	\N	\N	2016	387
-388	4,0	\N	\N	2016	388
-389	5,0	\N	\N	2016	389
-390	6,0	\N	\N	2016	390
-391	7,0	\N	\N	2016	391
-392	8,0	\N	\N	2016	392
-393	11,0	\N	\N	2016	393
-394	15,0	\N	\N	2016	394
-395	21,0	\N	\N	2016	395
-396	28,0	\N	\N	2016	396
-397	35,0	\N	\N	2016	397
-398	46,0	\N	\N	2016	398
-399	59,0	\N	\N	2016	399
-400	14,0	\N	\N	2016	400
-401	16,0	\N	\N	2016	401
-402	18,0	\N	\N	2016	402
-403	20,0	\N	\N	2016	403
-404	23,0	\N	\N	2016	404
-405	24,0	\N	\N	2016	405
-406	26,0	\N	\N	2016	406
-407	29,0	\N	\N	2016	407
-408	32,0	\N	\N	2016	408
-409	33,0	\N	\N	2016	409
-410	36,0	\N	\N	2016	410
-411	37,0	\N	\N	2016	411
-412	44,0	\N	\N	2016	412
-413	45,0	\N	\N	2016	413
-414	49,0	\N	\N	2016	414
-415	50,0	\N	\N	2016	415
-416	51,0	\N	\N	2016	416
-417	53,0	\N	\N	2016	417
-418	55,0	\N	\N	2016	418
-419	56,0	\N	\N	2016	419
-420	9,0	\N	\N	2016	420
-421	10,0	\N	\N	2016	421
-422	12,0	\N	\N	2016	422
-423	13,0	\N	\N	2016	423
-424	17,0	\N	\N	2016	424
-425	19,0	\N	\N	2016	425
-426	22,0	\N	\N	2016	426
-427	25,0	\N	\N	2016	427
-428	27,0	\N	\N	2016	428
-429	30,0	\N	\N	2016	429
-430	31,0	\N	\N	2016	430
-431	34,0	\N	\N	2016	431
-432	38,0	\N	\N	2016	432
-433	39,0	\N	\N	2016	433
-434	40,0	\N	\N	2016	434
-435	41,0	\N	\N	2016	435
-436	42,0	\N	\N	2016	436
-437	43,0	\N	\N	2016	437
-438	47,0	\N	\N	2016	438
-439	48,0	\N	\N	2016	439
-440	52,0	\N	\N	2016	440
-441	54,0	\N	\N	2016	441
-442	57,0	\N	\N	2016	442
-443	58,0	\N	\N	2016	443
-444	60,0	\N	\N	2016	444
-445	1,0	\N	\N	2017	445
-446	3,0	\N	\N	2017	446
-447	6,0	\N	\N	2017	447
-448	8,0	\N	\N	2017	448
-449	9,0	\N	\N	2017	449
-450	10,0	\N	\N	2017	450
-451	11,0	\N	\N	2017	451
-452	14,0	\N	\N	2017	452
-453	16,0	\N	\N	2017	453
-454	17,0	\N	\N	2017	454
-455	18,0	\N	\N	2017	455
-456	23,0	\N	\N	2017	456
-457	24,0	\N	\N	2017	457
-458	25,0	\N	\N	2017	458
-459	32,0	\N	\N	2017	459
-460	36,0	\N	\N	2017	460
-461	54,0	\N	\N	2017	461
-462	60,0	\N	\N	2017	462
-463	75,0	\N	\N	2017	463
-464	77,0	\N	\N	2017	464
-465	81,0	\N	\N	2017	465
-466	83,0	\N	\N	2017	466
-467	86,0	\N	\N	2017	467
-468	90,0	\N	\N	2017	468
-469	5,0	\N	\N	2017	469
-470	13,0	\N	\N	2017	470
-471	15,0	\N	\N	2017	471
-472	20,0	\N	\N	2017	472
-473	21,0	\N	\N	2017	473
-474	22,0	\N	\N	2017	474
-475	27,0	\N	\N	2017	475
-476	28,0	\N	\N	2017	476
-477	29,0	\N	\N	2017	477
-478	31,0	\N	\N	2017	478
-479	37,0	\N	\N	2017	479
-480	41,0	\N	\N	2017	480
-481	43,0	\N	\N	2017	481
-482	45,0	\N	\N	2017	482
-483	47,0	\N	\N	2017	483
-484	48,0	\N	\N	2017	484
-485	53,0	\N	\N	2017	485
-486	55,0	\N	\N	2017	486
-487	56,0	\N	\N	2017	487
-488	59,0	\N	\N	2017	488
-489	63,0	\N	\N	2017	489
-490	64,0	\N	\N	2017	490
-491	67,0	\N	\N	2017	491
-492	69,0	\N	\N	2017	492
-493	70,0	\N	\N	2017	493
-494	71,0	\N	\N	2017	494
-495	72,0	\N	\N	2017	495
-496	73,0	\N	\N	2017	496
-497	84,0	\N	\N	2017	497
-498	85,0	\N	\N	2017	498
-499	87,0	\N	\N	2017	499
-500	91,0	\N	\N	2017	500
-501	2,0	\N	\N	2017	501
-502	4,0	\N	\N	2017	502
-503	7,0	\N	\N	2017	503
-504	12,0	\N	\N	2017	504
-505	19,0	\N	\N	2017	505
-506	26,0	\N	\N	2017	506
-507	30,0	\N	\N	2017	507
-508	33,0	\N	\N	2017	508
-509	34,0	\N	\N	2017	509
-510	35,0	\N	\N	2017	510
-511	38,0	\N	\N	2017	511
-512	39,0	\N	\N	2017	512
-513	40,0	\N	\N	2017	513
-514	42,0	\N	\N	2017	514
-515	44,0	\N	\N	2017	515
-516	46,0	\N	\N	2017	516
-517	49,0	\N	\N	2017	517
-518	50,0	\N	\N	2017	518
-519	51,0	\N	\N	2017	519
-520	52,0	\N	\N	2017	520
-521	57,0	\N	\N	2017	521
-522	58,0	\N	\N	2017	522
-523	61,0	\N	\N	2017	523
-524	62,0	\N	\N	2017	524
-525	65,0	\N	\N	2017	525
-526	66,0	\N	\N	2017	526
-527	68,0	\N	\N	2017	527
-528	74,0	\N	\N	2017	528
-529	76,0	\N	\N	2017	529
-530	78,0	\N	\N	2017	530
-531	79,0	\N	\N	2017	531
-532	80,0	\N	\N	2017	532
-533	82,0	\N	\N	2017	533
-534	88,0	\N	\N	2017	534
-535	89,0	\N	\N	2017	535
-536	92,0	\N	\N	2017	536
-537	1,0	\N	\N	2018	537
-538	2,0	\N	\N	2018	538
-539	3,0	\N	\N	2018	539
-540	4,0	\N	\N	2018	540
-541	5,0	\N	\N	2018	541
-542	6,0	\N	\N	2018	542
-543	7,0	\N	\N	2018	543
-544	9,0	\N	\N	2018	544
-545	10,0	\N	\N	2018	545
-546	13,0	\N	\N	2018	546
-547	15,0	\N	\N	2018	547
-548	22,0	\N	\N	2018	548
-549	28,0	\N	\N	2018	549
-550	32,0	\N	\N	2018	550
-551	36,0	\N	\N	2018	551
-552	38,0	\N	\N	2018	552
-553	39,0	\N	\N	2018	553
-554	55,0	\N	\N	2018	554
-555	65,0	\N	\N	2018	555
-556	74,0	\N	\N	2018	556
-557	8,0	\N	\N	2018	557
-558	12,0	\N	\N	2018	558
-559	14,0	\N	\N	2018	559
-560	16,0	\N	\N	2018	560
-561	17,0	\N	\N	2018	561
-562	18,0	\N	\N	2018	562
-563	20,0	\N	\N	2018	563
-564	21,0	\N	\N	2018	564
-565	23,0	\N	\N	2018	565
-566	24,0	\N	\N	2018	566
-567	27,0	\N	\N	2018	567
-568	29,0	\N	\N	2018	568
-569	30,0	\N	\N	2018	569
-570	31,0	\N	\N	2018	570
-571	33,0	\N	\N	2018	571
-572	37,0	\N	\N	2018	572
-573	40,0	\N	\N	2018	573
-574	42,0	\N	\N	2018	574
-575	45,0	\N	\N	2018	575
-576	48,0	\N	\N	2018	576
-577	50,0	\N	\N	2018	577
-578	56,0	\N	\N	2018	578
-579	59,0	\N	\N	2018	579
-580	61,0	\N	\N	2018	580
-581	63,0	\N	\N	2018	581
-582	68,0	\N	\N	2018	582
-583	73,0	\N	\N	2018	583
-584	75,0	\N	\N	2018	584
-585	77,0	\N	\N	2018	585
-586	11,0	\N	\N	2018	586
-587	19,0	\N	\N	2018	587
-588	25,0	\N	\N	2018	588
-589	26,0	\N	\N	2018	589
-590	34,0	\N	\N	2018	590
-591	35,0	\N	\N	2018	591
-592	41,0	\N	\N	2018	592
-593	43,0	\N	\N	2018	593
-594	44,0	\N	\N	2018	594
-595	46,0	\N	\N	2018	595
-596	47,0	\N	\N	2018	596
-597	49,0	\N	\N	2018	597
-598	51,0	\N	\N	2018	598
-599	52,0	\N	\N	2018	599
-600	53,0	\N	\N	2018	600
-601	54,0	\N	\N	2018	601
-602	57,0	\N	\N	2018	602
-603	58,0	\N	\N	2018	603
-604	60,0	\N	\N	2018	604
-605	62,0	\N	\N	2018	605
-606	64,0	\N	\N	2018	606
-607	66,0	\N	\N	2018	607
-608	67,0	\N	\N	2018	608
-609	69,0	\N	\N	2018	609
-610	70,0	\N	\N	2018	610
-611	71,0	\N	\N	2018	611
-612	72,0	\N	\N	2018	612
-613	76,0	\N	\N	2018	613
+COPY public.users (id, name, number, role, username, year) FROM stdin;
+150	1,0	\N	\N	\N	2014
+151	2,0	\N	\N	\N	2014
+152	3,0	\N	\N	\N	2014
+153	5,0	\N	\N	\N	2014
+155	7,0	\N	\N	\N	2014
+163	42,0	\N	\N	\N	2014
+165	50,0	\N	\N	\N	2014
+167	59,0	\N	\N	\N	2014
+169	64,0	\N	\N	\N	2014
+173	101,0	\N	\N	\N	2014
+174	102,0	\N	\N	\N	2014
+176	112,0	\N	\N	\N	2014
+178	117,0	\N	\N	\N	2014
+180	120,0	\N	\N	\N	2014
+181	121,0	\N	\N	\N	2014
+182	122,0	\N	\N	\N	2014
+183	123,0	\N	\N	\N	2014
+184	124,0	\N	\N	\N	2014
+185	128,0	\N	\N	\N	2014
+108	48,0	108	\N	\N	2013
+111	51,0	111	\N	\N	2013
+112	52,0	112	\N	\N	2013
+113	53,0	113	\N	\N	2013
+115	55,0	115	\N	\N	2013
+116	56,0	116	\N	\N	2013
+117	57,0	117	\N	\N	2013
+118	58,0	118	\N	\N	2013
+119	59,0	119	\N	\N	2013
+120	60,0	120	\N	\N	2013
+121	61,0	121	\N	\N	2013
+124	64,0	124	\N	\N	2013
+125	65,0	125	\N	\N	2013
+128	68,0	128	\N	\N	2013
+131	71,0	131	\N	\N	2013
+132	72,0	132	\N	\N	2013
+133	73,0	133	\N	\N	2013
+134	74,0	134	\N	\N	2013
+136	76,0	136	\N	\N	2013
+137	77,0	137	\N	\N	2013
+138	78,0	138	\N	\N	2013
+139	79,0	139	\N	\N	2013
+140	80,0	140	\N	\N	2013
+141	81,0	141	\N	\N	2013
+143	83,0	143	\N	\N	2013
+145	85,0	145	\N	\N	2013
+146	86,0	146	\N	\N	2013
+147	87,0	147	\N	\N	2013
+149	89,0	149	\N	\N	2013
+179	119,0	179	\N	\N	2014
+13	13,0	13	\N	\N	2011
+11	11,0	11	\N	\N	2011
+35	35,0	35	\N	\N	2011
+1	1,0	1	\N	\N	2011
+8	8,0	8	\N	\N	2011
+19	19,0	19	\N	\N	2011
+27	27,0	27	\N	\N	2011
+29	29,0	29	\N	\N	2011
+36	36,0	36	\N	\N	2011
+52	52,0	52	\N	\N	2011
+3	3,0	3	\N	\N	2011
+6	6,0	6	\N	\N	2011
+23	23,0	23	\N	\N	2011
+31	31,0	31	\N	\N	2011
+46	46,0	46	\N	\N	2011
+73	13,0	73	\N	\N	2013
+91	31,0	91	\N	\N	2013
+92	32,0	92	\N	\N	2013
+98	38,0	98	\N	\N	2013
+76	16,0	76	\N	\N	2013
+175	107,0	175	\N	\N	2014
+154	6,0	154	\N	\N	2014
+157	15,0	157	\N	\N	2014
+162	41,0	162	\N	\N	2014
+170	73,0	170	\N	\N	2014
+171	74,0	171	\N	\N	2014
+177	114,0	177	\N	\N	2014
+159	21,0	159	\N	\N	2014
+160	23,0	160	\N	\N	2014
+172	78,0	172	\N	\N	2014
+156	12,0	156	\N	\N	2014
+158	19,0	158	\N	\N	2014
+161	26,0	161	\N	\N	2014
+164	44,0	164	\N	\N	2014
+166	52,0	166	\N	\N	2014
+168	63,0	168	\N	\N	2014
+186	130,0	\N	\N	\N	2014
+187	135,0	\N	\N	\N	2014
+188	138,0	\N	\N	\N	2014
+189	145,0	\N	\N	\N	2014
+190	154,0	\N	\N	\N	2014
+191	156,0	\N	\N	\N	2014
+192	158,0	\N	\N	\N	2014
+308	2,0	\N	\N	\N	2015
+311	5,0	\N	\N	\N	2015
+314	13,0	\N	\N	\N	2015
+316	24,0	\N	\N	\N	2015
+317	25,0	\N	\N	\N	2015
+319	51,0	\N	\N	\N	2015
+320	55,0	\N	\N	\N	2015
+321	65,0	\N	\N	\N	2015
+322	71,0	\N	\N	\N	2015
+199	20,0	199	\N	\N	2014
+203	29,0	203	\N	\N	2014
+207	43,0	207	\N	\N	2014
+209	48,0	209	\N	\N	2014
+211	53,0	211	\N	\N	2014
+215	70,0	215	\N	\N	2014
+226	93,0	226	\N	\N	2014
+227	94,0	227	\N	\N	2014
+236	125,0	236	\N	\N	2014
+240	133,0	240	\N	\N	2014
+202	28,0	202	\N	\N	2014
+238	131,0	238	\N	\N	2014
+245	149,0	245	\N	\N	2014
+201	27,0	201	\N	\N	2014
+205	34,0	205	\N	\N	2014
+206	37,0	206	\N	\N	2014
+230	105,0	230	\N	\N	2014
+231	108,0	231	\N	\N	2014
+234	116,0	234	\N	\N	2014
+243	143,0	243	\N	\N	2014
+193	4,0	193	\N	\N	2014
+194	8,0	194	\N	\N	2014
+195	9,0	195	\N	\N	2014
+196	10,0	196	\N	\N	2014
+197	13,0	197	\N	\N	2014
+198	14,0	198	\N	\N	2014
+200	24,0	200	\N	\N	2014
+262	47,0	262	\N	\N	2014
+264	54,0	264	\N	\N	2014
+267	57,0	267	\N	\N	2014
+269	62,0	269	\N	\N	2014
+272	67,0	272	\N	\N	2014
+273	68,0	273	\N	\N	2014
+274	71,0	274	\N	\N	2014
+275	80,0	275	\N	\N	2014
+280	90,0	280	\N	\N	2014
+282	92,0	282	\N	\N	2014
+283	95,0	283	\N	\N	2014
+284	96,0	284	\N	\N	2014
+288	103,0	288	\N	\N	2014
+290	110,0	290	\N	\N	2014
+293	126,0	293	\N	\N	2014
+295	134,0	295	\N	\N	2014
+300	144,0	300	\N	\N	2014
+306	155,0	306	\N	\N	2014
+307	157,0	307	\N	\N	2014
+248	16,0	248	\N	\N	2014
+256	35,0	256	\N	\N	2014
+261	45,0	261	\N	\N	2014
+263	49,0	263	\N	\N	2014
+266	56,0	266	\N	\N	2014
+268	61,0	268	\N	\N	2014
+277	82,0	277	\N	\N	2014
+286	98,0	286	\N	\N	2014
+292	115,0	292	\N	\N	2014
+297	140,0	297	\N	\N	2014
+298	141,0	298	\N	\N	2014
+299	142,0	299	\N	\N	2014
+302	147,0	302	\N	\N	2014
+305	152,0	305	\N	\N	2014
+258	38,0	258	\N	\N	2014
+289	106,0	289	\N	\N	2014
+294	129,0	294	\N	\N	2014
+301	146,0	301	\N	\N	2014
+303	150,0	303	\N	\N	2014
+324	6,0	324	\N	\N	2015
+328	21,0	328	\N	\N	2015
+332	30,0	332	\N	\N	2015
+342	50,0	342	\N	\N	2015
+346	57,0	346	\N	\N	2015
+349	68,0	349	\N	\N	2015
+352	72,0	352	\N	\N	2015
+353	74,0	353	\N	\N	2015
+329	27,0	329	\N	\N	2015
+333	32,0	333	\N	\N	2015
+337	39,0	337	\N	\N	2015
+339	43,0	339	\N	\N	2015
+341	49,0	341	\N	\N	2015
+344	54,0	344	\N	\N	2015
+351	70,0	351	\N	\N	2015
+327	19,0	327	\N	\N	2015
+312	7,0	312	\N	\N	2015
+385	1,0	\N	\N	\N	2016
+386	2,0	\N	\N	\N	2016
+387	3,0	\N	\N	\N	2016
+390	6,0	\N	\N	\N	2016
+393	11,0	\N	\N	\N	2016
+394	15,0	\N	\N	\N	2016
+396	28,0	\N	\N	\N	2016
+446	3,0	\N	\N	\N	2017
+447	6,0	\N	\N	\N	2017
+448	8,0	\N	\N	\N	2017
+449	9,0	\N	\N	\N	2017
+450	10,0	\N	\N	\N	2017
+451	11,0	\N	\N	\N	2017
+452	14,0	\N	\N	\N	2017
+454	17,0	\N	\N	\N	2017
+455	18,0	\N	\N	\N	2017
+457	24,0	\N	\N	\N	2017
+465	81,0	\N	\N	\N	2017
+466	83,0	\N	\N	\N	2017
+537	1,0	\N	\N	\N	2018
+538	2,0	\N	\N	\N	2018
+539	3,0	\N	\N	\N	2018
+540	4,0	\N	\N	\N	2018
+541	5,0	\N	\N	\N	2018
+542	6,0	\N	\N	\N	2018
+550	32,0	\N	\N	\N	2018
+552	38,0	\N	\N	\N	2018
+553	39,0	\N	\N	\N	2018
+554	55,0	\N	\N	\N	2018
+555	65,0	\N	\N	\N	2018
+422	12,0	422	\N	\N	2016
+424	17,0	424	\N	\N	2016
+425	19,0	425	\N	\N	2016
+436	42,0	436	\N	\N	2016
+435	41,0	435	\N	\N	2016
+437	43,0	437	\N	\N	2016
+442	57,0	442	\N	\N	2016
+438	47,0	438	\N	\N	2016
+443	58,0	443	\N	\N	2016
+392	8,0	392	\N	\N	2016
+397	35,0	397	\N	\N	2016
+389	5,0	389	\N	\N	2016
+395	21,0	395	\N	\N	2016
+416	51,0	416	\N	\N	2016
+398	46,0	398	\N	\N	2016
+415	50,0	415	\N	\N	2016
+423	13,0	423	\N	\N	2016
+470	13,0	470	\N	\N	2017
+476	28,0	476	\N	\N	2017
+480	41,0	480	\N	\N	2017
+485	53,0	485	\N	\N	2017
+471	15,0	471	\N	\N	2017
+500	91,0	500	\N	\N	2017
+472	20,0	472	\N	\N	2017
+483	47,0	483	\N	\N	2017
+469	5,0	469	\N	\N	2017
+473	21,0	473	\N	\N	2017
+478	31,0	478	\N	\N	2017
+545	10,0	545	\N	\N	2018
+546	13,0	546	\N	\N	2018
+375	48,0	375	\N	\N	2015
+374	47,0	374	\N	\N	2015
+403	20,0	403	\N	\N	2016
+419	56,0	419	\N	\N	2016
+412	44,0	412	\N	\N	2016
+444	60,0	444	\N	\N	2016
+434	40,0	434	\N	\N	2016
+432	38,0	432	\N	\N	2016
+433	39,0	433	\N	\N	2016
+439	48,0	439	\N	\N	2016
+441	54,0	441	\N	\N	2016
+388	4,0	388	\N	\N	2016
+399	59,0	399	\N	\N	2016
+391	7,0	391	\N	\N	2016
+477	29,0	477	\N	\N	2017
+481	43,0	481	\N	\N	2017
+486	55,0	486	\N	\N	2017
+488	59,0	488	\N	\N	2017
+490	64,0	490	\N	\N	2017
+491	67,0	491	\N	\N	2017
+475	27,0	475	\N	\N	2017
+489	63,0	489	\N	\N	2017
+505	19,0	505	\N	\N	2017
+521	57,0	521	\N	\N	2017
+525	65,0	525	\N	\N	2017
+536	92,0	536	\N	\N	2017
+503	7,0	503	\N	\N	2017
+504	12,0	504	\N	\N	2017
+526	66,0	526	\N	\N	2017
+535	89,0	535	\N	\N	2017
+453	16,0	453	\N	\N	2017
+445	1,0	445	\N	\N	2017
+463	75,0	463	\N	\N	2017
+456	23,0	456	\N	\N	2017
+460	36,0	460	\N	\N	2017
+462	60,0	462	\N	\N	2017
+468	90,0	468	\N	\N	2017
+461	54,0	461	\N	\N	2017
+464	77,0	464	\N	\N	2017
+543	7,0	543	\N	\N	2018
+551	36,0	551	\N	\N	2018
+547	15,0	547	\N	\N	2018
+548	22,0	548	\N	\N	2018
+2	2,0	2	\N	\N	2011
+7	7,0	7	\N	\N	2011
+15	15,0	15	\N	\N	2011
+18	18,0	18	\N	\N	2011
+25	25,0	25	\N	\N	2011
+28	28,0	28	\N	\N	2011
+32	32,0	32	\N	\N	2011
+51	51,0	51	\N	\N	2011
+54	54,0	54	\N	\N	2011
+56	56,0	56	\N	\N	2011
+59	59,0	59	\N	\N	2011
+24	24,0	24	\N	\N	2011
+33	33,0	33	\N	\N	2011
+40	40,0	40	\N	\N	2011
+47	47,0	47	\N	\N	2011
+10	10,0	10	\N	\N	2011
+16	16,0	16	\N	\N	2011
+20	20,0	20	\N	\N	2011
+38	38,0	38	\N	\N	2011
+41	41,0	41	\N	\N	2011
+45	45,0	45	\N	\N	2011
+49	49,0	49	\N	\N	2011
+55	55,0	55	\N	\N	2011
+22	22,0	22	\N	\N	2011
+26	26,0	26	\N	\N	2011
+4	4,0	4	\N	\N	2011
+42	42,0	42	\N	\N	2011
+53	53,0	53	\N	\N	2011
+9	9,0	9	\N	\N	2011
+14	14,0	14	\N	\N	2011
+34	34,0	34	\N	\N	2011
+50	50,0	50	\N	\N	2011
+57	57,0	57	\N	\N	2011
+60	60,0	60	\N	\N	2011
+5	5,0	5	\N	\N	2011
+12	12,0	12	\N	\N	2011
+17	17,0	17	\N	\N	2011
+43	43,0	43	\N	\N	2011
+44	44,0	44	\N	\N	2011
+39	39,0	39	\N	\N	2011
+21	21,0	21	\N	\N	2011
+37	37,0	37	\N	\N	2011
+48	48,0	48	\N	\N	2011
+58	58,0	58	\N	\N	2011
+30	30,0	30	\N	\N	2011
+67	7,0	67	\N	\N	2013
+84	24,0	84	\N	\N	2013
+95	35,0	95	\N	\N	2013
+97	37,0	97	\N	\N	2013
+61	1,0	61	\N	\N	2013
+62	2,0	62	\N	\N	2013
+63	3,0	63	\N	\N	2013
+65	5,0	65	\N	\N	2013
+66	6,0	66	\N	\N	2013
+68	8,0	68	\N	\N	2013
+69	9,0	69	\N	\N	2013
+70	10,0	70	\N	\N	2013
+71	11,0	71	\N	\N	2013
+72	12,0	72	\N	\N	2013
+78	18,0	78	\N	\N	2013
+81	21,0	81	\N	\N	2013
+86	26,0	86	\N	\N	2013
+88	28,0	88	\N	\N	2013
+90	30,0	90	\N	\N	2013
+94	34,0	94	\N	\N	2013
+99	39,0	99	\N	\N	2013
+100	40,0	100	\N	\N	2013
+102	42,0	102	\N	\N	2013
+103	43,0	103	\N	\N	2013
+93	33,0	93	\N	\N	2013
+96	36,0	96	\N	\N	2013
+87	27,0	87	\N	\N	2013
+64	4,0	64	\N	\N	2013
+101	41,0	101	\N	\N	2013
+75	15,0	75	\N	\N	2013
+82	22,0	82	\N	\N	2013
+104	44,0	104	\N	\N	2013
+85	25,0	85	\N	\N	2013
+83	23,0	83	\N	\N	2013
+74	14,0	74	\N	\N	2013
+89	29,0	89	\N	\N	2013
+77	17,0	77	\N	\N	2013
+80	20,0	80	\N	\N	2013
+79	19,0	79	\N	\N	2013
+110	50,0	110	\N	\N	2013
+123	63,0	123	\N	\N	2013
+130	70,0	130	\N	\N	2013
+114	54,0	114	\N	\N	2013
+126	66,0	126	\N	\N	2013
+106	46,0	106	\N	\N	2013
+109	49,0	109	\N	\N	2013
+129	69,0	129	\N	\N	2013
+144	84,0	144	\N	\N	2013
+148	88,0	148	\N	\N	2013
+122	62,0	122	\N	\N	2013
+127	67,0	127	\N	\N	2013
+135	75,0	135	\N	\N	2013
+142	82,0	142	\N	\N	2013
+105	45,0	105	\N	\N	2013
+107	47,0	107	\N	\N	2013
+233	113,0	233	\N	\N	2014
+281	91,0	281	\N	\N	2014
+278	86,0	278	\N	\N	2014
+291	111,0	291	\N	\N	2014
+285	97,0	285	\N	\N	2014
+279	87,0	279	\N	\N	2014
+338	40,0	338	\N	\N	2015
+326	16,0	326	\N	\N	2015
+334	33,0	334	\N	\N	2015
+323	1,0	323	\N	\N	2015
+606	64,0	606	\N	\N	2018
+563	20,0	563	\N	\N	2018
+597	49,0	597	\N	\N	2018
+594	44,0	594	\N	\N	2018
+559	14,0	559	\N	\N	2018
+588	25,0	588	\N	\N	2018
+572	37,0	572	\N	\N	2018
+585	77,0	585	\N	\N	2018
+567	27,0	567	\N	\N	2018
+568	29,0	568	\N	\N	2018
+571	33,0	571	\N	\N	2018
+574	42,0	574	\N	\N	2018
+580	61,0	580	\N	\N	2018
+582	68,0	582	\N	\N	2018
+583	73,0	583	\N	\N	2018
+584	75,0	584	\N	\N	2018
+566	24,0	566	\N	\N	2018
+581	63,0	581	\N	\N	2018
+586	11,0	586	\N	\N	2018
+587	19,0	587	\N	\N	2018
+589	26,0	589	\N	\N	2018
+592	41,0	592	\N	\N	2018
+593	43,0	593	\N	\N	2018
+596	47,0	596	\N	\N	2018
+598	51,0	598	\N	\N	2018
+348	62,0	348	\N	\N	2015
+343	53,0	343	\N	\N	2015
+336	38,0	336	\N	\N	2015
+350	69,0	350	\N	\N	2015
+347	61,0	347	\N	\N	2015
+345	56,0	345	\N	\N	2015
+354	75,0	354	\N	\N	2015
+330	28,0	330	\N	\N	2015
+325	10,0	325	\N	\N	2015
+335	37,0	335	\N	\N	2015
+368	34,0	368	\N	\N	2015
+364	22,0	364	\N	\N	2015
+377	58,0	377	\N	\N	2015
+380	63,0	380	\N	\N	2015
+371	42,0	371	\N	\N	2015
+362	18,0	362	\N	\N	2015
+379	60,0	379	\N	\N	2015
+366	26,0	366	\N	\N	2015
+369	35,0	369	\N	\N	2015
+359	12,0	359	\N	\N	2015
+384	73,0	384	\N	\N	2015
+373	46,0	373	\N	\N	2015
+357	9,0	357	\N	\N	2015
+378	59,0	378	\N	\N	2015
+363	20,0	363	\N	\N	2015
+376	52,0	376	\N	\N	2015
+372	45,0	372	\N	\N	2015
+383	67,0	383	\N	\N	2015
+382	66,0	382	\N	\N	2015
+313	8,0	313	\N	\N	2015
+356	77,0	356	\N	\N	2015
+355	76,0	355	\N	\N	2015
+358	11,0	358	\N	\N	2015
+381	64,0	381	\N	\N	2015
+310	4,0	310	\N	\N	2015
+340	44,0	340	\N	\N	2015
+402	18,0	402	\N	\N	2016
+409	33,0	409	\N	\N	2016
+405	24,0	405	\N	\N	2016
+400	14,0	400	\N	\N	2016
+401	16,0	401	\N	\N	2016
+411	37,0	411	\N	\N	2016
+410	36,0	410	\N	\N	2016
+418	55,0	418	\N	\N	2016
+407	29,0	407	\N	\N	2016
+414	49,0	414	\N	\N	2016
+404	23,0	404	\N	\N	2016
+408	32,0	408	\N	\N	2016
+406	26,0	406	\N	\N	2016
+417	53,0	417	\N	\N	2016
+413	45,0	413	\N	\N	2016
+440	52,0	440	\N	\N	2016
+420	9,0	420	\N	\N	2016
+426	22,0	426	\N	\N	2016
+429	30,0	429	\N	\N	2016
+431	34,0	431	\N	\N	2016
+428	27,0	428	\N	\N	2016
+421	10,0	421	\N	\N	2016
+430	31,0	430	\N	\N	2016
+427	25,0	427	\N	\N	2016
+482	45,0	482	\N	\N	2017
+493	70,0	493	\N	\N	2017
+495	72,0	495	\N	\N	2017
+497	84,0	497	\N	\N	2017
+498	85,0	498	\N	\N	2017
+499	87,0	499	\N	\N	2017
+479	37,0	479	\N	\N	2017
+496	73,0	496	\N	\N	2017
+487	56,0	487	\N	\N	2017
+494	71,0	494	\N	\N	2017
+484	48,0	484	\N	\N	2017
+512	39,0	512	\N	\N	2017
+528	74,0	528	\N	\N	2017
+534	88,0	534	\N	\N	2017
+508	33,0	508	\N	\N	2017
+515	44,0	515	\N	\N	2017
+516	46,0	516	\N	\N	2017
+511	38,0	511	\N	\N	2017
+513	40,0	513	\N	\N	2017
+514	42,0	514	\N	\N	2017
+529	76,0	529	\N	\N	2017
+502	4,0	502	\N	\N	2017
+506	26,0	506	\N	\N	2017
+510	35,0	510	\N	\N	2017
+517	49,0	517	\N	\N	2017
+522	58,0	522	\N	\N	2017
+523	61,0	523	\N	\N	2017
+524	62,0	524	\N	\N	2017
+527	68,0	527	\N	\N	2017
+531	79,0	531	\N	\N	2017
+532	80,0	532	\N	\N	2017
+492	69,0	492	\N	\N	2017
+507	30,0	507	\N	\N	2017
+458	25,0	458	\N	\N	2017
+474	22,0	474	\N	\N	2017
+467	86,0	467	\N	\N	2017
+459	32,0	459	\N	\N	2017
+509	34,0	509	\N	\N	2017
+530	78,0	530	\N	\N	2017
+518	50,0	518	\N	\N	2017
+519	51,0	519	\N	\N	2017
+520	52,0	520	\N	\N	2017
+533	82,0	533	\N	\N	2017
+501	2,0	501	\N	\N	2017
+565	23,0	565	\N	\N	2018
+557	8,0	557	\N	\N	2018
+562	18,0	562	\N	\N	2018
+564	21,0	564	\N	\N	2018
+569	30,0	569	\N	\N	2018
+561	17,0	561	\N	\N	2018
+560	16,0	560	\N	\N	2018
+576	48,0	576	\N	\N	2018
+573	40,0	573	\N	\N	2018
+578	56,0	578	\N	\N	2018
+579	59,0	579	\N	\N	2018
+577	50,0	577	\N	\N	2018
+570	31,0	570	\N	\N	2018
+575	45,0	575	\N	\N	2018
+558	12,0	558	\N	\N	2018
+599	52,0	599	\N	\N	2018
+590	34,0	590	\N	\N	2018
+607	66,0	607	\N	\N	2018
+600	53,0	600	\N	\N	2018
+613	76,0	613	\N	\N	2018
+611	71,0	611	\N	\N	2018
+591	35,0	591	\N	\N	2018
+595	46,0	595	\N	\N	2018
+601	54,0	601	\N	\N	2018
+604	60,0	604	\N	\N	2018
+608	67,0	608	\N	\N	2018
+549	28,0	549	\N	\N	2018
+544	9,0	544	\N	\N	2018
+204	33,0	204	\N	\N	2014
+208	46,0	208	\N	\N	2014
+210	51,0	210	\N	\N	2014
+212	58,0	212	\N	\N	2014
+213	60,0	213	\N	\N	2014
+214	69,0	214	\N	\N	2014
+216	72,0	216	\N	\N	2014
+217	75,0	217	\N	\N	2014
+218	76,0	218	\N	\N	2014
+219	77,0	219	\N	\N	2014
+220	79,0	220	\N	\N	2014
+221	83,0	221	\N	\N	2014
+222	84,0	222	\N	\N	2014
+223	85,0	223	\N	\N	2014
+224	88,0	224	\N	\N	2014
+225	89,0	225	\N	\N	2014
+228	99,0	228	\N	\N	2014
+229	104,0	229	\N	\N	2014
+232	109,0	232	\N	\N	2014
+235	118,0	235	\N	\N	2014
+237	127,0	237	\N	\N	2014
+239	132,0	239	\N	\N	2014
+241	136,0	241	\N	\N	2014
+242	137,0	242	\N	\N	2014
+244	148,0	244	\N	\N	2014
+246	153,0	246	\N	\N	2014
+252	25,0	252	\N	\N	2014
+255	32,0	255	\N	\N	2014
+265	55,0	265	\N	\N	2014
+270	65,0	270	\N	\N	2014
+271	66,0	271	\N	\N	2014
+276	81,0	276	\N	\N	2014
+287	100,0	287	\N	\N	2014
+296	139,0	296	\N	\N	2014
+304	151,0	304	\N	\N	2014
+247	11,0	247	\N	\N	2014
+249	17,0	249	\N	\N	2014
+250	18,0	250	\N	\N	2014
+251	22,0	251	\N	\N	2014
+253	30,0	253	\N	\N	2014
+254	31,0	254	\N	\N	2014
+257	36,0	257	\N	\N	2014
+259	39,0	259	\N	\N	2014
+260	40,0	260	\N	\N	2014
+331	29,0	331	\N	\N	2015
+360	15,0	360	\N	\N	2015
+361	17,0	361	\N	\N	2015
+365	23,0	365	\N	\N	2015
+367	31,0	367	\N	\N	2015
+370	41,0	370	\N	\N	2015
+315	14,0	315	\N	\N	2015
+318	36,0	318	\N	\N	2015
+309	3,0	309	\N	\N	2015
+602	57,0	602	\N	\N	2018
+603	58,0	603	\N	\N	2018
+605	62,0	605	\N	\N	2018
+609	69,0	609	\N	\N	2018
+610	70,0	610	\N	\N	2018
+612	72,0	612	\N	\N	2018
+556	74,0	556	\N	\N	2018
 \.
 
 

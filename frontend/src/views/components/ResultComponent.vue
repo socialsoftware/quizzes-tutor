@@ -37,17 +37,17 @@
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import { convertMarkDown } from "@/scripts/script";
-import Question from "@/models/student/Question";
-import Answer from "@/models/student/Answer";
-import CorrectAnswer from "@/models/student/CorrectAnswer";
-import Image from "@/models/student/Image";
+import StatementQuestion from "@/models/statement/StatementQuestion";
+import StatementAnswer from "@/models/statement/StatementAnswer";
+import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
+import Image from "@/models/management/Image";
 
 @Component
 export default class ResultComponent extends Vue {
   @Model("order", Number) order: number | undefined;
-  @Prop(Question) readonly question: Question | undefined;
-  @Prop(CorrectAnswer) readonly correctAnswer!: CorrectAnswer;
-  @Prop(Answer) readonly answer: Answer | undefined;
+  @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
+  @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
+  @Prop(StatementAnswer) readonly answer: StatementAnswer | undefined;
 
   optionLetters: string[] = ["A", "B", "C", "D"];
 

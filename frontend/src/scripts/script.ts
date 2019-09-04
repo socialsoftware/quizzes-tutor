@@ -1,4 +1,4 @@
-import Image from "@/models/student/Image";
+import Image from "@/models/management/Image";
 import showdown from "showdown";
 
 export function convertMarkDown(
@@ -31,8 +31,7 @@ export function convertMarkDownNoFigure(
   const converter = new showdown.Converter();
 
   if (image && image.url) {
-    text +=
-      " FIGURE HERE ";
+    text += " FIGURE HERE ";
   }
 
   let str = converter.makeHtml(text);
@@ -42,4 +41,3 @@ export function convertMarkDownNoFigure(
 
   return str;
 }
-

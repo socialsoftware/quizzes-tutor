@@ -17,9 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -27,7 +25,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,15 +51,15 @@ public class AnswersXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR, "File not found");
+			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		loadQuestionMap();
@@ -113,7 +110,7 @@ public class AnswersXmlImport {
 
 		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("quizNumber"));
 		Quiz quiz = quizRepository.findByNumber(quizNumber)
-				.orElseThrow(() -> new TutorException(TutorException.ExceptionError.ASWERS_IMPORT_ERROR,
+				.orElseThrow(() -> new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR,
 						"quiz number does not exist " + quizNumber));
 
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));

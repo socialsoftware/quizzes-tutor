@@ -1,5 +1,5 @@
-import Option from "@/models/question/Option";
-import Image from "@/models/student/Image";
+import Option from "@/models/management/Option";
+import Image from "@/models/management/Image";
 
 export interface QuestionDto {
   id: number;
@@ -23,7 +23,6 @@ export class Question implements QuestionDto {
   options!: Option[];
   image: Image | null;
   topics: string[] = [];
-
 
   constructor(jsonObj: QuestionDto) {
     this.id = jsonObj.id;

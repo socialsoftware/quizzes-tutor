@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Quiz from "@/models/student/Quiz";
+import StatementQuiz from "@/models/statement/StatementQuiz";
 import ResultComponent from "@/views/components/ResultComponent.vue";
 
 @Component({
@@ -43,17 +43,18 @@ import ResultComponent from "@/views/components/ResultComponent.vue";
     "result-component": ResultComponent
   }
 })
-export default class StudentResultsView extends Vue {
-  quiz: Quiz = Quiz.getInstance;
+export default class ResultsView extends Vue {
+  quiz: StatementQuiz = StatementQuiz.getInstance;
   order: number = 0;
 
   constructor() {
     super();
   }
 
+  // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.quiz.isEmpty()) {
-      this.$router.push("/setup");
+      await this.$router.push("/setup");
     }
   }
 

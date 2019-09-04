@@ -7,8 +7,6 @@ import org.fenixedu.sdk.ApplicationConfiguration;
 import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -18,14 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.FENIX_ERROR;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-
-    private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     private static String COURSE_ACRONYM = "ASof";
 
     @Autowired
@@ -61,6 +60,8 @@ public class AuthController {
             userDetails = client.getUserDetailsFromCode(data.getCode());
         } catch (FenixEduClientException e) {
             throw new InvalidFenixException("Wrong user Fenix code");
+        } catch (Exception e) {
+            throw new TutorException(FENIX_ERROR, "Wrong configuration");
         }
 
 

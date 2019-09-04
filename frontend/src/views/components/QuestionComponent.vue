@@ -40,14 +40,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import Question from "@/models/student/Question";
+import StatementQuestion from "@/models/statement/StatementQuestion";
+import Image from "@/models/management/Image";
 import { convertMarkDown } from "@/scripts/script";
-import Image from "@/models/student/Image";
 
 @Component
 export default class QuestionComponent extends Vue {
   @Model("order", Number) order: number | undefined;
-  @Prop(Question) readonly question: Question | undefined;
+  @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
   @Prop(Number) optionId: number | undefined;
   hover: boolean = false;
   optionLetters: string[] = ["A", "B", "C", "D"];

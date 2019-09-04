@@ -45,19 +45,25 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Quiz from "@/models/student/Quiz";
+import StatementQuiz from "@/models/statement/StatementQuiz";
 
 @Component
 export default class QuizSetupView extends Vue {
-  private quiz: Quiz = Quiz.getInstance;
+  private quiz: StatementQuiz = StatementQuiz.getInstance;
 
+  // noinspection JSUnusedGlobalSymbols
   beforeMount() {
     this.quiz.reset();
   }
 
   async createQuiz() {
-    await this.quiz.getQuestions();
-    this.$router.push("/quiz");
+    try {
+      await this.quiz.getQuestions();
+      await this.$router.push("/quiz");
+    } catch (error) {
+      this.$emit("error", error);
+      console.log(error);
+    }
   }
 }
 </script>

@@ -35,7 +35,7 @@ services:
           - tolocalhost.com
     container_name: frontend
     ports:
-      - 8081:80
+      - 80:80
     restart: unless-stopped
     links:
       - spring

@@ -51,6 +51,16 @@ public class QuizAnswer implements Serializable {
         quiz.addQuizAnswer(this);
     }
 
+    public QuizAnswer(User user, Quiz quiz) {
+        this.assignedDate = LocalDateTime.now();
+        this.availableDate = this.assignedDate;
+        this.completed = false;
+        this.user = user;
+        user.addQuizAnswer(this);
+        this.quiz = quiz;
+        quiz.addQuizAnswer(this);
+    }
+
     public void remove() {
         user.getQuizAnswers().remove(this);
         user = null;

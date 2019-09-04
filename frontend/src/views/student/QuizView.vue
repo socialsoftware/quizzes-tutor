@@ -41,6 +41,8 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import QuestionComponent from "@/views/components/QuestionComponent.vue";
+import StatementQuiz from "@/models/statement/StatementQuiz";
 
 Component.registerHooks([
   "beforeRouteEnter",
@@ -48,26 +50,23 @@ Component.registerHooks([
   "beforeRouteLeave"
 ]);
 
-import Quiz from "@/models/student/Quiz";
-import Answer from "@/models/student/Answer";
-import QuestionComponent from "@/views/components/QuestionComponent.vue";
-
 @Component({
   components: {
     "question-component": QuestionComponent
   }
 })
-export default class StudentQuizView extends Vue {
-  quiz: Quiz = Quiz.getInstance;
+export default class QuizView extends Vue {
+  quiz: StatementQuiz = StatementQuiz.getInstance;
   order: number = 0;
 
   constructor() {
     super();
   }
 
+  // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.quiz.isEmpty()) {
-      this.$router.push("/setup");
+      await this.$router.push("/setup");
     }
   }
 
@@ -99,20 +98,9 @@ export default class StudentQuizView extends Vue {
     }
   }
 
-  /*beforeRouteLeave(to: any, from: any, next: any) {
-    this.$dialog
-      .confirm("Do you want to proceed?")
-      .then(function() {
-        next();
-      })
-      .catch(function() {
-        next(false);
-      });
-  }*/
-
   async endQuiz() {
     await this.quiz.getCorrectAnswers();
-    this.$router.push("/results");
+    await this.$router.push("/results");
   }
 }
 </script>

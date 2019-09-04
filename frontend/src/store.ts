@@ -1,17 +1,34 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import axios from "axios";
-import { TokenAndUser } from "@/types";
+import User from "@/models/user/User";
+
+interface TokenAndUser {
+  token: string;
+  user: User | undefined;
+}
+
+interface State {
+  status: string;
+  token: string;
+  user: User | undefined;
+  error: boolean;
+  errorMessage: string;
+}
+
+const state: State = {
+  status: "",
+  token: localStorage.getItem("token") || "",
+  user: undefined,
+  error: false,
+  errorMessage: ""
+};
 
 Vue.use(Vuex);
 Vue.config.devtools = true;
 
 export default new Vuex.Store({
-  state: {
-    status: "",
-    token: localStorage.getItem("token") || "",
-    user: ""
-  },
+  state: state,
   mutations: {
     auth_request(state) {
       state.status = "loading";
@@ -27,9 +44,23 @@ export default new Vuex.Store({
     logout(state) {
       state.status = "";
       state.token = "";
+    },
+    error(state, errorMessage: string) {
+      state.error = true;
+      state.errorMessage = errorMessage;
+    },
+    clearError(state) {
+      state.error = false;
+      state.errorMessage = "";
     }
   },
   actions: {
+    error({ commit }, errorMessage) {
+      commit("error", errorMessage);
+    },
+    clearError({ commit }) {
+      commit("clearError");
+    },
     login({ commit }, code) {
       commit("auth_request");
       return new Promise((resolve, reject) => {
@@ -40,8 +71,6 @@ export default new Vuex.Store({
             const token = response.data.token;
             const user = response.data.user;
             localStorage.setItem("token", token);
-            // Add the following line:
-            axios.defaults.headers.common["Authorization"] = token;
             commit("auth_success", { token: token, user: user });
             resolve(response);
           })
@@ -62,15 +91,20 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getName(state): string {
-      const user: string = state.user;
-      return user || "";
+    getUser(state): User | undefined {
+      return state.user;
     },
     isLoggedIn(state): boolean {
       return !!state.token;
     },
     getToken(state): string {
       return state.token;
+    },
+    getError(state): boolean {
+      return state.error;
+    },
+    getErrorMessage(state): string {
+      return state.errorMessage;
     }
   }
 });

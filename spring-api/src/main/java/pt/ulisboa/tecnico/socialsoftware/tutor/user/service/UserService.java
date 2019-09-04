@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Calendar;
 
 @Service
 public class UserService {
@@ -38,8 +39,15 @@ public class UserService {
         if (findByUsername(username) != null) {
             throw new TutorException(TutorException.ExceptionError.DUPLICATE_USER, username);
         }
+        Calendar calendar = Calendar.getInstance();
 
-        User user = new User(name, username, role, getMaxUserNumber() + 1);
+        int year = calendar.get(Calendar.YEAR);
+
+        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
+            year -= 1;
+        }
+
+        User user = new User(name, username, role, getMaxUserNumber() + 1, year);
         entityManager.persist(user);
         return user;
     }

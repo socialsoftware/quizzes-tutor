@@ -28,7 +28,7 @@ public class Quiz implements Serializable {
    @GeneratedValue(strategy=GenerationType.IDENTITY)
    private Integer id;
 
-   @Column(name = "number", nullable = false)
+   @Column(name = "number")
    private Integer number;
 
    private String title;

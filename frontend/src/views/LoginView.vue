@@ -9,12 +9,13 @@ import { Component, Vue } from "vue-property-decorator";
 
 @Component
 export default class HomeView extends Vue {
+  // noinspection JSUnusedGlobalSymbols
   async mounted() {
     if (this.$route.query.error) {
       //TODO deal with error
     } else {
       await this.$store.dispatch("login", this.$route.query.code);
-      this.$router.push({ name: "home" });
+      await this.$router.push({ name: "home" });
     }
   }
 }

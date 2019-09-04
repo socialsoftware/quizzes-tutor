@@ -1,8 +1,8 @@
-import Option from "@/models/student/Option";
-import Image from "@/models/student/Image";
+import Option from "@/models/management/Option";
+import Image from "@/models/management/Image";
 import { _ } from "vue-underscore";
 
-export interface QuestionDto {
+/*export interface QuestionDto {
   quizQuestionId: number;
   content: string | null;
   options: Option[] | null;
@@ -10,7 +10,7 @@ export interface QuestionDto {
   image: Image | null;
 }
 
-export default class Question implements QuestionDto {
+export class Question implements QuestionDto {
   quizQuestionId!: number;
   content!: string | null;
   options!: Option[];
@@ -26,4 +26,13 @@ export default class Question implements QuestionDto {
     // TODO this.topic = jsonObj.topic;
     this.image = jsonObj.image;
   }
+}
+*/
+
+export default class StatementQuestion {
+  quizQuestionId!: number;
+  content!: string | null;
+  options!: Option[];
+  // TODO topic!: string | null;
+  image: Image | null = null;
 }
