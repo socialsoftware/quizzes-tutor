@@ -1,4 +1,4 @@
-<template v-if="topics.size === 0">
+<template v-if="topics.empty === false">
   <v-card>
     <v-card-title>
       <v-flex xs12 sm6 md6>

@@ -6,7 +6,7 @@
       ></span>
       <div class="navigation-buttons">
         <span
-          v-for="index in +quiz.numberOfQuestions"
+          v-for="index in +statementManager.numberOfQuestions"
           v-bind:class="[
             'question-button',
             index === order + 1 ? 'current-question-button' : ''
@@ -22,11 +22,11 @@
       ></span>
     </div>
     <result-component
-      v-if="quiz.correctAnswers[order]"
+      v-if="statementManager.correctAnswers[order]"
       v-model="order"
-      :answer="quiz.answers[order]"
-      :correctAnswer="quiz.correctAnswers[order]"
-      :question="quiz.questions[order]"
+      :answer="statementManager.answers[order]"
+      :correctAnswer="statementManager.correctAnswers[order]"
+      :question="statementManager.statementQuiz.questions[order]"
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
     ></result-component>
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementManager from "@/models/statement/StatementManager";
 import ResultComponent from "@/views/components/ResultComponent.vue";
 
 @Component({
@@ -44,7 +44,7 @@ import ResultComponent from "@/views/components/ResultComponent.vue";
   }
 })
 export default class ResultsView extends Vue {
-  quiz: StatementQuiz = StatementQuiz.getInstance;
+  statementManager: StatementManager = StatementManager.getInstance;
   order: number = 0;
 
   constructor() {
@@ -53,13 +53,17 @@ export default class ResultsView extends Vue {
 
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
-    if (this.quiz.isEmpty()) {
+    if (this.statementManager.isEmpty()) {
       await this.$router.push("/setup");
     }
   }
 
+  async mounted() {
+    console.log(this.statementManager.correctAnswers.length);
+  }
+
   increaseOrder(): void {
-    if (this.order + 1 < +this.quiz.numberOfQuestions) {
+    if (this.order + 1 < +this.statementManager.numberOfQuestions) {
       this.order += 1;
     }
   }
@@ -71,7 +75,7 @@ export default class ResultsView extends Vue {
   }
 
   changeOrder(n: number): void {
-    if (n >= 0 && n < +this.quiz.numberOfQuestions) {
+    if (n >= 0 && n < +this.statementManager.numberOfQuestions) {
       this.order = n;
     }
   }

@@ -13,7 +13,7 @@
       ></span>
       <div class="navigation-buttons">
         <span
-          v-for="index in +quiz.numberOfQuestions"
+          v-for="index in +statementManager.numberOfQuestions"
           v-bind:class="[
             'question-button',
             index === order + 1 ? 'current-question-button' : ''
@@ -30,8 +30,8 @@
     </div>
     <question-component
       v-model="order"
-      :optionId="quiz.answers[order].optionId"
-      :question="quiz.questions[order]"
+      :optionId="statementManager.answers[order].optionId"
+      :question="statementManager.statementQuiz.questions[order]"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -42,7 +42,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import QuestionComponent from "@/views/components/QuestionComponent.vue";
-import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementManager from "@/models/statement/StatementManager";
 
 Component.registerHooks([
   "beforeRouteEnter",
@@ -56,7 +56,7 @@ Component.registerHooks([
   }
 })
 export default class QuizView extends Vue {
-  quiz: StatementQuiz = StatementQuiz.getInstance;
+  statementManager: StatementManager = StatementManager.getInstance;
   order: number = 0;
 
   constructor() {
@@ -65,13 +65,13 @@ export default class QuizView extends Vue {
 
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
-    if (this.quiz.isEmpty()) {
+    if (this.statementManager.isEmpty()) {
       await this.$router.push("/setup");
     }
   }
 
   increaseOrder(): void {
-    if (this.order + 1 < +this.quiz.numberOfQuestions) {
+    if (this.order + 1 < +this.statementManager.numberOfQuestions) {
       this.order += 1;
     }
   }
@@ -83,24 +83,28 @@ export default class QuizView extends Vue {
   }
 
   changeOrder(n: number): void {
-    if (n >= 0 && n < +this.quiz.numberOfQuestions) {
+    if (n >= 0 && n < +this.statementManager.numberOfQuestions) {
       this.order = n;
     }
   }
 
   changeAnswer(optionId: number) {
-    if (this.quiz.answers[this.order]) {
-      if (this.quiz.answers[this.order].optionId === optionId) {
-        this.quiz.answers[this.order].optionId = null;
+    if (this.statementManager.answers[this.order]) {
+      if (this.statementManager.answers[this.order].optionId === optionId) {
+        this.statementManager.answers[this.order].optionId = null;
       } else {
-        this.quiz.answers[this.order].optionId = optionId;
+        this.statementManager.answers[this.order].optionId = optionId;
       }
     }
   }
 
   async endQuiz() {
-    await this.quiz.getCorrectAnswers();
-    await this.$router.push("/results");
+    try {
+      await this.statementManager.getCorrectAnswers();
+      await this.$router.push("/results");
+    } catch (error) {
+      await this.$store.dispatch("error", error);
+    }
   }
 }
 </script>

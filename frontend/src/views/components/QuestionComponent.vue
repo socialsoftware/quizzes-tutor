@@ -42,7 +42,7 @@
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
 import StatementQuestion from "@/models/statement/StatementQuestion";
 import Image from "@/models/management/Image";
-import { convertMarkDown } from "@/scripts/script";
+import { convertMarkDown } from "@/services/ConvertMarkdownService";
 
 @Component
 export default class QuestionComponent extends Vue {

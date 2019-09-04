@@ -1,4 +1,4 @@
-import Option from "@/models/management/Option";
+import StatementOption from "@/models/statement/StatementOption";
 import Image from "@/models/management/Image";
 import { _ } from "vue-underscore";
 
@@ -32,7 +32,7 @@ export class Question implements QuestionDto {
 export default class StatementQuestion {
   quizQuestionId!: number;
   content!: string | null;
-  options!: Option[];
+  options!: StatementOption[];
   // TODO topic!: string | null;
   image: Image | null = null;
 }

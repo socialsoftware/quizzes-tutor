@@ -8,7 +8,7 @@ import QuestionsView from "./views/management/QuestionsView.vue";
 import TopicsView from "./views/management/TopicsView.vue";
 import QuizzesView from "./views/management/QuizzesView.vue";
 import StudentView from "@/views/student/StudentView.vue";
-import QuizSetupView from "./views/student/QuizSetupView.vue";
+import QuizSetupView from "./views/student/StatementSetupView.vue";
 import QuizView from "./views/student/QuizView.vue";
 import ResultsView from "./views/student/ResultsView.vue";
 import StatsView from "./views/student/StatsView.vue";
@@ -134,7 +134,7 @@ router.beforeEach(async (to, from, next) => {
       next();
       return;
     }
-    next("/login");
+    next("/");
   } else {
     next();
   }

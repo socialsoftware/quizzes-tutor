@@ -4,7 +4,7 @@
       <v-layout row wrap align-center>
         <v-flex xs12>
           <p>Topic</p>
-          <v-btn-toggle v-model="quiz.topic" multiple mandatory>
+          <v-btn-toggle v-model="statementManager.topic" multiple mandatory>
             <v-btn flat value="1">1</v-btn>
             <v-btn flat value="2">2</v-btn>
             <v-btn flat value="3">3</v-btn>
@@ -17,7 +17,7 @@
       <v-layout row wrap align-center>
         <v-flex xs12>
           <p class="pl-0">Questions</p>
-          <v-btn-toggle v-model="quiz.questionType" mandatory>
+          <v-btn-toggle v-model="statementManager.questionType" mandatory>
             <v-btn flat value="failed">Failed</v-btn>
             <v-btn flat value="new">New</v-btn>
             <v-btn flat value="all">All</v-btn>
@@ -28,7 +28,7 @@
       <v-layout row wrap align-center>
         <v-flex xs12>
           <p class="pl-0">Number of Questions</p>
-          <v-btn-toggle v-model="quiz.numberOfQuestions" mandatory>
+          <v-btn-toggle v-model="statementManager.numberOfQuestions" mandatory>
             <v-btn flat value="5">5</v-btn>
             <v-btn flat value="10">10</v-btn>
             <v-btn flat value="20">20</v-btn>
@@ -45,24 +45,23 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementManager from "@/models/statement/StatementManager";
 
 @Component
-export default class QuizSetupView extends Vue {
-  private quiz: StatementQuiz = StatementQuiz.getInstance;
+export default class StatementSetupView extends Vue {
+  private statementManager: StatementManager = StatementManager.getInstance;
 
   // noinspection JSUnusedGlobalSymbols
   beforeMount() {
-    this.quiz.reset();
+    this.statementManager.reset();
   }
 
   async createQuiz() {
     try {
-      await this.quiz.getQuestions();
+      await this.statementManager.getQuizStatement();
       await this.$router.push("/quiz");
     } catch (error) {
-      this.$emit("error", error);
-      console.log(error);
+      await this.$store.dispatch("error", error);
     }
   }
 }

@@ -1,4 +1,4 @@
-<template v-if="questions.size === 0">
+<template>
   <v-card>
     <v-card-title>
       <v-flex xs12 sm6 md6>
@@ -134,8 +134,6 @@
       :custom-filter="customFilter"
       :items="questions"
       :search="search"
-      loading
-      loading-text="Loading... Please wait"
       :items-per-page="10"
       class="elevation-1"
     >
@@ -218,7 +216,7 @@
               <td class="text-left">{{ option.id }}</td>
               <td
                 class="text-left"
-                v-html="convertMarkDown(option.content)"
+                v-html="convertMarkDownNoFigure(option.content, null)"
               ></td>
               <td>
                 <span v-if="option.correct">TRUE</span><span v-else>FALSE</span>
@@ -236,7 +234,10 @@ import { Component, Vue } from "vue-property-decorator";
 import { Question, QuestionDto } from "@/models/management/Question";
 import QuestionForm from "@/models/management/QuestionForm";
 import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDown, convertMarkDownNoFigure } from "@/scripts/script";
+import {
+  convertMarkDown,
+  convertMarkDownNoFigure
+} from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
 
 @Component
@@ -304,10 +305,6 @@ export default class QuestionsView extends Vue {
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
-  }
-
-  convertMarkDown(text: string): string {
-    return convertMarkDownNoFigure(text);
   }
 
   async saveTopics(questionId: number) {

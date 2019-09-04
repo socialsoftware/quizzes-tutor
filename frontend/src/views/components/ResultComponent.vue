@@ -36,7 +36,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import { convertMarkDown } from "@/scripts/script";
+import { convertMarkDown } from "@/services/ConvertMarkdownService";
 import StatementQuestion from "@/models/statement/StatementQuestion";
 import StatementAnswer from "@/models/statement/StatementAnswer";
 import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";

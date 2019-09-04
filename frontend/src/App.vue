@@ -30,15 +30,16 @@ export default class HomeView extends Vue {
     });
   }
 
-  isLoggedIn() {
+  /* TODO eliminate
+    isLoggedIn() {
     return this.$store.getters.isLoggedIn;
   }
 
   logout() {
     this.$store.dispatch("logout").then(() => {
-      this.$router.push("/login");
+      this.$router.push("/");
     });
-  }
+  }*/
 }
 </script>
 

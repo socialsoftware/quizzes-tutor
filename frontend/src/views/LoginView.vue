@@ -12,7 +12,8 @@ export default class HomeView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async mounted() {
     if (this.$route.query.error) {
-      //TODO deal with error
+      await this.$store.dispatch("error", "Fenix authentication error");
+      await this.$router.push({ name: "home" });
     } else {
       await this.$store.dispatch("login", this.$route.query.code);
       await this.$router.push({ name: "home" });

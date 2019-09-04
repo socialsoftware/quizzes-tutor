@@ -19,6 +19,8 @@ public class QuizDto implements Serializable {
     private String type;
     private Integer series;
     private String version;
+    private int numberOfQuestions;
+    private int numberOfAnswers;
     private List<QuestionDto> questions;
 
     public QuizDto(){
@@ -33,6 +35,8 @@ public class QuizDto implements Serializable {
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
+        this.numberOfQuestions = quiz.getQuizQuestions().size();
+        this.numberOfAnswers = quiz.getQuizAnswers().size();
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
                     .sorted(Comparator.comparing(QuizQuestion::getSequence))
@@ -103,6 +107,22 @@ public class QuizDto implements Serializable {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    public int getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(int numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
+    }
+
+    public int getNumberOfAnswers() {
+        return numberOfAnswers;
+    }
+
+    public void setNumberOfAnswers(int numberOfAnswers) {
+        this.numberOfAnswers = numberOfAnswers;
     }
 
     public List<QuestionDto> getQuestions() {

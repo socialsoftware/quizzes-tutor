@@ -1,25 +1,22 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import axios from "axios";
-import User from "@/models/user/User";
-
-interface TokenAndUser {
-  token: string;
-  user: User | undefined;
-}
+import RemoteServices from "@/services/RemoteServices";
 
 interface State {
-  status: string;
   token: string;
-  user: User | undefined;
+  userRole: string;
   error: boolean;
   errorMessage: string;
 }
 
+interface AuthResponse {
+  token: string;
+  userRole: string;
+}
+
 const state: State = {
-  status: "",
   token: localStorage.getItem("token") || "",
-  user: undefined,
+  userRole: localStorage.getItem("userRole") || "",
   error: false,
   errorMessage: ""
 };
@@ -30,20 +27,13 @@ Vue.config.devtools = true;
 export default new Vuex.Store({
   state: state,
   mutations: {
-    auth_request(state) {
-      state.status = "loading";
-    },
-    auth_success(state, tokenAndUser: TokenAndUser) {
-      state.status = "success";
-      state.token = tokenAndUser.token;
-      state.user = tokenAndUser.user;
-    },
-    auth_error(state) {
-      state.status = "error";
+    login(state, authResponse: AuthResponse) {
+      state.token = authResponse.token;
+      state.userRole = authResponse.userRole;
     },
     logout(state) {
-      state.status = "";
       state.token = "";
+      state.userRole = "";
     },
     error(state, errorMessage: string) {
       state.error = true;
@@ -61,38 +51,28 @@ export default new Vuex.Store({
     clearError({ commit }) {
       commit("clearError");
     },
-    login({ commit }, code) {
-      commit("auth_request");
-      return new Promise((resolve, reject) => {
-        axios
-          .post(process.env.VUE_APP_ROOT_API + "/auth/fenix", { code: code })
-          .then(response => {
-            // handle success
-            const token = response.data.token;
-            const user = response.data.user;
-            localStorage.setItem("token", token);
-            commit("auth_success", { token: token, user: user });
-            resolve(response);
-          })
-          .catch(err => {
-            commit("auth_error");
-            localStorage.removeItem("token");
-            reject(err);
-          });
-      });
+    async login({ commit }, code) {
+      try {
+        const authResponse = await RemoteServices.authenticate(code);
+        commit("login", authResponse);
+        localStorage.setItem("token", authResponse.token);
+        localStorage.setItem("userRole", authResponse.userRole);
+      } catch (error) {
+        throw error;
+      }
     },
     logout({ commit }) {
       return new Promise((resolve, reject) => {
         commit("logout");
         localStorage.removeItem("token");
-        delete axios.defaults.headers.common["Authorization"];
+        localStorage.removeItem("userRole");
         resolve();
       });
     }
   },
   getters: {
-    getUser(state): User | undefined {
-      return state.user;
+    getUserRole(state): string {
+      return state.userRole;
     },
     isLoggedIn(state): boolean {
       return !!state.token;
