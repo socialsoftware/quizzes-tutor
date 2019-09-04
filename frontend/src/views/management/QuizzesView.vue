@@ -15,8 +15,38 @@
           vertical>
       </v-divider>
       <v-spacer></v-spacer>
-        <v-btn color="primary" dark class="mb-2" @click="open">New Quiz</v-btn>
-     </v-card-title>
+      <v-btn color="primary" dark class="mb-2" @click="newQuiz">New Quiz</v-btn>
+      <v-dialog v-model="dialog" max-width="1000px">
+          <v-card v-if="quiz">
+            <v-card-title>
+              <span class="headline">{{quiz.title}}</span>
+            </v-card-title>
+
+            <v-card-text>
+              <v-container grid-list-md fluid>
+                <v-layout column wrap>
+                  <ol>
+                    <li v-for="question in quiz.questions" :key="question.sequence" class="text-left">
+                      <span v-html="convertMarkDown(question.content, question.figure)"></span>
+                      <ul>
+                        <li v-for="option in question.options" :key="option.number">
+                          <span v-html="convertMarkDown(option.content, null)"
+                          v-bind:class="[option.correct ? 'font-weight-bold' : '']"></span>
+                        </li>
+                      </ul>
+                    </li>
+                  </ol>
+                </v-layout>
+              </v-container>              
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click="closeQuiz">close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+    </v-card-title>
     <v-data-table
     :headers="headers"
     :items="quizzes"
@@ -47,11 +77,16 @@
 import { Component, Vue} from "vue-property-decorator";
 import { Quiz } from "@/models/quiz/Quiz";
 import RemoteServices from "@/services/RemoteServices";
+import { convertMarkDown, convertMarkDownNoFigure } from "@/scripts/script";
+import { Question } from "@/models/question/Question";
+import Image from "@/models/student/Image";
 
 @Component
 export default class QuizzesView extends Vue {
   quizzes: Quiz[] = [];
+  quiz: Quiz | undefined = undefined;
   search: string = "";
+  dialog: boolean = false;
   headers: object = [
     { text: 'Title', value: 'title', align: 'left', width: "30%" },
     { text: 'Date', value: 'date', align: 'center', width: "10%" },
@@ -76,13 +111,29 @@ export default class QuizzesView extends Vue {
       }
   }
 
-  open() {
+  newQuiz() {
     alert("to be implemented");
   }
 
   async showQuiz(quizId: number) {
-    alert("to be implemented");
+    try {
+      this.quiz = await RemoteServices.getQuiz(quizId);
+      alert(this.quiz.title);
+      this.dialog = true;
+    } catch (error) {
+        confirm(error);
+    }
   }
+
+  closeQuiz() {
+    this.dialog = false;
+    this.quiz = undefined;
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
+
 
   async deleteQuiz(quizId: number) {
     if (confirm('Are you sure you want to delete this quiz?')) {

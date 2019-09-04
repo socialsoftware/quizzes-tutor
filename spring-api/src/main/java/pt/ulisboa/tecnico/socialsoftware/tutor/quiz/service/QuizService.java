@@ -48,16 +48,16 @@ public class QuizService {
 
 
     @Transactional
-    public Quiz findById(Integer quizId) {
-        return this.quizRepository.findById(quizId)
+    public QuizDto findById(Integer quizId) {
+        return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
                 .orElseThrow(() -> new ResourceNotFoundException("Quiz not found with id " + quizId));
     }
 
     @Transactional
     public List<QuizDto> findAllNonGenerated() {
-        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear);
-        comparator = comparator.thenComparing(Quiz::getSeries);
-        comparator = comparator.thenComparing(Quiz::getVersion);
+        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear)
+                .thenComparing(Quiz::getSeries)
+                .thenComparing(Quiz::getVersion);
         return quizRepository.findAllNonGenerated().stream()
                 .sorted(comparator).map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());

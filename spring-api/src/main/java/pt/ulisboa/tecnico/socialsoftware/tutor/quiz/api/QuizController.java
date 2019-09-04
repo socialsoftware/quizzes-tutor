@@ -41,7 +41,7 @@ public class QuizController {
 
     @GetMapping("/quizzes/{quizId}")
     public QuizDto getQuiz(@PathVariable Integer quizId) {
-        return new QuizDto(this.quizService.findById(quizId), true);
+        return this.quizService.findById(quizId);
     }
 
     @PostMapping("/quizzes")

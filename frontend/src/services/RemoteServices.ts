@@ -112,6 +112,22 @@ export default class RemoteServices {
     });
   }
 
+  static async getQuiz(quizId: number) : Promise<Quiz> {
+    return httpClient.get("/quizzes/" + quizId)    
+    .then(response => {
+      return response.data as Quiz;
+    })
+    .catch(error => {
+      if (error.response) {
+        throw new Error(error.response.data.message);
+      } else if (error.request) {
+        throw new Error("No response received");
+      } else {
+        throw new Error("Error");
+      }
+    });
+  }
+
 
 }
 
