@@ -68,7 +68,9 @@ public class Question implements Serializable {
         this.active = questionDto.getActive();
 
         if (questionDto.getImage() != null) {
-            setImage(new Image(questionDto.getImage()));
+            Image image = new Image(questionDto.getImage());
+            setImage(image);
+            image.setQuestion(this);
         }
 
         int index = 0;

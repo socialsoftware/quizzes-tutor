@@ -30,7 +30,7 @@
                   >
                     <span
                       v-html="
-                        convertMarkDown(question.content, question.figure)
+                        convertMarkDown(question.content, question.image)
                       "
                     ></span>
                     <ul>
