@@ -77,34 +77,34 @@ public class AuthController {
             // Verify if user is attending the course
             JsonArray courses = client.getPersonCourses(userDetails.getAuthorization()).get("attending").getAsJsonArray();
 
-            boolean isInAS = true;
-            // TODO change to false
+            boolean isStudent = false;
             for (JsonElement course : courses) {
-                isInAS |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
+                isStudent |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
             }
 
-            if (isInAS) {
+            if (isStudent) {
                 user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
             } else {
                 // Verify if user is teaching the course
                 courses = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
 
+                boolean isTeacher = false;
                 for (JsonElement course : courses) {
-                    isInAS |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
+                    isTeacher |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
                 }
 
-                if (isInAS) {
+                if (isTeacher) {
                     user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
+                } else if (username == "ist181002"){
+                    user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
                 } else {
                     throw new NotEnrolledException("User " + username + " is not enrolled");
                 }
             }
-
-
         }
-
+        
         String token = JwtTokenProvider.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token, user.getName()));
+        return ResponseEntity.ok(new JwtAuthenticationResponse(token, user.getRole()));
 
     }
 

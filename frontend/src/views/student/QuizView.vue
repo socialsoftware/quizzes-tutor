@@ -66,7 +66,7 @@ export default class QuizView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push("/setup");
+      await this.$router.push("/create");
     }
   }
 

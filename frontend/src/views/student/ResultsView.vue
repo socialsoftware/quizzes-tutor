@@ -54,7 +54,7 @@ export default class ResultsView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push("/setup");
+      await this.$router.push("/create");
     }
   }
 

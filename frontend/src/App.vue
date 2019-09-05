@@ -29,17 +29,6 @@ export default class HomeView extends Vue {
       });
     });
   }
-
-  /* TODO eliminate
-    isLoggedIn() {
-    return this.$store.getters.isLoggedIn;
-  }
-
-  logout() {
-    this.$store.dispatch("logout").then(() => {
-      this.$router.push("/");
-    });
-  }*/
 }
 </script>
 

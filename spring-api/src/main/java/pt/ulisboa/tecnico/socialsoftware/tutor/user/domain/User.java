@@ -12,7 +12,7 @@ import java.util.Set;
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
-    public enum Role {STUDENT, TEACHER}
+    public enum Role {STUDENT, TEACHER, ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

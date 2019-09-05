@@ -1,17 +1,26 @@
 import Vue from "vue";
 import Router from "vue-router";
 import Store from "./store";
+
 import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
+
 import ManagementView from "@/views/management/ManagementView.vue";
 import QuestionsView from "./views/management/QuestionsView.vue";
 import TopicsView from "./views/management/TopicsView.vue";
 import QuizzesView from "./views/management/QuizzesView.vue";
+import StudentStatsView from "./views/StudentStatsView.vue";
+
 import StudentView from "@/views/student/StudentView.vue";
-import QuizSetupView from "./views/student/StatementSetupView.vue";
+import AvailableQuizzesView from "./views/student/AvailableQuizzesView.vue";
+import CreateQuizzesView from "./views/student/CreateQuizzesView.vue";
+import SolvedQuizzesView from "./views/student/SolvedQuizzesView.vue";
 import QuizView from "./views/student/QuizView.vue";
 import ResultsView from "./views/student/ResultsView.vue";
 import StatsView from "./views/student/StatsView.vue";
+import AchievementsView from "./views/student/AchievementsView.vue";
+
+import AdminManagementView from "./views/AdminManagementView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 
 Vue.use(Router);
@@ -24,13 +33,13 @@ let router = new Router({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: { title: "Software Architecture" }
+      meta: { title: "Software Architecture", requiredAuth: true }
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      meta: { title: "Software Architecture - Login" }
+      meta: { title: "Software Architecture - Login", requiredAuth: true }
     },
     {
       path: "/management",
@@ -43,7 +52,7 @@ let router = new Router({
           component: QuestionsView,
           meta: {
             title: "Software Architecture - Questions",
-            requiresAuth: true
+            requiredAuth: Store.getters.isTeacher
           }
         },
         {
@@ -52,7 +61,7 @@ let router = new Router({
           component: TopicsView,
           meta: {
             title: "Software Architecture - Topics",
-            requiresAuth: true
+            requiredAuth: Store.getters.isTeacher
           }
         },
         {
@@ -61,10 +70,19 @@ let router = new Router({
           component: QuizzesView,
           meta: {
             title: "Software Architecture - Quizzes",
-            requiresAuth: true
+            requiredAuth: Store.getters.isTeacher
           }
         }
       ]
+    },
+    {
+      path: "/students-stats",
+      name: "students-stats",
+      component: StudentStatsView,
+      meta: {
+        title: "Software Architecture - StudentsStats",
+        requiredAuth: Store.getters.isTeacher
+      }
     },
     {
       path: "/student",
@@ -72,12 +90,30 @@ let router = new Router({
       component: StudentView,
       children: [
         {
-          path: "/setup",
-          name: "setup",
-          component: QuizSetupView,
+          path: "/available",
+          name: "available-quizzes",
+          component: AvailableQuizzesView,
           meta: {
-            title: "Software Architecture - Quiz Setup",
-            requiresAuth: true
+            title: "Software Architecture - Available Quizzes",
+            requiredAuth: Store.getters.isStudent
+          }
+        },
+        {
+          path: "/create",
+          name: "create-quizzes",
+          component: CreateQuizzesView,
+          meta: {
+            title: "Software Architecture - Create Quizzes",
+            requiredAuth: Store.getters.isStudent
+          }
+        },
+        {
+          path: "/solved",
+          name: "solved-quizzes",
+          component: SolvedQuizzesView,
+          meta: {
+            title: "Software Architecture - Solved Quizzes",
+            requiredAuth: Store.getters.isStudent
           }
         },
         {
@@ -86,7 +122,7 @@ let router = new Router({
           component: QuizView,
           meta: {
             title: "Software Architecture - Quiz",
-            requiresAuth: true,
+            requiredAuth: Store.getters.isStudent,
             requiresVerification: true
           }
         },
@@ -96,7 +132,7 @@ let router = new Router({
           component: ResultsView,
           meta: {
             title: "Software Architecture - Results",
-            requiresAuth: true,
+            requiredAuth: Store.getters.isStudent,
             requiresVerification: true
           }
         },
@@ -106,21 +142,40 @@ let router = new Router({
           component: StatsView,
           meta: {
             title: "Software Architecture - Stats",
-            requiresAuth: true
+            requiredAuth: Store.getters.isStudent
+          }
+        },
+        {
+          path: "/achievements",
+          name: "achievements",
+          component: AchievementsView,
+          meta: {
+            title: "Software Architecture - Achievements",
+            requiredAuth: Store.getters.isStudent
           }
         }
       ]
     },
     {
+      path: "/admin-management",
+      name: "admin-management",
+      component: AdminManagementView,
+      meta: {
+        title: "Software Architecture - AdminManagement",
+        requiredAuth: Store.getters.isAdmin
+      }
+    },
+    {
       path: "**",
       name: "not-found",
       component: NotFoundView,
-      meta: { title: "Page Not Found" }
+      meta: { title: "Page Not Found", requiredAuth: true }
     }
   ]
 });
 
 router.beforeEach(async (to, from, next) => {
+  /*TODO
   if (from.matched.some(record => record.meta.requiresVerification)) {
     if (confirm("are you sure?")) {
       next();
@@ -128,15 +183,12 @@ router.beforeEach(async (to, from, next) => {
       next(false);
     }
     return;
-  }
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (Store.getters.isLoggedIn) {
-      next();
-      return;
-    }
-    next("/");
-  } else {
+  }*/
+  if (to.matched.some(record => record.meta.requiredAuth)) {
     next();
+    return;
+  } else {
+    next("/");
   }
 });
 

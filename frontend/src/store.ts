@@ -58,7 +58,8 @@ export default new Vuex.Store({
         localStorage.setItem("token", authResponse.token);
         localStorage.setItem("userRole", authResponse.userRole);
       } catch (error) {
-        throw error;
+        commit("logout");
+        commit("error", error);
       }
     },
     logout({ commit }) {
@@ -71,11 +72,17 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getUserRole(state): string {
-      return state.userRole;
-    },
     isLoggedIn(state): boolean {
       return !!state.token;
+    },
+    isAdmin(state): boolean {
+      return !!state.token && state.userRole == "ADMIN";
+    },
+    isTeacher(state): boolean {
+      return !!state.token && state.userRole == "TEACHER";
+    },
+    isStudent(state): boolean {
+      return !!state.token && state.userRole == "STUDENT";
     },
     getToken(state): string {
       return state.token;
