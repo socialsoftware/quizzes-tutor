@@ -23,9 +23,8 @@ class ImportExportUsersSpockTest extends Specification {
     UserRepository userRepository
 
     def setup() {
-        def user = userService.create('Rito', 'ar', User.Role.TEACHER)
-        user.setYear(2019)
-        user = userService.create('Pedro', 'pc', User.Role.STUDENT)
+        userService.create('Rito', 'ar', User.Role.TEACHER)
+        userService.create('Pedro', 'pc', User.Role.STUDENT)
     }
 
     def 'export and import users'() {
@@ -33,6 +32,9 @@ class ImportExportUsersSpockTest extends Specification {
         def usersXml = userService.exportUsers()
         and: 'a clean database'
         userRepository.deleteAll()
+        and: 'current year'
+        def calendar = Calendar.getInstance();
+        def year = calendar.get(Calendar.YEAR);
 
         when:
         userService.importUsers(usersXml)
@@ -44,14 +46,14 @@ class ImportExportUsersSpockTest extends Specification {
         userOne.getNumber() == 1
         userOne.getName() == 'Rito'
         userOne.getRole() == 'TEACHER'
-        userOne.getYear() == 2019
+        userOne.getYear() == year
 
         def userTwo = userRepository.findByUsername('pc')
         userTwo != null
         userTwo.getNumber() == 2
         userTwo.getName() == 'Pedro'
         userTwo.getRole() == 'STUDENT'
-        userTwo.getYear() == null
+        userTwo.getYear() == year
     }
 
     @TestConfiguration

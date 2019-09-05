@@ -37,6 +37,9 @@ public class Quiz implements Serializable {
    @Column(name = "generation_date")
    private LocalDateTime date;
 
+   @Column(name = "available_date")
+   private LocalDateTime availableDate;
+
    private Integer year;
    private String type;
    private Integer series;
@@ -54,6 +57,11 @@ public class Quiz implements Serializable {
        this.number = quiz.getNumber();
        this.title = quiz.getTitle();
        this.date = quiz.getDate();
+       if (quiz.getType().equals(QuizType.STUDENT.name())) {
+           this.availableDate = this.date;
+       } else {
+           this.availableDate = quiz.getAvailableDate();
+       }
        this.year = quiz.getYear();
        this.type = quiz.getType();
        this.series = quiz.getSeries();
@@ -122,6 +130,14 @@ public class Quiz implements Serializable {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public LocalDateTime getAvailableDate() {
+        return availableDate;
+    }
+
+    public void setAvailableDate(LocalDateTime availableDate) {
+        this.availableDate = availableDate;
     }
 
     public Integer getYear() {

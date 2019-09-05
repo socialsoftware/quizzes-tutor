@@ -75,6 +75,10 @@ public class QuizzesXmlImport {
 		if (quizElement.getAttributeValue("date") != null) {
 			date = LocalDateTime.parse(quizElement.getAttributeValue("date"));
 		}
+		LocalDateTime availableDate = null;
+		if (quizElement.getAttributeValue("availableDate") != null) {
+			availableDate = LocalDateTime.parse(quizElement.getAttributeValue("availableDate"));
+		}
 		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
 		Integer series = Integer.valueOf(quizElement.getAttributeValue("series"));
@@ -85,6 +89,7 @@ public class QuizzesXmlImport {
 		quizDto.setNumber(number);
 		quizDto.setTitle(title);
 		quizDto.setDate(date);
+		quizDto.setAvailableDate(availableDate);
 		quizDto.setYear(year);
 		quizDto.setType(type);
 		quizDto.setSeries(series);

@@ -151,7 +151,6 @@ export default class QuizzesView extends Vue {
   async showQuiz(quizId: number) {
     try {
       this.quiz = await RemoteServices.getQuiz(quizId);
-      alert(this.quiz.title);
       this.dialog = true;
     } catch (error) {
       confirm(error);

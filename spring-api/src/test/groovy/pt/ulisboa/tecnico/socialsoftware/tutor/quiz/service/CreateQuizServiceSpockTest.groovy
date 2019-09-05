@@ -31,7 +31,7 @@ class CreateQuizServiceSpockTest extends Specification {
         def date =LocalDateTime.now()
         quiz.setDate(date)
         quiz.setYear(2019)
-        quiz.setType(Quiz.QuizType.EXAM.name())
+        quiz.setType(Quiz.QuizType.STUDENT.name())
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
 
@@ -45,8 +45,9 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getNumber() != null
         result.getTitle() == QUIZ_TITLE
         result.getDate() == date
+        result.getAvailableDate() == date
         result.getYear() == 2019
-        result.getType() == Quiz.QuizType.EXAM.name()
+        result.getType() == Quiz.QuizType.STUDENT.name()
         result.getSeries() == 1
         result.getVersion() == VERSION
         result.getQuizQuestions().size() == 0

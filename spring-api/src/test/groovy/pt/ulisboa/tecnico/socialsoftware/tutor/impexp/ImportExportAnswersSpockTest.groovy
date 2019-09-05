@@ -33,7 +33,6 @@ class ImportExportAnswersSpockTest extends Specification {
     def quiz
     def date
     def quizAnswer
-    def availableDate
     def answerDate
     def timeTaken
     def quizQuestion
@@ -86,8 +85,7 @@ class ImportExportAnswersSpockTest extends Specification {
 
         def user = userService.create('Pedro', 'pc', User.Role.STUDENT)
 
-        availableDate = LocalDateTime.now()
-        quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId(), availableDate)
+        quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId())
 
         def answersDto = new ArrayList<ResultAnswerDto>()
         def answerDto = new ResultAnswerDto()
@@ -118,7 +116,6 @@ class ImportExportAnswersSpockTest extends Specification {
         quizAnswerRepository.findAll().size() == 1
         def quizAnswerResult = quizAnswerRepository.findAll().get(0)
         quizAnswerResult.getAssignedDate() != null
-        quizAnswerResult.getAvailableDate() == availableDate
         quizAnswerResult.getAnswerDate() == answerDate
         quizAnswerResult.getCompleted()
         quizAnswerResult.getUser().getUsername() == 'pc'

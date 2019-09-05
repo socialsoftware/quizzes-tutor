@@ -57,12 +57,12 @@ public class AnswerService {
     EntityManager entityManager;
 
     @Transactional
-    public QuizAnswer createQuizAnswer(Integer userId, Integer quizId, LocalDateTime availableDate) {
+    public QuizAnswer createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, Integer.toString(userId)));
 
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
 
-        QuizAnswer quizAnswer = new QuizAnswer(user, quiz, availableDate);
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
         entityManager.persist(quizAnswer);
 
         return quizAnswer;
