@@ -94,10 +94,7 @@ public class AnswersXmlImport {
 
 	private void importQuizAnswer(Element answerElement) {
 		LocalDateTime assignedDate = LocalDateTime.parse(answerElement.getAttributeValue("assignedDate"));
-		LocalDateTime availableDate = null;
-		if (answerElement.getAttributeValue("availableDate") != null) {
-			availableDate = LocalDateTime.parse(answerElement.getAttributeValue("availableDate"));
-		}
+
 		LocalDateTime answerDate = null;
 		if (answerElement.getAttributeValue("answerDate") != null) {
 			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
@@ -116,7 +113,7 @@ public class AnswersXmlImport {
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
 		User user = userRepository.findByNumber(number);
 
-		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId(), availableDate);
+		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId());
 		quizAnswer.setAssignedDate(assignedDate);
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);

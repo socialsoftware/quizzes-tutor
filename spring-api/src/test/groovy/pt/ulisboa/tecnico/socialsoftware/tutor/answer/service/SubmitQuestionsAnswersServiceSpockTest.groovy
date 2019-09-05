@@ -61,8 +61,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     def setup() {
         def quiz = new Quiz()
         quiz.setNumber(1)
-        user = new User('name', 'username', User.Role.STUDENT, 1)
-        quizAnswer = new QuizAnswer(user, quiz, LocalDateTime.now())
+        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
+        quizAnswer = new QuizAnswer(user, quiz)
         def question = new Question()
         question.setNumber(1)
         quizQuestion = new QuizQuestion(quiz, question, 0)
@@ -124,7 +124,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
         resultAnswersDto.setAnswers(resultsDto)
         and: 'another user'
-        def otherUser = new User('name', 'username2', User.Role.STUDENT, 2)
+        def otherUser = new User('name', 'username2', User.Role.STUDENT, 2, 2019)
         userRepository.save(otherUser)
 
 

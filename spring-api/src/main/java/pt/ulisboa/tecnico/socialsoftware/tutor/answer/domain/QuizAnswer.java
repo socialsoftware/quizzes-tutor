@@ -19,9 +19,6 @@ public class QuizAnswer implements Serializable {
     @Column(name = "assigned_date")
     private LocalDateTime assignedDate;
 
-    @Column(name = "available_date")
-    private LocalDateTime availableDate;
-
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
 
@@ -41,19 +38,8 @@ public class QuizAnswer implements Serializable {
     public QuizAnswer() {
     }
 
-    public QuizAnswer(User user, Quiz quiz, LocalDateTime availableDate) {
-        this.assignedDate = LocalDateTime.now();
-        this.availableDate = availableDate;
-        this.completed = false;
-        this.user = user;
-        user.addQuizAnswer(this);
-        this.quiz = quiz;
-        quiz.addQuizAnswer(this);
-    }
-
     public QuizAnswer(User user, Quiz quiz) {
         this.assignedDate = LocalDateTime.now();
-        this.availableDate = this.assignedDate;
         this.completed = false;
         this.user = user;
         user.addQuizAnswer(this);
@@ -90,15 +76,7 @@ public class QuizAnswer implements Serializable {
     public void setAssignedDate(LocalDateTime assignedDate) {
         this.assignedDate = assignedDate;
     }
-
-    public LocalDateTime getAvailableDate() {
-        return availableDate;
-    }
-
-    public void setAvailableDate(LocalDateTime availableDate) {
-        this.availableDate = availableDate;
-    }
-
+    
     public LocalDateTime getAnswerDate() {
         return answerDate;
     }

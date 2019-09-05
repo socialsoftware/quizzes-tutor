@@ -43,9 +43,7 @@ public class AnswersXmlExport {
 	private void exportQuizAnswer(Element element, QuizAnswer quizAnswer) {
 		Element quizAnswerElement = new Element("quizAnswer");
 		quizAnswerElement.setAttribute("assignedDate", quizAnswer.getAssignedDate().toString());
-		if (quizAnswer.getAvailableDate() != null) {
-			quizAnswerElement.setAttribute("availableDate", quizAnswer.getAvailableDate().toString());
-		}
+
 		if (quizAnswer.getAnswerDate() != null) {
 			quizAnswerElement.setAttribute("answerDate", quizAnswer.getAnswerDate().toString());
 		}

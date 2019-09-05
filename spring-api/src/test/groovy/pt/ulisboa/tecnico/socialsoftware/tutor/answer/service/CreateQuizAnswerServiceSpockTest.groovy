@@ -41,17 +41,15 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
         given:
         def userId = userRepository.findAll().get(0).getId()
         def quizId = quizRepository.findAll().get(0).getId()
-        def availableDate = LocalDateTime.now()
 
         when:
-        answerService.createQuizAnswer(userId, quizId, availableDate)
+        answerService.createQuizAnswer(userId, quizId)
 
         then:
         quizAnswerRepository.findAll().size() == 1
         def quizAnswer = quizAnswerRepository.findAll().get(0)
         quizAnswer.getId() != null
         quizAnswer.getAssignedDate() != null
-        quizAnswer.getAvailableDate() == availableDate
         quizAnswer.getCompleted() == false
         quizAnswer.getUser().getId() == userId
         quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)

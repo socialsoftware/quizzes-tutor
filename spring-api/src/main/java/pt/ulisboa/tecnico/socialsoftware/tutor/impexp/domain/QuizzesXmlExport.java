@@ -47,6 +47,9 @@ public class QuizzesXmlExport {
 		if (quiz.getDate() != null) {
 			quizElement.setAttribute("date", quiz.getDate().toString());
 		}
+		if (quiz.getAvailableDate() != null) {
+			quizElement.setAttribute("availableDate", quiz.getAvailableDate().toString());
+		}
 		quizElement.setAttribute("year", quiz.getYear().toString());
 		quizElement.setAttribute("type", quiz.getType());
 		quizElement.setAttribute("series", quiz.getSeries().toString());

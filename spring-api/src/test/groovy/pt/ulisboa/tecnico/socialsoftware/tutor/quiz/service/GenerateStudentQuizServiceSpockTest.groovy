@@ -37,7 +37,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     def questionTwo
 
     def setup() {
-        user = new User('name', 'username', User.Role.STUDENT, 1)
+        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
         questionOne = new Question()
         questionOne.setNumber(1)
         questionOne.setActive(true)
