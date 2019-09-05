@@ -66,7 +66,7 @@ export default class QuizView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push("/create");
+      await this.$router.push("/student/create");
     }
   }
 
@@ -101,10 +101,10 @@ export default class QuizView extends Vue {
   async endQuiz() {
     try {
       await this.statementManager.getCorrectAnswers();
-      await this.$router.push("/results");
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$router.push("/student/results");
   }
 }
 </script>

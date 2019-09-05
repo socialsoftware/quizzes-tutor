@@ -231,7 +231,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Question, QuestionDto } from "@/models/management/Question";
+import { Question } from "@/models/management/Question";
 import QuestionForm from "@/models/management/QuestionForm";
 import RemoteServices from "@/services/RemoteServices";
 import {
@@ -477,7 +477,7 @@ export default class QuestionsView extends Vue {
         try {
           await RemoteServices.updateQuestion(
             this.editedId,
-            new Question(questionJson as QuestionDto)
+            new Question(questionJson as Question)
           );
           question.title = this.editedItem.title;
           question.content = this.editedItem.content;
@@ -522,7 +522,7 @@ export default class QuestionsView extends Vue {
       };
       try {
         const question = await RemoteServices.createQuestion(
-          new Question(questionJSON as QuestionDto)
+          new Question(questionJSON as Question)
         );
         this.questions.unshift(question);
       } catch (error) {

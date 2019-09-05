@@ -530,7 +530,7 @@
     <hop>
       <from>Add constants</from>
       <to>Update 2</to>
-      <enabled>N</enabled>
+      <enabled>Y</enabled>
     </hop>
     <hop>
       <from>quiz_question</from>

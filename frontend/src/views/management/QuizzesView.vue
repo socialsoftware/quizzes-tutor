@@ -29,9 +29,7 @@
                     class="text-left"
                   >
                     <span
-                      v-html="
-                        convertMarkDown(question.content, question.image)
-                      "
+                      v-html="convertMarkDown(question.content, question.image)"
                     ></span>
                     <ul>
                       <li

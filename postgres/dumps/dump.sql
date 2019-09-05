@@ -191,7 +191,6 @@ CREATE TABLE public.quiz_answers (
     id integer NOT NULL,
     answer_date timestamp without time zone,
     assigned_date timestamp without time zone,
-    available_date timestamp without time zone,
     completed boolean,
     quiz_id integer,
     user_id integer
@@ -264,6 +263,7 @@ ALTER SEQUENCE public.quiz_questions_id_seq OWNED BY public.quiz_questions.id;
 
 CREATE TABLE public.quizzes (
     id integer NOT NULL,
+    available_date timestamp without time zone,
     generation_date timestamp without time zone,
     number integer,
     series integer,
@@ -526,167 +526,125 @@ COPY public.images (id, url, width, question_id) FROM stdin;
 
 COPY public.options (id, content, correct, number, question_id) FROM stdin;
 5	Influence the software development process and its management, but not the software architecture of the system under development	f	0	2
-6	Should be captured in scenarios, as the requirements for quality attributes, and be taken into account in the design of the software architecture	f	1	2
 7	Are important to determine the feasibility of the system, but once we reach the conclusion that the system can be developed with these restrictions, software architecture no longer depends on these factors	f	2	2
 8	Are not one of the influences of the software architecture in the Architecture Business Cycle	f	3	2
-9	The *decomposition* and *uses* styles, which allow us to show how dependent a certain module is of other parts of the system	f	0	3
 10	The *implementation* style, which allows us to know where are the artifacts that implement a certain module	f	1	3
 11	The *layers* style, which allows us to show that the structure of our system is composed of various modules that may be easily reused in other systems	f	2	3
 12	The *client-server* and *deployment* styles, which allow us to isolate the required functionality in a component that executes autonomously and, thus, reusable in other systems	f	3	3
 13	To keep the current architecture of the system and optimize the code to achieve the currently required performance levels	f	0	4
 14	To change the Deployment view, replicating the server component by more machines	f	1	4
 15	To review the system's architecture so that part of the computation that is currently done at the server shifts to the clients	f	2	4
-16	To replace the machine used to run the server component by a more powerful machine that meets the new performance requirements, keeping only a server component running	f	3	4
 17	Those three viewtypes complement each other, but they are completely independent, showing different aspects that have no relation among them	f	0	5
 18	The module and component-and-connector viewtypes are independent of one another, but the allocation viewtype depends on the first two	f	1	5
 19	Each viewtype uses different software elements, such as modules or components, so it does not make sense to talk about relationships among these viewtypes	f	2	5
-20	Even though each viewtype addresses different aspects of a system, there are relationships among all of them	f	3	5
 29	A subset of the requirements that do not have conflicts among them and that correspond to the most important business goals	f	0	8
 30	A subset of the requirements that have many conflicts among them and for which you need to find tradeoffs early in the design process	f	1	8
-31	A subset of the requirements that correspond to the most important business goals, regardless of whether they have conflicts among them or not	f	2	8
 32	A subset of the requirements that is chosen exclusively by the architect by taking into account their influence on the system's architecture	f	3	8
-33	The *Peer-to-Peer* style	f	0	9
 34	The *Shared data* style	f	1	9
 35	The *Client-Server* style	f	2	9
 36	The *Publish-subscribe* style	f	3	9
 37	The *Communicating Processes* style	f	0	10
 38	The *Pipes-and-filters* style	f	1	10
 39	The *Peer-to-Peer* style	f	2	10
-40	The *Shared data* style	f	3	10
 41	Given that the change is on execution aspects, the change manifests itself only through the modification of components and connectors on the system	f	0	11
 42	This change in the way of how web applications run does not correspond to any change in its architecture, because at the architectural level we still have the same components	f	1	11
 43	The only architectural change is on the Deployment view, because the components and connectors remain the same, but execute in different places	f	2	11
-44	This change manifests itself on the relationship between the system's modules and components	f	3	11
-45	The *Communicating Processes* style	f	0	12
 46	The *Uses* style	f	1	12
 47	The *Layers* style	f	2	12
 48	The *Peer-to-Peer* style	f	3	12
 49	*Decomposition* and *Layers* views	f	0	13
 50	*Decomposition* and *Work assignment* views	f	1	13
-51	*Decomposition* and *Implementation* views	f	2	13
 52	*Decomposition* and *Generalization* views	f	3	13
 53	*Decomposition* and *Implementation* views	f	0	14
-54	*Decomposition* and *Uses* views	f	1	14
 55	*Component-and-connector* views	f	2	14
 56	 None, given that to perform black-box testing you do not need to know the code or the internal structure of the application to be tested	f	3	14
 57	The *Shared data* style	f	0	15
 58	The *Repository* style	f	1	15
-59	The *Layers* style	f	2	15
 60	The *Client-Server* style	f	3	15
 61	The *Decompostion* and *Implementation* styles	f	0	16
 62	The *Deployment* and *Uses* styles	f	1	16
 63	The *Client-Server* and *Generalization* styles	f	2	16
-64	the *Deployment* and *Layers* styles	f	3	16
 65	Views of the Component-and-Connector viewtype	f	0	17
-66	Views of the Module viewtype	f	1	17
 67	Views of the Allocation viewtype	f	2	17
 68	All of the above	f	3	17
-69	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	f	0	18
 70	To allow the existence of more than one layer of presentation logic for the same application (to provide for example, an interface to web services)	f	1	18
 71	To expose different interfaces of the domain logic layer so that it allows the implementation of different layers for the presentation logic	f	2	18
 72	To facilitate the use of the data access layer by the presentation logic layer	f	3	18
 73	To implement each of the services that are executed whenever the client makes a request to the server	f	0	19
 74	To improve the server performance by maintaining a cache of the objects most accessed during the processing of a client request	f	1	19
 75	To split the computation required to process each request made by the client in smaller units of work that are parallelizable	f	2	19
-76	To keep a record of changes made to the data during a business transaction and to coordinate the writing of these changes to the database	f	3	19
 77	To improve the performance of the application server because it maintains a cache of entities that reduces the number of operations made on the database	f	0	20
 78	To avoid loading a lot of data from the database when an entity that has many relationships with other entities is loaded	f	1	20
-79	To prevent data inconsistencies when there are multiple accesses within the same business operation to the same entity	f	2	20
 80	To map each entity loaded by the server to the identity of that entity in the database, so that the server is able to update the database later, if needed	f	3	20
 81	Stakeholders requirements do not emphasize performance as the most important issue	f	0	21
 82	The Hadoop small development team is highly competent and skilled	f	1	21
-83	Stakeholders do not mind if two simultaneous reads on the same file by two different applications may return different values	f	2	21
 84	The Hadoop system implementation uses complex distributed algorithms for scalability	f	3	21
 85	There is a conflict between availability and performance qualities	f	0	22
-86	The availability quality is more important, thus performance is addressed afterwards and depends on the tactics used for availability	f	1	22
 87	There is no conflict between availability and performance qualities	f	2	22
 88	Availability and performance qualities are ensured at deployment time only	f	3	22
 89	Active replication and passive replication	f	0	23
 90	Active replication, passive replication, and spare	f	1	23
-91	Passive replication and spare	f	2	23
 92	Quorum, active replication, and passive replication	f	3	23
 93	Shadow operation	f	0	24
-94	State Resynchronization	f	1	24
 95	Checkpoint/Rollback	f	2	24
 96	All of the above	f	3	24
-97	Authenticate users and authorize users	f	0	25
 98	Authenticate users, authorize users, and limit exposure	f	1	25
 99	Authenticate users, authorize users, and limit access	f	2	25
 100	Authenticate users, authorize users, limit access, and maintain integrity	f	3	25
 105	Because it has a well-defined interface	f	0	27
 106	That aggregates modules according to the uses relationship	f	1	27
 107	Because it has a well-defined interface and hides the internal behaviour	f	2	27
-108	That provides a set of complete and cohesive services	f	3	27
 109	Because it is a natural extension of the use cases concept	f	0	28
 110	But it requires additional information on the modules internal structure	f	1	28
-111	But it needs to be complemented, for each uses relationship, with the level of coupling	f	2	28
 112	And contains all the information required to assess effectively the impact	f	3	28
-113	The call's results may not have impact on the correct execution of the caller module	f	0	29
 114	The call's results may not have impact on the correct execution of the callee module	f	1	29
 115	The call may not transfer data between the modules	f	2	29
 116	The uses relationship requires calls to return control to the caller module	f	3	29
 117	We should always satisfy in the first place the requirements of more important stakeholders (such as the client)	f	0	30
 118	If no order was established among them, we would not know from where should we start the design process	f	1	30
 119	If one of the stakeholders complains that his requirement is not satisfied, we may explain to him that there were other more important requirements first	f	2	30
-120	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	30
 121	The Shared data style	f	0	31
 122	The Pipes-and-filters style	f	1	31
-123	The Peer-to-Peer style	f	2	31
 124	The Client-Server style	f	3	31
-125	A Client-Server architecture, where the DataNode is the Client and the NameNode is the Server	f	0	32
 126	A Client-Server architecture, where the NameNode is the Client and the DataNode is the Server	f	1	32
 127	A Peer-to-Peer architecture	f	2	32
 128	A Communicating Processes architecture	f	3	32
 129	That view will always be incomplete without the NameNode, because the HDFS Client needs to interact with it	f	0	33
-203	Using a view of the component-and-connector viewtype	f	2	51
 130	That view will always be incomplete without the NameNode, because the DataNode needs to interact with it	f	1	33
 131	The view does not need to include the NameNode, but in that case it will not be possible to reason about the availability of the system	f	2	33
-132	The availability guarantee may be given by the usage of an adequate connector between the HDFS Client and the DataNodes	f	3	33
 133	The Shared Data style	f	0	34
-134	The Communicating Processes style	f	1	34
 135	The Deployment style	f	2	34
 136	The Peer-to-Peer style	f	3	34
-141	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	f	0	36
 142	To allow the existence of more than one interface to the domain logic layer (to provide, for example, an interface to web services)	f	1	36
 143	To allow the existence of different presentation logic layers	f	2	36
 144	To facilitate the use of the data access layer by the presentation logic layer	f	3	36
 145	That should not be allowed because all interactions among components must be made through the Repository	f	0	37
 146	That is an acceptable solution if we want to reduce the dependencies among the various components of the system	f	1	37
-147	That is the recommended solution if there is a control flow that involves the choreography of both components	f	2	37
 148	That interaction cannot be represented in this view, but it may in another view of the system's architecture	f	3	37
 161	Essential to ensure the system scalability	f	0	41
-162	Essential to reduce costs whenever there is a fault in a hardware element	f	1	41
 163	Essential to ensure the system portability	f	2	41
 164	Essential to facilitate the integration with legacy systems	f	3	41
 165	Allows the creation of checkpoints but it is necessary to request all the information from the *NameNode* whenever a new checkpoint creation begins	f	0	42
 166	Does not allow the creation of checkpoints	f	1	42
-167	Allows the creation of checkpoints using the information that it gradually receives from the *NameNode*	f	2	42
 168	Allows the creation of checkpoints without requiring any kind of information from the *NameNode*	f	3	42
-169	Performance and availability qualities	f	0	43
 170	Performance qualities only	f	1	43
 171	Availability qualities only	f	2	43
 172	Performance and security qualities	f	3	43
-173	Increases the system modifiability whenever it is necessary to change the placement policy	f	0	44
 174	Allows *DataNodes* to decide which replicas they have	f	1	44
 175	Increases the system modifiability whenever it is necessary to change the the deployment structure	f	2	44
 176	Allow several replicas to be located in different *DataNodes*	f	3	44
 177	Because this tactic does not overload the *NameNode*	f	0	45
-178	But it would imply an *overhead* in the *NameNode*	f	1	45
 179	But an exceptions tactic could be used as well	f	2	45
 180	To notify other *DataNodes* that they are available	f	3	45
 181	This script is part of the system deployment module	f	0	46
 182	This script is a module that implements a security tactic	f	1	46
-183	This script is a module that implements a modifiability tactic	f	2	46
 184	This script cannot be considered a module because it is only a script	f	3	46
 185	Availability, security, and performance	f	0	47
 186	Availability only	f	1	47
 187	Availability and performance	f	2	47
-188	Availability and security	f	3	47
-193	Means that it may be difficult to design incremental testing	f	0	49
 194	Means that it is possible to implement the system according to an incremental development process	f	1	49
 195	Means that the modules that are part of the loop should be implemented first	f	2	49
 196	Gives a hint to replace the uses relations by is-a relations	f	3	49
-197	Is that the *Allowed to Use* relation defines a restriction for the possible *Uses* relations between modules belonging to different layers	f	0	50
 198	Is that the *Uses* relation can happen only among modules belonging to the same layer	f	1	50
 199	Is that the *Allowed to Use* relation does not imply that the correctness of the upper layer depends on the correct implementation of its nearest lower layer	f	2	50
 200	Is that the *Allowed to Use* relation is a *Uses* relation between layers	f	3	50
@@ -695,1069 +653,821 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 204	Using a view of the architectural style Deployment	f	3	51
 213	The component-and-connector view must, necessarily, be changed to include the components *NameNode* and *DataNode*, with which the web application has to interact to access its data	f	0	54
 214	The layered view of the web application will have to include a new layer corresponding to the Hadoop MapReduce framework	f	1	54
-215	The application continues to have a three-tiered architecture, where one of the tiers is now the HDFS system	f	2	54
 216	The Deployment view must be changed to include the racks needed to run the HDFS system	f	3	54
 217	The Pipes-and-filters style	f	0	55
 218	The Publish-Subscribe style	f	1	55
 219	The Peer-to-Peer style	f	2	55
-220	The Client Server style	f	3	55
 221	Affects only the domain logic layer	f	0	56
-222	May affect the data access layer because each pattern puts different requirements on the interface of that layer	f	1	56
 223	Does not affect the presentation logic layer because it cannot use it	f	2	56
 224	Does not affect the data access layer because the data access layer does not use the domain logic layer	f	3	56
 225	A machine may execute only one component, but a component may execute in more than one machine	f	0	57
 226	A component may execute in only one machine, but a machine may execute more than one component	f	1	57
 227	Each component executes in only one machine and each machine executes only one component	f	2	57
-228	All components may execute in all machines	f	3	57
 237	Only views of the component-and-connector viewtype are needed	f	0	60
 238	Only views of the Deployment style are needed	f	1	60
-239	We may need views of the component-and-connector viewtype and of the Deployment style	f	2	60
 240	We always need views of the component-and-connector viewtype and of the Deployment style	f	3	60
 241	The UK government, because it funded the project	f	0	61
 242	The researchers, because they invented the Haskell programming language	f	1	61
 243	The UK government, because it intended that the system could be used to develop the British software industry	f	2	61
-244	The researchers, because they wanted to use the system to validate their research	f	3	61
-245	As modules of the system	f	0	62
 246	As components of the system	f	1	62
 247	The compiler and the RTS as components and the boot libraries as a module	f	2	62
 248	The compiler as a component and the other two as modules	f	3	62
 249	Made the type-checking much simpler	f	0	63
 250	Satisfied performance requirements of the system	f	1	63
 251	Made the desugaring simpler	f	2	63
-252	Satisfied usability requirements of the system	f	3	63
 253	The performance of the compiler, because the RTS is written as very efficient C code	f	0	64
 254	The performance of the compiled programs, because the RTS is written as very efficient C code	f	1	64
-255	The portability, because the RTS creates an abstraction layer that hides some of the details of the operating system	f	2	64
 256	The modifiability of the compiled programs, because we may change their behavior by changing only the RTS	f	3	64
 257	To allow the parallel execution of the several compilation phases, thereby improving the compiler performance	f	0	65
 258	To allow the compilation of very large programs, because wach phase may execute incrementally without loading the entire program into memory at once	f	1	65
-259	To facilitate changing the phases used in the compilation process, thereby making the compiler more modifiable	f	2	65
 260	All other options	f	3	65
 261	It is a system with a Peer-to-Peer architecture	f	0	66
 262	It is a system with a Client-Server architecture	f	1	66
 263	It allows the development of systems with a Peer-to-Peer architecture	f	2	66
-264	It allows the development of systems with Peer-to-Peer, Client-Server, or Publish-Subscribe architectures	f	3	66
 265	The Tiers style	f	0	67
 266	The Communicating Processes style	f	1	67
-267	The Deployment style	f	2	67
 268	The Work Assignment style	f	3	67
 269	Increases the portability of the system for other operating systems	f	0	68
-270	Facilitates the addition of new messaging patterns	f	1	68
 271	Makes the system more scalable	f	2	68
 272	Facilitates the reuse of the messaging patterns	f	3	68
 273	To reduce the latency of sending a message when the system is overloaded	f	0	69
-274	To increase the throughput of the system when it is overloaded	f	1	69
 275	To reduce the amount of memory needed to send a large number of messages	f	2	69
 276	To reduce the CPU usage when the system has just a few messages to send	f	3	69
 277	The Pipe-and-Filter style	f	0	70
 278	The Shared data style	f	1	70
-279	The Communicating Processes style	f	2	70
 280	The Client-Server style	f	3	70
 281	To have better throughput than Apache	f	0	71
 282	To have a lower latency in the processing of a request than Apache	f	1	71
 283	To be more modifiable than Apache	f	2	71
-284	To allow more simultaneous connections than Apache	f	3	71
 285	The code is easier to develop because it is not concurrent	f	0	72
-286	They wanted to have a more efficient use of the computational resources	f	1	72
 287	Event-driven programs are easier to change	f	2	72
 288	In an event-driven system each component may function independently of the others	f	3	72
 293	To make the system more modifiable	f	0	74
 294	To make the system more portable to different operating systems	f	1	74
-295	To make the system faster	f	2	74
 296	To make the system more fault tolerant	f	3	74
 297	The Shared-data style	f	0	75
-298	The Communicating Processes style	f	1	75
 299	The Peer-to-Peer style	f	2	75
 300	The Client-Server style	f	3	75
 301	Increases the availability	f	0	76
 302	Increases the capacity	f	1	76
 303	Increases the capacity but decreases the availability	f	2	76
-304	Increases both the availability and the capacity	f	3	76
 305	Only in the Deployment view, because only the number of machines storing images was changed	f	0	77
 306	In the Uses view, because each *Image Write/Retrieval Service* is going to use a different *Image File Storage*	f	1	77
-307	In the Component-and-Connector view, because components and connectors need to be changed	f	2	77
 308	In the Decomposition view, because we need more modules to represent the split of images by different elements of the architecture	f	3	77
 309	Increasing the performance of the *Upload* operation	f	0	78
 310	Increasing the performance of the *Retrieval* operation	f	1	78
 311	Increasing the scalability of the system	f	2	78
-312	Increasing the fault tolerance of the system	f	3	78
 313	We now have four layers, where each layer is executed in the corresponding tier, as before	f	0	79
 314	Each one of the two middle tiers executes the previously existing three layers, and no change is needed on the layers view	f	1	79
 315	There is no relation between the tiers and the layers, so the layers architecture is not changed	f	2	79
-316	The execution of the previously existing layers is split between the two new tiers, and new intermediate layers may be needed	f	3	79
 321	The domain logic layer was implemented with the Domain Model pattern	f	0	81
-322	The domain logic layer was implemented with the Transaction Script pattern	f	1	81
 323	The domain logic layer was implemented with the Service Layer pattern	f	2	81
 324	The domain logic layer was implemented with a rich domain model, on top of which there was a thin service layer	f	3	81
 325	The Decomposition style	f	0	82
 326	The Generalization style	f	1	82
-327	The Uses style	f	2	82
 328	The SOA style	f	3	82
 341	The Communicating Processes style	f	0	86
 342	The Client-Server style	f	1	86
 343	Any style of the component-and-connector viewtype	f	2	86
-344	The Decomposition style	f	3	86
-345	In the Deployment view	f	0	87
 346	In the Decomposition view	f	1	87
 347	In a view of the component-and-connector type	f	2	87
 348	In the Aspects view	f	3	87
 349	To create an abstraction layer between the architecture of the system and its functionalities, so that the architecture may be changed later without affecting the functionalities	f	0	88
 350	To create an artifact that may be used to explain the system's software architecture to the various stakeholders	f	1	88
-351	To allow testing and validating the software architecture in the early development stages	f	2	88
 352	To facilitate the work assignment to the members of the development team that will implement the system's functionalities	f	3	88
 357	Does not change the existing modules of the system, because they are determined by the system's Decomposition, which is not changed	f	0	90
 358	Adds restrictions to the dependency relationships that exist between modules and that are represented using other styles, as with the layers style	f	1	90
-359	Typically gives rise to more modules than what we would have if not using this style	f	2	90
 360	Introduces only a new type of relation among the existing modules of the system, which resulted from other styles of the module viewtype	f	3	90
 361	To process all of the requests to send messages with a single thread, to free the remaining cores for the user threads	f	0	91
 362	To launch a worker thread for each user thread to guarantee that each user thread may send messages independently of what the others are doing	f	1	91
-363	To launch a worker thread for each core, to maximize the core usage and to minimize the need for synchronization among threads	f	2	91
 364	To launch a worker thread to process the sending of a new message, to guarantee maximal parallelism in message sending	f	3	91
 365	Only module views	f	0	92
 366	Only component-and-connector views	f	1	92
 367	Only allocation views	f	2	92
-368	Module and component-and-connector views	f	3	92
 369	It is less robust, because a fault in the *broker* causes a failure in the system	f	0	93
 370	It is less modifiable, because all components depend on the *broker*	f	1	93
-371	It has less performance, because the *broker* introduces greater latency in the communication	f	2	93
 372	It is more expensive, because it forces the existence of additional hardware to execute the *broker*	f	3	93
-373	Views of the Generalization style	f	0	94
 374	Views of the Layers style	f	1	94
 375	Views of the Decomposition style	f	2	94
 376	Views of the Uses style	f	3	94
-377	Usability	f	0	95
 378	Modifiability	f	1	95
 379	Performance	f	2	95
 380	Security	f	3	95
 381	The Publish-Subscribe style	f	0	96
 382	The Client-Server style	f	1	96
 383	The Peer-to-Peer style	f	2	96
-384	The Communicating Processes style	f	3	96
 385	The Layers style	f	0	97
 386	The Uses style	f	1	97
-387	The Shared data style	f	2	97
 388	The Communicating Processes style	f	3	97
 389	A new *worker* is created whenever a new connection is established with the server, and that *worker* processes all of the requests for that connection, being destroyed at the end of the connection	f	0	98
 390	There is a *pool* of *workers* that are reused between connections, but each *worker* processes only requests of a connection at a time	f	1	98
-391	Each *worker* is responsible for various connections, processing all requests from those connections	f	2	98
 392	Each *worker* processes requests that it obtains from a *pool of requests* that is shared among all workers	f	3	98
-393	By interleaving the various processing phases of each request in a sequential process	f	0	99
 394	By executing in parallel each of the phases of the pipeline corresponding to the processing of a request	f	1	99
 395	By executing in parallel the processing of the various requests	f	2	99
 396	By processing completely each request before moving to the next one, in a sequential process	f	3	99
 397	Have a throughput higher than Apache	f	0	100
 398	Be able to process each request faster than Apache	f	1	100
 399	Be able to launch more simultaneous threads than Apache	f	2	100
-400	Be able to reduce the amount of memory needed for each connection	f	3	100
 401	The *Decomposition* style	f	0	101
 402	The *Client-Server* style	f	1	101
-403	The *Layers* style	f	2	101
 404	The *Communicating Processes* style	f	3	101
 405	To increase the performance of RTS	f	0	102
 406	To allow changing the GC algorithm without affecting the rest of the system	f	1	102
 407	To increase the performance of the programs compiled by the GHC	f	2	102
-408	To make the RTS more portable to other operating systems	f	3	102
 409	It does not manifest, as it corresponds only to an extension to the Haskell language that must be processed by the compiler	f	0	103
-410	In the existence of a compiler component that is responsible for interpreting and applying the rewrite rules during the compilation of a program	f	1	103
 411	In a view of the Generalization style that includes a module defining an abstract interface that all *rewrite rules* must implement and of which all modules with the *rewrite rules* are specializations	f	2	103
 412	In a view of the Pipes-and-Filters style, corresponding to the process of compiling an Haskell program, to which is added a new filter whenever a new *rewrite rule* is defined	f	3	103
 413	A diagram of the component-and-connector viewtype	f	0	104
-414	A diagram of the module viewtype	f	1	104
 415	A diagram of the deployment style	f	2	104
 416	A diagram of the implementation style	f	3	104
-417	A diagram of the component-and-connector viewtype, showing the data flow between the various compiler components	f	0	105
 418	A diagram of the module viewtype, showing a decomposition of the compiler in the various modules that are responsible by each of the compilation process steps	f	1	105
 419	A diagram of the module viewtype, showing which modules use other modules	f	2	105
 420	A layered diagram, where there is a layer responsible for the code generation	f	3	105
 421	They are both modules	f	0	106
-422	They are both components	f	1	106
 423	The *Request Node* is a component and the *Cache* is a module	f	2	106
 424	The *Request Node* is a module and the *Cache* is a component	f	3	106
 425	Increasing performance and availability	f	0	107
 426	Increasing availability and decreasing performance	f	1	107
-427	Increasing performance and decreasing availability	f	2	107
+403	The *Layers* style	t	2	101
+408	To make the RTS more portable to other operating systems	t	3	102
+410	In the existence of a compiler component that is responsible for interpreting and applying the rewrite rules during the compilation of a program	t	1	103
+414	A diagram of the module viewtype	t	1	104
+417	A diagram of the component-and-connector viewtype, showing the data flow between the various compiler components	t	0	105
+422	They are both components	t	1	106
+427	Increasing performance and decreasing availability	t	2	107
 428	Increasing scalability and availability	f	3	107
 429	The Shared-Data style	f	0	108
 430	The Client-Server style	f	1	108
-431	The Peer-to-Peer style	f	2	108
 432	The Communicating Processes style	f	3	108
-433	The performance decreases	f	0	109
 434	The availability of the system's data decreases	f	1	109
 435	The availability of the system's services decreases	f	2	109
 436	The system is not affected in any way	f	3	109
 441	To start using the Transaction Script pattern in the domain logic layer	f	0	111
 442	To start using the Service Layer pattern in a new layer	f	1	111
-443	To move from an anemic domain model to a rich domain model	f	2	111
 444	To eliminate the service layer	f	3	111
 445	Views of the Module viewtype	f	0	112
 446	Views of the Component-and-Connector viewtype	f	1	112
 447	Views of the Allocation viewtype	f	2	112
-448	Views of the Component-and-Connector and Allocation viewtypes	f	3	112
 461	The Peer-to-Peer style	f	0	116
-462	The Client-Server style	f	1	116
 463	The Shared-Data style	f	2	116
 464	The Publish-subscribe style	f	3	116
 469	By using HTTPS in the communication between the browser and the web server	f	0	118
 470	By using robust authentication mechanisms to identify the users of the system with confidence	f	1	118
 471	By encrypting the information in the database with a password that is known only by the web server	f	2	118
-472	None of the other options solves the problem	f	3	118
-473	The presentation logic layer and how it relates with the underlying layer changed	f	0	119
 474	The connector used to represent the interaction between the browser and the web server changed	f	1	119
 475	The browser is now a component of a different type	f	2	119
 476	That evolution did not have any consequences on the software architecture of a web application	f	3	119
 477	A component	f	0	120
-478	A grouping of components	f	1	120
 479	A module	f	2	120
 480	A layer	f	3	120
-485	Maintain Multiple Copies of Computation	f	0	122
 486	Maintain Multiple Copies of Data	f	1	122
 487	Passive Redundancy	f	2	122
 488	Active Redundancy	f	3	122
-493	Performance, availability, and usability	f	0	124
 494	Performance, availability, and testability	f	1	124
 495	Reliability, performance, and usability	f	2	124
 496	Performance and usability	f	3	124
-497	Client-Server e Repository	f	0	125
 498	Repository e Service Oriented Architecture	f	1	125
 499	Client-Server, Repository, Communicating-Processes e Service Oriented Architecture	f	2	125
 500	Client-Server, Repository e Communicating-Processes	f	3	125
-501	By using a Timestamp tactic	f	0	126
 502	By using a Retry tactic	f	1	126
 503	Storing the information in the client using cookies	f	2	126
 504	By using a Transactions tactic	f	3	126
 505	May stop accepting reads	f	0	127
-506	May stop accepting writes	f	1	127
 507	May stop accepting reads and writes	f	2	127
 508	May need to add more servers to the cluster	f	3	127
-509	Increase Resource Efficiency	f	0	128
 510	Increase Resources	f	1	128
 511	Prioritize Events	f	2	128
 512	Maintain Multiple Copies of Data	f	3	128
 513	Data Encryption	f	0	129
 514	Intrusion Detection	f	1	129
-515	Limit Access	f	2	129
 516	Authorize Actors	f	3	129
-517	Introduce Concurrency	f	0	130
 518	Maintain Multiple Copies of Computation	f	1	130
 519	Limit Exposition	f	2	130
 520	Active Redundancy	f	3	130
 521	Publication-Subscription	f	0	131
 522	Pipes-and-Filters	f	1	131
-523	Dynamic Creation and Destruction	f	2	131
 524	Client-server	f	3	131
 525	It can take advantage of concurrency	f	0	132
 526	The *browser* needs to make more requests to the server	f	1	132
 527	It uses machine learning techniques	f	2	132
-528	It does not depend on a proprietary service	f	3	132
 529	It is always the same for all instances of Chrome	f	0	133
 530	It is defined compile-time of Chrome code	f	1	133
 531	It is defined during the initialization of each instance of Chrome	f	2	133
-532	It can change during the execution of each instance of Chrome	f	3	133
-533	Maintain User Model tactic	f	0	134
 534	Maintain Task Model tactic	f	1	134
 535	Maintain System Model tactic	f	2	134
 536	Support User Initiative tactics	f	3	134
 537	It is necessary to decompress the complete file, even though if only a small part of the information is needed	f	0	135
 538	Pickle algorithm is not efficient	f	1	135
 539	It is a Python specific solution	f	2	135
-540	Limitations of the concurrent access to files	f	3	135
-541	Increase the modifiability quality, because the new user interface was implemented using the REST interface	f	0	136
 542	Increase the modifiability quality, because external applications stopped using the administrative functionalities	f	1	136
 543	Increase the interoperability quality, because external applications can read and send messages to GNU Mailman	f	2	136
 544	None of the previous options	f	3	136
 545	A sequence of bytes to allow independence between filters	f	0	137
 546	An object tree to allow the simultaneous execution of several filters	f	1	137
 547	A sequence of bytes to allow that the order of filters execution is not relevant	f	2	137
-548	An object tree to simplify the processing of each filter	f	3	137
 549	Effectively guarantees the FIFO delivery of messages and the queue runners do not need to synchronize	f	0	138
 550	Guarantees the FIFO delivery of messages but the queue runners need to synchronize	f	1	138
-551	Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order	f	2	138
 552	Guarantees the FIFO delivery of messages because in each *queue* only are stored messages which arrived with a difference of more than one minute	f	3	138
 553	Client-Server	f	0	139
 554	Peer-to-Peer	f	1	139
-555	Dynamic Creation and Destruction	f	2	139
 556	Tiers	f	3	139
 557	Each message does not need to be accessed concurrently by several processes	f	0	140
 558	Pickle can efficiently write and read messages	f	1	140
 559	Each message is stored as a file in a directory	f	2	140
-560	All the previous options	f	3	140
 561	Allocate modules to the file system	f	0	141
-562	Differ on the emphasis on production and development phases of the software process	f	1	141
 563	Are applied to completely distinct sets of files	f	2	141
 564	Are applied to the same set of files	f	3	141
 565	Interoperability e Performance	f	0	142
 566	Performance and Availability	f	1	142
 567	Easy Development and Performance	f	2	142
-568	Modifiability and Performance	f	3	142
-569	Defer Binding	f	0	143
 570	Passive Redundancy	f	1	143
 571	Active Redundancy	f	2	143
 572	Passive Redundancy and Active Redundancy	f	3	143
 573	It is necessary to use a optimistic concurrency control policy because the transactions cannot be open for a long period	f	0	144
 574	It is necessary to use a pessimistic concurrency control policy to avoid frequent conflicts in the transactions	f	1	144
-575	Both, pessimistic and optimistic, concurrency control policies can be used	f	2	144
 576	Transactional management is the complete responsibility of the repository	f	3	144
-581	Detect and Recover from the attack	f	0	146
 582	Resist to the attack	f	1	146
 583	React to the attack	f	2	146
 584	Resist and React to the attack	f	3	146
 589	Depend on the types of the publishers components	f	0	148
-590	Only depend on the type of events	f	1	148
 591	Are completely independent	f	2	148
 592	It is necessary to support dynamic Defer Binding of components, publishers and subscribers, to the connector to be completely independent	f	3	148
 593	They only concern the web designers	f	0	149
 594	They are dependent on performance tactics	f	1	149
 595	They are dependent on availability tactics	f	2	149
-596	They are not implemented by a usability tactic	f	3	149
 601	Performance	f	0	151
 602	Reliability and Performance	f	1	151
-603	Reliability	f	2	151
 604	Security	f	3	151
 613	Only have a server for write requests	f	0	154
 614	Store all the information statically	f	1	154
-615	Prioritize performance and availability over functionality	f	2	154
 616	Use several levels of cache	f	3	154
 617	Passive Redundancy and Increase Resources Efficiency	f	0	155
 618	Active Redundancy and Increase Resources Efficiency	f	1	155
 619	Active Redundancy and Maintain Multiple Copies of Computation	f	2	155
-620	Passive Redundancy and Maintain Multiple Copies of Computation	f	3	155
 621	In the server	f	0	156
-622	By the load balancer	f	1	156
 623	In the repository	f	2	156
 624	In the client	f	3	156
 625	Escalating Restart	f	0	157
 626	Voting	f	1	157
-627	Degradation	f	2	157
 628	Exception Handling	f	3	157
 629	Prioritize Events	f	0	158
 630	Increase Resources	f	1	158
-631	Increase Resources Efficiency	f	2	158
 632	Maintain Multiple Copies of Data	f	3	158
 633	Security and Mobility	f	0	159
 634	Performance, Security and Interoperability	f	1	159
 635	Security, Performance, Usability, Interoperability and Mobility	f	2	159
-636	Security, Performance, Usability and Mobility	f	3	159
 641	Separates the Renderer process from the other processes	f	0	161
-642	The *browser* needs to make less requests to the server	f	1	161
 643	Applies machine learning techniques	f	2	161
 644	Uses prefetching	f	3	161
 645	Repository	f	0	162
-646	Communicating-Processes	f	1	162
 647	Service-Oriented Architecture	f	2	162
 648	Client-Server	f	3	162
-649	Uses the Introduce Concurrency tactic	f	0	163
 650	The page is in cache	f	1	163
 651	Uses the Maintain Multiple Copies of Computation tactic	f	2	163
 652	Uses the Maintain Multiple Copies of Data tactic	f	3	163
 657	The new user interface started using the REST interface	f	0	165
-658	External applications can administrate the GNU Mailman mailing lists	f	1	165
 659	External applications can read and send messages to GNU Mailman	f	2	165
 660	The GNU Mailman interface became public	f	3	165
 661	Communicating-Processes	f	0	166
 662	Client-Server	f	1	166
-663	Pipes-and-Filters	f	2	166
 664	Publish-Subscribe	f	3	166
-665	Data Model	f	0	167
 666	Decomposition	f	1	167
 667	Aspects	f	2	167
 668	Pipes-and-Filters	f	3	167
-669	The quality of Performance	f	0	168
 670	The quality of Availability	f	1	168
 671	The quality of Reliability	f	2	168
 672	The FIFO delivery of messages	f	3	168
-673	Security	f	0	169
 674	Security and Testability	f	1	169
 675	Reliability and Modifiability	f	2	169
 676	Reliability and Testability	f	3	169
 677	Module	f	0	170
 678	Component-and-Connector	f	1	170
-679	Module and Component-and-Connector	f	2	170
 680	Module, but only for the Decomposition architectural style	f	3	170
-681	Modifiability and Interoperability	f	0	171
 682	Performance and Interoperability	f	1	171
 683	Easiness of Development and Performance	f	2	171
 684	Interoperability	f	3	171
 685	Decomposition	f	0	172
-686	Aspects	f	1	172
 687	Uses	f	2	172
 688	Data Model	f	3	172
 689	User Model and Undo	f	0	173
-690	User Model	f	1	173
 691	User Model and System Model	f	2	173
 692	System Model	f	3	173
 693	It is not possible to support SQL searches in the application server	f	0	174
 694	It is always necessary to search in the database before accessing an object	f	1	174
 695	All accesses to objects should occur through their inter-references	f	2	174
-696	It is necessary that each object has a unique identifier	f	3	174
 697	Exception Handling	f	0	175
 698	Increase Competence Set	f	1	175
 699	Exception Prevention	f	2	175
-700	Exception Detection	f	3	175
 701	The Model module uses the Observer module	f	0	176
 702	The Model module uses the Observer module if data is sent in the notification	f	1	176
 703	The Model module uses the Observer module if complex data is sent in the notification	f	2	176
-704	In what concerns the notification, the Model module does not use the Observer module	f	3	176
 705	The Uses views are designed first	f	0	177
 706	The Layered view are designed first	f	1	177
-707	There isn't any predefined order to design Uses and Layered views	f	2	177
 708	Whenever there is at least one Uses view then a Layered view needs to be designed as well	f	3	177
 709	Can only contain a single architectural style	f	0	178
 710	May contain several architectural styles, but only if the are of the Component-and-Connector and Allocation viewtypes	f	1	178
-711	May contain several architectural styles, but only if they are of the same viewtype	f	2	178
 712	May contain several architectural styles, if that is the best way to convey the information to a group of stakeholders	f	3	178
 713	Can only be applied after the Decomposition view is finished	f	0	179
 714	Can be applied before a Decomposition view is designed	f	1	179
-715	Once applied in a view may be necessary to change the Decomposition view	f	2	179
 716	Should be applied in at least a view of the system	f	3	179
-717	It is an advantage for programmers that the transactional behavior is transparently provided	f	0	180
 718	It is not necessary to have transactional behavior in the business logic	f	1	180
 719	The Component-and-Connector architecture needs to have three Tiers	f	2	180
 720	The Module architecture needs to have three Layers	f	3	180
 841	The Transaction Script pattern to help demarcate the business transactions.	f	0	211
-842	The Domain Model pattern to reduce the interface of the Domain Logic layer to a controlled set.	f	1	211
 843	The Data Access layer to be able to access the data that it needs in each service.	f	2	211
 844	The Table Module pattern to hide the details of the table structure for the Presentation layer.	f	3	211
 845	The Transaction Script pattern.	f	0	212
 846	The Table Module pattern.	f	1	212
-847	The Domain Model pattern.	f	2	212
 848	The Service Layer pattern.	f	3	212
-853	The Requirements function is part of the Design module.	f	0	214
 854	The Requirements function is not part of the RulesSet module.	f	1	214
 855	The Requirements function is part of the Objects module.	f	2	214
 856	The Requirements function is part of the Dynamic Design module.	f	3	214
-857	A Condition Monitoring tactic for the Availability quality.	f	0	215
 858	An Encrypt Data tactic for the Security quality.	f	1	215
 859	A Verify Message Integrity tactic to React to Attacks for the Security quality.	f	2	215
 860	An Exception Prevention tactic to Prevent Faults for the Availability quality.	f	3	215
 861	The source of stimulus for scenarios of the Availability quality.	f	0	216
 862	The stimulus for scenarios of the Availability quality.	f	1	216
-863	The stimulus for scenarios of the Security quality.	f	2	216
 864	The source of stimulus for scenarios of the Security quality.	f	3	216
 869	The source of stimulus is the ruleset.	f	0	218
 870	The ruleset designer is the stimulus.	f	1	218
-871	The environment is design time.	f	2	218
 872	The response is defer binding.	f	3	218
 873	Schedule resources.	f	0	219
 874	Condition monitoring.	f	1	219
 875	Reduce overhead.	f	2	219
-876	Increase resource efficiency.	f	3	219
-877	Create a decomposition where there is a module corresponding to the Windows OS and another one for the Mac OS X, each one responsible for containing the OS-specific code.	f	0	220
 878	Use a classic 3-layer architecture with the following layers, from top to bottom: Presentation, Domain Logic, and Data Access.	f	1	220
 879	Use an aspect-oriented architecture, where an aspect is used to generate a graphical interface.	f	2	220
 880	Use two deployment views, each one allocating different components to different machines with different operating systems.	f	3	220
-885	We have to use a Repository component-and-connector style.	f	0	222
 886	It is not necessary to use a ''Data Access'' layer because the information is simple.	f	1	222
 887	We must identify a module for writing the scores in a Decomposition style.	f	2	222
 888	We may assign the responsibility of writing the scores to another module that already has other responsibilities.	f	3	222
 889	Client-server in both cases.	f	0	223
-890	Client-server in the first case and Peer-to-peer in the second.	f	1	223
 891	Peer-to-peer in both cases.	f	2	223
 892	Peer-to-peer in the first case and Client-Server in the second.	f	3	223
 893	Depends mostly on the system's functional requirements.	f	0	224
 894	Depends more on the architect's experience than on anything else.	f	1	224
 895	Should not depend on the skills of the developing team.	f	2	224
-896	Is driven by a trade-off among the stakeholders needs.	f	3	224
 897	May be responsible for the Featuritis problems of architectures.	f	0	225
-898	May be responsible for the Performitis problems of architectures.	f	1	225
 899	Is focused on creating common generalizations of several systems.	f	2	225
 900	Is focused on the details of the architecture.	f	3	225
 905	The current location is the source of the stimulus.	f	0	227
 906	The traffic monitoring system is the environment.	f	1	227
 907	The Google Map is the artefact.	f	2	227
-908	The location information is correctly included with a probability of 99.99% is the response measure.	f	3	227
 913	A component-and-connector view using a shared-data style.	f	0	229
 914	A data model view.	f	1	229
 915	A service-oriented architecture view.	f	2	229
-916	A data model view and a component-and-connector view using a shared-data style.	f	3	229
 917	Peer-to-peer style.	f	0	230
 918	Pipe-and-Filter style.	f	1	230
-919	Shared-data style.	f	2	230
 920	Publish-subscribe style.	f	3	230
 921	The team did not know the FenixFramework.	f	0	231
-922	The domain only needs CRUD (Create, Read, Update, and Delete) operations.	f	1	231
 923	A domain layer is absent from the architecture.	f	2	231
 924	Most of the information is stored in the client.	f	3	231
-925	It is necessary to design two deployment views, one for each deployment option.	f	0	232
 926	It is necessary to design a single deployment view that contains all the variation, because only the hardware capabilities change.	f	1	232
 927	Two different component-and-connector views are necessary to represent the same runtime behavior of the system.	f	2	232
 928	The deployment options have a large impact on the work assignment view.	f	3	232
 929	Passive redundancy for availability, because it is possible to recover from the commands log.	f	0	233
 930	Undo tactic for usability, because the server can undo the snapshot.	f	1	233
-931	Increase resource efficiency tactic for performance, because it reduces the need of upfront calculus/computation on new clients.	f	2	233
 932	Multiple copies of data tactic for performance, clients do not have to execute the commands.	f	3	233
 933	The server propagates them to all the clients.	f	0	234
-934	The server propagates local commands and cursor movements to the clients, and keeps the snapshots for the initialization of new clients.	f	1	234
 935	The server only propagates local commands to the clients and keeps cursor movements in a log and the snapshots in a repository.	f	2	234
 936	The server propagates the snapshots and the cursor movements to the clients and store the local commands for the initialization of new clients.	f	3	234
 937	Testability.	f	0	235
 938	Modifiability.	f	1	235
-939	Testability and Modifiability.	f	2	235
 940	Performance.	f	3	235
 1085	Requires a more skilled team, because the object-oriented paradigm is more complex than the procedural paradigm	f	0	272
 1086	Is typically used with more complex data access code	f	1	272
 1087	Requires that we write more code when we have only a couple of simple use cases	f	2	272
-1088	All of the above	f	3	272
 1089	The Service Layer pattern	f	0	273
-1090	The Active Record pattern	f	1	273
 1091	The Transaction Script pattern	f	2	273
 1092	The Data Mapper pattern	f	3	273
-1097	Ping-and-echo requires the availability monitor to know the addresses of the components it is monitoring	f	0	275
 1098	Heartbeat requires the availability monitor to confirm the reception of the signal	f	1	275
 1099	In Ping-and-echo the availability monitor should always send the same request	f	2	275
 1100	In Heartbeat, the monitored components can change the message rate	f	3	275
 1101	It is not possible to achieve this requirement. A non-architectural solution is to be careful when hiring system administrators	f	0	276
 1102	It is necessary to use the authenticate authors tactic to authenticate system administrators before they access to the database	f	1	276
 1103	It is necessary to use the encrypt data tactic to encrypt the information with a password that is in a configuration file	f	2	276
-1104	It is necessary to use the encrypt data tactic to encrypt the information on the client web browser, before it is send to the web server	f	3	276
 1109	A scenario for performance associated with a multiple copies of computation tactic	f	0	278
 1110	A scenario for usability associated with a support system initiative tactic	f	1	278
 1111	A scenario for performance associated with a limit event response tactic	f	2	278
-1112	A scenario for usability associated with a support user initiative tactic	f	3	278
-1113	Multiple copies of computation	f	0	279
 1114	Active redundancy	f	1	279
 1115	Increase resource efficiency	f	2	279
 1116	All of the above	f	3	279
-1117	Decomposition view	f	0	280
 1118	Data model view	f	1	280
 1119	Generalization view	f	2	280
 1120	Layered view	f	3	280
 1121	To analyse the source code of the system to see how it is built	f	0	281
 1122	To analyse the system's functional requirements to see what is the system supposed to do	f	1	281
 1123	To analyse the implemented set of features to see what is it that the system actually does	f	2	281
-1124	To talk with the people that developed the system to know what they did and why they did it	f	3	281
 1125	The architecture of a system cannot change	f	0	282
 1126	The main goal of an architect is to identify the quality attributes of system	f	1	282
-1127	Architecture is the design that gets harder to change as development progresses	f	2	282
 1128	The main goal of an architect is to design a detailed structure of the system that supports most of the requirements	f	3	282
 1129	It is not a good idea to consider performance when designing the architecture of the system	f	0	283
 1130	The performance of a system only depends on the global performance strategies	f	1	283
 1131	Testability and maintainability always conflict with performance	f	2	283
-1132	None of the above	f	3	283
-1133	Represent different architectural qualities and they may not be all represented in a single view	f	0	284
 1134	Have a view for each stakeholder	f	1	284
 1135	Have at least a view for each viewtype	f	2	284
 1136	Have a view for each group of interconnected components, and very often a system has several groups of interconnected components	f	3	284
 1137	We should always satisfy in the first place the requirements of the more important stakeholders (such as the client)	f	0	285
 1138	If no order was established among them, we would not know from where should we start the design process	f	1	285
 1139	If one of the stakeholders complains that her requirement is not satisfied, we may explain to her that there were other more important requirements first	f	2	285
-1140	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	285
 1141	A module	f	0	286
 1142	A component	f	1	286
-1143	Both, a module and a component	f	2	286
 1144	An allocation element	f	3	286
 1145	Peer-to-Peer to represent the communication between the components	f	0	287
 1146	Client-Server to represent the request the application makes to the different new sources	f	1	287
-1147	Generalisation to represent an abstraction common to all interfaces and keep API-specific details in child modules	f	2	287
 1148	Layers to create a virtual machine that hides the internals of the application from its users interface code to allow the support of different user interfaces	f	3	287
 1149	Performance because there is an overhead of communication between the modules.	f	0	288
 1150	Install because most of the modules need to be assigned to the same executable file	f	1	288
-1151	Development because it is not possible to do incremental development	f	2	288
 1152	Availability because if a module fails the failure easily propagates to all the other modules	f	3	288
-1153	Performance, because it describes what is the response to REST API calls	f	0	289
 1154	Modifiability, because the jsdom code can not be reused by several threads	f	1	289
 1155	Security, because it describes a "queue overflow" attack	f	2	289
 1156	Interoperability, because the REST API allow the exchange of information with external applications	f	3	289
 1157	Reduce overhead tactic	f	0	290
-1158	Increase resource efficiency tactic	f	1	290
 1159	Increase resources tactic	f	2	290
 1160	Testability tactic	f	3	290
 1161	Overall costs, because of deployment	f	0	291
 1162	Availability, because of the interprocess communication	f	1	291
-1163	Testability, because of the logic complexity	f	2	291
 1164	Performance, because there is not a significative improvement by using more CPUs	f	3	291
 1169	A publish-subscribe style	f	0	293
 1170	A peer-to-peer style	f	1	293
 1171	A client-server style	f	2	293
-1172	A communication processes style	f	3	293
 1173	It is enough to show the load-balancer between the web clients machines and the servers machines using a deployment view	f	0	294
-1174	It is necessary to change the connector between the web clients and the web servers, in the component-and-connector view, to show the semantics that is provided by the load-balancer	f	1	294
 1175	It is necessary to create a uses view to show how clients require the correct functioning of servers	f	2	294
 1176	It is necessary to change the component-and-connector view to show the communicating processes	f	3	294
 1343	Is an architectural pattern.	f	2	336
 1177	They have many different use cases, corresponding to many distinct user interfaces	f	0	295
-1178	They have to process very large amounts of data in each request	f	1	295
 1179	They need to be able to process concurrent requests from the users	f	2	295
 1180	They have a very complex domain logic that requires much processing power for answering each request	f	3	295
-1189	A generalisation architectural style	f	0	298
 1190	An aspects architectural style	f	1	298
 1191	A data model architectural style	f	2	298
 1192	A shared-data architectural style	f	3	298
 1193	Subscribes to the same kind of events that the sub2 port	f	0	299
 1194	Subscribes to the same kind of events that the inputSub port	f	1	299
-1195	Subscribes to cursor position events	f	2	299
 1196	It is unnecessary in the diagram because the :TableEditor can use port sub2 through the :Sheet component	f	3	299
 1197	The communicating processes architectural style	f	0	300
 1198	The client-server architectural style	f	1	300
 1199	The deployment architectural style	f	2	300
-1200	All of the above	f	3	300
 1201	Featuritis may result from a requirement of the technical context.	f	0	301
 1202	Featuritis requires the performance quality because the end user needs to execute the features.	f	1	301
-1203	Featuritis may be a result of a requirement of the business context.	f	2	301
 1204	Featuritis requires the modifiability quality to allow a the system to be easily modified to support new features.	f	3	301
 1209	The book definition does not consider relevant the externally visible properties.	f	0	303
-1210	The book definition also considers that the properties are externally visible because they are used for reasoning by the stakeholders.	f	1	303
 1211	The book definition also considers that the properties are externally visible because by definition an architectural property is externally visible.	f	2	303
 1212	The book definition is not correct, as pointed out in the errata.	f	3	303
-1213	This shared understanding is what distinguishes architecture from design.	f	0	304
 1214	This shared understanding is necessary to define precise requirements.	f	1	304
 1215	This shared understanding does not allow to define the architecture trade-offs because some of the stakeholders have their own goals.	f	2	304
 1216	This shared understanding does not allow to have a global perspective of the system, because stakeholders have different interests.	f	3	304
-1221	Frank Buschmann is referring to some possible consequences of the modifiability quality.	f	0	306
 1222	Frank Buschmann are considering performance and security as the most important qualities.	f	1	306
 1223	Frank Buschmann is referring that the consequences of a flexible system is poor performance and bad security.	f	2	306
 1224	Frank Buschmann is not considering modifiability as an important quality	f	3	306
 1225	Performance should be the last quality to be addressed because it is a local property of an architecture.	f	0	307
 1226	Modifiability, flexibility, should be the first quality to be addressed because it allows the delay of architectural decisions.	f	1	307
 1227	The lack of functionality results in a system without business value, therefore a rich set of features should be implemented first.	f	2	307
-1228	A solution for any quality in isolation may lead to a biased architecture.	f	3	307
 1229	A component.	f	0	308
-1230	A module.	f	1	308
 1231	Both, a component and a module, depending on the perspective.	f	2	308
 1232	An external element.	f	3	308
 1237	Is unable to define a domain model of the system.	f	0	310
 1238	Is focused on the technology context of the architecture.	f	1	310
-1239	Is focused on creating common generalizations of several systems.	f	2	310
 1240	Is focused on the details of the architecture.	f	3	310
 1241	Such misunderstanding and mistrust occurs because the stakeholders have their own agendas	f	0	311
 1242	The cycle Frank Buschmann refers to is the Architectural Influence Cycle.	f	1	311
 1243	The cycle Frank Buschmann refers to allows the clarification of requirements.	f	2	311
-1244	To break such misunderstanding and mistrust the architecture has to make explicit the stakeholders needs.	f	3	311
 1245	Is a functional prototype, which tests the functionalities required by the business stakeholders.	f	0	312
 1246	Is an architecture that demonstrates that the system will support the qualities raised by the stakeholders.	f	1	312
-1247	Is a baseline architecture that allows to experiment with the most significant architectural requirements.	f	2	312
 1344	Is a system decomposition.	f	3	336
+1203	Featuritis may be a result of a requirement of the business context.	t	2	301
+1210	The book definition also considers that the properties are externally visible because they are used for reasoning by the stakeholders.	t	1	303
+1230	A module.	t	1	308
 1248	Is an object-oriented framework, which integrates functional and non-functional requirements of the system.	f	3	312
 1249	A component.	f	0	313
-1250	A module.	f	1	313
 1251	Both, a component and a module, depending on the perspective.	f	2	313
 1252	An external element.	f	3	313
 1257	Are unable to understand the technology capabilities.	f	0	315
 1258	Are focused on the project context of the architecture.	f	1	315
-1259	Are unable to distinguish architecture from design.	f	2	315
 1260	Are focused on the business context of the architecture.	f	3	315
 1261	A flexible architecture occurs when it is not possible to identify all the requirements.	f	0	316
-1262	A solution to this problem is to prioritize the system qualities.	f	1	316
 1263	Performance uncertainty about the system should be dealt with more flexibility.	f	2	316
 1264	A solution to this problem is to reduce the level of flexibility of a system.	f	3	316
 1265	Project and Technical Contexts.	f	0	317
 1266	Project and Professional Contexts.	f	1	317
 1267	Business and Project Contexts.	f	2	317
-1268	Professional and Technical Contexts.	f	3	317
 1273	Modifiability.	f	0	319
-1274	Availability and Performance.	f	1	319
 1275	Testability.	f	2	319
 1276	Availability.	f	3	319
 1277	Tries to guarantee that the final system will have the qualities required by stakeholders.	f	0	320
-1278	Tries to guarantee that the final system will have the qualities aimed by the architecture.	f	1	320
 1279	Does not allow developers to define some of the design of the system	f	2	320
 1280	It requires automatic generation of code from the architecture.	f	3	320
 1281	Performance.	f	0	321
-1282	Availability.	f	1	321
 1283	Reliability.	f	2	321
 1284	Fault-tolerance	f	3	321
 1285	Implements a tactic to recover from faults.	f	0	322
 1286	Implements a tactic to prevent faults.	f	1	322
-1287	Can be used as the source of a stimulus in a scenario.	f	2	322
 1288	Can be used in a non-concurrent system.	f	3	322
 1289	Is an aggregate design tactic.	f	0	323
 1290	Is a maintain user model design tactic.	f	1	323
-1291	Is a design tactic for a scenario where the source of stimulus are technical users.	f	2	323
 1292	Is a design tactic for a scenario where the source of stimulus is the graph owner user.	f	3	323
 1293	Detect intrusion.	f	0	324
 1294	Limit access.	f	1	324
-1295	Limit exposure.	f	2	324
 1296	Separate entities.	f	3	324
 1301	The stimulus is a system input.	f	0	326
 1302	The response can be omitted.	f	1	326
 1303	The artefact can be outside the system.	f	2	326
-1304	The stimulus and the response should be always present.	f	3	326
-1309	The quality addressed is availability.	f	0	328
 1310	The quality addressed is performance.	f	1	328
 1311	The quality addressed is availability and a voting design tactic is required to solve the problem.	f	2	328
 1312	The quality addressed is performance and a maintain multiple copies of data design tactic is required to solve the problem.	f	3	328
 1313	Detect intrusion.	f	0	329
 1314	Detect service denial.	f	1	329
-1315	Verify message integrity.	f	2	329
 1316	Detect message delay.	f	3	329
 1317	Increase resources.	f	0	330
-1318	Introduce concurrency.	f	1	330
 1319	Reduce overhead.	f	2	330
 1320	Manage sample rate.	f	3	330
 1321	Performance.	f	0	331
 1322	Availability.	f	1	331
-1323	Interoperability.	f	2	331
 1324	Testability.	f	3	331
 1325	Ignore faulty behavior.	f	0	332
 1326	Transactions.	f	1	332
 1327	Rollback.	f	2	332
-1328	Exception prevention.	f	3	332
-1329	A Maintain Multiple Copies of Computation design tactic in Carbon.	f	0	333
 1330	A Maintain Multiple Copies of Computation design tactic in the WebApp such that reads do not compete with writes.	f	1	333
 1331	A Maintain Multiple Copies of Data design tactic in Carbon.	f	2	333
 1332	A Maintain Multiple Copies of Data design tactic in the WebApp such that reads do not compete with writes.	f	3	333
 1333	Limit access, to restrict the access to the database system.	f	0	334
 1334	Limit exposure, locate the database system in the intranet.	f	1	334
-1335	Separate entities, to allow the use of more strict tactics on the sensitive data.	f	2	334
 1336	Change default settings, because default passwords are sensitive.	f	3	334
-1337	Maintain user model tactic.	f	0	335
 1338	Introduce concurrence tactic.	f	1	335
 1339	Increase resource efficiency tactic.	f	2	335
 1340	Maintain task model tactic.	f	3	335
 1341	Is a mediator, an application of the mediator pattern, between the input stimulus and the output response.	f	0	336
-1342	May be associated to other tactics to deal with a single stimulus.	f	1	336
-1345	This situation corresponds to the use of the degradation availability tactic.	f	0	337
+1250	A module.	t	1	313
 1346	This situation corresponds to the use of the removal from service availability tactic.	f	1	337
 1347	This situation corresponds to the use of the limit access security tactic.	f	2	337
 1348	This situation corresponds to the use of the limit exposure security tactic.	f	3	337
 1349	The quality addressed is availability.	f	0	338
-1350	The quality addressed is modifiability.	f	1	338
 1351	The quality addressed is availability and an active redundancy design tactic is required to solve the problem.	f	2	338
 1352	The quality addressed is modifiability and an increase cohesion design tactic is required to solve the problem.	f	3	338
 1353	Detect and Resist.	f	0	339
 1354	Detect and React.	f	1	339
-1355	Detect and Recover.	f	2	339
 1356	Resist and React.	f	3	339
 1369	Testability.	f	0	343
 1370	Reliability.	f	1	343
 1371	Availability.	f	2	343
-1372	Usability.	f	3	343
-1373	Interoperability.	f	0	344
 1374	Performance.	f	1	344
 1375	Availability.	f	2	344
 1376	Usability.	f	3	344
-1381	Business scenario.	f	0	346
 1382	Availability scenario.	f	1	346
 1383	Modifiability scenario.	f	2	346
 1384	Usability scenario.	f	3	346
 1389	Performance.	f	0	348
-1390	Modifiability.	f	1	348
 1391	Availability.	f	2	348
 1392	Usability.	f	3	348
 1393	Change default settings.	f	0	349
 1394	Limit access.	f	1	349
 1395	Support user initiative.	f	2	349
-1396	Support system initiative.	f	3	349
 1397	Results in a similar decomposition as if the criteria was not applied but some modules are identified to be outsourced.	f	0	350
 1398	Results in a decomposition where each module may be implemented by a single developer.	f	1	350
 1399	Allows to increase the overall calendar development time of the project because there is a communication overhead with external teams.	f	2	350
-1400	Allows to identify modules for which the development team does not have the required implementation competences.	f	3	350
 1401	Only contains business qualities.	f	0	351
 1402	Cannot be defined for the security quality.	f	1	351
 1403	Contains the architectural tactics associated with architecturally significant requirements.	f	2	351
-1404	Contains the business value and the architectural impact of architecturally significant requirements.	f	3	351
 1405	This ASR can easily be supported by the architecture.	f	0	352
 1406	This ASR should be supported by the architecture because of its high impact.	f	1	352
-1407	The architect have to decide on the cost/benefit of designing an architecture that supports this ASR.	f	2	352
 1408	The architect should support this ASR after designing an architecture that supports all the ASRs with high business value.	f	3	352
 1409	Performance.	f	0	353
 1410	Reliability.	f	1	353
-1411	Availability.	f	2	353
 1412	Usability.	f	3	353
 1413	Performance.	f	0	354
 1414	Interoperability.	f	1	354
-1415	Availability.	f	2	354
 1416	Usability.	f	3	354
-1421	Business scenario.	f	0	356
 1422	Availability scenario.	f	1	356
 1423	Modifiability scenario.	f	2	356
 1424	Usability scenario.	f	3	356
-1433	Rollback.	f	0	359
 1434	Persistence.	f	1	359
 1435	Retry.	f	2	359
 1436	Passive redundancy.	f	3	359
 1441	Applying the generalization style to identify child modules of a module in the loop chain.	f	0	361
-1442	Applying the decomposition style to some of the modules in the loop chain.	f	1	361
 1443	Identifying which of the *uses* dependencies are actually generalization dependencies.	f	2	361
 1444	Decomposing a *uses* relation into different interfaces.	f	3	361
-1449	Limit exposure.	f	0	363
 1450	Limit access.	f	1	363
 1451	Authorize actors.	f	2	363
 1452	Separate entities.	f	3	363
 1453	The type of a connector does not depend on the type of its roles.	f	0	364
 1454	The type of a component does not depend on the type of its ports.	f	1	364
 1455	The attachment is a runtime relation which dynamically manages type compliance.	f	2	364
-1456	The attachment between components and connectors only depends on their ports and roles types.	f	3	364
 1465	It is necessary design a CRUD matrix to show the dependencies between the persistent information.	f	0	367
 1466	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.	f	1	367
 1467	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.	f	2	367
-1468	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance issues of the access to data.	f	3	367
 1469	Schedule resources.	f	0	368
 1470	Maintain multiple copies of data.	f	1	368
-1471	Increase resource efficiency.	f	2	368
 1472	Reduce overhead.	f	3	368
 1473	She encapsulates the connector qualities inside a higher level component.	f	0	369
 1474	She delays the complete specification of the connector for development time to have human resources to prototype and measure different implementations.	f	1	369
 1475	She does not want to clutter the view with details and trusts the development team to implement the connector according to the required quality level.	f	2	369
-1476	The required quality associated with the connector is supported by existing and well-know technology.	f	3	369
-1477	She can define a variant of this style with asynchronous communication by allowing the client to register callbacks that the server calls at specific times.	f	0	370
 1478	She has to use another architectural style to describe asynchronous communication.	f	1	370
 1479	She can use the request/reply connector but the server should not return results to the client.	f	2	370
 1480	She can define a variant of this style with asynchronous communication by allowing the server to have the initiative to initiate the interaction.	f	3	370
 1481	Allows the analysis of the impact of changes because if a module uses another it will necessarily have to change whenever the used module changes.	f	0	371
 1482	Improves testability because if a module uses another then it is only possible to test them together.	f	1	371
-1483	Allows incremental development because the possible increments of functionally can be inferred from use dependencies.	f	2	371
 1484	Improves testability because it informs the tester about which modules involved in circular use dependencies.	f	3	371
-1485	Relates a view of the Uses style with a view of the Data Model style.	f	0	372
 1486	Is an extension of a view of the Data Model style.	f	1	372
 1487	Allows to avoid redundancy and inconsistency.	f	2	372
 1488	Describes the structure of the data used by the system.	f	3	372
-1489	Multiple copies of computation and Passive redundancy tactics.	f	0	373
 1490	Multiple copies of computation tactic.	f	1	373
 1491	Passive redundancy tactic.	f	2	373
 1492	Multiple copies of computation and Active redundancy tactics.	f	3	373
 1493	A module interface has to be attached to a single component port.	f	0	374
 1494	A module interface can be replicated but component ports cannot.	f	1	374
-1495	A module interface cannot be replicated but component ports can.	f	2	374
 1496	A module interface may be attached to several component ports.	f	3	374
 1497	It allows an undefined number of clients.	f	0	375
-1498	It is possible to have redundant servers.	f	1	375
 1499	Servers can also be clients.	f	2	375
+1433	Rollback.	t	0	359
 1500	Servers can send a heartbeat to clients.	f	3	375
 1505	Sanity checking.	f	0	377
 1506	Exception detection.	f	1	377
 1507	Detect intrusion.	f	2	377
-1508	Condition monitoring.	f	3	377
-1509	It is possible to integrate a new data accessor without changing the other data accessors.	f	0	378
 1510	It is possible to change the repository schema without changing the data accessors.	f	1	378
 1511	The integration of a new data accessor only implies changes in the data accessors that access the same type of data.	f	2	378
 1512	The communication between data accessors does not occur through the repository.	f	3	378
 1517	This means that the modules inside a layer cannot be loosely coupled.	f	0	380
 1518	This means that this architectural style emphasizes the quality of performance.	f	1	380
 1519	This means that each module cannot use other modules inside the same layer.	f	2	380
-1520	This means that the modules inside a layer are likely to be ported to a new application together.	f	3	380
 1525	Is a Client-Server style because consumers are clients and providers are servers.	f	0	382
 1526	Is a Peer-to-Peer style because consumers and providers are peers.	f	1	382
-1527	Can use a Service Registry to improve transparency of location of service providers.	f	2	382
 1528	Is a Publish-subscriber style because consumers use an enterprise service bus.	f	3	382
-1529	In the view there are multiple instances of the `Queue` component.	f	0	383
 1530	In the view there are multiple instances of the `Writer` component.	f	1	383
 1531	In the view `Receiver` component's `client` port is not associated with an external port.	f	2	383
 1532	In the view the `produce` port of a `Receiver` component is attached to the `consume` port of a `Writer` component.	f	3	383
 1545	It encapsulates applications through well-defined interfaces.	f	0	387
 1546	It decouples the coordination of the interaction among applications from the applications themselves.	f	1	387
 1547	It improves transparency of location of service providers.	f	2	387
-1548	It encapsulates applications through well-defined interfaces, decouples the coordination of the interaction among applications from the applications themselves, and improves transparency of location of service providers.	f	3	387
 1549	There is a message passing connector between the `read` port of `Queue` and the `data points access` port of `WebApp`.	f	0	388
-1550	There is a interface delegation relation between the `read` port of `Queue` and the `query` port of `Carbon`.	f	1	388
 1551	There is a connector between the `producer` port of a `Queue` component and the `client` port of its `Carbon` component.	f	2	388
 1552	The `client` ports of `Carbon` and `WebApp` are connected to a `Client` component through the same connector instance.	f	3	388
 1553	Deployment style.	f	0	389
-1554	Implementation style.	f	1	389
 1555	Install style.	f	2	389
 1556	Work assignment style.	f	3	389
 1561	It applies layers to tiers.	f	0	391
-1562	Restrict the communication between components because, for instance, a group of components should be located in the same hardware.	f	1	391
 1563	Is an extension of the Client-Server architectural style.	f	2	391
 1564	Defines tiers as components.	f	3	391
 1569	Deployment style.	f	0	393
 1570	Implementation style.	f	1	393
-1571	Install style.	f	2	393
 1572	Work assignment style.	f	3	393
-1577	Memcached can be considered a sub-module of the Store Graphs module.	f	0	395
 1578	Memcached can be considered a sub-module of the Present Graphs module.	f	1	395
 1579	Memcached can be considered a direct sub-module of the top Graphite module.	f	2	395
 1580	Memcached is not a module.	f	3	395
-1589	Buffering can be considered a sub-module of the Store Graphs module.	f	0	398
 1590	Buffering can be considered a sub-module of the Present Graphs module.	f	1	398
 1591	Buffering can be considered a direct sub-module of the top Graphite module.	f	2	398
 1592	Buffering is not a module.	f	3	398
 1593	A work assignment view.	f	0	399
-1594	A deployment view.	f	1	399
 1595	An install view.	f	2	399
 1596	An implementation view.	f	3	399
-1601	Amazon Silk is more convenient for mobile devices because it does most of the computation in the cloud.	f	0	401
 1602	Google Chrome is more convenient for mobile devices because it has an optimized network stack that runs in any kind device.	f	1	401
 1603	Amazon Silk is more convenient for mobile devices because it customizes the number of threads that run in the device.	f	2	401
 1604	Google Chrome is more convenient for mobile devices because content delivery is optimized.	f	3	401
 1605	There is a ThousandParsec connector.	f	0	402
 1606	There is a Read/Write connector which encapsulates a redundant Repository.	f	1	402
-1607	There is a Read/Write connector which guarantees that players turns are not lost.	f	2	402
 1608	There is a Read/Write connector which guarantees that only the turns of the last two players may be lost.	f	3	402
 1609	Supports asynchronous communication to deal with disconnected mode.	f	0	403
 1610	Implements an event bus that allows the server to inform the client about new order recommendations.	f	1	403
 1611	May loose some of the changes done on the client component.	f	2	403
-1612	Has reduced reliability qualities.	f	3	403
 1613	The ConflictResolution module is part of the code executed by the : TableEditor component.	f	0	404
-1614	The ConflictResolution module is part of the code executed by the : Sheet component.	f	1	404
 1615	The code of the ConflictResolution module is executed by a broadcast connector that implements an eventbus between the SpreadSheet components.	f	2	404
 1616	The code of the ConflictResolution module is executed in a server component because it needs to be centralized.	f	3	404
 1617	An object oriented style is followed.	f	0	405
-1618	The business logic is organized around record sets.	f	1	405
 1619	Row Data Gateway is the most suitable data source pattern.	f	2	405
 1620	A Service Layer should be used to provide an interface for the presentation layer.	f	3	405
 1621	In Amazon Silk a request for a web page corresponds to a peer-to-peer interaction between all the web components containing the resources.	f	0	406
 1622	In Google Chrome a request for a web page is accomplished by a single access to the internet.	f	1	406
-1623	In Amazon Silk a request for a web page corresponds to requesting a service from the amazon cloud.	f	2	406
 1624	In Google Chrome a request for a web page aggregates the page on the background before it is sent to the client.	f	3	406
 1625	Should be described as a submodule of the RulesSet module.	f	0	407
-1626	Should be described as a submodule of but not included in the RulesSet subtree.	f	1	407
 1627	Should be described as a submodule of the Design module.	f	2	407
 1628	Should not be described as a module because it is a component.	f	3	407
 1633	The : TableEditor broadcasts the cursor position through the : Sheet.	f	0	409
-1634	An interface delegation is missing in the picture to represent the : TableEditor broadcasting the cursor position through the Pub port.	f	1	409
+1601	Amazon Silk is more convenient for mobile devices because it does most of the computation in the cloud.	t	0	401
+1607	There is a Read/Write connector which guarantees that players turns are not lost.	t	2	402
+1612	Has reduced reliability qualities.	t	3	403
+1614	The ConflictResolution module is part of the code executed by the : Sheet component.	t	1	404
+1618	The business logic is organized around record sets.	t	1	405
+1623	In Amazon Silk a request for a web page corresponds to requesting a service from the amazon cloud.	t	2	406
+1626	Should be described as a submodule of but not included in the RulesSet subtree.	t	1	407
 1635	The : Sheet broadcasts the cursor position through the Pub port.	f	2	409
 1636	The : TableEditor broadcasts the cursor position through its : StatusCallback port.	f	3	409
 1637	Are responsible for loading the objects they refer to.	f	0	410
 1638	Are responsible for the management of transactions, begin and end of transactions.	f	1	410
 1639	Contain the business logic.	f	2	410
-1640	May not even exist, only record sets are used.	f	3	410
-1641	Amazon Silk predicts accesses based on the information gathered for all Silk users.	f	0	411
 1642	Google Chrome uses a usability maintain system model tactic.	f	1	411
 1643	Amazon Silk predictions are constrained by the amount of information it can store about each user access.	f	2	411
 1644	Google Chrome predictions do not require storage in the client-side.	f	3	411
 1645	There is a ThousandParsec connector.	f	0	412
 1646	There is a Request/Reply connector.	f	1	412
-1647	There is a ThousandParsec connector which can be decomposed into a set of components and Request/Reply connectors.	f	2	412
 1648	There is an EventBus connector.	f	3	412
-1649	Was taken because HTML5 provides better portability qualities.	f	0	413
 1650	Was taken because Native applications provide better modifiability qualities.	f	1	413
 1651	Was taken because HTML5 provides better usability qualities.	f	2	413
 1652	Was taken because Native application provide better support for working offline.	f	3	413
-1653	The server implements the : Repository component and the : Broadcast connector.	f	0	414
 1654	The server implements the : Repository component.	f	1	414
 1655	The server implements the : Broadcast connector.	f	2	414
 1656	The server implements the SpreadSheet components	f	3	414
-1657	Table Data Gateway and Row Data Gateway.	f	0	415
 1658	Row Data Gateway and Active Record.	f	1	415
 1659	Row Data Gateway and Data Mapper.	f	2	415
 1660	Active Record and Data Mapper.	f	3	415
 1661	Amazon Silk explicitly caches pages on the browser to optimize accesses.	f	0	416
-1662	Google Chrome predictor takes into consideration the amount of available cache.	f	1	416
 1663	Amazon Silk cache is not shared between different users of the service to support confidentiality.	f	2	416
 1664	Google Chrome cache is shared among the different users of a desktop machine.	f	3	416
 1665	As a specialization of the RulesSet module.	f	0	417
 1666	As a submodule of the RulesSet module.	f	1	417
-1667	As a module but not included in the RulesSet subtree.	f	2	417
 1668	As a specialization of the Design module.	f	3	417
-1669	Two distinct unidirectional connectors.	f	0	418
 1670	A single bidirectional connector.	f	1	418
 1671	Three distinct unidirectional connectors.	f	2	418
 1672	A single unidirectional connector.	f	3	418
 1673	The Parser module is part of the code executed by the : TableEditor component.	f	0	419
-1674	The Parser module is part of the code executed by the : Sheet component.	f	1	419
 1675	The code of the Parser module is executed by a repository component, which is not represented in the view.	f	2	419
 1676	The code of the Parser module is executed by both, the : Sheet and the repository components (the latter is not visible in the view).	f	3	419
 1677	Table Data Gateway and Row Data Gateway.	f	0	420
 1678	Row Data Gateway and Active Record.	f	1	420
 1679	Row Data Gateway and Data Mapper.	f	2	420
-1680	Active Record and Data Mapper.	f	3	420
-1801	The stimulus is to integrate reports from a variety of test tools	f	0	451
 1802	The response is JUnit XML standard	f	1	451
 1803	The source of the stimulus is Sun	f	2	451
 1804	The measure of the response is a robust open-source community associated with it	f	3	451
 1805	Modifiability and Performance	f	0	452
 1806	Availability and Modifiability	f	1	452
-1807	Performance and Reliability	f	2	452
 1808	Reliability and Security	f	3	452
 1809	In the Deployment view, because the presentation component is now executing in a different place	f	0	453
 1810	In the component-and-connector view, because the connector between the web client and the web server has to change	f	1	453
 1811	In the Layer view, because the order of the layers will have to change	f	2	453
-1812	In the mapping between layers of the system and the components where they execute	f	3	453
 1813	The left part of the figure represents a three-layered architecture	f	0	454
 1814	The most relevant architectural style in the right part of the figure is shared-data	f	1	454
 1815	The system represented in the left part of the figure tends to be non-transactional	f	2	454
-1816	The system represented in the right part of the figure tends to have good modifiability	f	3	454
 1817	Service-oriented architecture to express how clients can access the services	f	0	455
 1818	Client-server to express how multiple clients can access the applications	f	1	455
-1819	Tiers to express that different applications define their own contexts	f	2	455
 1820	Decomposition to express the different responsibilities assigned to each application	f	3	455
 1821	We should always satisfy in the first place the requirements of more important stakeholders (such as the client)	f	0	456
 1822	If no order was established among them, we would not know from where should we start the design process	f	1	456
 1823	If one of the stakeholders complains that his requirement is not satisfied, we may explain to him that there were other more important requirements first	f	2	456
-1824	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	f	3	456
-1837	Retry	f	0	460
 1838	Active redundancy	f	1	460
 1839	Ignore faulty behaviour	f	2	460
 1840	Ping/Echo	f	3	460
 1841	Consider the requirements not realistic	f	0	461
 1842	Apply tactics of defer binding to allow the addition of the new sources of information in initialization time	f	1	461
-1843	Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders	f	2	461
 1844	Consider this requirement as a non architecturally significant requirement	f	3	461
 1845	Increasing performance and availability	f	0	462
 1846	Increasing availability and decreasing performance	f	1	462
 1847	Increasing performance and decreasing availability	f	2	462
-1848	Increasing performance, scalability and availability	f	3	462
 1849	Due to its configuration strategy Apache has better performance	f	0	463
 1850	Performance was the main concern of the design of the configuration strategy in Nginx	f	1	463
 1851	Apache emphasizes the usability quality for system administrators by allowing to split the configuration by different files	f	2	463
-1852	Nginx emphasizes the usability quality for system administrators by reducing the number or errors	f	3	463
 1853	It makes no sense to use views of the module viewtype, as they give only a static view of the system	f	0	464
 1854	You should use only views of the component-and-connector viewtype, which describe the dynamic aspects of the system	f	1	464
-1855	You may need to use views of the three viewtypes	f	2	464
 1856	The only views that are relevant to performance requirements are views of the Deployment style	f	3	464
 1857	The Work Assignment style	f	0	465
 1858	The Client-Server style	f	1	465
 1859	The Deployment style	f	2	465
-1860	The Communicating Processes style	f	3	465
 1865	The Peer-to-Peer style	f	0	467
-1866	The Pipes-and-filters style	f	1	467
 1867	The Client-Server style	f	2	467
 1868	The Publish-subscribe style	f	3	467
-1873	Launching a new process for processing each request is too expensive	f	0	469
 1874	Using threads ensures that the processing of each request is isolated from the remaining requests	f	1	469
 1875	With this approach they may use all of the available cores in multiprocessor machines	f	2	469
 1876	They are used for implementing enterprise applications that typically have complex domain logic and, by using threads, it is easier to reuse code from one request to another	f	3	469
 1877	An increase resource efficiency tactic	f	0	470
 1878	A schedule resources tactic	f	1	470
-1879	A multiple copies of computation tactic	f	2	470
 1880	A manage sampling rate tactic	f	3	470
 1881	A decomposition view which represent the module for compare-and-set	f	0	471
 1882	A client-server view with non-blocking connectors for the interaction between threads and core data structures	f	1	471
-1883	A communicating-processes view with non-blocking connectors for the interaction between threads and core data structures	f	2	471
 1884	A deployment view which allocate threads to the multi-cores	f	3	471
-1885	The solution where the application is responsible for the eviction has better availability	f	0	472
 1886	The solution where the cache is responsible for the eviction has better availability	f	1	472
 1887	The solution where the application is responsible for the eviction has better modifiability	f	2	472
 1888	The solution where the cache is responsible for the eviction has better performance	f	3	472
 1889	Performance	f	0	473
 1890	Interoperability	f	1	473
-1891	Reliability	f	2	473
 1892	Security	f	3	473
 1897	This law highlights the impact of the business on the architecture	f	0	475
-1898	This law can be seen as an example of the architecture influence cycle	f	1	475
 1899	This law states that architectures impact on the structure of the organization	f	2	475
 1900	This law does not apply to the design of architectures	f	3	475
 1901	Becomes unavailable for clients if there is a fault in the hardware of web server (srv-web)	f	0	476
 1902	Becomes unavailable for clients if there is a fault in the hardware of database server (srv-db)	f	1	476
 1903	Becomes unavailable for clients if there is a fault in the hardware of service server (srv-opc)	f	2	476
-1904	Becomes unavailable for banks if there is a fault in the hardware of service server (srv-opc)	f	3	476
 1905	Performance is a quality that you have to address at the end of the development process	f	0	477
 1906	There is no system which can have good performance and be easily maintainable	f	1	477
-1907	We have to distinguish architectural performance from opportunistic performance	f	2	477
 1908	The system performance quality has impact on the performance of the execution of tests	f	3	477
 1917	They are both modules	f	0	480
-1918	They are both components	f	1	480
 1919	The *Request Node* is a component and the *Cache* is a module	f	2	480
 1920	The *Request Node* is a module and the *Cache* is a component	f	3	480
-2049	By interleaving the various processing phases of each request in a sequential process	f	0	513
 2050	By executing in parallel each of the phases of the pipeline corresponding to the processing of a request	f	1	513
 2051	By executing in parallel the processing of the various requests	f	2	513
 2052	By processing completely each request before moving to the next one, in a sequential process	f	3	513
-2053	You need to change the decomposition view to represent modules with the responsibilities associated with the DSL	f	0	514
 2054	You need to design a client-server view representing the interaction between the DSL and the servers that execute its commands	f	1	514
 2055	You need to design an implementation view to allow system administrators configure the builds	f	2	514
 2056	You do not need to change the views because the DSL does not have any architectural impact	f	3	514
 2057	A uses view which represent modules for the externalizers	f	0	515
 2058	A client-server view which represent the byte stream for transmission across a network	f	1	515
 2059	A connector that has the serialization and de-serialization speed qualities	f	2	515
-2060	A decomposition view which contains the serialization/de-serilization modules	f	3	515
-2065	The main quality of the system in the right part of the figure is scalability	f	0	517
 2066	The main quality of the system in the left part of the figure is scalability	f	1	517
 2067	The main quality of the system in the right part of the figure is ease of development	f	2	517
 2068	The main quality of the system in the left part of the figure is to promote cross-functional teams	f	3	517
 2069	Data model to express the stored data formats	f	0	518
-2070	Decomposition to express the services interfaces	f	1	518
 2071	Aspects to express the evolution of service interfaces	f	2	518
 2072	Publish-subscribe to express how data is shared between services	f	3	518
 2073	Performance because all requests will be processed faster	f	0	519
-2074	Performance because it allows the processing of more requests per unit of time	f	1	519
 2075	Availability because even if PartB1 is not available partB2 can be provided	f	2	519
 2076	Reliability because a single correct read is used to responde to several requests	f	3	519
 2085	Is useful only if done (even if only partially) before the system's implementation is concluded, given that the architecture is used for restricting the implementation	f	0	522
 2086	Is useful only if done (even if only partially) before the system's implementation is concluded, because if the system is already implemented, its implementation uniquely determines the architecture	f	1	522
 2087	Is useful only if done (even if only partially) before the system passes all of the acceptance tests by the client, given that no more requirements changes will take place after that time	f	2	522
-2088	Is useful even if the implementation is concluded and the system has entered the maintenance phase	f	3	522
-2089	The most important requirements (both functional and qualities) that the system must achieve	f	0	523
 2090	The components that manage the communication between the remaining elements in the system	f	1	523
 2091	The stakeholders that drive the development of the system	f	2	523
 2239	The design of a reusable interface is the stimulus.	f	2	560
@@ -1765,751 +1475,575 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 2097	Communicating processes	f	0	525
 2098	Communicating processes and shared-data	f	1	525
 2099	Communicating processes, shared-data and service-oriented architecture	f	2	525
-2100	Communicating processes, shared-data, service-oriented architecture, and peer-to-peer	f	3	525
 2101	A module may contain code from different components	f	0	526
-2102	A component may execute code from different modules	f	1	526
 2103	A module may execute code from different components	f	2	526
 2104	A component may contain code from different modules	f	3	526
 2105	They describe general requirements that all systems should try to satisfy	f	0	527
 2106	They allow us to build a more robust architecture that satisfies less specific requirements, which address a wider range of situations that may happen in the system	f	1	527
 2107	They identify the most important requirements that the system should satisfy	f	2	527
-2108	They guide us in the requirement elicitation process with the system's stakeholders	f	3	527
 2109	There is a high level of communication between the several modules, and this will cause the system to have a low performance	f	0	528
 2110	It is not possible to install the system in more than one machine	f	1	528
-2111	It is not possible to develop and to test the system incrementally	f	2	528
 2112	It is very hard to explain what the system does, because we need to understand all the execution fluxes	f	3	528
 2121	The Peer-to-Peer style	f	0	531
 2122	The Client-Server style	f	1	531
-2123	The Shared-Data style	f	2	531
 2124	The Publish-subscribe style	f	3	531
 2125	The Shared data style	f	0	532
 2126	The Pipes-and-filters style	f	1	532
 2127	The Peer-to-Peer style	f	2	532
-2128	The Communicating Processes style	f	3	532
 2129	Ping/Echo	f	0	533
 2130	Heartbeat	f	1	533
-2131	Voting	f	2	533
 2132	Removal from Service	f	3	533
 2137	Launch a new process for processing each request	f	0	535
 2138	Spawn a new thread for processing each request	f	1	535
-2139	Put the requests into a queue and schedule their processing	f	2	535
 2140	Buy a server with high processing power	f	3	535
 2141	A Deployment view	f	0	536
 2142	A Component-and-Connector view	f	1	536
 2143	A Uses view	f	2	536
-2144	A Decomposition view	f	3	536
 2145	Increasing performance and availability	f	0	537
 2146	Increasing availability and decreasing performance	f	1	537
-2147	Increasing performance and decreasing availability	f	2	537
 2148	Increasing scalability and availability	f	3	537
 2149	Make a business case for the system	f	0	538
-2150	Understand the architecturally significant requirements	f	1	538
 2151	The system design	f	2	538
 2152	Documenting and communicating the architecture	f	3	538
 2153	Modifiability	f	0	539
 2154	Availability	f	1	539
 2155	Testability	f	2	539
-2156	Interoperability	f	3	539
 2157	Performance	f	0	540
-2158	Modifiability	f	1	540
 2159	Usability	f	2	540
 2160	Security	f	3	540
 2240	The data input to the system is the stimulus.	f	3	560
 2181	Should be avoided because scenarios should describe very concrete situations.	f	0	546
-2182	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, etc.	f	1	546
 2183	Can omit some of the elements like, for instance, the environment, if they are not relevant for the general scenario.	f	2	546
 2184	Is a very reusable scenario that can be used in many different concrete situations.	f	3	546
 2185	Can be applied to any kind of availability scenario.	f	0	547
-2186	Is useful to support scenarios where the stimulus is an omission.	f	1	547
 2187	Guarantees that the system will not become unavailable.	f	2	547
 2188	Reduces the availability scenario response time because the request occurs twice.	f	3	547
 2189	The business aspects of the system are for business architects, not the software architects.	f	0	548
 2190	Dealing with the technological aspects of the system should be delayed to the implementation stage of development.	f	1	548
 2191	The modeling of a system is not part of the software architect duties.	f	2	548
-2192	The level of abstraction of the system an architect works may vary.	f	3	548
 2193	Martin Fowler disagrees with this definition because we should delay the design decisions and focus on features first.	f	0	549
-2194	Martin Fowler complains about this definition because the early decisions are not necessarily the right ones.	f	1	549
 2195	Martin Fowler complains about this definition because architecture should stress flexibility which can only be necessary later.	f	2	549
 2196	Martin Fowler disagrees with this definition because to design an architecture it is not necessary to make any decision.	f	3	549
 2197	This view highlights the availability of the system.	f	0	550
 2198	This view highlights the performance of the `Image File Storage`.	f	1	550
-2199	This view highlights the different performance levels for `upload` and `dowload` operations.	f	2	550
 2200	This view highlights the scalability of `upload` and `dowload` operations.	f	3	550
 2225	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business.	f	0	557
 2226	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the project.	f	1	557
-2227	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business and project.	f	2	557
 2228	This is a case of an architectural influence cycle without feedback.	f	3	557
 2229	This view highlights the security of the system.	f	0	558
 2230	This view highlights the scalability of `upload` and `dowload` operations.	f	1	558
 2231	This view highlights the scalability of storage.	f	2	558
-2232	This view highlights the scalability of `upload` and `dowload` operations, and of storage.	f	3	558
 2233	This shared understanding can be represented by a set of architectural views.	f	0	559
-2234	This shared understanding includes the architecturally significant requirements.	f	1	559
 2235	The system algorithms should be part of the shared understanding.	f	2	559
 2236	The shared understanding describes the system from a high-level perspective.	f	3	559
-2237	The exchange of information is the stimulus.	f	0	560
 2238	The request to adapt an interface is the stimulus.	f	1	560
 2261	This view highlights the availability of the `Image File Storage`.	f	0	566
-2262	This view highlights the performance of the `download` operations.	f	1	566
 2263	This view highlights the performance of `upload` operations.	f	2	566
 2264	This view highlights the scalability of `upload` and `dowload` operations.	f	3	566
 2269	Design an architectural solution together with the stakeholders to be sure that everybody agrees on the resolution of conflits.	f	0	568
 2270	Solve the conflicts between requirements by deciding on the best trad-offs the system should support.	f	1	568
-2271	Facilitate the communication among the stakeholders such that they can decide on what are the architecturally significant requirements.	f	2	568
 2272	Design an architecture that supports all the conflicting requirements and present it to the stakeholders.	f	3	568
 2273	The set of structures is needed to support different levels of performance for the system.	f	0	569
-2274	To reason about a system is to verify whether the architecturally significant requirements are considered by the architecture.	f	1	569
 2275	The hardware is an example of a software element.	f	2	569
 2276	There isn't any relation between the properties of the software elements and the ability to reason about the system.	f	3	569
-2277	Active redundancy can be used together with a voting tactic to detect and recover from faults.	f	0	570
 2278	These tactics are used to prevent the occurence of a fault.	f	1	570
 2279	Spare guarantees immediate recover.	f	2	570
 2280	Passive redundancy does not work with non-deterministic behavior of request's execution.	f	3	570
 2301	It describes an availability scenario because the configuration allows to define redundant virtual servers.	f	0	576
 2302	It describes a scalability scenario because it is possible to increment the size of the configuration at a linear cost.	f	1	576
-2303	It describes a usability scenario where the stimulus is reduce the number of errors when configuring the system.	f	2	576
 2304	It describes a modifiability scenario because of the cost associated with maintaining the configuration.	f	3	576
-2305	In each iteration one or more architecturally significant requirements are used to decompose a software element of the system design.	f	0	577
 2306	The architect cannot backtrack the decomposition decisions she made.	f	1	577
 2307	During the design process the number of architecturally significant requirements cannot change.	f	2	577
 2308	Contraints cannot be used as requirements for the decomposition process.	f	3	577
 2313	It describes a performance scenario where the stimulus is the request of a custom graph.	f	0	579
 2314	The scenario is supported by a manage sampling rate tactic because several requests to the same graph return the same result.	f	1	579
 2315	It describes a usability scenario where the source of stimulus is a non-technical user.	f	2	579
-2316	A support user initiative tactic based on the definition of a language is used to achieve this scenario.	f	3	579
 2317	Has as main goal the reduction of the modules' size.	f	0	580
 2318	Results in the creation of a third module that does not have to change when any of the original modules are changed.	f	1	580
 2319	Increases the cohesion between the two modules.	f	2	580
-2320	Cannot be used together with the Reduce Overhead performance tactic.	f	3	580
 2341	Introduce concurrency.	f	0	586
 2342	Increase resources.	f	1	586
-2343	Schedule resources.	f	2	586
 2344	Maintain multiple copies of computation.	f	3	586
 2345	This is a performance scenario because the stimulus is an input, *launches several instances of the system*.	f	0	587
-2346	This is a modifiability scenario which has a defer binding tactic.	f	1	587
 2347	This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.	f	2	587
 2348	This is a modifiability scenario and its environment design time.	f	3	587
-2349	Bound execution times, bound queue sizes, and increase resources.	f	0	588
 2350	Bound execution times, and increase resources.	f	1	588
 2351	Manage sampling rate, bound queue sizes, and increase resources.	f	2	588
 2352	Bound queue sizes, and increase resources.	f	3	588
 2353	Only the scenarios that have high architectural impact and high business value should appear in the tree.	f	0	589
 2354	A scenario for a power outage should have a low business value because the fault is temporary.	f	1	589
 2355	A scenario for a 24 hours x 7 days availability of the system should appear as a leaf of the utility tree.	f	2	589
-2356	The utility tree covers all the significant qualities the system has to address.	f	3	589
 2357	Manage sampling rate.	f	0	590
 2358	Limit event response.	f	1	590
 2359	Prioritize events.	f	2	590
-2360	Maintain multiple copies of computation.	f	3	590
 2381	This decision does not have any impact on the architecture.	f	0	596
 2382	This decision corresponds to a constraint requirement.	f	1	596
 2383	This decision needs to be made concrete by an interoperability scenario.	f	2	596
-2384	This decision is not a consequence of the Fénix business case.	f	3	596
 2385	It describes a reliability scenario because the data points for each metric will be split between a buffer and disk.	f	0	597
 2386	It describes a performance scenario for the execution of reads.	f	1	597
-2387	The tactic used to solve the problem is based in the fact that data points are appended to the end of the metric file.	f	2	597
 2388	The tactic used to solve the problem is not manage sampling rate because there isn't any loss of data points.	f	3	597
 2389	Increase resource efficiency.	f	0	598
-2390	Increase resources.	f	1	598
 2391	Increase resource efficiency and Increase resources.	f	2	598
 2392	Increase resources and Maintain multiple copies of computation.	f	3	598
 2393	A security scenario because it allows the introduction of filters to encrypt the messages.	f	0	599
 2394	A availability scenario because it allows the introduction of load balancers.	f	1	599
-2395	A modifiability scenario where defer binding occurs at compile time.	f	2	599
 2396	A usability scenario because developers can extend the system without having to modify the nginx core.	f	3	599
 2397	A low cost of change may imply a high cost of development.	f	0	600
 2398	A low cost of change implies a low cost of development, because changing the code is part of development.	f	1	600
-2399	There is no relation between the cost of change and the cost of development.	f	2	600
 2400	A high cost of change occurs if it is necessary to defer the binding of what needs to be changed.	f	3	600
 2421	A client-server style.	f	0	606
 2422	A shared-data style.	f	1	606
-2423	Both, client-server and shared-data styles.	f	2	606
 2424	A blackboard style.	f	3	606
 2425	Passive redundancy.	f	0	607
 2426	Active redundancy.	f	1	607
 2427	Voting.	f	2	607
-2428	Maintain multiples copies of computation.	f	3	607
 2429	Its main goal is to establish the reusability qualities of the architecture.	f	0	608
 2430	Project managers are not interested in views that use this style because it lacks the necessary level of detail.	f	1	608
 2431	Incremental development is a criteria that drives the design of views of this type.	f	2	608
-2432	There should be at least one view of the system using this architectural style.	f	3	608
 2433	The library approach allows non-java applications.	f	0	609
-2434	The server approach can scale independently of the number of applications.	f	1	609
 2435	The server approach implements a local cache.	f	2	609
 2436	The library approach does not build a cluster.	f	3	609
 2437	A component cannot be decomposed into a set of components and connectors.	f	0	610
 2438	A connector cannot be decomposed into a set of components and connectors.	f	1	610
-2439	A connector embodies a communication protocol.	f	2	610
 2440	A component can only have a single type of port.	f	3	610
-2473	Schedule resources.	f	0	619
+2423	Both, client-server and shared-data styles.	t	2	606
+2428	Maintain multiples copies of computation.	t	3	607
+2432	There should be at least one view of the system using this architectural style.	t	3	608
 2474	Introduce concurrency.	f	1	619
 2475	Tailor interface.	f	2	619
 2476	Increase resources.	f	3	619
 2477	Modifiability.	f	0	620
 2478	Availability.	f	1	620
 2479	Performance.	f	2	620
-2480	Scalability.	f	3	620
 2501	The Merge component executes the module merge.	f	0	626
-2502	The Merge component executes the modules merge and stdio.	f	1	626
 2503	The module main is executed in the Merge component.	f	2	626
 2504	The Pipe connectors do not execute any module.	f	3	626
-2505	Performance.	f	0	627
 2506	Availability.	f	1	627
 2507	Modifiability.	f	2	627
 2508	Reliability.	f	3	627
 2509	Modifiability, because the Data Accessors do not depend on the data model.	f	0	628
-2510	Scalability of read requests, because it is easy add more repositories to where reads are distributed, though there may be some level of inconsistency.	f	1	628
 2511	Scalability of write requests, because a transactional system will synchronize the writes among the several repositories.	f	2	628
 2512	Confidentially of data, because it can be replicated in several repositories.	f	3	628
-2513	Interoperability.	f	0	629
 2514	Usability.	f	1	629
 2515	Performance.	f	2	629
 2516	Modifiability.	f	3	629
 2541	A decomposition view.	f	0	636
 2542	A view of the component-and-connector viewtype.	f	1	636
 2543	A view of the component-and-connector viewtype and a deployment view.	f	2	636
-2544	A decomposition view, a view of the component-and-connector viewtype and a deployment view.	f	3	636
-2549	Client-server.	f	0	638
 2550	Peer-to-peer.	f	1	638
 2551	Master-slave.	f	2	638
 2552	Pipe-and-filter.	f	3	638
 2553	Peer-to-peer.	f	0	639
 2554	Shared-data where the Buildbot is the data accessor.	f	1	639
-2555	Client-server where the Buildbot is the client.	f	2	639
 2556	Client-server where the Buildbot is the server.	f	3	639
 2581	Decomposition.	f	0	646
 2582	Generalization.	f	1	646
-2583	Decomposition and Generalization.	f	2	646
 2584	Peer-to-peer.	f	3	646
 2589	It assigns modules to the hardware.	f	0	648
 2590	It cannot assign software elements to virtual servers because they are not hardware.	f	1	648
 2591	For each set of software elements there is a single possible assignment to hardwre.	f	2	648
-2592	It is useful for system administrators.	f	3	648
-2593	Publish-subscribe.	f	0	649
 2594	Client-server.	f	1	649
 2595	Shared-date.	f	2	649
 2596	Generalization.	f	3	649
 2597	Client-server to represent performance.	f	0	650
-2598	Tiers to represent scalability.	f	1	650
 2599	Service-oriented architecture to represent interoperability.	f	2	650
 2600	Shared-data to represent modifiability.	f	3	650
 2621	The data-shared architectural style is not applied because data is encapsulated inside services.	f	0	656
-2622	The sharing of data is done using a service-oriented architecture.	f	1	656
 2623	Modifiability is not a concern of their architecture.	f	2	656
 2624	The decouple of data formats does not support scalability because of the transactional properties.	f	3	656
 2625	Peer-to-peer.	f	0	657
 2626	Shared-data where the Dashboard is the repository.	f	1	657
 2627	Client-server where the Dashboard is the client.	f	2	657
-2628	Client-server where the Dashboard is the server.	f	3	657
 2637	Client-server.	f	0	660
-2638	Communicating processes.	f	1	660
 2639	Peer-to-peer.	f	2	660
 2640	Shared-data.	f	3	660
 2777	Work Assignment views	f	0	695
 2778	Generalization views	f	1	695
 2779	Deployment views	f	2	695
-2780	Implementation views	f	3	695
-2781	Communicating Processes	f	0	696
 2782	Client-Server	f	1	696
 2783	Peer-to-Peer	f	2	696
 2784	Uses	f	3	696
-2785	Typically have a software architecture that results from the common knowledge about the system that is shared among the team members	f	0	697
 2861	Different stakeholders are interested in different views of the system	f	0	716
 2786	Do not have a software architecture, because in agile methodologies there is no architectural design phase	f	1	697
 2787	Do not have a software architecture, because the practice of refactoring allows changing every part of the system easily	f	2	697
 2788	May have a software architecture, but that architecture is not known because it was neither designed nor documented	f	3	697
 2789	However, functional requirements do not have any impact on the architecture because the systemic qualities of an architecture are non-functional	f	0	698
 2790	The functional requirements have a large impact on the definition of views of the component-and-connector viewtype because each component executes a functionality	f	1	698
-2791	The functional requirements have a large impact on the definition of views of the module viewtype because they are used to define the high cohesion and low coupling of modules	f	2	698
 2792	The functional requirements can be considered as constraints on the software architecture design	f	3	698
 2793	The stimulus is incorrect response	f	0	699
 2794	The artefact is the load balancer	f	1	699
-2795	The response is not correctly stated	f	2	699
 2796	The quality it addresses is interoperability	f	3	699
-2801	Performance	f	0	701
 2802	Usability	f	1	701
 2803	Availability	f	2	701
 2804	Modifiability	f	3	701
-2805	Manage sampling rate	f	0	702
 2806	Limit event response	f	1	702
 2807	Reduce overhead	f	2	702
 2808	Bound execution times	f	3	702
 2809	Have high throughput	f	0	703
 2810	Have low latency	f	1	703
 2811	Allow many simultaneous users	f	2	703
-2812	May be easily changed to increase their performance	f	3	703
 2817	Per-to-peer	f	0	705
 2818	Shared-data	f	1	705
 2819	Communicating processes	f	2	705
-2820	Publish-subscribe	f	3	705
-2821	The stimulus is an omission and the tactic is retry	f	0	706
 2822	The stimulus is a crash and the tactic is retry	f	1	706
 2823	The stimulus is an incorrect timing and the tactic is ignore faulty behaviour	f	2	706
 2824	The stimulus is incorrect response and the tactic is voting	f	3	706
 2829	The quality being addressed is performance and the tactic multiple copies of data	f	0	708
 2830	The quality being addressed is performance and the tactic multiple copies of computation	f	1	708
-2831	The quality being addressed is performance and the tactics multiple copies of data and multiple copies of computation	f	2	708
 2832	The quality being addressed is availability and the tactic passive redundancy	f	3	708
-2833	Tiers style	f	0	709
 2834	Client-server style	f	1	709
 2835	Shared-data style	f	2	709
 2836	Pipe-and-filter style	f	3	709
 2841	The shared-data architectural style is not applied because data is encapsulated inside services	f	0	711
-2842	The sharing of data is done using a service-oriented architecture	f	1	711
 2843	Modifiability is not a concern of their architecture	f	2	711
 2844	The decouple of data formats does not support scalability because of the transactional properties	f	3	711
 2845	an ACID transaction occurs in all the involved applications	f	0	712
 2846	a two-phase commit protocol takes place between the involved applications	f	1	712
 2847	a ACID transaction occurs in each of the involved applications, but we can not infer which transaction occurs first	f	2	712
-2848	an ACID transaction occurs in the invoked application and ACID transactions in the other involved applications will eventually occur later	f	3	712
 2849	The access to two different aggregate instances in the context of the same request does not hinder scalability	f	0	713
 2850	This is the solution followed by Twitter client applications	f	1	713
 2851	It describes the typical behavior of a microservices system	f	2	713
-2852	To support high scalability the request of `User 1` needs to be decomposed into a request to only one of the aggregate instances and the processing in the other aggregate occurs in the background	f	3	713
-2853	We must use various different views, both of the component-and-connector and the allocation viewtypes	f	0	714
 2854	We just have to show, through component-and-connector views, that the system maintains replicas of the data in different components	f	1	714
 2855	We just have to show, through Deployment views, that the *DataNode* component executes in more than one machine of the cluster	f	2	714
 2856	We just have to show, through Decomposition views, that there are modules responsible for the replication of file blocks	f	3	714
 2857	Active replication and passive replication	f	0	715
 2858	Active replication, passive replication, and spare	f	1	715
-2859	Passive replication and spare	f	2	715
 2860	Quorum, active replication, and passive replication	f	3	715
+2801	Performance	t	0	701
+2805	Manage sampling rate	t	0	702
+2812	May be easily changed to increase their performance	t	3	703
+2820	Publish-subscribe	t	3	705
 2862	A single view would be too simplistic	f	1	716
 2863	The views describe different aspects of the system	f	2	716
-2864	All of the above	f	3	716
-3001	The stimulus is to port the system to a new browser	f	0	751
 3002	The environment is build time	f	1	751
 3003	The response is 5 person/month	f	2	751
 3004	To implement the above scenario it is necessary to apply a runtime defer binding tactic	f	3	751
 3005	Split module	f	0	752
-3006	Increase semantic coherence	f	1	752
 3007	Restrict dependencies	f	2	752
 3008	Defer binding	f	3	752
 3009	Essential to ensure the system scalability	f	0	753
-3010	Essential to reduce costs whenever there is a fault in a hardware element	f	1	753
 3011	Essential to ensure the system portability	f	2	753
 3012	Essential to facilitate the integration with legacy systems	f	3	753
-3013	Because this tactic simplifies the addition and removal of DataNodes	f	0	754
 3014	But they could have used the ping tactic instead without adding any overhead to the NameNode	f	1	754
 3015	But the exceptions tactic could have been used as well	f	2	754
 3016	To inform other DataNodes about their availability	f	3	754
 3017	Is a high-level view of the system with the purpose of understanding what are the system's goals and features	f	0	755
-3018	Is composed of things such as code units, runtime elements, hardware, and people, together with the relationships among them	f	1	755
 3019	Is a set of guidelines that the developing team should follow in the development of the system	f	2	755
 3020	Is a set of diagrams that show the runtime elements of the system and their relationships	f	3	755
-3021	Describing what are the qualities that the system should possess	f	0	756
 3022	Describing a set of steps that a user of the system must perform to accomplish some task	f	1	756
 3023	Describing a use case for the system that makes clear what should be the system's responses to each of the user's inputs	f	2	756
 3024	Describing the system's features by way of different usage scenarios for it, in which users play the role of actors	f	3	756
 3025	The scenario is not correct	f	0	757
-3026	The scenario is correct but it does not describe whether the request the servers fails to respond to succeeds or fails	f	1	757
 3027	The scenario is correct but it is not clear what is the artefact	f	2	757
 3028	The scenario is not completely correct because it contains two responses	f	3	757
 3029	Only in the Deployment view	f	0	758
 3030	Only in the Decomposition view	f	1	758
 3031	Only in a component-and-connector view	f	2	758
-3032	Both in a component-and-connector and the Deployment views	f	3	758
-3033	Performance	f	0	759
 3034	Availability	f	1	759
 3035	Modifiability	f	2	759
 3036	Reliability	f	3	759
 3037	Manage sampling rate	f	0	760
 3038	Limit event response	f	1	760
 3039	Reduce overhead	f	2	760
-3040	Bound execution times	f	3	760
 3041	The presentation logic layer, domain logic layer, and data access layer	f	0	761
 3042	The traditional web applications, the mashups, and the rich internet applications (RIAs)	f	1	761
-3043	The web browser, o web server, and the data base	f	2	761
 3044	The web services layer, the domain logic layer, and the data access layer	f	3	761
 3045	It enforces the use of a single implementation language among all applications	f	0	762
 3046	The orchestration is in charge of improving the transparent location of service providers	f	1	762
 3047	The enterprise service bus coordinates the execution of several services	f	2	762
-3048	It decouples applications developed for different organizations	f	3	762
 3049	Work assignment view	f	0	763
-3050	Install view	f	1	763
 3051	Implementation view	f	2	763
 3052	Deployment view	f	3	763
 3053	Write a single scenario on performance	f	0	764
-3054	Write two scenarios on performance	f	1	764
 3055	Write a scenario on performance and a scenario on interoperability	f	2	764
 3056	Write a single scenario on interoperability	f	3	764
 3057	Module viewtype	f	0	765
-3058	Component-and-connector viewtype	f	1	765
 3059	Install architectural style of the allocation viewtype	f	2	765
 3060	It is not necessary to represent this behavior because it does not describe any qualities	f	3	765
-3065	A module view	f	0	767
 3066	A component-and-connector view	f	1	767
 3067	An allocation view	f	2	767
 3068	They are not represented by a view	f	3	767
-3069	The Decomposition and the Work Assignment styles	f	0	768
 3070	The Decomposition and the Layers styles	f	1	768
 3071	The Decomposition and the Uses styles	f	2	768
 3072	The Decomposition and the SOA styles	f	3	768
 3073	The Decomposition style	f	0	769
 3074	The Deployment style	f	1	769
-3075	The Uses style	f	2	769
 3076	The Work-assignment style	f	3	769
-3077	The Generalization style	f	0	770
 3078	The Uses style	f	1	770
 3079	The Layers style	f	2	770
 3080	The Aspects style	f	3	770
-3085	Use a passive redundancy tactic in the OPC (Order Processing Center)	f	0	772
 3086	Use a passive redundancy tactic in the Consumer Web site	f	1	772
 3087	Use an active redundancy tactic in the OPC (Order Processing Center) 	f	2	772
 3088	Use an active redundancy tactic in the Consumer Web site	f	3	772
-3089	The decomposition view to include a module for the synchronization responsibilities	f	0	773
 3090	The uses view to represent how the mobile device uses the Catalog application	f	1	773
 3091	The layered view to include a layer for each type of device	f	2	773
 3092	The domain layer of the layered style to represent the types of devices	f	3	773
 3097	The file transfers follows the same path of nodes used to identify where the file was located	f	0	775
 3098	The peer initiating the request for a file needs to know where the file is located	f	1	775
 3099	If a peer providing a file crashes it is necessary to restart downloading the file from the begin	f	2	775
-3100	The price for high scalability and availability is the need to have several replicas of the files to be shared	f	3	775
 3105	All functionalities can be transactional	f	0	777
-3106	Only a small set of functionalities are transactional	f	1	777
 3107	It is not necessary to have transactional properties because all data is in memory	f	2	777
 3108	Only the isolation property of transactions is supported	f	3	777
 3109	When an event is published to the distributed log, the order of delivery to the different subscribing applications is predefined	f	0	778
+3033	Performance	t	0	759
 3110	When two events are published to the distributed log they are delivered to the different subscribing applications in the same order	f	1	778
-3111	The distributed log guarantees that events will be delivered only once	f	2	778
 3112	The distributed log may not deliver some of the events that are published to their subscribers	f	3	778
 3113	It allows high scalability because the data model has only four entities	f	0	779
-3114	It allows high scalability because it is possible the implement transactions associated to each one of the aggregates	f	1	779
 3115	It allows high scalability because the only synchronized access is to the `ProductId`, so it requires a single contention point	f	2	779
 3116	It does not allow high scalability	f	3	779
-3117	Implementation	f	0	780
 3118	Work assignment	f	1	780
 3119	Decomposition	f	2	780
 3120	None, because this description does not describe any architectural aspect of the system	f	3	780
 3141	When a new block is created, the first replica is written in the node where the writer is located, to improve availability	f	0	786
 3142	When a new block is created, the second replica is not stored in the same rack than the first replica to increase the availability when a Data Node fails	f	1	786
 3143	When a new block is created, the third replica is stored in the same rack than the second replica to improve the performance of reads	f	2	786
-3144	When a read occurs, the client, if it is located in the cluster, receives a list of the DataNodes where the replicas are, ordered by its closeness to the client, to improve performance of reads	f	3	786
 3145	Depends mostly on the system's functional requirements	f	0	787
 3146	Depends more on the architect's experience than on anything else	f	1	787
 3147	Should not depend on the skills of the developing team	f	2	787
-3148	None of the above	f	3	787
 3149	Describes a concrete quality that a particular system has to implement	f	0	788
-3150	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, response, etc	f	1	788
 3151	Can omit some of the elements like, for instance, the environment, if they are not relevant for the general scenario	f	2	788
 3152	Is a very reusable scenario that can be effectively used in many different concrete situations	f	3	788
 3153	The writing of a tweet is a synchronous process where different users have a consistent view of the sequence of tweets	f	0	789
 3154	A tweet is written in each one of the Twitter's servers	f	1	789
-3155	The tweet unique ID is written in the home timeline of each one of the writer's followers	f	2	789
 3156	The tweet content is written in the home timeline of each one of the writer's followers	f	3	789
 3157	This solution optimizes the performance in terms of the latency of each request	f	0	790
 3158	This solution allows an "infinite"increase of the number clients by allowing the inclusion of more Request Nodes	f	1	790
 3159	This solution continues to provide service even if a crash occurs in the Data server	f	2	790
-3160	This solution optimizes the performance in terms of the throughput of processed requests	f	3	790
 3181	The periodic rebuild of the checkpoint is done to increase the availability of the NameNode	f	0	796
 3182	The advantage of running the CheckpointNode in a different host is to not degrade the availability of the NameNode during checkpoint construction	f	1	796
 3183	The periodic rebuild of the checkpoint improves the performance of the NameNode during normal operation	f	2	796
-3184	The periodic rebuild of the checkpoint improves the performance of the NameNode during its initialization	f	3	796
 3185	A non-functional requirement a system has to achieve	f	0	797
-3186	How to control the response to one or more stimulus	f	1	797
 3187	What should be the system response in the occurrence of a stimulus	f	2	797
 3188	A decomposition of the system that fulfills an architectural quality	f	3	797
 3189	The search timeline is the most important business use case for Twitter	f	0	798
-3190	The ingestion process includes tokenizing of the tweet to include in an index	f	1	798
 3191	The Early Bird server contains the tweet content	f	2	798
 3192	The write in the Early Bird server is synchronous, only when it finishes does the user receives the feedback of a successful post	f	3	798
 3193	This is right because if you don't the project fails	f	0	799
 3194	This is wrong because you can easily change these decisions during the project lifetime	f	1	799
-3195	This is right but you cannot be completely sure whether the decisions are the right ones	f	2	799
 3196	This is wrong because it is against the agile way of thinking the software development process	f	3	799
 3197	This solution assures a consistency view to the clients of the data that is written	f	0	800
 3198	In this solution the clients invocations have to be synchronous	f	1	800
 3199	In this solution the tasks in the queue need to be sequentially processed, only when a task is finished can another start to be processed	f	2	800
-3200	This solution allows the dimensioning of the number of activities (threads or processes) that run in the server, taking into consideration the server's hardware capacity, in order to have a efficient usage of the server's CPU	f	3	800
 3225	Performance	f	0	807
 3226	Interoperability	f	1	807
-3227	Availability (Reliability)	f	2	807
 3228	Security	f	3	807
-3229	Performance and availability qualities	f	0	808
 3230	Performance qualities only	f	1	808
 3231	Availability qualities only	f	2	808
 3232	Performance and security qualities	f	3	808
 3233	Can be applied to any kind stimulus in availability scenarios	f	0	809
-3234	Is useful to support scenarios where the stimulus is an omission	f	1	809
 3235	Can guarantee that the system will not become unavailable	f	2	809
 3236	When applied it increases the latency of the availability scenario's response time	f	3	809
 3237	Have high throughput	f	0	810
 3238	Have low latency	f	1	810
 3239	Allow many simultaneous users	f	2	810
-3240	May be easily changed to increase their storage capacity	f	3	810
+3227	Availability (Reliability)	t	2	807
+3229	Performance and availability qualities	t	0	808
+3234	Is useful to support scenarios where the stimulus is an omission	t	1	809
+3240	May be easily changed to increase their storage capacity	t	3	810
 3261	Encapsulate the module such that the clients of the module should not be aware of the remote invocations	f	0	816
-3262	Use an intermediary that contains all the code associated with the remote invocation separating it from the modules' business logic	f	1	816
 3263	Refactor the common parts between the business logic and the remote invocation	f	2	816
 3264	Increase the semantic coherence between the business logic code and the remote invocation code	f	3	816
 3269	The system would respond faster to all the clients' requests	f	0	818
 3270	The performance of the system would not change	f	1	818
-3271	The system would respond faster to requests about file locations	f	2	818
 3272	The system would respond faster to requests made by DataNodes to update the metadata	f	3	818
 3277	The Ping/Echo tactic	f	0	820
 3278	The Heartbeat tactic	f	1	820
-3279	The Voting tactic	f	2	820
 3280	The Removal from Service tactic	f	3	820
 3313	This means that in this software system it is not possible to modularize each responsibility in a cohesive module	f	0	829
 3314	She should define finer-grained modules where she splits the unassigned responsibility	f	1	829
-3315	She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules	f	2	829
 3316	She should try to use a view of the Layered style and assign this responsibility to a module in the bottom layer that can be used by all the other modules	f	3	829
 3345	A change to the uses view to represent that friends can use each other catalog	f	0	837
 3346	A change of the layered view to support different presentations, one for each friend	f	1	837
 3347	A change of the decomposition view to include a set of new modules with the responsibilities associated with the access control	f	2	837
-3348	A new aspect view that includes a module with the responsibilities associated with the access control and that crosscuts some of the other modules	f	3	837
 3357	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure	f	0	840
 3358	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure	f	1	840
 3359	It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database	f	2	840
-3360	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data	f	3	840
 3381	Service-oriented architecture, and Client-server	f	0	846
 3382	Service-oriented architecture, and Shared-data	f	1	846
 3383	Service-oriented architecture, Shared-data, and Peer-to-peer	f	2	846
-3384	Service-oriented architecture, Shared-data, Peer-to-peer, and Client-server	f	3	846
 3389	Represent the hardware infrastructure that allows components to communicate with each other	f	0	848
-3390	May, on another view of the system, be represented by a set of components and connectors	f	1	848
 3391	Represent the dependency relations that exist among the various components	f	2	848
 3392	Represent the control flow during an execution of the system	f	3	848
 3421	Tiers	f	0	856
 3422	Tiers, and Shared-data	f	1	856
 3423	Tiers, Shared-data, and Service-oriented architecture	f	2	856
-3424	Tiers, Shared-data, Service-oriented architecture, and Client-server	f	3	856
-3425	A component can subscribe to events	f	0	857
 3426	It is always guaranteed that all the published events are received by their subscribing components	f	1	857
 3427	The events should be delivered by the same order they are sent	f	2	857
 3428	The set of events types are predefined at initialization time	f	3	857
 3429	Shared-data and Communicating-Processes	f	0	858
 3430	Communicating-Processes	f	1	858
 3431	Tiers	f	2	858
-3432	Client-Server and Shared-data	f	3	858
 3437	A Module viewtype view	f	0	860
 3438	A Allocation viewtype view	f	1	860
-3439	A Communicating processes view	f	2	860
 3440	A Install view	f	3	860
 3521	Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.	f	0	881
 3522	It is preferable to only design views that do not use complex connectors to increase understandability.	f	1	881
-3523	If there is some technology available that implements the complex connectors it is not necessary to document their decomposition.	f	2	881
 3524	Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them.	f	3	881
-3529	Decomposition.	f	0	883
 3530	Aspects.	f	1	883
 3531	Layered.	f	2	883
 3532	Data model.	f	3	883
 3533	This solution optimizes the performance in terms of the latency of each request.	f	0	884
 3534	This solution allows an "infinite"increase of the number clients by allowing the inclusion of more Request Nodes.	f	1	884
 3535	This solution continues to provide service even if a crash occurs in the Data server.	f	2	884
-3536	This solution optimizes the performance in terms of the throughput of processed requests.	f	3	884
 3537	Incorporate in the organization's core business the goals of a software house.	f	0	885
 3538	Do in-house development.	f	1	885
-3539	Integrate the development of the software system with the organization's business goals.	f	2	885
 3540	Reimplement all the information systems of the organization	f	3	885
 3541	A failure.	f	0	886
 3542	An error.	f	1	886
-3543	A fault.	f	2	886
 3544	An input.	f	3	886
 3545	Stochastic event.	f	0	887
 3546	Overload.	f	1	887
 3547	Change level of service.	f	2	887
-3548	Throughput.	f	3	887
 3549	Split module.	f	0	888
 3550	Use an intermediary.	f	1	888
-3551	Restrict dependencies.	f	2	888
 3552	Refactor.	f	3	888
 3553	Decomposition style.	f	0	889
-3554	Uses style.	f	1	889
 3555	Generalization style.	f	2	889
 3556	Layered style.	f	3	889
 3557	The Decomposition style.	f	0	890
 3558	The Decomposition and Uses styles.	f	1	890
 3559	The Layered style.	f	2	890
-3560	The Generalization and Decomposition styles.	f	3	890
 3561	An aggregate can contain a large number of instances.	f	0	891
-3562	An aggregate is usually loaded in its entirety from the database.	f	1	891
 3563	An aggregate has runtime references to other aggregates.	f	2	891
 3564	An aggregate is cluster of domain classes.	f	3	891
 3565	Each service can be developed and deployed independently	f	0	892
 3566	Easier to scale development	f	1	892
 3567	Eliminates any long-term commitment to a technology stack	f	2	892
-3568	Testing is easier	f	3	892
 3569	Aggregate.	f	0	893
 3570	Maintain user model.	f	1	893
 3571	Maintain task model.	f	2	893
-3572	Maintain system model.	f	3	893
-3573	This view shows that if is possible to scale differently the `web tier` from the `EJB tier`.	f	0	894
 3574	This view shows that the `Adventure Builder Catalog DB` and the `OPC` components should be deployed in the same hardware.	f	1	894
 3575	This view **does not** show that the `Adventure Builder Catalog DB` and the `OPC` components can execute behind a firewall.	f	2	894
 3576	This view **does not** show that the access to the `web tier` has some security qualities.	f	3	894
 3577	Pipe-and-filter.	f	0	895
 3578	Maintain multiple copies of data.	f	1	895
-3579	Maintain multiple copies of computation.	f	2	895
 3580	Introduce concurrency.	f	3	895
 3581	Ignore faulty behaviour tactic	f	0	896
 3582	Ping-and-echo tactic	f	1	896
 3583	Active redundancy tactic	f	2	896
-3584	Retry tactic	f	3	896
 3585	Cycles in the uses relation between modules are a good sign, because it indicates that several modules should be tested together.	f	0	897
-3586	The project manager uses this view to get advice on the incremental development of the system.	f	1	897
 3587	The uses relation should be applied to the coarse-grained modules, because it allows to identify circular dependences.	f	2	897
 3588	There isn't any relation with the layered architectural style because the allowed-to-use relation is more generic.	f	3	897
-3593	Analysing the performance of the system.	f	0	899
 3594	Planning incremental releases of the system.	f	1	899
 3595	Estimating the effort needed to implement the system.	f	2	899
 3596	Analysing the system's portability and reusability.	f	3	899
 3597	All layers are mapped to the application server component.	f	0	900
 3598	The presentation and domain logic layers are mapped to the application server component and the data access layer to the repository component.	f	1	900
 3599	The presentation layer is mapped to the browser component and the other two layers are mapped to the application server component.	f	2	900
-3600	All layers are mapped to the browser component where the data access layer will contains, besides a module to access a local repository, modules to access external services.	f	3	900
 3681	It would reduce the scalability for updates of different orders for the same customer.	f	0	921
 3682	Two users would conflict if they attempt to edit different orders for the same customer.	f	1	921
 3683	As the number of orders grows it will be increasingly expensive to load the aggregate.	f	2	921
-3684	All the above.	f	3	921
-3685	Increase competence set.	f	0	922
 3686	Shadow.	f	1	922
 3687	Voting.	f	2	922
 3688	Ignore faulty behavior.	f	3	922
 3689	Increase resources.	f	0	923
-3690	Reduce overhead.	f	1	923
 3691	Bound queue sizes.	f	2	923
 3692	Introduce concurrency.	f	3	923
 3693	We do not need a view of the module viewtype because it is about the runtime properties of the system.	f	0	924
 3694	We do not need a view of the allocation viewtype because deployment is automated.	f	1	924
 3695	The component-and-connector view should emphasize the performance qualities of systems following the microservices architecture.	f	2	924
-3696	It is necessary to use views of the three viewtypes.	f	3	924
 3705	Usability and Performance.	f	0	927
-3706	Usability.	f	1	927
 3707	Performance.	f	2	927
 3708	Modifiability.	f	3	927
 3709	It assigns components and connectors to people and teams.	f	0	928
-3710	It is useful for the project managers.	f	1	928
 3711	It does not consider the software that is outsourced.	f	2	928
 3712	It allows to estimate the cost of hardware.	f	3	928
 3713	Performance.	f	0	929
 3714	Availability for incorrect responses from the Image File Storage component.	f	1	929
-3715	Performance and Availability for crashes of the Image File Storage component.	f	2	929
 3716	Performance and Availability for incorrect responses from the Image File Storage component.	f	3	929
 3717	One.	f	0	930
 3718	Two.	f	1	930
 3719	Three.	f	2	930
-3720	Four.	f	3	930
 3721	The cost of the modification.	f	0	931
 3722	That the integration of a new source will not have any impact on the other modules of the Catalog of DVDs.	f	1	931
-3723	That the impact of integrating a new source is controlled by the interface of *Import DVD Info* Module.	f	2	931
 3724	That the modification can occur at runtime.	f	3	931
 3729	The Decomposition style.	f	0	933
 3730	The Client-Server style.	f	1	933
-3731	The Service Oriented Architecture style.	f	2	933
 3732	The Communicating Processes style.	f	3	933
 3733	This view shows that the processing of orders is done synchronously.	f	0	934
-3734	This view shows that the processing of tracking requests is done synchronously.	f	1	934
 3735	This view shows that bank debits are done asynchronously.	f	2	934
 3736	This view shows that the responses from the providers are processed synchronously.	f	3	934
 3741	Pipe-and-filter and tiers.	f	0	936
 3742	Shared-data and publish-subscribe.	f	1	936
 3743	Pipe-and-filter and publish-subscribe.	f	2	936
-3744	Pipe-and-filter and shared-data.	f	3	936
 3745	Guarantees that the redundant data in the client and the server is always synchronized.	f	0	937
 3746	Implements an event bus that allows the server to inform the client about new order recommendations.	f	1	937
-3747	Do not loose the changes done on the client component if the server is not available.	f	2	937
 3748	It completely hides the server faults from the Pad user.	f	3	937
-3749	Split module.	f	0	938
 3750	Abstract common services.	f	1	938
 3751	Restrict dependencies.	f	2	938
 3752	Encapsulation.	f	3	938
 3757	The *config* module is not used in the implementation of any component.	f	0	940
 3758	The *main* module is used in the implementation of all components.	f	1	940
-3759	The connectors only use the *stdio* module for their implementation.	f	2	940
 3760	The *Split* component uses the *to_lower* module for its implementation	f	3	940
 3781	The result of decisions that are made at the "upper floors" of the organization	f	0	946
 3782	The sole decision of an architect	f	1	946
-3783	A common understanding to be achieve among all the system stakeholders	f	2	946
 3784	A set of software elements and their relations	f	3	946
 3785	The source of stimulus is the FenixEDU system	f	0	947
 3786	The stimulus is periodic	f	1	947
 3787	The environment is overloaded	f	2	947
-3788	The measure of the response is throughput	f	3	947
 3789	Commercial	f	0	948
 3790	Technical	f	1	948
-3791	Project	f	2	948
 3792	Professional	f	3	948
 3793	Availability of the Image Write Service, whenever one of the Image Write Service components crashes	f	0	949
-3794	Scalability of the Image File Storage in terms of the storage capacity	f	1	949
 3795	Availability of the Image File Storage, whenever the Image File Storage component crashes	f	2	949
 3796	Performance of the Image Write Service	f	3	949
 3797	Availability whenever the server running the tasks crashes, the tasks are restarted and eventually finished	f	0	950
 3798	Performance of the tasks execution, scheduling of tasks can be optimized for the particular context of the system	f	1	950
 3799	Performance of the services being executed by the clients, they can execute other actions while waiting for the response	f	2	950
-3800	Simple programming model, the clients only need to concern about the business logic of the application, the remote services are transparent	f	3	950
 3821	The synchronous solution requires less memory than asynchronous solution	f	0	956
-3822	The asynchronous solution can support a larger number of simultaneous requests	f	1	956
 3823	In the synchronous solution a task can be associated, during its execution, with different execution entities, e.g. thread	f	2	956
 3824	In the asynchronous solution a task is always associated, during its execution, with the same execution entity, e.g. thread	f	3	956
 3825	Interoperability is a quality that as lower priority than performance	f	0	957
 3826	Scalability should be the quality to be achieved first by any architecture	f	1	957
 3827	That the use of XML technology for interoperability is not a correct decision	f	2	957
-3828	None of the above	f	3	957
 3829	Performance	f	0	958
 3830	Availability	f	1	958
-3831	Modifiability	f	2	958
 3832	Time to market	f	3	958
 3833	The number of Image Write Service components should be the same of the number Image Retrieval Service components	f	0	959
 3834	The hardware where of Image Write Service components execute should have the same capabilities of the hardware where Image Retrieval Service components run	f	1	959
 3835	Both components, the Image Write Service and the Image Retrieval Service, should be designed using an synchronous model of interactions, where a thread is associated with each request	f	2	959
-3836	The separation of write and retrieval services allows them do scale independently	f	3	959
 3837	Introduce concurrency	f	0	960
-3838	Limit event response	f	1	960
 3839	Maintain multiple copies of data	f	2	960
 3840	Schedule resources	f	3	960
 3861	In the synchronous solution only some of the tasks that are being executed are lost and they have to be resubmitted by the client	f	0	966
 3862	In the asynchronous solution the tasks that are being executed are lost and they have to be resubmitted by the client	f	1	966
-3863	In the asynchronous solution it is possible to provide an implement where the tasks being executed are finished without requiring the client to resubmitted them	f	2	966
 3864	In the synchronous solution the tasks being executed are finished without requiring the client to resubmitted them	f	3	966
-3865	Provides the quality of availability	f	0	967
 3866	Provides the quality of performance	f	1	967
 3867	Provides the quality of modifiability	f	2	967
 3868	Does not provide any additional quality	f	3	967
 3869	The need to use a two-phase commit protocol	f	0	968
 3870	The need to have a tight integration of the development teams	f	1	968
-3871	The need to have eventual consistency and compensating operations	f	2	968
 3872	The need to deploy all the microservices simultaneously	f	3	968
 3873	Manage sampling rate	f	0	969
 3874	Bound execution times	f	1	969
-3875	Maintain multiple copies of computation	f	2	969
 3876	Increase resource efficiency	f	3	969
-3877	Time to market is the most important impact of cloud computing in an architecture	f	0	970
 3878	Reduction of cost is the most important impact of cloud computing in an architecture	f	1	970
 3879	Cloud computing has impact on the business but it is not an architectural aspect	f	2	970
 3880	Using cloud computing we cannot delay some architectural decisions	f	3	970
 3901	Its main goal is to establish the reusability qualities of the architecture.	f	0	976
 3902	Project managers are not interested in views that use this style because it lacks the necessary level of detail.	f	1	976
 3903	Views of this type are mostly useful to guide the testing of the system.	f	2	976
-3904	There should be at least one view of the system using this architectural style.	f	3	976
 3905	Task Model tactics.	f	0	977
 3906	System Model tactics.	f	1	977
-3907	performance tactics.	f	2	977
 3908	User Model tactics.	f	3	977
 3913	Has as main goal the reduction of the modules' size.	f	0	979
 3914	Results in the creation of a third module that makes the original modules independent.	f	1	979
 3915	Increases the cohesion between the two modules.	f	2	979
-3916	May conflict with the Reduce Overhead performance tactic.	f	3	979
 3917	Results from a utility tree for performance.	f	0	980
 3918	Results from a single availability scenario.	f	1	980
 3919	Results from the application of a single ADD iteration.	f	2	980
-3920	Results from the application of several ADD iterations.	f	3	980
 3945	Programming, if the components execute modules developed by different teams.	f	0	987
 3946	Hardware, if there is hardware redundancy.	f	1	987
 3947	Operating Systems, if redundant components execute on top of different operating systems..	f	2	987
-3948	All the previous options.	f	3	987
 3953	This is a performance scenario and the measure of the response is 10 minutes latency.	f	0	989
-3954	This is a modifiability scenario which has a defer binding tactic.	f	1	989
 3955	This is not a modifiability scenario because the source of the stimulus cannot be a system administrator.	f	2	989
 3956	This is a modifiability scenario and its environment design time.	f	3	989
 3985	Each view contains a single architectural style.	f	0	997
 3986	Views need to contain more than one architectural style.	f	1	997
 3987	A view may not contain any architectural style.	f	2	997
-3988	None of the above.	f	3	997
-3989	The quality addressed is availability and transactions tactic is required to solve the problem.	f	0	998
 3990	The quality addressed is performance and a limit event response is required to solve the problem.	f	1	998
 3991	The quality addressed is availability and a voting design tactic is required to solve the problem.	f	2	998
 3992	The quality addressed is performance and a maintain multiple copies of data design tactic is required to solve the problem.	f	3	998
-3997	A low cost of change may imply a high cost of development.	f	0	1000
 3998	A low cost of change implies a low cost of development, because changing the code is part of development.	f	1	1000
 3999	There is no relation between the cost of change and the cost of development.	f	2	1000
 4000	The cost of change is higher if it occurs at runtime.	f	3	1000
@@ -2517,426 +2051,892 @@ COPY public.options (id, content, correct, number, question_id) FROM stdin;
 4021	Service-oriented architecture, and Client-server.	f	0	1006
 4022	Service-oriented architecture, and Shared-data.	f	1	1006
 4023	Service-oriented architecture, Shared-data, and Client-server.	f	2	1006
-4024	Service-oriented architecture, Shared-data, Client-server and Peer-to-peer.	f	3	1006
 4025	The Aspects style.	f	0	1007
 4026	The Generalisation style.	f	1	1007
-4027	The Decomposition style.	f	2	1007
 4028	The Shared-data style.	f	3	1007
 4033	But when the filters are executed sequentially the composition power is reduced.	f	0	1009
-4034	Which improves modifiability, because filters are decoupled through pipes.	f	1	1009
 4035	But the size of buffers may reduce the composition power.	f	2	1009
 4036	And filters do not have to agree on the data formats.	f	3	1009
 4037	The view does not address the scenario	f	0	1010
 4038	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module.	f	1	1010
-4039	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	f	2	1010
 4040	The view addresses the scenario because the `Consumer Website` module does not use the interfaces a new business partner has to implement.	f	3	1010
-4061	If the OPC crashes the Consumer Website can continue to provide service in degraded mode.	f	0	1016
 4062	If the OPC crashes the Consumer Website can continue to provide service in normal mode.	f	1	1016
 4063	If the Adventure Catalog BD crashes the Consumer Website can continue to present the Adventure Builder offers.	f	2	1016
 4064	If a Bank component is not available the OPC cannot continue to provide service.	f	3	1016
-4065	A component can subscribe to events.	f	0	1017
 4066	All the published events are received by their subscribing components.	f	1	1017
 4067	The events should be received by the same order they are sent.	f	2	1017
 4068	The set of events types are predefined at initialization time.	f	3	1017
 4069	The Decomposition style.	f	0	1018
 4070	The Generalisation style.	f	1	1018
-4071	The Uses style.	f	2	1018
 4072	The Aspects style.	f	3	1018
 4077	The type of a connector does not depend on the type of its roles.	f	0	1020
 4078	Components of different types may have ports of the same type.	f	1	1020
 4079	The attachment is a runtime relation which dynamically manages type compliance.	f	2	1020
-4080	The attachment between components and connectors only depends on their ports and roles types.	f	3	1020
 4101	Client-server.	f	0	1026
-4102	Publish-subscribe.	f	1	1026
 4103	Shared-data.	f	2	1026
 4104	Peer-to-peer.	f	3	1026
-4105	Layer 1.	f	0	1027
 4106	Layer 4.	f	1	1027
 4107	In a layered architecture all layers are equally modifiable.	f	2	1027
 4108	Modifiability is not made easier by a layered architecture.	f	3	1027
-4109	The view does not address the scenario	f	0	1028
 4110	The view addresses the scenario because the uses relation between the `Consumer Website` module and the `OpcApp` module has the require properties.	f	1	1028
 4111	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	f	2	1028
 4112	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules.	f	3	1028
 4113	The file transfer has to follow the same path of nodes used to identify where the file was located.	f	0	1029
 4114	The peer initiating the request for a file needs to know where the file is located.	f	1	1029
 4115	If a peer providing a file crashes the file will not be downloaded.	f	2	1029
-4116	The price for high scalability and availability is the need to have several replicas of the files to be shared.	f	3	1029
 4117	Modifiability.	f	0	1030
-4118	Availability and Performance.	f	1	1030
 4119	Testability and Modifiability.	f	2	1030
 4120	Maintainability and Availability.	f	3	1030
-4141	A performance scenario associated with the throughput of writing data points to disk.	f	0	1036
 4142	A performance scenario associated with the latency of writing data points to disk.	f	1	1036
 4143	An availability scenario associated with a fault in the *Carbon* component.	f	2	1036
 4144	A usability scenario.	f	3	1036
 4145	Simplifies the evolution of the event schema.	f	0	1037
 4146	Simplifies the query operations in the event store.	f	1	1037
-4147	Allows the querying of a past state.	f	2	1037
 4148	Provides a programming model developers are familiar with.	f	3	1037
 4153	The decomposition was driven by a defer binding tactic.	f	0	1039
 4154	The decomposition was driven by a quality that is supported by a restrict dependencies tactic.	f	1	1039
-4155	The decomposition was driven by a split module tactic.	f	2	1039
 4156	The decomposition was driven by a quality that is supported by an encapsulate tactic.	f	3	1039
-4157	HTML5 provides better portability qualities.	f	0	1040
 4158	Native applications provide better modifiability qualities.	f	1	1040
 4159	HTML5 provides better usability qualities.	f	2	1040
 4160	Native applications provide better support for working offline.	f	3	1040
 4181	A modifiability scenario the *Graphite* system.	f	0	1046
 4182	A usability scenario of the *Graphite* system.	f	1	1046
 4183	A performance scenario of the *Graphite* system.	f	2	1046
-4184	An availability scenario of the *Graphite* system.	f	3	1046
 4185	A request for a web page corresponds to a peer-to-peer interaction between all the web components containing the resources.	f	0	1047
 4186	Web pages are explicitly cached on the browser to optimize accesses.	f	1	1047
-4187	A request for a web page corresponds to requesting a service from the amazon cloud.	f	2	1047
 4188	It is possible to customize the number of threads that run in the mobile device.	f	3	1047
 4189	She should decide to use a microservices architecture to improve the scalability of the system.	f	0	1048
 4190	She should decide to use a modular monolith architecture to reduce the cost of development, because developers will not need to define intermediate states for the transactional execution of the business logic.	f	1	1048
-4191	She should try to split the system in parts in order to isolate the complex business logic and use the two architectural approaches accordingly.	f	2	1048
 4192	She should give up because it is not possible to have the two approaches in a singe architecture.	f	3	1048
 4193	Dynamic Reconfiguration.	f	0	1049
 4194	Tiers.	f	1	1049
-4195	Communicating Processes.	f	2	1049
 4196	Install.	f	3	1049
 4197	The view illustrates the achievement of a security scenario.	f	0	1050
 4198	The view illustrates the achievement of a performance scenario.	f	1	1050
 4199	The view results from the implementation of a support user initiative tactic.	f	2	1050
-4200	The view results from the implementation of a support system initiative tactic.	f	3	1050
 4221	Performance was traded for easy of development to reduce the overall development costs.	f	0	1056
-4222	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	f	1	1056
 4223	Performance was traded for the availability quality.	f	2	1056
 4224	An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe.	f	3	1056
 4225	A deployment view.	f	0	1057
 4226	A work assignment view.	f	1	1057
-4227	A deployment and a work assignment view.	f	2	1057
 4228	A install view.	f	3	1057
 4229	This generalization was driven by a split module tactic.	f	0	1058
 4230	This view fulfills an availability scenario, which defines the expected behavior whenever an external source is not available.	f	1	1058
-4231	This view fulfills a modifiability scenario, which states about the cost of adding a new source of information to the system.	f	2	1058
 4232	This view fulfills a modifiability scenario, which states that it should be easy to support the system in new software platforms, e.g. *Windows* or *OS X* .	f	3	1058
 4233	A modifiability scenario the *Graphite* system.	f	0	1059
 4234	A usability scenario of the *Graphite* system.	f	1	1059
 4235	A single performance scenario of the *Graphite* system.	f	2	1059
-4236	At least two performance scenarios of the *Graphite* system.	f	3	1059
 4237	Does not allow optimizations according to the type of query.	f	0	1060
 4238	Does not support independent scalability according to the type of operation.	f	1	1060
-4239	Reads may not be consistent with the most recent write.	f	2	1060
 4240	Querying the event sourcing becomes more complex.	f	3	1060
 4828	Publish-Subscribe.	f	3	1207
-4321	Modifiability.	f	0	1081
 4322	Usability.	f	1	1081
 4323	Security.	f	2	1081
 4324	Availability.	f	3	1081
 4325	A view of the Data Model style	f	0	1082
 4326	A view of the Layers style	f	1	1082
-4327	A view of the Decomposition style	f	2	1082
 4328	A view of the Uses style	f	3	1082
 4329	By changing the commonalities that are in the children.	f	0	1083
 4330	Because the *is-a* relation does not allow reuse of implementation.	f	1	1083
 4331	By adding, removing, or changing children.	f	2	1083
-4332	By changing a parent, which will automatically change all the children that inherit from it.	f	3	1083
-4333	With a component-and-connector view, where the *load balancer* is a component of the system	f	0	1084
 4334	With a Deployment view, where the *load balancer* is part of the communication infra-structure used to execute the system	f	1	1084
 4335	With a Uses view, representing the existing dependencies between the *load balancer* and the services that it uses	f	2	1084
 4336	With a Layers view, where the *load balancer* creates an abstraction layer between who makes the request and who provides the service	f	3	1084
 4337	It implements a maintain multiple copies of computation tactic.	f	0	1085
-4338	It supports the concurrent access of data accessors.	f	1	1085
 4339	It supports the access to persistent information.	f	2	1085
 4340	It implements a maintain multiple copies of data tactic.	f	3	1085
-4341	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability	f	0	1086
 4342	The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better availability	f	1	1086
 4343	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better modifiability	f	2	1086
 4344	The solution where the cache is responsible for retrieving the missing piece of data from the underlying store has better performance	f	3	1086
 4345	A change to the uses view to represent that friends can use each other catalog.	f	0	1087
 4346	A change of the layered view to support different presentations, one for each friend.	f	1	1087
 4347	A change of the decomposition view to include the responsibilities associated with the access control.	f	2	1087
-4348	A new aspect view to include the responsibilities associated with the access control.	f	3	1087
 4349	The Shared Data style	f	0	1088
 4350	The Pipes-and-filters style	f	1	1088
-4351	The Publish-subscribe style	f	2	1088
 4352	The Client-Server style	f	3	1088
-4353	Analysing the performance of the system	f	0	1089
 4354	Planning incremental releases of the system	f	1	1089
 4355	Estimating the effort needed to implement the system	f	2	1089
 4356	Analysing the system's portability and reusability	f	3	1089
 4357	Client-server and Repository.	f	0	1090
 4358	Repository and Publish-subscribe.	f	1	1090
 4359	Publish-subscribe and Repository.	f	2	1090
-4360	Client-server, Repository and Publish-subscribe.	f	3	1090
 4361	Interoperability	f	0	1091
 4362	Modifiability	f	1	1091
 4363	Performance	f	2	1091
-4364	Security	f	3	1091
 4365	but this reduces reliability because de webapp components do not access the most recent data	f	0	1092
 4366	but it reduces performance, anyway, because the buffer components easily overflow	f	1	1092
-4367	and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data	f	2	1092
 4368	and it improves security because the buffer is protected agains attacks	f	3	1092
 4369	A *web services* architecture	f	0	1093
 4370	A Client-Server architecture, where the *mashup* is the client and the various sources are the servers	f	1	1093
-4371	A layered architecture, where the access to the various sources is the responsibility of the bottommost layer	f	2	1093
 4372	A Publish-Subscribe architecture, where the various sources publish events with the changes made and the *mashup* subscribes those events	f	3	1093
-4373	Schedule Resources	f	0	1094
 4374	Increase Resources	f	1	1094
 4375	Introduce Concurrency	f	2	1094
 4376	Maintain Multiple Copies of Computation	f	3	1094
-4377	Maintain system model tactic.	f	0	1095
 4378	Support user initiative tactic.	f	1	1095
 4379	Maintain multiple copies of data tactic.	f	2	1095
 4380	Conflict detection tactic.	f	3	1095
 4381	Performance was traded for easy of development.	f	0	1096
-4382	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	f	1	1096
 4383	Performance was traded for the modifiability quality.	f	2	1096
 4384	An incremental development was followed, which allowed to have the system in production without being necessary to export all the information to the mainframe.	f	3	1096
 4385	This decomposition is the only possible of the original domain model.	f	0	1097
-4386	This decomposition implies that, in average, customers are going to have a large number of orders.	f	1	1097
 4387	This decomposition implies that products will frequently change their unique identification.	f	2	1097
 4388	All the above.	f	3	1097
 4389	These tactics cannot be applied in conjunction with the self-test tactic.	f	0	1098
 4390	These tactics are used to prevent the occurrence of a fault.	f	1	1098
-4391	Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.	f	2	1098
 4392	In ping/echo the components have the initiative to start the interaction.	f	3	1098
 4393	Only views of the component-and-connector viewtype are needed	f	0	1099
-4394	All viewtypes may be necessary	f	1	1099
 4395	Only views of the component-and-connector viewtype and allocation viewtype are needed	f	2	1099
 4396	Views of the module viewtype are not needed	f	3	1099
 4397	When the environment is design time it means that the change should be done before the system enters into production	f	0	1100
 4398	When the environment is build time it means that it is necessary to codify a new module that is added by rebuilding the system	f	1	1100
-4399	When the environment is initiation time it means that it is necessary to restart the system for the change to take effect	f	2	1100
 4400	When the environment is runtime the cost of doing the change is higher than in the other environments	f	3	1100
-4481	Can use the operations defined in any of the system's modules	f	0	1121
 4482	Can use the operations defined in the lower layer, but not the ones defined inthe upper layer	f	1	1121
 4483	Can use the operations defined in the upper layer, but not the ones defined inthe lower layer	f	2	1121
 4484	Should use some operation defined in the lower layer	f	3	1121
 4489	It corresponds to a particular case of a specialization in a generalization view.	f	0	1123
 4490	It represents a relation between a connector's role and a port of one of its internal components.	f	1	1123
-4491	It represents a relation between a component's port and a port of one of its internal components.	f	2	1123
 4492	It represents a relation between a component's port and a connector's role.	f	3	1123
-4493	To facilitate the interaction among heterogeneous components that use distinct communication protocols	f	0	1124
 4494	To promote the use of a common communication protocol for all the remaining components of the system	f	1	1124
 4495	To increase the performance of the interaction between the components of the system	f	2	1124
 4496	To create a strong coupling between the various services provided by the organization	f	3	1124
 4497	When a peer connects to the network it establishes connections with all other peers in the network	f	0	1125
-4498	The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used	f	1	1125
 4499	When a peer receives a connection it sends all its files to the peer connecting it	f	2	1125
 4500	The behavior described in the sentence can be represented in a view where the tier architectural style is used	f	3	1125
 4501	The development team is the main stakeholder interesting in these views.	f	0	1126
 4502	It assigns modules to files.	f	1	1126
 4503	It is completely independent of the deployment architectural style.	f	2	1126
-4504	It helps on the configuration of systems.	f	3	1126
-4505	The presentation logic layer and how it relates with the underlying layer changed	f	0	1127
 4506	The style of the connector used to represent the interaction between the browser and the web server changed	f	1	1127
 4507	The browser is now a component of a different type	f	2	1127
 4508	That evolution did not have any consequences on the software architecture of a web application	f	3	1127
 4509	Prevent a fault in hardware.	f	0	1128
 4510	Prevent a fault in software.	f	1	1128
 4511	Prevent a fault in a process.	f	2	1128
-4512	Detect a fault.	f	3	1128
 4513	Manage sampling rate	f	0	1129
-4514	Limit event response	f	1	1129
 4515	Prioritize events	f	2	1129
 4516	Bound execution time	f	3	1129
 4517	Split module	f	0	1130
 4518	Encapsulate	f	1	1130
-4519	Restrict dependencies	f	2	1130
 4520	Defer binding	f	3	1130
-4521	It would reduce the scalability for updates of different orders for the same customer.	f	0	1131
 4522	Two users would not conflict if they attempt to edit different orders for the same customer.	f	1	1131
 4523	The increase of the number of orders would not have impact on the load the aggregate.	f	2	1131
 4524	All the above.	f	3	1131
 4525	Does not allow optimizations according to the type of query.	f	0	1132
 4526	Does not support independent scalability according to the type of operation.	f	1	1132
-4527	Reads may not be consistent with the most recent write.	f	2	1132
 4528	Does not support joins.	f	3	1132
 4529	A module contains the code that executes in a single component and a component executes the code of a single module	f	0	1133
 4530	A module contains the code that can execute in several components and a component executes the code of a single module	f	1	1133
 4531	A module contains the code that executes in a single component and a component can execute the code of several modules	f	2	1133
-4532	A module contains the code that can execute in several components and a component can execute the code of several modules	f	3	1133
-4533	Manage sampling rate	f	0	1134
 4534	Limit event response	f	1	1134
 4535	Prioritize events	f	2	1134
 4536	Bound execution times	f	3	1134
-4537	The layered view to deal with the aspects of portability.	f	0	1135
 4538	The uses view to show the coupling between the different platforms.	f	1	1135
 4539	The uses view to show the uses relationships between the different platforms.	f	2	1135
 4540	The data model view to represent each one of the platforms.	f	3	1135
 4541	The view does not address the scenario	f	0	1136
-4542	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module to allow the execution of the `Consumer Website` module in a component that can have multiple copies of computation	f	1	1136
 4543	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement	f	2	1136
 4544	The view addresses the scenario because the `Consumer Website` module uses the `gwt` and `waf` modules	f	3	1136
 4545	Task Model	f	0	1137
 4546	System Model	f	1	1137
-4547	Performance	f	2	1137
 4548	User Model	f	3	1137
 4549	Usability e Modifiability	f	0	1138
-4550	Performance e Usability	f	1	1138
 4551	Availability e Usability	f	2	1138
 4552	Availability e Performance	f	3	1138
 4553	A module view of the decomposition style.	f	0	1139
-4554	A module view of the data model style.	f	1	1139
 4555	A component-and-connector view of the service-oriented architecture style.	f	2	1139
 4556	A module view of the uses style.	f	3	1139
 4557	Suffered from featuritis, because the architect decided to delay the difficult parts for latter in the development.	f	0	1140
 4558	Did not suffer from featuritis.	f	1	1140
-4559	Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.	f	2	1140
 4560	Suffered from featuritis, but it had no impact on the final development.	f	3	1140
 4621	Usability and Performance	f	0	1156
-4622	Usability	f	1	1156
 4623	Performance	f	2	1156
 4624	Testability	f	3	1156
 4625	Performance	f	0	1157
 4626	Security	f	1	1157
-4627	Performance and security	f	2	1157
 4628	Security and modifiability	f	3	1157
 4629	Performance	f	0	1158
 4630	Availability	f	1	1158
 4631	Usability	f	2	1158
-4632	Monitorability	f	3	1158
-4633	Manage sampling rate	f	0	1159
 4634	Limit event response	f	1	1159
 4635	Introduce concurrency	f	2	1159
 4637	Maintain multiple copies of data	f	0	1160
-4638	Maintain multiple copies of computation	f	1	1160
 4639	Bound execution times	f	2	1160
 4640	Reduce overhead	f	3	1160
 4701	Performance.	f	0	1176
 4702	Interoperability.	f	1	1176
-4703	Availability.	f	2	1176
 4704	Security.	f	3	1176
 4705	Limit event response	f	0	1177
 4706	Maintain multiple copies of computation	f	1	1177
 4707	Maintain multiple copies of data	f	2	1177
-4708	Schedule resources	f	3	1177
 4709	Component	f	0	1178
 4710	Module	f	1	1178
-4711	Component and Module	f	2	1178
 4712	None of the above	f	3	1178
 4713	Manage sampling rate	f	0	1179
 4714	Limit event response	f	1	1179
-4715	Maintain multiple copies of data	f	2	1179
 4716	Maintain multiple copies of computation	f	3	1179
-4717	Limit event response	f	0	1180
 4718	Schedule resources	f	1	1180
 4719	Bound execution times	f	2	1180
 4720	Increase resource efficiency	f	3	1180
-4741	Limit access.	f	0	1186
 4742	Increase resources.	f	1	1186
 4743	Increase resource efficiency.	f	2	1186
 4744	Maintain multiple copies of data.	f	3	1186
 4745	Manage sampling rate tactic.	f	0	1187
-4746	Increase resource efficiency tactic.	f	1	1187
 4747	Introduce concurrency tactic.	f	2	1187
 4748	Schedule resources tactic.	f	3	1187
 4749	When the modification should occur.	f	0	1188
 4750	The features that will be implemented.	f	1	1188
-4751	The new defects introduced.	f	2	1188
 4752	Defer binding.	f	3	1188
 4753	Is driven by functional requirements.	f	0	1189
 4754	Is done in a single step, after all the tactics were identified.	f	1	1189
 4755	Is a top-down process where a initial decomposition is chosen and it is successively decomposed without changing the initial decisions.	f	2	1189
-4756	Is an iterative process where architectural designs are proposed as hypothesis and tested.	f	3	1189
 4757	Is applied only once at the beginning of the architectural design process.	f	0	1190
-4758	Is applied at the begin of the architectural design process but may be necessary to redo it later.	f	1	1190
 4759	Is mostly driven by the security attribute quality.	f	2	1190
 4760	Follows a bottom-up decomposition process of the system.	f	3	1190
 4781	Ping/Echo.	f	0	1196
 4782	Retry.	f	1	1196
-4783	Voting.	f	2	1196
 4784	Passive Redundancy.	f	3	1196
-4785	This ASR can easily be supported by the architecture because it has little effect in the architecture.	f	0	1197
 4786	This ASR requires a specific architectural design because it profoundly affects the architecture.	f	1	1197
 4787	The cost of meeting the ASR after development starts is too high.	f	2	1197
 4788	Any ASR that has a high business value cannot have a low architecture impact because it needs to be supported by the architecture.	f	3	1197
-4789	The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.	f	0	1198
 4790	The invoked function may not have any input parameter.	f	1	1198
 4791	The invoked function may not have any output parameter.	f	2	1198
 4792	The invoked function may not have both any input parameter nor any output parameter.	f	3	1198
 4793	Maintain multiple copies of data tactic.	f	0	1199
 4794	Introduce concurrence tactic.	f	1	1199
 4795	Increase resource efficiency tactic.	f	2	1199
-4796	Schedule resources tactic.	f	3	1199
 4797	Maintain task model	f	0	1200
 4798	Maintain user model	f	1	1200
-4799	Maintain system model	f	2	1200
 4800	Aggregate	f	3	1200
 4821	Whenever complex connectors are used in architectural views it is necessary to also document their decomposition.	f	0	1206
 4822	It is preferable to only design views that do not use complex connectors to increase understandability.	f	1	1206
-4823	If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.	f	2	1206
 4824	Whenever possible it should be avoided to use complex connectors because developers have difficult to know how to implement them.	f	3	1206
 4825	Peer-to-Peer.	f	0	1207
-4826	Pipe-and-Filter.	f	1	1207
 4827	Client-Server.	f	2	1207
-4829	The main quality this style addresses is interoperability.	f	0	1208
+4823	If there is some technology available that implements the complex connectors, according to its expected qualities, it is not necessary to document their decomposition.	t	2	1206
+4826	Pipe-and-Filter.	t	1	1207
 4830	It cannot be applied when the system includes legacy systems.	f	1	1208
 4831	Its enterprise service bus cannot support asynchronous communication between the components.	f	2	1208
 4832	The typical communication pattern is point-to-point.	f	3	1208
 4833	The modules inside a layer cannot use other modules in the same layer	f	0	1209
 4834	A layer cannot call the layer above	f	1	1209
-4835	Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer	f	2	1209
 4836	It is possible to have a circular allowed-to-use relationship between several layers	f	3	1209
-4837	If there are performance requirements concerning the access to data, then the level of detail should be physical	f	0	1210
 4838	It should always consider the physical detail level	f	1	1210
 4839	The logical detail level should only be used when the target of implementation is a relational database	f	2	1210
 4840	Only the conceptual level is required, the other two levels of detail are optional	f	3	1210
 4861	Applies layers to tiers.	f	0	1216
-4862	Restricts the communication between components because, for instance, a group of components should be located in the same hardware.	f	1	1216
 4863	Is an extension of the Client-Server architectural style.	f	2	1216
 4864	Defines tiers as components.	f	3	1216
 4865	It imposes restrictions on which uses relationships may exist between the system's modules	f	0	1217
 4866	It makes it easier to create generalization relationships between the system's modules	f	1	1217
-4867	It separates in new modules responsibilities that were spread over various of the system's modules	f	2	1217
 4868	It allows the decomposition of each of the system's modules into finer grained modules	f	3	1217
 4869	All the peers are equal.	f	0	1218
 4870	Any peer can access any other peer.	f	1	1218
 4871	Peers are only used to share files.	f	2	1218
-4872	The interaction between peers is symmetric.	f	3	1218
 4873	It is not necessary to have any view of the Data Model architectural style because Facebook information has a very simple structure.	f	0	1219
 4874	It is enough to design a view of the Data Model architectural style at the conceptual level because Facebook information has a very simple structure.	f	1	1219
 4875	It is enough to design a view of the Data Model architectural style at the logical level because the information will be stored in a relational database.	f	2	1219
-4876	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data.	f	3	1219
-4877	A component is an instance and a view can have several instances of the same component type.	f	0	1220
 4878	A component type is made of a single architectural style.	f	1	1220
 4879	Only components can be associated with application-specific types.	f	2	1220
 4880	A component-and-connector view can only use a single architectural style.	f	3	1220
 4901	One view of the component-and-connector viewtype and another of the deployment style.	f	0	1226
-4902	A single view of the communicating processes style.	f	1	1226
 4903	Two views of the communicating processes style.	f	2	1226
 4904	A view of the aspects style.	f	3	1226
 4905	The aggregates publishes the event in a message broker and subscribes to the published event.	f	0	1227
 4906	Using the database of the aggregate as a temporary message queue.	f	1	1227
 4907	Using event sourcing.	f	2	1227
-4908	All of the above.	f	3	1227
 4909	A deployment view.	f	0	1228
 4910	A work assignment view.	f	1	1228
-4911	A deployment and a work assignment view.	f	2	1228
 4912	A install view.	f	3	1228
 4913	The layered view to support a new specific layer for the customization of the catalog.	f	0	1229
 4914	The layered view to accommodate a new layer for each kind of catalog, which other layers may use.	f	1	1229
 4915	The data model view in order to define entities for each kind of catalog.	f	2	1229
-4916	The data model view in order to define generic entities that can be customized for different kinds of catalogs.	f	3	1229
-4917	Client-server.	f	0	1230
 4918	Communicating Processes.	f	1	1230
 4919	Repository.	f	2	1230
 4920	Pipes-and-Filters.	f	3	1230
 4941	Client-server.	f	0	1236
-4942	Communicating Processes.	f	1	1236
 4943	Repository.	f	2	1236
 4944	Pipes-and-Filters.	f	3	1236
 4945	The communicating processes style.	f	0	1237
-4946	The communicating processes style and the dynamic reconfiguration style.	f	1	1237
 4947	The communicating processes style and the pipes-and-filters style.	f	2	1237
 4948	The dynamic reconfiguration style.	f	3	1237
 4949	The communicating processes.	f	0	1238
 4950	Pipes-and-filters.	f	1	1238
-4951	Publish-subscribe.	f	2	1238
 4952	Dynamic reconfiguration.	f	3	1238
 4953	Components are allocated to persons and teams.	f	0	1239
-4954	Modules are allocated to persons and teams.	f	1	1239
 4955	Components and modules are allocated to persons and teams.	f	2	1239
 4956	None of the above.	f	3	1239
-4957	The decomposition view to include a module for the synchronization responsibilities.	f	0	1240
 4958	The uses view to represent how the mobile device uses the Catalog application.	f	1	1240
 4959	The layered view to include a layer for each type of device.	f	2	1240
 4960	The domain layer of the layered style to represent the types of devices.	f	3	1240
+6	Should be captured in scenarios, as the requirements for quality attributes, and be taken into account in the design of the software architecture	t	1	2
+9	The *decomposition* and *uses* styles, which allow us to show how dependent a certain module is of other parts of the system	t	0	3
+16	To replace the machine used to run the server component by a more powerful machine that meets the new performance requirements, keeping only a server component running	t	3	4
+20	Even though each viewtype addresses different aspects of a system, there are relationships among all of them	t	3	5
+31	A subset of the requirements that correspond to the most important business goals, regardless of whether they have conflicts among them or not	t	2	8
+33	The *Peer-to-Peer* style	t	0	9
+40	The *Shared data* style	t	3	10
+44	This change manifests itself on the relationship between the system's modules and components	t	3	11
+45	The *Communicating Processes* style	t	0	12
+51	*Decomposition* and *Implementation* views	t	2	13
+54	*Decomposition* and *Uses* views	t	1	14
+59	The *Layers* style	t	2	15
+64	the *Deployment* and *Layers* styles	t	3	16
+66	Views of the Module viewtype	t	1	17
+69	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	t	0	18
+76	To keep a record of changes made to the data during a business transaction and to coordinate the writing of these changes to the database	t	3	19
+79	To prevent data inconsistencies when there are multiple accesses within the same business operation to the same entity	t	2	20
+83	Stakeholders do not mind if two simultaneous reads on the same file by two different applications may return different values	t	2	21
+86	The availability quality is more important, thus performance is addressed afterwards and depends on the tactics used for availability	t	1	22
+91	Passive replication and spare	t	2	23
+94	State Resynchronization	t	1	24
+97	Authenticate users and authorize users	t	0	25
+108	That provides a set of complete and cohesive services	t	3	27
+111	But it needs to be complemented, for each uses relationship, with the level of coupling	t	2	28
+113	The call's results may not have impact on the correct execution of the caller module	t	0	29
+120	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	30
+123	The Peer-to-Peer style	t	2	31
+125	A Client-Server architecture, where the DataNode is the Client and the NameNode is the Server	t	0	32
+132	The availability guarantee may be given by the usage of an adequate connector between the HDFS Client and the DataNodes	t	3	33
+134	The Communicating Processes style	t	1	34
+141	To control and to reduce the interface exposed by the domain logic layer, thereby increasing the modifiability of that layer	t	0	36
+147	That is the recommended solution if there is a control flow that involves the choreography of both components	t	2	37
+162	Essential to reduce costs whenever there is a fault in a hardware element	t	1	41
+167	Allows the creation of checkpoints using the information that it gradually receives from the *NameNode*	t	2	42
+169	Performance and availability qualities	t	0	43
+173	Increases the system modifiability whenever it is necessary to change the placement policy	t	0	44
+178	But it would imply an *overhead* in the *NameNode*	t	1	45
+183	This script is a module that implements a modifiability tactic	t	2	46
+188	Availability and security	t	3	47
+193	Means that it may be difficult to design incremental testing	t	0	49
+197	Is that the *Allowed to Use* relation defines a restriction for the possible *Uses* relations between modules belonging to different layers	t	0	50
+203	Using a view of the component-and-connector viewtype	t	2	51
+215	The application continues to have a three-tiered architecture, where one of the tiers is now the HDFS system	t	2	54
+220	The Client Server style	t	3	55
+222	May affect the data access layer because each pattern puts different requirements on the interface of that layer	t	1	56
+228	All components may execute in all machines	t	3	57
+239	We may need views of the component-and-connector viewtype and of the Deployment style	t	2	60
+244	The researchers, because they wanted to use the system to validate their research	t	3	61
+245	As modules of the system	t	0	62
+252	Satisfied usability requirements of the system	t	3	63
+255	The portability, because the RTS creates an abstraction layer that hides some of the details of the operating system	t	2	64
+259	To facilitate changing the phases used in the compilation process, thereby making the compiler more modifiable	t	2	65
+264	It allows the development of systems with Peer-to-Peer, Client-Server, or Publish-Subscribe architectures	t	3	66
+267	The Deployment style	t	2	67
+270	Facilitates the addition of new messaging patterns	t	1	68
+274	To increase the throughput of the system when it is overloaded	t	1	69
+279	The Communicating Processes style	t	2	70
+284	To allow more simultaneous connections than Apache	t	3	71
+286	They wanted to have a more efficient use of the computational resources	t	1	72
+295	To make the system faster	t	2	74
+298	The Communicating Processes style	t	1	75
+304	Increases both the availability and the capacity	t	3	76
+307	In the Component-and-Connector view, because components and connectors need to be changed	t	2	77
+312	Increasing the fault tolerance of the system	t	3	78
+316	The execution of the previously existing layers is split between the two new tiers, and new intermediate layers may be needed	t	3	79
+322	The domain logic layer was implemented with the Transaction Script pattern	t	1	81
+327	The Uses style	t	2	82
+344	The Decomposition style	t	3	86
+345	In the Deployment view	t	0	87
+351	To allow testing and validating the software architecture in the early development stages	t	2	88
+359	Typically gives rise to more modules than what we would have if not using this style	t	2	90
+363	To launch a worker thread for each core, to maximize the core usage and to minimize the need for synchronization among threads	t	2	91
+368	Module and component-and-connector views	t	3	92
+371	It has less performance, because the *broker* introduces greater latency in the communication	t	2	93
+373	Views of the Generalization style	t	0	94
+377	Usability	t	0	95
+384	The Communicating Processes style	t	3	96
+387	The Shared data style	t	2	97
+391	Each *worker* is responsible for various connections, processing all requests from those connections	t	2	98
+393	By interleaving the various processing phases of each request in a sequential process	t	0	99
+400	Be able to reduce the amount of memory needed for each connection	t	3	100
+431	The Peer-to-Peer style	t	2	108
+433	The performance decreases	t	0	109
+443	To move from an anemic domain model to a rich domain model	t	2	111
+448	Views of the Component-and-Connector and Allocation viewtypes	t	3	112
+462	The Client-Server style	t	1	116
+472	None of the other options solves the problem	t	3	118
+473	The presentation logic layer and how it relates with the underlying layer changed	t	0	119
+478	A grouping of components	t	1	120
+485	Maintain Multiple Copies of Computation	t	0	122
+493	Performance, availability, and usability	t	0	124
+497	Client-Server e Repository	t	0	125
+501	By using a Timestamp tactic	t	0	126
+506	May stop accepting writes	t	1	127
+509	Increase Resource Efficiency	t	0	128
+515	Limit Access	t	2	129
+517	Introduce Concurrency	t	0	130
+523	Dynamic Creation and Destruction	t	2	131
+528	It does not depend on a proprietary service	t	3	132
+532	It can change during the execution of each instance of Chrome	t	3	133
+533	Maintain User Model tactic	t	0	134
+540	Limitations of the concurrent access to files	t	3	135
+541	Increase the modifiability quality, because the new user interface was implemented using the REST interface	t	0	136
+548	An object tree to simplify the processing of each filter	t	3	137
+551	Does not guarantee the FIFO delivery of messages, some messages may be delivery by a different order	t	2	138
+555	Dynamic Creation and Destruction	t	2	139
+560	All the previous options	t	3	140
+562	Differ on the emphasis on production and development phases of the software process	t	1	141
+568	Modifiability and Performance	t	3	142
+569	Defer Binding	t	0	143
+575	Both, pessimistic and optimistic, concurrency control policies can be used	t	2	144
+581	Detect and Recover from the attack	t	0	146
+590	Only depend on the type of events	t	1	148
+596	They are not implemented by a usability tactic	t	3	149
+603	Reliability	t	2	151
+615	Prioritize performance and availability over functionality	t	2	154
+620	Passive Redundancy and Maintain Multiple Copies of Computation	t	3	155
+622	By the load balancer	t	1	156
+627	Degradation	t	2	157
+631	Increase Resources Efficiency	t	2	158
+636	Security, Performance, Usability and Mobility	t	3	159
+642	The *browser* needs to make less requests to the server	t	1	161
+646	Communicating-Processes	t	1	162
+649	Uses the Introduce Concurrency tactic	t	0	163
+658	External applications can administrate the GNU Mailman mailing lists	t	1	165
+663	Pipes-and-Filters	t	2	166
+665	Data Model	t	0	167
+669	The quality of Performance	t	0	168
+673	Security	t	0	169
+679	Module and Component-and-Connector	t	2	170
+681	Modifiability and Interoperability	t	0	171
+686	Aspects	t	1	172
+690	User Model	t	1	173
+696	It is necessary that each object has a unique identifier	t	3	174
+700	Exception Detection	t	3	175
+704	In what concerns the notification, the Model module does not use the Observer module	t	3	176
+707	There isn't any predefined order to design Uses and Layered views	t	2	177
+711	May contain several architectural styles, but only if they are of the same viewtype	t	2	178
+715	Once applied in a view may be necessary to change the Decomposition view	t	2	179
+717	It is an advantage for programmers that the transactional behavior is transparently provided	t	0	180
+842	The Domain Model pattern to reduce the interface of the Domain Logic layer to a controlled set.	t	1	211
+847	The Domain Model pattern.	t	2	212
+853	The Requirements function is part of the Design module.	t	0	214
+857	A Condition Monitoring tactic for the Availability quality.	t	0	215
+863	The stimulus for scenarios of the Security quality.	t	2	216
+871	The environment is design time.	t	2	218
+876	Increase resource efficiency.	t	3	219
+877	Create a decomposition where there is a module corresponding to the Windows OS and another one for the Mac OS X, each one responsible for containing the OS-specific code.	t	0	220
+885	We have to use a Repository component-and-connector style.	t	0	222
+890	Client-server in the first case and Peer-to-peer in the second.	t	1	223
+896	Is driven by a trade-off among the stakeholders needs.	t	3	224
+898	May be responsible for the Performitis problems of architectures.	t	1	225
+908	The location information is correctly included with a probability of 99.99% is the response measure.	t	3	227
+916	A data model view and a component-and-connector view using a shared-data style.	t	3	229
+919	Shared-data style.	t	2	230
+922	The domain only needs CRUD (Create, Read, Update, and Delete) operations.	t	1	231
+925	It is necessary to design two deployment views, one for each deployment option.	t	0	232
+931	Increase resource efficiency tactic for performance, because it reduces the need of upfront calculus/computation on new clients.	t	2	233
+934	The server propagates local commands and cursor movements to the clients, and keeps the snapshots for the initialization of new clients.	t	1	234
+939	Testability and Modifiability.	t	2	235
+1088	All of the above	t	3	272
+1090	The Active Record pattern	t	1	273
+1097	Ping-and-echo requires the availability monitor to know the addresses of the components it is monitoring	t	0	275
+1104	It is necessary to use the encrypt data tactic to encrypt the information on the client web browser, before it is send to the web server	t	3	276
+1112	A scenario for usability associated with a support user initiative tactic	t	3	278
+1113	Multiple copies of computation	t	0	279
+1117	Decomposition view	t	0	280
+1124	To talk with the people that developed the system to know what they did and why they did it	t	3	281
+1127	Architecture is the design that gets harder to change as development progresses	t	2	282
+1132	None of the above	t	3	283
+1133	Represent different architectural qualities and they may not be all represented in a single view	t	0	284
+1140	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	285
+1143	Both, a module and a component	t	2	286
+1147	Generalisation to represent an abstraction common to all interfaces and keep API-specific details in child modules	t	2	287
+1151	Development because it is not possible to do incremental development	t	2	288
+1153	Performance, because it describes what is the response to REST API calls	t	0	289
+1158	Increase resource efficiency tactic	t	1	290
+1163	Testability, because of the logic complexity	t	2	291
+1172	A communication processes style	t	3	293
+1174	It is necessary to change the connector between the web clients and the web servers, in the component-and-connector view, to show the semantics that is provided by the load-balancer	t	1	294
+1178	They have to process very large amounts of data in each request	t	1	295
+1189	A generalisation architectural style	t	0	298
+1195	Subscribes to cursor position events	t	2	299
+1200	All of the above	t	3	300
+1213	This shared understanding is what distinguishes architecture from design.	t	0	304
+1221	Frank Buschmann is referring to some possible consequences of the modifiability quality.	t	0	306
+1228	A solution for any quality in isolation may lead to a biased architecture.	t	3	307
+1239	Is focused on creating common generalizations of several systems.	t	2	310
+1244	To break such misunderstanding and mistrust the architecture has to make explicit the stakeholders needs.	t	3	311
+1247	Is a baseline architecture that allows to experiment with the most significant architectural requirements.	t	2	312
+1259	Are unable to distinguish architecture from design.	t	2	315
+1262	A solution to this problem is to prioritize the system qualities.	t	1	316
+1268	Professional and Technical Contexts.	t	3	317
+1274	Availability and Performance.	t	1	319
+1278	Tries to guarantee that the final system will have the qualities aimed by the architecture.	t	1	320
+1282	Availability.	t	1	321
+1287	Can be used as the source of a stimulus in a scenario.	t	2	322
+1291	Is a design tactic for a scenario where the source of stimulus are technical users.	t	2	323
+1295	Limit exposure.	t	2	324
+1304	The stimulus and the response should be always present.	t	3	326
+1309	The quality addressed is availability.	t	0	328
+1315	Verify message integrity.	t	2	329
+1318	Introduce concurrency.	t	1	330
+1323	Interoperability.	t	2	331
+1328	Exception prevention.	t	3	332
+1329	A Maintain Multiple Copies of Computation design tactic in Carbon.	t	0	333
+1335	Separate entities, to allow the use of more strict tactics on the sensitive data.	t	2	334
+1337	Maintain user model tactic.	t	0	335
+1342	May be associated to other tactics to deal with a single stimulus.	t	1	336
+1345	This situation corresponds to the use of the degradation availability tactic.	t	0	337
+1350	The quality addressed is modifiability.	t	1	338
+1355	Detect and Recover.	t	2	339
+1372	Usability.	t	3	343
+1373	Interoperability.	t	0	344
+1381	Business scenario.	t	0	346
+1390	Modifiability.	t	1	348
+1396	Support system initiative.	t	3	349
+1400	Allows to identify modules for which the development team does not have the required implementation competences.	t	3	350
+1404	Contains the business value and the architectural impact of architecturally significant requirements.	t	3	351
+1407	The architect have to decide on the cost/benefit of designing an architecture that supports this ASR.	t	2	352
+1411	Availability.	t	2	353
+1415	Availability.	t	2	354
+1421	Business scenario.	t	0	356
+1442	Applying the decomposition style to some of the modules in the loop chain.	t	1	361
+1449	Limit exposure.	t	0	363
+1456	The attachment between components and connectors only depends on their ports and roles types.	t	3	364
+1468	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance issues of the access to data.	t	3	367
+1471	Increase resource efficiency.	t	2	368
+1476	The required quality associated with the connector is supported by existing and well-know technology.	t	3	369
+1477	She can define a variant of this style with asynchronous communication by allowing the client to register callbacks that the server calls at specific times.	t	0	370
+1483	Allows incremental development because the possible increments of functionally can be inferred from use dependencies.	t	2	371
+1485	Relates a view of the Uses style with a view of the Data Model style.	t	0	372
+1489	Multiple copies of computation and Passive redundancy tactics.	t	0	373
+1495	A module interface cannot be replicated but component ports can.	t	2	374
+1498	It is possible to have redundant servers.	t	1	375
+1508	Condition monitoring.	t	3	377
+1509	It is possible to integrate a new data accessor without changing the other data accessors.	t	0	378
+1520	This means that the modules inside a layer are likely to be ported to a new application together.	t	3	380
+1527	Can use a Service Registry to improve transparency of location of service providers.	t	2	382
+1529	In the view there are multiple instances of the `Queue` component.	t	0	383
+1548	It encapsulates applications through well-defined interfaces, decouples the coordination of the interaction among applications from the applications themselves, and improves transparency of location of service providers.	t	3	387
+1550	There is a interface delegation relation between the `read` port of `Queue` and the `query` port of `Carbon`.	t	1	388
+1554	Implementation style.	t	1	389
+1562	Restrict the communication between components because, for instance, a group of components should be located in the same hardware.	t	1	391
+1571	Install style.	t	2	393
+1577	Memcached can be considered a sub-module of the Store Graphs module.	t	0	395
+1589	Buffering can be considered a sub-module of the Store Graphs module.	t	0	398
+1594	A deployment view.	t	1	399
+1634	An interface delegation is missing in the picture to represent the : TableEditor broadcasting the cursor position through the Pub port.	t	1	409
+1640	May not even exist, only record sets are used.	t	3	410
+1641	Amazon Silk predicts accesses based on the information gathered for all Silk users.	t	0	411
+1647	There is a ThousandParsec connector which can be decomposed into a set of components and Request/Reply connectors.	t	2	412
+1649	Was taken because HTML5 provides better portability qualities.	t	0	413
+1653	The server implements the : Repository component and the : Broadcast connector.	t	0	414
+1657	Table Data Gateway and Row Data Gateway.	t	0	415
+1662	Google Chrome predictor takes into consideration the amount of available cache.	t	1	416
+1667	As a module but not included in the RulesSet subtree.	t	2	417
+1669	Two distinct unidirectional connectors.	t	0	418
+1674	The Parser module is part of the code executed by the : Sheet component.	t	1	419
+1680	Active Record and Data Mapper.	t	3	420
+1801	The stimulus is to integrate reports from a variety of test tools	t	0	451
+1807	Performance and Reliability	t	2	452
+1812	In the mapping between layers of the system and the components where they execute	t	3	453
+1816	The system represented in the right part of the figure tends to have good modifiability	t	3	454
+1819	Tiers to express that different applications define their own contexts	t	2	455
+1824	When it is not possible to satisfy all of the requirements optimally, we should be aware of their relative importance so that we may find a solution that corresponds to a satisfactory trade-off	t	3	456
+1837	Retry	t	0	460
+1843	Identify what should be the common and specific parts of the module responsible for the interaction with the external sources, before interacting again with the stakeholders	t	2	461
+1848	Increasing performance, scalability and availability	t	3	462
+1852	Nginx emphasizes the usability quality for system administrators by reducing the number or errors	t	3	463
+1855	You may need to use views of the three viewtypes	t	2	464
+1860	The Communicating Processes style	t	3	465
+1866	The Pipes-and-filters style	t	1	467
+1873	Launching a new process for processing each request is too expensive	t	0	469
+1879	A multiple copies of computation tactic	t	2	470
+1883	A communicating-processes view with non-blocking connectors for the interaction between threads and core data structures	t	2	471
+1885	The solution where the application is responsible for the eviction has better availability	t	0	472
+1891	Reliability	t	2	473
+1898	This law can be seen as an example of the architecture influence cycle	t	1	475
+1904	Becomes unavailable for banks if there is a fault in the hardware of service server (srv-opc)	t	3	476
+1907	We have to distinguish architectural performance from opportunistic performance	t	2	477
+1918	They are both components	t	1	480
+2049	By interleaving the various processing phases of each request in a sequential process	t	0	513
+2053	You need to change the decomposition view to represent modules with the responsibilities associated with the DSL	t	0	514
+2060	A decomposition view which contains the serialization/de-serilization modules	t	3	515
+2065	The main quality of the system in the right part of the figure is scalability	t	0	517
+2070	Decomposition to express the services interfaces	t	1	518
+2074	Performance because it allows the processing of more requests per unit of time	t	1	519
+2088	Is useful even if the implementation is concluded and the system has entered the maintenance phase	t	3	522
+2089	The most important requirements (both functional and qualities) that the system must achieve	t	0	523
+2100	Communicating processes, shared-data, service-oriented architecture, and peer-to-peer	t	3	525
+2102	A component may execute code from different modules	t	1	526
+2108	They guide us in the requirement elicitation process with the system's stakeholders	t	3	527
+2111	It is not possible to develop and to test the system incrementally	t	2	528
+2123	The Shared-Data style	t	2	531
+2128	The Communicating Processes style	t	3	532
+2131	Voting	t	2	533
+2139	Put the requests into a queue and schedule their processing	t	2	535
+2144	A Decomposition view	t	3	536
+2147	Increasing performance and decreasing availability	t	2	537
+2150	Understand the architecturally significant requirements	t	1	538
+2156	Interoperability	t	3	539
+2158	Modifiability	t	1	540
+2182	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, etc.	t	1	546
+2186	Is useful to support scenarios where the stimulus is an omission.	t	1	547
+2192	The level of abstraction of the system an architect works may vary.	t	3	548
+2194	Martin Fowler complains about this definition because the early decisions are not necessarily the right ones.	t	1	549
+2199	This view highlights the different performance levels for `upload` and `dowload` operations.	t	2	550
+2227	This is a case of an architectural influence cycle where the feedback cycle resulted in changes on the business and project.	t	2	557
+2232	This view highlights the scalability of `upload` and `dowload` operations, and of storage.	t	3	558
+2234	This shared understanding includes the architecturally significant requirements.	t	1	559
+2237	The exchange of information is the stimulus.	t	0	560
+2262	This view highlights the performance of the `download` operations.	t	1	566
+2271	Facilitate the communication among the stakeholders such that they can decide on what are the architecturally significant requirements.	t	2	568
+2274	To reason about a system is to verify whether the architecturally significant requirements are considered by the architecture.	t	1	569
+2277	Active redundancy can be used together with a voting tactic to detect and recover from faults.	t	0	570
+2303	It describes a usability scenario where the stimulus is reduce the number of errors when configuring the system.	t	2	576
+2305	In each iteration one or more architecturally significant requirements are used to decompose a software element of the system design.	t	0	577
+2316	A support user initiative tactic based on the definition of a language is used to achieve this scenario.	t	3	579
+2320	Cannot be used together with the Reduce Overhead performance tactic.	t	3	580
+2343	Schedule resources.	t	2	586
+2346	This is a modifiability scenario which has a defer binding tactic.	t	1	587
+2349	Bound execution times, bound queue sizes, and increase resources.	t	0	588
+2356	The utility tree covers all the significant qualities the system has to address.	t	3	589
+2360	Maintain multiple copies of computation.	t	3	590
+2384	This decision is not a consequence of the Fénix business case.	t	3	596
+2387	The tactic used to solve the problem is based in the fact that data points are appended to the end of the metric file.	t	2	597
+2390	Increase resources.	t	1	598
+2395	A modifiability scenario where defer binding occurs at compile time.	t	2	599
+2399	There is no relation between the cost of change and the cost of development.	t	2	600
+2434	The server approach can scale independently of the number of applications.	t	1	609
+2439	A connector embodies a communication protocol.	t	2	610
+2473	Schedule resources.	t	0	619
+2480	Scalability.	t	3	620
+2502	The Merge component executes the modules merge and stdio.	t	1	626
+2505	Performance.	t	0	627
+2510	Scalability of read requests, because it is easy add more repositories to where reads are distributed, though there may be some level of inconsistency.	t	1	628
+2513	Interoperability.	t	0	629
+2544	A decomposition view, a view of the component-and-connector viewtype and a deployment view.	t	3	636
+2549	Client-server.	t	0	638
+2555	Client-server where the Buildbot is the client.	t	2	639
+2583	Decomposition and Generalization.	t	2	646
+2592	It is useful for system administrators.	t	3	648
+2593	Publish-subscribe.	t	0	649
+2598	Tiers to represent scalability.	t	1	650
+2622	The sharing of data is done using a service-oriented architecture.	t	1	656
+2628	Client-server where the Dashboard is the server.	t	3	657
+2638	Communicating processes.	t	1	660
+2780	Implementation views	t	3	695
+2781	Communicating Processes	t	0	696
+2785	Typically have a software architecture that results from the common knowledge about the system that is shared among the team members	t	0	697
+2791	The functional requirements have a large impact on the definition of views of the module viewtype because they are used to define the high cohesion and low coupling of modules	t	2	698
+2795	The response is not correctly stated	t	2	699
+2821	The stimulus is an omission and the tactic is retry	t	0	706
+2831	The quality being addressed is performance and the tactics multiple copies of data and multiple copies of computation	t	2	708
+2833	Tiers style	t	0	709
+2842	The sharing of data is done using a service-oriented architecture	t	1	711
+2848	an ACID transaction occurs in the invoked application and ACID transactions in the other involved applications will eventually occur later	t	3	712
+2852	To support high scalability the request of `User 1` needs to be decomposed into a request to only one of the aggregate instances and the processing in the other aggregate occurs in the background	t	3	713
+2853	We must use various different views, both of the component-and-connector and the allocation viewtypes	t	0	714
+2859	Passive replication and spare	t	2	715
+2864	All of the above	t	3	716
+3001	The stimulus is to port the system to a new browser	t	0	751
+3006	Increase semantic coherence	t	1	752
+3010	Essential to reduce costs whenever there is a fault in a hardware element	t	1	753
+3013	Because this tactic simplifies the addition and removal of DataNodes	t	0	754
+3018	Is composed of things such as code units, runtime elements, hardware, and people, together with the relationships among them	t	1	755
+3021	Describing what are the qualities that the system should possess	t	0	756
+3026	The scenario is correct but it does not describe whether the request the servers fails to respond to succeeds or fails	t	1	757
+3032	Both in a component-and-connector and the Deployment views	t	3	758
+3040	Bound execution times	t	3	760
+3043	The web browser, o web server, and the data base	t	2	761
+3048	It decouples applications developed for different organizations	t	3	762
+3050	Install view	t	1	763
+3054	Write two scenarios on performance	t	1	764
+3058	Component-and-connector viewtype	t	1	765
+3065	A module view	t	0	767
+3069	The Decomposition and the Work Assignment styles	t	0	768
+3075	The Uses style	t	2	769
+3077	The Generalization style	t	0	770
+3085	Use a passive redundancy tactic in the OPC (Order Processing Center)	t	0	772
+3089	The decomposition view to include a module for the synchronization responsibilities	t	0	773
+3100	The price for high scalability and availability is the need to have several replicas of the files to be shared	t	3	775
+3106	Only a small set of functionalities are transactional	t	1	777
+3111	The distributed log guarantees that events will be delivered only once	t	2	778
+3114	It allows high scalability because it is possible the implement transactions associated to each one of the aggregates	t	1	779
+3117	Implementation	t	0	780
+3144	When a read occurs, the client, if it is located in the cluster, receives a list of the DataNodes where the replicas are, ordered by its closeness to the client, to improve performance of reads	t	3	786
+3148	None of the above	t	3	787
+3150	Enumerates, for each kind of quality attribute, all the possible types of source of stimulus, stimulus, response, etc	t	1	788
+3155	The tweet unique ID is written in the home timeline of each one of the writer's followers	t	2	789
+3160	This solution optimizes the performance in terms of the throughput of processed requests	t	3	790
+3184	The periodic rebuild of the checkpoint improves the performance of the NameNode during its initialization	t	3	796
+3186	How to control the response to one or more stimulus	t	1	797
+3190	The ingestion process includes tokenizing of the tweet to include in an index	t	1	798
+3195	This is right but you cannot be completely sure whether the decisions are the right ones	t	2	799
+3200	This solution allows the dimensioning of the number of activities (threads or processes) that run in the server, taking into consideration the server's hardware capacity, in order to have a efficient usage of the server's CPU	t	3	800
+3262	Use an intermediary that contains all the code associated with the remote invocation separating it from the modules' business logic	t	1	816
+3271	The system would respond faster to requests about file locations	t	2	818
+3279	The Voting tactic	t	2	820
+3315	She should try to use a view of the Aspects style, assign this responsibility to a single module and define where it crosscuts the other modules	t	2	829
+3348	A new aspect view that includes a module with the responsibilities associated with the access control and that crosscuts some of the other modules	t	3	837
+3360	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data	t	3	840
+3384	Service-oriented architecture, Shared-data, Peer-to-peer, and Client-server	t	3	846
+3390	May, on another view of the system, be represented by a set of components and connectors	t	1	848
+3424	Tiers, Shared-data, Service-oriented architecture, and Client-server	t	3	856
+3425	A component can subscribe to events	t	0	857
+3432	Client-Server and Shared-data	t	3	858
+3439	A Communicating processes view	t	2	860
+3523	If there is some technology available that implements the complex connectors it is not necessary to document their decomposition.	t	2	881
+3529	Decomposition.	t	0	883
+3536	This solution optimizes the performance in terms of the throughput of processed requests.	t	3	884
+3539	Integrate the development of the software system with the organization's business goals.	t	2	885
+3543	A fault.	t	2	886
+3548	Throughput.	t	3	887
+3551	Restrict dependencies.	t	2	888
+3554	Uses style.	t	1	889
+3560	The Generalization and Decomposition styles.	t	3	890
+3562	An aggregate is usually loaded in its entirety from the database.	t	1	891
+3568	Testing is easier	t	3	892
+3572	Maintain system model.	t	3	893
+3573	This view shows that if is possible to scale differently the `web tier` from the `EJB tier`.	t	0	894
+3579	Maintain multiple copies of computation.	t	2	895
+3584	Retry tactic	t	3	896
+3586	The project manager uses this view to get advice on the incremental development of the system.	t	1	897
+3593	Analysing the performance of the system.	t	0	899
+3600	All layers are mapped to the browser component where the data access layer will contains, besides a module to access a local repository, modules to access external services.	t	3	900
+3684	All the above.	t	3	921
+3685	Increase competence set.	t	0	922
+3690	Reduce overhead.	t	1	923
+3696	It is necessary to use views of the three viewtypes.	t	3	924
+3706	Usability.	t	1	927
+3710	It is useful for the project managers.	t	1	928
+3715	Performance and Availability for crashes of the Image File Storage component.	t	2	929
+3720	Four.	t	3	930
+3723	That the impact of integrating a new source is controlled by the interface of *Import DVD Info* Module.	t	2	931
+3731	The Service Oriented Architecture style.	t	2	933
+3734	This view shows that the processing of tracking requests is done synchronously.	t	1	934
+3744	Pipe-and-filter and shared-data.	t	3	936
+3747	Do not loose the changes done on the client component if the server is not available.	t	2	937
+3749	Split module.	t	0	938
+3759	The connectors only use the *stdio* module for their implementation.	t	2	940
+3783	A common understanding to be achieve among all the system stakeholders	t	2	946
+3788	The measure of the response is throughput	t	3	947
+3791	Project	t	2	948
+3794	Scalability of the Image File Storage in terms of the storage capacity	t	1	949
+3800	Simple programming model, the clients only need to concern about the business logic of the application, the remote services are transparent	t	3	950
+3822	The asynchronous solution can support a larger number of simultaneous requests	t	1	956
+3828	None of the above	t	3	957
+3831	Modifiability	t	2	958
+3836	The separation of write and retrieval services allows them do scale independently	t	3	959
+3838	Limit event response	t	1	960
+3863	In the asynchronous solution it is possible to provide an implement where the tasks being executed are finished without requiring the client to resubmitted them	t	2	966
+3865	Provides the quality of availability	t	0	967
+3871	The need to have eventual consistency and compensating operations	t	2	968
+3875	Maintain multiple copies of computation	t	2	969
+3877	Time to market is the most important impact of cloud computing in an architecture	t	0	970
+3904	There should be at least one view of the system using this architectural style.	t	3	976
+3907	performance tactics.	t	2	977
+3916	May conflict with the Reduce Overhead performance tactic.	t	3	979
+3920	Results from the application of several ADD iterations.	t	3	980
+3948	All the previous options.	t	3	987
+3954	This is a modifiability scenario which has a defer binding tactic.	t	1	989
+3988	None of the above.	t	3	997
+3989	The quality addressed is availability and transactions tactic is required to solve the problem.	t	0	998
+3997	A low cost of change may imply a high cost of development.	t	0	1000
+4024	Service-oriented architecture, Shared-data, Client-server and Peer-to-peer.	t	3	1006
+4027	The Decomposition style.	t	2	1007
+4034	Which improves modifiability, because filters are decoupled through pipes.	t	1	1009
+4039	The view addresses the scenario because it separates the modules that represent the interfaces a new business partner has to implement.	t	2	1010
+4061	If the OPC crashes the Consumer Website can continue to provide service in degraded mode.	t	0	1016
+4065	A component can subscribe to events.	t	0	1017
+4071	The Uses style.	t	2	1018
+4080	The attachment between components and connectors only depends on their ports and roles types.	t	3	1020
+4102	Publish-subscribe.	t	1	1026
+4105	Layer 1.	t	0	1027
+4109	The view does not address the scenario	t	0	1028
+4116	The price for high scalability and availability is the need to have several replicas of the files to be shared.	t	3	1029
+4118	Availability and Performance.	t	1	1030
+4141	A performance scenario associated with the throughput of writing data points to disk.	t	0	1036
+4147	Allows the querying of a past state.	t	2	1037
+4155	The decomposition was driven by a split module tactic.	t	2	1039
+4157	HTML5 provides better portability qualities.	t	0	1040
+4184	An availability scenario of the *Graphite* system.	t	3	1046
+4187	A request for a web page corresponds to requesting a service from the amazon cloud.	t	2	1047
+4191	She should try to split the system in parts in order to isolate the complex business logic and use the two architectural approaches accordingly.	t	2	1048
+4195	Communicating Processes.	t	2	1049
+4200	The view results from the implementation of a support system initiative tactic.	t	3	1050
+4504	It helps on the configuration of systems.	t	3	1126
+4222	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	t	1	1056
+4227	A deployment and a work assignment view.	t	2	1057
+4231	This view fulfills a modifiability scenario, which states about the cost of adding a new source of information to the system.	t	2	1058
+4236	At least two performance scenarios of the *Graphite* system.	t	3	1059
+4239	Reads may not be consistent with the most recent write.	t	2	1060
+4321	Modifiability.	t	0	1081
+4327	A view of the Decomposition style	t	2	1082
+4332	By changing a parent, which will automatically change all the children that inherit from it.	t	3	1083
+4333	With a component-and-connector view, where the *load balancer* is a component of the system	t	0	1084
+4338	It supports the concurrent access of data accessors.	t	1	1085
+4341	The solution where the application is responsible for retrieving the missing piece of data from the underlying store has better availability	t	0	1086
+4348	A new aspect view to include the responsibilities associated with the access control.	t	3	1087
+4351	The Publish-subscribe style	t	2	1088
+4353	Analysing the performance of the system	t	0	1089
+4360	Client-server, Repository and Publish-subscribe.	t	3	1090
+4364	Security	t	3	1091
+4367	and it does not penalize reliability because it also provides an interface that the webapp components can use to access the most recent data	t	2	1092
+4371	A layered architecture, where the access to the various sources is the responsibility of the bottommost layer	t	2	1093
+4373	Schedule Resources	t	0	1094
+4377	Maintain system model tactic.	t	0	1095
+4382	An iterative development was followed, which allowed more time to develop a connector with good performance in the latter stages of the project.	t	1	1096
+4386	This decomposition implies that, in average, customers are going to have a large number of orders.	t	1	1097
+4391	Heartbeat is more scalable than ping/echo because the monitor does not need to know in advance the addresses of the components.	t	2	1098
+4394	All viewtypes may be necessary	t	1	1099
+4399	When the environment is initiation time it means that it is necessary to restart the system for the change to take effect	t	2	1100
+4481	Can use the operations defined in any of the system's modules	t	0	1121
+4491	It represents a relation between a component's port and a port of one of its internal components.	t	2	1123
+4493	To facilitate the interaction among heterogeneous components that use distinct communication protocols	t	0	1124
+4498	The behavior described in the sentence can be represented in a view where the dynamic reconfiguration architectural style is used	t	1	1125
+4505	The presentation logic layer and how it relates with the underlying layer changed	t	0	1127
+4512	Detect a fault.	t	3	1128
+4514	Limit event response	t	1	1129
+4519	Restrict dependencies	t	2	1130
+4521	It would reduce the scalability for updates of different orders for the same customer.	t	0	1131
+4527	Reads may not be consistent with the most recent write.	t	2	1132
+4532	A module contains the code that can execute in several components and a component can execute the code of several modules	t	3	1133
+4533	Manage sampling rate	t	0	1134
+4537	The layered view to deal with the aspects of portability.	t	0	1135
+4542	The view addresses the scenario because it separates the `Consumer Website` module from the `OpcApp` module to allow the execution of the `Consumer Website` module in a component that can have multiple copies of computation	t	1	1136
+4547	Performance	t	2	1137
+4550	Performance e Usability	t	1	1138
+4554	A module view of the data model style.	t	1	1139
+4559	Suffered from some level of featuritis, but it allowed to have a pilot from which the team learned.	t	2	1140
+4622	Usability	t	1	1156
+4627	Performance and security	t	2	1157
+4632	Monitorability	t	3	1158
+4633	Manage sampling rate	t	0	1159
+4638	Maintain multiple copies of computation	t	1	1160
+4703	Availability.	t	2	1176
+4708	Schedule resources	t	3	1177
+4711	Component and Module	t	2	1178
+4715	Maintain multiple copies of data	t	2	1179
+4717	Limit event response	t	0	1180
+4741	Limit access.	t	0	1186
+4746	Increase resource efficiency tactic.	t	1	1187
+4751	The new defects introduced.	t	2	1188
+4756	Is an iterative process where architectural designs are proposed as hypothesis and tested.	t	3	1189
+4758	Is applied at the begin of the architectural design process but may be necessary to redo it later.	t	1	1190
+4783	Voting.	t	2	1196
+4785	This ASR can easily be supported by the architecture because it has little effect in the architecture.	t	0	1197
+4789	The correctness of the caller module may not depend on the correct implementation of the invoked function in the called module.	t	0	1198
+4796	Schedule resources tactic.	t	3	1199
+4799	Maintain system model	t	2	1200
+4829	The main quality this style addresses is interoperability.	t	0	1208
+4835	Each layer defines a virtual machine because it provides a set of cohesive functionalities to the upper layer	t	2	1209
+4837	If there are performance requirements concerning the access to data, then the level of detail should be physical	t	0	1210
+4862	Restricts the communication between components because, for instance, a group of components should be located in the same hardware.	t	1	1216
+4867	It separates in new modules responsibilities that were spread over various of the system's modules	t	2	1217
+4872	The interaction between peers is symmetric.	t	3	1218
+4876	It is necessary to design a view of the Data Model architectural style at the physical level to deal with performance and consistency issues of the access to data.	t	3	1219
+4877	A component is an instance and a view can have several instances of the same component type.	t	0	1220
+4902	A single view of the communicating processes style.	t	1	1226
+4908	All of the above.	t	3	1227
+4911	A deployment and a work assignment view.	t	2	1228
+4916	The data model view in order to define generic entities that can be customized for different kinds of catalogs.	t	3	1229
+4917	Client-server.	t	0	1230
+4942	Communicating Processes.	t	1	1236
+4946	The communicating processes style and the dynamic reconfiguration style.	t	1	1237
+4951	Publish-subscribe.	t	2	1238
+4954	Modules are allocated to persons and teams.	t	1	1239
+4957	The decomposition view to include a module for the synchronization responsibilities.	t	0	1240
 \.
 
 
@@ -24864,6 +24864,7 @@ COPY public.question_answers (id, time_taken, option_id, quiz_answer_id, quiz_qu
 
 COPY public.questions (id, active, content, number, number_of_answers, number_of_correct, title) FROM stdin;
 71	t	The main architectural driver for the nginx system was	71	0	0	nginxFirstADINGLES
+101	t	The document describing the Glasgow Haskell Compiler presents two design decisions about the development of the *Runtime System*. The first of those decisions is described like this:  \n>"The garbage collector is built on top of a block layer that manages memory in units of blocks, where a block is a multiple of 4 KB in size. The block layer has a very simple API: [...]. This is the only API used by the garbage collector for allocating and deallocating memory. Blocks of memory are allocated with `allocGroup` and freed with `freeGroup`."  \n  \nWhich architectural style is more adequate to represent this design decision?	101	0	0	GHCBlockLayerINGLES
 316	t	Frank Buschmann states that:  \n>"Architects use flexibility as a cover for uncertainty."  \n  \n	316	0	0	Prioritize
 317	t	In his article *On Hammers and Nails, and Falling in Love with Technology and Design* what is the main type of influence on the architecture?	317	0	0	HammersNails
 610	t	Consider the Component-and-Connector viewtype	610	0	0	ComponentAndConnectorOne
@@ -24906,6 +24907,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 897	t	Consider the Uses architectural style of the Module viewtype	897	0	0	Layered
 1099	t	To analyse the performance of a system	1099	0	0	PerformanceOne
 1128	t	A voting tactic can be used to	1128	0	0	AvailabilityTwo
+415	t	When the domain logic is organized using a Transaction Script pattern the most suitable data source patterns are	415	0	0	LogicAccessTransactionScript
 63	t	One of the most important decisions during the development of the Glasgow Haskell Compiler was to perform the type-checking before the desugaring of an Haskell program into a program in the Core language (*type-check-before-desugar*). This design decision	63	0	0	GHCDesugaringINGLES
 2	t	There are other factors that affect the development of a software system, besides its functional requirements and quality attributes. For example, factors such as budget or available time. These factors	2	0	0	AtrQualNegocio
 3	t	Suppose that you are developing a new software system and that you want some part of the system's functionality to be easily reusable in future systems. Which of the following architectural styles are more suitable to show that the system architecture meets this requirement.	3	0	0	Reutilizar
@@ -24918,6 +24920,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 12	t	Given the complexity of building a good automatic Chess player, programs that play chess usually make use of existing chess engines, as shown by the following excerpt from Wikipedia:  \n>"A chess engine is a computer program that can play the game of chess. Most chess engines do not have their own graphical user interface (GUI) but are rather console applications that communicate with a GUI such as XBoard (Linux) and WinBoard (Windows) via a standard protocol."  \n  \nIn the web page for XBoard, we may read the following:  \n>"XBoard is a graphical user interface for chess [...]. It displays a chessboard on the screen, accepts moves made with the mouse, and loads and saves games in Portable Game Notation (PGN). It serves as a front-end for many different chess services, including:  \n-  Chess engines that will run on your machine and play a game against you or help you analyze, such as GNU Chess, Crafty, or many others.  \n-  [...]  \n"  \n  \nGiven the above information on XBoard, chess engines, and how they interact at runtime, which of the following architectural styles best represents the of architecture of a software system based on XBoard and one of the engines?	12	0	0	XBoardChess
 13	t	Suppose that you join the development team of a very large software system, and that you are assigned some tasks to change some existing features. Which of the following architectural views would be, in principle, more useful to you to perform those tasks quickly?	13	0	0	AlterarFuncionalidadesExistentes
 14	t	Consider the following excerpt from the Wikipedia page on *black-box testing*:  \n>"Black-box testing is a method of software testing that tests the functionality of an application as opposed to its internal structures or workings. Specific knowledge of the application's code/internal structure and programming knowledge in general is not required. Test cases are built around specifications and requirements, i.e., what the application is supposed to do."  \n  \nAssuming that you belong to the team testing a complex system and that you are responsible for performing black box tests on the system, which of the following architectural views of the system would be most useful to you?	14	0	0	BlackBoxTesting
+416	t	When comparing Amazon Silk with Google Chrome	416	0	0	SilkCaching
 15	t	Consider an enterprise application that needs to keep its data persistently, but for which no one knows yet what is the volume of information that will be handled by the application. Therefore, the system's architect intends to develop the system such that it is possible to change easily the relational database (RDBMS) component used to store the application's data, replacing it with an RDBMS from another manufacturer. Given that this is a common requirement, the recommended software architecture for such applications fulfills this requirement by using a particular architectural style. Which style is it?	15	0	0	TrocarBDCamadas
 16	t	Suppose that you decided to use the Google App Engine (GAE) in the development of a web application. The GAE is described in the Wikipedia as follows:  \n>"Google App Engine is a platform for developing and hosting web applications in Google-managed data centers. Google App Engine is cloud computing technology. It virtualizes applications across multiple servers and data centers. [...] Google App Engine is free up to a certain level of used resources. Fees are charged for additional storage, bandwidth, or CPU cycles required by the application."  \n  \nOn the other hand, the GAE documentation reads the following:  \n>"With App Engine, you can build web applications using standard Java technologies and run them on Google's scalable infrastructure. The Java environment provides a Java 6 JVM, a Java Servlets interface, and support for standard interfaces to the App Engine scalable datastore and services, such as JDO, JPA, JavaMail, and JCache. Standards support makes developing your application easy and familiar, and also makes porting your application to and from your own servlet environment straightforward."  \n  \nTaking into account these two perspectives on the GAE, which architectural styles are more appropriate to represent the use of GAE in the software architecture of your web application?	16	0	0	GoogleAppEngine
 17	t	The Eclipse IDE is an open source application written in Java, and is extensible through the use of plug-ins. In the document that describes the existing plug-ins architecture in Eclipse, we may read the following:  \n>"A plug-in in Eclipse is a component that provides a certain type of service within the context of the Eclipse workbench. [...] The plug-in class provides configuration and management support for the plug-in. A plug-in class in Eclipse must extend `org.eclipse.core.runtime.Plugin`, which is an abstract class that provides generic facilities for managing plug-ins."  \n  \nConsidering the model and terminology used in the course to describe a software architecture, what kind of views are more appropriate to represent the plug-ins architecture of Eclipse described above?	17	0	0	PluginsEclipse
@@ -24971,7 +24974,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 78	t	Consider again the architecture shown in Figure~1.3, where redundancy was introduced into the system. In this particular case, introducing redundancy into the architecture has the goal of	78	0	0	WebRedundancyINGLES
 79	t	The typical software architecture of an enterprise application is composed of three tiers and three layers. Yet, we may have variations of this architecture. For instance, by separating the middle tier in two tiers. In this case, which other changes exist on the architecture that are related with the layers?	79	0	0	ThreeVsFourTiersINGLES
 81	t	The first architecture of the Fénix system, corresponding to its first years of development, could be described as a three-layered architecture, typical of an enterprise application. One of those layers was the *domain logic* layer. Which of the following sentences best describes the Fénix architecture in what concerns that layer?	81	0	0	DomainLogicFenixINGLES
-570	t	Considering the availability architectural quality and the tactics of active redundancy, passive redundancy, and spare	570	0	0	RestartInRedundancy
+1210	t	The detail that can be used in a view of the Data Model viewtype can be conceptual, logical or physical.	1210	0	0	DataModelOne
 82	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	82	0	0	IncrementalReleasesINGLES
 86	t	The web page that describes the architecture of Chromium OS (an open source project to implement a new operating system) starts like this:  \n>"Chromium OS consists of three major components:  \n-  The Chromium-based browser and the window manager  \n-  System-level software and user-land services: the kernel, drivers, connection manager, and so on  \n-  Firmware  \n"  \n  \nConsidering this brief description of the software architecture of Chromium OS, which architectural style is more adequate to represent it?	86	0	0	ChromiumDecompositionINGLES
 87	t	Suppose that, to satisfy a security requirement related with possible attacks coming from users that access your system through the Internet, you want to use the tactic named *Limit Exposure*. How does the use of that tactic manifests in the architectural views of your system?	87	0	0	SecurityINGLES
@@ -24986,9 +24989,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 97	t	In the continuation of the description presented in the previous question, later in the document there is this passage:  \n>"Caching in nginx is implemented in the form of hierarchical data storage on a filesystem. Cache keys are configurable, and different request-specific parameters can be used to control what gets into the cache. Cache keys and cache metadata are stored in the shared memory segments, which the cache loader, cache manager and workers can access."  \n  \nWhich architectural style is more adequate to represent the use of cache in nginx?	97	0	0	nginxCachingINGLES
 98	t	As mentioned in the previous questions, the use of *workers* is one of the crucial elements in the software architecture of nginx. Which of the following sentences best describes how *workers* work in nginx?	98	0	0	nginxWorkersINGLES
 99	t	Given that a *worker* processes various requests during its life, how does it do it?	99	0	0	nginxWorkerParallelINGLES
-568	t	Very often, when a software architecture is being designed, conflicting requirements are identified, like between security and availability. The role of the software architect is to	568	0	0	Diplomat
 100	t	The main *architectural driver* for the nginx system was to solve the *C10K problem*: being able to maintain 10.000 simultaneous connections with a single server running on conventional hardware. For this o happen, nginx must	100	0	0	nginxCTenKProblemINGLES
-101	t	The document describing the Glasgow Haskell Compiler presents two design decisions about the development of the *Runtime System*. The first of those decisions is described like this:  \n>"The garbage collector is built on top of a block layer that manages memory in units of blocks, where a block is a multiple of 4 KB in size. The block layer has a very simple API: [...]. This is the only API used by the garbage collector for allocating and deallocating memory. Blocks of memory are allocated with `allocGroup` and freed with `freeGroup`."  \n  \nWhich architectural style is more adequate to represent this design decision?	101	0	0	GHCBlockLayerINGLES
 102	t	What was the main goal of the GHC's authors that led them to the design decision described in the previous question?	102	0	0	GHCBlockLayerQualitiesINGLES
 103	t	Some of the *architectural drivers* of the Glasgow Haskell Compiler are related with the system's extensibility, and one of the solutions adopted by its authors to provide that extensibility was the introduction of *user-defined rewrite rules*, described in the document as follows:  \n>"The core of GHC is a long sequence of optimisation passes, each of which performs some semantics-preserving transformation, `Core` into `Core`. But the author of a library defines functions that often have some non-trivial, domain-specific transformations of their own, ones that cannot possibly be predicted by GHC. So GHC allows library authors to define rewrite rules that are used to rewrite the program during optimisation. In this way, programmers can, in effect, extend GHC with domain-specific optimisations."  \n  \nHow does this solution manifests in the software architecture of the system?	103	0	0	GHCRewriteRulesINGLES
 104	t	According to the document that describes the Glasgow Haskell Compiler:  \n>"As the popularity of the Haskell language has grown, there has been an increasing need for tools and infrastructure that understand Haskell source code, and GHC of course contains a lot of the functionality necessary for building these tools: a Haskell parser, abstract syntax, type checker and so on. With this in mind, we made a simple change to GHC: rather than building GHC as a monolithic program, we build GHC as a library, that is then linked with a small Main module to make the GHC executable itself, but also shipped in library form so that users can call it from their own programs. At the same time we built an API to expose GHC's functionality to clients."  \n  \nWhich architectural diagram is more adequate to represent the information presented above?	104	0	0	GHCAsLibraryINGLES
@@ -24999,6 +25000,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 109	t	Consider the paragraph marked with the number 2 in the document that describes the use of caches in web services (see annex), where the failure of a node in the distributed cache is discussed. When that happens, what are the consequences for the system?	109	0	0	WebMissingCacheNodeINGLES
 111	t	One of the major changes introduced in the software architecture of the Fénix system, compared to its first architecture, was	111	0	0	DomainLogicFenixINGLES
 112	t	Several of the cases studied in this course had performance requirements. Which architectural views are typically needed to show that those requirements are satisfied?	112	0	0	PerformanceINGLES
+136	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed:	136	0	0	GMRestModularityEN
 116	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MUA and the MTA?	116	0	0	ArqEmailMUAMTAINGLES
 118	t	Suppose that you are developing a web application that keeps in a database some information that is introduced by the users and that one of the requirements is that the information should be kept confidential, such that no one but the author of the information should be able to see it (but the author may access that information whenever he wants it). How would you satisfy this requirement?	118	0	0	SecurityINGLES
 119	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	119	0	0	WebEvolutionINGLES
@@ -25016,7 +25018,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 133	t	One of the qualities of Chrome is the execution of the JavaScript code inside a process, which allows the isolation against possible interferences between the execution of JavaScript programs that are loaded from different sites. The isolation level	133	0	0	CHSecurityLevelEN
 134	t	In the description of the Chrome case study you can read:  \n*Typing in the Omnibox (URL) bar triggers high-likelihood suggestions, which may similarly kick off a DNS lookup, TCP pre-connect, and even prerender the page in a hidden tab.*  \nThis description refers to	134	0	0	CHOmniboxTacticsEN
 135	t	Consider the following fragment of GNU Mailman  \n*In Mailman 2, the MailList object's state is stored in a file called config.pck, which is just the pickled representation of the MailList object's dictionary. Every Python object has an attribute dictionary called __dict__. So saving a mailing list object then is simply a matter of pickling its __dict__ to a file, and loading it just involves reading the pickle from the file and reconstituting its __dict__.*  \nAlthough simple, this solution resulted in several problems which had a negative impact on performance. This is due to:	135	0	0	GMPicklePerformanceEN
-136	t	Consider the following fragment of GNU Mailman case study:  \n*Mailman 3 has adopted the Representational State Transfer (REST) model for external administrative control. REST is based on HTTP, and Mailman's default object representation is JSON. These protocols are ubiquitous and well-supported in a large variety of programming languages and environments, making it fairly easy to integrate Mailman with third party systems. REST was the perfect fit for Mailman 3, and now much of its functionality is exposed through a REST API.*  \nThis solution allowed:	136	0	0	GMRestModularityEN
 137	t	Consider the following fragment of GNU Mailman case study:  \n*Once a message has made its way through the chains and rules and is accepted for posting, the message must be further processed before it can be delivered to the final recipients. For example, some headers may get added or deleted, and some messages may get some extra decorations that provide important disclaimers or information, such as how to leave the mailing list.*  \nThe Pipes-and-Filters architectural style is used in the handling of messages. In this context the data type which is sent among the filters is	137	0	0	GMPipesFiltersDataEN
 138	t	In the description of the GNU Mailman case study it is proposed a solution that, when there are several queue runners executing on the same queue, the delivery of messages is done according to arrival order (FIFO).  \n*There's another side effect of this algorithm that did cause problems during the early design of this system. Despite the unpredictability of email delivery in general, the best user experience is provided by processing the queue files in FIFO order, so that replies to a mailing list get sent out in roughly chronological order.*  \nThe proposed solution	138	0	0	GMReliabilityFIFOEN
 139	t	The function of Master Runner component of GNU Mailman can be represented using an architecture style of	139	0	0	GMMasterRunnerEN
@@ -25074,7 +25075,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 233	t	In EtherCalc initial prototype clients send their local commands and snapshots to the server, which result on redundant information on the server about the state of the spreadsheet. This redundancy is an application of	233	0	0	EtherCalcRedundancy
 234	t	In EtherCalc initial prototype clients send their local commands, cursor movements and snapshots to the server.	234	0	0	EtherCalcSnapshotPerformance
 235	t	In the EtherCalc case description can be read  \n>"The in-browser SocialCalc engine is written in JavaScript. We considered translating that logic into Perl, but that would have carried the steep cost of maintaining two code bases."  \n  \nThe excerpt is referring to a quality of	235	0	0	EtherCalcModifiabilityTestability
-287	t	You have to develop an application that collects news from different web sources and process that information to present a digest to the application users. The different sources provide similar information through different interfaces (APIs). Additionally, the new sources may change the interfaces, for instance to enhance their service. Which architectural style can be used to represent this requirements?	287	0	0	GeneralizationInterfaces
+638	t	Consider the Infinispan system when it is configured as a remote data grid. The relation between the Applications and the Grid is	638	0	0	InfinispanOne
 272	t	Compared to the Transaction Script pattern, the Domain Logic pattern has a higher initial cost of adoption. That is, it is harder to start with the Domain Logic pattern than with the Transaction Script pattern. The reason for this is that the Domain Logic pattern	272	0	0	TransactionScript
 273	t	Ruby on Rails is a popular full-stack framework for building web applications. One of the elements of this framework is the **model**, which is described in the Rails documentation in the following way:  \n>"A model represents the information (data) of the application and the rules to manipulate that data. In the case of Rails, models are primarily used for managing the rules of interaction with a corresponding database table. In most cases, one table in your database will correspond to one model in your application. The bulk of your application's business logic will be concentrated in the models."  \n  \nGiven this description, the Rails' model is best described as an instance of	273	0	0	ActiveRecordRuby
 275	t	Ping-and-echo and Heartbeat are two availability tactics to detect faults.	275	0	0	AvailabilityPingEchoHeartbeat
@@ -25088,6 +25089,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 284	t	The software architecture of a system is usually represented through several views because we need to	284	0	0	ArchitecturalViews
 285	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecturally significant requirements*. These architecturally significant requirements should be sorted according to their importance for the system's stakeholders because	285	0	0	ArchitecturallySignificantRequirements
 286	t	On the web page of Memcached can be read:  \n>"..., high-performance, distributed memory object caching system, generic in nature, but intended for use in speeding up dynamic web applications by alleviating database load."  \n  \nAccording to this information, Memcached is	286	0	0	ModueComponent
+287	t	You have to develop an application that collects news from different web sources and process that information to present a digest to the application users. The different sources provide similar information through different interfaces (APIs). Additionally, the new sources may change the interfaces, for instance to enhance their service. Which architectural style can be used to represent this requirements?	287	0	0	GeneralizationInterfaces
 288	t	When designing the architecture for a system the architect realises that most of the modules have bidirectional uses relationships. This has impact on	288	0	0	UsesIncremental
 289	t	In the description of EtherCalc case study can be read  \n>"Because all jsdom code runs in a single thread, subsequent REST API calls are blocked until the previous command's rendering completes. Under high concurrency, this queue eventually triggered a latent bug that ultimately resulted in server lock-up."  \n  \nThe above sentence is related to a quality for	289	0	0	EtherCalcPerformance
 290	t	In the description of EtherCalc case study can be read  \n>"So, we removed jsdom from the RenderSheet function, re-implemented a minimal DOM in 20 lines of LiveScript for HTML export, then ran the profiler again. Much better! We have improved throughput by a factor of 4, HTML exporting is 20 times faster, and the lock-up problem is gone."  \n  \nThe above sentence describes a	290	0	0	EtherCalcTactic
@@ -25155,17 +25157,15 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 398	t	Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Buffering is a library used to temporarily store incoming data point.   \n![image][image]  \n	398	0	0	GraphiteDecompositionBuffering
 399	t	An architect needs to show that a security tactic of limit exposure will be effectively provided by the executing system. Therefore, she decides to design	399	0	0	DeploymentStyleLimitExposure
 414	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the system. According to this representation   \n![image][image]  \n	414	0	0	SocialCalcServer
-415	t	When the domain logic is organized using a Transaction Script pattern the most suitable data source patterns are	415	0	0	LogicAccessTransactionScript
-416	t	When comparing Amazon Silk with Google Chrome	416	0	0	SilkCaching
 417	t	Consider the architectural views for the ThousandParsec system. The following diagram depicts a fragment of a proposal for the decomposition view of the system. The AI players should be described   \n![image][image]  \n	417	0	0	ThousandParsecAI
 418	t	Consider the architecture of the Morrison's OrderPad. The final interaction between the OrderPadDatabase component and Mainframe component is supported by	418	0	0	OrderPadMainframeConnector
 419	t	Consider the architectural views for the SocialCalc system. The following diagram depicts a proposal for a component-and-connector view of the client Spreadsheet. A Parser module is used when loading a file   \n![image][image]  \n	419	0	0	SocialCalcParser
 420	t	When the domain logic is organized using a Domain Model pattern the most suitable data source patterns are	420	0	0	LogicAccessDomainModel
-465	t	Suppose that you are designing the software architecture for an enterprise application that has requirements about the maximum response time for a certain type of requests. Moreover, assume that those requests arrive at the system periodically, whereas the remaining requests have an unpredictable frequency. Finally, assume that your system will have a single server that will be executing on a predefined machine with a 12-core AMD processor. To show to the stakeholders that your system satisfies the performance requirements you have to use views of which architectural style?	465	0	0	RepositoryClientServerOne
 451	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nConsider that a scenario is written from the above sentence	451	0	0	ContinousIntegrationScenariosTacticsOne
 452	t	In the Infinispan case study can be read  \n>"When persisting for durability, persistence can either be online, where the application thread is blocked until data is safely written to disk, or offline, where data is flushed to disk periodically and asynchronously. In the latter case, the application thread is not blocked on the process of persistence, in exchange for uncertainty as to whether the data was successfully persisted to disk at all."  \n  \nFrom the description we can infer a trade-off between the qualities of	452	0	0	InfinispanScenariosTacticsOne
 453	t	With the evolution of the web application technologies, it is now possible to develop web applications with a user interface similar to the interface of desktop applications. Yet, for this to happen, part of the code that was executing in the web server is now executing in the web browser. How does this change manifests in the software architecture of the system?	453	0	0	WebTwoOne
 454	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	454	0	0	MicroservicesArchitectureOne
+639	t	Consider the following representation of the Buildbot system.   \n![image][image]  \n The architecture style between the Buildbot Master and the Clients is:	639	0	0	JenkinsOne
 455	t	Consider the following excerpt about the Amazon system  \n>"Over time, this grew into hundreds of services and a number of application servers that aggregate the information from the services. The application that renders the Amazon.com Web pages is one such application server, but so are the applications that serve the Web-services interface, the customer service application, the seller interface, and the many third-party Web sites that run on our platform."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	455	0	0	AmazonOne
 456	t	According to the attribute-driven design process, we should design the software architecture for a system based on a selected list of requirements, which are called the *architecture significant requirements*. These requirements should be sorted according to their importance for the system's stakeholders because	456	0	0	DesigningArchitectureOne
 460	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to deal with faults of type *omission* in your system, which tactic is more adequate?	460	0	0	AvailabilityOne
@@ -25173,6 +25173,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 462	t	Consider the change in the architecture associated with the use of caches in web services shown in the figure   \n![image][image]  \n That change has the goal and the consequence of, respectively	462	0	0	PerformanceOneOne
 463	t	Consider the following excerpt from Nginx case study  \n>"nginx configuration is kept in a number of plain text files which typically reside in /usr/local/etc/nginx or /etc/nginx. The main configuration file is usually called nginx.conf. To keep it uncluttered, parts of the configuration can be put in separate files which can be automatically included in the main one. However, it should be noted here that nginx does not currently support Apache-style distributed configurations (i.e., .htaccess files). All of the configuration relevant to nginx web server behavior should reside in a centralized set of configuration files."  \n  \nWhen comparing the configuration in Nginx with the configuration in Apache we can say that	463	0	0	NginxScenariosTacticsOne
 464	t	Suppose that there are certain performance requirements for a system, and that you want to show to the stakeholders of the system that the software architecture that you designed meet those requirements. To do this	464	0	0	ComponentConnectorOne
+465	t	Suppose that you are designing the software architecture for an enterprise application that has requirements about the maximum response time for a certain type of requests. Moreover, assume that those requests arrive at the system periodically, whereas the remaining requests have an unpredictable frequency. Finally, assume that your system will have a single server that will be executing on a predefined machine with a 12-core AMD processor. To show to the stakeholders that your system satisfies the performance requirements you have to use views of which architectural style?	465	0	0	RepositoryClientServerOne
 467	t	Imagine that you want to develop a system that is to be used in email servers, whose goal is to allow changing the emails that are received by the server (for example, to remove potential viruses or URLs linking to phishing sites). The goal is that the server feeds each received email through this system before processing it (e.g., forward it to another server, or store it locally). The system is supposed to be easily modifiable, to support new types of email transformations. Which architectural style is the most adequate to satisfy these requirements?	467	0	0	SOAPipesFiltersOne
 469	t	Web servers implemented in Java, such as the Tomcat web server, typically use a thread-based model for processing requests. That is, they process each request on a different thread within the same JVM process, rather than on a different process. One of the reasons for this is that	469	0	0	nginxOne
 470	t	Consider the following architectural view of the Pony-Build system as described in the Continous integration case study   \n![image][image]  \n According to this view the quality of performance is achieved through	470	0	0	ContinousIntegrationViewsOne
@@ -25184,9 +25185,9 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 477	t	Frank Buschmann cites the characterization Marquardt does of Performitis:  \n>"Each part of the system is directly influenced by local performance tuning measures. There is no global performance strategy, or it ignores other qualities of the system as testability and maintainability."  \n  \nFrom this problem you can conclude that:	477	0	0	RequirementsOne
 480	t	Consider the Figure that describes the use of caches in web services.   \n![image][image]  \n In that Figure, there is a rectangle with the name *Cache* within another rectangle with the name *Request Node*. Taking into account the description made in the text and the goal of that Figure, those rectangles correspond to which type of software elements?	480	0	0	ModuleComponentOne
 513	t	In Nginx, given that a *worker* processes various requests during its life, how does it do it?	513	0	0	nginxTwo
-569	t	The definition of software architecture, on the course book, is  \n>"*The software architecture of a system is the set of structures needed to reason about the system, which comprise software elements, relations among them, and properties of both.*"  \n  \nAccording to this definition	569	0	0	ASDefinition
 514	t	In the Continous integration case study can be read about future features for Pony-Build  \n>"Currently, each continuous integration system reinvents the wheel by providing its own build configuration language, which is manifestly ridiculous; there are fewer than a dozen commonly used build systems, and probably only a few dozen test runners. Nonetheless, each CI system has a new and different way of specifying the build and test commands to be run. In fact, this seems to be one of the reasons why so many basically identical CI systems exist: each language and community implements their own configuration system, tailored to their own build and test systems, and then layers on the same set of features above that system. Therefore, building a domain-specific language (DSL) capable of representing the options used by the few dozen commonly used build and test tool chains would go a long way toward simplifying the CI landscape."  \n  \nSuppose that you are the architect that has to change the architecture to accomodate this new feature. Therefore, as an architect	514	0	0	ContinousIntegrationViewsTwo
 515	t	In the Infinispan case study can be read  \n>"Infinispan uses its own serialization scheme, where full class definitions are not written to the stream. Instead, magic numbers are used for known types where each known type is represented by a single byte. This greatly improves not just serialization and de-serialization speed qualities, but also produces a much more compact byte stream for transmission across a network. An externalizer is registered for each known data type, registered against a magic number. This externalizer contains the logic to convert object to bytes and vice versa."  \n  \nThese properties of Infinispan can be represented by	515	0	0	InfinispanViewsTwo
+536	t	Suppose that in the development of an enterprise application (which needs to access a database) it was decided to use the Hibernate framework to simplify the development of the data access code. Which architectural view is the most adequate to represent this decision?	536	0	0	ModuleViewtypeTwoOne
 517	t	Consider the following figure depicting two different architectures for web applications   \n![image][image]  \n	517	0	0	MicroservicesArchitectureTwo
 518	t	Consider the following excerpt about the Amazon system  \n>"Mainly, I think service orientation has helped us there. The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats. You could dictate a rigorous single format, but that would not be realistic if you are in Amazon's platform business. We have to make sure that the platform can be extended by our customers to meet their needs."  \n  \nThe architectural style that better represents these aspects of the Amazon architecture is	518	0	0	AmazonTwo
 519	t	Consider the following excerpt about the Scalable web architecture and distributed systems case study  \n>"Employing such a strategy maximizes data locality for the requests, which can result in decreased request latency. For example, let's say a bunch of nodes request parts of B: partB1, partB2, etc. We can set up our proxy to recognize the spatial locality of the individual requests, collapsing them into a single request and returning only bigB, greatly minimizing the reads from the data origin."  \n  \nThe quality that is achieved with this tactic is	519	0	0	ScalableArchitectureTwo
@@ -25197,11 +25198,9 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 527	t	General scenarios play an important role in the development of a software architecture because	527	0	0	ScenariosTacticsTwo
 528	t	Suppose that in the process of designing a system's software architecture you come to the conclusion that there are uses relations in both directions in almost all of the system's modules. This means that	528	0	0	UsesGeneralizationTwo
 531	t	The email system is composed of various types of components playing different roles. For example, to send an email, a user uses a *mail user agent* (MUA), to compose his message and send it. To send the message, the MUA typically connects to a *mail transfer agent* (MTA) that receives the message, analyzes the message's headers to determine the recipients and, after querying the DNS system to determine the MTA responsible for each recipient, it connects to the MTAs responsible for the destination addresses to deliver the message. Each of these MTAs receives the message and stores it locally or forwards it to others MTAs until the message reaches its destination MTA. The recipient user of the message will then use his MUA to see the messages that were sent to him. To do it, the MUA connects to an IMAP or POP server to obtain the user's messages. Those IMAP and POP servers obtain the messages for a user by reading the messages stored by the MTA. Given this simplified description of the operation of the email system, which of the following architectural styles is more appropriate to represent the pattern of interaction between the MTA and the servers IMAP and POP?	531	0	0	RepositoryClientServerTwo
-566	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	566	0	0	ImageHostingReads
 532	t	Consider the following excerpt from the tutorial on the Hadoop MapReduce:  \n>"Hadoop MapReduce is a software framework for easily writing applications which process vast amounts of data (multi-terabyte data-sets) in-parallel on large clusters (thousands of nodes) of commodity hardware in a reliable, fault-tolerant manner. A MapReduce job usually splits the input data-set into independent chunks which are processed by the map tasks in a completely parallel manner. The framework sorts the outputs of the maps, which are then input to the reduce tasks. Typically both the input and the output of the job are stored in a file-system. The framework takes care of scheduling tasks, monitoring them and re-executes the failed tasks."  \n  \nWhich architectural style of the component-and-connector viewtype is more adequate to describe how the MapReduce works, taking into account its main advantages in solving a problem?	532	0	0	TiersDynamicreconfigurationPeertopeerPublishsubscribeTwo
 533	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	533	0	0	AvailabilityTwo
 535	t	Web servers typically receive requests from different users concurrently (that is, either different users make requests simultaneously or they make them fast enough that it is not possible for the web server to answer one request from one user before receiving another request from another user). To process all the requests, web servers may use different implementation strategies. Assuming that we want to develop a web server to serve only static pages with more or less the same size to a set of clients on the same LAN network as the server, which of the following strategies would be better?	535	0	0	NginxScenariosTacticsTwo
-536	t	Suppose that in the development of an enterprise application (which needs to access a database) it was decided to use the Hibernate framework to simplify the development of the data access code. Which architectural view is the most adequate to represent this decision?	536	0	0	ModuleViewtypeTwoOne
 537	t	Consider the change in the architecture associated with the use of caches in web services shown in the figure   \n![image][image]  \n Taking into consideration that this change involves adding a server, which has a larger storage capacity than the request Nodes, that change has the impact of	537	0	0	PerformanceTwoOne
 538	t	During the different steps on how to create an architecture, the precise specification of architecture quality attributes is initially relevant to	538	0	0	DesigningArchitectureTwo
 539	t	In the Continous integration case study can be read about Jenkins  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools. Jenkins originated with Sun, but is very widely used and has a robust open-source community associated with it."  \n  \nThe quality of Jenkins that is emphasized in the above sentence is	539	0	0	ContinousIntegrationScenariosTacticsTwo
@@ -25214,6 +25213,10 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 558	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	558	0	0	ImageHostingScalability
 559	t	In his article *Who Needs an Architect?* Martin Fowler refers to the following architecture definition  \n>"*the expert developers working on that project have a shared understanding of the system design*"  \n  \n	559	0	0	SharedUnderstanding
 560	t	In a scenario for interoperability	560	0	0	InteroperabilityStimulus
+566	t	Consider the following informal view of an Image Hosting System   \n![image][image]  \n	566	0	0	ImageHostingReads
+568	t	Very often, when a software architecture is being designed, conflicting requirements are identified, like between security and availability. The role of the software architect is to	568	0	0	Diplomat
+569	t	The definition of software architecture, on the course book, is  \n>"*The software architecture of a system is the set of structures needed to reason about the system, which comprise software elements, relations among them, and properties of both.*"  \n  \nAccording to this definition	569	0	0	ASDefinition
+570	t	Considering the availability architectural quality and the tactics of active redundancy, passive redundancy, and spare	570	0	0	RestartInRedundancy
 576	t	Consider the following fragment in the description of the nginx case study.  \n>"nginx's configuration system was inspired by Igor Sysoev's experiences with Apache. His main insight was that a scalable configuration system is essential for a web server. The main scaling problem was encountered when maintaining large complicated configurations with lots of virtual servers, directories, locations and datasets. In a relatively big web setup it can be a nightmare if not done properly both at the application level and by the system engineer himself."  \n  \n	576	0	0	NginxOne
 577	t	The Attribute-Driven Design method is characterized by	577	0	0	BusinessToDesignOne
 579	t	Consider the following fragment in the description of the Graphite system:  \n>"The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response."  \n  \n	579	0	0	GraphiteOne
@@ -25223,6 +25226,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 588	t	Consider the following fragment in the description of the Graphite system:  \n>"To avoid this kind of catastrophe, I added several features to carbon including configurable limits on how many data points can be queued and rate-limits on how quickly various whisper operations can be performed. These features can protect carbon from spiraling out of control and instead impose less harsh effects like dropping some data points or refusing to accept more data points. However, proper values for those settings are system-specific and require a fair amount of testing to tune. They are useful but they do not fundamentally solve the problem. For that, we'll need more hardware."  \n  \nThe performance tactics referred in the above description are:	588	0	0	GraphiteTwo
 589	t	Architecturally significant requirements (ASR) are captured in a utility tree where each one of the ASRs are classified in terms of its architectural impact and business value.	589	0	0	BusinessToDesignTwo
 590	t	The two basic contributors for the response time are the processing time and the blocking time. Which tactic for performance may reduce the blocking time	590	0	0	PerformanceTwo
+636	t	Consider the following distinction between Monoliths and Microservices made by Matin Fowler   \n![image][image]  \n If we try to map this figure into a set of views we will need.	636	0	0	MicroAndAmazonOne
 596	t	It was decided that the Fénix system should be based on open-source software.	596	0	0	BusinessToDesignThree
 597	t	Consider the following fragment in the description of the Graphite system:  \n>"Imagine that you have 60,000 metrics that you send to your Graphite server, and each of these metrics has one data point per minute. Remember that each metric has its own whisper file on the filesystem. This means carbon must do one write operation to 60,000 different files each minute. As long as carbon can write to one file each millisecond, it should be able to keep up. This isn't too far fetched, but let's say you have 600,000 metrics updating each minute, or your metrics are updating every second, or perhaps you simply cannot afford fast enough storage. Whatever the case, assume the rate of incoming data points exceeds the rate of write operations that your storage can keep up with. How should this situation be handled?"  \n  \n	597	0	0	GraphiteThree
 598	t	Jeff Atwood wrote an article in its blog about performance of software systems that is entitled, *Hardware is Cheap, Programmers are Expensive*. Which performance tactic(s) is he suggesting	598	0	0	PerformanceThree
@@ -25234,9 +25238,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 627	t	In the Infinispan case study can be read  \n>"Before putting data on the network, application objects need to be serialized into bytes so that they can be pushed across a network, into the grid, and then again between peers. The bytes then need to be de-serialized back into application objects, when read by the application. In most common configurations, about 20% of the time spent in processing a request is spent in serialization and de-serialization."  \n  \nThe above description can motivate a scenario for	627	0	0	InfinispanThree
 628	t	Consider the shared-data style. Which of the following qualities does it support?	628	0	0	CCStyleThree
 629	t	In the Continuous Integration case study can be read  \n>"It takes advantage of the JUnit XML standard for unit test and code coverage reporting to integrate reports from a variety of test tools."  \n  \nThe referred quality is	629	0	0	ContinuousIntegrationThree
-636	t	Consider the following distinction between Monoliths and Microservices made by Matin Fowler   \n![image][image]  \n If we try to map this figure into a set of views we will need.	636	0	0	MicroAndAmazonOne
-638	t	Consider the Infinispan system when it is configured as a remote data grid. The relation between the Applications and the Grid is	638	0	0	InfinispanOne
-639	t	Consider the following representation of the Buildbot system.   \n![image][image]  \n The architecture style between the Buildbot Master and the Clients is:	639	0	0	JenkinsOne
 646	t	In the description of Infinispan system can be read  \n>"Infinispan supports several pluggable cache stores-adapters that can be used to persist data to disk or any form of secondary storage. The current default implementation is a simplistic hash bucket and linked list implementation, where each hash bucket is represented by a file on the filesystem. While easy to use and configure, this isn't the best-performing implementation."  \n  \nThe architectural style(s) that should be used to illustrate the sentence is (are)	646	0	0	InfinispanTwo
 648	t	Consider the deployment architectural style of the allocation viewtype.	648	0	0	AllocationTwo
 649	t	In the Continuous Integration case can be read  \n>"Build notification: The outcomes of builds generally need to be communicated to interested clients, either via pull (Web, RSS, RPC, etc.) or push notification (e-mail, Twitter, etc.) This can include notification of all builds, or only failed builds, or builds that haven't been executed within a certain period."  \n  \nThe architectural style used in push notifications is	649	0	0	JenkinsTwo
@@ -25254,10 +25255,10 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 711	t	In the interview Werner Vogels from Amazon gives to Jim Gray, Werner Vogels says that  \n>"The stored data formats are decoupled from the format in which you communicate data items. If there is no need for sharing schemas of the actual storage layout, you can focus on making sure that the service interfaces can evolve in a way that allows you to handle variations of data formats."  \n  \nWhich means that in the software architecture of Amazon's systems	711	0	0	MicroAndAmazonThree
 712	t	Consider the following representation of a system following a microservices architecture,   \n![image][image]  \n After an invocation through the REST API	712	0	0	BoundedContextOne
 713	t	Consider the following figure   \n![image][image]  \n	713	0	0	DomainDesignOne
-790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
 714	t	One of the key requirements for the HDFS system is that the data stored in the system remains available, even in the presence of various types of failures (non simultaneous) in the hardware in which the system executes. To show that the system satisfies this requirement	714	0	0	HadoopDisponibilidadeDadosINGLES
 715	t	In the HDFS system the fault recovery tactics are:	715	0	0	HadoopTacticasRecuperacaoFaltasINGLES
 716	t	The documentation of the software architecture for a system is often composed of several views, because	716	0	0	SecondEEEN
+796	t	In the description of Hadoop we can red.  \n>"The CheckpointNode periodically combines the existing checkpoint and journal to create a new checkpoint and an empty journal. The CheckpointNode usually runs on a different host from the NameNode since it has the same memory requirements as the NameNode."  \n  \n	796	0	0	HadoopCreateFile
 751	t	Consider the following modifiability scenario  \n>"The effort necessary to successfully port the system to execute in a new browser should not be higher than 5 person/month."  \n  \n	751	0	0	ModifiabilityScenario
 752	t	The main tactic associated with the aspects architectural style is:	752	0	0	AspectsTactics
 753	t	In the HDFS system, in the stakeholders perspective, the use of low cost servers to build the clusters is:	753	0	0	HadoopStakeholdersEurosINGLES
@@ -25276,6 +25277,8 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 767	t	When designing an architecture requirements can be split into functional, quality attributes, and constraints. Functional requirements have impact on:	767	0	0	FunctionalModule
 768	t	Suppose that you are developing a software architecture for a new large scale system and that you intend to resort extensively to third party subcontractors for the development of various parts of the system. Which architectural styles are most useful to plan the development of the system in this case?	768	0	0	SubcontractorsINGLES
 769	t	To achieve a faster time-to-market, software companies are increasingly using a strategy of incremental releases of their software, where each new release has a set of new features. Which architectural style is better to analyse whether the system's software architecture is adequate for the planned incremental releases?	769	0	0	UsesStyle
+797	t	An architectural tactic for a system describes	797	0	0	ArchitecturalTactics
+900	t	Consider a web application that was implemented using three layers: presentation, domain logic, and data access. How are these layers mapped into the components if it is a rich interface application.	900	0	0	WebAppsOne
 770	t	According to the document that describes nginx:  \n>"nginx's modular architecture generally allows developers to extend the set of web server features without modifying the nginx core. nginx modules come in slightly different incarnations, namely core modules, event modules, phase handlers, protocols, variable handlers, filters, upstreams and load balancers. [...] Event modules provide a particular OS-dependent event notification mechanism like kqueue or epoll. Protocol modules allow nginx to communicate through HTTPS, TLS/SSL, SMTP, POP3 and IMAP."  \n  \nWhich architectural style is more adequate to represent the information presented above?	770	0	0	nginxModuleTypesINGLES
 772	t	Consider the following requirement for availability of the Adventure Builder system  \n>"The Consumer Web site is available to the user 24x7. If an instance of OPC application fails, the fault is detected and the system administrator is notified in 30 seconds; the system continues taking order requests; another OPC instance is automatically created; and data remains in consistent state."  \n  \nIn order to support this quality it is necessary to	772	0	0	AdventureBuilderSix
 773	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"To support iPhone/iPad/Android version with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	773	0	0	DVDCatalogMobile
@@ -25288,8 +25291,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 787	t	The software architecture of a system	787	0	0	SoftwareArchitecture
 788	t	A general scenario for a quality attribute	788	0	0	GeneralScenario
 789	t	In the description of the Twitter system we can read:  \n>"Twitter is optimized to be highly available on the read path on the home timeline. Read path is in the 10s of milliseconds."  \n  \nThis is achieved because:	789	0	0	TwitterScaleOne
-796	t	In the description of Hadoop we can red.  \n>"The CheckpointNode periodically combines the existing checkpoint and journal to create a new checkpoint and an empty journal. The CheckpointNode usually runs on a different host from the NameNode since it has the same memory requirements as the NameNode."  \n  \n	796	0	0	HadoopCreateFile
-797	t	An architectural tactic for a system describes	797	0	0	ArchitecturalTactics
+790	t	Consider the following figure that presents a Proxy Server, which collapses requests from different users.   \n![image][image]  \n	790	0	0	ProxyServer
 798	t	In the description of the Twitter system we can read:  \n>"On the search timeline: Write. when a tweet comes in and hits the Ingester only one Early Bird machine is hit. Write time path is O(1). A single tweet is ingested in under 5 seconds between the queuing and processing to find the one Early Bird to write it to."  \n  \n	798	0	0	TwitterScaleTwo
 799	t	In his article, *Who Needs and Architect?*, Martin Fowler cites Ralph Johnson definition:  \n>"Architecture is the set of decisions that must be made early in a project."  \n  \nIn his opinion:	799	0	0	EarlyDecisions
 800	t	Consider the following figure that presents a Queue where client applications write their requests to be served by a server.   \n![image][image]  \n	800	0	0	Queues
@@ -25306,8 +25308,8 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 856	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n In this view the following architectural styles are used	856	0	0	AdventureBuilderTwo
 857	t	In the Publish-Subscribe architectural style	857	0	0	PublishSubscribe
 858	t	A high-level component-and-connect view of Graphite system can be designed using only the architectural style(s)	858	0	0	GraphiteViewsTwo
-928	t	Consider the Work Assignment architectural style of the allocation viewtype.	928	0	0	WorkAssigment
 860	t	The Java web servers, like Tomcat, use threads to process requests. For each request they create (or reuse) a thread to process it. To draw a architectural view that describes this behaviour we should use	860	0	0	CommunicationProcesses
+899	t	In the software architecture of a system, the Deployment architectural style of the allocation viewtype is best suited for	899	0	0	Deployment
 881	t	In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.	881	0	0	ComponentAndConnectorViewtypeOne
 883	t	Consider the following fragment in the description of the Graphite system.  \n>"The Graphite webapp allows users to request custom graphs with a simple URL-based API. Graphing parameters are specified in the query-string of an HTTP GET request, and a PNG image is returned in response."  \n  \nTo describe this scenario it should be designed a view that applies the following architectural style	883	0	0	GraphiteOne
 884	t	Consider the following figure that presents a Proxy Server that collapses requests from different users.   \n![image][image]  \n	884	0	0	ProxyServer
@@ -25316,7 +25318,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 887	t	A response measure of a performance scenario is	887	0	0	PerformanceOne
 888	t	The layered architectural style applies the modifiability architectural tactic of	888	0	0	ModifiabilityExamOne
 889	t	One of the advantages of having views of the module viewtype is that they allow to do an impact analysis to predict the effect of modifying the system. The architectural style of the module viewtype which provides richer information for this impact analysis is	889	0	0	ModuleViewtypeExamOne
-950	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server.   \n![image][image]  \n This solution **does not** provide the following quality:	950	0	0	QueuesQualities
 890	t	Consider that a chess game should provide an automatic and intelligent chess player, and that to implement that player we will use some of the many chess engines already available in the market. Moreover, the system should allow the user to choose which engine to use for each new game. Given these requirements, which of the architectural styles from the module viewtype are best suited to satisfy them?	890	0	0	DecompositionGeneralization
 891	t	In a microservices architecture, aggregates are used as a unit of processing	891	0	0	AggregateOne
 892	t	Consider the Microservice architectural style. Which of the following sentences **does not** describe an advantage of microservices?	892	0	0	MicroservicesExamOne
@@ -25324,13 +25325,12 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 894	t	Consider the following view of the Adventure Builder case study that applies the tiers architectural style   \n![image][image]  \n	894	0	0	AdventureBuilderOne
 895	t	Consider the following view of the Pulse case study   \n![image][image]  \n This view provides a solution that uses the following tactic	895	0	0	PulseOne
 896	t	In the description of architecture of the OrderPad case study it can be read that the updates the user does on the OrderPad when it is offline are not lost. This availability quality is achieved through a	896	0	0	OrderPadOne
-899	t	In the software architecture of a system, the Deployment architectural style of the allocation viewtype is best suited for	899	0	0	Deployment
-900	t	Consider a web application that was implemented using three layers: presentation, domain logic, and data access. How are these layers mapped into the components if it is a rich interface application.	900	0	0	WebAppsOne
 921	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate   \n![image][image]  \n	921	0	0	AggregateTwo
 922	t	An availability tactic to prevent faults is	922	0	0	AvailabilityTwo
 923	t	A performance tactic to control resource demand is	923	0	0	PerformanceTwo
 924	t	Consider the following definition of Microservice architectural style by Martin Fowler  \n>"The microservice architectural style is an approach to developing a single application as a suite of small services, each running in its own process and communicating with lightweight mechanisms, often an HTTP resource API. These services are built around business capabilities and independently deployable by fully automated deployment machinery. There is a bare minimum of centralized management of these services, which may be written in different programming languages and use different data storage technologies."  \n  \nTo represent an architecture based on Microservices	924	0	0	MicroservicesExamTwo
 927	t	Which quality, or qualities, of the Graphite system are described by the sentence: *Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL.*	927	0	0	GraphiteTwo
+928	t	Consider the Work Assignment architectural style of the allocation viewtype.	928	0	0	WorkAssigment
 929	t	Consider the following figure that presents a Image Hosting System.   \n![image][image]  \n By adding another Image File Storage component, which contains a redundant copy of the data and provides read access to the clients, but without guaranteeing a ACID transactional behavior between reads and writes, it improves the quality(ies) of	929	0	0	ScalableArchitectureOne
 930	t	Consider a web application that supports several types of user interface, e.g., web, mobile, etc. If it has to process a high volume of requests, which depend on the type of user interface, and a multi-tier architecture is followed. How many tiers should be used?	930	0	0	WebAppsTwo
 931	t	Consider the following generalization view of the Catalog of DVD case study to fulfill a modifiability scenario   \n![image][image]  \n From this view the stakeholders can infer	931	0	0	DVDTwo
@@ -25344,7 +25344,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 947	t	Consider the following scenario for performance  \n>"During the enrollment period the FenixEDU system should be able to completely enroll 5.000 students in less than 30 minutes."  \n  \n	947	0	0	PerformanceSenario
 948	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"The microservice approach to division ..., splitting up into services organized around business capability. Such services take a broad-stack implementation of software for that business area, including user-interface, persistent storage, and any external collaborations. Consequently the teams are cross-functional, including the full range of skills required for the development: user-experience, database, and project management."  \n  \nConsidering the architecture influence cycle, which influence factor it is being considered?	948	0	0	MicroservicesProject
 949	t	Consider the following figure that presents an architectural view of an *Image Hosting Application* which resulted from the enrichment of another architectural view by adding another *Image File Storage* pair, in the figure they are distinguished by 1 and 2.   \n![image][image]  \n Which quality results from this enrichment, that was not provided by the previous version of the architecture?	949	0	0	ScalablePartitioning
-1198	t	A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because	1198	0	0	UsesCalls
+950	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server.   \n![image][image]  \n This solution **does not** provide the following quality:	950	0	0	QueuesQualities
 956	t	Consider the following figure that presents a Queue where client applications write their requests to be processed by a server (asynchronous) and compare with another architectural design (synchronous) where a thread is associated with each request.   \n![image][image]  \n	956	0	0	QueuesSyncAndAsync
 957	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"Once a developer approached our architecture team with an application that had "significant scalability demands". A quick look at the architecture diagram revealed numerous components communicating via XML messages. When I pointed out that this may be the very reason for the performance concerns, I was quickly informed that this was an architecture decision and couldn't be changed. Assuming the architects are smart and well-intentioned, they may have thought about interoperability when they made this decision but may be unaware of the negative impact on run-time performance and development velocity."  \n  \nFrom this sentence we can conclude that	957	0	0	ElevatorInteroperability
 958	t	In the description of the Microservices Architecture by James Lewis and Martin Fowler can be read:  \n>"As well as the fact that services are independently deployable and scalable, each service also provides a firm module boundary, even allowing for different services to be written in different programming languages. They can also be managed by different teams."  \n  \nWhich is not necessarily an advantage of being independently deployable and scalable?	958	0	0	MicroservicesModularity
@@ -25357,6 +25357,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 970	t	In the Architect Elevator article by Gregor Hohpe can be read:  \n>"A lot of large companies have discovered the benefits of cloud computing but see it mainly as an infrastructure topic. I feel that's misguided: being able to get compute resources more quickly and cheaply is useful, but the real business benefit lies in a fully automated tool chain that minimizes the time in which a normal code change can go into production. Not quite coincidentally, this is my favorite definition of DevOps."  \n  \nIn the author's opinion	970	0	0	ElevatorDevops
 976	t	Consider the Decomposition architectural style of the Module viewtype	976	0	0	ModuleViewtypeOne
 977	t	The *Composer UI* component of Graphite system, described as - *Graphite's Composer UI provides a point-and-click method to create a graph from which you can simply copy and paste the URL* - to be effective needs to show to the user the changes she performs in the graph such that she has immediate feedback whenever she clicks on a option. To do so, the architecture needs to include	977	0	0	GraphiteComposerUIPerformance
+1100	t	In a modifiability scenario the environment can be characterized as design time, compile time, build time, initiation time, and runtime.	1100	0	0	ModifiabilityOne
 979	t	The modifiability tactic Use an Intermediary between two modules	979	0	0	ModifiabilityOne
 980	t	When applying Attribute-Driven Design (ADD) to the FenixEdu system the creation of a view where there are redundant web servers, load balancers and database servers	980	0	0	FenixADD
 987	t	The availability quality can be supported by a voting tactic in order to identify faults of	987	0	0	AvailabilityVotingSecond
@@ -25368,8 +25369,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1007	t	Suppose that in the development of an enterprise application (which needs to access a database) it was decided to use the FenixFramework library to simplify the development of the data access code. Which architectural style is the most adequate to represent this decision?	1007	0	0	ModuleStylesOne
 1009	t	The Pipe-and-Filter style allows composition of filters	1009	0	0	PipeFilterComposition
 1010	t	Consider the following modifiability scenario for the Adventure Builder system  \n>"A new business partner (airline, lodging, or activity provider) that uses its own web services interface is added to the system in no more than 10 person-days of effort for the implementation. The business goal is easy integration with new business partners."  \n  \nand the following architectural view   \n![image][image]  \n	1010	0	0	AdventureBuilderModuleOne
-1131	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate  \n![image][image]  \n	1131	0	0	AggregatesTwo
-1237	t	In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use	1237	0	0	ChromeDynamicReconfiguration
 1016	t	Consider the following view of the Adventure Builder system   \n![image][image]  \n In this view it is possible to reason that	1016	0	0	AdventureBuilderComponentAndConnectorSecond
 1017	t	In the Publish-Subscribe architectural style	1017	0	0	PublishSubscribe
 1018	t	Which architectural style is adequate for planning incremental releases?	1018	0	0	UsesOne
@@ -25410,7 +25409,6 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1096	t	Consider the architecture of the Morrison's OrderPad. In the description of the system can be read:  \n>"One of these was using a file-transfer to send data to the mainframe rather than MQ, which wouldn't perform well once many stores were active."  \n  \nThis approach means that	1096	0	0	OrderPadOne
 1097	t	Consider the following decomposition of a domain model into 3 aggregates.  \n![image][image]  \n	1097	0	0	AggregatesOne
 1098	t	Considering the availability architectural quality and the tactics of ping/echo and heartbeat	1098	0	0	AvailabilityOne
-1100	t	In a modifiability scenario the environment can be characterized as design time, compile time, build time, initiation time, and runtime.	1100	0	0	ModifiabilityOne
 1121	t	Suppose that you are implementing a module in a system that has a two layered architecture. Knowing that your module belongs to the upper layer (assuming the usual notation for the layer style), this means that you	1121	0	0	ModuleStyleTwo
 1123	t	Consider the concept of interface delegation	1123	0	0	ComponentAndConnectorViewtypeTwo
 1124	t	In the Service Oriented Architecture style it is common to have a specialized component, named *Enterprise Service Bus* (ESB). The goal of using of an ESB in a system is	1124	0	0	ComponentAndConnectorStyleTwo
@@ -25419,6 +25417,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1127	t	Web applications went through several evolutions over the last years. One of those evolutions was to make their user interfaces more sophisticated, by leveraging on new technologies available in the browsers, such as, for example, Javascript, to provide a more satisfying user experience. What were the most visible consequences of such an evolution on the typical software architecture of a web application?	1127	0	0	WebApplicationsTwo
 1129	t	Consider a scenario for performance where the arrival of events is stochastic with a distribution where there are peeks of events but the arrival of events over a long period is uniform. The best tactic to apply is	1129	0	0	PerformanceTwo
 1130	t	The main tactic associated with the layered architectural style is:	1130	0	0	ModifiabilityTwo
+1131	t	Consider the following decomposition of a domain model into 3 aggregates. If, instead of this decomposition, `Customer` and `Order` were in the same aggregate  \n![image][image]  \n	1131	0	0	AggregatesTwo
 1132	t	Consider the architectural solutions for microservices architectures that use the Command Query Responsibility Segregation (CQRS) technique in the context of Event Sourcing. This technique has the following disadvantage	1132	0	0	EventSourcingTwo
 1133	t	Consider the kind of relations between components and modules.	1133	0	0	ModuleViewTypeTwo
 1134	t	Consider the use of a proxy to collapse requests. This corresponds to a tactic of	1134	0	0	ScalableArchitectureTwo
@@ -25445,13 +25444,13 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1190	t	The Decomposition architectural style of the Module viewtype	1190	0	0	Decomposition
 1196	t	There are several tactics to satisfy availability requirements, which may be applied depending on the concrete requirement that we want to satisfy. Assuming that you want to detect faults of type *response* in your system, which tactic is more adequate?	1196	0	0	AvailabilityVotingFirst
 1197	t	Consider an architecturally significant requirement (ASR) that has a low impact on the architecture but a high business value	1197	0	0	LowArchitecturalImpact
+1198	t	A function call is not necessarily a uses relation of the Uses architectural style of the Module viewtype because	1198	0	0	UsesCalls
 1199	t	In the description of the Chrome system can be read  \n>"The goal of the predictor is to evaluate the likelihood of its success, and then to trigger the activity if resources are available."  \n  \nThe above sentence refer to	1199	0	0	ChromePredictor
 1200	t	In the description of the SocialCalc case study can be read:  \n>"A simple improvement is for each client to broadcast its cursor position to other users, so everyone can see which cells are being worked on."  \n  \nThis sentence describes a tactic for usability which is	1200	0	0	SocialCalcTacticsTwo
 1206	t	In the component-and-connector viewtype connectors can be complex, which means that they provide a rich set of qualities to the interaction between the components that they connect. These complex connectors can be documented in another view using a set of components interacting through simpler connectors.	1206	0	0	ComponentAndConnectorOne
 1207	t	Consider that you intend to develop a system where it is necessary to change the emails received by the server (for instance, to remove potential virus or URLs for phishing sites). The goal is that each email is processed by this system before it is sent to other servers or it is stored locally. Additionally, the system should be easily modified to support new kinds of transformations. Which style is more suitable to satisfy these requirements?	1207	0	0	PipesFilters
 1208	t	Consider the Service-Oriented Architecture architectural style	1208	0	0	SOA
 1209	t	Consider the Layered architectural style of the Module viewtype	1209	0	0	Layered
-1210	t	The detail that can be used in a view of the Data Model viewtype can be conceptual, logical or physical.	1210	0	0	DataModelOne
 1216	t	The Tiers architectural style	1216	0	0	Tiers
 1217	t	Using the Aspects architectural style promotes the modifiability of a system because	1217	0	0	Aspects
 1218	t	Consider the peer-to-peer architectural style	1218	0	0	PeerToPeer
@@ -25463,6 +25462,7 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 1229	t	Consider the module viewtype views of the DVDCatalog application. The architect knows about a new requirement  \n>"The application should support other kinds of catalogs (CDs, games, books, ...)."  \n  \nThis requirement requires a change of	1229	0	0	DVDCatalogMeta
 1230	t	In Graphite system, in order to generate up-to-date graphs, the *WebApp* component interacts with the *Carbon* component. The interaction between these two components follows the architectural style	1230	0	0	GraphiteClientServer
 1236	t	In Graphite system the *receiver* and the *writer threads* support asynchronous writing of metrics to optimize disk accesses. The interaction between these two components follow the architectural style	1236	0	0	GraphiteCommunicationProcesses
+1237	t	In Chrome system, to show that it provides mobility qualities by managing the number of tab, it is necessary to use	1237	0	0	ChromeDynamicReconfiguration
 1238	t	Event Sourcing is a technique that use the following architectural style	1238	0	0	EventSourcing
 1239	t	The Work-assignment is an architectural style of the allocation viewtype, where	1239	0	0	WorkAssignment
 1240	t	Consider the module viewtype views of the Catalog of DVD application. The architect knows about a new requirement  \n>"To support iPhone, iPad, Android versions with sync, which allows offline use of the application in the mobile device and data synchronization to occur when a connection is available"  \n  \nThis requirement requires a change of	1240	0	0	DVDCatalogMobile
@@ -25473,1593 +25473,1593 @@ COPY public.questions (id, active, content, number, number_of_answers, number_of
 -- Data for Name: quiz_answers; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.quiz_answers (id, answer_date, assigned_date, available_date, completed, quiz_id, user_id) FROM stdin;
-1	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	2
-2	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	7
-3	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	15
-4	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	18
-5	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	25
-6	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	28
-7	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	32
-8	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	51
-9	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	54
-10	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	56
-11	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	59
-12	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	24
-13	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	33
-14	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	40
-15	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	47
-16	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	10
-17	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	16
-18	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	20
-19	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	38
-20	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	41
-21	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	45
-22	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	49
-23	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	55
-24	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	22
-25	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	26
-26	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	4
-27	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	42
-28	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	53
-29	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	9
-30	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	14
-31	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	34
-32	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	50
-33	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	57
-34	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	60
-35	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	5
-36	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	12
-37	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	17
-38	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	43
-39	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	44
-40	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	39
-41	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	21
-42	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	37
-43	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	48
-44	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	58
-45	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	30
-46	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	67
-47	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	84
-48	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	95
-49	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	97
-50	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	61
-51	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	62
-52	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	63
-53	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	65
-54	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	66
-55	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	68
-56	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	69
-57	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	70
-58	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	71
-59	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	72
-60	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	78
-61	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	81
-62	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	86
-63	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	88
-64	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	90
-65	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	94
-66	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	99
-67	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	100
-68	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	102
-69	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	103
-70	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	93
-71	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	96
-72	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	87
-73	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	64
-74	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	101
-75	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	75
-76	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	82
-77	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	104
-78	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	85
-79	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	83
-80	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	74
-81	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	89
-82	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	77
-83	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	80
-84	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	79
-85	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	110
-86	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	123
-87	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	130
-88	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	114
-89	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	126
-90	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	106
-91	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	109
-92	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	129
-93	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	144
-94	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	148
-95	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	122
-96	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	127
-97	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	135
-98	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	142
-99	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	105
-100	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	107
-101	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	108
-102	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	111
-103	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	112
-104	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	113
-105	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	115
-106	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	116
-107	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	117
-108	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	118
-109	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	119
-110	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	120
-111	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	121
-112	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	124
-113	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	125
-114	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	128
-115	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	131
-116	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	132
-117	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	133
-118	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	134
-119	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	136
-120	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	137
-121	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	138
-122	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	139
-123	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	140
-124	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	141
-125	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	143
-126	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	145
-127	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	146
-128	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	147
-129	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	149
-130	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	233
-131	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	281
-132	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	278
-133	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	291
-134	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	285
-135	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	179
-136	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	279
-137	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	338
-138	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	326
-139	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	334
-140	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	323
-141	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	348
-142	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	343
-143	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	336
-144	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	350
-145	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	347
-146	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	345
-147	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	354
-148	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	330
-149	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	325
-150	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	335
-151	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	368
-152	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	364
-153	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	377
-154	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	380
-155	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	371
-156	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	362
-157	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	379
-158	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	366
-159	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	369
-160	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	359
-161	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	384
-162	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	373
-163	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	357
-164	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	378
-165	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	363
-166	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	376
-167	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	372
-168	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	383
-169	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	380
-170	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	382
-171	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	371
-172	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	345
-173	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	313
-174	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	334
-175	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	377
-176	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	369
-177	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	359
-178	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	363
-179	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	364
-180	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	356
-181	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	335
-182	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	347
-183	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	323
-184	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	338
-185	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	355
-186	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	358
-187	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	381
-188	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	345
-189	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	350
-190	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	369
-191	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	357
-192	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	383
-193	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	380
-194	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	376
-195	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	368
-196	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	377
-197	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	310
-198	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	326
-199	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	371
-200	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	325
-201	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	340
-202	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	381
-203	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	323
-204	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	369
-205	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	376
-206	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	350
-207	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	343
-208	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	380
-209	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	336
-210	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	326
-211	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	362
-212	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	330
-213	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	310
-214	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	377
-215	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	371
-216	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	364
-217	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	381
-218	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	334
-219	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	313
-220	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	380
-221	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	326
-222	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	381
-223	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	371
-224	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	323
-225	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	380
-226	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	379
-227	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	313
-228	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	368
-229	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	402
-230	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	409
-231	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	405
-232	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	400
-233	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	401
-234	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	411
-235	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	410
-236	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	418
-237	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	407
-238	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	414
-239	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	404
-240	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	408
-241	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	406
-242	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	417
-243	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	413
-244	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	440
-245	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	420
-246	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	426
-247	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	429
-248	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	431
-249	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	428
-250	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	421
-251	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	430
-252	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	427
-253	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	422
-254	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	424
-255	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	425
-256	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	436
-257	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	435
-258	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	437
-259	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	442
-260	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	438
-261	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	443
-262	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	392
-263	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	408
-264	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	410
-265	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	424
-266	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	436
-267	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	420
-268	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	397
-269	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	389
-270	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	395
-271	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	401
-272	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	416
-273	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	392
-274	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	402
-275	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	411
-276	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	398
-277	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	395
-278	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	410
-279	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	404
-280	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	440
-281	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	425
-282	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	415
-283	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	400
-284	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	402
-285	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	409
-286	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	410
-287	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	420
-288	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	425
-289	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	397
-290	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	395
-291	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	415
-292	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	395
-293	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	402
-294	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	425
-295	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	410
-296	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	423
-297	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	395
-298	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	409
-299	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	470
-300	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	476
-301	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	480
-302	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	485
-303	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	471
-304	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	500
-305	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	472
-306	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	483
-307	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	469
-308	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	473
-309	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	478
-310	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	482
-311	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	493
-312	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	495
-313	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	497
-314	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	498
-315	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	499
-316	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	479
-317	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	496
-318	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	487
-319	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	494
-320	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	484
-321	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	512
-322	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	528
-323	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	534
-324	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	508
-325	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	515
-326	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	516
-327	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	511
-328	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	513
-329	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	514
-330	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	529
-331	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	502
-332	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	506
-333	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	510
-334	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	517
-335	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	522
-336	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	523
-337	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	524
-338	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	527
-339	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	531
-340	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	532
-341	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	499
-342	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	469
-343	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	476
-344	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	497
-345	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	492
-346	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	529
-347	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	471
-348	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	507
-349	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	508
-350	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	534
-351	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	458
-352	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	474
-353	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	517
-354	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	470
-355	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	513
-356	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	470
-357	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	522
-358	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	493
-359	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	512
-360	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	531
-361	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	479
-362	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	508
-363	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	483
-364	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	467
-365	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	459
-366	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	469
-367	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	493
-368	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	514
-369	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	472
-370	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	500
-371	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	509
-372	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	511
-373	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	480
-374	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	499
-375	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	508
-376	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	485
-377	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	470
-378	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	527
-379	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	528
-380	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	531
-381	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	493
-382	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	471
-383	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	472
-384	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	478
-385	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	511
-386	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	458
-387	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	508
-388	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	529
-389	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	478
-390	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	517
-391	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	530
-392	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	518
-393	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	519
-394	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	493
-395	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	472
-396	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	520
-397	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	471
-398	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	479
-399	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	534
-400	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	496
-401	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	480
-402	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	483
-403	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	533
-404	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	508
-405	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	532
-406	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	501
-407	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	467
-408	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	565
-409	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	557
-410	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	562
-411	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	564
-412	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	569
-413	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	561
-414	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	560
-415	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	576
-416	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	573
-417	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	578
-418	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	579
-419	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	577
-420	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	570
-421	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	575
-422	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	558
-423	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	599
-424	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	590
-425	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	607
-426	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	600
-427	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	613
-428	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	611
-429	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	591
-430	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	595
-431	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	601
-432	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	604
-433	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	608
-434	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	565
-435	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	549
-436	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	569
-437	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	544
-438	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	606
-439	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	611
-440	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	563
-441	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	590
-442	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	607
-443	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	576
-444	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	597
-445	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	594
-446	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	559
-447	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	588
-448	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	544
-449	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	590
-450	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	559
-451	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	576
-452	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	545
-453	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	572
-454	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	577
-455	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	544
-456	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	546
-457	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	570
-458	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	544
-459	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	546
-460	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	545
-461	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	576
-462	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	577
-463	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	606
-464	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	578
-465	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	576
-466	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	544
-467	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	565
-468	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	575
-469	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	577
-470	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	590
-471	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	600
-472	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	13
-473	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	11
-474	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	35
-475	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	1
-476	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	8
-477	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	19
-478	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	27
-479	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	29
-480	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	36
-481	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	52
-482	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	3
-483	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	6
-484	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	23
-485	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	31
-486	2011-01-01 00:00:00	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	46
-487	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	73
-488	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	91
-489	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	92
-490	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	98
-491	2013-01-01 00:00:00	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	76
-492	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	199
-493	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	203
-494	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	207
-495	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	209
-496	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	211
-497	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	215
-498	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	226
-499	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	227
-500	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	236
-501	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	240
-502	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	202
-503	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	238
-504	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	245
-505	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	201
-506	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	205
-507	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	206
-508	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	230
-509	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	231
-510	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	234
-511	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	243
-512	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	193
-513	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	194
-514	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	195
-515	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	196
-516	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	197
-517	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	198
-518	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	200
-519	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	204
-520	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	208
-521	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	210
-522	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	212
-523	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	213
-524	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	214
-525	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	216
-526	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	217
-527	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	218
-528	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	219
-529	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	220
-530	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	221
-531	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	222
-532	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	223
-533	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	224
-534	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	225
-535	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	228
-536	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	229
-537	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	232
-538	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	235
-539	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	237
-540	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	239
-541	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	241
-542	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	242
-543	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	244
-544	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	246
-545	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	252
-546	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	255
-547	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	265
-548	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	270
-549	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	271
-550	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	276
-551	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	287
-552	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	296
-553	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	304
-554	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	247
-555	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	249
-556	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	250
-557	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	251
-558	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	253
-559	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	254
-560	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	257
-561	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	259
-562	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	260
-563	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	262
-564	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	264
-565	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	267
-566	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	269
-567	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	272
-568	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	273
-569	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	274
-570	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	275
-571	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	280
-572	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	282
-573	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	283
-574	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	284
-575	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	288
-576	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	290
-577	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	293
-578	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	295
-579	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	300
-580	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	306
-581	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	307
-582	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	248
-583	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	256
-584	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	261
-585	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	263
-586	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	266
-587	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	268
-588	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	277
-589	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	279
-590	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	286
-591	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	292
-592	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	297
-593	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	298
-594	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	299
-595	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	302
-596	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	305
-597	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	258
-598	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	289
-599	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	294
-600	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	301
-601	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	303
-602	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	197
-603	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	224
-604	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	285
-605	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	287
-606	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	226
-607	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	175
-608	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	290
-609	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	154
-610	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	157
-611	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	248
-612	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	200
-613	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	206
-614	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	162
-615	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	208
-616	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	264
-617	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	271
-618	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	215
-619	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	216
-620	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	170
-621	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	171
-622	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	281
-623	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	283
-624	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	228
-625	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	288
-626	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	289
-627	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	232
-628	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	233
-629	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	299
-630	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	301
-631	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	245
-632	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	247
-633	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	203
-634	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	256
-635	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	278
-636	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	177
-637	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	223
-638	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	291
-639	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	159
-640	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	160
-641	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	172
-642	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	227
-643	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	286
-644	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	234
-645	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	156
-646	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	158
-647	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	199
-648	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	161
-649	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	255
-650	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	258
-651	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	164
-652	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	263
-653	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	210
-654	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	166
-655	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	265
-656	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	269
-657	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	168
-658	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	270
-659	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	241
-660	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	297
-661	2014-01-01 00:00:00	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	304
-662	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	324
-663	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	328
-664	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	332
-665	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	340
-666	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	342
-667	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	346
-668	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	349
-669	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	352
-670	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	353
-671	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	329
-672	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	333
-673	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	337
-674	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	339
-675	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	341
-676	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	344
-677	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	351
-678	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	356
-679	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	327
-680	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	331
-681	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	355
-682	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	358
-683	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	360
-684	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	361
-685	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	365
-686	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	367
-687	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	375
-688	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	381
-689	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	382
-690	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	370
-691	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	374
-692	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	332
-693	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	344
-694	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	315
-695	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	337
-696	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	376
-697	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	381
-698	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	327
-699	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	341
-700	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	346
-701	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	348
-702	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	354
-703	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	361
-704	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	371
-705	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	358
-706	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	360
-707	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	361
-708	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	365
-709	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	339
-710	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	340
-711	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	356
-712	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	331
-713	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	351
-714	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	352
-715	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	349
-716	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	355
-717	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	335
-718	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	325
-719	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	318
-720	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	354
-721	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	315
-722	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	363
-723	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	374
-724	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	342
-725	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	343
-726	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	353
-727	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	324
-728	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	328
-729	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	323
-730	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	312
-731	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	334
-732	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	348
-733	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	375
-734	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	384
-735	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	362
-736	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	373
-737	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	309
-738	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	329
-739	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	332
-740	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	347
-741	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	330
-742	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	341
-743	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	382
-744	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	327
-745	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	333
-746	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	337
-747	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	338
-748	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	370
-749	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	344
-750	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	378
-751	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	379
-752	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	313
-753	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	366
-754	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	364
-755	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	367
-756	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	336
-757	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	372
-758	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	364
-759	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	331
-760	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	335
-761	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	352
-762	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	356
-763	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	318
-764	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	351
-765	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	358
-766	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	349
-767	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	360
-768	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	354
-769	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	355
-770	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	365
-771	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	339
-772	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	324
-773	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	328
-774	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	353
-775	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	315
-776	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	361
-777	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	342
-778	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	363
-779	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	334
-780	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	374
-781	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	375
-782	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	383
-783	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	384
-784	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	357
-785	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	366
-786	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	379
-787	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	327
-788	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	329
-789	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	367
-790	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	333
-791	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	337
-792	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	338
-793	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	372
-794	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	378
-795	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	348
-796	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	345
-797	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	312
-798	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	313
-799	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	368
-800	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	309
-801	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	341
-802	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	332
-803	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	370
-804	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	373
-805	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	344
-806	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	347
-807	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	382
-808	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	331
-809	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	335
-810	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	352
-811	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	350
-812	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	355
-813	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	340
-814	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	351
-815	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	354
-816	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	365
-817	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	349
-818	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	324
-819	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	357
-820	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	369
-821	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	374
-822	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	375
-823	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	383
-824	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	315
-825	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	361
-826	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	376
-827	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	323
-828	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	363
-829	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	328
-830	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	342
-831	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	348
-832	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	384
-833	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	356
-834	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	358
-835	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	353
-836	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	339
-837	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	343
-838	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	360
-839	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	336
-840	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	373
-841	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	341
-842	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	345
-843	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	378
-844	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	379
-845	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	367
-846	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	333
-847	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	372
-848	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	347
-849	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	361
-850	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	362
-851	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	365
-852	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	340
-853	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	352
-854	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	354
-855	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	350
-856	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	355
-857	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	335
-858	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	360
-859	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	358
-860	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	364
-861	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	331
-862	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	349
-863	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	351
-864	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	383
-865	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	357
-866	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	334
-867	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	339
-868	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	336
-869	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	342
-870	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	376
-871	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	353
-872	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	356
-873	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	343
-874	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	363
-875	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	328
-876	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	369
-877	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	374
-878	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	375
-879	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	384
-880	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	310
-881	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	326
-882	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	330
-883	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	367
-884	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	337
-885	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	377
-886	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	344
-887	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	372
-888	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	341
-889	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	378
-890	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	370
-891	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	348
-892	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	325
-893	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	366
-894	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	332
-895	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	333
-896	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	338
-897	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	373
-898	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	347
-899	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	382
-900	2015-01-01 00:00:00	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	327
-901	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	403
-902	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	415
-903	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	416
-904	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	419
-905	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	412
-906	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	444
-907	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	434
-908	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	423
-909	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	432
-910	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	433
-911	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	439
-912	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	441
-913	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	439
-914	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	432
-915	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	388
-916	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	431
-917	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	434
-918	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	412
-919	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	398
-920	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	422
-921	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	405
-922	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	434
-923	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	442
-924	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	414
-925	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	439
-926	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	419
-927	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	399
-928	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	436
-929	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	417
-930	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	441
-931	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	444
-932	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	412
-933	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	415
-934	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	418
-935	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	429
-936	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	431
-937	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	432
-938	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	433
-939	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	424
-940	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	435
-941	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	423
-942	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	400
-943	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	427
-944	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	406
-945	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	421
-946	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	428
-947	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	401
-948	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	443
-949	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	389
-950	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	391
-951	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	420
-952	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	430
-953	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	408
-954	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	409
-955	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	397
-956	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	437
-957	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	438
-958	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	434
-959	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	416
-960	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	417
-961	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	441
-962	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	444
-963	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	405
-964	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	442
-965	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	436
-966	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	423
-967	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	418
-968	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	419
-969	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	422
-970	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	391
-971	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	406
-972	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	433
-973	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	438
-974	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	414
-975	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	443
-976	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	421
-977	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	401
-978	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	424
-979	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	428
-980	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	440
-981	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	398
-982	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	404
-983	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	427
-984	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	429
-985	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	430
-986	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	408
-987	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	431
-988	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	411
-989	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	435
-990	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	437
-991	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	412
-992	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	399
-993	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	432
-994	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	439
-995	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	423
-996	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	434
-997	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	417
-998	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	441
-999	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	418
-1000	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	442
-1001	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	416
-1002	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	436
-1003	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	405
-1004	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	439
-1005	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	414
-1006	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	440
-1007	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	419
-1008	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	444
-1009	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	400
-1010	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	412
-1011	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	389
-1012	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	401
-1013	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	428
-1014	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	409
-1015	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	397
-1016	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	392
-1017	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	421
-1018	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	430
-1019	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	408
-1020	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	435
-1021	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	398
-1022	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	438
-1023	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	443
-1024	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	420
-1025	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	422
-1026	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	424
-1027	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	404
-1028	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	427
-1029	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	406
-1030	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	429
-1031	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	431
-1032	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	411
-1033	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	432
-1034	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	433
-1035	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	437
-1036	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	444
-1037	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	434
-1038	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	417
-1039	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	441
-1040	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	418
-1041	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	419
-1042	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	401
-1043	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	439
-1044	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	424
-1045	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	405
-1046	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	436
-1047	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	412
-1048	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	414
-1049	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	415
-1050	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	416
-1051	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	440
-1052	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	442
-1053	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	406
-1054	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	421
-1055	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	404
-1056	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	389
-1057	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	425
-1058	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	427
-1059	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	432
-1060	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	433
-1061	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	443
-1062	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	420
-1063	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	422
-1064	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	431
-1065	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	392
-1066	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	408
-1067	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	402
-1068	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	428
-1069	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	429
-1070	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	430
-1071	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	410
-1072	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	411
-1073	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	435
-1074	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	437
-1075	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	398
-1076	2016-01-01 00:00:00	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	438
-1077	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	492
-1078	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	474
-1079	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	477
-1080	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	481
-1081	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	486
-1082	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	488
-1083	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	490
-1084	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	491
-1085	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	475
-1086	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	489
-1087	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	505
-1088	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	507
-1089	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	518
-1090	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	520
-1091	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	521
-1092	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	525
-1093	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	533
-1094	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	536
-1095	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	501
-1096	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	503
-1097	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	504
-1098	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	509
-1099	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	519
-1100	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	526
-1101	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	530
-1102	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	535
-1103	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	453
-1104	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	505
-1105	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	486
-1106	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	445
-1107	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	463
-1108	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	456
-1109	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	460
-1110	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	506
-1111	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	475
-1112	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	462
-1113	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	490
-1114	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	494
-1115	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	469
-1116	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	503
-1117	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	453
-1118	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	506
-1119	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	478
-1120	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	514
-1121	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	484
-1122	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	486
-1123	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	524
-1124	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	525
-1125	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	535
-1126	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	504
-1127	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	488
-1128	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	462
-1129	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	530
-1130	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	487
-1131	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	472
-1132	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	473
-1133	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	477
-1134	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	510
-1135	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	517
-1136	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	518
-1137	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	519
-1138	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	520
-1139	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	523
-1140	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	489
-1141	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	490
-1142	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	475
-1143	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	509
-1144	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	460
-1145	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	480
-1146	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	481
-1147	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	515
-1148	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	516
-1149	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	485
-1150	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	521
-1151	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	532
-1152	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	498
-1153	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	499
-1154	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	500
-1155	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	482
-1156	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	534
-1157	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	458
-1158	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	507
-1159	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	513
-1160	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	496
-1161	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	533
-1162	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	468
-1163	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	511
-1164	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	536
-1165	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	461
-1166	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	445
-1167	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	526
-1168	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	491
-1169	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	527
-1170	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	528
-1171	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	463
-1172	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	529
-1173	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	464
-1174	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	492
-1175	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	497
-1176	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	501
-1177	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	505
-1178	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	494
-1179	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	495
-1180	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	517
-1181	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	453
-1182	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	506
-1183	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	478
-1184	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	519
-1185	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	520
-1186	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	486
-1187	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	487
-1188	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	490
-1189	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	525
-1190	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	530
-1191	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	503
-1192	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	473
-1193	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	484
-1194	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	488
-1195	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	523
-1196	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	524
-1197	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	489
-1198	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	522
-1199	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	504
-1200	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	510
-1201	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	477
-1202	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	518
-1203	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	535
-1204	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	479
-1205	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	513
-1206	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	481
-1207	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	482
-1208	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	532
-1209	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	533
-1210	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	498
-1211	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	534
-1212	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	468
-1213	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	460
-1214	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	516
-1215	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	521
-1216	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	536
-1217	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	458
-1218	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	512
-1219	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	515
-1220	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	483
-1221	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	496
-1222	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	505
-1223	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	494
-1224	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	467
-1225	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	501
-1226	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	462
-1227	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	492
-1228	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	497
-1229	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	526
-1230	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	495
-1231	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	529
-1232	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	445
-1233	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	491
-1234	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	463
-1235	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	469
-1236	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	484
-1237	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	520
-1238	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	522
-1239	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	524
-1240	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	477
-1241	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	510
-1242	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	517
-1243	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	489
-1244	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	473
-1245	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	535
-1246	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	519
-1247	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	486
-1248	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	453
-1249	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	506
-1250	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	514
-1251	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	518
-1252	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	487
-1253	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	490
-1254	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	525
-1255	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	530
-1256	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	475
-1257	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	509
-1258	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	479
-1259	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	481
-1260	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	515
-1261	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	516
-1262	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	498
-1263	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	534
-1264	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	513
-1265	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	536
-1266	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	512
-1267	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	482
-1268	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	483
-1269	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	485
-1270	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	521
-1271	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	496
-1272	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	531
-1273	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	500
-1274	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	507
-1275	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	532
-1276	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	499
-1277	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	480
-1278	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	533
-1279	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	470
-1280	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	491
-1281	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	527
-1282	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	463
-1283	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	497
-1284	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	488
-1285	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	526
-1286	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	494
-1287	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	523
-1288	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	462
-1289	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	467
-1290	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	445
-1291	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	505
-1292	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	492
-1293	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	495
-1294	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	528
-1295	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	503
-1296	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	504
-1297	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	453
-1298	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	473
-1299	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	486
-1300	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	522
-1301	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	490
-1302	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	525
-1303	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	470
-1304	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	487
-1305	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	506
-1306	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	477
-1307	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	514
-1308	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	484
-1309	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	489
-1310	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	535
-1311	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	469
-1312	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	524
-1313	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	507
-1314	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	511
-1315	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	513
-1316	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	536
-1317	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	460
-1318	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	512
-1319	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	515
-1320	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	482
-1321	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	481
-1322	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	485
-1323	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	500
-1324	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	458
-1325	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	516
-1326	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	521
-1327	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	498
-1328	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	499
-1329	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	462
-1330	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	523
-1331	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	527
-1332	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	495
-1333	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	528
-1334	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	463
-1335	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	529
-1336	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	492
-1337	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	488
-1338	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	526
-1339	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	491
-1340	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	494
-1341	2017-01-01 00:00:00	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	497
-1342	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	585
-1343	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	563
-1344	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	567
-1345	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	568
-1346	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	571
-1347	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	572
-1348	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	574
-1349	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	580
-1350	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	582
-1351	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	583
-1352	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	584
-1353	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	559
-1354	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	566
-1355	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	581
-1356	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	586
-1357	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	587
-1358	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	589
-1359	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	592
-1360	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	593
-1361	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	594
-1362	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	596
-1363	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	597
-1364	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	598
-1365	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	602
-1366	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	603
-1367	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	605
-1368	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	606
-1369	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	609
-1370	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	610
-1371	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	612
-1372	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	588
-1373	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	589
-1374	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	602
-1375	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	579
-1376	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	592
-1377	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	593
-1378	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	543
-1379	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	604
-1380	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	584
-1381	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	587
-1382	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	566
-1383	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	589
-1384	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	549
-1385	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	568
-1386	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	595
-1387	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	599
-1388	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	607
-1389	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	571
-1390	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	593
-1391	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	581
-1392	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	606
-1393	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	611
-1394	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	560
-1395	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	564
-1396	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	567
-1397	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	578
-1398	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	580
-1399	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	575
-1400	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	603
-1401	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	586
-1402	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	551
-1403	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	600
-1404	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	579
-1405	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	588
-1406	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	591
-1407	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	573
-1408	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	596
-1409	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	601
-1410	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	602
-1411	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	605
-1412	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	612
-1413	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	585
-1414	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	547
-1415	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	556
-1416	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	548
-1417	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	569
-1418	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	577
-1419	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	582
-1420	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	613
-1421	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	561
-1422	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	597
-1423	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	557
-1424	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	565
-1425	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	594
-1426	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	608
-1427	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	609
-1428	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	610
-1429	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	570
-1430	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	583
-1431	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	546
-1432	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	598
-1433	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	558
-1434	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	562
-1435	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	572
-1436	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	574
-1437	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	563
-1438	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	592
-1439	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	566
-1440	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	571
-1441	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	578
-1442	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	564
-1443	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	591
-1444	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	595
-1445	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	601
-1446	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	581
-1447	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	549
-1448	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	599
-1449	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	600
-1450	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	580
-1451	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	607
-1452	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	589
-1453	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	584
-1454	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	586
-1455	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	560
-1456	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	588
-1457	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	567
-1458	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	568
-1459	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	573
-1460	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	593
-1461	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	596
-1462	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	602
-1463	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	579
-1464	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	605
-1465	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	606
-1466	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	612
-1467	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	585
-1468	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	587
-1469	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	603
-1470	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	604
-1471	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	557
-1472	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	569
-1473	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	590
-1474	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	609
-1475	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	610
-1476	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	611
-1477	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	556
-1478	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	613
-1479	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	562
-1480	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	545
-1481	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	558
-1482	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	563
-1483	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	576
-1484	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	594
-1485	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	561
-1486	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	565
-1487	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	592
-1488	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	574
-1489	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	575
-1490	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	597
-1491	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	598
-1492	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	608
-1493	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	582
-1494	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	583
-1495	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	612
-1496	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	586
-1497	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	560
-1498	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	564
-1499	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	566
-1500	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	588
-1501	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	591
-1502	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	573
-1503	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	596
-1504	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	601
-1505	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	604
-1506	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	605
-1507	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	581
-1508	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	606
-1509	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	607
-1510	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	587
-1511	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	567
-1512	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	549
-1513	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	599
-1514	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	603
-1515	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	568
-1516	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	571
-1517	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	593
-1518	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	595
-1519	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	578
-1520	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	579
-1521	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	580
-1522	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	584
-1523	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	585
-1524	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	589
-1525	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	592
-1526	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	565
-1527	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	558
-1528	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	561
-1529	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	575
-1530	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	608
-1531	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	609
-1532	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	610
-1533	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	611
-1534	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	613
-1535	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	557
-1536	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	597
-1537	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	556
-1538	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	574
-1539	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	563
-1540	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	569
-1541	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	570
-1542	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	572
-1543	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	594
-1544	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	598
-1545	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	583
-1546	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	600
-1547	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	590
-1548	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	582
-1549	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	587
-1550	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	566
-1551	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	588
-1552	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	571
-1553	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	591
-1554	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	579
-1555	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	581
-1556	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	612
-1557	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	584
-1558	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	585
-1559	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	586
-1560	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	603
-1561	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	564
-1562	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	567
-1563	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	549
-1564	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	568
-1565	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	589
-1566	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	593
-1567	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	602
-1568	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	604
-1569	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	594
-1570	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	583
-1571	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	546
-1572	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	592
-1573	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	611
-1574	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	562
-1575	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	563
-1576	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	597
-1577	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	582
-1578	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	610
-1579	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	557
-1580	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	558
-1581	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	561
-1582	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	569
-1583	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	570
-1584	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	574
-1585	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	608
-1586	2018-01-01 00:00:00	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	609
+COPY public.quiz_answers (id, answer_date, assigned_date, completed, quiz_id, user_id) FROM stdin;
+1	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	2
+2	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	7
+3	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	15
+4	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	18
+5	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	25
+6	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	28
+7	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	32
+8	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	51
+9	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	54
+10	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	56
+11	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	59
+12	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	24
+13	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	33
+14	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	40
+15	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	47
+16	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	10
+17	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	16
+18	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	20
+19	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	38
+20	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	41
+21	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	45
+22	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	49
+23	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	55
+24	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	22
+25	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	26
+26	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	4
+27	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	42
+28	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	53
+29	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	9
+30	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	14
+31	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	34
+32	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	50
+33	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	57
+34	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	60
+35	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	5
+36	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	12
+37	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	17
+38	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	43
+39	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	44
+40	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	39
+41	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	21
+42	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	37
+43	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	48
+44	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	58
+45	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	30
+46	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	67
+47	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	84
+48	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	95
+49	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	97
+50	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	61
+51	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	62
+52	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	63
+53	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	65
+54	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	66
+55	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	68
+56	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	69
+57	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	70
+58	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	71
+59	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	72
+60	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	78
+61	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	81
+62	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	86
+63	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	88
+64	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	90
+65	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	94
+66	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	99
+67	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	100
+68	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	102
+69	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	103
+70	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	93
+71	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	96
+72	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	87
+73	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	64
+74	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	101
+75	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	75
+76	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	82
+77	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	104
+78	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	85
+79	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	83
+80	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	74
+81	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	89
+82	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	77
+83	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	80
+84	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	79
+85	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	110
+86	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	123
+87	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	130
+88	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	114
+89	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	126
+90	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	106
+91	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	109
+92	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	129
+93	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	144
+94	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	148
+95	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	122
+96	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	127
+97	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	135
+98	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	142
+99	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	105
+100	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	107
+101	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	108
+102	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	111
+103	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	112
+104	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	113
+105	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	115
+106	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	116
+107	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	117
+108	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	118
+109	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	119
+110	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	120
+111	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	121
+112	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	124
+113	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	125
+114	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	128
+115	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	131
+116	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	132
+117	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	133
+118	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	134
+119	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	136
+120	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	137
+121	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	138
+122	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	139
+123	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	140
+124	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	141
+125	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	143
+126	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	145
+127	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	146
+128	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	147
+129	2013-01-01 00:00:00	2013-01-01 00:00:00	t	7	149
+130	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	233
+131	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	281
+132	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	278
+133	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	291
+134	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	285
+135	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	179
+136	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	279
+137	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	338
+138	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	326
+139	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	334
+140	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	323
+141	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	348
+142	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	343
+143	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	336
+144	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	350
+145	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	347
+146	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	345
+147	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	354
+148	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	330
+149	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	325
+150	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	335
+151	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	368
+152	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	364
+153	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	377
+154	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	380
+155	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	371
+156	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	362
+157	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	379
+158	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	366
+159	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	369
+160	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	359
+161	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	384
+162	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	373
+163	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	357
+164	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	378
+165	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	363
+166	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	376
+167	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	372
+168	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	383
+169	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	380
+170	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	382
+171	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	371
+172	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	345
+173	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	313
+174	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	334
+175	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	377
+176	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	369
+177	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	359
+178	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	363
+179	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	364
+180	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	356
+181	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	335
+182	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	347
+183	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	323
+184	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	338
+185	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	355
+186	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	358
+187	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	381
+188	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	345
+189	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	350
+190	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	369
+191	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	357
+192	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	383
+193	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	380
+194	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	376
+195	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	368
+196	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	377
+197	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	310
+198	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	326
+199	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	371
+200	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	325
+201	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	340
+202	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	381
+203	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	323
+204	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	369
+205	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	376
+206	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	350
+207	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	343
+208	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	380
+209	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	336
+210	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	326
+211	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	362
+212	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	330
+213	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	310
+214	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	377
+215	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	371
+216	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	364
+217	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	381
+218	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	334
+219	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	313
+220	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	380
+221	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	326
+222	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	381
+223	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	371
+224	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	323
+225	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	380
+226	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	379
+227	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	313
+228	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	368
+229	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	402
+230	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	409
+231	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	405
+232	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	400
+233	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	401
+234	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	411
+235	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	410
+236	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	418
+237	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	407
+238	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	414
+239	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	404
+240	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	408
+241	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	406
+242	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	417
+243	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	413
+244	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	440
+245	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	420
+246	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	426
+247	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	429
+248	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	431
+249	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	428
+250	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	421
+251	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	430
+252	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	427
+253	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	422
+254	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	424
+255	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	425
+256	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	436
+257	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	435
+258	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	437
+259	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	442
+260	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	438
+261	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	443
+262	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	392
+263	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	408
+264	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	410
+265	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	424
+266	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	436
+267	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	420
+268	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	397
+269	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	389
+270	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	395
+271	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	401
+272	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	416
+273	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	392
+274	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	402
+275	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	411
+276	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	398
+277	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	395
+278	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	410
+279	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	404
+280	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	440
+281	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	425
+282	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	415
+283	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	400
+284	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	402
+285	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	409
+286	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	410
+287	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	420
+288	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	425
+289	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	397
+290	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	395
+291	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	415
+292	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	395
+293	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	402
+294	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	425
+295	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	410
+296	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	423
+297	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	395
+298	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	409
+299	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	470
+300	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	476
+301	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	480
+302	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	485
+303	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	471
+304	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	500
+305	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	472
+306	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	483
+307	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	469
+308	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	473
+309	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	478
+310	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	482
+311	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	493
+312	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	495
+313	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	497
+314	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	498
+315	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	499
+316	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	479
+317	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	496
+318	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	487
+319	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	494
+320	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	484
+321	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	512
+322	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	528
+323	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	534
+324	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	508
+325	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	515
+326	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	516
+327	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	511
+328	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	513
+329	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	514
+330	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	529
+331	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	502
+332	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	506
+333	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	510
+334	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	517
+335	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	522
+336	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	523
+337	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	524
+338	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	527
+339	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	531
+340	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	532
+341	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	499
+342	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	469
+343	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	476
+344	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	497
+345	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	492
+346	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	529
+347	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	471
+348	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	507
+349	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	508
+350	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	534
+351	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	458
+352	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	474
+353	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	517
+354	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	470
+355	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	513
+356	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	470
+357	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	522
+358	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	493
+359	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	512
+360	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	531
+361	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	479
+362	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	508
+363	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	483
+364	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	467
+365	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	459
+366	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	469
+367	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	493
+368	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	514
+369	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	472
+370	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	500
+371	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	509
+372	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	511
+373	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	480
+374	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	499
+375	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	508
+376	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	485
+377	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	470
+378	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	527
+379	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	528
+380	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	531
+381	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	493
+382	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	471
+383	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	472
+384	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	478
+385	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	511
+386	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	458
+387	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	508
+388	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	529
+389	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	478
+390	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	517
+391	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	530
+392	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	518
+393	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	519
+394	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	493
+395	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	472
+396	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	520
+397	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	471
+398	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	479
+399	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	534
+400	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	496
+401	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	480
+402	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	483
+403	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	533
+404	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	508
+405	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	532
+406	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	501
+407	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	467
+408	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	565
+409	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	557
+410	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	562
+411	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	564
+412	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	569
+413	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	561
+414	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	560
+415	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	576
+416	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	573
+417	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	578
+418	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	579
+419	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	577
+420	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	570
+421	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	575
+422	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	558
+423	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	599
+424	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	590
+425	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	607
+426	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	600
+427	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	613
+428	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	611
+429	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	591
+430	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	595
+431	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	601
+432	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	604
+433	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	608
+434	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	565
+435	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	549
+436	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	569
+437	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	544
+438	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	606
+439	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	611
+440	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	563
+441	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	590
+442	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	607
+443	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	576
+444	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	597
+445	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	594
+446	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	559
+447	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	588
+448	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	544
+449	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	590
+450	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	559
+451	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	576
+452	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	545
+453	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	572
+454	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	577
+455	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	544
+456	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	546
+457	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	570
+458	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	544
+459	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	546
+460	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	545
+461	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	576
+462	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	577
+463	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	606
+464	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	578
+465	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	576
+466	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	544
+467	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	565
+468	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	575
+469	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	577
+470	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	590
+471	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	600
+472	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	13
+473	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	11
+474	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	35
+475	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	1
+476	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	8
+477	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	19
+478	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	27
+479	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	29
+480	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	36
+481	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	52
+482	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	3
+483	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	6
+484	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	23
+485	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	31
+486	2011-01-01 00:00:00	2011-01-01 00:00:00	t	2	46
+487	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	73
+488	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	91
+489	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	92
+490	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	98
+491	2013-01-01 00:00:00	2013-01-01 00:00:00	t	6	76
+492	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	199
+493	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	203
+494	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	207
+495	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	209
+496	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	211
+497	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	215
+498	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	226
+499	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	227
+500	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	236
+501	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	240
+502	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	202
+503	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	238
+504	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	245
+505	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	201
+506	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	205
+507	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	206
+508	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	230
+509	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	231
+510	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	234
+511	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	243
+512	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	193
+513	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	194
+514	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	195
+515	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	196
+516	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	197
+517	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	198
+518	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	200
+519	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	204
+520	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	208
+521	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	210
+522	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	212
+523	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	213
+524	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	214
+525	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	216
+526	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	217
+527	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	218
+528	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	219
+529	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	220
+530	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	221
+531	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	222
+532	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	223
+533	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	224
+534	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	225
+535	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	228
+536	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	229
+537	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	232
+538	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	235
+539	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	237
+540	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	239
+541	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	241
+542	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	242
+543	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	244
+544	2014-01-01 00:00:00	2014-01-01 00:00:00	t	8	246
+545	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	252
+546	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	255
+547	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	265
+548	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	270
+549	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	271
+550	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	276
+551	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	287
+552	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	296
+553	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	304
+554	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	247
+555	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	249
+556	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	250
+557	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	251
+558	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	253
+559	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	254
+560	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	257
+561	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	259
+562	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	260
+563	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	262
+564	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	264
+565	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	267
+566	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	269
+567	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	272
+568	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	273
+569	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	274
+570	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	275
+571	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	280
+572	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	282
+573	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	283
+574	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	284
+575	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	288
+576	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	290
+577	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	293
+578	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	295
+579	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	300
+580	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	306
+581	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	307
+582	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	248
+583	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	256
+584	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	261
+585	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	263
+586	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	266
+587	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	268
+588	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	277
+589	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	279
+590	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	286
+591	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	292
+592	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	297
+593	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	298
+594	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	299
+595	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	302
+596	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	305
+597	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	258
+598	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	289
+599	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	294
+600	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	301
+601	2014-01-01 00:00:00	2014-01-01 00:00:00	t	9	303
+602	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	197
+603	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	224
+604	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	285
+605	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	287
+606	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	226
+607	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	175
+608	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	290
+609	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	154
+610	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	157
+611	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	248
+612	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	200
+613	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	206
+614	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	162
+615	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	208
+616	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	264
+617	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	271
+618	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	215
+619	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	216
+620	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	170
+621	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	171
+622	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	281
+623	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	283
+624	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	228
+625	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	288
+626	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	289
+627	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	232
+628	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	233
+629	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	299
+630	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	301
+631	2014-01-01 00:00:00	2014-01-01 00:00:00	t	10	245
+632	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	247
+633	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	203
+634	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	256
+635	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	278
+636	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	177
+637	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	223
+638	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	291
+639	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	159
+640	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	160
+641	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	172
+642	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	227
+643	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	286
+644	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	234
+645	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	156
+646	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	158
+647	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	199
+648	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	161
+649	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	255
+650	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	258
+651	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	164
+652	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	263
+653	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	210
+654	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	166
+655	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	265
+656	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	269
+657	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	168
+658	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	270
+659	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	241
+660	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	297
+661	2014-01-01 00:00:00	2014-01-01 00:00:00	t	11	304
+662	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	324
+663	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	328
+664	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	332
+665	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	340
+666	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	342
+667	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	346
+668	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	349
+669	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	352
+670	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	353
+671	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	329
+672	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	333
+673	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	337
+674	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	339
+675	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	341
+676	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	344
+677	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	351
+678	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	356
+679	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	327
+680	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	331
+681	2015-01-01 00:00:00	2015-01-01 00:00:00	t	36	355
+682	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	358
+683	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	360
+684	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	361
+685	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	365
+686	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	367
+687	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	375
+688	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	381
+689	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	382
+690	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	370
+691	2015-01-01 00:00:00	2015-01-01 00:00:00	t	37	374
+692	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	332
+693	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	344
+694	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	315
+695	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	337
+696	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	376
+697	2015-01-01 00:00:00	2015-01-01 00:00:00	t	38	381
+698	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	327
+699	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	341
+700	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	346
+701	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	348
+702	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	354
+703	2015-01-01 00:00:00	2015-01-01 00:00:00	t	39	361
+704	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	371
+705	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	358
+706	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	360
+707	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	361
+708	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	365
+709	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	339
+710	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	340
+711	2015-01-01 00:00:00	2015-01-01 00:00:00	t	40	356
+712	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	331
+713	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	351
+714	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	352
+715	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	349
+716	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	355
+717	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	335
+718	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	325
+719	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	318
+720	2015-01-01 00:00:00	2015-01-01 00:00:00	t	41	354
+721	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	315
+722	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	363
+723	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	374
+724	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	342
+725	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	343
+726	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	353
+727	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	324
+728	2015-01-01 00:00:00	2015-01-01 00:00:00	t	42	328
+729	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	323
+730	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	312
+731	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	334
+732	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	348
+733	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	375
+734	2015-01-01 00:00:00	2015-01-01 00:00:00	t	43	384
+735	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	362
+736	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	373
+737	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	309
+738	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	329
+739	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	332
+740	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	347
+741	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	330
+742	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	341
+743	2015-01-01 00:00:00	2015-01-01 00:00:00	t	44	382
+744	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	327
+745	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	333
+746	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	337
+747	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	338
+748	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	370
+749	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	344
+750	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	378
+751	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	379
+752	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	313
+753	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	366
+754	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	364
+755	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	367
+756	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	336
+757	2015-01-01 00:00:00	2015-01-01 00:00:00	t	45	372
+758	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	364
+759	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	331
+760	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	335
+761	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	352
+762	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	356
+763	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	318
+764	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	351
+765	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	358
+766	2015-01-01 00:00:00	2015-01-01 00:00:00	t	46	349
+767	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	360
+768	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	354
+769	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	355
+770	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	365
+771	2015-01-01 00:00:00	2015-01-01 00:00:00	t	47	339
+772	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	324
+773	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	328
+774	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	353
+775	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	315
+776	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	361
+777	2015-01-01 00:00:00	2015-01-01 00:00:00	t	48	342
+778	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	363
+779	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	334
+780	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	374
+781	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	375
+782	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	383
+783	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	384
+784	2015-01-01 00:00:00	2015-01-01 00:00:00	t	49	357
+785	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	366
+786	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	379
+787	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	327
+788	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	329
+789	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	367
+790	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	333
+791	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	337
+792	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	338
+793	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	372
+794	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	378
+795	2015-01-01 00:00:00	2015-01-01 00:00:00	t	50	348
+796	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	345
+797	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	312
+798	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	313
+799	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	368
+800	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	309
+801	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	341
+802	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	332
+803	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	370
+804	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	373
+805	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	344
+806	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	347
+807	2015-01-01 00:00:00	2015-01-01 00:00:00	t	51	382
+808	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	331
+809	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	335
+810	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	352
+811	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	350
+812	2015-01-01 00:00:00	2015-01-01 00:00:00	t	52	355
+813	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	340
+814	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	351
+815	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	354
+816	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	365
+817	2015-01-01 00:00:00	2015-01-01 00:00:00	t	53	349
+818	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	324
+819	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	357
+820	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	369
+821	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	374
+822	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	375
+823	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	383
+824	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	315
+825	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	361
+826	2015-01-01 00:00:00	2015-01-01 00:00:00	t	54	376
+827	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	323
+828	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	363
+829	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	328
+830	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	342
+831	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	348
+832	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	384
+833	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	356
+834	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	358
+835	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	353
+836	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	339
+837	2015-01-01 00:00:00	2015-01-01 00:00:00	t	55	343
+838	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	360
+839	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	336
+840	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	373
+841	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	341
+842	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	345
+843	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	378
+844	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	379
+845	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	367
+846	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	333
+847	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	372
+848	2015-01-01 00:00:00	2015-01-01 00:00:00	t	56	347
+849	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	361
+850	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	362
+851	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	365
+852	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	340
+853	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	352
+854	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	354
+855	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	350
+856	2015-01-01 00:00:00	2015-01-01 00:00:00	t	58	355
+857	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	335
+858	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	360
+859	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	358
+860	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	364
+861	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	331
+862	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	349
+863	2015-01-01 00:00:00	2015-01-01 00:00:00	t	59	351
+864	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	383
+865	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	357
+866	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	334
+867	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	339
+868	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	336
+869	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	342
+870	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	376
+871	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	353
+872	2015-01-01 00:00:00	2015-01-01 00:00:00	t	60	356
+873	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	343
+874	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	363
+875	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	328
+876	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	369
+877	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	374
+878	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	375
+879	2015-01-01 00:00:00	2015-01-01 00:00:00	t	61	384
+880	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	310
+881	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	326
+882	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	330
+883	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	367
+884	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	337
+885	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	377
+886	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	344
+887	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	372
+888	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	341
+889	2015-01-01 00:00:00	2015-01-01 00:00:00	t	62	378
+890	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	370
+891	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	348
+892	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	325
+893	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	366
+894	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	332
+895	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	333
+896	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	338
+897	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	373
+898	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	347
+899	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	382
+900	2015-01-01 00:00:00	2015-01-01 00:00:00	t	63	327
+901	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	403
+902	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	415
+903	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	416
+904	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	419
+905	2016-01-01 00:00:00	2016-01-01 00:00:00	t	64	412
+906	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	444
+907	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	434
+908	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	423
+909	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	432
+910	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	433
+911	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	439
+912	2016-01-01 00:00:00	2016-01-01 00:00:00	t	65	441
+913	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	439
+914	2016-01-01 00:00:00	2016-01-01 00:00:00	t	66	432
+915	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	388
+916	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	431
+917	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	434
+918	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	412
+919	2016-01-01 00:00:00	2016-01-01 00:00:00	t	67	398
+920	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	422
+921	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	405
+922	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	434
+923	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	442
+924	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	414
+925	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	439
+926	2016-01-01 00:00:00	2016-01-01 00:00:00	t	68	419
+927	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	399
+928	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	436
+929	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	417
+930	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	441
+931	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	444
+932	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	412
+933	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	415
+934	2016-01-01 00:00:00	2016-01-01 00:00:00	t	69	418
+935	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	429
+936	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	431
+937	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	432
+938	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	433
+939	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	424
+940	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	435
+941	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	423
+942	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	400
+943	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	427
+944	2016-01-01 00:00:00	2016-01-01 00:00:00	t	70	406
+945	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	421
+946	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	428
+947	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	401
+948	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	443
+949	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	389
+950	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	391
+951	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	420
+952	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	430
+953	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	408
+954	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	409
+955	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	397
+956	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	437
+957	2016-01-01 00:00:00	2016-01-01 00:00:00	t	71	438
+958	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	434
+959	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	416
+960	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	417
+961	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	441
+962	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	444
+963	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	405
+964	2016-01-01 00:00:00	2016-01-01 00:00:00	t	72	442
+965	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	436
+966	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	423
+967	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	418
+968	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	419
+969	2016-01-01 00:00:00	2016-01-01 00:00:00	t	73	422
+970	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	391
+971	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	406
+972	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	433
+973	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	438
+974	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	414
+975	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	443
+976	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	421
+977	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	401
+978	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	424
+979	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	428
+980	2016-01-01 00:00:00	2016-01-01 00:00:00	t	74	440
+981	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	398
+982	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	404
+983	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	427
+984	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	429
+985	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	430
+986	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	408
+987	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	431
+988	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	411
+989	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	435
+990	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	437
+991	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	412
+992	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	399
+993	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	432
+994	2016-01-01 00:00:00	2016-01-01 00:00:00	t	75	439
+995	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	423
+996	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	434
+997	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	417
+998	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	441
+999	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	418
+1000	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	442
+1001	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	416
+1002	2016-01-01 00:00:00	2016-01-01 00:00:00	t	76	436
+1003	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	405
+1004	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	439
+1005	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	414
+1006	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	440
+1007	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	419
+1008	2016-01-01 00:00:00	2016-01-01 00:00:00	t	77	444
+1009	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	400
+1010	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	412
+1011	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	389
+1012	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	401
+1013	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	428
+1014	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	409
+1015	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	397
+1016	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	392
+1017	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	421
+1018	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	430
+1019	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	408
+1020	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	435
+1021	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	398
+1022	2016-01-01 00:00:00	2016-01-01 00:00:00	t	78	438
+1023	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	443
+1024	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	420
+1025	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	422
+1026	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	424
+1027	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	404
+1028	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	427
+1029	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	406
+1030	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	429
+1031	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	431
+1032	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	411
+1033	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	432
+1034	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	433
+1035	2016-01-01 00:00:00	2016-01-01 00:00:00	t	79	437
+1036	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	444
+1037	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	434
+1038	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	417
+1039	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	441
+1040	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	418
+1041	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	419
+1042	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	401
+1043	2016-01-01 00:00:00	2016-01-01 00:00:00	t	80	439
+1044	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	424
+1045	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	405
+1046	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	436
+1047	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	412
+1048	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	414
+1049	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	415
+1050	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	416
+1051	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	440
+1052	2016-01-01 00:00:00	2016-01-01 00:00:00	t	81	442
+1053	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	406
+1054	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	421
+1055	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	404
+1056	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	389
+1057	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	425
+1058	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	427
+1059	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	432
+1060	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	433
+1061	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	443
+1062	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	420
+1063	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	422
+1064	2016-01-01 00:00:00	2016-01-01 00:00:00	t	82	431
+1065	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	392
+1066	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	408
+1067	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	402
+1068	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	428
+1069	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	429
+1070	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	430
+1071	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	410
+1072	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	411
+1073	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	435
+1074	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	437
+1075	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	398
+1076	2016-01-01 00:00:00	2016-01-01 00:00:00	t	83	438
+1077	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	492
+1078	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	474
+1079	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	477
+1080	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	481
+1081	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	486
+1082	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	488
+1083	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	490
+1084	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	491
+1085	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	475
+1086	2017-01-01 00:00:00	2017-01-01 00:00:00	t	84	489
+1087	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	505
+1088	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	507
+1089	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	518
+1090	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	520
+1091	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	521
+1092	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	525
+1093	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	533
+1094	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	536
+1095	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	501
+1096	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	503
+1097	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	504
+1098	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	509
+1099	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	519
+1100	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	526
+1101	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	530
+1102	2017-01-01 00:00:00	2017-01-01 00:00:00	t	85	535
+1103	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	453
+1104	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	505
+1105	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	486
+1106	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	445
+1107	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	463
+1108	2017-01-01 00:00:00	2017-01-01 00:00:00	t	86	456
+1109	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	460
+1110	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	506
+1111	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	475
+1112	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	462
+1113	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	490
+1114	2017-01-01 00:00:00	2017-01-01 00:00:00	t	87	494
+1115	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	469
+1116	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	503
+1117	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	453
+1118	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	506
+1119	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	478
+1120	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	514
+1121	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	484
+1122	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	486
+1123	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	524
+1124	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	525
+1125	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	535
+1126	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	504
+1127	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	488
+1128	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	462
+1129	2017-01-01 00:00:00	2017-01-01 00:00:00	t	88	530
+1130	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	487
+1131	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	472
+1132	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	473
+1133	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	477
+1134	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	510
+1135	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	517
+1136	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	518
+1137	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	519
+1138	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	520
+1139	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	523
+1140	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	489
+1141	2017-01-01 00:00:00	2017-01-01 00:00:00	t	89	490
+1142	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	475
+1143	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	509
+1144	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	460
+1145	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	480
+1146	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	481
+1147	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	515
+1148	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	516
+1149	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	485
+1150	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	521
+1151	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	532
+1152	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	498
+1153	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	499
+1154	2017-01-01 00:00:00	2017-01-01 00:00:00	t	90	500
+1155	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	482
+1156	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	534
+1157	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	458
+1158	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	507
+1159	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	513
+1160	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	496
+1161	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	533
+1162	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	468
+1163	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	511
+1164	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	536
+1165	2017-01-01 00:00:00	2017-01-01 00:00:00	t	91	461
+1166	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	445
+1167	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	526
+1168	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	491
+1169	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	527
+1170	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	528
+1171	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	463
+1172	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	529
+1173	2017-01-01 00:00:00	2017-01-01 00:00:00	t	92	464
+1174	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	492
+1175	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	497
+1176	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	501
+1177	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	505
+1178	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	494
+1179	2017-01-01 00:00:00	2017-01-01 00:00:00	t	93	495
+1180	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	517
+1181	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	453
+1182	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	506
+1183	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	478
+1184	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	519
+1185	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	520
+1186	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	486
+1187	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	487
+1188	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	490
+1189	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	525
+1190	2017-01-01 00:00:00	2017-01-01 00:00:00	t	94	530
+1191	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	503
+1192	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	473
+1193	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	484
+1194	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	488
+1195	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	523
+1196	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	524
+1197	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	489
+1198	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	522
+1199	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	504
+1200	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	510
+1201	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	477
+1202	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	518
+1203	2017-01-01 00:00:00	2017-01-01 00:00:00	t	95	535
+1204	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	479
+1205	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	513
+1206	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	481
+1207	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	482
+1208	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	532
+1209	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	533
+1210	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	498
+1211	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	534
+1212	2017-01-01 00:00:00	2017-01-01 00:00:00	t	96	468
+1213	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	460
+1214	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	516
+1215	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	521
+1216	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	536
+1217	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	458
+1218	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	512
+1219	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	515
+1220	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	483
+1221	2017-01-01 00:00:00	2017-01-01 00:00:00	t	97	496
+1222	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	505
+1223	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	494
+1224	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	467
+1225	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	501
+1226	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	462
+1227	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	492
+1228	2017-01-01 00:00:00	2017-01-01 00:00:00	t	98	497
+1229	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	526
+1230	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	495
+1231	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	529
+1232	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	445
+1233	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	491
+1234	2017-01-01 00:00:00	2017-01-01 00:00:00	t	99	463
+1235	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	469
+1236	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	484
+1237	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	520
+1238	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	522
+1239	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	524
+1240	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	477
+1241	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	510
+1242	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	517
+1243	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	489
+1244	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	473
+1245	2017-01-01 00:00:00	2017-01-01 00:00:00	t	100	535
+1246	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	519
+1247	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	486
+1248	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	453
+1249	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	506
+1250	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	514
+1251	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	518
+1252	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	487
+1253	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	490
+1254	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	525
+1255	2017-01-01 00:00:00	2017-01-01 00:00:00	t	101	530
+1256	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	475
+1257	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	509
+1258	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	479
+1259	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	481
+1260	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	515
+1261	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	516
+1262	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	498
+1263	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	534
+1264	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	513
+1265	2017-01-01 00:00:00	2017-01-01 00:00:00	t	102	536
+1266	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	512
+1267	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	482
+1268	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	483
+1269	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	485
+1270	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	521
+1271	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	496
+1272	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	531
+1273	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	500
+1274	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	507
+1275	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	532
+1276	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	499
+1277	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	480
+1278	2017-01-01 00:00:00	2017-01-01 00:00:00	t	103	533
+1279	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	470
+1280	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	491
+1281	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	527
+1282	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	463
+1283	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	497
+1284	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	488
+1285	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	526
+1286	2017-01-01 00:00:00	2017-01-01 00:00:00	t	104	494
+1287	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	523
+1288	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	462
+1289	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	467
+1290	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	445
+1291	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	505
+1292	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	492
+1293	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	495
+1294	2017-01-01 00:00:00	2017-01-01 00:00:00	t	105	528
+1295	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	503
+1296	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	504
+1297	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	453
+1298	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	473
+1299	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	486
+1300	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	522
+1301	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	490
+1302	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	525
+1303	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	470
+1304	2017-01-01 00:00:00	2017-01-01 00:00:00	t	106	487
+1305	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	506
+1306	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	477
+1307	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	514
+1308	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	484
+1309	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	489
+1310	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	535
+1311	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	469
+1312	2017-01-01 00:00:00	2017-01-01 00:00:00	t	107	524
+1313	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	507
+1314	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	511
+1315	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	513
+1316	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	536
+1317	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	460
+1318	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	512
+1319	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	515
+1320	2017-01-01 00:00:00	2017-01-01 00:00:00	t	108	482
+1321	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	481
+1322	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	485
+1323	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	500
+1324	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	458
+1325	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	516
+1326	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	521
+1327	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	498
+1328	2017-01-01 00:00:00	2017-01-01 00:00:00	t	109	499
+1329	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	462
+1330	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	523
+1331	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	527
+1332	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	495
+1333	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	528
+1334	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	463
+1335	2017-01-01 00:00:00	2017-01-01 00:00:00	t	110	529
+1336	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	492
+1337	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	488
+1338	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	526
+1339	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	491
+1340	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	494
+1341	2017-01-01 00:00:00	2017-01-01 00:00:00	t	111	497
+1342	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	585
+1343	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	563
+1344	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	567
+1345	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	568
+1346	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	571
+1347	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	572
+1348	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	574
+1349	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	580
+1350	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	582
+1351	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	583
+1352	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	584
+1353	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	559
+1354	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	566
+1355	2018-01-01 00:00:00	2018-01-01 00:00:00	t	112	581
+1356	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	586
+1357	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	587
+1358	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	589
+1359	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	592
+1360	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	593
+1361	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	594
+1362	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	596
+1363	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	597
+1364	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	598
+1365	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	602
+1366	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	603
+1367	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	605
+1368	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	606
+1369	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	609
+1370	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	610
+1371	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	612
+1372	2018-01-01 00:00:00	2018-01-01 00:00:00	t	113	588
+1373	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	589
+1374	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	602
+1375	2018-01-01 00:00:00	2018-01-01 00:00:00	t	114	579
+1376	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	592
+1377	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	593
+1378	2018-01-01 00:00:00	2018-01-01 00:00:00	t	115	543
+1379	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	604
+1380	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	584
+1381	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	587
+1382	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	566
+1383	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	589
+1384	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	549
+1385	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	568
+1386	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	595
+1387	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	599
+1388	2018-01-01 00:00:00	2018-01-01 00:00:00	t	116	607
+1389	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	571
+1390	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	593
+1391	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	581
+1392	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	606
+1393	2018-01-01 00:00:00	2018-01-01 00:00:00	t	117	611
+1394	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	560
+1395	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	564
+1396	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	567
+1397	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	578
+1398	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	580
+1399	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	575
+1400	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	603
+1401	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	586
+1402	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	551
+1403	2018-01-01 00:00:00	2018-01-01 00:00:00	t	118	600
+1404	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	579
+1405	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	588
+1406	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	591
+1407	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	573
+1408	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	596
+1409	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	601
+1410	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	602
+1411	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	605
+1412	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	612
+1413	2018-01-01 00:00:00	2018-01-01 00:00:00	t	119	585
+1414	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	547
+1415	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	556
+1416	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	548
+1417	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	569
+1418	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	577
+1419	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	582
+1420	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	613
+1421	2018-01-01 00:00:00	2018-01-01 00:00:00	t	120	561
+1422	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	597
+1423	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	557
+1424	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	565
+1425	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	594
+1426	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	608
+1427	2018-01-01 00:00:00	2018-01-01 00:00:00	t	121	609
+1428	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	610
+1429	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	570
+1430	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	583
+1431	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	546
+1432	2018-01-01 00:00:00	2018-01-01 00:00:00	t	122	598
+1433	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	558
+1434	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	562
+1435	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	572
+1436	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	574
+1437	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	563
+1438	2018-01-01 00:00:00	2018-01-01 00:00:00	t	123	592
+1439	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	566
+1440	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	571
+1441	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	578
+1442	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	564
+1443	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	591
+1444	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	595
+1445	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	601
+1446	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	581
+1447	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	549
+1448	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	599
+1449	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	600
+1450	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	580
+1451	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	607
+1452	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	589
+1453	2018-01-01 00:00:00	2018-01-01 00:00:00	t	124	584
+1454	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	586
+1455	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	560
+1456	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	588
+1457	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	567
+1458	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	568
+1459	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	573
+1460	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	593
+1461	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	596
+1462	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	602
+1463	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	579
+1464	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	605
+1465	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	606
+1466	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	612
+1467	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	585
+1468	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	587
+1469	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	603
+1470	2018-01-01 00:00:00	2018-01-01 00:00:00	t	125	604
+1471	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	557
+1472	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	569
+1473	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	590
+1474	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	609
+1475	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	610
+1476	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	611
+1477	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	556
+1478	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	613
+1479	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	562
+1480	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	545
+1481	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	558
+1482	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	563
+1483	2018-01-01 00:00:00	2018-01-01 00:00:00	t	126	576
+1484	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	594
+1485	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	561
+1486	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	565
+1487	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	592
+1488	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	574
+1489	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	575
+1490	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	597
+1491	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	598
+1492	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	608
+1493	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	582
+1494	2018-01-01 00:00:00	2018-01-01 00:00:00	t	127	583
+1495	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	612
+1496	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	586
+1497	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	560
+1498	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	564
+1499	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	566
+1500	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	588
+1501	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	591
+1502	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	573
+1503	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	596
+1504	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	601
+1505	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	604
+1506	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	605
+1507	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	581
+1508	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	606
+1509	2018-01-01 00:00:00	2018-01-01 00:00:00	t	128	607
+1510	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	587
+1511	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	567
+1512	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	549
+1513	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	599
+1514	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	603
+1515	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	568
+1516	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	571
+1517	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	593
+1518	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	595
+1519	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	578
+1520	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	579
+1521	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	580
+1522	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	584
+1523	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	585
+1524	2018-01-01 00:00:00	2018-01-01 00:00:00	t	129	589
+1525	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	592
+1526	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	565
+1527	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	558
+1528	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	561
+1529	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	575
+1530	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	608
+1531	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	609
+1532	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	610
+1533	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	611
+1534	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	613
+1535	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	557
+1536	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	597
+1537	2018-01-01 00:00:00	2018-01-01 00:00:00	t	130	556
+1538	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	574
+1539	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	563
+1540	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	569
+1541	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	570
+1542	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	572
+1543	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	594
+1544	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	598
+1545	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	583
+1546	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	600
+1547	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	590
+1548	2018-01-01 00:00:00	2018-01-01 00:00:00	t	131	582
+1549	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	587
+1550	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	566
+1551	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	588
+1552	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	571
+1553	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	591
+1554	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	579
+1555	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	581
+1556	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	612
+1557	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	584
+1558	2018-01-01 00:00:00	2018-01-01 00:00:00	t	132	585
+1559	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	586
+1560	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	603
+1561	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	564
+1562	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	567
+1563	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	549
+1564	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	568
+1565	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	589
+1566	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	593
+1567	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	602
+1568	2018-01-01 00:00:00	2018-01-01 00:00:00	t	133	604
+1569	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	594
+1570	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	583
+1571	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	546
+1572	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	592
+1573	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	611
+1574	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	562
+1575	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	563
+1576	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	597
+1577	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	582
+1578	2018-01-01 00:00:00	2018-01-01 00:00:00	t	134	610
+1579	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	557
+1580	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	558
+1581	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	561
+1582	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	569
+1583	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	570
+1584	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	574
+1585	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	608
+1586	2018-01-01 00:00:00	2018-01-01 00:00:00	t	135	609
 \.
 
 
@@ -28315,142 +28315,142 @@ COPY public.quiz_questions (id, sequence, question_id, quiz_id) FROM stdin;
 -- Data for Name: quizzes; Type: TABLE DATA; Schema: public; Owner: pedro
 --
 
-COPY public.quizzes (id, generation_date, number, series, title, type, version, year) FROM stdin;
-101	\N	101	3	data-2017-test-3-test-31B	TEST	AB	2017
-102	\N	102	3	data-2017-test-3-test-32A	TEST	BA	2017
-103	\N	103	3	data-2017-test-3-test-32B	TEST	BB	2017
-104	\N	104	3	data-2017-test-3-test-33A	TEST	CA	2017
-105	\N	105	3	data-2017-test-3-test-33B	TEST	CB	2017
-106	\N	106	4	data-2017-test-4-test-41A	TEST	AA	2017
-107	\N	107	4	data-2017-test-4-test-41B	TEST	AB	2017
-108	\N	108	4	data-2017-test-4-test-42A	TEST	BA	2017
-109	\N	109	4	data-2017-test-4-test-42B	TEST	BB	2017
-110	\N	110	4	data-2017-test-4-test-43A	TEST	CA	2017
-111	\N	111	4	data-2017-test-4-test-43B	TEST	CB	2017
-112	\N	112	1	data-2018-20190111-Exam-exame-20190111-companion-A	EXAM	A	2018
-113	\N	113	1	data-2018-20190111-Exam-exame-20190111-companion-B	EXAM	B	2018
-114	\N	114	2	data-2018-20190129-Exam-exame-20190129-companion-A	EXAM	A	2018
-115	\N	115	2	data-2018-20190129-Exam-exame-20190129-companion-B	EXAM	B	2018
-116	\N	116	1	data-2018-test-1-test-11-A	TEST	AA	2018
-117	\N	117	1	data-2018-test-1-test-11-B	TEST	AB	2018
-118	\N	118	1	data-2018-test-1-test-11-C	TEST	AC	2018
-119	\N	119	1	data-2018-test-1-test-11-D	TEST	AD	2018
-120	\N	120	1	data-2018-test-1-test-12-A	TEST	BA	2018
-1	\N	1	1	data-2010-primeiro-exame-20110113-companion-en	EXAM	A	2010
-2	\N	2	1	data-2011-exam1-exame-20120109-companion-en	EXAM	A	2011
-3	\N	3	2	data-2011-exam2-exame-20120203-companion-en	EXAM	A	2011
-4	\N	4	1	data-2012-exam1-exame-20130109-companion-en	EXAM	A	2012
-5	\N	5	2	data-2012-exam2-exame-20130201-companion-en	EXAM	A	2012
-6	\N	6	1	data-2013-exam1-exame-20140110-companion-en	EXAM	A	2013
-7	\N	7	2	data-2013-exam2-exame-20140130-companion-en	EXAM	A	2013
-8	\N	8	1	data-2014-exam-exam20150109-exame-20150109-companion-A	EXAM	A	2014
-9	\N	9	1	data-2014-exam-exam20150109-exame-20150109-companion-B	EXAM	B	2014
-10	\N	10	2	data-2014-exam-exam20150127-exame-20150127-companion-A	EXAM	A	2014
-11	\N	11	2	data-2014-exam-exam20150127-exame-20150127-companion-B	EXAM	B	2014
-12	\N	12	1	data-2014-test-1-test-11A-17co╠Бpias	TEST	AA	2014
-13	\N	13	1	data-2014-test-1-test-12A-24co╠Бpias	TEST	BA	2014
-14	\N	14	1	data-2014-test-1-test-13A-17co╠Бpias	TEST	CA	2014
-15	\N	15	1	data-2014-test-1-test-14A-24co╠Бpias	TEST	DA	2014
-16	\N	16	2	data-2014-test-2-test-21A-18co╠Бpias	TEST	AA	2014
-17	\N	17	2	data-2014-test-2-test-22A-18co╠Бpias	TEST	BA	2014
-18	\N	18	2	data-2014-test-2-test-23A-18co╠Бpias	TEST	CA	2014
-19	\N	19	2	data-2014-test-2-test-24A-18co╠Бpias	TEST	DA	2014
-20	\N	20	3	data-2014-test-3-test-31A-18copias	TEST	AA	2014
-21	\N	21	3	data-2014-test-3-test-32A-18copias	TEST	BA	2014
-22	\N	22	3	data-2014-test-3-test-33A-18copias	TEST	CA	2014
-23	\N	23	3	data-2014-test-3-test-34A-18copias	TEST	DA	2014
-24	\N	24	4	data-2014-test-4-test-41A-17copias	TEST	AA	2014
-25	\N	25	4	data-2014-test-4-test-42A-16copias	TEST	BA	2014
-26	\N	26	4	data-2014-test-4-test-43A-16copias	TEST	CA	2014
-27	\N	27	4	data-2014-test-4-test-44A-18copias	TEST	DA	2014
-28	\N	28	5	data-2014-test-5-test-51A-17copias	TEST	AA	2014
-29	\N	29	5	data-2014-test-5-test-52A-16copias	TEST	BA	2014
-30	\N	30	5	data-2014-test-5-test-53A-16copias	TEST	CA	2014
-31	\N	31	5	data-2014-test-5-test-54A-18copias	TEST	DA	2014
-32	\N	32	6	data-2014-test-6-test-61A-17copias	TEST	AA	2014
-33	\N	33	6	data-2014-test-6-test-62A-16copias	TEST	BA	2014
-34	\N	34	6	data-2014-test-6-test-63A-16copias	TEST	CA	2014
-35	\N	35	6	data-2014-test-6-test-64A-18copias	TEST	DA	2014
-36	\N	36	1	data-2015-exams-20160108Exam-exame-20160108-companion-A	EXAM	A	2015
-37	\N	37	1	data-2015-exams-20160108Exam-exame-20160108-companion-B	EXAM	B	2015
-38	\N	38	2	data-2015-exams-20160126Exam-exame-20160126-companion-A	EXAM	A	2015
-39	\N	39	2	data-2015-exams-20160126Exam-exame-20160126-companion-B	EXAM	B	2015
-40	\N	40	1	data-2015-test-1-test-11A	TEST	AA	2015
-41	\N	41	1	data-2015-test-1-test-11B	TEST	AB	2015
-42	\N	42	1	data-2015-test-1-test-12A	TEST	BA	2015
-43	\N	43	1	data-2015-test-1-test-12B	TEST	BB	2015
-44	\N	44	1	data-2015-test-1-test-13A	TEST	CA	2015
-45	\N	45	1	data-2015-test-1-test-13B	TEST	CB	2015
-46	\N	46	2	data-2015-test-2-test-21A	TEST	AA	2015
-47	\N	47	2	data-2015-test-2-test-21B	TEST	AB	2015
-48	\N	48	2	data-2015-test-2-test-22A	TEST	BA	2015
-49	\N	49	2	data-2015-test-2-test-22B	TEST	BB	2015
-50	\N	50	2	data-2015-test-2-test-23A	TEST	CA	2015
-51	\N	51	2	data-2015-test-2-test-23B	TEST	CB	2015
-52	\N	52	3	data-2015-test-3-test-31A	TEST	AA	2015
-53	\N	53	3	data-2015-test-3-test-31B	TEST	AB	2015
-54	\N	54	3	data-2015-test-3-test-32A	TEST	BA	2015
-55	\N	55	3	data-2015-test-3-test-32B	TEST	BB	2015
-56	\N	56	3	data-2015-test-3-test-33A	TEST	CA	2015
-57	\N	57	3	data-2015-test-3-test-33B	TEST	CC	2015
-58	\N	58	4	data-2015-test-4-test-41A	TEST	AA	2015
-59	\N	59	4	data-2015-test-4-test-41B	TEST	AB	2015
-60	\N	60	4	data-2015-test-4-test-42A	TEST	BA	2015
-61	\N	61	4	data-2015-test-4-test-42B	TEST	BB	2015
-62	\N	62	4	data-2015-test-4-test-43A	TEST	CA	2015
-63	\N	63	4	data-2015-test-4-test-43B	TEST	CB	2015
-64	\N	64	1	data-2016-20170113Exam-exame-20170113-companion-A	EXAM	A	2016
-65	\N	65	1	data-2016-20170113Exam-exame-20170113-companion-B	EXAM	B	2016
-66	\N	66	2	data-2016-20170131Exam-exame-20170131-companion-A	EXAM	A	2016
-67	\N	67	2	data-2016-20170131Exam-exame-20170131-companion-B	EXAM	B	2016
-68	\N	68	1	data-2016-test-1-test-11A	TEST	AA	2016
-69	\N	69	1	data-2016-test-1-test-11B	TEST	AB	2016
-70	\N	70	1	data-2016-test-1-test-12A	TEST	BA	2016
-71	\N	71	1	data-2016-test-1-test-12B	TEST	BB	2016
-72	\N	72	2	data-2016-test-2-test-21A	TEST	AA	2016
-73	\N	73	2	data-2016-test-2-test-21B	TEST	AB	2016
-74	\N	74	2	data-2016-test-2-test-22A	TEST	BA	2016
-75	\N	75	2	data-2016-test-2-test-22B	TEST	BB	2016
-76	\N	76	3	data-2016-test-3-test-31A	TEST	AA	2016
-77	\N	77	3	data-2016-test-3-test-31B	TEST	AB	2016
-78	\N	78	3	data-2016-test-3-test-32A	TEST	BA	2016
-79	\N	79	3	data-2016-test-3-test-32B	TEST	BB	2016
-80	\N	80	4	data-2016-test-4-test-41A	TEST	AA	2016
-81	\N	81	4	data-2016-test-4-test-41B	TEST	AB	2016
-82	\N	82	4	data-2016-test-4-test-42A	TEST	BA	2016
-83	\N	83	4	data-2016-test-4-test-42B	TEST	BB	2016
-84	\N	84	1	data-2017-20180112-Exam-exame-20180112-companion-A	EXAM	A	2017
-85	\N	85	1	data-2017-20180112-Exam-exame-20180112-companion-B	EXAM	B	2017
-86	\N	86	2	data-2017-20180130-Exam-exame-20180130-companion-A	EXAM	A	2017
-87	\N	87	2	data-2017-20180130-Exam-exame-20180130-companion-B	EXAM	B	2017
-88	\N	88	1	data-2017-test-1-test-11A	TEST	AA	2017
-89	\N	89	1	data-2017-test-1-test-11B	TEST	AB	2017
-90	\N	90	1	data-2017-test-1-test-12A	TEST	BA	2017
-91	\N	91	1	data-2017-test-1-test-12B	TEST	BB	2017
-92	\N	92	1	data-2017-test-1-test-13A	TEST	CA	2017
-93	\N	93	1	data-2017-test-1-test-13B	TEST	CB	2017
-94	\N	94	2	data-2017-test-2-test-21-A	TEST	AA	2017
-95	\N	95	2	data-2017-test-2-test-21-B	TEST	AB	2017
-96	\N	96	2	data-2017-test-2-test-22-A	TEST	BA	2017
-97	\N	97	2	data-2017-test-2-test-22-B	TEST	BB	2017
-98	\N	98	2	data-2017-test-2-test-23-A	TEST	CA	2017
-99	\N	99	2	data-2017-test-2-test-23-B	TEST	CB	2017
-100	\N	100	3	data-2017-test-3-test-31A	TEST	AA	2017
-121	\N	121	1	data-2018-test-1-test-12-B	TEST	BB	2018
-122	\N	122	1	data-2018-test-1-test-12-C	TEST	BC	2018
-123	\N	123	1	data-2018-test-1-test-12-D	TEST	BD	2018
-124	\N	124	2	data-2018-test-2-test-21-A	TEST	AA	2018
-125	\N	125	2	data-2018-test-2-test-21-B	TEST	AB	2018
-126	\N	126	2	data-2018-test-2-test-22-A	TEST	BA	2018
-127	\N	127	2	data-2018-test-2-test-22-B	TEST	BB	2018
-128	\N	128	3	data-2018-test-3-test-31-A	TEST	AA	2018
-129	\N	129	3	data-2018-test-3-test-31-B	TEST	AB	2018
-130	\N	130	3	data-2018-test-3-test-32-A	TEST	BA	2018
-131	\N	131	3	data-2018-test-3-test-32-B	TEST	BB	2018
-132	\N	132	4	data-2018-test-4-test-41-A	TEST	AA	2018
-133	\N	133	4	data-2018-test-4-test-41-B	TEST	AB	2018
-134	\N	134	4	data-2018-test-4-test-42-A	TEST	BA	2018
-135	\N	135	4	data-2018-test-4-test-42-B	TEST	BB	2018
+COPY public.quizzes (id, available_date, generation_date, number, series, title, type, version, year) FROM stdin;
+101	\N	\N	101	3	data-2017-test-3-test-31B	TEST	AB	2017
+102	\N	\N	102	3	data-2017-test-3-test-32A	TEST	BA	2017
+103	\N	\N	103	3	data-2017-test-3-test-32B	TEST	BB	2017
+104	\N	\N	104	3	data-2017-test-3-test-33A	TEST	CA	2017
+105	\N	\N	105	3	data-2017-test-3-test-33B	TEST	CB	2017
+106	\N	\N	106	4	data-2017-test-4-test-41A	TEST	AA	2017
+107	\N	\N	107	4	data-2017-test-4-test-41B	TEST	AB	2017
+108	\N	\N	108	4	data-2017-test-4-test-42A	TEST	BA	2017
+1	\N	\N	1	1	data-2010-primeiro-exame-20110113-companion-en	EXAM	A	2010
+2	\N	\N	2	1	data-2011-exam1-exame-20120109-companion-en	EXAM	A	2011
+3	\N	\N	3	2	data-2011-exam2-exame-20120203-companion-en	EXAM	A	2011
+4	\N	\N	4	1	data-2012-exam1-exame-20130109-companion-en	EXAM	A	2012
+5	\N	\N	5	2	data-2012-exam2-exame-20130201-companion-en	EXAM	A	2012
+6	\N	\N	6	1	data-2013-exam1-exame-20140110-companion-en	EXAM	A	2013
+7	\N	\N	7	2	data-2013-exam2-exame-20140130-companion-en	EXAM	A	2013
+8	\N	\N	8	1	data-2014-exam-exam20150109-exame-20150109-companion-A	EXAM	A	2014
+9	\N	\N	9	1	data-2014-exam-exam20150109-exame-20150109-companion-B	EXAM	B	2014
+10	\N	\N	10	2	data-2014-exam-exam20150127-exame-20150127-companion-A	EXAM	A	2014
+11	\N	\N	11	2	data-2014-exam-exam20150127-exame-20150127-companion-B	EXAM	B	2014
+12	\N	\N	12	1	data-2014-test-1-test-11A-17co╠Бpias	TEST	AA	2014
+13	\N	\N	13	1	data-2014-test-1-test-12A-24co╠Бpias	TEST	BA	2014
+14	\N	\N	14	1	data-2014-test-1-test-13A-17co╠Бpias	TEST	CA	2014
+15	\N	\N	15	1	data-2014-test-1-test-14A-24co╠Бpias	TEST	DA	2014
+16	\N	\N	16	2	data-2014-test-2-test-21A-18co╠Бpias	TEST	AA	2014
+17	\N	\N	17	2	data-2014-test-2-test-22A-18co╠Бpias	TEST	BA	2014
+18	\N	\N	18	2	data-2014-test-2-test-23A-18co╠Бpias	TEST	CA	2014
+19	\N	\N	19	2	data-2014-test-2-test-24A-18co╠Бpias	TEST	DA	2014
+20	\N	\N	20	3	data-2014-test-3-test-31A-18copias	TEST	AA	2014
+21	\N	\N	21	3	data-2014-test-3-test-32A-18copias	TEST	BA	2014
+22	\N	\N	22	3	data-2014-test-3-test-33A-18copias	TEST	CA	2014
+23	\N	\N	23	3	data-2014-test-3-test-34A-18copias	TEST	DA	2014
+24	\N	\N	24	4	data-2014-test-4-test-41A-17copias	TEST	AA	2014
+25	\N	\N	25	4	data-2014-test-4-test-42A-16copias	TEST	BA	2014
+26	\N	\N	26	4	data-2014-test-4-test-43A-16copias	TEST	CA	2014
+27	\N	\N	27	4	data-2014-test-4-test-44A-18copias	TEST	DA	2014
+28	\N	\N	28	5	data-2014-test-5-test-51A-17copias	TEST	AA	2014
+29	\N	\N	29	5	data-2014-test-5-test-52A-16copias	TEST	BA	2014
+30	\N	\N	30	5	data-2014-test-5-test-53A-16copias	TEST	CA	2014
+31	\N	\N	31	5	data-2014-test-5-test-54A-18copias	TEST	DA	2014
+32	\N	\N	32	6	data-2014-test-6-test-61A-17copias	TEST	AA	2014
+33	\N	\N	33	6	data-2014-test-6-test-62A-16copias	TEST	BA	2014
+34	\N	\N	34	6	data-2014-test-6-test-63A-16copias	TEST	CA	2014
+35	\N	\N	35	6	data-2014-test-6-test-64A-18copias	TEST	DA	2014
+36	\N	\N	36	1	data-2015-exams-20160108Exam-exame-20160108-companion-A	EXAM	A	2015
+37	\N	\N	37	1	data-2015-exams-20160108Exam-exame-20160108-companion-B	EXAM	B	2015
+38	\N	\N	38	2	data-2015-exams-20160126Exam-exame-20160126-companion-A	EXAM	A	2015
+39	\N	\N	39	2	data-2015-exams-20160126Exam-exame-20160126-companion-B	EXAM	B	2015
+40	\N	\N	40	1	data-2015-test-1-test-11A	TEST	AA	2015
+41	\N	\N	41	1	data-2015-test-1-test-11B	TEST	AB	2015
+42	\N	\N	42	1	data-2015-test-1-test-12A	TEST	BA	2015
+43	\N	\N	43	1	data-2015-test-1-test-12B	TEST	BB	2015
+44	\N	\N	44	1	data-2015-test-1-test-13A	TEST	CA	2015
+45	\N	\N	45	1	data-2015-test-1-test-13B	TEST	CB	2015
+46	\N	\N	46	2	data-2015-test-2-test-21A	TEST	AA	2015
+47	\N	\N	47	2	data-2015-test-2-test-21B	TEST	AB	2015
+48	\N	\N	48	2	data-2015-test-2-test-22A	TEST	BA	2015
+49	\N	\N	49	2	data-2015-test-2-test-22B	TEST	BB	2015
+50	\N	\N	50	2	data-2015-test-2-test-23A	TEST	CA	2015
+51	\N	\N	51	2	data-2015-test-2-test-23B	TEST	CB	2015
+52	\N	\N	52	3	data-2015-test-3-test-31A	TEST	AA	2015
+53	\N	\N	53	3	data-2015-test-3-test-31B	TEST	AB	2015
+54	\N	\N	54	3	data-2015-test-3-test-32A	TEST	BA	2015
+55	\N	\N	55	3	data-2015-test-3-test-32B	TEST	BB	2015
+56	\N	\N	56	3	data-2015-test-3-test-33A	TEST	CA	2015
+57	\N	\N	57	3	data-2015-test-3-test-33B	TEST	CC	2015
+58	\N	\N	58	4	data-2015-test-4-test-41A	TEST	AA	2015
+59	\N	\N	59	4	data-2015-test-4-test-41B	TEST	AB	2015
+60	\N	\N	60	4	data-2015-test-4-test-42A	TEST	BA	2015
+61	\N	\N	61	4	data-2015-test-4-test-42B	TEST	BB	2015
+62	\N	\N	62	4	data-2015-test-4-test-43A	TEST	CA	2015
+63	\N	\N	63	4	data-2015-test-4-test-43B	TEST	CB	2015
+64	\N	\N	64	1	data-2016-20170113Exam-exame-20170113-companion-A	EXAM	A	2016
+65	\N	\N	65	1	data-2016-20170113Exam-exame-20170113-companion-B	EXAM	B	2016
+66	\N	\N	66	2	data-2016-20170131Exam-exame-20170131-companion-A	EXAM	A	2016
+67	\N	\N	67	2	data-2016-20170131Exam-exame-20170131-companion-B	EXAM	B	2016
+68	\N	\N	68	1	data-2016-test-1-test-11A	TEST	AA	2016
+69	\N	\N	69	1	data-2016-test-1-test-11B	TEST	AB	2016
+70	\N	\N	70	1	data-2016-test-1-test-12A	TEST	BA	2016
+71	\N	\N	71	1	data-2016-test-1-test-12B	TEST	BB	2016
+72	\N	\N	72	2	data-2016-test-2-test-21A	TEST	AA	2016
+73	\N	\N	73	2	data-2016-test-2-test-21B	TEST	AB	2016
+74	\N	\N	74	2	data-2016-test-2-test-22A	TEST	BA	2016
+75	\N	\N	75	2	data-2016-test-2-test-22B	TEST	BB	2016
+76	\N	\N	76	3	data-2016-test-3-test-31A	TEST	AA	2016
+77	\N	\N	77	3	data-2016-test-3-test-31B	TEST	AB	2016
+78	\N	\N	78	3	data-2016-test-3-test-32A	TEST	BA	2016
+79	\N	\N	79	3	data-2016-test-3-test-32B	TEST	BB	2016
+80	\N	\N	80	4	data-2016-test-4-test-41A	TEST	AA	2016
+81	\N	\N	81	4	data-2016-test-4-test-41B	TEST	AB	2016
+82	\N	\N	82	4	data-2016-test-4-test-42A	TEST	BA	2016
+83	\N	\N	83	4	data-2016-test-4-test-42B	TEST	BB	2016
+84	\N	\N	84	1	data-2017-20180112-Exam-exame-20180112-companion-A	EXAM	A	2017
+85	\N	\N	85	1	data-2017-20180112-Exam-exame-20180112-companion-B	EXAM	B	2017
+86	\N	\N	86	2	data-2017-20180130-Exam-exame-20180130-companion-A	EXAM	A	2017
+87	\N	\N	87	2	data-2017-20180130-Exam-exame-20180130-companion-B	EXAM	B	2017
+88	\N	\N	88	1	data-2017-test-1-test-11A	TEST	AA	2017
+89	\N	\N	89	1	data-2017-test-1-test-11B	TEST	AB	2017
+90	\N	\N	90	1	data-2017-test-1-test-12A	TEST	BA	2017
+91	\N	\N	91	1	data-2017-test-1-test-12B	TEST	BB	2017
+92	\N	\N	92	1	data-2017-test-1-test-13A	TEST	CA	2017
+93	\N	\N	93	1	data-2017-test-1-test-13B	TEST	CB	2017
+94	\N	\N	94	2	data-2017-test-2-test-21-A	TEST	AA	2017
+95	\N	\N	95	2	data-2017-test-2-test-21-B	TEST	AB	2017
+96	\N	\N	96	2	data-2017-test-2-test-22-A	TEST	BA	2017
+97	\N	\N	97	2	data-2017-test-2-test-22-B	TEST	BB	2017
+98	\N	\N	98	2	data-2017-test-2-test-23-A	TEST	CA	2017
+99	\N	\N	99	2	data-2017-test-2-test-23-B	TEST	CB	2017
+100	\N	\N	100	3	data-2017-test-3-test-31A	TEST	AA	2017
+109	\N	\N	109	4	data-2017-test-4-test-42B	TEST	BB	2017
+110	\N	\N	110	4	data-2017-test-4-test-43A	TEST	CA	2017
+111	\N	\N	111	4	data-2017-test-4-test-43B	TEST	CB	2017
+112	\N	\N	112	1	data-2018-20190111-Exam-exame-20190111-companion-A	EXAM	A	2018
+113	\N	\N	113	1	data-2018-20190111-Exam-exame-20190111-companion-B	EXAM	B	2018
+114	\N	\N	114	2	data-2018-20190129-Exam-exame-20190129-companion-A	EXAM	A	2018
+115	\N	\N	115	2	data-2018-20190129-Exam-exame-20190129-companion-B	EXAM	B	2018
+116	\N	\N	116	1	data-2018-test-1-test-11-A	TEST	AA	2018
+117	\N	\N	117	1	data-2018-test-1-test-11-B	TEST	AB	2018
+118	\N	\N	118	1	data-2018-test-1-test-11-C	TEST	AC	2018
+119	\N	\N	119	1	data-2018-test-1-test-11-D	TEST	AD	2018
+120	\N	\N	120	1	data-2018-test-1-test-12-A	TEST	BA	2018
+121	\N	\N	121	1	data-2018-test-1-test-12-B	TEST	BB	2018
+122	\N	\N	122	1	data-2018-test-1-test-12-C	TEST	BC	2018
+123	\N	\N	123	1	data-2018-test-1-test-12-D	TEST	BD	2018
+124	\N	\N	124	2	data-2018-test-2-test-21-A	TEST	AA	2018
+125	\N	\N	125	2	data-2018-test-2-test-21-B	TEST	AB	2018
+126	\N	\N	126	2	data-2018-test-2-test-22-A	TEST	BA	2018
+127	\N	\N	127	2	data-2018-test-2-test-22-B	TEST	BB	2018
+128	\N	\N	128	3	data-2018-test-3-test-31-A	TEST	AA	2018
+129	\N	\N	129	3	data-2018-test-3-test-31-B	TEST	AB	2018
+130	\N	\N	130	3	data-2018-test-3-test-32-A	TEST	BA	2018
+131	\N	\N	131	3	data-2018-test-3-test-32-B	TEST	BB	2018
+132	\N	\N	132	4	data-2018-test-4-test-41-A	TEST	AA	2018
+133	\N	\N	133	4	data-2018-test-4-test-41-B	TEST	AB	2018
+134	\N	\N	134	4	data-2018-test-4-test-42-A	TEST	BA	2018
+135	\N	\N	135	4	data-2018-test-4-test-42-B	TEST	BB	2018
 \.
 
 
@@ -28475,619 +28475,619 @@ COPY public.topics_questions (topics_id, questions_id) FROM stdin;
 --
 
 COPY public.users (id, name, number, role, username, year) FROM stdin;
-150	1,0	\N	\N	\N	2014
-151	2,0	\N	\N	\N	2014
-152	3,0	\N	\N	\N	2014
-153	5,0	\N	\N	\N	2014
-155	7,0	\N	\N	\N	2014
-163	42,0	\N	\N	\N	2014
-165	50,0	\N	\N	\N	2014
-167	59,0	\N	\N	\N	2014
-169	64,0	\N	\N	\N	2014
-173	101,0	\N	\N	\N	2014
-174	102,0	\N	\N	\N	2014
-176	112,0	\N	\N	\N	2014
-178	117,0	\N	\N	\N	2014
-180	120,0	\N	\N	\N	2014
-181	121,0	\N	\N	\N	2014
-182	122,0	\N	\N	\N	2014
-183	123,0	\N	\N	\N	2014
-184	124,0	\N	\N	\N	2014
-185	128,0	\N	\N	\N	2014
-108	48,0	108	\N	\N	2013
-111	51,0	111	\N	\N	2013
-112	52,0	112	\N	\N	2013
-113	53,0	113	\N	\N	2013
-115	55,0	115	\N	\N	2013
-116	56,0	116	\N	\N	2013
-117	57,0	117	\N	\N	2013
-118	58,0	118	\N	\N	2013
-119	59,0	119	\N	\N	2013
-120	60,0	120	\N	\N	2013
-121	61,0	121	\N	\N	2013
-124	64,0	124	\N	\N	2013
-125	65,0	125	\N	\N	2013
-128	68,0	128	\N	\N	2013
-131	71,0	131	\N	\N	2013
-132	72,0	132	\N	\N	2013
-133	73,0	133	\N	\N	2013
-134	74,0	134	\N	\N	2013
-136	76,0	136	\N	\N	2013
-137	77,0	137	\N	\N	2013
-138	78,0	138	\N	\N	2013
-139	79,0	139	\N	\N	2013
-140	80,0	140	\N	\N	2013
-141	81,0	141	\N	\N	2013
-143	83,0	143	\N	\N	2013
-145	85,0	145	\N	\N	2013
-146	86,0	146	\N	\N	2013
-147	87,0	147	\N	\N	2013
-149	89,0	149	\N	\N	2013
-179	119,0	179	\N	\N	2014
-13	13,0	13	\N	\N	2011
-11	11,0	11	\N	\N	2011
-35	35,0	35	\N	\N	2011
-1	1,0	1	\N	\N	2011
-8	8,0	8	\N	\N	2011
-19	19,0	19	\N	\N	2011
-27	27,0	27	\N	\N	2011
-29	29,0	29	\N	\N	2011
-36	36,0	36	\N	\N	2011
-52	52,0	52	\N	\N	2011
-3	3,0	3	\N	\N	2011
-6	6,0	6	\N	\N	2011
-23	23,0	23	\N	\N	2011
-31	31,0	31	\N	\N	2011
-46	46,0	46	\N	\N	2011
-73	13,0	73	\N	\N	2013
-91	31,0	91	\N	\N	2013
-92	32,0	92	\N	\N	2013
-98	38,0	98	\N	\N	2013
-76	16,0	76	\N	\N	2013
-175	107,0	175	\N	\N	2014
-154	6,0	154	\N	\N	2014
-157	15,0	157	\N	\N	2014
-162	41,0	162	\N	\N	2014
-170	73,0	170	\N	\N	2014
-171	74,0	171	\N	\N	2014
-177	114,0	177	\N	\N	2014
-159	21,0	159	\N	\N	2014
-160	23,0	160	\N	\N	2014
-172	78,0	172	\N	\N	2014
-156	12,0	156	\N	\N	2014
-158	19,0	158	\N	\N	2014
-161	26,0	161	\N	\N	2014
-164	44,0	164	\N	\N	2014
-166	52,0	166	\N	\N	2014
-168	63,0	168	\N	\N	2014
-186	130,0	\N	\N	\N	2014
-187	135,0	\N	\N	\N	2014
-188	138,0	\N	\N	\N	2014
-189	145,0	\N	\N	\N	2014
-190	154,0	\N	\N	\N	2014
-191	156,0	\N	\N	\N	2014
-192	158,0	\N	\N	\N	2014
-308	2,0	\N	\N	\N	2015
-311	5,0	\N	\N	\N	2015
-314	13,0	\N	\N	\N	2015
-316	24,0	\N	\N	\N	2015
-317	25,0	\N	\N	\N	2015
-319	51,0	\N	\N	\N	2015
-320	55,0	\N	\N	\N	2015
-321	65,0	\N	\N	\N	2015
-322	71,0	\N	\N	\N	2015
-199	20,0	199	\N	\N	2014
-203	29,0	203	\N	\N	2014
-207	43,0	207	\N	\N	2014
-209	48,0	209	\N	\N	2014
-211	53,0	211	\N	\N	2014
-215	70,0	215	\N	\N	2014
-226	93,0	226	\N	\N	2014
-227	94,0	227	\N	\N	2014
-236	125,0	236	\N	\N	2014
-240	133,0	240	\N	\N	2014
-202	28,0	202	\N	\N	2014
-238	131,0	238	\N	\N	2014
-245	149,0	245	\N	\N	2014
-201	27,0	201	\N	\N	2014
-205	34,0	205	\N	\N	2014
-206	37,0	206	\N	\N	2014
-230	105,0	230	\N	\N	2014
-231	108,0	231	\N	\N	2014
-234	116,0	234	\N	\N	2014
-243	143,0	243	\N	\N	2014
-193	4,0	193	\N	\N	2014
-194	8,0	194	\N	\N	2014
-195	9,0	195	\N	\N	2014
-196	10,0	196	\N	\N	2014
-197	13,0	197	\N	\N	2014
-198	14,0	198	\N	\N	2014
-200	24,0	200	\N	\N	2014
-262	47,0	262	\N	\N	2014
-264	54,0	264	\N	\N	2014
-267	57,0	267	\N	\N	2014
-269	62,0	269	\N	\N	2014
-272	67,0	272	\N	\N	2014
-273	68,0	273	\N	\N	2014
-274	71,0	274	\N	\N	2014
-275	80,0	275	\N	\N	2014
-280	90,0	280	\N	\N	2014
-282	92,0	282	\N	\N	2014
-283	95,0	283	\N	\N	2014
-284	96,0	284	\N	\N	2014
-288	103,0	288	\N	\N	2014
-290	110,0	290	\N	\N	2014
-293	126,0	293	\N	\N	2014
-295	134,0	295	\N	\N	2014
-300	144,0	300	\N	\N	2014
-306	155,0	306	\N	\N	2014
-307	157,0	307	\N	\N	2014
-248	16,0	248	\N	\N	2014
-256	35,0	256	\N	\N	2014
-261	45,0	261	\N	\N	2014
-263	49,0	263	\N	\N	2014
-266	56,0	266	\N	\N	2014
-268	61,0	268	\N	\N	2014
-277	82,0	277	\N	\N	2014
-286	98,0	286	\N	\N	2014
-292	115,0	292	\N	\N	2014
-297	140,0	297	\N	\N	2014
-298	141,0	298	\N	\N	2014
-299	142,0	299	\N	\N	2014
-302	147,0	302	\N	\N	2014
-305	152,0	305	\N	\N	2014
-258	38,0	258	\N	\N	2014
-289	106,0	289	\N	\N	2014
-294	129,0	294	\N	\N	2014
-301	146,0	301	\N	\N	2014
-303	150,0	303	\N	\N	2014
-324	6,0	324	\N	\N	2015
-328	21,0	328	\N	\N	2015
-332	30,0	332	\N	\N	2015
-342	50,0	342	\N	\N	2015
-346	57,0	346	\N	\N	2015
-349	68,0	349	\N	\N	2015
-352	72,0	352	\N	\N	2015
-353	74,0	353	\N	\N	2015
-329	27,0	329	\N	\N	2015
-333	32,0	333	\N	\N	2015
-337	39,0	337	\N	\N	2015
-339	43,0	339	\N	\N	2015
-341	49,0	341	\N	\N	2015
-344	54,0	344	\N	\N	2015
-351	70,0	351	\N	\N	2015
-327	19,0	327	\N	\N	2015
-312	7,0	312	\N	\N	2015
-385	1,0	\N	\N	\N	2016
-386	2,0	\N	\N	\N	2016
-387	3,0	\N	\N	\N	2016
-390	6,0	\N	\N	\N	2016
-393	11,0	\N	\N	\N	2016
-394	15,0	\N	\N	\N	2016
-396	28,0	\N	\N	\N	2016
-446	3,0	\N	\N	\N	2017
-447	6,0	\N	\N	\N	2017
-448	8,0	\N	\N	\N	2017
-449	9,0	\N	\N	\N	2017
-450	10,0	\N	\N	\N	2017
-451	11,0	\N	\N	\N	2017
-452	14,0	\N	\N	\N	2017
-454	17,0	\N	\N	\N	2017
-455	18,0	\N	\N	\N	2017
-457	24,0	\N	\N	\N	2017
-465	81,0	\N	\N	\N	2017
-466	83,0	\N	\N	\N	2017
-537	1,0	\N	\N	\N	2018
-538	2,0	\N	\N	\N	2018
-539	3,0	\N	\N	\N	2018
-540	4,0	\N	\N	\N	2018
-541	5,0	\N	\N	\N	2018
-542	6,0	\N	\N	\N	2018
-550	32,0	\N	\N	\N	2018
-552	38,0	\N	\N	\N	2018
-553	39,0	\N	\N	\N	2018
-554	55,0	\N	\N	\N	2018
-555	65,0	\N	\N	\N	2018
-422	12,0	422	\N	\N	2016
-424	17,0	424	\N	\N	2016
-425	19,0	425	\N	\N	2016
-436	42,0	436	\N	\N	2016
-435	41,0	435	\N	\N	2016
-437	43,0	437	\N	\N	2016
-442	57,0	442	\N	\N	2016
-438	47,0	438	\N	\N	2016
-443	58,0	443	\N	\N	2016
-392	8,0	392	\N	\N	2016
-397	35,0	397	\N	\N	2016
-389	5,0	389	\N	\N	2016
-395	21,0	395	\N	\N	2016
-416	51,0	416	\N	\N	2016
-398	46,0	398	\N	\N	2016
-415	50,0	415	\N	\N	2016
-423	13,0	423	\N	\N	2016
-470	13,0	470	\N	\N	2017
-476	28,0	476	\N	\N	2017
-480	41,0	480	\N	\N	2017
-485	53,0	485	\N	\N	2017
-471	15,0	471	\N	\N	2017
-500	91,0	500	\N	\N	2017
-472	20,0	472	\N	\N	2017
-483	47,0	483	\N	\N	2017
-469	5,0	469	\N	\N	2017
-473	21,0	473	\N	\N	2017
-478	31,0	478	\N	\N	2017
-545	10,0	545	\N	\N	2018
-546	13,0	546	\N	\N	2018
-375	48,0	375	\N	\N	2015
-374	47,0	374	\N	\N	2015
-403	20,0	403	\N	\N	2016
-419	56,0	419	\N	\N	2016
-412	44,0	412	\N	\N	2016
-444	60,0	444	\N	\N	2016
-434	40,0	434	\N	\N	2016
-432	38,0	432	\N	\N	2016
-433	39,0	433	\N	\N	2016
-439	48,0	439	\N	\N	2016
-441	54,0	441	\N	\N	2016
-388	4,0	388	\N	\N	2016
-399	59,0	399	\N	\N	2016
-391	7,0	391	\N	\N	2016
-477	29,0	477	\N	\N	2017
-481	43,0	481	\N	\N	2017
-486	55,0	486	\N	\N	2017
-488	59,0	488	\N	\N	2017
-490	64,0	490	\N	\N	2017
-491	67,0	491	\N	\N	2017
-475	27,0	475	\N	\N	2017
-489	63,0	489	\N	\N	2017
-505	19,0	505	\N	\N	2017
-521	57,0	521	\N	\N	2017
-525	65,0	525	\N	\N	2017
-536	92,0	536	\N	\N	2017
-503	7,0	503	\N	\N	2017
-504	12,0	504	\N	\N	2017
-526	66,0	526	\N	\N	2017
-535	89,0	535	\N	\N	2017
-453	16,0	453	\N	\N	2017
-445	1,0	445	\N	\N	2017
-463	75,0	463	\N	\N	2017
-456	23,0	456	\N	\N	2017
-460	36,0	460	\N	\N	2017
-462	60,0	462	\N	\N	2017
-468	90,0	468	\N	\N	2017
-461	54,0	461	\N	\N	2017
-464	77,0	464	\N	\N	2017
-543	7,0	543	\N	\N	2018
-551	36,0	551	\N	\N	2018
-547	15,0	547	\N	\N	2018
-548	22,0	548	\N	\N	2018
-2	2,0	2	\N	\N	2011
-7	7,0	7	\N	\N	2011
-15	15,0	15	\N	\N	2011
-18	18,0	18	\N	\N	2011
-25	25,0	25	\N	\N	2011
-28	28,0	28	\N	\N	2011
-32	32,0	32	\N	\N	2011
-51	51,0	51	\N	\N	2011
-54	54,0	54	\N	\N	2011
-56	56,0	56	\N	\N	2011
-59	59,0	59	\N	\N	2011
-24	24,0	24	\N	\N	2011
-33	33,0	33	\N	\N	2011
-40	40,0	40	\N	\N	2011
-47	47,0	47	\N	\N	2011
-10	10,0	10	\N	\N	2011
-16	16,0	16	\N	\N	2011
-20	20,0	20	\N	\N	2011
-38	38,0	38	\N	\N	2011
-41	41,0	41	\N	\N	2011
-45	45,0	45	\N	\N	2011
-49	49,0	49	\N	\N	2011
-55	55,0	55	\N	\N	2011
-22	22,0	22	\N	\N	2011
-26	26,0	26	\N	\N	2011
-4	4,0	4	\N	\N	2011
-42	42,0	42	\N	\N	2011
-53	53,0	53	\N	\N	2011
-9	9,0	9	\N	\N	2011
-14	14,0	14	\N	\N	2011
-34	34,0	34	\N	\N	2011
-50	50,0	50	\N	\N	2011
-57	57,0	57	\N	\N	2011
-60	60,0	60	\N	\N	2011
-5	5,0	5	\N	\N	2011
-12	12,0	12	\N	\N	2011
-17	17,0	17	\N	\N	2011
-43	43,0	43	\N	\N	2011
-44	44,0	44	\N	\N	2011
-39	39,0	39	\N	\N	2011
-21	21,0	21	\N	\N	2011
-37	37,0	37	\N	\N	2011
-48	48,0	48	\N	\N	2011
-58	58,0	58	\N	\N	2011
-30	30,0	30	\N	\N	2011
-67	7,0	67	\N	\N	2013
-84	24,0	84	\N	\N	2013
-95	35,0	95	\N	\N	2013
-97	37,0	97	\N	\N	2013
-61	1,0	61	\N	\N	2013
-62	2,0	62	\N	\N	2013
-63	3,0	63	\N	\N	2013
-65	5,0	65	\N	\N	2013
-66	6,0	66	\N	\N	2013
-68	8,0	68	\N	\N	2013
-69	9,0	69	\N	\N	2013
-70	10,0	70	\N	\N	2013
-71	11,0	71	\N	\N	2013
-72	12,0	72	\N	\N	2013
-78	18,0	78	\N	\N	2013
-81	21,0	81	\N	\N	2013
-86	26,0	86	\N	\N	2013
-88	28,0	88	\N	\N	2013
-90	30,0	90	\N	\N	2013
-94	34,0	94	\N	\N	2013
-99	39,0	99	\N	\N	2013
-100	40,0	100	\N	\N	2013
-102	42,0	102	\N	\N	2013
-103	43,0	103	\N	\N	2013
-93	33,0	93	\N	\N	2013
-96	36,0	96	\N	\N	2013
-87	27,0	87	\N	\N	2013
-64	4,0	64	\N	\N	2013
-101	41,0	101	\N	\N	2013
-75	15,0	75	\N	\N	2013
-82	22,0	82	\N	\N	2013
-104	44,0	104	\N	\N	2013
-85	25,0	85	\N	\N	2013
-83	23,0	83	\N	\N	2013
-74	14,0	74	\N	\N	2013
-89	29,0	89	\N	\N	2013
-77	17,0	77	\N	\N	2013
-80	20,0	80	\N	\N	2013
-79	19,0	79	\N	\N	2013
-110	50,0	110	\N	\N	2013
-123	63,0	123	\N	\N	2013
-130	70,0	130	\N	\N	2013
-114	54,0	114	\N	\N	2013
-126	66,0	126	\N	\N	2013
-106	46,0	106	\N	\N	2013
-109	49,0	109	\N	\N	2013
-129	69,0	129	\N	\N	2013
-144	84,0	144	\N	\N	2013
-148	88,0	148	\N	\N	2013
-122	62,0	122	\N	\N	2013
-127	67,0	127	\N	\N	2013
-135	75,0	135	\N	\N	2013
-142	82,0	142	\N	\N	2013
-105	45,0	105	\N	\N	2013
-107	47,0	107	\N	\N	2013
-233	113,0	233	\N	\N	2014
-281	91,0	281	\N	\N	2014
-278	86,0	278	\N	\N	2014
-291	111,0	291	\N	\N	2014
-285	97,0	285	\N	\N	2014
-279	87,0	279	\N	\N	2014
-338	40,0	338	\N	\N	2015
-326	16,0	326	\N	\N	2015
-334	33,0	334	\N	\N	2015
-323	1,0	323	\N	\N	2015
-606	64,0	606	\N	\N	2018
-563	20,0	563	\N	\N	2018
-597	49,0	597	\N	\N	2018
-594	44,0	594	\N	\N	2018
-559	14,0	559	\N	\N	2018
-588	25,0	588	\N	\N	2018
-572	37,0	572	\N	\N	2018
-585	77,0	585	\N	\N	2018
-567	27,0	567	\N	\N	2018
-568	29,0	568	\N	\N	2018
-571	33,0	571	\N	\N	2018
-574	42,0	574	\N	\N	2018
-580	61,0	580	\N	\N	2018
-582	68,0	582	\N	\N	2018
-583	73,0	583	\N	\N	2018
-584	75,0	584	\N	\N	2018
-566	24,0	566	\N	\N	2018
-581	63,0	581	\N	\N	2018
-586	11,0	586	\N	\N	2018
-587	19,0	587	\N	\N	2018
-589	26,0	589	\N	\N	2018
-592	41,0	592	\N	\N	2018
-593	43,0	593	\N	\N	2018
-596	47,0	596	\N	\N	2018
-598	51,0	598	\N	\N	2018
-348	62,0	348	\N	\N	2015
-343	53,0	343	\N	\N	2015
-336	38,0	336	\N	\N	2015
-350	69,0	350	\N	\N	2015
-347	61,0	347	\N	\N	2015
-345	56,0	345	\N	\N	2015
-354	75,0	354	\N	\N	2015
-330	28,0	330	\N	\N	2015
-325	10,0	325	\N	\N	2015
-335	37,0	335	\N	\N	2015
-368	34,0	368	\N	\N	2015
-364	22,0	364	\N	\N	2015
-377	58,0	377	\N	\N	2015
-380	63,0	380	\N	\N	2015
-371	42,0	371	\N	\N	2015
-362	18,0	362	\N	\N	2015
-379	60,0	379	\N	\N	2015
-366	26,0	366	\N	\N	2015
-369	35,0	369	\N	\N	2015
-359	12,0	359	\N	\N	2015
-384	73,0	384	\N	\N	2015
-373	46,0	373	\N	\N	2015
-357	9,0	357	\N	\N	2015
-378	59,0	378	\N	\N	2015
-363	20,0	363	\N	\N	2015
-376	52,0	376	\N	\N	2015
-372	45,0	372	\N	\N	2015
-383	67,0	383	\N	\N	2015
-382	66,0	382	\N	\N	2015
-313	8,0	313	\N	\N	2015
-356	77,0	356	\N	\N	2015
-355	76,0	355	\N	\N	2015
-358	11,0	358	\N	\N	2015
-381	64,0	381	\N	\N	2015
-310	4,0	310	\N	\N	2015
-340	44,0	340	\N	\N	2015
-402	18,0	402	\N	\N	2016
-409	33,0	409	\N	\N	2016
-405	24,0	405	\N	\N	2016
-400	14,0	400	\N	\N	2016
-401	16,0	401	\N	\N	2016
-411	37,0	411	\N	\N	2016
-410	36,0	410	\N	\N	2016
-418	55,0	418	\N	\N	2016
-407	29,0	407	\N	\N	2016
-414	49,0	414	\N	\N	2016
-404	23,0	404	\N	\N	2016
-408	32,0	408	\N	\N	2016
-406	26,0	406	\N	\N	2016
-417	53,0	417	\N	\N	2016
-413	45,0	413	\N	\N	2016
-440	52,0	440	\N	\N	2016
-420	9,0	420	\N	\N	2016
-426	22,0	426	\N	\N	2016
-429	30,0	429	\N	\N	2016
-431	34,0	431	\N	\N	2016
-428	27,0	428	\N	\N	2016
-421	10,0	421	\N	\N	2016
-430	31,0	430	\N	\N	2016
-427	25,0	427	\N	\N	2016
-482	45,0	482	\N	\N	2017
-493	70,0	493	\N	\N	2017
-495	72,0	495	\N	\N	2017
-497	84,0	497	\N	\N	2017
-498	85,0	498	\N	\N	2017
-499	87,0	499	\N	\N	2017
-479	37,0	479	\N	\N	2017
-496	73,0	496	\N	\N	2017
-487	56,0	487	\N	\N	2017
-494	71,0	494	\N	\N	2017
-484	48,0	484	\N	\N	2017
-512	39,0	512	\N	\N	2017
-528	74,0	528	\N	\N	2017
-534	88,0	534	\N	\N	2017
-508	33,0	508	\N	\N	2017
-515	44,0	515	\N	\N	2017
-516	46,0	516	\N	\N	2017
-511	38,0	511	\N	\N	2017
-513	40,0	513	\N	\N	2017
-514	42,0	514	\N	\N	2017
-529	76,0	529	\N	\N	2017
-502	4,0	502	\N	\N	2017
-506	26,0	506	\N	\N	2017
-510	35,0	510	\N	\N	2017
-517	49,0	517	\N	\N	2017
-522	58,0	522	\N	\N	2017
-523	61,0	523	\N	\N	2017
-524	62,0	524	\N	\N	2017
-527	68,0	527	\N	\N	2017
-531	79,0	531	\N	\N	2017
-532	80,0	532	\N	\N	2017
-492	69,0	492	\N	\N	2017
-507	30,0	507	\N	\N	2017
-458	25,0	458	\N	\N	2017
-474	22,0	474	\N	\N	2017
-467	86,0	467	\N	\N	2017
-459	32,0	459	\N	\N	2017
-509	34,0	509	\N	\N	2017
-530	78,0	530	\N	\N	2017
-518	50,0	518	\N	\N	2017
-519	51,0	519	\N	\N	2017
-520	52,0	520	\N	\N	2017
-533	82,0	533	\N	\N	2017
-501	2,0	501	\N	\N	2017
-565	23,0	565	\N	\N	2018
-557	8,0	557	\N	\N	2018
-562	18,0	562	\N	\N	2018
-564	21,0	564	\N	\N	2018
-569	30,0	569	\N	\N	2018
-561	17,0	561	\N	\N	2018
-560	16,0	560	\N	\N	2018
-576	48,0	576	\N	\N	2018
-573	40,0	573	\N	\N	2018
-578	56,0	578	\N	\N	2018
-579	59,0	579	\N	\N	2018
-577	50,0	577	\N	\N	2018
-570	31,0	570	\N	\N	2018
-575	45,0	575	\N	\N	2018
-558	12,0	558	\N	\N	2018
-599	52,0	599	\N	\N	2018
-590	34,0	590	\N	\N	2018
-607	66,0	607	\N	\N	2018
-600	53,0	600	\N	\N	2018
-613	76,0	613	\N	\N	2018
-611	71,0	611	\N	\N	2018
-591	35,0	591	\N	\N	2018
-595	46,0	595	\N	\N	2018
-601	54,0	601	\N	\N	2018
-604	60,0	604	\N	\N	2018
-608	67,0	608	\N	\N	2018
-549	28,0	549	\N	\N	2018
-544	9,0	544	\N	\N	2018
-204	33,0	204	\N	\N	2014
-208	46,0	208	\N	\N	2014
-210	51,0	210	\N	\N	2014
-212	58,0	212	\N	\N	2014
-213	60,0	213	\N	\N	2014
-214	69,0	214	\N	\N	2014
-216	72,0	216	\N	\N	2014
-217	75,0	217	\N	\N	2014
-218	76,0	218	\N	\N	2014
-219	77,0	219	\N	\N	2014
-220	79,0	220	\N	\N	2014
-221	83,0	221	\N	\N	2014
-222	84,0	222	\N	\N	2014
-223	85,0	223	\N	\N	2014
-224	88,0	224	\N	\N	2014
-225	89,0	225	\N	\N	2014
-228	99,0	228	\N	\N	2014
-229	104,0	229	\N	\N	2014
-232	109,0	232	\N	\N	2014
-235	118,0	235	\N	\N	2014
-237	127,0	237	\N	\N	2014
-239	132,0	239	\N	\N	2014
-241	136,0	241	\N	\N	2014
-242	137,0	242	\N	\N	2014
-244	148,0	244	\N	\N	2014
-246	153,0	246	\N	\N	2014
-252	25,0	252	\N	\N	2014
-255	32,0	255	\N	\N	2014
-265	55,0	265	\N	\N	2014
-270	65,0	270	\N	\N	2014
-271	66,0	271	\N	\N	2014
-276	81,0	276	\N	\N	2014
-287	100,0	287	\N	\N	2014
-296	139,0	296	\N	\N	2014
-304	151,0	304	\N	\N	2014
-247	11,0	247	\N	\N	2014
-249	17,0	249	\N	\N	2014
-250	18,0	250	\N	\N	2014
-251	22,0	251	\N	\N	2014
-253	30,0	253	\N	\N	2014
-254	31,0	254	\N	\N	2014
-257	36,0	257	\N	\N	2014
-259	39,0	259	\N	\N	2014
-260	40,0	260	\N	\N	2014
-331	29,0	331	\N	\N	2015
-360	15,0	360	\N	\N	2015
-361	17,0	361	\N	\N	2015
-365	23,0	365	\N	\N	2015
-367	31,0	367	\N	\N	2015
-370	41,0	370	\N	\N	2015
-315	14,0	315	\N	\N	2015
-318	36,0	318	\N	\N	2015
-309	3,0	309	\N	\N	2015
-602	57,0	602	\N	\N	2018
-603	58,0	603	\N	\N	2018
-605	62,0	605	\N	\N	2018
-609	69,0	609	\N	\N	2018
-610	70,0	610	\N	\N	2018
-612	72,0	612	\N	\N	2018
-556	74,0	556	\N	\N	2018
+150	1,0	\N	STUDENT	\N	2014
+151	2,0	\N	STUDENT	\N	2014
+152	3,0	\N	STUDENT	\N	2014
+153	5,0	\N	STUDENT	\N	2014
+155	7,0	\N	STUDENT	\N	2014
+108	48,0	108	STUDENT	\N	2013
+111	51,0	111	STUDENT	\N	2013
+112	52,0	112	STUDENT	\N	2013
+113	53,0	113	STUDENT	\N	2013
+115	55,0	115	STUDENT	\N	2013
+116	56,0	116	STUDENT	\N	2013
+117	57,0	117	STUDENT	\N	2013
+118	58,0	118	STUDENT	\N	2013
+119	59,0	119	STUDENT	\N	2013
+120	60,0	120	STUDENT	\N	2013
+121	61,0	121	STUDENT	\N	2013
+124	64,0	124	STUDENT	\N	2013
+125	65,0	125	STUDENT	\N	2013
+128	68,0	128	STUDENT	\N	2013
+131	71,0	131	STUDENT	\N	2013
+132	72,0	132	STUDENT	\N	2013
+133	73,0	133	STUDENT	\N	2013
+134	74,0	134	STUDENT	\N	2013
+136	76,0	136	STUDENT	\N	2013
+137	77,0	137	STUDENT	\N	2013
+138	78,0	138	STUDENT	\N	2013
+139	79,0	139	STUDENT	\N	2013
+140	80,0	140	STUDENT	\N	2013
+141	81,0	141	STUDENT	\N	2013
+143	83,0	143	STUDENT	\N	2013
+145	85,0	145	STUDENT	\N	2013
+146	86,0	146	STUDENT	\N	2013
+147	87,0	147	STUDENT	\N	2013
+149	89,0	149	STUDENT	\N	2013
+13	13,0	13	STUDENT	\N	2011
+11	11,0	11	STUDENT	\N	2011
+35	35,0	35	STUDENT	\N	2011
+1	1,0	1	STUDENT	\N	2011
+8	8,0	8	STUDENT	\N	2011
+19	19,0	19	STUDENT	\N	2011
+27	27,0	27	STUDENT	\N	2011
+29	29,0	29	STUDENT	\N	2011
+36	36,0	36	STUDENT	\N	2011
+52	52,0	52	STUDENT	\N	2011
+3	3,0	3	STUDENT	\N	2011
+6	6,0	6	STUDENT	\N	2011
+23	23,0	23	STUDENT	\N	2011
+31	31,0	31	STUDENT	\N	2011
+46	46,0	46	STUDENT	\N	2011
+73	13,0	73	STUDENT	\N	2013
+91	31,0	91	STUDENT	\N	2013
+92	32,0	92	STUDENT	\N	2013
+98	38,0	98	STUDENT	\N	2013
+76	16,0	76	STUDENT	\N	2013
+154	6,0	154	STUDENT	\N	2014
+157	15,0	157	STUDENT	\N	2014
+156	12,0	156	STUDENT	\N	2014
+163	42,0	\N	STUDENT	\N	2014
+165	50,0	\N	STUDENT	\N	2014
+167	59,0	\N	STUDENT	\N	2014
+169	64,0	\N	STUDENT	\N	2014
+173	101,0	\N	STUDENT	\N	2014
+174	102,0	\N	STUDENT	\N	2014
+176	112,0	\N	STUDENT	\N	2014
+178	117,0	\N	STUDENT	\N	2014
+180	120,0	\N	STUDENT	\N	2014
+181	121,0	\N	STUDENT	\N	2014
+182	122,0	\N	STUDENT	\N	2014
+183	123,0	\N	STUDENT	\N	2014
+184	124,0	\N	STUDENT	\N	2014
+185	128,0	\N	STUDENT	\N	2014
+186	130,0	\N	STUDENT	\N	2014
+187	135,0	\N	STUDENT	\N	2014
+188	138,0	\N	STUDENT	\N	2014
+189	145,0	\N	STUDENT	\N	2014
+190	154,0	\N	STUDENT	\N	2014
+191	156,0	\N	STUDENT	\N	2014
+192	158,0	\N	STUDENT	\N	2014
+308	2,0	\N	STUDENT	\N	2015
+311	5,0	\N	STUDENT	\N	2015
+314	13,0	\N	STUDENT	\N	2015
+199	20,0	199	STUDENT	\N	2014
+203	29,0	203	STUDENT	\N	2014
+207	43,0	207	STUDENT	\N	2014
+209	48,0	209	STUDENT	\N	2014
+211	53,0	211	STUDENT	\N	2014
+215	70,0	215	STUDENT	\N	2014
+226	93,0	226	STUDENT	\N	2014
+262	47,0	262	STUDENT	\N	2014
+264	54,0	264	STUDENT	\N	2014
+267	57,0	267	STUDENT	\N	2014
+269	62,0	269	STUDENT	\N	2014
+272	67,0	272	STUDENT	\N	2014
+273	68,0	273	STUDENT	\N	2014
+274	71,0	274	STUDENT	\N	2014
+275	80,0	275	STUDENT	\N	2014
+280	90,0	280	STUDENT	\N	2014
+282	92,0	282	STUDENT	\N	2014
+283	95,0	283	STUDENT	\N	2014
+284	96,0	284	STUDENT	\N	2014
+288	103,0	288	STUDENT	\N	2014
+290	110,0	290	STUDENT	\N	2014
+293	126,0	293	STUDENT	\N	2014
+295	134,0	295	STUDENT	\N	2014
+300	144,0	300	STUDENT	\N	2014
+306	155,0	306	STUDENT	\N	2014
+307	157,0	307	STUDENT	\N	2014
+248	16,0	248	STUDENT	\N	2014
+256	35,0	256	STUDENT	\N	2014
+261	45,0	261	STUDENT	\N	2014
+263	49,0	263	STUDENT	\N	2014
+266	56,0	266	STUDENT	\N	2014
+268	61,0	268	STUDENT	\N	2014
+277	82,0	277	STUDENT	\N	2014
+286	98,0	286	STUDENT	\N	2014
+292	115,0	292	STUDENT	\N	2014
+297	140,0	297	STUDENT	\N	2014
+298	141,0	298	STUDENT	\N	2014
+299	142,0	299	STUDENT	\N	2014
+302	147,0	302	STUDENT	\N	2014
+305	152,0	305	STUDENT	\N	2014
+258	38,0	258	STUDENT	\N	2014
+289	106,0	289	STUDENT	\N	2014
+294	129,0	294	STUDENT	\N	2014
+301	146,0	301	STUDENT	\N	2014
+303	150,0	303	STUDENT	\N	2014
+175	107,0	175	STUDENT	\N	2014
+162	41,0	162	STUDENT	\N	2014
+170	73,0	170	STUDENT	\N	2014
+171	74,0	171	STUDENT	\N	2014
+177	114,0	177	STUDENT	\N	2014
+159	21,0	159	STUDENT	\N	2014
+160	23,0	160	STUDENT	\N	2014
+172	78,0	172	STUDENT	\N	2014
+158	19,0	158	STUDENT	\N	2014
+161	26,0	161	STUDENT	\N	2014
+164	44,0	164	STUDENT	\N	2014
+166	52,0	166	STUDENT	\N	2014
+168	63,0	168	STUDENT	\N	2014
+312	7,0	312	STUDENT	\N	2015
+309	3,0	309	STUDENT	\N	2015
+316	24,0	\N	STUDENT	\N	2015
+317	25,0	\N	STUDENT	\N	2015
+319	51,0	\N	STUDENT	\N	2015
+320	55,0	\N	STUDENT	\N	2015
+321	65,0	\N	STUDENT	\N	2015
+322	71,0	\N	STUDENT	\N	2015
+385	1,0	\N	STUDENT	\N	2016
+386	2,0	\N	STUDENT	\N	2016
+387	3,0	\N	STUDENT	\N	2016
+390	6,0	\N	STUDENT	\N	2016
+393	11,0	\N	STUDENT	\N	2016
+394	15,0	\N	STUDENT	\N	2016
+396	28,0	\N	STUDENT	\N	2016
+446	3,0	\N	STUDENT	\N	2017
+447	6,0	\N	STUDENT	\N	2017
+448	8,0	\N	STUDENT	\N	2017
+449	9,0	\N	STUDENT	\N	2017
+450	10,0	\N	STUDENT	\N	2017
+451	11,0	\N	STUDENT	\N	2017
+452	14,0	\N	STUDENT	\N	2017
+454	17,0	\N	STUDENT	\N	2017
+455	18,0	\N	STUDENT	\N	2017
+457	24,0	\N	STUDENT	\N	2017
+465	81,0	\N	STUDENT	\N	2017
+466	83,0	\N	STUDENT	\N	2017
+422	12,0	422	STUDENT	\N	2016
+424	17,0	424	STUDENT	\N	2016
+425	19,0	425	STUDENT	\N	2016
+436	42,0	436	STUDENT	\N	2016
+435	41,0	435	STUDENT	\N	2016
+437	43,0	437	STUDENT	\N	2016
+442	57,0	442	STUDENT	\N	2016
+438	47,0	438	STUDENT	\N	2016
+443	58,0	443	STUDENT	\N	2016
+392	8,0	392	STUDENT	\N	2016
+397	35,0	397	STUDENT	\N	2016
+389	5,0	389	STUDENT	\N	2016
+395	21,0	395	STUDENT	\N	2016
+416	51,0	416	STUDENT	\N	2016
+398	46,0	398	STUDENT	\N	2016
+415	50,0	415	STUDENT	\N	2016
+423	13,0	423	STUDENT	\N	2016
+470	13,0	470	STUDENT	\N	2017
+471	15,0	471	STUDENT	\N	2017
+469	5,0	469	STUDENT	\N	2017
+458	25,0	458	STUDENT	\N	2017
+467	86,0	467	STUDENT	\N	2017
+459	32,0	459	STUDENT	\N	2017
+324	6,0	324	STUDENT	\N	2015
+328	21,0	328	STUDENT	\N	2015
+332	30,0	332	STUDENT	\N	2015
+342	50,0	342	STUDENT	\N	2015
+346	57,0	346	STUDENT	\N	2015
+349	68,0	349	STUDENT	\N	2015
+352	72,0	352	STUDENT	\N	2015
+353	74,0	353	STUDENT	\N	2015
+329	27,0	329	STUDENT	\N	2015
+333	32,0	333	STUDENT	\N	2015
+337	39,0	337	STUDENT	\N	2015
+339	43,0	339	STUDENT	\N	2015
+341	49,0	341	STUDENT	\N	2015
+344	54,0	344	STUDENT	\N	2015
+351	70,0	351	STUDENT	\N	2015
+327	19,0	327	STUDENT	\N	2015
+331	29,0	331	STUDENT	\N	2015
+360	15,0	360	STUDENT	\N	2015
+361	17,0	361	STUDENT	\N	2015
+365	23,0	365	STUDENT	\N	2015
+367	31,0	367	STUDENT	\N	2015
+375	48,0	375	STUDENT	\N	2015
+370	41,0	370	STUDENT	\N	2015
+374	47,0	374	STUDENT	\N	2015
+315	14,0	315	STUDENT	\N	2015
+318	36,0	318	STUDENT	\N	2015
+403	20,0	403	STUDENT	\N	2016
+419	56,0	419	STUDENT	\N	2016
+412	44,0	412	STUDENT	\N	2016
+444	60,0	444	STUDENT	\N	2016
+434	40,0	434	STUDENT	\N	2016
+432	38,0	432	STUDENT	\N	2016
+433	39,0	433	STUDENT	\N	2016
+439	48,0	439	STUDENT	\N	2016
+441	54,0	441	STUDENT	\N	2016
+388	4,0	388	STUDENT	\N	2016
+399	59,0	399	STUDENT	\N	2016
+391	7,0	391	STUDENT	\N	2016
+453	16,0	453	STUDENT	\N	2017
+445	1,0	445	STUDENT	\N	2017
+463	75,0	463	STUDENT	\N	2017
+456	23,0	456	STUDENT	\N	2017
+460	36,0	460	STUDENT	\N	2017
+462	60,0	462	STUDENT	\N	2017
+468	90,0	468	STUDENT	\N	2017
+461	54,0	461	STUDENT	\N	2017
+464	77,0	464	STUDENT	\N	2017
+537	1,0	\N	STUDENT	\N	2018
+538	2,0	\N	STUDENT	\N	2018
+539	3,0	\N	STUDENT	\N	2018
+540	4,0	\N	STUDENT	\N	2018
+541	5,0	\N	STUDENT	\N	2018
+542	6,0	\N	STUDENT	\N	2018
+550	32,0	\N	STUDENT	\N	2018
+552	38,0	\N	STUDENT	\N	2018
+553	39,0	\N	STUDENT	\N	2018
+554	55,0	\N	STUDENT	\N	2018
+555	65,0	\N	STUDENT	\N	2018
+2	2,0	2	STUDENT	\N	2011
+7	7,0	7	STUDENT	\N	2011
+15	15,0	15	STUDENT	\N	2011
+18	18,0	18	STUDENT	\N	2011
+25	25,0	25	STUDENT	\N	2011
+28	28,0	28	STUDENT	\N	2011
+32	32,0	32	STUDENT	\N	2011
+51	51,0	51	STUDENT	\N	2011
+54	54,0	54	STUDENT	\N	2011
+56	56,0	56	STUDENT	\N	2011
+59	59,0	59	STUDENT	\N	2011
+24	24,0	24	STUDENT	\N	2011
+33	33,0	33	STUDENT	\N	2011
+606	64,0	606	STUDENT	\N	2018
+563	20,0	563	STUDENT	\N	2018
+597	49,0	597	STUDENT	\N	2018
+594	44,0	594	STUDENT	\N	2018
+559	14,0	559	STUDENT	\N	2018
+588	25,0	588	STUDENT	\N	2018
+545	10,0	545	STUDENT	\N	2018
+572	37,0	572	STUDENT	\N	2018
+546	13,0	546	STUDENT	\N	2018
+477	29,0	477	STUDENT	\N	2017
+481	43,0	481	STUDENT	\N	2017
+486	55,0	486	STUDENT	\N	2017
+488	59,0	488	STUDENT	\N	2017
+490	64,0	490	STUDENT	\N	2017
+491	67,0	491	STUDENT	\N	2017
+475	27,0	475	STUDENT	\N	2017
+489	63,0	489	STUDENT	\N	2017
+505	19,0	505	STUDENT	\N	2017
+521	57,0	521	STUDENT	\N	2017
+525	65,0	525	STUDENT	\N	2017
+536	92,0	536	STUDENT	\N	2017
+503	7,0	503	STUDENT	\N	2017
+504	12,0	504	STUDENT	\N	2017
+526	66,0	526	STUDENT	\N	2017
+535	89,0	535	STUDENT	\N	2017
+585	77,0	585	STUDENT	\N	2018
+567	27,0	567	STUDENT	\N	2018
+568	29,0	568	STUDENT	\N	2018
+571	33,0	571	STUDENT	\N	2018
+574	42,0	574	STUDENT	\N	2018
+580	61,0	580	STUDENT	\N	2018
+582	68,0	582	STUDENT	\N	2018
+583	73,0	583	STUDENT	\N	2018
+584	75,0	584	STUDENT	\N	2018
+566	24,0	566	STUDENT	\N	2018
+581	63,0	581	STUDENT	\N	2018
+586	11,0	586	STUDENT	\N	2018
+587	19,0	587	STUDENT	\N	2018
+589	26,0	589	STUDENT	\N	2018
+592	41,0	592	STUDENT	\N	2018
+593	43,0	593	STUDENT	\N	2018
+596	47,0	596	STUDENT	\N	2018
+598	51,0	598	STUDENT	\N	2018
+602	57,0	602	STUDENT	\N	2018
+603	58,0	603	STUDENT	\N	2018
+605	62,0	605	STUDENT	\N	2018
+609	69,0	609	STUDENT	\N	2018
+610	70,0	610	STUDENT	\N	2018
+612	72,0	612	STUDENT	\N	2018
+543	7,0	543	STUDENT	\N	2018
+551	36,0	551	STUDENT	\N	2018
+547	15,0	547	STUDENT	\N	2018
+556	74,0	556	STUDENT	\N	2018
+548	22,0	548	STUDENT	\N	2018
+40	40,0	40	STUDENT	\N	2011
+47	47,0	47	STUDENT	\N	2011
+10	10,0	10	STUDENT	\N	2011
+16	16,0	16	STUDENT	\N	2011
+20	20,0	20	STUDENT	\N	2011
+38	38,0	38	STUDENT	\N	2011
+41	41,0	41	STUDENT	\N	2011
+45	45,0	45	STUDENT	\N	2011
+49	49,0	49	STUDENT	\N	2011
+55	55,0	55	STUDENT	\N	2011
+22	22,0	22	STUDENT	\N	2011
+26	26,0	26	STUDENT	\N	2011
+4	4,0	4	STUDENT	\N	2011
+42	42,0	42	STUDENT	\N	2011
+53	53,0	53	STUDENT	\N	2011
+9	9,0	9	STUDENT	\N	2011
+14	14,0	14	STUDENT	\N	2011
+34	34,0	34	STUDENT	\N	2011
+50	50,0	50	STUDENT	\N	2011
+57	57,0	57	STUDENT	\N	2011
+60	60,0	60	STUDENT	\N	2011
+5	5,0	5	STUDENT	\N	2011
+12	12,0	12	STUDENT	\N	2011
+17	17,0	17	STUDENT	\N	2011
+43	43,0	43	STUDENT	\N	2011
+44	44,0	44	STUDENT	\N	2011
+39	39,0	39	STUDENT	\N	2011
+21	21,0	21	STUDENT	\N	2011
+37	37,0	37	STUDENT	\N	2011
+48	48,0	48	STUDENT	\N	2011
+58	58,0	58	STUDENT	\N	2011
+30	30,0	30	STUDENT	\N	2011
+67	7,0	67	STUDENT	\N	2013
+84	24,0	84	STUDENT	\N	2013
+95	35,0	95	STUDENT	\N	2013
+97	37,0	97	STUDENT	\N	2013
+61	1,0	61	STUDENT	\N	2013
+62	2,0	62	STUDENT	\N	2013
+63	3,0	63	STUDENT	\N	2013
+65	5,0	65	STUDENT	\N	2013
+66	6,0	66	STUDENT	\N	2013
+68	8,0	68	STUDENT	\N	2013
+69	9,0	69	STUDENT	\N	2013
+70	10,0	70	STUDENT	\N	2013
+71	11,0	71	STUDENT	\N	2013
+72	12,0	72	STUDENT	\N	2013
+78	18,0	78	STUDENT	\N	2013
+81	21,0	81	STUDENT	\N	2013
+86	26,0	86	STUDENT	\N	2013
+88	28,0	88	STUDENT	\N	2013
+90	30,0	90	STUDENT	\N	2013
+94	34,0	94	STUDENT	\N	2013
+99	39,0	99	STUDENT	\N	2013
+100	40,0	100	STUDENT	\N	2013
+102	42,0	102	STUDENT	\N	2013
+103	43,0	103	STUDENT	\N	2013
+93	33,0	93	STUDENT	\N	2013
+96	36,0	96	STUDENT	\N	2013
+87	27,0	87	STUDENT	\N	2013
+64	4,0	64	STUDENT	\N	2013
+101	41,0	101	STUDENT	\N	2013
+75	15,0	75	STUDENT	\N	2013
+82	22,0	82	STUDENT	\N	2013
+104	44,0	104	STUDENT	\N	2013
+85	25,0	85	STUDENT	\N	2013
+83	23,0	83	STUDENT	\N	2013
+74	14,0	74	STUDENT	\N	2013
+89	29,0	89	STUDENT	\N	2013
+77	17,0	77	STUDENT	\N	2013
+80	20,0	80	STUDENT	\N	2013
+79	19,0	79	STUDENT	\N	2013
+110	50,0	110	STUDENT	\N	2013
+123	63,0	123	STUDENT	\N	2013
+130	70,0	130	STUDENT	\N	2013
+114	54,0	114	STUDENT	\N	2013
+126	66,0	126	STUDENT	\N	2013
+106	46,0	106	STUDENT	\N	2013
+109	49,0	109	STUDENT	\N	2013
+129	69,0	129	STUDENT	\N	2013
+144	84,0	144	STUDENT	\N	2013
+148	88,0	148	STUDENT	\N	2013
+122	62,0	122	STUDENT	\N	2013
+127	67,0	127	STUDENT	\N	2013
+135	75,0	135	STUDENT	\N	2013
+142	82,0	142	STUDENT	\N	2013
+105	45,0	105	STUDENT	\N	2013
+107	47,0	107	STUDENT	\N	2013
+233	113,0	233	STUDENT	\N	2014
+281	91,0	281	STUDENT	\N	2014
+278	86,0	278	STUDENT	\N	2014
+291	111,0	291	STUDENT	\N	2014
+285	97,0	285	STUDENT	\N	2014
+179	119,0	179	STUDENT	\N	2014
+279	87,0	279	STUDENT	\N	2014
+338	40,0	338	STUDENT	\N	2015
+326	16,0	326	STUDENT	\N	2015
+334	33,0	334	STUDENT	\N	2015
+323	1,0	323	STUDENT	\N	2015
+348	62,0	348	STUDENT	\N	2015
+343	53,0	343	STUDENT	\N	2015
+336	38,0	336	STUDENT	\N	2015
+350	69,0	350	STUDENT	\N	2015
+347	61,0	347	STUDENT	\N	2015
+345	56,0	345	STUDENT	\N	2015
+354	75,0	354	STUDENT	\N	2015
+330	28,0	330	STUDENT	\N	2015
+325	10,0	325	STUDENT	\N	2015
+335	37,0	335	STUDENT	\N	2015
+368	34,0	368	STUDENT	\N	2015
+364	22,0	364	STUDENT	\N	2015
+377	58,0	377	STUDENT	\N	2015
+380	63,0	380	STUDENT	\N	2015
+371	42,0	371	STUDENT	\N	2015
+362	18,0	362	STUDENT	\N	2015
+379	60,0	379	STUDENT	\N	2015
+366	26,0	366	STUDENT	\N	2015
+369	35,0	369	STUDENT	\N	2015
+359	12,0	359	STUDENT	\N	2015
+384	73,0	384	STUDENT	\N	2015
+373	46,0	373	STUDENT	\N	2015
+357	9,0	357	STUDENT	\N	2015
+378	59,0	378	STUDENT	\N	2015
+363	20,0	363	STUDENT	\N	2015
+376	52,0	376	STUDENT	\N	2015
+372	45,0	372	STUDENT	\N	2015
+383	67,0	383	STUDENT	\N	2015
+382	66,0	382	STUDENT	\N	2015
+313	8,0	313	STUDENT	\N	2015
+356	77,0	356	STUDENT	\N	2015
+355	76,0	355	STUDENT	\N	2015
+358	11,0	358	STUDENT	\N	2015
+381	64,0	381	STUDENT	\N	2015
+310	4,0	310	STUDENT	\N	2015
+340	44,0	340	STUDENT	\N	2015
+402	18,0	402	STUDENT	\N	2016
+409	33,0	409	STUDENT	\N	2016
+405	24,0	405	STUDENT	\N	2016
+400	14,0	400	STUDENT	\N	2016
+401	16,0	401	STUDENT	\N	2016
+411	37,0	411	STUDENT	\N	2016
+410	36,0	410	STUDENT	\N	2016
+418	55,0	418	STUDENT	\N	2016
+407	29,0	407	STUDENT	\N	2016
+414	49,0	414	STUDENT	\N	2016
+404	23,0	404	STUDENT	\N	2016
+408	32,0	408	STUDENT	\N	2016
+406	26,0	406	STUDENT	\N	2016
+417	53,0	417	STUDENT	\N	2016
+413	45,0	413	STUDENT	\N	2016
+440	52,0	440	STUDENT	\N	2016
+420	9,0	420	STUDENT	\N	2016
+426	22,0	426	STUDENT	\N	2016
+429	30,0	429	STUDENT	\N	2016
+431	34,0	431	STUDENT	\N	2016
+428	27,0	428	STUDENT	\N	2016
+421	10,0	421	STUDENT	\N	2016
+430	31,0	430	STUDENT	\N	2016
+427	25,0	427	STUDENT	\N	2016
+476	28,0	476	STUDENT	\N	2017
+480	41,0	480	STUDENT	\N	2017
+485	53,0	485	STUDENT	\N	2017
+500	91,0	500	STUDENT	\N	2017
+472	20,0	472	STUDENT	\N	2017
+483	47,0	483	STUDENT	\N	2017
+473	21,0	473	STUDENT	\N	2017
+478	31,0	478	STUDENT	\N	2017
+482	45,0	482	STUDENT	\N	2017
+493	70,0	493	STUDENT	\N	2017
+495	72,0	495	STUDENT	\N	2017
+497	84,0	497	STUDENT	\N	2017
+498	85,0	498	STUDENT	\N	2017
+499	87,0	499	STUDENT	\N	2017
+479	37,0	479	STUDENT	\N	2017
+496	73,0	496	STUDENT	\N	2017
+487	56,0	487	STUDENT	\N	2017
+494	71,0	494	STUDENT	\N	2017
+484	48,0	484	STUDENT	\N	2017
+512	39,0	512	STUDENT	\N	2017
+528	74,0	528	STUDENT	\N	2017
+534	88,0	534	STUDENT	\N	2017
+508	33,0	508	STUDENT	\N	2017
+515	44,0	515	STUDENT	\N	2017
+516	46,0	516	STUDENT	\N	2017
+511	38,0	511	STUDENT	\N	2017
+513	40,0	513	STUDENT	\N	2017
+514	42,0	514	STUDENT	\N	2017
+529	76,0	529	STUDENT	\N	2017
+502	4,0	502	STUDENT	\N	2017
+506	26,0	506	STUDENT	\N	2017
+510	35,0	510	STUDENT	\N	2017
+517	49,0	517	STUDENT	\N	2017
+522	58,0	522	STUDENT	\N	2017
+523	61,0	523	STUDENT	\N	2017
+524	62,0	524	STUDENT	\N	2017
+527	68,0	527	STUDENT	\N	2017
+531	79,0	531	STUDENT	\N	2017
+532	80,0	532	STUDENT	\N	2017
+492	69,0	492	STUDENT	\N	2017
+507	30,0	507	STUDENT	\N	2017
+474	22,0	474	STUDENT	\N	2017
+509	34,0	509	STUDENT	\N	2017
+530	78,0	530	STUDENT	\N	2017
+518	50,0	518	STUDENT	\N	2017
+519	51,0	519	STUDENT	\N	2017
+520	52,0	520	STUDENT	\N	2017
+533	82,0	533	STUDENT	\N	2017
+501	2,0	501	STUDENT	\N	2017
+565	23,0	565	STUDENT	\N	2018
+557	8,0	557	STUDENT	\N	2018
+562	18,0	562	STUDENT	\N	2018
+564	21,0	564	STUDENT	\N	2018
+569	30,0	569	STUDENT	\N	2018
+561	17,0	561	STUDENT	\N	2018
+560	16,0	560	STUDENT	\N	2018
+576	48,0	576	STUDENT	\N	2018
+573	40,0	573	STUDENT	\N	2018
+578	56,0	578	STUDENT	\N	2018
+579	59,0	579	STUDENT	\N	2018
+577	50,0	577	STUDENT	\N	2018
+570	31,0	570	STUDENT	\N	2018
+575	45,0	575	STUDENT	\N	2018
+558	12,0	558	STUDENT	\N	2018
+599	52,0	599	STUDENT	\N	2018
+590	34,0	590	STUDENT	\N	2018
+607	66,0	607	STUDENT	\N	2018
+600	53,0	600	STUDENT	\N	2018
+613	76,0	613	STUDENT	\N	2018
+611	71,0	611	STUDENT	\N	2018
+591	35,0	591	STUDENT	\N	2018
+595	46,0	595	STUDENT	\N	2018
+601	54,0	601	STUDENT	\N	2018
+604	60,0	604	STUDENT	\N	2018
+608	67,0	608	STUDENT	\N	2018
+549	28,0	549	STUDENT	\N	2018
+544	9,0	544	STUDENT	\N	2018
+227	94,0	227	STUDENT	\N	2014
+236	125,0	236	STUDENT	\N	2014
+240	133,0	240	STUDENT	\N	2014
+202	28,0	202	STUDENT	\N	2014
+238	131,0	238	STUDENT	\N	2014
+245	149,0	245	STUDENT	\N	2014
+201	27,0	201	STUDENT	\N	2014
+205	34,0	205	STUDENT	\N	2014
+206	37,0	206	STUDENT	\N	2014
+230	105,0	230	STUDENT	\N	2014
+231	108,0	231	STUDENT	\N	2014
+234	116,0	234	STUDENT	\N	2014
+243	143,0	243	STUDENT	\N	2014
+193	4,0	193	STUDENT	\N	2014
+194	8,0	194	STUDENT	\N	2014
+195	9,0	195	STUDENT	\N	2014
+196	10,0	196	STUDENT	\N	2014
+197	13,0	197	STUDENT	\N	2014
+198	14,0	198	STUDENT	\N	2014
+200	24,0	200	STUDENT	\N	2014
+204	33,0	204	STUDENT	\N	2014
+208	46,0	208	STUDENT	\N	2014
+210	51,0	210	STUDENT	\N	2014
+212	58,0	212	STUDENT	\N	2014
+213	60,0	213	STUDENT	\N	2014
+214	69,0	214	STUDENT	\N	2014
+216	72,0	216	STUDENT	\N	2014
+217	75,0	217	STUDENT	\N	2014
+218	76,0	218	STUDENT	\N	2014
+219	77,0	219	STUDENT	\N	2014
+220	79,0	220	STUDENT	\N	2014
+221	83,0	221	STUDENT	\N	2014
+222	84,0	222	STUDENT	\N	2014
+223	85,0	223	STUDENT	\N	2014
+224	88,0	224	STUDENT	\N	2014
+225	89,0	225	STUDENT	\N	2014
+228	99,0	228	STUDENT	\N	2014
+229	104,0	229	STUDENT	\N	2014
+232	109,0	232	STUDENT	\N	2014
+235	118,0	235	STUDENT	\N	2014
+237	127,0	237	STUDENT	\N	2014
+239	132,0	239	STUDENT	\N	2014
+241	136,0	241	STUDENT	\N	2014
+242	137,0	242	STUDENT	\N	2014
+244	148,0	244	STUDENT	\N	2014
+246	153,0	246	STUDENT	\N	2014
+252	25,0	252	STUDENT	\N	2014
+255	32,0	255	STUDENT	\N	2014
+265	55,0	265	STUDENT	\N	2014
+270	65,0	270	STUDENT	\N	2014
+271	66,0	271	STUDENT	\N	2014
+276	81,0	276	STUDENT	\N	2014
+287	100,0	287	STUDENT	\N	2014
+296	139,0	296	STUDENT	\N	2014
+304	151,0	304	STUDENT	\N	2014
+247	11,0	247	STUDENT	\N	2014
+249	17,0	249	STUDENT	\N	2014
+250	18,0	250	STUDENT	\N	2014
+251	22,0	251	STUDENT	\N	2014
+253	30,0	253	STUDENT	\N	2014
+254	31,0	254	STUDENT	\N	2014
+257	36,0	257	STUDENT	\N	2014
+259	39,0	259	STUDENT	\N	2014
+260	40,0	260	STUDENT	\N	2014
 \.
 
 

@@ -22,7 +22,6 @@
       ></span>
     </div>
     <result-component
-      v-if="statementManager.correctAnswers[order]"
       v-model="order"
       :answer="statementManager.answers[order]"
       :correctAnswer="statementManager.correctAnswers[order]"
@@ -54,12 +53,8 @@ export default class ResultsView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push("/create");
+      await this.$router.push("/student/create");
     }
-  }
-
-  async mounted() {
-    console.log(this.statementManager.correctAnswers.length);
   }
 
   increaseOrder(): void {

@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <div class="img-container"></div>
     <top-bar />
     <message-bar />
     <router-view />
@@ -40,6 +41,36 @@ export default class HomeView extends Vue {
   text-align: center;
   color: #2c3e50;
   height: 100vh;
+}
+
+.img-container {
+  position: absolute;
+  background: white;
+  overflow: hidden;
+  top: 0;
+  margin: 0 !important;
+  z-index: -1;
+  height: 100vh;
+  width: 100vw;
+}
+.img-container:before {
+  content: " ";
+  display: block;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  opacity: 0.7;
+  background-image: url("./assets/01.jpg");
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  -ms-background-size: cover;
+  -o-background-size: cover;
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
+  background-size: cover;
 }
 
 /*noinspection CssUnusedSymbol*/

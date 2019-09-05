@@ -48,7 +48,7 @@ import { Component, Vue } from "vue-property-decorator";
 import StatementManager from "@/models/statement/StatementManager";
 
 @Component
-export default class StatementSetupView extends Vue {
+export default class CreateQuizzesView extends Vue {
   private statementManager: StatementManager = StatementManager.getInstance;
 
   // noinspection JSUnusedGlobalSymbols
@@ -59,7 +59,7 @@ export default class StatementSetupView extends Vue {
   async createQuiz() {
     try {
       await this.statementManager.getQuizStatement();
-      await this.$router.push("/quiz");
+      await this.$router.push("/student/quiz");
     } catch (error) {
       await this.$store.dispatch("error", error);
     }

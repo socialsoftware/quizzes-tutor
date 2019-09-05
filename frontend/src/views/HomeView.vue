@@ -1,6 +1,6 @@
 <template>
-  <div class="img-container">
-    <v-parallax height="900" dark>
+  <div>
+    <v-parallax height="800" dark>
       <v-layout align-center column justify-center>
         <h1 id="home-title" class="display-2 font-weight-thin mb-3">
           Software Architecture
@@ -37,24 +37,13 @@ export default class HomeView extends Vue {
 </script>
 
 <style>
-.img-container {
-  position: absolute;
-  top: 0;
-  z-index: -1;
-  height: 100vh;
-  background-image: url("../assets/01.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  margin: 0 !important;
-  width: 100vw;
-}
 .v-parallax__image {
   transform: translate(-50%) !important;
-  z-index: 1;
+  z-index: 10;
 }
 #home-title {
   font-family: "Graduate", cursive;
-  background-color: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.75);
   padding: 10px 20px;
   font-weight: bold;
 }

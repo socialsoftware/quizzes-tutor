@@ -579,12 +579,6 @@
       </key>
       <key>
         <name>date</name>
-        <field>available_date</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
-        <name>date</name>
         <field>answer_date</field>
         <condition>=</condition>
         <name2/>
@@ -597,11 +591,6 @@
       <value>
         <name>quiz_id</name>
         <rename>quiz_id</rename>
-        <update>Y</update>
-      </value>
-      <value>
-        <name>available_date</name>
-        <rename>date</rename>
         <update>Y</update>
       </value>
       <value>

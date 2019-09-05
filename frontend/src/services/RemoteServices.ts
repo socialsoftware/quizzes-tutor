@@ -5,6 +5,8 @@ import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 import Store from "../store";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementQuestion from "@/models/statement/StatementQuestion";
+import StatementSolution from "@/models/statement/StatementSolution";
 
 interface AuthResponse {
   token: string;
@@ -157,7 +159,7 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as StatementQuiz;
+        return new StatementQuiz(response.data);
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -172,7 +174,7 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as StatementCorrectAnswer[];
+        return new StatementSolution(response.data).answers;
       })
       .catch(error => {
         throw Error(this.errorMessage(error));

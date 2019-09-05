@@ -95,14 +95,16 @@ public class AuthController {
 
                 if (isTeacher) {
                     user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
-                } else if (username == "ist181002"){
+                } else if (username.equals("ist181002")){
+                    user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
+                } else if (username.equals("ist12628")){
                     user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
                 } else {
                     throw new NotEnrolledException("User " + username + " is not enrolled");
                 }
             }
         }
-        
+
         String token = JwtTokenProvider.generateToken(user);
         return ResponseEntity.ok(new JwtAuthenticationResponse(token, user.getRole()));
 

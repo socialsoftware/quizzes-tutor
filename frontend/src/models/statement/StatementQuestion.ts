@@ -2,37 +2,18 @@ import StatementOption from "@/models/statement/StatementOption";
 import Image from "@/models/management/Image";
 import { _ } from "vue-underscore";
 
-/*export interface QuestionDto {
-  quizQuestionId: number;
-  content: string | null;
-  options: Option[] | null;
-  //topic: string | null;
-  image: Image | null;
-}
-
-export class Question implements QuestionDto {
+export default class StatementQuestion {
   quizQuestionId!: number;
   content!: string | null;
-  options!: Option[];
-  // TODO topic!: string | null;
-  image: Image | null;
+  options!: StatementOption[];
+  image: Image | null = null;
 
-  constructor(jsonObj: QuestionDto) {
+  constructor(jsonObj: StatementQuestion) {
     this.quizQuestionId = jsonObj.quizQuestionId;
     this.content = jsonObj.content;
     if (jsonObj.options) {
       this.options = _.shuffle(jsonObj.options);
     }
-    // TODO this.topic = jsonObj.topic;
     this.image = jsonObj.image;
   }
-}
-*/
-
-export default class StatementQuestion {
-  quizQuestionId!: number;
-  content!: string | null;
-  options!: StatementOption[];
-  // TODO topic!: string | null;
-  image: Image | null = null;
 }

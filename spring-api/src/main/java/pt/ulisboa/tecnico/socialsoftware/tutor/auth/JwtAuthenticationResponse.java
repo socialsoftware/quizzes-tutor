@@ -2,11 +2,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 public class JwtAuthenticationResponse {
     private String token;
-    private String user;
+    private String userRole;
 
-    public JwtAuthenticationResponse(String token, String user) {
+    public JwtAuthenticationResponse(String token, String userRole) {
         this.token = token;
-        this.user = user;
+        this.userRole = userRole;
     }
 
     public String getToken() {
@@ -17,11 +17,11 @@ public class JwtAuthenticationResponse {
         this.token = token;
     }
 
-    public String getUser() {
-        return user;
+    public String getUserRole() {
+        return userRole;
     }
 
-    public void setUser(String user) {
-        this.user = user;
+    public void setUser(String userRole) {
+        this.userRole = userRole;
     }
 }

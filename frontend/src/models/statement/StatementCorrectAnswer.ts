@@ -1,4 +1,9 @@
 export default class StatementCorrectAnswer {
-  questionId!: number;
+  quizQuestionId!: number;
   correctOptionId!: number;
+
+  constructor(answer: StatementCorrectAnswer) {
+    this.quizQuestionId = answer.quizQuestionId;
+    this.correctOptionId = answer.correctOptionId;
+  }
 }

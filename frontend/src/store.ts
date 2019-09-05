@@ -79,10 +79,16 @@ export default new Vuex.Store({
       return !!state.token && state.userRole == "ADMIN";
     },
     isTeacher(state): boolean {
-      return !!state.token && state.userRole == "TEACHER";
+      return (
+        !!state.token &&
+        (state.userRole == "TEACHER" || state.userRole == "ADMIN")
+      );
     },
     isStudent(state): boolean {
-      return !!state.token && state.userRole == "STUDENT";
+      return (
+        !!state.token &&
+        (state.userRole == "STUDENT" || state.userRole == "ADMIN")
+      );
     },
     getToken(state): string {
       return state.token;

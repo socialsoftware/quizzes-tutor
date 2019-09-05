@@ -90,7 +90,7 @@ let router = new Router({
       component: StudentView,
       children: [
         {
-          path: "/available",
+          path: "available",
           name: "available-quizzes",
           component: AvailableQuizzesView,
           meta: {
@@ -99,7 +99,7 @@ let router = new Router({
           }
         },
         {
-          path: "/create",
+          path: "create",
           name: "create-quizzes",
           component: CreateQuizzesView,
           meta: {
@@ -108,7 +108,7 @@ let router = new Router({
           }
         },
         {
-          path: "/solved",
+          path: "solved",
           name: "solved-quizzes",
           component: SolvedQuizzesView,
           meta: {
@@ -117,7 +117,7 @@ let router = new Router({
           }
         },
         {
-          path: "/quiz",
+          path: "quiz",
           name: "quiz",
           component: QuizView,
           meta: {
@@ -127,7 +127,7 @@ let router = new Router({
           }
         },
         {
-          path: "/results",
+          path: "results",
           name: "results",
           component: ResultsView,
           meta: {
@@ -137,7 +137,7 @@ let router = new Router({
           }
         },
         {
-          path: "/stats",
+          path: "stats",
           name: "stats",
           component: StatsView,
           meta: {
@@ -146,7 +146,7 @@ let router = new Router({
           }
         },
         {
-          path: "/achievements",
+          path: "achievements",
           name: "achievements",
           component: AchievementsView,
           meta: {

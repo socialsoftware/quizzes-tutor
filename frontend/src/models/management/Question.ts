@@ -1,19 +1,7 @@
 import Option from "@/models/management/Option";
 import Image from "@/models/management/Image";
 
-export interface QuestionDto {
-  id: number;
-  title: string;
-  active: boolean;
-  numberOfAnswers: number;
-  difficulty: number;
-  content: string;
-  options: Option[];
-  image: Image | null;
-  topics: string[];
-}
-
-export class Question implements QuestionDto {
+export class Question {
   id!: number;
   title: string;
   active: boolean;
@@ -24,7 +12,7 @@ export class Question implements QuestionDto {
   image: Image | null;
   topics: string[] = [];
 
-  constructor(jsonObj: QuestionDto) {
+  constructor(jsonObj: Question) {
     this.id = jsonObj.id;
     this.title = jsonObj.title;
     this.active = jsonObj.active;
