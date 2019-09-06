@@ -46,7 +46,7 @@ public class QuizController {
 
     @PostMapping("/quizzes")
     public QuizDto createQuiz(@Valid @RequestBody QuizDto quiz) {
-        return new QuizDto(this.quizService.createQuiz(quiz),true);
+        return this.quizService.createQuiz(quiz);
     }
 
     @DeleteMapping("/quizzes/{quizId}")

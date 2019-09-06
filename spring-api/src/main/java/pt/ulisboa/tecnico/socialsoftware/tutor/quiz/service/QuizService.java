@@ -55,9 +55,9 @@ public class QuizService {
 
     @Transactional
     public List<QuizDto> findAllNonGenerated() {
-        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear)
-                .thenComparing(Quiz::getSeries)
-                .thenComparing(Quiz::getVersion);
+        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear, Comparator.nullsFirst(Comparator.reverseOrder()))
+                .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
+                .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
         return quizRepository.findAllNonGenerated().stream()
                 .sorted(comparator).map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());
@@ -70,13 +70,13 @@ public class QuizService {
     }
 
     @Transactional
-    public Quiz createQuiz(QuizDto quizDto) {
+    public QuizDto createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
             quizDto.setNumber(getMaxQuizNumber() + 1);
         }
         Quiz quiz = new Quiz(quizDto);
         entityManager.persist(quiz);
-        return quiz;
+        return new QuizDto(quiz, true);
     }
 
     @Transactional

@@ -95,12 +95,12 @@ public class QuizzesXmlImport {
 		quizDto.setSeries(series);
 		quizDto.setVersion(version);
 
-		Quiz quiz = quizService.createQuiz(quizDto);
+		QuizDto quiz = quizService.createQuiz(quizDto);
 
-		importQuizQuestions(quizElement.getChild("quizQuestions"), quiz);
+		importQuizQuestions(quizElement.getChild("quizQuestions"), quiz.getId());
 	}
 
-	private void importQuizQuestions(Element quizQuestionsElement, Quiz quiz) {
+	private void importQuizQuestions(Element quizQuestionsElement, Integer quizId ) {
 		for (Element quizQuestionElement: quizQuestionsElement.getChildren("quizQuestion")) {
 			Integer sequence = Integer.valueOf(quizQuestionElement.getAttributeValue("sequence"));
 			Integer questionNumber = Integer.valueOf(quizQuestionElement.getAttributeValue("questionNumber"));
@@ -108,7 +108,7 @@ public class QuizzesXmlImport {
 			Question question = questionRepository.findByNumber(questionNumber)
 					.orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionNumber.toString()));
 
-			QuizQuestion quizQuestion = quizService.addQuestionToQuiz(question.getId(), quiz.getId());
+			QuizQuestion quizQuestion = quizService.addQuestionToQuiz(question.getId(), quizId);
 
 			quizQuestion.setSequence(sequence);
 		}

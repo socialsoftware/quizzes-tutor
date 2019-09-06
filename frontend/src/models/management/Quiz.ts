@@ -5,6 +5,7 @@ export class Quiz {
   number!: number;
   title!: string;
   date!: Date;
+  availableDate!: Date;
   type!: string;
   year!: number;
   series!: number;
