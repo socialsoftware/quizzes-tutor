@@ -261,6 +261,36 @@ export default class RemoteServices {
       });
   }
 
+  static async saveQuiz(quiz: Quiz): Promise<Quiz> {
+    if (quiz.id) {
+      return httpClient
+      .put("/quizzes/" + quiz.id, quiz, {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data as Quiz;
+      })
+      .catch(error => {
+        throw Error(this.errorMessage(error));
+      });
+    } else {
+      return httpClient
+        .post("/quizzes/", quiz, {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
+        })
+        .then(response => {
+          return response.data as Quiz;
+        })
+        .catch(error => {
+          throw Error(this.errorMessage(error));
+        });
+    }
+  }
+
   static errorMessage(error: any): string {
     if (error.code === "ECONNABORTED") {
       return "Timeout: Can not connect to server";
