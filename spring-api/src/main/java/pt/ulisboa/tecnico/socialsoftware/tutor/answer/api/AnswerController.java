@@ -1,17 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.time.LocalDateTime;
 
 @RestController
 public class AnswerController {
@@ -27,6 +28,8 @@ public class AnswerController {
         if(user == null){
             return null;
         }
+
+        answers.setAnswerDate(LocalDateTime.now());
 
         return answerService.submitQuestionsAnswers(user, answers);
     }

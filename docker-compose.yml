@@ -5,7 +5,6 @@ networks:
 
 services:
   postgres:
-    build: ./postgres/
     image: stramer1/tutor-postgres
     network_mode: bridge
     container_name: postgres
@@ -14,7 +13,6 @@ services:
     restart: unless-stopped
 
   spring:
-    build: ./spring-api/
     image: stramer1/tutor-spring-api
     network_mode: bridge
     container_name: spring
@@ -27,7 +25,6 @@ services:
       - postgres
 
   frontend:
-    build: ./frontend/
     image: stramer1/tutor-frontend
     networks:
       app_network:

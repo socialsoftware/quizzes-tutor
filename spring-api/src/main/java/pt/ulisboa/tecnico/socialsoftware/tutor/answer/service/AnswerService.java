@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
