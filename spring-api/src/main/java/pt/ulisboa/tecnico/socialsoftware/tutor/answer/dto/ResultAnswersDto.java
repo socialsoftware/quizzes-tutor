@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ResultAnswersDto implements Serializable {
     private Integer quizAnswerId;
-    private LocalDateTime answerDate;
     private List<ResultAnswerDto> answers;
+    private LocalDateTime answerDate;
 
     public ResultAnswersDto(){
     }
@@ -21,19 +21,19 @@ public class ResultAnswersDto implements Serializable {
         this.quizAnswerId = quizAnswerId;
     }
 
-    public LocalDateTime getAnswerDate() {
-        return answerDate;
-    }
-
-    public void setAnswerDate(LocalDateTime answerDate) {
-        this.answerDate = answerDate;
-    }
-
     public List<ResultAnswerDto> getAnswers() {
         return answers;
     }
 
     public void setAnswers(List<ResultAnswerDto> answers) {
         this.answers = answers;
+    }
+
+    public LocalDateTime getAnswerDate() {
+        return answerDate;
+    }
+
+    public void setAnswerDate(LocalDateTime answerDate) {
+        this.answerDate = answerDate;
     }
 }

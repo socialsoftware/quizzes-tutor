@@ -36,7 +36,6 @@ export default class StatementManager {
   async getCorrectAnswers() {
     if (this.statementQuiz) {
       let params = {
-        answerDate: new Date().toISOString(),
         quizAnswerId: this.statementQuiz.quizAnswerId,
         answers: this.answers
       };
