@@ -42,6 +42,11 @@ public class QuestionController {
         return this.questionService.findAllQuestions(pageIndex, pageSize);
     }
 
+    @GetMapping("/questions/active")
+    public List<QuestionDto> getActiveQuestions(){
+        return this.questionService.findActiveQuestions();
+    }
+
     @GetMapping("/questions/{questionId}")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
         return this.questionService.findQuestionById(questionId);

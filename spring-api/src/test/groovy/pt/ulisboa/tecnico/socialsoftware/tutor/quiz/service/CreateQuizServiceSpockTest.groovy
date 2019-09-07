@@ -4,8 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
@@ -23,17 +28,40 @@ class CreateQuizServiceSpockTest extends Specification {
     @Autowired
     QuizRepository quizRepository
 
-    def "create a quiz"() {
-        given: 'createQuiz a quiz'
-        def quiz = new QuizDto()
+    @Autowired
+    QuestionRepository questionRepository
+
+    def quiz
+    def date
+    def questionDto
+
+    def setup() {
+        quiz = new QuizDto()
         quiz.setNumber(1)
-        quiz.setTitle(QUIZ_TITLE)
-        def date =LocalDateTime.now()
+        date = LocalDateTime.now()
         quiz.setDate(date)
         quiz.setYear(2019)
-        quiz.setType(Quiz.QuizType.STUDENT.name())
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
+
+        def question = new Question()
+        question.setNumber(1)
+        questionRepository.save(question)
+
+        questionDto = new QuestionDto()
+        questionDto.setId(question.getId())
+        questionDto.setNumber(1)
+        questionDto.setSequence(1)
+
+        def questions = new ArrayList()
+        questions.add(questionDto)
+        quiz.setQuestions(questions)
+    }
+
+    def "create a quiz"() {
+        given: 'student quiz with title'
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.STUDENT.name())
 
         when:
         quizService.createQuiz(quiz)
@@ -50,9 +78,51 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getType() == Quiz.QuizType.STUDENT.name()
         result.getSeries() == 1
         result.getVersion() == VERSION
-        result.getQuizQuestions().size() == 0
-
+        result.getQuizQuestions().size() == 1
     }
+
+    def "create a quiz no title"() {
+        given: 'student quiz'
+        quiz.setType(Quiz.QuizType.STUDENT.name())
+
+        when:
+        quizService.createQuiz(quiz)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        quizRepository.count() == 0L
+    }
+
+    def "create a TEACHER quiz no available date"() {
+        given: 'createQuiz a quiz'
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.TEACHER.name())
+
+        when:
+        quizService.createQuiz(quiz)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        quizRepository.count() == 0L
+    }
+
+    def "create a TEACHER quiz wrong sequence"() {
+        given: 'createQuiz a quiz'
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.STUDENT.name())
+        questionDto.setSequence(3)
+
+        when:
+        quizService.createQuiz(quiz)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        quizRepository.count() == 0L
+    }
+
 
     @TestConfiguration
     static class QuizServiceImplTestContextConfiguration {

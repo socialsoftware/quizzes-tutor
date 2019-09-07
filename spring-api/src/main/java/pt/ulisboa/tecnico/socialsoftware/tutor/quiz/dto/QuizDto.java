@@ -42,7 +42,11 @@ public class QuizDto implements Serializable {
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
                     .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                    .map(quizQuestion -> new QuestionDto(quizQuestion.getQuestion()))
+                    .map(quizQuestion -> {
+                       QuestionDto questionDto = new QuestionDto(quizQuestion.getQuestion());
+                       questionDto.setSequence(quizQuestion.getSequence());
+                       return questionDto;
+                    })
                     .collect(Collectors.toList());
         }
     }

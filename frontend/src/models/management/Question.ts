@@ -11,6 +11,7 @@ export class Question {
   options!: Option[];
   image: Image | null;
   topics: string[] = [];
+  sequence: number | null = null;
 
   constructor(jsonObj: Question) {
     this.id = jsonObj.id;

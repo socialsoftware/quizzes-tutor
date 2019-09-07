@@ -44,9 +44,24 @@ export default class RemoteServices {
       });
   }
 
-  static getQuestions(): Promise<Question[]> {
+  static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get("/questions", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data as Question[];
+      })
+      .catch(error => {
+        throw Error(this.errorMessage(error));
+      });
+  }
+
+  static async getActiveQuestions(): Promise<Question[]> {
+    return httpClient
+      .get("/questions/active", {
         headers: {
           Authorization: Store.getters.getToken
         }

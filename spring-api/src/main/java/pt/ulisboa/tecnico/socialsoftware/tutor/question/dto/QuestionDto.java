@@ -20,6 +20,7 @@ public class QuestionDto implements Serializable {
     private List<OptionDto> options;
     private ImageDto image;
     private List<String> topics;
+    private Integer sequence;
 
     public QuestionDto() {
     }
@@ -130,5 +131,13 @@ public class QuestionDto implements Serializable {
 
     public void setTopics(List<String> topics) {
         this.topics = topics;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }

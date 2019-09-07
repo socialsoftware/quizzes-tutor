@@ -52,6 +52,11 @@ public class QuestionService {
     }
 
     @Transactional
+    public List<QuestionDto> findActiveQuestions() {
+        return questionRepository.getActiveQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional
     public QuestionDto createQuestion(QuestionDto questionDto) {
         if (questionDto.getNumber() == null) {
             Integer maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?

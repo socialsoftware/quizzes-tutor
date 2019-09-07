@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -46,7 +47,6 @@ public class QuizService {
         return quizRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
     }
 
-
     @Transactional
     public QuizDto findById(Integer quizId) {
         return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
@@ -75,7 +75,17 @@ public class QuizService {
             quizDto.setNumber(getMaxQuizNumber() + 1);
         }
         Quiz quiz = new Quiz(quizDto);
+
+        if (quizDto.getQuestions() != null) {
+            for (QuestionDto questionDto : quizDto.getQuestions()) {
+                Question question = questionRepository.findById(questionDto.getId())
+                        .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(questionDto.getId())));
+                new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+            }
+        }
+
         entityManager.persist(quiz);
+
         return new QuizDto(quiz, true);
     }
 

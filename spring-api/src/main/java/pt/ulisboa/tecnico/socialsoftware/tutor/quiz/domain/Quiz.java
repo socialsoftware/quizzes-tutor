@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
@@ -54,6 +55,8 @@ public class Quiz implements Serializable {
    public Quiz() {}
 
    public Quiz(QuizDto quiz) {
+       check(quiz);
+
        this.number = quiz.getNumber();
        this.title = quiz.getTitle();
        this.date = quiz.getDate();
@@ -66,6 +69,24 @@ public class Quiz implements Serializable {
        this.type = quiz.getType();
        this.series = quiz.getSeries();
        this.version = quiz.getVersion();
+   }
+
+   private void check(QuizDto quiz) {
+       if (quiz.getTitle() == null || quiz.getTitle().trim().length() == 0) {
+           throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Title");
+       }
+
+       if (quiz.getType().equals(QuizType.TEACHER.name()) && quiz.getAvailableDate() == null) {
+           throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Available date");
+       }
+
+       if (quiz.getQuestions() != null) {
+           for (QuestionDto questionDto : quiz.getQuestions()) {
+               if (questionDto.getSequence() != quiz.getQuestions().indexOf(questionDto) + 1) {
+                   throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
+               }
+           }
+       }
    }
 
     public void remove() {
