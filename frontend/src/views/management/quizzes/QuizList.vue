@@ -13,6 +13,7 @@
         </v-flex>
         <v-divider class="mx-4" inset vertical> </v-divider>
         <v-spacer></v-spacer>
+        <quiz-view></quiz-view>
         <v-dialog v-model="dialog" max-width="1000px">
           <v-card v-if="quiz">
             <v-card-title>
@@ -98,11 +99,16 @@
 <script lang="ts">
 import { Component, Vue , Prop} from "vue-property-decorator";
 import { Quiz } from "@/models/management/Quiz";
+import QuizView from "@/views/management/quizzes/QuizView.vue";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
 
-@Component
+@Component({
+  components: {
+    QuizView
+  }
+})
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz = new Quiz();
