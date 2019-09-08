@@ -99,8 +99,8 @@
                                 <v-icon v-if="props.item.sequence && props.item.sequence !== 1" small class="mr-2"
                                     @click="moveLeft(props.item.id)">
                                     chevron_left</v-icon>
-                                <v-icon v-if="props.item.sequence" small class="mr-2"
-                                    @click="moveRight(props.item.id)">
+                                <v-icon v-if="props.item.sequence && quizQuestions.length > 1" small class="mr-2"
+                                    @click="openSetPosition(props.item.id)">
                                     expand_more</v-icon>
                                 <v-icon v-if="props.item.sequence && props.item.sequence !== quizQuestions.length" small class="mr-2"
                                     @click="moveRight(props.item.id)">
@@ -133,6 +133,26 @@
             </v-container>
         </v-card-text>
     </v-card>
+    <v-dialog v-if="position" v-model="dialog" persistent max-width="200px">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field 
+                    v-model="position"
+                    label="position" required> </v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="blue darken-1" text @click="closeSetPosition">Close</v-btn>
+          <v-btn color="blue darken-1" text @click="saveSetPosition">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
@@ -155,14 +175,17 @@ import Image from "@/models/management/Image";
   }
 })
 export default class QuizForm extends Vue {
+    @Prop(Quiz) quiz!: Quiz;
     @Prop(Boolean) readonly editMode!: boolean;
-    quiz: Quiz = new Quiz();
     questions: Question[] = [];
     search: string = "";
     tableChange: number = 0;
     showQuestion: boolean = false;
     questionToShow: Question | null | undefined = null;
     quizQuestions: Question[] = [];
+    dialog: boolean = false;
+    questionPosition: Question | undefined;
+    position: number | null = null;
     headers: object = [
         { text: "Sequence", value: "sequence", align: "left", width: "1%" },
         { text: "Question", value: "content", align: "left", width: "70%", sortable: false },
@@ -199,6 +222,7 @@ export default class QuizForm extends Vue {
     }
 
     switchMode() {
+        this.cleanQuizQuestions();
         this.$emit('switchMode');
     }
 
@@ -209,7 +233,7 @@ export default class QuizForm extends Vue {
             this.quiz.questions = this.quizQuestions;
             let updatedQuiz: Quiz; 
             updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
-            this.quiz = new Quiz();
+            this.cleanQuizQuestions();
             this.$emit('updateQuiz', updatedQuiz);
         } catch(error) {
             await this.$store.dispatch("error", error);
@@ -244,7 +268,7 @@ export default class QuizForm extends Vue {
       return items;
     }
 
-    compare(a: number, b: number) {
+    compare(a: any, b: any) {
         if (a === b) {
             return 0;
         } else if (a === null || a === undefined) {
@@ -338,6 +362,33 @@ export default class QuizForm extends Vue {
         }
     }
 
+    openSetPosition(questionId: number) {
+       let question = this.quizQuestions.find(q => q.id === questionId);
+        if (question && question.sequence) {
+            this.dialog = true;
+            this.position = question.sequence;
+            this.questionPosition = question;
+        }
+    }
+
+    closeSetPosition() {
+        this.dialog = false;
+        this.position = null;
+        this.questionPosition = undefined;
+    }
+
+    saveSetPosition() {
+        if (this.questionPosition && 
+            this.questionPosition.sequence !== this.position &&
+            this.position &&
+            this.position > 0 &&
+            this.position <= this.quizQuestions.length
+            ) {
+            this.changeQuestionPosition(this.questionPosition, this.position - 1);
+        }
+        this.closeSetPosition();
+    }
+
     changeQuestionPosition(question: Question, position: number) {
         if (question.sequence) {
             let currentPosition: number = this.quizQuestions.indexOf(question);
@@ -349,6 +400,12 @@ export default class QuizForm extends Vue {
         }
     }
 
+    cleanQuizQuestions() {
+        this.quizQuestions.forEach(question => {
+            question.sequence = null; 
+        });
+        this.quizQuestions = [];
+    }
 }
 </script>
 

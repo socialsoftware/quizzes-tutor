@@ -3,7 +3,8 @@
     <quiz-form 
       @switchMode="changeMode" 
       @updateQuiz="updateQuiz" 
-      :edit-mode="editMode"></quiz-form>
+      :edit-mode="editMode"
+      :quiz="quiz"></quiz-form>
     <quiz-list v-if="!editMode" 
       @deleteQuiz="deleteQuiz"
       :quizzes="quizzes"></quiz-list>
@@ -25,6 +26,7 @@ import QuizList from "@/views/management/quizzes/QuizList.vue";
 })
 export default class QuizzesView extends Vue {
     quizzes: Quiz[] = [];
+    quiz: Quiz = new Quiz();
     editMode: boolean = false;
 
   constructor() {
