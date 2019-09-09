@@ -13,12 +13,17 @@
         </v-flex>
         <v-divider class="mx-4" inset vertical> </v-divider>
         <v-spacer></v-spacer>
-        <quiz-view></quiz-view>
-        <v-dialog v-model="dialog" max-width="1000px">
+        <v-dialog v-model="dialog" 
+          @keydown.esc="closeQuiz" 
+          fullscreen hide-overlay max-width="1000px">
           <v-card v-if="quiz">
-            <v-card-title>
-              <span class="headline">{{ quiz.title }}</span>
-            </v-card-title>
+            <v-toolbar dark color="primary">
+              <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
+              <div class="flex-grow-1"></div>
+              <v-toolbar-items>
+                <v-btn dark color="primary" text @click="closeQuiz">Close</v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
 
             <v-card-text>
               <v-container grid-list-md fluid>
@@ -47,6 +52,7 @@
                           ></span>
                         </li>
                       </ul>
+                      <br/> 
                     </li>
                   </ol>
                 </v-layout>
@@ -55,10 +61,10 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeQuiz">close</v-btn>
+              <v-btn dark color="primary" text @click="closeQuiz">close</v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> 
       </v-card-title>
       <v-data-table
         :headers="headers"
@@ -99,16 +105,11 @@
 <script lang="ts">
 import { Component, Vue , Prop} from "vue-property-decorator";
 import { Quiz } from "@/models/management/Quiz";
-import QuizView from "@/views/management/quizzes/QuizView.vue";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
 
-@Component({
-  components: {
-    QuizView
-  }
-})
+@Component
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz = new Quiz();

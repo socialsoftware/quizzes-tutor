@@ -44,12 +44,16 @@ export default class QuizzesView extends Vue {
 
   changeMode() {
     this.editMode = !this.editMode;
+    if (this.editMode) {
+      this.quiz = new Quiz();
+    }
   }
 
   updateQuiz(updatedQuiz: Quiz) {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== updatedQuiz.id);
     this.quizzes.push(updatedQuiz);
     this.editMode = false;
+    this.quiz = new Quiz();
   }
 
   deleteQuiz(quizId: number) {

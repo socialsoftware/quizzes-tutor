@@ -53,6 +53,7 @@
               </v-layout>
             </v-container>
             <v-container grid-list-md fluid>
+                <v-layout row wrap>
                 <v-flex xs12 sm6 md6>
                     <v-text-field
                         v-model="search"
@@ -63,6 +64,11 @@
                 </v-flex>
                 <v-divider class="mx-4" inset vertical> </v-divider>
                 <v-spacer></v-spacer>
+                <v-btn v-if="quizQuestions.length !== 0"
+                    color="primary" 
+                    dark class="mb-2" 
+                    @click="openShowDialog">Show Quiz</v-btn>
+                </v-layout>
                 <v-data-table :key="tableChange"
                         :headers="headers"
                         :items="questions"
@@ -153,6 +159,58 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+     <v-dialog v-model="showDialog" 
+          @keydown.esc="closeShowDialog" 
+          fullscreen hide-overlay max-width="1000px">
+          <v-card v-if="quiz">
+            <v-toolbar dark color="primary">
+              <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
+              <div class="flex-grow-1"></div>
+              <v-toolbar-items>
+                <v-btn dark color="primary" text @click="closeShowDialog">Close</v-btn>
+              </v-toolbar-items>
+            </v-toolbar>
+
+            <v-card-text>
+              <v-container grid-list-md fluid>
+                <v-layout column wrap>
+                  <ol>
+                    <li
+                      v-for="question in quiz.questions"
+                      :key="question.sequence"
+                      class="text-left"
+                    >
+                      <span
+                        v-html="
+                          convertMarkDown(question.content, question.image)
+                        "
+                      ></span>
+                      <ul>
+                        <li
+                          v-for="option in question.options"
+                          :key="option.number"
+                        >
+                          <span
+                            v-html="convertMarkDown(option.content, null)"
+                            v-bind:class="[
+                              option.correct ? 'font-weight-bold' : ''
+                            ]"
+                          ></span>
+                        </li>
+                      </ul>
+                      <br/> 
+                    </li>
+                  </ol>
+                </v-layout>
+              </v-container>
+            </v-card-text>
+
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn dark color="primary" text @click="closeShowDialog">close</v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-dialog> 
   </v-content>
 </template>
 
@@ -186,6 +244,7 @@ export default class QuizForm extends Vue {
     dialog: boolean = false;
     questionPosition: Question | undefined;
     position: number | null = null;
+    showDialog: boolean = false;
     headers: object = [
         { text: "Sequence", value: "sequence", align: "left", width: "1%" },
         { text: "Question", value: "content", align: "left", width: "70%", sortable: false },
@@ -406,6 +465,20 @@ export default class QuizForm extends Vue {
         });
         this.quizQuestions = [];
     }
+
+    openShowDialog() {
+        this.showDialog = true;
+        this.quiz.questions = this.quizQuestions;
+    }
+
+    closeShowDialog() {
+        this.showDialog = false;
+    }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
+
 }
 </script>
 
