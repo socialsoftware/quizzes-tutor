@@ -90,7 +90,7 @@
           </v-list>
         </v-menu>
 
-        <v-btn v-if="isStudent" to="/stats" flat dark>
+        <v-btn v-if="isStudent" to="/student/stats" flat dark>
           Stats
           <v-icon>fas fa-user</v-icon>
         </v-btn>

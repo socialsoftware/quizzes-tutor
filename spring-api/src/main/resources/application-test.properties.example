@@ -15,4 +15,4 @@ load.dir=<DIRECTORY_FOR_LOAD>
 oauth.consumer.key=<FENIX CLIENT KEY>
 oauth.consumer.secret=<FENIX SECRET>
 callback.url=<URL FENIX REDIRECTS TO>
-base.url=<API BASE URL>
+base.url=https://fenix.tecnico.ulisboa.pt
