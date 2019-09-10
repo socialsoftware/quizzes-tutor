@@ -15,6 +15,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
     @Query(value = "select * from quizzes q where q.type != 'STUDENT'", nativeQuery = true)
     List<Quiz> findAllNonGenerated();
 
+    @Query(value = "select * from quizzes q where q.type != 'STUDENT' and q.year == :year", nativeQuery = true)
+    List<Quiz> findAvailableTeacherQuizzes(Integer year);
+
     @Query(value = "select MAX(number) from quizzes", nativeQuery = true)
     Integer getMaxQuizNumber();
 

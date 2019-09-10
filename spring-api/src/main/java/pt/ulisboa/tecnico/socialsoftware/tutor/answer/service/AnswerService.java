@@ -6,10 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
@@ -27,7 +24,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
@@ -116,6 +116,32 @@ public class AnswerService {
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(CorrectAnswerDto::new).collect(Collectors.toList()));
+    }
+
+    @Transactional
+    public List<QuizAnswerDto> getAvailableQuizAnswers(String username) {
+        User user = userRepository.findByUsername(username);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        Set<Quiz> studentQuizzes =  user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuiz)
+                .filter(quiz -> quiz.getType().equals(Quiz.QuizType.TEACHER))
+                .collect(Collectors.toSet());
+
+        quizRepository.findAvailableTeacherQuizzes(user.getYear()).stream()
+                .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizzes.contains(quiz))
+                .forEach(quiz ->  {
+                    QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+                    entityManager.persist(quizAnswer);
+                });
+
+        return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> !quizAnswer.getCompleted())
+                .map(QuizAnswerDto::new)
+                .sorted(Comparator.comparing(QuizAnswerDto::getAvailableDate))
+                .collect(Collectors.toList());
+
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
