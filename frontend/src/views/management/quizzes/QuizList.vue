@@ -91,6 +91,9 @@
               <v-icon small class="mr-2" @click="showQuiz(props.item.id)"
                 >visibility</v-icon
               >
+              <v-icon small class="mr-2" @click="editQuiz(props.item.id)"
+                >edit</v-icon
+              >
               <v-icon small class="mr-2" @click="deleteQuiz(props.item.id)"
                 >delete</v-icon
               >
@@ -164,6 +167,10 @@ export default class QuizList extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  editQuiz(quizId: number) {
+    this.$emit('editQuiz', quizId);
   }
 
   async deleteQuiz(quizId: number) {

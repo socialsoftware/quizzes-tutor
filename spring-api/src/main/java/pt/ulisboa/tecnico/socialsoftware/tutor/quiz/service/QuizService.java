@@ -90,6 +90,30 @@ public class QuizService {
     }
 
     @Transactional
+    public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
+
+        quiz.setTitle(quizDto.getTitle());
+        quiz.setAvailableDate(quizDto.getAvailableDate());
+
+        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+
+        quizQuestions.forEach(quizQuestion -> quizQuestion.remove());
+        quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
+
+        if (quizDto.getQuestions() != null) {
+            for (QuestionDto questionDto : quizDto.getQuestions()) {
+                Question question = questionRepository.findById(questionDto.getId())
+                        .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(questionDto.getId())));
+                QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+                entityManager.persist(quizQuestion);
+            }
+        }
+
+        return new QuizDto(quiz, true);
+    }
+
+    @Transactional
     public QuizQuestion addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, Integer.toString(questionId)));

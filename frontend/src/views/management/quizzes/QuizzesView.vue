@@ -1,11 +1,12 @@
 <template>
   <v-content>
-    <quiz-form 
+    <quiz-form
       @switchMode="changeMode" 
       @updateQuiz="updateQuiz" 
       :edit-mode="editMode"
       :quiz="quiz"></quiz-form>
     <quiz-list v-if="!editMode" 
+      @editQuiz="editQuiz"
       @deleteQuiz="deleteQuiz"
       :quizzes="quizzes"></quiz-list>
    </v-content>
@@ -26,7 +27,7 @@ import QuizList from "@/views/management/quizzes/QuizList.vue";
 })
 export default class QuizzesView extends Vue {
     quizzes: Quiz[] = [];
-    quiz: Quiz = new Quiz();
+    quiz: Quiz | null = null;
     editMode: boolean = false;
 
   constructor() {
@@ -34,7 +35,7 @@ export default class QuizzesView extends Vue {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     try {
       this.quizzes = await RemoteServices.getNonGeneratedQuizzes();
     } catch (error) {
@@ -46,6 +47,17 @@ export default class QuizzesView extends Vue {
     this.editMode = !this.editMode;
     if (this.editMode) {
       this.quiz = new Quiz();
+    } else {
+      this.quiz = null;
+    }
+  }
+
+  async editQuiz(quizId: number) {
+    try {
+      this.quiz = await RemoteServices.getQuiz(quizId);
+      this.editMode = true;
+    } catch (error) {
+      confirm(error);
     }
   }
 
@@ -53,7 +65,7 @@ export default class QuizzesView extends Vue {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== updatedQuiz.id);
     this.quizzes.push(updatedQuiz);
     this.editMode = false;
-    this.quiz = new Quiz();
+    this.quiz = null;
   }
 
   deleteQuiz(quizId: number) {

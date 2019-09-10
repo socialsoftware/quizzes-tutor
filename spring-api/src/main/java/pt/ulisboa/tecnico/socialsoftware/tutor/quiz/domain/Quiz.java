@@ -55,41 +55,46 @@ public class Quiz implements Serializable {
    public Quiz() {}
 
    public Quiz(QuizDto quiz) {
-       check(quiz);
+       checkQuestions(quiz.getQuestions());
 
        this.number = quiz.getNumber();
-       this.title = quiz.getTitle();
+
+       setTitle(quiz.getTitle());
        this.date = quiz.getDate();
-       if (quiz.getType().equals(QuizType.STUDENT.name())) {
+       this.type = quiz.getType();
+       if (this.type.equals(QuizType.STUDENT.name())) {
            this.availableDate = this.date;
        } else {
-           this.availableDate = quiz.getAvailableDate();
+           setAvailableDate(quiz.getAvailableDate());
        }
        this.year = quiz.getYear();
-       this.type = quiz.getType();
        this.series = quiz.getSeries();
        this.version = quiz.getVersion();
    }
 
-   private void check(QuizDto quiz) {
-       if (quiz.getTitle() == null || quiz.getTitle().trim().length() == 0) {
-           throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Title");
-       }
+     private void checkTitle(String title) {
+        if (title == null || title.trim().length() == 0) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Title");
+        }
+    }
 
-       if (quiz.getType().equals(QuizType.TEACHER.name()) && quiz.getAvailableDate() == null) {
-           throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Available date");
-       }
+    private void checkAvailableDate(LocalDateTime availableDate) {
+        if (this.type.equals(QuizType.TEACHER.name()) && availableDate == null) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Available date");
+        }
+    }
 
-       if (quiz.getQuestions() != null) {
-           for (QuestionDto questionDto : quiz.getQuestions()) {
-               if (questionDto.getSequence() != quiz.getQuestions().indexOf(questionDto) + 1) {
-                   throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
-               }
-           }
-       }
-   }
+    private void checkQuestions(List<QuestionDto> questions) {
+        if (questions != null) {
+            for (QuestionDto questionDto : questions) {
+                if (questionDto.getSequence() != questions.indexOf(questionDto) + 1) {
+                    throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
+                }
+            }
+        }
+    }
 
-    public void remove() {
+     public void remove() {
        getQuizQuestions().stream().collect(Collectors.toList()).forEach(QuizQuestion::remove);
 
        quizQuestions.clear();
@@ -142,6 +147,7 @@ public class Quiz implements Serializable {
     }
 
     public void setTitle(String title) {
+       checkTitle(title);
         this.title = title;
     }
 
@@ -158,6 +164,7 @@ public class Quiz implements Serializable {
     }
 
     public void setAvailableDate(LocalDateTime availableDate) {
+       checkAvailableDate(availableDate);
         this.availableDate = availableDate;
     }
 

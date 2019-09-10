@@ -69,7 +69,7 @@
                     dark class="mb-2" 
                     @click="openShowDialog">Show Quiz</v-btn>
                 </v-layout>
-                <v-data-table :key="tableChange"
+                <v-data-table
                         :headers="headers"
                         :items="questions"
                         :search="search"
@@ -215,7 +215,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop} from "vue-property-decorator";
+import { Component, Vue, Prop, Watch} from "vue-property-decorator";
 import { Datetime } from 'vue-datetime';
 import 'vue-datetime/dist/vue-datetime.css'
 import RemoteServices from "@/services/RemoteServices";
@@ -233,11 +233,10 @@ import Image from "@/models/management/Image";
   }
 })
 export default class QuizForm extends Vue {
-    @Prop(Quiz) quiz!: Quiz;
+    @Prop(Quiz) readonly quiz!: Quiz;
     @Prop(Boolean) readonly editMode!: boolean;
     questions: Question[] = [];
     search: string = "";
-    tableChange: number = 0;
     showQuestion: boolean = false;
     questionToShow: Question | null | undefined = null;
     quizQuestions: Question[] = [];
@@ -259,24 +258,33 @@ export default class QuizForm extends Vue {
         super();
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    async beforeMount() {
+    async created() {
         try {
             this.questions = await RemoteServices.getActiveQuestions();
+        } catch (error) {
+            await this.$store.dispatch("error", error);
+        } 
+    }
 
+    @Watch('quiz')
+    onQuizChange() {
+        alert("quiz change");
+        if (this.quiz !== null) {
             let questionIds: number[] = [];
             if (this.quiz.questions) {
                 this.quiz.questions.forEach(question => {
-                    questionIds.push(question.id);
+                    if (!this.quizQuestions.includes(question)) {
+                        questionIds.push(question.id);
+                    }
                 })
             }
+
             this.questions.forEach(question => {
                 if (questionIds.includes(question.id)) {
                     question.sequence = questionIds.indexOf(question.id) + 1;
+                    this.quizQuestions.push(question);
                 }
             });
-        } catch (error) {
-            await this.$store.dispatch("error", error);
         }
     }
 
@@ -376,7 +384,6 @@ export default class QuizForm extends Vue {
         if (question) {
             question.sequence = this.quizQuestions.length + 1;
             this.quizQuestions.push(question);
-            this.tableChange++;
         }
     }
 
@@ -389,7 +396,6 @@ export default class QuizForm extends Vue {
             this.quizQuestions.forEach((question, index) => {
                 question.sequence = index + 1;
             })
-            this.tableChange++;
         }
     }
 
@@ -455,7 +461,6 @@ export default class QuizForm extends Vue {
             this.quizQuestions.forEach((question, index) => {
                 question.sequence = index + 1;
             })
-            this.tableChange++;
         }
     }
 

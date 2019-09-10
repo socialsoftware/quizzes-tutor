@@ -49,6 +49,11 @@ public class QuizController {
         return this.quizService.createQuiz(quiz);
     }
 
+    @PutMapping("/quizzes/{quizId}")
+    public QuizDto updateQuiz(@PathVariable Integer quizId, @Valid @RequestBody QuizDto quiz) {
+        return this.quizService.updateQuiz(quizId, quiz);
+    }
+
     @DeleteMapping("/quizzes/{quizId}")
     public ResponseEntity deleteQuiz(@PathVariable Integer quizId) {
         logger.debug("deleteQuiz quizId: {}: ", quizId);
