@@ -57,19 +57,28 @@
           </v-layout>
         </v-container>
         <v-container grid-list-md fluid>
-          <v-flex xs12 sm6 md6>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="Search"
-              single-line
-              hide-details
-            ></v-text-field>
-          </v-flex>
-          <v-divider class="mx-4" inset vertical> </v-divider>
-          <v-spacer></v-spacer>
+          <v-layout row wrap>
+            <v-flex xs12 sm6 md6>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="Search"
+                single-line
+                hide-details
+              ></v-text-field>
+            </v-flex>
+            <v-divider class="mx-4" inset vertical> </v-divider>
+            <v-spacer></v-spacer>
+            <v-btn
+              v-if="quizQuestions.length !== 0"
+              color="primary"
+              dark
+              class="mb-2"
+              @click="openShowDialog"
+              >Show Quiz</v-btn
+            >
+          </v-layout>
           <v-data-table
-            :key="tableChange"
             :headers="headers"
             :items="questions"
             :search="search"
@@ -224,11 +233,66 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog
+      v-model="showDialog"
+      @keydown.esc="closeShowDialog"
+      fullscreen
+      hide-overlay
+      max-width="1000px"
+    >
+      <v-card v-if="quiz">
+        <v-toolbar dark color="primary">
+          <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
+          <div class="flex-grow-1"></div>
+          <v-toolbar-items>
+            <v-btn dark color="primary" text @click="closeShowDialog"
+              >Close</v-btn
+            >
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <ol>
+                <li
+                  v-for="question in quiz.questions"
+                  :key="question.sequence"
+                  class="text-left"
+                >
+                  <span
+                    v-html="convertMarkDown(question.content, question.image)"
+                  ></span>
+                  <ul>
+                    <li v-for="option in question.options" :key="option.number">
+                      <span
+                        v-html="convertMarkDown(option.content, null)"
+                        v-bind:class="[
+                          option.correct ? 'font-weight-bold' : ''
+                        ]"
+                      ></span>
+                    </li>
+                  </ul>
+                  <br />
+                </li>
+              </ol>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn dark color="primary" text @click="closeShowDialog"
+            >close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
+import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import { Datetime } from "vue-datetime";
 import "vue-datetime/dist/vue-datetime.css";
 import RemoteServices from "@/services/RemoteServices";
@@ -246,17 +310,17 @@ import Image from "@/models/management/Image";
   }
 })
 export default class QuizForm extends Vue {
-  @Prop(Quiz) quiz!: Quiz;
+  @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
   questions: Question[] = [];
   search: string = "";
-  tableChange: number = 0;
   showQuestion: boolean = false;
   questionToShow: Question | null | undefined = null;
   quizQuestions: Question[] = [];
   dialog: boolean = false;
   questionPosition: Question | undefined;
   position: number | null = null;
+  showDialog: boolean = false;
   headers: object = [
     { text: "Sequence", value: "sequence", align: "left", width: "1%" },
     {
@@ -296,23 +360,33 @@ export default class QuizForm extends Vue {
   }
 
   // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     try {
       this.questions = await RemoteServices.getActiveQuestions();
+    } catch (error) {
+      await this.$store.dispatch("error", error);
+    }
+  }
 
+  @Watch("quiz")
+  onQuizChange() {
+    alert("quiz change");
+    if (this.quiz !== null) {
       let questionIds: number[] = [];
       if (this.quiz.questions) {
         this.quiz.questions.forEach(question => {
-          questionIds.push(question.id);
+          if (!this.quizQuestions.includes(question)) {
+            questionIds.push(question.id);
+          }
         });
       }
+
       this.questions.forEach(question => {
         if (questionIds.includes(question.id)) {
           question.sequence = questionIds.indexOf(question.id) + 1;
+          this.quizQuestions.push(question);
         }
       });
-    } catch (error) {
-      await this.$store.dispatch("error", error);
     }
   }
 
@@ -358,7 +432,6 @@ export default class QuizForm extends Vue {
         } else {
           return b[index] < a[index] ? -1 : 1;
         }
-        return 1;
       }
     });
     return items;
@@ -414,7 +487,6 @@ export default class QuizForm extends Vue {
     if (question) {
       question.sequence = this.quizQuestions.length + 1;
       this.quizQuestions.push(question);
-      this.tableChange++;
     }
   }
 
@@ -427,7 +499,6 @@ export default class QuizForm extends Vue {
       this.quizQuestions.forEach((question, index) => {
         question.sequence = index + 1;
       });
-      this.tableChange++;
     }
   }
 
@@ -504,7 +575,6 @@ export default class QuizForm extends Vue {
       this.quizQuestions.forEach((question, index) => {
         question.sequence = index + 1;
       });
-      this.tableChange++;
     }
   }
 
@@ -513,6 +583,19 @@ export default class QuizForm extends Vue {
       question.sequence = null;
     });
     this.quizQuestions = [];
+  }
+
+  openShowDialog() {
+    this.showDialog = true;
+    this.quiz.questions = this.quizQuestions;
+  }
+
+  closeShowDialog() {
+    this.showDialog = false;
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

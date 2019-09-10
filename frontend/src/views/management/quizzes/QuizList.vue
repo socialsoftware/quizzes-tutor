@@ -13,11 +13,23 @@
         </v-flex>
         <v-divider class="mx-4" inset vertical> </v-divider>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="1000px">
+        <v-dialog
+          v-model="dialog"
+          @keydown.esc="closeQuiz"
+          fullscreen
+          hide-overlay
+          max-width="1000px"
+        >
           <v-card v-if="quiz">
-            <v-card-title>
-              <span class="headline">{{ quiz.title }}</span>
-            </v-card-title>
+            <v-toolbar dark color="primary">
+              <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
+              <div class="flex-grow-1"></div>
+              <v-toolbar-items>
+                <v-btn dark color="primary" text @click="closeQuiz"
+                  >Close</v-btn
+                >
+              </v-toolbar-items>
+            </v-toolbar>
 
             <v-card-text>
               <v-container grid-list-md fluid>
@@ -46,6 +58,7 @@
                           ></span>
                         </li>
                       </ul>
+                      <br />
                     </li>
                   </ol>
                 </v-layout>
@@ -54,7 +67,7 @@
 
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeQuiz">close</v-btn>
+              <v-btn dark color="primary" text @click="closeQuiz">close</v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -73,7 +86,9 @@
           <tr>
             <td class="text-left">{{ props.item.title }}</td>
             <td class="text-center">{{ convertDate(props.item.date) }}</td>
-            <td class="text-center">{{ convertDate(props.item.availableDate) }}</td>
+            <td class="text-center">
+              {{ convertDate(props.item.availableDate) }}
+            </td>
             <td class="text-center">{{ props.item.type }}</td>
             <td class="text-center">{{ props.item.year }}</td>
             <td class="text-center">{{ props.item.series }}</td>
@@ -83,6 +98,9 @@
             <td>
               <v-icon small class="mr-2" @click="showQuiz(props.item.id)"
                 >visibility</v-icon
+              >
+              <v-icon small class="mr-2" @click="editQuiz(props.item.id)"
+                >edit</v-icon
               >
               <v-icon small class="mr-2" @click="deleteQuiz(props.item.id)"
                 >delete</v-icon
@@ -96,7 +114,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue , Prop} from "vue-property-decorator";
+import { Component, Vue, Prop } from "vue-property-decorator";
 import { Quiz } from "@/models/management/Quiz";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown } from "@/services/ConvertMarkdownService";
@@ -111,7 +129,12 @@ export default class QuizList extends Vue {
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
     { text: "Date", value: "date", align: "center", width: "10%" },
-    { text: "Available Date", value: "availableDate", align: "center", width: "10%" },
+    {
+      text: "Available Date",
+      value: "availableDate",
+      align: "center",
+      width: "10%"
+    },
     { text: "Type", value: "type", align: "center", width: "10%" },
     { text: "Year", value: "year", align: "center", width: "10%" },
     { text: "Series", value: "series", align: "center", width: "10%" },
@@ -159,25 +182,30 @@ export default class QuizList extends Vue {
     return convertMarkDown(text, image);
   }
 
+  editQuiz(quizId: number) {
+    this.$emit("editQuiz", quizId);
+  }
+
   async deleteQuiz(quizId: number) {
-      if (confirm("Are you sure you want to delete this quiz?")) {
+    if (confirm("Are you sure you want to delete this quiz?")) {
       try {
         await RemoteServices.deleteQuiz(quizId);
-        this.$emit('deleteQuiz', quizId);
+        this.$emit("deleteQuiz", quizId);
       } catch (error) {
         confirm(error);
       }
     }
   }
 
-  convertDate(date: string[]) : string {
+  convertDate(date: string[]): string {
     if (date == null) {
-      return '';
+      return "";
     } else {
-      return date[0]+'/'+date[1]+'/'+date[2]+' '+date[3]+':'+date[4];
+      return (
+        date[0] + "/" + date[1] + "/" + date[2] + " " + date[3] + ":" + date[4]
+      );
     }
   }
-
 }
 </script>
 

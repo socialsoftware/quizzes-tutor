@@ -1,14 +1,18 @@
 <template>
   <v-content>
-    <quiz-form 
-      @switchMode="changeMode" 
-      @updateQuiz="updateQuiz" 
+    <quiz-form
+      @switchMode="changeMode"
+      @updateQuiz="updateQuiz"
       :edit-mode="editMode"
-      :quiz="quiz"></quiz-form>
-    <quiz-list v-if="!editMode" 
+      :quiz="quiz"
+    ></quiz-form>
+    <quiz-list
+      v-if="!editMode"
+      @editQuiz="editQuiz"
       @deleteQuiz="deleteQuiz"
-      :quizzes="quizzes"></quiz-list>
-   </v-content>
+      :quizzes="quizzes"
+    ></quiz-list>
+  </v-content>
 </template>
 
 <script lang="ts">
@@ -20,21 +24,21 @@ import QuizList from "@/views/management/quizzes/QuizList.vue";
 
 @Component({
   components: {
-    QuizForm, 
-    QuizList,
+    QuizForm,
+    QuizList
   }
 })
 export default class QuizzesView extends Vue {
-    quizzes: Quiz[] = [];
-    quiz: Quiz = new Quiz();
-    editMode: boolean = false;
+  quizzes: Quiz[] = [];
+  quiz: Quiz | null = null;
+  editMode: boolean = false;
 
   constructor() {
     super();
   }
 
   // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     try {
       this.quizzes = await RemoteServices.getNonGeneratedQuizzes();
     } catch (error) {
@@ -44,18 +48,32 @@ export default class QuizzesView extends Vue {
 
   changeMode() {
     this.editMode = !this.editMode;
+    if (this.editMode) {
+      this.quiz = new Quiz();
+    } else {
+      this.quiz = null;
+    }
+  }
+
+  async editQuiz(quizId: number) {
+    try {
+      this.quiz = await RemoteServices.getQuiz(quizId);
+      this.editMode = true;
+    } catch (error) {
+      confirm(error);
+    }
   }
 
   updateQuiz(updatedQuiz: Quiz) {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== updatedQuiz.id);
     this.quizzes.push(updatedQuiz);
     this.editMode = false;
+    this.quiz = null;
   }
 
   deleteQuiz(quizId: number) {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== quizId);
   }
-
 }
 </script>
 

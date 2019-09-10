@@ -1,4 +1,3 @@
-
 // To allow gzip compression
 const CompressionPlugin = require("compression-webpack-plugin");
 
