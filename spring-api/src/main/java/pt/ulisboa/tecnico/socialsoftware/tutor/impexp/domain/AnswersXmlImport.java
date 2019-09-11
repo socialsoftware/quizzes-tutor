@@ -10,7 +10,7 @@ import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -18,8 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -93,8 +93,6 @@ public class AnswersXmlImport {
 	}
 
 	private void importQuizAnswer(Element answerElement) {
-		LocalDateTime assignedDate = LocalDateTime.parse(answerElement.getAttributeValue("assignedDate"));
-
 		LocalDateTime answerDate = null;
 		if (answerElement.getAttributeValue("answerDate") != null) {
 			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
@@ -114,7 +112,6 @@ public class AnswersXmlImport {
 		User user = userRepository.findByNumber(number);
 
 		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId());
-		quizAnswer.setAssignedDate(assignedDate);
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 

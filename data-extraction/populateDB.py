@@ -1,8 +1,8 @@
 import glob, os, re, json, psycopg2, shutil, time
 from pathlib import Path
 
-dataPath = os.getcwd() + '/data/**/*.tex'
-imagesPath = os.getcwd() + '/spring-api/src/main/resources/static/images/questions/'
+dataPath = os.getcwd() + '/../data/**/*.tex'
+imagesPath = os.getcwd() + '/../spring-api/src/main/resources/static/images/questions/'
 DBNAME = 'tutordb'
 DBUSER = 'pedro'
 DBPASS = 'foobar123'
@@ -71,8 +71,8 @@ def getTexFiles():
     return result
 
 # separates the question tex files from the questions tex files
-def separateQuestionsFromQuizes(texFiles):
-    quizes = []
+def separateQuestionsFromQuizzes(texFiles):
+    quizzes = []
     questions = []
 
     for texFile in texFiles:
@@ -80,14 +80,14 @@ def separateQuestionsFromQuizes(texFiles):
             questions.append(texFile)
 
         elif "macros.tex" not in texFile:
-            quizes.append(texFile)
+            quizzes.append(texFile)
 
-    result = {"questions": questions, "quizes": quizes}
+    result = {"questions": questions, "quizzes": quizzes}
 
     return result
 
 # parse quiz files
-# return list of quizes
+# return list of quizzes
 def parseQuizFiles(quizFiles):
     result = []
 
@@ -225,10 +225,10 @@ def extractOptions(questionTex):
    
     return result
 
-def getQuizes(quizes, questionsDBs):
+def getQuizzes(quizzes, questionsDBs):
     result = []
 
-    for quiz in quizes:
+    for quiz in quizzes:
         result.append(getQuiz(quiz, questionsDBs))
 
     return result
@@ -291,14 +291,14 @@ def getImagePath(quizFile, imageList):
 
     return result
 
-def populateDB(quizes):
+def populateDB(quizzes):
 
     try:
         conn = psycopg2.connect("dbname='" + DBNAME + "' user='" + DBUSER + "' host='localhost' password='" + DBPASS + "'")
         cur = conn.cursor()
 
         # quiz = {"quizFile": quiz["quizFile"], "quizTitle": quiz["quizTitle"], "questions": []}
-        for quiz in quizes:
+        for quiz in quizzes:
             insertQuiz(cur, quiz)
         # Make the changes to the database persistent
         conn.commit()
@@ -330,7 +330,6 @@ def insertQuestion(cur, question, quizId, sequence):
     questionId = cur.fetchone()[0]
     # insert quizhasquestion
     cur.execute("INSERT INTO quiz_questions (quiz_id, question_id, sequence) VALUES (%s, %s, %s)", [int(quizId), int(questionId), sequence])
-
     # image insertion
     if len(question["image"]) > 0:
         imageAbsolutePath = question["image"][0]['image']
@@ -362,24 +361,23 @@ def insertOptions(cur, options, questionId):
 
 def main():
     texFiles = getTexFiles()
-
-    texFiles = separateQuestionsFromQuizes(texFiles)
-    quizFiles = texFiles["quizes"]
+    texFiles = separateQuestionsFromQuizzes(texFiles)
+    quizFiles = texFiles["quizzes"]
     questionFiles = texFiles["questions"]
 
-    quizes = parseQuizFiles(quizFiles)
+    quizzes = parseQuizFiles(quizFiles)
 
     questionsDBs = parseQuestionFiles(questionFiles)
 
-    outputQuizes = getQuizes(quizes, questionsDBs)
+    outputQuizzes = getQuizzes(quizzes, questionsDBs)
     #outputing the data as a json
     #encoding not working
     #should also validate the encoding for the reads
     #with open('data.json', 'w', encoding="iso-8859-15") as outfile:
-    #    json.dump(outputQuizes, outfile, indent=4)
+    #    json.dump(outputQuizzes, outfile, indent=4)
 
-    #print(outputQuizes)
+    #print(outputQuizzes)
 
-    populateDB(outputQuizes)
+    populateDB(outputQuizzes)
 
 main()

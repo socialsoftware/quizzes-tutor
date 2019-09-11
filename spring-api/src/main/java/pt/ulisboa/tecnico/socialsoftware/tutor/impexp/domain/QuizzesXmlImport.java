@@ -7,15 +7,12 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -71,14 +68,20 @@ public class QuizzesXmlImport {
 	private void importQuiz(Element quizElement) {
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
 		String title = quizElement.getAttributeValue("title");
-		LocalDateTime date = null;
-		if (quizElement.getAttributeValue("date") != null) {
-			date = LocalDateTime.parse(quizElement.getAttributeValue("date"));
+		LocalDateTime creationDate = null;
+		if (quizElement.getAttributeValue("creationDate") != null) {
+            creationDate = LocalDateTime.parse(quizElement.getAttributeValue("creationDate"));
 		}
+
 		LocalDateTime availableDate = null;
 		if (quizElement.getAttributeValue("availableDate") != null) {
 			availableDate = LocalDateTime.parse(quizElement.getAttributeValue("availableDate"));
 		}
+
+        LocalDateTime conclusionDate = null;
+        if (quizElement.getAttributeValue("conclusionDate") != null) {
+            conclusionDate = LocalDateTime.parse(quizElement.getAttributeValue("conclusionDate"));
+        }
 		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
 		Integer series = Integer.valueOf(quizElement.getAttributeValue("series"));
@@ -88,7 +91,9 @@ public class QuizzesXmlImport {
 		QuizDto quizDto = new QuizDto();
 		quizDto.setNumber(number);
 		quizDto.setTitle(title);
-		quizDto.setDate(date);
+		quizDto.setCreationDate(creationDate);
+        quizDto.setAvailableDate(availableDate);
+        quizDto.setConclusionDate(conclusionDate);
 		quizDto.setAvailableDate(availableDate);
 		quizDto.setYear(year);
 		quizDto.setType(type);

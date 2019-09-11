@@ -560,12 +560,6 @@
       <schema/>
       <table>quiz_answers</table>
       <key>
-        <name>date</name>
-        <field>assigned_date</field>
-        <condition>=</condition>
-        <name2/>
-      </key>
-      <key>
         <name>quiz_id</name>
         <field>quiz_id</field>
         <condition>=</condition>
@@ -583,11 +577,6 @@
         <condition>=</condition>
         <name2/>
       </key>
-      <value>
-        <name>assigned_date</name>
-        <rename>date</rename>
-        <update>Y</update>
-      </value>
       <value>
         <name>quiz_id</name>
         <rename>quiz_id</rename>

@@ -6,9 +6,6 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.util.List;
 import java.util.Set;
@@ -42,7 +39,6 @@ public class AnswersXmlExport {
 
 	private void exportQuizAnswer(Element element, QuizAnswer quizAnswer) {
 		Element quizAnswerElement = new Element("quizAnswer");
-		quizAnswerElement.setAttribute("assignedDate", quizAnswer.getAssignedDate().toString());
 
 		if (quizAnswer.getAnswerDate() != null) {
 			quizAnswerElement.setAttribute("answerDate", quizAnswer.getAnswerDate().toString());

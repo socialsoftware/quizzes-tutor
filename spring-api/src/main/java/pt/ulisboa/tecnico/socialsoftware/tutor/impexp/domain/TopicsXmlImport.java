@@ -9,7 +9,7 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 
 import java.io.*;
 import java.nio.charset.Charset;

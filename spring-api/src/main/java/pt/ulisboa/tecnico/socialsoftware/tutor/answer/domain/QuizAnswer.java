@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -15,9 +15,6 @@ public class QuizAnswer implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "assigned_date")
-    private LocalDateTime assignedDate;
 
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
@@ -39,7 +36,6 @@ public class QuizAnswer implements Serializable {
     }
 
     public QuizAnswer(User user, Quiz quiz) {
-        this.assignedDate = LocalDateTime.now();
         this.completed = false;
         this.user = user;
         user.addQuizAnswer(this);
@@ -67,14 +63,6 @@ public class QuizAnswer implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public LocalDateTime getAssignedDate() {
-        return assignedDate;
-    }
-
-    public void setAssignedDate(LocalDateTime assignedDate) {
-        this.assignedDate = assignedDate;
     }
     
     public LocalDateTime getAnswerDate() {

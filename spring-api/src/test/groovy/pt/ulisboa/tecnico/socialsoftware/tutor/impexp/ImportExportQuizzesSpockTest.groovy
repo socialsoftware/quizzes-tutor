@@ -6,13 +6,11 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -26,7 +24,9 @@ class ImportExportQuizzesSpockTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
 
     def quiz
-    def date
+    def creationDate
+    def availableDate
+    def conclusionDate
 
     @Autowired
     QuizService quizService
@@ -55,8 +55,12 @@ class ImportExportQuizzesSpockTest extends Specification {
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
         quizDto.setTitle(QUIZ_TITLE)
-        date = LocalDateTime.now()
-        quizDto.setDate(date)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now()
+        quizDto.setCreationDate(creationDate)
+        quizDto.setAvailableDate(availableDate)
+        quizDto.setConclusionDate(conclusionDate)
         quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM.name())
         quizDto.setSeries(1)
@@ -81,7 +85,9 @@ class ImportExportQuizzesSpockTest extends Specification {
         def quizResult = quizRepository.findAll().get(0)
         quizResult.getNumber() == 1
         quizResult.getTitle() == QUIZ_TITLE
-        quizResult.getDate() == date
+        quizResult.getCreationDate() == creationDate
+        quizResult.getAvailableDate() == availableDate
+        quizResult.getConclusionDate() == conclusionDate
         quizResult.getYear() == 2019
         quizResult.getType() == Quiz.QuizType.EXAM.name()
         quizResult.getSeries() == 1

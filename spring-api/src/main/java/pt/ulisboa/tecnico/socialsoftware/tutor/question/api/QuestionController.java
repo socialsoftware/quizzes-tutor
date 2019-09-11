@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 
 import javax.validation.Valid;
 import java.io.IOException;

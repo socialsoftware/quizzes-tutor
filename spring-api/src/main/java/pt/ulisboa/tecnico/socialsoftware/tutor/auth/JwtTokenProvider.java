@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

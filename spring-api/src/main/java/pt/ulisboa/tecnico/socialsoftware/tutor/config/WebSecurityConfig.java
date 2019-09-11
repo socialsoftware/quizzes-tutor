@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtConfigurer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
@@ -18,11 +19,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    JwtTokenProvider jwtTokenProvider;
-
-    WebSecurityConfig(JwtTokenProvider jwtTokenProvider) {
-        this.jwtTokenProvider = jwtTokenProvider;
-    }
+    @Autowired
+    private JwtTokenProvider jwtTokenProvider;
 
     @Override
     public void configure(WebSecurity web) throws Exception {

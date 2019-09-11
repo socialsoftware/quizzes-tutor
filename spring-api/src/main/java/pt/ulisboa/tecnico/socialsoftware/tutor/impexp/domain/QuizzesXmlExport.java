@@ -4,9 +4,6 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -44,12 +41,15 @@ public class QuizzesXmlExport {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("number", quiz.getNumber().toString());
 		quizElement.setAttribute("title", quiz.getTitle());
-		if (quiz.getDate() != null) {
-			quizElement.setAttribute("date", quiz.getDate().toString());
+		if (quiz.getCreationDate() != null) {
+			quizElement.setAttribute("creationDate", quiz.getCreationDate().toString());
 		}
 		if (quiz.getAvailableDate() != null) {
 			quizElement.setAttribute("availableDate", quiz.getAvailableDate().toString());
 		}
+        if (quiz.getConclusionDate() != null) {
+            quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().toString());
+        }
 		quizElement.setAttribute("year", quiz.getYear().toString());
 		quizElement.setAttribute("type", quiz.getType());
 		quizElement.setAttribute("series", quiz.getSeries().toString());

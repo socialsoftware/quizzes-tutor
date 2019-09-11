@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,7 +22,8 @@ import java.util.stream.Collectors;
                 @Index(name = "quizzes_indx_0", columnList = "number")
         })
 public class Quiz implements Serializable {
-   public enum QuizType {
+
+    public enum QuizType {
        EXAM, TEST, STUDENT, TEACHER
    }
 
@@ -30,17 +31,17 @@ public class Quiz implements Serializable {
    @GeneratedValue(strategy=GenerationType.IDENTITY)
    private Integer id;
 
-   @Column(name = "number")
-   private Integer number;
-
-   private String title;
-
-   @Column(name = "generation_date")
-   private LocalDateTime date;
+   @Column(name = "creation_date")
+   private LocalDateTime creationDate;
 
    @Column(name = "available_date")
    private LocalDateTime availableDate;
 
+    @Column(name = "conclusion_date")
+    private LocalDateTime conclusionDate;
+
+   private Integer number;
+   private String title;
    private Integer year;
    private String type;
    private Integer series;
@@ -60,13 +61,10 @@ public class Quiz implements Serializable {
        this.number = quiz.getNumber();
 
        setTitle(quiz.getTitle());
-       this.date = quiz.getDate();
+       this.creationDate = quiz.getCreationDate();
+       this.availableDate = quiz.getAvailableDate();
+       this.conclusionDate = quiz.getConclusionDate();
        this.type = quiz.getType();
-       if (this.type.equals(QuizType.STUDENT.name())) {
-           this.availableDate = this.date;
-       } else {
-           setAvailableDate(quiz.getAvailableDate());
-       }
        this.year = quiz.getYear();
        this.series = quiz.getSeries();
        this.version = quiz.getVersion();
@@ -122,7 +120,7 @@ public class Quiz implements Serializable {
            }
        }
 
-       this.setDate(LocalDateTime.now());
+       this.setCreationDate(LocalDateTime.now());
        this.setType(QuizType.STUDENT.name());
     }
 
@@ -151,12 +149,12 @@ public class Quiz implements Serializable {
         this.title = title;
     }
 
-    public LocalDateTime getDate() {
-        return date;
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public void setDate(LocalDateTime date) {
-        this.date = date;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public LocalDateTime getAvailableDate() {
@@ -166,6 +164,14 @@ public class Quiz implements Serializable {
     public void setAvailableDate(LocalDateTime availableDate) {
        checkAvailableDate(availableDate);
         this.availableDate = availableDate;
+    }
+
+    public LocalDateTime getConclusionDate() {
+        return conclusionDate;
+    }
+
+    public void setConclusionDate(LocalDateTime conclusionDate) {
+        this.conclusionDate = conclusionDate;
     }
 
     public Integer getYear() {

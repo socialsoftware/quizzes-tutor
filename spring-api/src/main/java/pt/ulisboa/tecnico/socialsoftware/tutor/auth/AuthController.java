@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.util.Arrays;
 
@@ -29,9 +29,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-        private static Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     private static String COURSE_ACRONYM = "ASof";
-    private static String[] ADMINS = {"ist181002", "ist12628"};
+    // Pedro, Professor Rito, Professor Prada, Professor Daniel Gonçalves, José
+    private static String[] ADMINS = {"ist181002", "ist12628", "ist32219", "ist13898", "ist148794"};
 
     @Autowired
     private UserService userService;
@@ -63,12 +64,10 @@ public class AuthController {
 
         // Get user's authorization data (access_token and refresh_token) client.
         try {
-            logger.debug("fenixAuth");
             userDetails = client.getUserDetailsFromCode(data.getCode());
         } catch (FenixEduClientException e) {
             throw new InvalidFenixException("Wrong user Fenix code");
         } catch (Exception e) {
-            e.printStackTrace();
             throw new TutorException(FENIX_ERROR, "Wrong configuration");
         }
 

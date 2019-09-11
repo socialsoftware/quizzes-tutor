@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.test.web.servlet.MockMvc
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.WebSecurityConfig
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizController
 import spock.lang.Specification
 import spock.mock.DetachedMockFactory
 
@@ -13,9 +14,7 @@ import spock.mock.DetachedMockFactory
 class CreateQuizControllerSpockTest extends Specification {
     @Autowired
     protected MockMvc mvc
-
-
-
+    
 
     def 'create quiz with one question and two options'() {
         given:

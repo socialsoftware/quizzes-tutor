@@ -4,20 +4,19 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -31,7 +30,9 @@ class ImportExportAnswersSpockTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
 
     def quiz
-    def date
+    def creationDate
+    def availableDate
+    def conclusionDate
     def quizAnswer
     def answerDate
     def timeTaken
@@ -73,8 +74,12 @@ class ImportExportAnswersSpockTest extends Specification {
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
         quizDto.setTitle(QUIZ_TITLE)
-        date = LocalDateTime.now()
-        quizDto.setDate(date)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now()
+        quizDto.setCreationDate(creationDate)
+        quizDto.setAvailableDate(availableDate)
+        quizDto.setConclusionDate(conclusionDate)
         quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM.name())
         quizDto.setSeries(1)
@@ -115,7 +120,6 @@ class ImportExportAnswersSpockTest extends Specification {
         then:
         quizAnswerRepository.findAll().size() == 1
         def quizAnswerResult = quizAnswerRepository.findAll().get(0)
-        quizAnswerResult.getAssignedDate() != null
         quizAnswerResult.getAnswerDate() == answerDate
         quizAnswerResult.getCompleted()
         quizAnswerResult.getUser().getUsername() == 'pc'

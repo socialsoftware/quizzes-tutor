@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImpExpService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 
 
 @PropertySource({ "classpath:application.properties" })

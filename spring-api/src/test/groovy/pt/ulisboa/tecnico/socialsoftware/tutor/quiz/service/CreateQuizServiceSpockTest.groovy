@@ -8,9 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
@@ -32,14 +32,20 @@ class CreateQuizServiceSpockTest extends Specification {
     QuestionRepository questionRepository
 
     def quiz
-    def date
+    def creationDate
+    def availableDate
+    def conclusionDate
     def questionDto
 
     def setup() {
         quiz = new QuizDto()
         quiz.setNumber(1)
-        date = LocalDateTime.now()
-        quiz.setDate(date)
+        creationDate = LocalDateTime.now()
+        availableDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now()
+        quiz.setCreationDate(creationDate)
+        quiz.setAvailableDate(availableDate)
+        quiz.setConclusionDate(conclusionDate)
         quiz.setYear(2019)
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
@@ -72,8 +78,9 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getId() != null
         result.getNumber() != null
         result.getTitle() == QUIZ_TITLE
-        result.getDate() == date
-        result.getAvailableDate() == date
+        result.getCreationDate() == creationDate
+        result.getAvailableDate() == availableDate
+        result.getConclusionDate() == conclusionDate
         result.getYear() == 2019
         result.getType() == Quiz.QuizType.STUDENT.name()
         result.getSeries() == 1

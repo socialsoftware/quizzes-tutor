@@ -8,10 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.service.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.service.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest

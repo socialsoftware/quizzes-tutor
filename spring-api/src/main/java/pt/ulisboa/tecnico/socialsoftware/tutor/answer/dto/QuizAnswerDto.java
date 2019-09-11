@@ -7,16 +7,12 @@ import java.time.LocalDateTime;
 public class QuizAnswerDto {
     private Integer id;
     private LocalDateTime availableDate;
-    private LocalDateTime assignedDate;
     private LocalDateTime answerDate;
     private Boolean completed;
-    // TODO: add more attributes
 
     public QuizAnswerDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getId();
         this.availableDate = quizAnswer.getQuiz().getAvailableDate();
-        this.assignedDate = quizAnswer.getAssignedDate();
-        this.assignedDate = quizAnswer.getAnswerDate();
         this.completed = quizAnswer.getCompleted();
     }
 
@@ -34,14 +30,6 @@ public class QuizAnswerDto {
 
     public void setAvailableDate(LocalDateTime availableDate) {
         this.availableDate = availableDate;
-    }
-
-    public LocalDateTime getAssignedDate() {
-        return assignedDate;
-    }
-
-    public void setAssignedDate(LocalDateTime assignedDate) {
-        this.assignedDate = assignedDate;
     }
 
     public LocalDateTime getAnswerDate() {

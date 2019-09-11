@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-
-import java.time.LocalDateTime
 
 @DataJpaTest
 class CreateQuizAnswerServiceSpockTest extends Specification {
@@ -49,7 +48,6 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
         quizAnswerRepository.findAll().size() == 1
         def quizAnswer = quizAnswerRepository.findAll().get(0)
         quizAnswer.getId() != null
-        quizAnswer.getAssignedDate() != null
         quizAnswer.getCompleted() == false
         quizAnswer.getUser().getId() == userId
         quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)
