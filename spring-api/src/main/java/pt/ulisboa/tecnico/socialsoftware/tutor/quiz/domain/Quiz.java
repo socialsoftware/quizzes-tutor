@@ -47,7 +47,7 @@ public class Quiz implements Serializable {
    private Integer series;
    private String version;
 
-   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch=FetchType.EAGER)
    private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")

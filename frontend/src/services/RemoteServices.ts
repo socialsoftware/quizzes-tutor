@@ -7,6 +7,7 @@ import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import StatementQuestion from "@/models/statement/StatementQuestion";
 import StatementSolution from "@/models/statement/StatementSolution";
+import SolvedQuiz from "@/models/statement/SolvedQuiz";
 
 interface AuthResponse {
   token: string;
@@ -168,7 +169,7 @@ export default class RemoteServices {
 
   static getQuizStatement(params: object): Promise<StatementQuiz> {
     return httpClient
-      .post("/quizzes/generate/student", params, {
+      .post("/student/quizzes/generate", params, {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -181,9 +182,39 @@ export default class RemoteServices {
       });
   }
 
+  static getAvailableQuizzes(): Promise<StatementQuiz[]> {
+    return httpClient
+      .get("/student/quizzes/available", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data as StatementQuiz[];
+      })
+      .catch(error => {
+        throw Error(this.errorMessage(error));
+      });
+  }
+
+  static getSolvedQuizzes(): Promise<SolvedQuiz[]> {
+    return httpClient
+      .get("/student/quizzes/solved", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data as SolvedQuiz[];
+      })
+      .catch(error => {
+        throw Error(this.errorMessage(error));
+      });
+  }
+
   static getCorrectAnswers(params: object): Promise<StatementCorrectAnswer[]> {
     return httpClient
-      .post("/quiz-answers", params, {
+      .post("/student/quizzes/answer", params, {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -279,17 +310,17 @@ export default class RemoteServices {
   static async saveQuiz(quiz: Quiz): Promise<Quiz> {
     if (quiz.id) {
       return httpClient
-      .put("/quizzes/" + quiz.id, quiz, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
-      .then(response => {
-        return response.data as Quiz;
-      })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
-      });
+        .put("/quizzes/" + quiz.id, quiz, {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
+        })
+        .then(response => {
+          return response.data as Quiz;
+        })
+        .catch(error => {
+          throw Error(this.errorMessage(error));
+        });
     } else {
       return httpClient
         .post("/quizzes/", quiz, {

@@ -32,13 +32,13 @@ let router = new Router({
       path: "/",
       name: "home",
       component: HomeView,
-      meta: { title: "Software Architecture", requiredAuth: true }
+      meta: { title: "Software Architecture", requiredAuth: "None" }
     },
     {
       path: "/login",
       name: "login",
       component: LoginView,
-      meta: { title: "Software Architecture - Login", requiredAuth: true }
+      meta: { title: "Software Architecture - Login", requiredAuth: "None" }
     },
     {
       path: "/management",
@@ -51,7 +51,7 @@ let router = new Router({
           component: QuestionsView,
           meta: {
             title: "Software Architecture - Questions",
-            requiredAuth: Store.getters.isTeacher
+            requiredAuth: "Teacher"
           }
         },
         {
@@ -60,7 +60,7 @@ let router = new Router({
           component: TopicsView,
           meta: {
             title: "Software Architecture - Topics",
-            requiredAuth: Store.getters.isTeacher
+            requiredAuth: "Teacher"
           }
         },
         {
@@ -69,7 +69,7 @@ let router = new Router({
           component: QuizzesView,
           meta: {
             title: "Software Architecture - Quizzes",
-            requiredAuth: Store.getters.isTeacher
+            requiredAuth: "Teacher"
           }
         }
       ]
@@ -80,7 +80,7 @@ let router = new Router({
       component: StudentStatsView,
       meta: {
         title: "Software Architecture - StudentsStats",
-        requiredAuth: Store.getters.isTeacher
+        requiredAuth: "Teacher"
       }
     },
     {
@@ -94,7 +94,7 @@ let router = new Router({
           component: AvailableQuizzesView,
           meta: {
             title: "Software Architecture - Available Quizzes",
-            requiredAuth: Store.getters.isStudent
+            requiredAuth: "Student"
           }
         },
         {
@@ -103,7 +103,7 @@ let router = new Router({
           component: CreateQuizzesView,
           meta: {
             title: "Software Architecture - Create Quizzes",
-            requiredAuth: Store.getters.isStudent
+            requiredAuth: "Student"
           }
         },
         {
@@ -112,7 +112,7 @@ let router = new Router({
           component: SolvedQuizzesView,
           meta: {
             title: "Software Architecture - Solved Quizzes",
-            requiredAuth: Store.getters.isStudent
+            requiredAuth: "Student"
           }
         },
         {
@@ -121,7 +121,7 @@ let router = new Router({
           component: QuizView,
           meta: {
             title: "Software Architecture - Quiz",
-            requiredAuth: Store.getters.isStudent,
+            requiredAuth: "Student",
             requiresVerification: true
           }
         },
@@ -131,7 +131,7 @@ let router = new Router({
           component: ResultsView,
           meta: {
             title: "Software Architecture - Results",
-            requiredAuth: Store.getters.isStudent,
+            requiredAuth: "Student",
             requiresVerification: true
           }
         },
@@ -141,7 +141,7 @@ let router = new Router({
           component: StatsView,
           meta: {
             title: "Software Architecture - Stats",
-            requiredAuth: Store.getters.isStudent
+            requiredAuth: "Student"
           }
         },
         {
@@ -150,7 +150,7 @@ let router = new Router({
           component: AchievementsView,
           meta: {
             title: "Software Architecture - Achievements",
-            requiredAuth: Store.getters.isStudent
+            requiredAuth: "Student"
           }
         }
       ]
@@ -161,14 +161,14 @@ let router = new Router({
       component: AdminManagementView,
       meta: {
         title: "Software Architecture - AdminManagement",
-        requiredAuth: Store.getters.isAdmin
+        requiredAuth: "Admin"
       }
     },
     {
       path: "**",
       name: "not-found",
       component: NotFoundView,
-      meta: { title: "Page Not Found", requiredAuth: true }
+      meta: { title: "Page Not Found", requiredAuth: "None" }
     }
   ]
 });
@@ -183,9 +183,14 @@ router.beforeEach(async (to, from, next) => {
     }
     return;
   }*/
-  if (to.matched.some(record => record.meta.requiredAuth)) {
+  if (to.meta.requiredAuth == "None") {
     next();
-    return;
+  } else if (to.meta.requiredAuth == "Admin" && Store.getters.isAdmin) {
+    next();
+  } else if (to.meta.requiredAuth == "Teacher" && Store.getters.isTeacher) {
+    next();
+  } else if (to.meta.requiredAuth == "Student" && Store.getters.isStudent) {
+    next();
   } else {
     next("/");
   }

@@ -97,7 +97,7 @@ public class StatementService {
     @Transactional
     public List<SolvedQuizDto> getSolvedQuizzes(User user) {
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getCompleted())
+                .filter(QuizAnswer::getCompleted)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());

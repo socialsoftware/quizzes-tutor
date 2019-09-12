@@ -10,10 +10,10 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items>
-        <v-btn v-if="isAdmin" to="/admin-management" flat dark disabled>
+        <!--v-btn v-if="isAdmin" to="/admin-management" flat dark disabled>
           Admin Management
           <v-icon>fas fa-user</v-icon>
-        </v-btn>
+        </v-btn-->
 
         <v-menu offset-y v-if="isTeacher" open-on-hover>
           <template v-slot:activator="{ on }">
@@ -50,10 +50,10 @@
           </v-list>
         </v-menu>
 
-        <v-btn v-if="isTeacher" to="/studentStats" flat dark disabled>
+        <!--v-btn v-if="isTeacher" to="/student/stats" flat dark disabled>
           Students Stats
           <v-icon>fas fa-user</v-icon>
-        </v-btn>
+        </v-btn-->
 
         <v-menu offset-y v-if="isStudent" open-on-hover>
           <template v-slot:activator="{ on }">
@@ -63,7 +63,7 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-tile to="/student/available" disabled>
+            <v-list-tile to="/student/available">
               <v-list-tile-action>
                 <v-icon>assignment</v-icon>
               </v-list-tile-action>
@@ -79,7 +79,7 @@
                 <v-list-tile-title>Create</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile to="/student/solved" disabled>
+            <v-list-tile to="/student/solved">
               <v-list-tile-action>
                 <v-icon>done</v-icon>
               </v-list-tile-action>
@@ -90,7 +90,7 @@
           </v-list>
         </v-menu>
 
-        <v-btn v-if="isStudent" to="/student/stats" flat dark>
+        <v-btn to="/student/stats" v-if="isStudent" flat dark>
           Stats
           <v-icon>fas fa-user</v-icon>
         </v-btn>
@@ -140,8 +140,10 @@ export default class TopBar extends Vue {
     return this.$store.getters.isStudent;
   }
 
-  logout(): void {
-    this.$store.dispatch("logout");
+  async logout() {
+    await this.$store.dispatch("logout");
+    await this.$store.dispatch("clearError");
+    await this.$router.push("/").catch(() => {});
   }
 }
 </script>
