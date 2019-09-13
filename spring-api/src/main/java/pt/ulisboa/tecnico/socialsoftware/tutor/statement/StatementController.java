@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.access.AccessService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
@@ -28,9 +29,14 @@ public class StatementController {
     @Autowired
     private StatementService statementService;
 
+    @Autowired
+    private AccessService accessService;
+
     @PostMapping("/generate")
     public StatementQuizDto getNewQuiz(Principal principal, @RequestBody StatementCreationDto quizDetails) {
         User user = (User) ((Authentication) principal).getPrincipal();
+
+        accessService.create(user, LocalDateTime.now(), "GENERATE");
 
         return statementService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
     }
@@ -43,6 +49,8 @@ public class StatementController {
             return Collections.emptyList();
         }
 
+        accessService.create(user, LocalDateTime.now(), "LIST_AVAILABLE");
+
         return statementService.getAvailableQuizzes(user);
     }
 
@@ -54,6 +62,8 @@ public class StatementController {
             return Collections.emptyList();
         }
 
+        accessService.create(user, LocalDateTime.now(), "LIST_SOLVED");
+
         return statementService.getSolvedQuizzes(user);
     }
 
@@ -64,6 +74,8 @@ public class StatementController {
         if(user == null){
             return null;
         }
+
+        accessService.create(user, LocalDateTime.now(), "ANSWER");
 
         answers.setAnswerDate(LocalDateTime.now());
 

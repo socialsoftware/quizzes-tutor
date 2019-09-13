@@ -16,12 +16,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.tecnico.socialsoftware.tutor.access.AccessService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.FENIX_ERROR;
@@ -48,6 +50,9 @@ public class AuthController {
 
     @Value("${callback.url}")
     private String callbackUrl;
+
+    @Autowired
+    private AccessService accessService;
 
     @PostMapping("/fenix")
     public ResponseEntity<?> fenixAuth(@RequestBody FenixCode data) {
@@ -109,6 +114,8 @@ public class AuthController {
                 }
             }
         }
+
+        accessService.create(user, LocalDateTime.now(), "LOGIN");
 
         String token = JwtTokenProvider.generateToken(user);
         return ResponseEntity.ok(new JwtAuthenticationResponse(token, user.getRole()));

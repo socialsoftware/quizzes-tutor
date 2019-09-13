@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import java.time.LocalDateTime;
+
 public class UserDto {
     private int id;
     private String username;
     private String name;
     private int year;
     private String role;
+    private LocalDateTime creationDate;
 
     public UserDto(User user) {
         this.id = user.getId();
@@ -13,6 +16,7 @@ public class UserDto {
         this.name = user.getName();
         this.year = user.getYear();
         this.role = user.getRole();
+        this.creationDate = user.getCreationDate();
 
     }
 
@@ -56,4 +60,11 @@ public class UserDto {
         this.role = role;
     }
 
- }
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+}

@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Entity(name = "Users")
@@ -23,12 +24,11 @@ public class User implements UserDetails {
     private Integer year;
     private String role;
 
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
-
-    @Transient
-    private Collection<GrantedAuthority> authorities = new HashSet<>();
-
 
     public User() {
     }
@@ -42,6 +42,7 @@ public class User implements UserDetails {
 
         this.number = number;
         this.year = year;
+        this.creationDate = LocalDateTime.now();
     }
 
     public Integer getId() {
@@ -91,6 +92,14 @@ public class User implements UserDetails {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public Set<QuizAnswer> getQuizAnswers() {
