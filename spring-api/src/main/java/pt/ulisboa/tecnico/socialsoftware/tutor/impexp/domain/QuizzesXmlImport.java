@@ -67,7 +67,10 @@ public class QuizzesXmlImport {
 
 	private void importQuiz(Element quizElement) {
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
-		Boolean scramble = Boolean.valueOf(quizElement.getAttributeValue("scramble"));
+		Boolean scramble = false;
+		if (quizElement.getAttributeValue("scramble") != null) {
+			scramble = Boolean.valueOf(quizElement.getAttributeValue("scramble"));
+		}
 		String title = quizElement.getAttributeValue("title");
 		LocalDateTime creationDate = null;
 		if (quizElement.getAttributeValue("creationDate") != null) {
@@ -85,7 +88,10 @@ public class QuizzesXmlImport {
         }
 		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
-		Integer series = Integer.valueOf(quizElement.getAttributeValue("series"));
+		Integer series = null;
+		if (quizElement.getAttributeValue("series") != null) {
+			series = Integer.valueOf(quizElement.getAttributeValue("series"));
+		}
 		String version = quizElement.getAttributeValue("version");
 
 
@@ -96,7 +102,6 @@ public class QuizzesXmlImport {
 		quizDto.setCreationDate(creationDate);
         quizDto.setAvailableDate(availableDate);
         quizDto.setConclusionDate(conclusionDate);
-		quizDto.setAvailableDate(availableDate);
 		quizDto.setYear(year);
 		quizDto.setType(type);
 		quizDto.setSeries(series);
