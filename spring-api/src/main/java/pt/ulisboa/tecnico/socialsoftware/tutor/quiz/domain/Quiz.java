@@ -67,7 +67,6 @@ public class Quiz implements Serializable {
        this.creationDate = quiz.getCreationDate();
        setAvailableDate(quiz.getAvailableDate());
        setConclusionDate(quiz.getConclusionDate());
-       this.conclusionDate = quiz.getConclusionDate();
        this.year = quiz.getYear();
        this.series = quiz.getSeries();
        this.version = quiz.getVersion();
@@ -89,8 +88,11 @@ public class Quiz implements Serializable {
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.TEACHER.name()) && availableDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Conclusion date");
+        if (this.type.equals(QuizType.TEACHER.name()) &&
+                conclusionDate != null &&
+                availableDate != null &&
+                conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
         }
     }
 

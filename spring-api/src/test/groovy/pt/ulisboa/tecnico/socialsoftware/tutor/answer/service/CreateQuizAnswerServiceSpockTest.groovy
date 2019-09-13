@@ -48,7 +48,7 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
         quizAnswerRepository.findAll().size() == 1
         def quizAnswer = quizAnswerRepository.findAll().get(0)
         quizAnswer.getId() != null
-        quizAnswer.getCompleted() == false
+        !quizAnswer.getCompleted()
         quizAnswer.getUser().getId() == userId
         quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)
         quizAnswer.getQuiz().getId() == quizId

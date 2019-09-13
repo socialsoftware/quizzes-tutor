@@ -39,7 +39,9 @@ public class QuizzesXmlExport {
 	private void exportQuiz(Element element, Quiz quiz) {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("number", quiz.getNumber().toString());
-		quizElement.setAttribute("scramble", quiz.getScramble().toString());
+		if (quiz.getScramble() != null) {
+			quizElement.setAttribute("scramble", quiz.getScramble().toString());
+		}
 		quizElement.setAttribute("title", quiz.getTitle());
 		if (quiz.getCreationDate() != null) {
 			quizElement.setAttribute("creationDate", quiz.getCreationDate().toString());
@@ -52,8 +54,12 @@ public class QuizzesXmlExport {
         }
 		quizElement.setAttribute("year", quiz.getYear().toString());
 		quizElement.setAttribute("type", quiz.getType());
-		quizElement.setAttribute("series", quiz.getSeries().toString());
-		quizElement.setAttribute("version", quiz.getVersion());
+		if (quiz.getSeries() != null) {
+			quizElement.setAttribute("series", quiz.getSeries().toString());
+		}
+		if (quiz.getVersion() != null) {
+			quizElement.setAttribute("version", quiz.getVersion());
+		}
 
 		exportQuizQuestions(quizElement, quiz.getQuizQuestions());
 
