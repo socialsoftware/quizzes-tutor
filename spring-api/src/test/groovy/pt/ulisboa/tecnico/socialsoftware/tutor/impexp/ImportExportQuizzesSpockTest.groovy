@@ -54,10 +54,11 @@ class ImportExportQuizzesSpockTest extends Specification {
 
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
+        quizDto.setScramble(false)
         quizDto.setTitle(QUIZ_TITLE)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(2)
         quizDto.setCreationDate(creationDate)
         quizDto.setAvailableDate(availableDate)
         quizDto.setConclusionDate(conclusionDate)
@@ -84,6 +85,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizRepository.findAll().size() == 1
         def quizResult = quizRepository.findAll().get(0)
         quizResult.getNumber() == 1
+        !quizResult.getScramble()
         quizResult.getTitle() == QUIZ_TITLE
         quizResult.getCreationDate() == creationDate
         quizResult.getAvailableDate() == availableDate

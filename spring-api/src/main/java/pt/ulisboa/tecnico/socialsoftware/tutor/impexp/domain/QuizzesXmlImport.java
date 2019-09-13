@@ -67,6 +67,7 @@ public class QuizzesXmlImport {
 
 	private void importQuiz(Element quizElement) {
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
+		Boolean scramble = Boolean.valueOf(quizElement.getAttributeValue("scramble"));
 		String title = quizElement.getAttributeValue("title");
 		LocalDateTime creationDate = null;
 		if (quizElement.getAttributeValue("creationDate") != null) {
@@ -78,7 +79,7 @@ public class QuizzesXmlImport {
 			availableDate = LocalDateTime.parse(quizElement.getAttributeValue("availableDate"));
 		}
 
-        LocalDateTime conclusionDate = null;
+		LocalDateTime conclusionDate = null;
         if (quizElement.getAttributeValue("conclusionDate") != null) {
             conclusionDate = LocalDateTime.parse(quizElement.getAttributeValue("conclusionDate"));
         }
@@ -90,6 +91,7 @@ public class QuizzesXmlImport {
 
 		QuizDto quizDto = new QuizDto();
 		quizDto.setNumber(number);
+		quizDto.setScramble(scramble);
 		quizDto.setTitle(title);
 		quizDto.setCreationDate(creationDate);
         quizDto.setAvailableDate(availableDate);

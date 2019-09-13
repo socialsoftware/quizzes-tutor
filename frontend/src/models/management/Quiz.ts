@@ -3,9 +3,12 @@ import { Question } from "@/models/management/Question";
 export class Quiz {
   id!: number;
   number!: number;
+  scramble!: boolean;
   title!: string;
   date!: Date;
+  creation!: Date;
   availableDate!: Date;
+  conclusionDate!: Date;
   type!: string;
   year!: number;
   series!: number;

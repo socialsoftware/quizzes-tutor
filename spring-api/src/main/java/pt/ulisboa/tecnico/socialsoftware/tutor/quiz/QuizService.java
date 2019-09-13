@@ -94,6 +94,7 @@ public class QuizService {
 
         quiz.setTitle(quizDto.getTitle());
         quiz.setAvailableDate(quizDto.getAvailableDate());
+        quiz.setScramble(quizDto.getScramble());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 

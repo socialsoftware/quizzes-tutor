@@ -40,11 +40,11 @@
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md fluid>
-          <v-layout row wrap>
+          <v-layout column wrap>
             <v-flex xs18 sm9 md6>
               <v-text-field v-model="quiz.title" label="Title"></v-text-field>
             </v-flex>
-            <v-flex xs12 sm6 md4>
+            <v-flex xs12 sm6 md4 class="text-left">
               <br />
               <datetime
                 type="datetime"
@@ -53,6 +53,18 @@
               >
                 <label for="startDate" slot="before">Available Date:</label>
               </datetime>
+            </v-flex>
+            <v-flex xs12 sm6 md4 class="text-left">
+              <datetime
+                type="datetime"
+                v-model="quiz.conclusionDate"
+                id="startDate"
+              >
+                <label for="startDate" slot="before">Conclusion Date:</label>
+              </datetime>
+            </v-flex>
+            <v-flex xs12 sm6 md4>
+              <v-switch v-model="quiz.scramble" :label="`Scramble: ${quiz.scramble ? quiz.scramble.toString() : 'false'}`"></v-switch>
             </v-flex>
           </v-layout>
         </v-container>
@@ -370,7 +382,6 @@ export default class QuizForm extends Vue {
 
   @Watch("quiz")
   onQuizChange() {
-    alert("quiz change");
     if (this.quiz !== null) {
       let questionIds: number[] = [];
       if (this.quiz.questions) {

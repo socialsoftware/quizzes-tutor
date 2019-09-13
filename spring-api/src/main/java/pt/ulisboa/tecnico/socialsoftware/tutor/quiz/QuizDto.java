@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 public class QuizDto implements Serializable {
     private Integer id;
     private Integer number;
+    private Boolean scramble;
     private String title;
     private LocalDateTime creationDate;
     private LocalDateTime availableDate;
@@ -31,6 +32,7 @@ public class QuizDto implements Serializable {
     public QuizDto(Quiz quiz, boolean deepCopy) {
         this.id = quiz.getId();
         this.number = quiz.getNumber();
+        this.scramble = quiz.getScramble();
         this.title = quiz.getTitle();
         this.creationDate = quiz.getCreationDate();
         this.availableDate = quiz.getAvailableDate();
@@ -68,6 +70,14 @@ public class QuizDto implements Serializable {
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    public Boolean getScramble() {
+        return scramble;
+    }
+
+    public void setScramble(Boolean scramble) {
+        this.scramble = scramble;
     }
 
     public String getTitle() {

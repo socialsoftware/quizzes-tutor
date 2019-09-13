@@ -40,6 +40,7 @@ public class QuizzesXmlExport {
 	private void exportQuiz(Element element, Quiz quiz) {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("number", quiz.getNumber().toString());
+		quizElement.setAttribute("scramble", quiz.getScramble().toString());
 		quizElement.setAttribute("title", quiz.getTitle());
 		if (quiz.getCreationDate() != null) {
 			quizElement.setAttribute("creationDate", quiz.getCreationDate().toString());

@@ -82,8 +82,6 @@ public class AnswerService {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
 
-        quizAnswer.setAnswerDate(answers.getAnswerDate());
-
         if (isNotAssignedStudent(user, quizAnswer)) {
             throw new TutorException(USER_MISMATCH, user.getUsername());
         }
@@ -111,6 +109,7 @@ public class AnswerService {
             entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
         }
 
+        quizAnswer.setAnswerDate(answers.getAnswerDate());
         quizAnswer.setCompleted(true);
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()

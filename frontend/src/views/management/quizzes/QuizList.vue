@@ -89,6 +89,12 @@
             <td class="text-center">
               {{ convertDate(props.item.availableDate) }}
             </td>
+            <td class="text-center">
+              {{ convertDate(props.item.conclusionDate) }}
+            </td>
+            <td class="text-center">
+              {{ props.item.scramble }}
+            </td>
             <td class="text-center">{{ props.item.type }}</td>
             <td class="text-center">{{ props.item.year }}</td>
             <td class="text-center">{{ props.item.series }}</td>
@@ -135,6 +141,13 @@ export default class QuizList extends Vue {
       align: "center",
       width: "10%"
     },
+    {
+      text: "Conclusion Date",
+      value: "conclusionDate",
+      align: "center",
+      width: "10%"
+    },
+    { text: "Scramble", value: "scramble", align: "center", width: "10%" },
     { text: "Type", value: "type", align: "center", width: "10%" },
     { text: "Year", value: "year", align: "center", width: "10%" },
     { text: "Series", value: "series", align: "center", width: "10%" },

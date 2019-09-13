@@ -42,7 +42,8 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setNumber(1)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
-        conclusionDate = LocalDateTime.now()
+        conclusionDate = LocalDateTime.now().plusDays(1)
+        quiz.setScramble(true);
         quiz.setCreationDate(creationDate)
         quiz.setAvailableDate(availableDate)
         quiz.setConclusionDate(conclusionDate)
@@ -77,6 +78,7 @@ class CreateQuizServiceSpockTest extends Specification {
         def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getNumber() != null
+        result.getScramble()
         result.getTitle() == QUIZ_TITLE
         result.getCreationDate() == creationDate
         result.getAvailableDate() == availableDate
@@ -104,6 +106,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a TEACHER quiz no available date"() {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
+        quiz.setAvailableDate(null);
         quiz.setType(Quiz.QuizType.TEACHER.name())
 
         when:

@@ -6,12 +6,15 @@ import java.time.LocalDateTime;
 
 public class QuizAnswerDto {
     private Integer id;
+    private Boolean scramble;
     private LocalDateTime availableDate;
     private LocalDateTime answerDate;
     private Boolean completed;
 
+
     public QuizAnswerDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getId();
+        this.scramble = quizAnswer.getQuiz().getScramble();
         this.availableDate = quizAnswer.getQuiz().getAvailableDate();
         this.completed = quizAnswer.getCompleted();
     }
@@ -22,6 +25,14 @@ public class QuizAnswerDto {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Boolean getScramble() {
+        return scramble;
+    }
+
+    public void setScramble(Boolean scramble) {
+        this.scramble = scramble;
     }
 
     public LocalDateTime getAvailableDate() {

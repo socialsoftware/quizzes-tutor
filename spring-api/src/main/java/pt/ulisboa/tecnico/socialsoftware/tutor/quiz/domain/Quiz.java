@@ -37,8 +37,10 @@ public class Quiz implements Serializable {
    @Column(name = "available_date")
    private LocalDateTime availableDate;
 
-    @Column(name = "conclusion_date")
-    private LocalDateTime conclusionDate;
+   @Column(name = "conclusion_date")
+   private LocalDateTime conclusionDate;
+
+   private Boolean scramble;
 
    private Integer number;
    private String title;
@@ -59,12 +61,13 @@ public class Quiz implements Serializable {
        checkQuestions(quiz.getQuestions());
 
        this.number = quiz.getNumber();
-
        setTitle(quiz.getTitle());
-       this.creationDate = quiz.getCreationDate();
-       this.availableDate = quiz.getAvailableDate();
-       this.conclusionDate = quiz.getConclusionDate();
        this.type = quiz.getType();
+       this.scramble = quiz.getScramble();
+       this.creationDate = quiz.getCreationDate();
+       setAvailableDate(quiz.getAvailableDate());
+       setConclusionDate(quiz.getConclusionDate());
+       this.conclusionDate = quiz.getConclusionDate();
        this.year = quiz.getYear();
        this.series = quiz.getSeries();
        this.version = quiz.getVersion();
@@ -79,6 +82,15 @@ public class Quiz implements Serializable {
     private void checkAvailableDate(LocalDateTime availableDate) {
         if (this.type.equals(QuizType.TEACHER.name()) && availableDate == null) {
             throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Available date");
+        }
+        if (this.type.equals(QuizType.TEACHER.name()) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Available date");
+        }
+    }
+
+    private void checkConclusionDate(LocalDateTime conclusionDate) {
+        if (this.type.equals(QuizType.TEACHER.name()) && availableDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(TutorException.ExceptionError.QUIZ_NOT_CONSISTENT, "Conclusion date");
         }
     }
 
@@ -140,6 +152,14 @@ public class Quiz implements Serializable {
         this.number = number;
     }
 
+    public Boolean getScramble() {
+        return scramble;
+    }
+
+    public void setScramble(Boolean scramble) {
+        this.scramble = scramble;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -162,7 +182,7 @@ public class Quiz implements Serializable {
     }
 
     public void setAvailableDate(LocalDateTime availableDate) {
-       checkAvailableDate(availableDate);
+        checkAvailableDate(availableDate);
         this.availableDate = availableDate;
     }
 
@@ -171,6 +191,7 @@ public class Quiz implements Serializable {
     }
 
     public void setConclusionDate(LocalDateTime conclusionDate) {
+       checkConclusionDate(conclusionDate);
         this.conclusionDate = conclusionDate;
     }
 
