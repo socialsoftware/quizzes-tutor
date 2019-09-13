@@ -22,6 +22,7 @@ public class SolvedQuizDto implements Serializable {
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
+        this.answerDate = quizAnswer.getAnswerDate();
         this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(SolvedQuestionDto::new)

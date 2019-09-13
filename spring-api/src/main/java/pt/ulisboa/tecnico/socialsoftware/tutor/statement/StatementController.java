@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 
 @RestController
@@ -27,7 +28,6 @@ public class StatementController {
 
     @PostMapping("/generate")
     public StatementQuizDto getNewQuiz(Principal principal, @RequestBody StatementCreationDto quizDetails) {
-
         User user = (User) ((Authentication) principal).getPrincipal();
 
         return statementService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
@@ -38,7 +38,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return null;
+            return Collections.emptyList();
         }
 
         // TODO: include if they can be scrambled or not
@@ -51,7 +51,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return null;
+            return Collections.emptyList();
         }
 
         // TODO: include if they can be scrambled or not
@@ -61,7 +61,6 @@ public class StatementController {
 
     @PostMapping("/answer")
     public CorrectAnswersDto correctAnswers(Principal principal, @Valid @RequestBody ResultAnswersDto answers) {
-
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){

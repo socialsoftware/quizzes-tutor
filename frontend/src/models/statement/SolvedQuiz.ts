@@ -1,11 +1,15 @@
-import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
+import SolvedQuestion from "@/models/statement/SolvedQuestion";
 
-export default class StatementSolution {
-  answers: StatementCorrectAnswer[] = [];
+export default class SolvedQuiz {
+  title: string;
+  answerDate: string;
+  quizAnswerId: number;
+  questions: SolvedQuestion[];
 
-  constructor(jsonObj: StatementSolution) {
-    jsonObj.answers.forEach(answer => {
-      this.answers.push(new StatementCorrectAnswer(answer));
-    });
+  constructor(jsonObj: SolvedQuiz) {
+    this.title = jsonObj.title;
+    this.answerDate = jsonObj.answerDate;
+    this.quizAnswerId = jsonObj.quizAnswerId;
+    this.questions = jsonObj.questions;
   }
 }
