@@ -41,8 +41,6 @@ public class StatementController {
             return Collections.emptyList();
         }
 
-        // TODO: include if they can be scrambled or not
-
         return statementService.getAvailableQuizzes(user);
     }
 
@@ -53,8 +51,6 @@ public class StatementController {
         if(user == null){
             return Collections.emptyList();
         }
-
-        // TODO: include if they can be scrambled or not
 
         return statementService.getSolvedQuizzes(user);
     }

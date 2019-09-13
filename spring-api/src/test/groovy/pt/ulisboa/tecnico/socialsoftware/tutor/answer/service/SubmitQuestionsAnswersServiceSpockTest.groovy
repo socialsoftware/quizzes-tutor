@@ -23,6 +23,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
+import java.time.LocalDateTime
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.QUIZ_MISMATCH
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.USER_MISMATCH
 
@@ -56,6 +58,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     def quizQuestion
     def optionOk
     def quizAnswer
+    def date
 
     def setup() {
         def quiz = new Quiz()
@@ -71,6 +74,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         optionOk = new Option()
         optionOk.setCorrect(true)
         question.addOption(optionOk)
+
+        def date = LocalDateTime.now()
 
         userRepository.save(user)
         quizRepository.save(quiz)
@@ -90,6 +95,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultsDto.add(resultDto)
         def resultAnswersDto = new ResultAnswersDto()
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
+        resultAnswersDto.setAnswerDate(date)
         resultAnswersDto.setAnswers(resultsDto)
 
         when:
@@ -97,6 +103,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()
+        quizAnswer.getAnswerDate() == date
         questionAnswerRepository.findAll().size() == 1
         def result = questionAnswerRepository.findAll().get(0)
         result.getQuizAnswer() == quizAnswer
