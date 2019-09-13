@@ -1,7 +1,7 @@
 <template>
   <div class="master-container">
     <div class="question-navigation">
-      <span class="left-button" @click="decreaseOrder"
+      <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
         ><i class="fas fa-chevron-left"></i
       ></span>
       <div class="navigation-buttons">
@@ -9,7 +9,16 @@
           v-for="index in +statementManager.numberOfQuestions"
           v-bind:class="[
             'question-button',
-            index === order + 1 ? 'current-question-button' : ''
+            index === order + 1 ? 'current-question-button' : '',
+            index === order + 1 &&
+            statementManager.correctAnswers[index - 1].correctOptionId !==
+              statementManager.answers[index - 1].optionId
+              ? 'incorrect-current'
+              : '',
+            statementManager.correctAnswers[index - 1].correctOptionId !==
+            statementManager.answers[index - 1].optionId
+              ? 'incorrect'
+              : ''
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -17,7 +26,10 @@
           {{ index }}
         </span>
       </div>
-      <span class="right-button" @click="increaseOrder"
+      <span
+        class="right-button"
+        @click="increaseOrder"
+        v-if="order !== statementManager.statementQuiz.questions.length - 1"
         ><i class="fas fa-chevron-right"></i
       ></span>
     </div>
@@ -26,6 +38,7 @@
       :answer="statementManager.answers[order]"
       :correctAnswer="statementManager.correctAnswers[order]"
       :question="statementManager.statementQuiz.questions[order]"
+      :questionNumber="statementManager.statementQuiz.questions.length"
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
     ></result-component>
@@ -76,3 +89,14 @@ export default class ResultsView extends Vue {
   }
 }
 </script>
+
+<style>
+.incorrect {
+  color: #cf2323 !important;
+}
+
+.incorrect-current {
+  background-color: #cf2323 !important;
+  color: #fff !important;
+}
+</style>

@@ -1,14 +1,14 @@
 <template>
   <div class="master-container">
     <header>
-      <span class="timer"><i class="fas fa-clock"></i> 00:00</span>
+      <!--span class="timer"><i class="fas fa-clock"></i> 00:00</span-->
       <span class="end-quiz" @click="endQuiz"
         ><i class="fas fa-times"></i>End Quiz</span
       >
     </header>
 
     <div class="question-navigation">
-      <span class="left-button" @click="decreaseOrder"
+      <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
         ><i class="fas fa-chevron-left"></i
       ></span>
       <div class="navigation-buttons">
@@ -24,7 +24,10 @@
           {{ index }}
         </span>
       </div>
-      <span class="right-button" @click="increaseOrder"
+      <span
+        class="right-button"
+        @click="increaseOrder"
+        v-if="order !== statementManager.statementQuiz.questions.length - 1"
         ><i class="fas fa-chevron-right"></i
       ></span>
     </div>
@@ -32,6 +35,7 @@
       v-model="order"
       :optionId="statementManager.answers[order].optionId"
       :question="statementManager.statementQuiz.questions[order]"
+      :questionNumber="statementManager.statementQuiz.questions.length"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"

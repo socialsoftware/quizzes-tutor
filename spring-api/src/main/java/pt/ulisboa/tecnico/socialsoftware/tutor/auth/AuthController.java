@@ -89,9 +89,7 @@ public class AuthController {
                 isStudent |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
             }
 
-            if ( Arrays.stream(ADMINS).anyMatch(username::equals) ){
-                user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
-            } else if (username.equals("ist12628")) {
+            if (Arrays.asList(ADMINS).contains(username)){
                 user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
             } else if (isStudent) {
                 user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);

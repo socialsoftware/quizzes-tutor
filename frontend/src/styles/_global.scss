@@ -1,2 +1,3 @@
 // https://github.com/vuetifyjs/vuetify/issues/864
-html { overflow-y: auto !important;}
+html { overflow-y: auto !important; height:100%;}
+html,body { height:100%; }

@@ -91,7 +91,9 @@ export default class HomeView extends Vue {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .img-container {
@@ -101,8 +103,9 @@ export default class HomeView extends Vue {
   top: 0;
   margin: 0 !important;
   z-index: -1;
-  height: 100vh;
+  min-height: 100vh;
   width: 100vw;
+  height: 100%;
 }
 .img-container:before {
   content: " ";

@@ -1,13 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity(name = "Users")
 @Table(name = "users")
@@ -110,8 +109,12 @@ public class User implements UserDetails {
     }
 
     @Override
-    public Collection<GrantedAuthority> getAuthorities() {
-        return this.authorities;
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> list = new ArrayList<>();
+
+        list.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+        return list;
     }
 
     @Override

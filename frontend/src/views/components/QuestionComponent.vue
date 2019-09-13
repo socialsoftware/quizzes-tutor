@@ -7,7 +7,7 @@
         @mouseover="hover = true"
         @mouseleave="hover = false"
       >
-        <i v-if="hover" class="fas fa-chevron-left"></i>
+        <i v-if="hover && order !== 0" class="fas fa-chevron-left"></i>
         <span v-else>{{ order + 1 }}</span>
       </span>
       <div
@@ -15,7 +15,7 @@
         v-html="convertMarkDown(question.content, question.image)"
       ></div>
       <div class="square" @click="increaseOrder">
-        <i class="fas fa-chevron-right"></i>
+        <i v-if="order !== questionNumber - 1" class="fas fa-chevron-right"></i>
       </div>
     </div>
     <ul class="option-list">
@@ -49,6 +49,7 @@ export default class QuestionComponent extends Vue {
   @Model("order", Number) order: number | undefined;
   @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
   @Prop(Number) optionId: number | undefined;
+  @Prop() readonly questionNumber!: number;
   hover: boolean = false;
   optionLetters: string[] = ["A", "B", "C", "D"];
 

@@ -1,27 +1,9 @@
 
 .master-container {
-  background-image: linear-gradient(to top, rgba(0,0,0,0) , white 20%);
-  bottom: 0;
-  box-sizing: border-box;
-  color: rgb(51, 51, 51);
-  height: 804px;
-  left: 0;
-  position: relative;
-  right: 0;
-  text-decoration: none solid rgb(51, 51, 51);
-  text-size-adjust: 100%;
-  top: 0;
-  touch-action: pan-y;
-  column-rule-color: rgb(51, 51, 51);
-  perspective-origin: 789px 402px;
-  transform-origin: 789px 402px;
-  user-select: none;
-  caret-color: rgb(51, 51, 51);
-  border: 0 none rgb(51, 51, 51);
   font: normal normal 400 normal 16px / 16px "Varela Round", Helvetica, Arial,
   sans-serif;
-  outline: rgb(51, 51, 51) none 0;
-  transition: all 0.5s linear 0s;
+  flex-grow: 1;
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0), white 20%);
 
   header {
     bottom: 0;
@@ -197,7 +179,7 @@
 
     .current-question-button {
       box-sizing: border-box;
-      color: rgb(255, 255, 255);
+      color: white !important;
       cursor: pointer;
       display: inline-block;
       height: 40px;
@@ -405,6 +387,7 @@
     outline: rgb(51, 51, 51) none 0;
     overflow: hidden;
     padding: 0;
+    margin-bottom: 0;
 
     .option {
       clear: left;

@@ -16,7 +16,6 @@ public class UsersXmlExport {
 
 		XMLOutputter xml = new XMLOutputter();
 		xml.setFormat(Format.getPrettyFormat());
-		System.out.println(xml.outputString(element));
 
 		return xml.outputString(element);
 	}

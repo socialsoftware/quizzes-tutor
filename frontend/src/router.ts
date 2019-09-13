@@ -194,6 +194,8 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next("/");
   }
+
+  await Store.dispatch("clearError");
 });
 
 router.afterEach((to, from) => {

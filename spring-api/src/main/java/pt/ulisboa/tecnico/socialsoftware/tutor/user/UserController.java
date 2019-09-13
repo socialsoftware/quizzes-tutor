@@ -1,14 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
 
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@Secured({ "ROLE_ADMIN", "ROLE_TEACHER" })
 public class UserController {
 
     private UserRepository userRepository;
