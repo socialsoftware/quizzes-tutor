@@ -143,7 +143,7 @@ export default class TopBar extends Vue {
   async logout() {
     await this.$store.dispatch("logout");
     await this.$store.dispatch("clearError");
-    await this.$router.push("/").catch(() => {});
+    await this.$router.push({ name: "home" }).catch(() => {});
   }
 }
 </script>

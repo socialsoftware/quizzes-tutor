@@ -136,6 +136,7 @@ public class Quiz implements Serializable {
 
        this.setCreationDate(LocalDateTime.now());
        this.setType(QuizType.STUDENT.name());
+       this.title = "Generated Quiz";
     }
 
     public Integer getId() {

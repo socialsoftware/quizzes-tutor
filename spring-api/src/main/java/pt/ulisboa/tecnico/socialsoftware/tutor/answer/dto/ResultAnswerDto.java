@@ -12,6 +12,12 @@ public class ResultAnswerDto implements Serializable {
     public ResultAnswerDto(){
     }
 
+    public ResultAnswerDto(Integer quizQuestionId, Integer optionId, LocalDateTime timeTaken){
+        this.quizQuestionId = quizQuestionId;
+        this.optionId = optionId;
+        this.timeTaken = timeTaken;
+    }
+
     public Integer getQuizQuestionId() {
         return quizQuestionId;
     }

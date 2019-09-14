@@ -117,7 +117,7 @@ let router = new Router({
         },
         {
           path: "quiz",
-          name: "quiz",
+          name: "solve-quiz",
           component: QuizView,
           meta: {
             title: "Software Architecture - Quiz",
@@ -127,7 +127,7 @@ let router = new Router({
         },
         {
           path: "results",
-          name: "results",
+          name: "quiz-results",
           component: ResultsView,
           meta: {
             title: "Software Architecture - Results",

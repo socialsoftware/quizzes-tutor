@@ -29,7 +29,7 @@ public class QuizAnswer implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.EAGER)
     private Set<QuestionAnswer> questionAnswers;
 
     public QuizAnswer() {

@@ -5,8 +5,6 @@ import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 import Store from "../store";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
-import StatementQuestion from "@/models/statement/StatementQuestion";
-import StatementSolution from "@/models/statement/StatementSolution";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
 
 interface AuthResponse {
@@ -15,7 +13,7 @@ interface AuthResponse {
 }
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 5000;
+httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
@@ -53,7 +51,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as Question[];
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -68,7 +68,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as Question[];
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -190,7 +192,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as StatementQuiz[];
+        return response.data.map((statementQuiz: any) => {
+          return new StatementQuiz(statementQuiz);
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -205,7 +209,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as SolvedQuiz[];
+        return response.data.map((solvedQuiz: any) => {
+          return new SolvedQuiz(solvedQuiz);
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -220,7 +226,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return new StatementSolution(response.data).answers;
+        return response.data.answers.map((answer: any) => {
+          return new StatementCorrectAnswer(answer);
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -267,13 +275,15 @@ export default class RemoteServices {
 
   static getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
-      .get("/quizzes/nongenerated", {
+      .get("/quizzes/non-generated", {
         headers: {
           Authorization: Store.getters.getToken
         }
       })
       .then(response => {
-        return response.data as Quiz[];
+        return response.data.map((quiz: any) => {
+          return quiz as Quiz;
+        });
       })
       .catch(error => {
         throw Error(this.errorMessage(error));

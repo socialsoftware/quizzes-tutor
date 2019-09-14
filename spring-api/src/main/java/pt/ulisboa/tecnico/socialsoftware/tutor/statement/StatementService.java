@@ -74,13 +74,13 @@ public class StatementService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        Set<Quiz> studentQuizzes =  user.getQuizAnswers().stream()
+        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
                 .map(QuizAnswer::getQuiz)
-                .filter(quiz -> quiz.getType().equals(Quiz.QuizType.TEACHER.name()))
+                .map(Quiz::getId)
                 .collect(Collectors.toSet());
 
         quizRepository.findAvailableTeacherQuizzes(user.getYear()).stream()
-                .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizzes.contains(quiz))
+                .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
                     entityManager.persist(quizAnswer);

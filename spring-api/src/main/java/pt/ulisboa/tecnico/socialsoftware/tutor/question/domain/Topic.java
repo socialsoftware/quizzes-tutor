@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -18,6 +16,12 @@ public class Topic implements Serializable {
 
     @ManyToMany
     private Set<Question> questions = new HashSet<>();
+
+    @ManyToOne
+    private Topic parentTopic;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentTopic", fetch=FetchType.EAGER)
+    private Set<Topic> childrenTopics = new HashSet<>();
 
     public Topic() {
     }
@@ -50,9 +54,26 @@ public class Topic implements Serializable {
         this.questions = questions;
     }
 
-    public void remove() {
-        getQuestions().stream().forEach(question -> question.getTopics().remove(this));
-        getQuestions().clear();
-
+    public Topic getParentTopic() {
+        return parentTopic;
     }
+
+    public void setParentTopic(Topic parentTopic) {
+        this.parentTopic = parentTopic;
+    }
+
+    public Set<Topic> getChildrenTopics() {
+        return childrenTopics;
+    }
+
+    public void setChildrenTopics(Set<Topic> childrenTopics) {
+        this.childrenTopics = childrenTopics;
+    }
+
+    public void remove() {
+        getQuestions().forEach(question -> question.getTopics().remove(this));
+        getQuestions().clear();
+    }
+
+
 }

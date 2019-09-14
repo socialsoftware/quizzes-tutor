@@ -13,7 +13,7 @@
       ></span>
       <div class="navigation-buttons">
         <span
-          v-for="index in +statementManager.numberOfQuestions"
+          v-for="index in +statementManager.statementQuiz.questions.length"
           v-bind:class="[
             'question-button',
             index === order + 1 ? 'current-question-button' : ''
@@ -70,12 +70,15 @@ export default class QuizView extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push("/student/create");
+      await this.$router.push({ name: "create-quiz" });
     }
   }
 
   increaseOrder(): void {
-    if (this.order + 1 < +this.statementManager.numberOfQuestions) {
+    if (
+      this.order + 1 <
+      +this.statementManager.statementQuiz!.questions.length
+    ) {
       this.order += 1;
     }
   }
@@ -87,7 +90,7 @@ export default class QuizView extends Vue {
   }
 
   changeOrder(n: number): void {
-    if (n >= 0 && n < +this.statementManager.numberOfQuestions) {
+    if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
       this.order = n;
     }
   }
@@ -108,7 +111,7 @@ export default class QuizView extends Vue {
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
-    await this.$router.push("/student/results");
+    await this.$router.push({ name: "quiz-results" });
   }
 }
 </script>

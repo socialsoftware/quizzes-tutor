@@ -23,7 +23,7 @@ public class QuizQuestion {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.EAGER)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;
@@ -47,8 +47,8 @@ public class QuizQuestion {
         question = null;
     }
 
-    public void checkCanRemove() {
-        if (questionAnswers.size() != 0) {
+    void checkCanRemove() {
+        if (questionAnswers.isEmpty()) {
             throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, String.valueOf(questionAnswers.size()));
         }
     }

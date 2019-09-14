@@ -1,15 +1,17 @@
-import SolvedQuestion from "@/models/statement/SolvedQuestion";
+import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementAnswer from "@/models/statement/StatementAnswer";
+import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 
 export default class SolvedQuiz {
-  title: string;
   answerDate: string;
-  quizAnswerId: number;
-  questions: SolvedQuestion[];
+  statementQuiz: StatementQuiz;
+  answers: StatementAnswer[] = [];
+  correctAnswers: StatementCorrectAnswer[] = [];
 
   constructor(jsonObj: SolvedQuiz) {
-    this.title = jsonObj.title;
-    this.answerDate = jsonObj.answerDate;
-    this.quizAnswerId = jsonObj.quizAnswerId;
-    this.questions = jsonObj.questions;
+    this.answerDate = new Date(jsonObj.answerDate).toLocaleString("pt");
+    this.statementQuiz = jsonObj.statementQuiz;
+    this.answers = jsonObj.answers;
+    this.correctAnswers = jsonObj.correctAnswers;
   }
 }

@@ -22,7 +22,7 @@ export default class HomeView extends Vue {
   // noinspection JSUnusedGlobalSymbols
 
   beforeCreate() {
-    const description = "Software Architecture Tutor";
+    /*    const description = "Software Architecture Tutor";
     const image = require("../public/logo.png");
     let tag = document.createElement("meta");
     tag.setAttribute("description", description);
@@ -68,7 +68,7 @@ export default class HomeView extends Vue {
     document.head.appendChild(tag);
     tag = document.createElement("meta");
     tag.setAttribute("og:type", "website");
-    document.head.appendChild(tag);
+    document.head.appendChild(tag);*/
   }
 
   created() {

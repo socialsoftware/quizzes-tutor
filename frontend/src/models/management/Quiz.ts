@@ -6,7 +6,7 @@ export class Quiz {
   scramble!: boolean;
   title!: string;
   date!: Date;
-  creation!: Date;
+  creationDate!: Date;
   availableDate!: Date;
   conclusionDate!: Date;
   type!: string;

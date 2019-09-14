@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,8 +12,8 @@ import java.util.stream.Collectors;
 public class StatementQuizDto implements Serializable {
     private Integer quizAnswerId;
     private String title;
-    private LocalDateTime availableDate;
-    private LocalDateTime conclusionDate;
+    private String availableDate;
+    private String conclusionDate;
     private List<StatementQuestionDto> questions = new ArrayList<>();
 
     public StatementQuizDto(){
@@ -23,8 +22,12 @@ public class StatementQuizDto implements Serializable {
     public StatementQuizDto(QuizAnswer quizAnswer) {
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
-        this.availableDate = quizAnswer.getQuiz().getAvailableDate();
-        this.conclusionDate = quizAnswer.getQuiz().getConclusionDate();
+        if (quizAnswer.getQuiz().getAvailableDate() != null) {
+            this.availableDate = quizAnswer.getQuiz().getAvailableDate().toString();
+        }
+        if (quizAnswer.getQuiz().getConclusionDate() != null) {
+            this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().toString();
+        }
         this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(StatementQuestionDto::new)
@@ -47,19 +50,19 @@ public class StatementQuizDto implements Serializable {
         this.title = title;
     }
 
-    public LocalDateTime getAvailableDate() {
+    public String getAvailableDate() {
         return availableDate;
     }
 
-    public void setAvailableDate(LocalDateTime availableDate) {
+    public void setAvailableDate(String availableDate) {
         this.availableDate = availableDate;
     }
 
-    public LocalDateTime getConclusionDate() {
+    public String getConclusionDate() {
         return conclusionDate;
     }
 
-    public void setConclusionDate(LocalDateTime conclusionDate) {
+    public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
     }
 

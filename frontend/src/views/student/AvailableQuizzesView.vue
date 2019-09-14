@@ -1,28 +1,43 @@
 <template>
-  <v-layout row>
-    <v-flex xs12 sm6 offset-sm3>
-      <v-card>
-        <v-list two-line>
-          <template v-for="quiz in quizzes">
-            <v-subheader v-if="quiz" :key="quiz.quizAnswerId">
-              {{ quiz.title }}
-            </v-subheader>
-            <v-list-tile :key="quiz.title">
-              <v-list-tile-content>
-                <v-list-tile-title v-html="quiz.title"></v-list-tile-title>
-              </v-list-tile-content>
-            </v-list-tile>
-          </template>
-        </v-list>
-      </v-card>
-    </v-flex>
-  </v-layout>
+  <div class="container">
+    <h2>Available Quizzes</h2>
+    <ul class="responsive-table">
+      <li class="table-header">
+        <div class="col">Title</div>
+        <div class="col">Available since</div>
+        <div class="col">Available until</div>
+        <div class="col"></div>
+      </li>
+    </ul>
+    <ul class="responsive-table scrollbar">
+      <li class="table-row" v-for="quiz in quizzes" :key="quiz.quizAnswerId">
+        <div class="col" data-label="title">
+          {{ quiz.title }}
+        </div>
+        <div class="col" data-label="solved-date">
+          {{ quiz.availableDate }}
+        </div>
+        <div class="col" data-label="score">
+          {{ quiz.conclusionDate }}
+        </div>
+        <div class="col" data-label="button">
+          <v-btn small color="primary" dark @click="solveQuiz(quiz)"
+            >Solve Quiz</v-btn
+          >
+        </div>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
+import SolvedQuiz from "@/models/statement/SolvedQuiz";
+import StatementManager from "@/models/statement/StatementManager";
 import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementQuestion from "@/models/statement/StatementQuestion";
+import StatementAnswer from "@/models/statement/StatementAnswer";
 
 @Component
 export default class AvailableQuizzesView extends Vue {
@@ -30,12 +45,95 @@ export default class AvailableQuizzesView extends Vue {
 
   async beforeMount() {
     try {
-      this.quizzes = await RemoteServices.getAvailableQuizzes();
+      this.quizzes = (await RemoteServices.getAvailableQuizzes()).reverse();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
   }
+
+  async solveQuiz(quiz: StatementQuiz) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    statementManager.statementQuiz = quiz;
+    statementManager.answers = quiz.questions.map(
+      (question: StatementQuestion) =>
+        new StatementAnswer(question.quizQuestionId)
+    );
+    await this.$router.push({ name: "solve-quiz" });
+  }
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.container {
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 10px;
+  padding-right: 10px;
+
+  h2 {
+    font-size: 26px;
+    margin: 20px 0;
+    text-align: center;
+    small {
+      font-size: 0.5em;
+    }
+  }
+
+  .responsive-table {
+    padding: 0 5px;
+    max-height: 70vh;
+
+    li {
+      border-radius: 3px;
+      padding: 15px 10px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .table-header {
+      background-color: #95a5a6;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+
+    .col {
+      flex-basis: 25% !important;
+      margin: auto; /* Important */
+      text-align: center;
+    }
+
+    .table-row {
+      background-color: #ffffff;
+      box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+      display: flex;
+    }
+
+    @media all and (max-width: 767px) {
+      .table-header {
+        display: none;
+      }
+      li {
+        display: block;
+      }
+      .col {
+        flex-basis: 100%;
+      }
+      .col {
+        display: flex;
+        padding: 10px 0;
+        &:before {
+          color: #6c7a89;
+          padding-right: 10px;
+          content: attr(data-label);
+          flex-basis: 50%;
+          text-align: right;
+        }
+      }
+    }
+  }
+}
+</style>

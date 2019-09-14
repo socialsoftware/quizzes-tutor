@@ -24,7 +24,7 @@ public class QuizController {
         return quizService.findAll(pageIndex, pageSize).stream().map(quiz -> new QuizDto(quiz, true)).collect(Collectors.toList());
     }
 
-    @GetMapping("/quizzes/nongenerated")
+    @GetMapping("/quizzes/non-generated")
     public List<QuizDto> getNonGeneratedQuizzes() {
         return quizService.findAllNonGenerated();
     }
