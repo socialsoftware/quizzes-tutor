@@ -1,18 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 
 public class ResultAnswerDto implements Serializable {
     private Integer quizQuestionId;
     private Integer optionId;
-    private LocalDateTime timeTaken;
+    private Integer timeTaken;
 
     public ResultAnswerDto(){
     }
 
-    public ResultAnswerDto(Integer quizQuestionId, Integer optionId, LocalDateTime timeTaken){
+    public ResultAnswerDto(Integer quizQuestionId, Integer optionId, Integer timeTaken){
         this.quizQuestionId = quizQuestionId;
         this.optionId = optionId;
         this.timeTaken = timeTaken;
@@ -34,11 +33,11 @@ public class ResultAnswerDto implements Serializable {
         this.optionId = optionId;
     }
 
-    public LocalDateTime getTimeTaken() {
+    public Integer getTimeTaken() {
         return timeTaken;
     }
 
-    public void setTimeTaken(LocalDateTime timeTaken) {
+    public void setTimeTaken(Integer timeTaken) {
         this.timeTaken = timeTaken;
     }
 

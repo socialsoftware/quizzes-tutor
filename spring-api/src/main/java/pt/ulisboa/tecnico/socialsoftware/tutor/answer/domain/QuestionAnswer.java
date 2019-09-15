@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "question_answers")
@@ -15,7 +14,7 @@ public class QuestionAnswer implements Serializable {
     private Integer id;
 
     @Column(name = "time_taken")
-    private LocalDateTime timeTaken;
+    private Integer timeTaken;
 
     @ManyToOne
     @JoinColumn(name = "quiz_question_id")
@@ -32,7 +31,7 @@ public class QuestionAnswer implements Serializable {
     public QuestionAnswer() {
     }
 
-    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, LocalDateTime timeTaken, Option option){
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, Option option){
         this.timeTaken = timeTaken;
         this.quizAnswer = quizAnswer;
         quizAnswer.addQuestionAnswer(this);
@@ -65,11 +64,11 @@ public class QuestionAnswer implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getTimeTaken() {
+    public Integer getTimeTaken() {
         return timeTaken;
     }
 
-    public void setTimeTaken(LocalDateTime timeTaken) {
+    public void setTimeTaken(Integer timeTaken) {
         this.timeTaken = timeTaken;
     }
 

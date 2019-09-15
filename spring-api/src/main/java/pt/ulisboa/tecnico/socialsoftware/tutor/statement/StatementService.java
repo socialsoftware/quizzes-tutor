@@ -87,7 +87,7 @@ public class StatementService {
                 });
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> !quizAnswer.getCompleted())
+                .filter(quizAnswer -> !quizAnswer.getCompleted() && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER.name()))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate))
                 .collect(Collectors.toList());

@@ -13,12 +13,21 @@
         </div>
       </v-layout>
     </v-parallax>
+    <a
+      v-if="isLoggedIn"
+      class="btn btn-block btn-social btn-github"
+      href="https://github.com/socialsoftware/as-tutor"
+      target="_blank"
+    >
+      <span class="fab fa-github"></span> View code
+    </a>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Store from "@/store";
+import "@/styles/bootstrap-social.css";
 
 @Component
 export default class HomeView extends Vue {
@@ -37,6 +46,12 @@ export default class HomeView extends Vue {
 </script>
 
 <style>
+.btn-github {
+  color: white !important;
+  width: 125px;
+  margin: auto;
+}
+
 .v-parallax__image {
   transform: translate(-50%) !important;
   z-index: 10;

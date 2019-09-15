@@ -97,7 +97,7 @@ class ImportExportAnswersSpockTest extends Specification {
         answerDto.setQuizQuestionId(quizQuestion.getId())
         def optionId = question.getOptions().stream().findAny().orElse(null).id
         answerDto.setOptionId(optionId)
-        timeTaken = LocalDateTime.now()
+        timeTaken = 0
         answerDto.setTimeTaken(timeTaken)
         answersDto.add(answerDto)
         def resultAnswersDto = new ResultAnswersDto()

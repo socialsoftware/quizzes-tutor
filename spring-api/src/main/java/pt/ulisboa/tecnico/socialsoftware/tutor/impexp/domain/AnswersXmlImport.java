@@ -128,9 +128,9 @@ public class AnswersXmlImport {
 		resultAnswersDto.setAnswers(new ArrayList<>());
 
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
-			LocalDateTime timeTaken = null;
+			Integer timeTaken = null;
 			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
-				timeTaken = LocalDateTime.parse(questionAnswerElement.getAttributeValue("timeTaken"));
+				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
 			}
 
 			Integer sequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));

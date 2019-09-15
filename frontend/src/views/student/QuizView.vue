@@ -61,6 +61,7 @@ Component.registerHooks([
 })
 export default class QuizView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
+  startTime: Date = new Date();
   order: number = 0;
 
   constructor() {
@@ -79,18 +80,21 @@ export default class QuizView extends Vue {
       this.order + 1 <
       +this.statementManager.statementQuiz!.questions.length
     ) {
+      this.calculateTime();
       this.order += 1;
     }
   }
 
   decreaseOrder(): void {
     if (this.order > 0) {
+      this.calculateTime();
       this.order -= 1;
     }
   }
 
   changeOrder(n: number): void {
     if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
+      this.calculateTime();
       this.order = n;
     }
   }
@@ -107,11 +111,18 @@ export default class QuizView extends Vue {
 
   async endQuiz() {
     try {
+      this.calculateTime();
       await this.statementManager.getCorrectAnswers();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
     await this.$router.push({ name: "quiz-results" });
+  }
+
+  calculateTime() {
+    this.statementManager.answers[this.order].timeTaken +=
+      new Date().getTime() - this.startTime.getTime();
+    this.startTime = new Date();
   }
 }
 </script>
