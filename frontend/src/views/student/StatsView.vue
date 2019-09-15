@@ -9,7 +9,7 @@
           <animated-number :number="stats.totalQuizzes"></animated-number>
         </div>
         <div class="project-name">
-          <p>Total Quizzes</p>
+          <p>Total Quizzes Solved</p>
         </div>
       </div>
       <div class="items">
@@ -17,7 +17,7 @@
           <animated-number :number="stats.totalAnswers"></animated-number>
         </div>
         <div class="project-name">
-          <p>Total Questions</p>
+          <p>Total Questions Solved</p>
         </div>
       </div>
       <div class="items">
@@ -27,18 +27,25 @@
           ></animated-number>
         </div>
         <div class="project-name">
-          <p>Unique Questions</p>
+          <p>Unique Questions Solved</p>
         </div>
       </div>
       <div class="items">
         <div class="icon-wrapper" ref="number">
-          <animated-number
-            :number="stats.uniqueCorrectAnswers / stats.totalUniqueQuestions"
+          <animated-number :number="stats.correctAnswers">%</animated-number>
+        </div>
+        <div class="project-name">
+          <p>Total Correct Answers</p>
+        </div>
+      </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.improvedCorrectAnswers"
             >%</animated-number
           >
         </div>
         <div class="project-name">
-          <p>Correct Questions</p>
+          <p>Improved Correct Questions</p>
         </div>
       </div>
     </div>

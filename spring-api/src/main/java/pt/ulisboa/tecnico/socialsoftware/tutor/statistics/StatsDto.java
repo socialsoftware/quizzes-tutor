@@ -4,21 +4,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 import java.io.Serializable;
 
 public class StatsDto implements Serializable {
-    private Integer totalQuizzes;
-    private Integer totalAnswers;
-    private Integer uniqueCorrectAnswers;
-    private Integer uniqueWrongAnswers;
-    private Integer totalUniqueQuestions;
-    //private TopicsStatsDto[] topics;
-    //private AnsweredQuizDto[] quizzes;
-
-    public StatsDto(Integer totalQuizzes, Integer totalAnswers, Integer uniqueCorrectAnswers, Integer uniqueWrongAnswers, Integer totalUniqueQuestions) {
-        this.totalQuizzes = totalQuizzes;
-        this.totalAnswers = totalAnswers;
-        this.uniqueCorrectAnswers = uniqueCorrectAnswers;
-        this.uniqueWrongAnswers = uniqueWrongAnswers;
-        this.totalUniqueQuestions = totalUniqueQuestions;
-    }
+    private Integer totalQuizzes = 0;
+    private Integer totalAnswers = 0;
+    private Integer totalUniqueQuestions = 0;
+    private float correctAnswers = 0;
+    private float improvedCorrectAnswers = 0;
+    private Integer uniqueCorrectAnswers = 0;
+    private Integer uniqueWrongAnswers = 0;
 
     public Integer getTotalQuizzes() {
         return totalQuizzes;
@@ -36,6 +28,30 @@ public class StatsDto implements Serializable {
         this.totalAnswers = totalAnswers;
     }
 
+    public Integer getTotalUniqueQuestions() {
+        return totalUniqueQuestions;
+    }
+
+    public void setTotalUniqueQuestions(Integer totalUniqueQuestions) {
+        this.totalUniqueQuestions = totalUniqueQuestions;
+    }
+
+    public float getCorrectAnswers() {
+        return correctAnswers;
+    }
+
+    public void setCorrectAnswers(float correctAnswers) {
+        this.correctAnswers = correctAnswers;
+    }
+
+    public float getImprovedCorrectAnswers() {
+        return improvedCorrectAnswers;
+    }
+
+    public void setImprovedCorrectAnswers(float improvedCorrectAnswers) {
+        this.improvedCorrectAnswers = improvedCorrectAnswers;
+    }
+
     public Integer getUniqueCorrectAnswers() {
         return uniqueCorrectAnswers;
     }
@@ -50,13 +66,5 @@ public class StatsDto implements Serializable {
 
     public void setUniqueWrongAnswers(Integer uniqueWrongAnswers) {
         this.uniqueWrongAnswers = uniqueWrongAnswers;
-    }
-
-    public Integer getTotalUniqueQuestions() {
-        return totalUniqueQuestions;
-    }
-
-    public void setTotalUniqueQuestions(Integer totalUniqueQuestions) {
-        this.totalUniqueQuestions = totalUniqueQuestions;
     }
 }

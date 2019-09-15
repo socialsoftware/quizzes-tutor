@@ -4,43 +4,74 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.security.Principal;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_STUDENT" })
 public class StatsController {
 
-    private QuestionAnswerRepository questionAnswerRepository;
-    private QuestionRepository questionRepository;
-    private QuizRepository quizRepository;
-
-    StatsController(QuestionAnswerRepository questionAnswerRepository, QuestionRepository questionRepository, QuizRepository quizRepository) {
-        this.questionAnswerRepository = questionAnswerRepository;
-        this.questionRepository = questionRepository;
-        this.quizRepository = quizRepository;
-
-    }
-
     @GetMapping("/stats")
     public StatsDto getStats(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        Integer totalQuizzes = this.questionAnswerRepository.getTotalQuizzes(user.getId());
-        Integer totalActiveQuestions = this.questionRepository.getTotalActiveQuestions();
+        StatsDto statsDto = new StatsDto();
 
-        Integer totalAnswers = this.questionAnswerRepository.getTotalAnswers(user.getId());
-        //Integer uniqueCorrectAnswers = this.questionAnswerRepository.getUniqueCorrectAnswers(user.getId());
-        Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - 0;
-        //Integer uniqueWrongAnswers = this.questionAnswerRepository.getUniqueAnswers(user.getId()) - uniqueCorrectAnswers;
-        //TopicsStatsDto[] topics = this.answerRepository.getTopicsStats(user.getId());
-        //AnsweredQuizDto[] quizzes = this.quizRepository.getQuizzes(user.getId());
+        Integer totalAnswers = user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuestionAnswers)
+                .map(Set::size)
+                .reduce(0, Integer::sum);
 
-        //return new StatsDto(totalQuizzes, totalAnswers, uniqueCorrectAnswers, uniqueWrongAnswers, totalActiveQuestions);
-        return new StatsDto(totalQuizzes, totalAnswers, 0, uniqueWrongAnswers, totalActiveQuestions);
+        Integer uniqueQuestions = user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .map(QuestionAnswer::getQuizQuestion)
+                .map(QuizQuestion::getQuestion)
+                .map(Question::getId)
+                .collect(Collectors.toSet())
+                .size();
+
+        Integer correctAnswers = (int) user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .map(QuestionAnswer::getOption)
+                .filter(Option::getCorrect).count();
+
+        System.out.println(user.getQuizAnswers().stream()
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .map(QuestionAnswer::getOption)
+                .filter(Option::getCorrect).count());
+
+        // TODO this requires atention
+        Integer uniqueCorrectAnswers = user.getQuizAnswers().stream()
+                .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .map(QuestionAnswer::getOption)
+                .filter(Option::getCorrect)
+                .map(Option::getQuestion)
+                .map(Question::getId)
+                .collect(Collectors.toSet())
+                .size();
+
+        statsDto.setTotalQuizzes((int) user.getQuizAnswers().stream().filter(QuizAnswer::getCompleted).count());
+        statsDto.setTotalAnswers(totalAnswers);
+        statsDto.setTotalUniqueQuestions(uniqueQuestions);
+        if (totalAnswers != 0) {
+            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
+            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+        }
+        return statsDto;
     }
 }
