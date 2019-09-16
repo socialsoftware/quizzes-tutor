@@ -48,7 +48,7 @@ public class QuizQuestion {
     }
 
     void checkCanRemove() {
-        if (questionAnswers.isEmpty()) {
+        if (!questionAnswers.isEmpty()) {
             throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, String.valueOf(questionAnswers.size()));
         }
     }

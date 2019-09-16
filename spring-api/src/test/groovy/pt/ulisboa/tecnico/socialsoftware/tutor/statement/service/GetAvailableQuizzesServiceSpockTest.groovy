@@ -90,7 +90,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         statmentQuizDtos.size() == 1
         def statementResult = statmentQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate()
+        statementResult.getAvailableDate() == quiz.getAvailableDate().toString()
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -129,7 +129,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         statmentQuizDtos.size() == 1
         def statementResult = statmentQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate()
+        statementResult.getAvailableDate() == quiz.getAvailableDate().toString()
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
