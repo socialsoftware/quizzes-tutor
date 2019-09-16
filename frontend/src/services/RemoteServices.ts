@@ -118,7 +118,7 @@ export default class RemoteServices {
 
   static questionSwitchActive(questionId: number) {
     return httpClient
-      .put("/questions/" + questionId + "/switchActive", {
+      .put("/questions/" + questionId + "/switchActive", null, {
         headers: {
           Authorization: Store.getters.getToken
         }

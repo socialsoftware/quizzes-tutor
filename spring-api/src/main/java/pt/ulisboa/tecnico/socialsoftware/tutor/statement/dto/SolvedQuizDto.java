@@ -3,10 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class SolvedQuizDto implements Serializable {
     private StatementQuizDto statementQuiz;
@@ -19,15 +22,14 @@ public class SolvedQuizDto implements Serializable {
 
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
-        /*this.answers = quizAnswer.getQuestionAnswers().stream().map(questionAnswer -> {
-            return new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), questionAnswer.getOption().getId(), questionAnswer.getTimeTaken());
-        }
-        ).collect(Collectors.toList());
+        this.answers = quizAnswer.getQuestionAnswers().stream()
+                .map(questionAnswer -> new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), questionAnswer.getOption().getId(), questionAnswer.getTimeTaken()))
+                .collect(Collectors.toList());
         this.correctAnswers = quizAnswer.getQuiz()
                 .getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(CorrectAnswerDto::new)
-                .collect(Collectors.toList());*/
+                .collect(Collectors.toList());
         this.answerDate = quizAnswer.getAnswerDate().toString();
     }
 
