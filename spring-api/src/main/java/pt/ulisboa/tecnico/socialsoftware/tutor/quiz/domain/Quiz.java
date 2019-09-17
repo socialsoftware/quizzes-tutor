@@ -41,7 +41,6 @@ public class Quiz implements Serializable {
    private LocalDateTime conclusionDate;
 
    private Boolean scramble;
-
    private Integer number;
    private String title;
    private Integer year;

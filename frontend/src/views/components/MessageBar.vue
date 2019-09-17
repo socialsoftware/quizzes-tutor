@@ -1,18 +1,16 @@
 <template>
-  <v-app id="inspire">
-    <v-alert
-      v-model="error"
-      dismissible
-      border="top"
-      elevation="2"
-      colored-border
-      type="error"
-      dense
-      transition="scale-transition"
-    >
-      {{ errorMessage }}
-    </v-alert>
-  </v-app>
+  <v-alert
+    v-model="error"
+    dismissible
+    border="top"
+    elevation="2"
+    colored-border
+    type="error"
+    dense
+    transition="scale-transition"
+  >
+    {{ errorMessage }}
+  </v-alert>
 </template>
 
 <script lang="ts">

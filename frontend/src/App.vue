@@ -1,9 +1,19 @@
 <template>
   <div id="app">
-    <div class="img-container"></div>
+    <v-img
+      src="./assets/01.jpg"
+      gradient="to top, rgba(255,255,255,.4), rgba(255,255,255,.4)"
+      width="100vw"
+      height="100vh"
+      style="position: absolute; z-index: -1"
+    ></v-img>
     <top-bar />
     <message-bar />
     <router-view />
+    <v-img
+      src="./assets/impress.png"
+      style="position: absolute; bottom:10px; left:10px"
+    ></v-img>
   </div>
 </template>
 
@@ -84,14 +94,13 @@ export default class HomeView extends Vue {
 }
 </script>
 
-<style>
+<style scoped>
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  height: 100%;
   display: flex;
   flex-direction: column;
 }
@@ -103,9 +112,8 @@ export default class HomeView extends Vue {
   top: 0;
   margin: 0 !important;
   z-index: -1;
-  min-height: 100vh;
   width: 100vw;
-  height: 100%;
+  height: 100vh;
 }
 .img-container:before {
   content: " ";

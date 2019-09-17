@@ -1,18 +1,11 @@
 <template>
-  <div>
-    <v-parallax height="800" dark>
-      <v-layout align-center column justify-center>
-        <h1 id="home-title" class="display-2 font-weight-thin mb-3">
-          Software Architecture
-        </h1>
-
-        <div>
-          <v-btn v-if="!isLoggedIn" :href="fenix_url" depressed color="primary"
-            >Log in</v-btn
-          >
-        </div>
-      </v-layout>
-    </v-parallax>
+  <div class="home-container">
+    <h1 id="home-title" class="display-2 font-weight-thin mb-3">
+      Software Architecture
+    </h1>
+    <v-btn v-if="!isLoggedIn" :href="fenix_url" depressed color="primary"
+      >Log in</v-btn
+    >
     <a
       v-if="isLoggedIn"
       class="btn btn-block btn-social btn-github"
@@ -46,20 +39,39 @@ export default class HomeView extends Vue {
 </script>
 
 <style>
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .btn-github {
   color: white !important;
   width: 125px;
   margin: auto;
 }
 
-.v-parallax__image {
-  transform: translate(-50%) !important;
-  z-index: 10;
-}
 #home-title {
-  font-family: "Graduate", cursive;
-  background-color: rgba(0, 0, 0, 0.75);
+  box-sizing: border-box;
+  color: rgb(255, 255, 255);
+  height: 68px;
+  min-height: auto;
+  min-width: auto;
+  text-align: center;
+  text-decoration: none solid rgb(255, 255, 255);
+  text-rendering: optimizelegibility;
+  text-size-adjust: 100%;
+  width: 459.844px;
+  column-rule-color: rgb(255, 255, 255);
+  perspective-origin: 229.922px 34px;
+  transform-origin: 229.922px 34px;
+  caret-color: rgb(255, 255, 255);
+  background: rgba(0, 0, 0, 0.75) none no-repeat scroll 0% 0% / auto padding-box
+    border-box;
+  border: 0px none rgb(255, 255, 255);
+  font: normal normal 100 normal 45px / 48px Roboto, sans-serif;
+  margin: 0px auto;
+  outline: rgb(255, 255, 255) none 0px;
   padding: 10px 20px;
-  font-weight: bold;
 }
 </style>

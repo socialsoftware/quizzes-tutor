@@ -96,7 +96,7 @@ let router = new Router({
             title: "Software Architecture - Available Quizzes",
             requiredAuth: "Student"
           }
-        },
+        } /*
         {
           path: "create",
           name: "create-quizzes",
@@ -105,7 +105,7 @@ let router = new Router({
             title: "Software Architecture - Create Quizzes",
             requiredAuth: "Student"
           }
-        },
+        },*/,
         {
           path: "solved",
           name: "solved-quizzes",
@@ -143,7 +143,7 @@ let router = new Router({
             title: "Software Architecture - Stats",
             requiredAuth: "Student"
           }
-        },
+        } /*,
         {
           path: "achievements",
           name: "achievements",
@@ -152,7 +152,7 @@ let router = new Router({
             title: "Software Architecture - Achievements",
             requiredAuth: "Student"
           }
-        }
+        }*/
       ]
     },
     {

@@ -64,7 +64,14 @@
               </datetime>
             </v-flex>
             <v-flex xs12 sm6 md4>
-              <v-switch v-model="quiz.scramble" :label="`Scramble: ${quiz.scramble ? quiz.scramble.toString() : 'false'}`"></v-switch>
+              <v-switch
+                v-model="quiz.scramble"
+                :label="
+                  `Scramble: ${
+                    quiz.scramble ? quiz.scramble.toString() : 'false'
+                  }`
+                "
+              ></v-switch>
             </v-flex>
           </v-layout>
         </v-container>

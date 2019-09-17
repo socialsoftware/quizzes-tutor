@@ -5,11 +5,11 @@
         <v-flex xs12>
           <p>Topic</p>
           <v-btn-toggle v-model="statementManager.topic" multiple mandatory>
-            <v-btn flat value="1">1</v-btn>
-            <v-btn flat value="2">2</v-btn>
-            <v-btn flat value="3">3</v-btn>
-            <v-btn flat value="4">4</v-btn>
-            <v-btn flat value="all">All</v-btn>
+            <v-btn text value="1">1</v-btn>
+            <v-btn text value="2">2</v-btn>
+            <v-btn text value="3">3</v-btn>
+            <v-btn text value="4">4</v-btn>
+            <v-btn text value="all">All</v-btn>
           </v-btn-toggle>
         </v-flex>
       </v-layout>
@@ -18,9 +18,9 @@
         <v-flex xs12>
           <p class="pl-0">Questions</p>
           <v-btn-toggle v-model="statementManager.questionType" mandatory>
-            <v-btn flat value="failed">Failed</v-btn>
-            <v-btn flat value="new">New</v-btn>
-            <v-btn flat value="all">All</v-btn>
+            <v-btn text value="failed">Failed</v-btn>
+            <v-btn text value="new">New</v-btn>
+            <v-btn text value="all">All</v-btn>
           </v-btn-toggle>
         </v-flex>
       </v-layout>
@@ -29,9 +29,9 @@
         <v-flex xs12>
           <p class="pl-0">Number of Questions</p>
           <v-btn-toggle v-model="statementManager.numberOfQuestions" mandatory>
-            <v-btn flat value="5">5</v-btn>
-            <v-btn flat value="10">10</v-btn>
-            <v-btn flat value="20">20</v-btn>
+            <v-btn text value="5">5</v-btn>
+            <v-btn text value="10">10</v-btn>
+            <v-btn text value="20">20</v-btn>
           </v-btn-toggle>
         </v-flex>
       </v-layout>

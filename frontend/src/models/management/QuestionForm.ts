@@ -1,12 +1,12 @@
 export default class QuestionForm {
-  title: string | null = '';
-  content: string | null = '';
-  optionZero: string | null = '';
+  title: string | null = "";
+  content: string | null = "";
+  optionZero: string | null = "";
   correctZero: Boolean | null = false;
-  optionOne: string | null = '';
+  optionOne: string | null = "";
   correctOne: Boolean | null = false;
-  optionTwo: string | null = '';
+  optionTwo: string | null = "";
   correctTwo: Boolean | null = false;
-  optionThree: string | null = '';
+  optionThree: string | null = "";
   correctThree: Boolean | null = false;
 }
