@@ -4,6 +4,10 @@
     <top-bar />
     <message-bar />
     <router-view />
+    <v-img
+      :src="require('./assets/impress.png')"
+      style="position: absolute; bottom:30px; left:30px; width: 150px"
+    ></v-img>
   </div>
 </template>
 

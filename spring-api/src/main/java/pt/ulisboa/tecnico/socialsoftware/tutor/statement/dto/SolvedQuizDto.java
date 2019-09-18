@@ -23,7 +23,10 @@ public class SolvedQuizDto implements Serializable {
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
         this.answers = quizAnswer.getQuestionAnswers().stream()
-                .map(questionAnswer -> new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), questionAnswer.getOption().getId(), questionAnswer.getTimeTaken()))
+                .map(questionAnswer -> {
+                    Integer optionId = (questionAnswer.getOption() != null) ? questionAnswer.getOption().getId() : null;
+                    return new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), optionId, questionAnswer.getTimeTaken());
+                })
                 .collect(Collectors.toList());
         this.correctAnswers = quizAnswer.getQuiz()
                 .getQuizQuestions().stream()

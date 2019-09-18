@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,12 +46,14 @@ public class StatsController {
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
+                .filter(Objects::nonNull)
                 .filter(Option::getCorrect).count();
 
         System.out.println(user.getQuizAnswers().stream()
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
+                .filter(Objects::nonNull)
                 .filter(Option::getCorrect).count());
 
         // TODO this requires atention
@@ -59,6 +62,7 @@ public class StatsController {
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
+                .filter(Objects::nonNull)
                 .filter(Option::getCorrect)
                 .map(Option::getQuestion)
                 .map(Question::getId)

@@ -282,7 +282,7 @@ export default class RemoteServices {
       })
       .then(response => {
         return response.data.map((quiz: any) => {
-          return quiz as Quiz;
+          return new Quiz(quiz);
         });
       })
       .catch(error => {
@@ -310,7 +310,7 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as Quiz;
+        return new Quiz(response.data);
       })
       .catch(error => {
         throw Error(this.errorMessage(error));
@@ -326,7 +326,7 @@ export default class RemoteServices {
           }
         })
         .then(response => {
-          return response.data as Quiz;
+          return new Quiz(response.data);
         })
         .catch(error => {
           throw Error(this.errorMessage(error));

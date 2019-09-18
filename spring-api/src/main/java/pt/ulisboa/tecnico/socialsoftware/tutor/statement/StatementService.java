@@ -83,7 +83,7 @@ public class StatementService {
                 .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-                    if (quiz.getConclusionDate().isBefore(now)) {
+                    if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isBefore(now)) {
                         quizAnswer.setCompleted(true);
                     }
                     entityManager.persist(quizAnswer);

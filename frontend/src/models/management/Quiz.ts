@@ -16,4 +16,24 @@ export class Quiz {
   numberOfQuestions!: number;
   numberOfAnswers!: number;
   questions!: Question[] | null;
+
+  constructor(jsonObj?: Quiz) {
+    if (jsonObj) {
+      this.id = jsonObj.id;
+      this.number = jsonObj.number;
+      this.scramble = jsonObj.scramble;
+      this.title = jsonObj.title;
+      this.date = jsonObj.date;
+      this.creationDate = jsonObj.creationDate;
+      this.availableDate = jsonObj.availableDate;
+      this.conclusionDate = jsonObj.conclusionDate;
+      this.type = jsonObj.type;
+      this.year = jsonObj.year;
+      this.series = jsonObj.series;
+      this.version = jsonObj.version;
+      this.numberOfQuestions = jsonObj.numberOfQuestions;
+      this.numberOfAnswers = jsonObj.numberOfAnswers;
+      this.questions = jsonObj.questions;
+    }
+  }
 }

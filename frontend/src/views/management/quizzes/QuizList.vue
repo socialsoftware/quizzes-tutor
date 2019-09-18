@@ -129,7 +129,7 @@ import Image from "@/models/management/Image";
 @Component
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
-  quiz: Quiz = new Quiz();
+  quiz: Quiz | null = null;
   search: string = "";
   dialog: boolean = false;
   headers: object = [
@@ -188,7 +188,7 @@ export default class QuizList extends Vue {
 
   closeQuiz() {
     this.dialog = false;
-    this.quiz = new Quiz();
+    this.quiz = null;
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
