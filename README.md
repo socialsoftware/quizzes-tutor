@@ -1,6 +1,7 @@
 # Tutor System - Impress project
 
 ![](http://gaips.inesc-id.pt/sapient/wp-content/uploads/2014/11/logo_inesc.png)
+![](https://www.inesc-id.pt/wp-content/uploads/2018/01/impress_logo_703x316.png)
 
 ## Instalation
 
