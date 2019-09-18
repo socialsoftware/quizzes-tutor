@@ -58,7 +58,8 @@ public class QuizService {
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
         return quizRepository.findAllNonGenerated().stream()
-                .sorted(comparator).map(quiz -> new QuizDto(quiz, false))
+                .sorted(comparator)
+                .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());
     }
 

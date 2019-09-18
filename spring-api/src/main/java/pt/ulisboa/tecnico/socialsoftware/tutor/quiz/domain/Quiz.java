@@ -49,10 +49,10 @@ public class Quiz implements Serializable {
    private Integer series;
    private String version;
 
-   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch=FetchType.EAGER)
+   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
    private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz")
+   @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
    private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
    public Quiz() {}
