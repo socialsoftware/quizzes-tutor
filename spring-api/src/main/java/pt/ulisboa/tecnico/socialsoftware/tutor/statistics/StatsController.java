@@ -49,13 +49,6 @@ public class StatsController {
                 .filter(Objects::nonNull)
                 .filter(Option::getCorrect).count();
 
-        System.out.println(user.getQuizAnswers().stream()
-                .map(QuizAnswer::getQuestionAnswers)
-                .flatMap(Collection::stream)
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect).count());
-
         // TODO this requires atention
         Integer uniqueCorrectAnswers = user.getQuizAnswers().stream()
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())

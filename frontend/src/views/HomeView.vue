@@ -13,6 +13,11 @@
         </div>
       </v-layout>
     </v-parallax>
+
+    <v-img
+      :src="require('../assets/ist.png')"
+      style="position: absolute; bottom:0px; left:0px; width: 250px"
+    ></v-img>
     <a
       v-if="isLoggedIn"
       class="btn btn-block btn-social btn-github"
@@ -21,6 +26,10 @@
     >
       <span class="fab fa-github"></span> View code
     </a>
+    <v-img
+      :src="require('../assets/impress.png')"
+      style="position: absolute; bottom:40px; right:40px; width: 200px"
+    ></v-img>
   </div>
 </template>
 

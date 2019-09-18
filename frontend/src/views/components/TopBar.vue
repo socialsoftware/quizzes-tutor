@@ -71,14 +71,14 @@
                 <v-list-tile-title>Available</v-list-tile-title>
               </v-list-tile-content>
             </v-list-tile>
-            <v-list-tile to="/student/create">
+            <!--v-list-tile to="/student/create">
               <v-list-tile-action>
                 <v-icon>create</v-icon>
               </v-list-tile-action>
               <v-list-tile-content>
                 <v-list-tile-title>Create</v-list-tile-title>
               </v-list-tile-content>
-            </v-list-tile>
+            </v-list-tile-->
             <v-list-tile to="/student/solved">
               <v-list-tile-action>
                 <v-icon>done</v-icon>

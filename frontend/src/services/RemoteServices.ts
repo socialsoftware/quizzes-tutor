@@ -13,7 +13,7 @@ interface AuthResponse {
 }
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 10000;
+httpClient.defaults.timeout = 20000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
