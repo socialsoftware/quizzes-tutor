@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.NOT_ENOUGH_QUESTIONS;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.NOT_ENOUGH_QUESTIONS;
 
 @Service
 public class StatementService {
@@ -55,7 +55,7 @@ public class StatementService {
         List<Question> activeQuestions = questionRepository.getActiveQuestions();
 
         if (activeQuestions.size() < quizSize) {
-            throw new TutorException(NOT_ENOUGH_QUESTIONS, Integer.toString(activeQuestions.size()));
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
         // TODO: to include knowhow about the student in the future

@@ -28,6 +28,8 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ANSWERS_IMPORT_ERROR;
+
 public class AnswersXmlImport {
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
@@ -51,15 +53,15 @@ public class AnswersXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		loadQuestionMap();
@@ -98,14 +100,14 @@ public class AnswersXmlImport {
 			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
 		}
 
-		Boolean completed = false;
+		boolean completed = false;
 		if (answerElement.getAttributeValue("completed") != null) {
-			completed = Boolean.valueOf(answerElement.getAttributeValue("completed"));
+			completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
 		}
 
 		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("quizNumber"));
 		Quiz quiz = quizRepository.findByNumber(quizNumber)
-				.orElseThrow(() -> new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR,
+				.orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
 						"quiz number does not exist " + quizNumber));
 
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));

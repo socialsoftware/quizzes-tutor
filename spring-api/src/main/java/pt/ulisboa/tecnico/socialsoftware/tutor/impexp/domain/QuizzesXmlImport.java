@@ -18,6 +18,9 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZZES_IMPORT_ERROR;
+
 public class QuizzesXmlImport {
 	private QuizService quizService;
 	private QuestionRepository questionRepository;
@@ -34,15 +37,15 @@ public class QuizzesXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.QUIZZES_IMPORT_ERROR, "File not found");
+			throw new TutorException(QUIZZES_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.QUIZZES_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(QUIZZES_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.QUIZZES_IMPORT_ERROR, "File type or format");
+			throw new TutorException(QUIZZES_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.QUIZZES_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(QUIZZES_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		importQuizzes(doc);
@@ -67,9 +70,9 @@ public class QuizzesXmlImport {
 
 	private void importQuiz(Element quizElement) {
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
-		Boolean scramble = false;
+		boolean scramble = false;
 		if (quizElement.getAttributeValue("scramble") != null) {
-			scramble = Boolean.valueOf(quizElement.getAttributeValue("scramble"));
+			scramble = Boolean.parseBoolean(quizElement.getAttributeValue("scramble"));
 		}
 		String title = quizElement.getAttributeValue("title");
 		LocalDateTime creationDate = null;
@@ -118,12 +121,11 @@ public class QuizzesXmlImport {
 			Integer questionNumber = Integer.valueOf(quizQuestionElement.getAttributeValue("questionNumber"));
 
 			Question question = questionRepository.findByNumber(questionNumber)
-					.orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionNumber.toString()));
+					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionNumber));
 
 			QuizQuestion quizQuestion = quizService.addQuestionToQuiz(question.getId(), quizId);
 
 			quizQuestion.setSequence(sequence);
 		}
 	}
-
 }

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.access;
+package pt.ulisboa.tecnico.socialsoftware.tutor.log;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -11,13 +11,13 @@ import java.util.List;
 
 @RestController
 @Secured({ "ROLE_ADMIN" })
-public class AccessController {
+public class LogController {
 
     @Autowired
-    private AccessRepository accessRepository;
+    private LogRepository logRepository;
 
-    @GetMapping("/accesses")
-    public List<Access> getAccess(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
-        return accessRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
+    @GetMapping("/logs")
+    public List<Log> getLog(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
+        return logRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
     }
 }

@@ -182,7 +182,7 @@ export default class QuizList extends Vue {
       this.quiz = await RemoteServices.getQuiz(quizId);
       this.dialog = true;
     } catch (error) {
-      confirm(error);
+      await this.$store.dispatch("error", error);
     }
   }
 
@@ -205,7 +205,7 @@ export default class QuizList extends Vue {
         await RemoteServices.deleteQuiz(quizId);
         this.$emit("deleteQuiz", quizId);
       } catch (error) {
-        confirm(error);
+        await this.$store.dispatch("error", error);
       }
     }
   }

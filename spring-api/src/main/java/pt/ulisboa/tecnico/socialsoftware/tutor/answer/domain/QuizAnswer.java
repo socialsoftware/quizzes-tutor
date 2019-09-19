@@ -19,7 +19,7 @@ public class QuizAnswer implements Serializable {
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
 
-    private Boolean completed;
+    private boolean completed;
 
     @ManyToOne
     @JoinColumn(name = "quiz_id")
@@ -73,11 +73,11 @@ public class QuizAnswer implements Serializable {
         this.answerDate = answerDate;
     }
 
-    public Boolean getCompleted() {
+    public boolean getCompleted() {
         return completed;
     }
 
-    public void setCompleted(Boolean completed) {
+    public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 

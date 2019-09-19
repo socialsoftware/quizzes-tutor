@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USERS_IMPORT_ERROR;
+
 public class UsersXmlImport {
 	private UserService userService;
 
@@ -28,15 +30,15 @@ public class UsersXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.USERS_IMPORT_ERROR, "File not found");
+			throw new TutorException(USERS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.USERS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(USERS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.USERS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(USERS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.USERS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(USERS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		importUsers(doc);

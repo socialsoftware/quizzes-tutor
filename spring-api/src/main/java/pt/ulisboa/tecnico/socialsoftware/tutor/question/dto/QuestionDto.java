@@ -16,7 +16,7 @@ public class QuestionDto implements Serializable {
     private double difficulty;
     private int numberOfAnswers;
     private int numberOfCorrect;
-    private Boolean active;
+    private boolean active;
     private List<OptionDto> options;
     private ImageDto image;
     private List<String> topics;
@@ -93,11 +93,11 @@ public class QuestionDto implements Serializable {
         this.numberOfCorrect = numberOfCorrect;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 

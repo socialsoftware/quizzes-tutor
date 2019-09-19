@@ -43,9 +43,7 @@ public class AnswersXmlExport {
 			quizAnswerElement.setAttribute("answerDate", quizAnswer.getAnswerDate().toString());
 		}
 
-		if (quizAnswer.getCompleted() != null) {
-			quizAnswerElement.setAttribute("completed", quizAnswer.getCompleted().toString());
-		}
+		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.getCompleted()));
 
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("quizNumber", quizAnswer.getQuiz().getNumber().toString());

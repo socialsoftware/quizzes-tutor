@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class QuizDto implements Serializable {
     private Integer id;
     private Integer number;
-    private Boolean scramble;
+    private boolean scramble;
     private String title;
     private LocalDateTime creationDate;
     private LocalDateTime availableDate;
@@ -72,11 +72,11 @@ public class QuizDto implements Serializable {
         this.number = number;
     }
 
-    public Boolean getScramble() {
+    public boolean getScramble() {
         return scramble;
     }
 
-    public void setScramble(Boolean scramble) {
+    public void setScramble(boolean scramble) {
         this.scramble = scramble;
     }
 

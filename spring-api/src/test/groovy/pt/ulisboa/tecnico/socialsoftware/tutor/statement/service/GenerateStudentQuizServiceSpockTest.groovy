@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
@@ -97,8 +98,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getError() == TutorException.ExceptionError.NOT_ENOUGH_QUESTIONS
-        exception.getValue() == Integer.toString(2)
+        exception.getError() == ExceptionError.NOT_ENOUGH_QUESTIONS
         quizRepository.count() == 0L
     }
 

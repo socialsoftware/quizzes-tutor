@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -14,7 +12,6 @@ import java.util.stream.Collectors;
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_TEACHER" })
 public class QuizController {
-    private static Logger logger = LoggerFactory.getLogger(QuizController.class);
 
     @Autowired
     private QuizService quizService;

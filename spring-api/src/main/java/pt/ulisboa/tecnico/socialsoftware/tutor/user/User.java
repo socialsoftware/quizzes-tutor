@@ -150,9 +150,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
-    public boolean hasRole(String role) {
-        return getAuthorities().stream().anyMatch(a -> a.getAuthority().equals(role));
-    }
-
 }

@@ -1,13 +1,13 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.access;
+package pt.ulisboa.tecnico.socialsoftware.tutor.log;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity(name = "Accesses")
-@Table(name = "users")
-public class Access {
+@Entity(name = "Logs")
+@Table(name = "logs")
+public class Log {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,10 +20,10 @@ public class Access {
     private LocalDateTime time;
     private String operation;
 
-    public Access() {
+    public Log() {
     }
 
-    public Access(User user, LocalDateTime time, String operation) {
+    public Log(User user, LocalDateTime time, String operation) {
         this.user = user;
         this.time = time;
         this.operation = operation;

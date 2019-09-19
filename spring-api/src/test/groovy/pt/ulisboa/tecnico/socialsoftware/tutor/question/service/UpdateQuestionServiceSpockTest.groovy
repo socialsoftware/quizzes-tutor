@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -19,6 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import spock.lang.Specification
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_MISSING_DATA
 
 @DataJpaTest
 class UpdateQuestionServiceSpockTest extends Specification {
@@ -159,8 +162,9 @@ class UpdateQuestionServiceSpockTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUESTION_MISSING_DATA
+        exception.getError() == QUESTION_MISSING_DATA
     }
+
 
     def "update question with two options true"() {
         given: 'a question'
@@ -189,7 +193,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUESTION_MULTIPLE_CORRECT_OPTIONS
+        exception.getError() == ExceptionError.QUESTION_MULTIPLE_CORRECT_OPTIONS
     }
 
     def "update correct option in a question with answers"() {
@@ -232,7 +236,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS
+        exception.getError() == ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS
     }
 
 

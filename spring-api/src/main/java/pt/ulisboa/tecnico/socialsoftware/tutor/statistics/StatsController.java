@@ -28,12 +28,12 @@ public class StatsController {
 
         StatsDto statsDto = new StatsDto();
 
-        Integer totalAnswers = user.getQuizAnswers().stream()
+        int totalAnswers = user.getQuizAnswers().stream()
                 .map(QuizAnswer::getQuestionAnswers)
                 .map(Set::size)
                 .reduce(0, Integer::sum);
 
-        Integer uniqueQuestions = user.getQuizAnswers().stream()
+        int uniqueQuestions = user.getQuizAnswers().stream()
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getQuizQuestion)
@@ -42,15 +42,14 @@ public class StatsController {
                 .collect(Collectors.toSet())
                 .size();
 
-        Integer correctAnswers = (int) user.getQuizAnswers().stream()
+        int correctAnswers = (int) user.getQuizAnswers().stream()
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
                 .filter(Objects::nonNull)
                 .filter(Option::getCorrect).count();
 
-        // TODO this requires atention
-        Integer uniqueCorrectAnswers = user.getQuizAnswers().stream()
+        int uniqueCorrectAnswers = user.getQuizAnswers().stream()
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)

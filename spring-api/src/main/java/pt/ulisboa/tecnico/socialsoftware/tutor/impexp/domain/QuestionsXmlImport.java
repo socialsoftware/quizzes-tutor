@@ -18,7 +18,10 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTIONS_IMPORT_ERROR;
+
 public class QuestionsXmlImport {
+
 	private QuestionService questionService;
 
 	public void importQuestions(InputStream inputStream, QuestionService questionService) {
@@ -32,15 +35,15 @@ public class QuestionsXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.QUESTIONS_IMPORT_ERROR, "File not found");
+			throw new TutorException(QUESTIONS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.QUESTIONS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(QUESTIONS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.QUESTIONS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(QUESTIONS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.QUESTIONS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(QUESTIONS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		importQuestions(doc);
@@ -67,7 +70,7 @@ public class QuestionsXmlImport {
 		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
-		Boolean active = Boolean.valueOf(questionElement.getAttributeValue("active"));
+		boolean active = Boolean.parseBoolean(questionElement.getAttributeValue("active"));
 
 		QuestionDto questionDto = new QuestionDto();
 		questionDto.setNumber(number);
@@ -92,7 +95,7 @@ public class QuestionsXmlImport {
 		for (Element optionElement : questionElement.getChild("options").getChildren("option")) {
 			Integer optionNumber = Integer.valueOf( optionElement.getAttributeValue("number"));
 			String optionContent = optionElement.getAttributeValue("content");
-			Boolean correct = Boolean.valueOf(optionElement.getAttributeValue("correct"));
+			boolean correct = Boolean.parseBoolean(optionElement.getAttributeValue("correct"));
 
 			OptionDto optionDto = new OptionDto();
 			optionDto.setNumber(optionNumber);

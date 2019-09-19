@@ -5,12 +5,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS;
+
 @Entity
 @Table(name="quiz_questions")
-public class QuizQuestion {
+public class QuizQuestion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -49,7 +52,7 @@ public class QuizQuestion {
 
     void checkCanRemove() {
         if (!questionAnswers.isEmpty()) {
-            throw new TutorException(TutorException.ExceptionError.QUIZ_QUESTION_HAS_ANSWERS, String.valueOf(questionAnswers.size()));
+            throw new TutorException(QUIZ_QUESTION_HAS_ANSWERS);
         }
     }
 

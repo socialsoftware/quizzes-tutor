@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-public class JwtAuthenticationResponse {
+public class JwtAuthenticationDto {
     private String token;
     private String userRole;
 
-    public JwtAuthenticationResponse(String token, String userRole) {
+    public JwtAuthenticationDto(String token, String userRole) {
         this.token = token;
         this.userRole = userRole;
     }

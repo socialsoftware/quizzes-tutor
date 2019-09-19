@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -85,7 +86,7 @@ class RemoveQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUIZ_HAS_ANSWERS
+        exception.getError() == ExceptionError.QUIZ_HAS_ANSWERS
         quizRepository.count() == 1L
         quizQuestionRepository.count() == 1L
         questionRepository.count() == 1L

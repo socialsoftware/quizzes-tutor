@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+
 @Service
 public class QuestionService {
 
@@ -37,13 +39,13 @@ public class QuestionService {
     @Transactional
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
-                .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
     @Transactional
     public QuestionDto findQuestionByNumber(Integer number) {
         return questionRepository.findByNumber(number).map(QuestionDto::new)
-                .orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, number.toString()));
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, number));
     }
 
     @Transactional
@@ -59,7 +61,7 @@ public class QuestionService {
     @Transactional
     public QuestionDto createQuestion(QuestionDto questionDto) {
         if (questionDto.getNumber() == null) {
-            Integer maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
+            int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
                     questionRepository.getMaxQuestionNumber() : 0;
             questionDto.setNumber(maxQuestionNumber + 1);
         }
@@ -71,26 +73,26 @@ public class QuestionService {
 
     @Transactional
     public void updateQuestion(Integer questionId, QuestionDto questionDto) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
     }
 
     @Transactional
     public void removeQuestion(Integer questionId) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.remove();
         entityManager.remove(question);
     }
 
     @Transactional
     public void questionSwitchActive(Integer questionId) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.switchActive();
     }
 
     @Transactional
     public void uploadImage(Integer questionId, String type) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         Image image = question.getImage();
 
@@ -107,7 +109,7 @@ public class QuestionService {
 
     @Transactional
     public List<String> findAllTopics() {
-        return topicRepository.findAll().stream().map(topic -> topic.getName()).sorted().collect(Collectors.toList());
+        return topicRepository.findAll().stream().map(Topic::getName).sorted().collect(Collectors.toList());
     }
 
     @Transactional
@@ -115,7 +117,7 @@ public class QuestionService {
         Topic topic = topicRepository.findByName(name);
 
         if (topic != null) {
-            throw new TutorException(TutorException.ExceptionError.DUPLICATE_TOPIC, name);
+            throw new TutorException(DUPLICATE_TOPIC, name);
         }
 
         topic = new Topic(name);
@@ -128,7 +130,7 @@ public class QuestionService {
         Topic topic = topicRepository.findByName(oldName);
 
         if (topic == null) {
-            throw new TutorException(TutorException.ExceptionError.TOPIC_NOT_FOUND, oldName);
+            throw new TutorException(TOPIC_NOT_FOUND, oldName);
         }
 
         topic.setName(newName);
@@ -139,7 +141,7 @@ public class QuestionService {
         Topic topic = topicRepository.findByName(name);
 
         if (topic == null) {
-            throw new TutorException(TutorException.ExceptionError.TOPIC_NOT_FOUND, name);
+            throw new TutorException(TOPIC_NOT_FOUND, name);
         }
 
         topic.remove();
@@ -149,7 +151,7 @@ public class QuestionService {
 
     @Transactional
     public void updateQuestionTopics(Integer questionId, String[] topics) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(TutorException.ExceptionError.QUESTION_NOT_FOUND, questionId.toString()));
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         question.updateTopics(Arrays.stream(topics).map(name -> topicRepository.findByName(name)).collect(Collectors.toSet()));
     }

@@ -60,7 +60,7 @@ export default class QuizzesView extends Vue {
       this.quiz = await RemoteServices.getQuiz(quizId);
       this.editMode = true;
     } catch (error) {
-      confirm(error);
+      await this.$store.dispatch("error", error);
     }
   }
 

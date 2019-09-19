@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-public class FenixCode {
+public class FenixAuthenticationDto {
     private String code;
 
     public String getCode() {

@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class OptionDto implements Serializable {
     private Integer id;
     private Integer number;
-    private Boolean correct;
+    private boolean correct;
     private String content;
 
     public OptionDto() {
@@ -37,11 +37,11 @@ public class OptionDto implements Serializable {
         this.number = number;
     }
 
-    public Boolean getCorrect() {
+    public boolean getCorrect() {
         return correct;
     }
 
-    public void setCorrect(Boolean correct) {
+    public void setCorrect(boolean correct) {
         this.correct = correct;
     }
 

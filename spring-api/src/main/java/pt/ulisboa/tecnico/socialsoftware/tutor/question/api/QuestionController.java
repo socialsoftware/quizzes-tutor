@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @RestController
@@ -106,7 +107,7 @@ public class QuestionController {
             Files.delete(getTargetLocation(url));
         }
 
-        int lastIndex = file.getContentType().lastIndexOf('/');
+        int lastIndex = Objects.requireNonNull(file.getContentType()).lastIndexOf('/');
         String type = file.getContentType().substring(lastIndex + 1);
 
         questionService.uploadImage(questionId, type);

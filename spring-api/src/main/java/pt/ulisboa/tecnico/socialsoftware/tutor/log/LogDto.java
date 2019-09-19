@@ -1,18 +1,18 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.access;
+package pt.ulisboa.tecnico.socialsoftware.tutor.log;
 
 import java.time.LocalDateTime;
 
-public class AccessDto {
+public class LogDto {
     private Integer id;
     private Integer userId;
     private LocalDateTime time;
     private String operation;
 
-    public AccessDto(Access access) {
-        this.id = access.getId();
-        this.userId = access.getUser().getId();
-        this.time = access.getTime();
-        this.operation = access.getOperation();
+    public LogDto(Log log) {
+        this.id = log.getId();
+        this.userId = log.getUser().getId();
+        this.time = log.getTime();
+        this.operation = log.getOperation();
     }
 
     public Integer getId() {

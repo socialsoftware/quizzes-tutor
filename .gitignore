@@ -6,8 +6,8 @@
 
 SQL/data.json
 spring-api/src/main/resources/static/images/questions/
-pentaho/**.xlsx
-pentaho/**.xls
+*.xlsx
+*.xls
 pentaho/**.js
 extract_data/**.json
 dump/*.bak
