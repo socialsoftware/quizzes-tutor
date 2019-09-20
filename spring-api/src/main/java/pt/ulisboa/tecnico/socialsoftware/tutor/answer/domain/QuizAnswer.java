@@ -21,7 +21,7 @@ public class QuizAnswer implements Serializable {
 
     private boolean completed;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
