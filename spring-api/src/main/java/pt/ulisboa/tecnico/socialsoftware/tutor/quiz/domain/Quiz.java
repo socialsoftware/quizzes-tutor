@@ -9,10 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_NOT_CONSISTENT;
@@ -137,6 +134,17 @@ public class Quiz implements Serializable {
 
         this.setCreationDate(LocalDateTime.now());
         this.setType(QuizType.STUDENT.name());
+
+        // TODO change based on fenix info
+        Calendar calendar = Calendar.getInstance();
+
+        int year = calendar.get(Calendar.YEAR);
+
+        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
+            year -= 1;
+        }
+
+        this.setYear(year);
         this.title = "Generated Quiz";
     }
 
