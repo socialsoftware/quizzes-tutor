@@ -1,6 +1,10 @@
 <template>
   <v-app id="inspire">
-    <v-toolbar color="primary">
+    <v-toolbar color="primary" clipped-left>
+      <v-toolbar-side-icon
+        @click.stop="drawer = !drawer"
+        class="hidden-md-and-up"
+      ></v-toolbar-side-icon>
       <v-toolbar-title class="white-text">
         <v-btn href="/" flat dark>
           Software Architecture Quizzes
@@ -9,7 +13,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-toolbar-items>
+      <v-toolbar-items class="hidden-sm-and-down">
         <!--v-btn v-if="isAdmin" to="/admin-management" flat dark disabled>
           Admin Management
           <v-icon>fas fa-user</v-icon>
@@ -109,6 +113,56 @@
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-toolbar-items>
+
+      <!-- Start of mobile side menu -->
+      <v-navigation-drawer app v-model="drawer" left>
+        <!-- Menu title -->
+        <v-toolbar flat>
+          <v-list>
+            <v-list-tile>
+              <v-list-tile-title class="title">Menu</v-list-tile-title>
+            </v-list-tile>
+          </v-list>
+        </v-toolbar>
+        <!-- Menu Links -->
+        <v-list>
+          <v-list-tile to="/student/available" v-if="isStudent" exact>
+            <v-list-tile-action>
+              <v-icon>assignment</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Available Quizzes</v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile to="/student/solved" v-if="isStudent">
+            <v-list-tile-action>
+              <v-icon>done</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Solved Quizzes</v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile to="/student/stats" v-if="isStudent">
+            <v-list-tile-action>
+              <v-icon>fas fa-user</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Stats</v-list-tile-content>
+          </v-list-tile>
+
+          <v-list-tile @click="logout" v-if="isLoggedIn">
+            <v-list-tile-action>
+              <v-icon>fas fa-sign-out-alt</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Logout</v-list-tile-content>
+          </v-list-tile>
+          <v-list-tile :to="fenix_url" v-else>
+            <v-list-tile-action>
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-list-tile-action>
+            <v-list-tile-content>Login</v-list-tile-content>
+          </v-list-tile>
+        </v-list>
+      </v-navigation-drawer>
+
+      <!-- End of mobile side menu -->
     </v-toolbar>
   </v-app>
 </template>
@@ -123,6 +177,7 @@ export default class TopBar extends Vue {
     process.env.VUE_APP_FENIX_CLIENT_ID +
     "&redirect_uri=" +
     process.env.VUE_APP_FENIX_REDIRECT_URI;
+  drawer: boolean = false;
 
   get isLoggedIn() {
     return this.$store.getters.isLoggedIn;

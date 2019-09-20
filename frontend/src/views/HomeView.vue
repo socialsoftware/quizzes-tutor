@@ -14,22 +14,38 @@
       </v-layout>
     </v-parallax>
 
-    <v-img
-      :src="require('../assets/ist.png')"
-      style="position: absolute; bottom:0px; left:0px; width: 250px"
-    ></v-img>
-    <a
-      v-if="isLoggedIn"
-      class="btn btn-block btn-social btn-github"
-      href="https://github.com/socialsoftware/as-tutor"
-      target="_blank"
-    >
-      <span class="fab fa-github"></span> View code
-    </a>
-    <v-img
-      :src="require('../assets/impress.png')"
-      style="position: absolute; bottom:40px; right:40px; width: 200px"
-    ></v-img>
+    <div class="bottom-row-container">
+      <img
+        :src="require('../assets/ist.png')"
+        class="logo"
+        alt="Técnico Logo"
+      />
+      <div>
+        <a
+          v-if="isLoggedIn"
+          class="btn btn-block btn-social btn-github"
+          href="https://github.com/socialsoftware/as-tutor"
+          target="_blank"
+        >
+          <span class="fab fa-github"></span> View code
+        </a>
+      </div>
+      <div>
+        <a
+          v-if="isLoggedIn"
+          class="btn btn-block btn-social btn-github"
+          href="https://github.com/socialsoftware/tutor-private/issues"
+          target="_blank"
+        >
+          <span class="fab fa-github"></span> Bug report
+        </a>
+      </div>
+      <img
+        :src="require('../assets/impress.png')"
+        class="logo"
+        alt="IMPRESS Logo"
+      />
+    </div>
   </div>
 </template>
 
@@ -54,11 +70,35 @@ export default class HomeView extends Vue {
 }
 </script>
 
-<style>
-.btn-github {
-  color: white !important;
-  width: 125px;
-  margin: auto;
+<style lang="scss">
+.bottom-row-container {
+  display: flex; /* or inline-flex */
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-height: 100px;
+  position: absolute;
+  bottom: 0;
+  overflow: hidden;
+
+  .logo {
+    flex-shrink: 1;
+    width: 20%;
+    max-width: 200px;
+    padding: 2%;
+  }
+
+  div {
+    flex-grow: 2;
+
+    .btn-github {
+      color: white !important;
+      width: 125px;
+      margin: 0 auto;
+    }
+  }
 }
 
 .v-parallax__image {
