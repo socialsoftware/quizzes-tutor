@@ -10,7 +10,12 @@
       </li>
     </ul>
     <ul class="responsive-table scrollbar">
-      <li class="table-row" v-for="quiz in quizzes" :key="quiz.quizAnswerId">
+      <li
+        class="table-row"
+        v-for="quiz in quizzes"
+        :key="quiz.quizAnswerId"
+        @click="showResults(quiz)"
+      >
         <div class="col" data-label="title">
           {{ quiz.title }}
         </div>
@@ -21,7 +26,7 @@
           {{ calculateScore(quiz) }}
         </div>
         <div class="col last-col" data-label="button">
-          <i class="fas fa-chevron-circle-right" @click="showResults(quiz)"></i>
+          <i class="fas fa-chevron-circle-right"></i>
         </div>
       </li>
     </ul>

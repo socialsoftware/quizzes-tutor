@@ -1,10 +1,11 @@
 <template>
-  <div id="app">
-    <div class="img-container"></div>
-    <top-bar />
-    <message-bar />
-    <router-view />
-  </div>
+  <v-app id="app">
+    <div class="img-container">
+      <top-bar />
+      <message-bar />
+      <router-view />
+    </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -18,7 +19,7 @@ import "@/styles/_question.scss";
 @Component({
   components: { TopBar, MessageBar }
 })
-export default class HomeView extends Vue {
+export default class App extends Vue {
   // noinspection JSUnusedGlobalSymbols
 
   beforeCreate() {
@@ -86,9 +87,6 @@ export default class HomeView extends Vue {
 
 <style>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   height: 100%;
@@ -98,16 +96,15 @@ export default class HomeView extends Vue {
 
 .img-container {
   position: absolute;
-  background: white;
   overflow: hidden;
   top: 0;
   margin: 0 !important;
-  z-index: -1;
   min-height: 100vh;
   width: 100vw;
   height: 100%;
+  z-index: 1;
 }
-.img-container:before {
+.img-container:after {
   content: " ";
   display: block;
   position: absolute;
@@ -115,7 +112,7 @@ export default class HomeView extends Vue {
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
+  z-index: -1;
   opacity: 0.7;
   background-image: url("./assets/01.jpg");
   background-repeat: no-repeat;

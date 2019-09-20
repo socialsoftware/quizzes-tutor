@@ -1,18 +1,16 @@
 <template>
-  <v-app id="inspire">
-    <v-alert
-      v-model="error"
-      dismissible
-      border="top"
-      elevation="2"
-      colored-border
-      type="error"
-      dense
-      transition="scale-transition"
-    >
-      {{ errorMessage }}
-    </v-alert>
-  </v-app>
+  <v-alert
+    v-model="error"
+    dismissible
+    border="top"
+    elevation="2"
+    colored-border
+    type="error"
+    dense
+    transition="scale-transition"
+  >
+    {{ errorMessage }}
+  </v-alert>
 </template>
 
 <script lang="ts">
@@ -44,6 +42,8 @@ export default class MessageBar extends Vue {
 
 <style scoped lang="scss">
 .v-alert {
+  position: absolute;
+  width: calc(100% - 20px);
   margin: 10px !important;
 }
 </style>

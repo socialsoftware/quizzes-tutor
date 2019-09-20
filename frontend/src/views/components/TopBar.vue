@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <nav>
     <v-toolbar color="primary" clipped-left>
       <v-toolbar-side-icon
         @click.stop="drawer = !drawer"
@@ -115,7 +115,14 @@
       </v-toolbar-items>
 
       <!-- Start of mobile side menu -->
-      <v-navigation-drawer app v-model="drawer" left>
+      <v-navigation-drawer
+        app
+        v-model="drawer"
+        absolute
+        dark
+        hide-overlay
+        style="overflow: initial; z-index: 20;"
+      >
         <!-- Menu title -->
         <v-toolbar flat>
           <v-list>
@@ -124,8 +131,9 @@
             </v-list-tile>
           </v-list>
         </v-toolbar>
+
         <!-- Menu Links -->
-        <v-list>
+        <v-list class="pt-0" dense>
           <v-list-tile to="/student/available" v-if="isStudent" exact>
             <v-list-tile-action>
               <v-icon>assignment</v-icon>
@@ -153,7 +161,7 @@
             </v-list-tile-action>
             <v-list-tile-content>Logout</v-list-tile-content>
           </v-list-tile>
-          <v-list-tile :to="fenix_url" v-else>
+          <v-list-tile :href="fenix_url" v-else>
             <v-list-tile-action>
               <v-icon>fas fa-sign-in-alt</v-icon>
             </v-list-tile-action>
@@ -164,7 +172,7 @@
 
       <!-- End of mobile side menu -->
     </v-toolbar>
-  </v-app>
+  </nav>
 </template>
 
 <script lang="ts">
