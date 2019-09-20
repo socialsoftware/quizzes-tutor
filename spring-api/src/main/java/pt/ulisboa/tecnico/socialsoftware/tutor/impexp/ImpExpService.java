@@ -154,7 +154,7 @@ public class ImpExpService {
 
                 File answersFile = new File(directory.getPath() + "/" + "answers.xml");
                 AnswersXmlImport answersXmlImport = new AnswersXmlImport();
-                answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, userRepository);
+                answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
             } catch (FileNotFoundException e) {
 
             }

@@ -8,9 +8,11 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -34,15 +36,17 @@ public class AnswersXmlImport {
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
 	private QuizRepository quizRepository;
+	private QuizAnswerRepository quizAnswerRepository;
 	private UserRepository userRepository;
 
 	private Map<Integer, Map<Integer,Integer>> questionMap;
 
 	public void importAnswers(InputStream inputStream, AnswerService answerService, QuestionRepository questionRepository,
-							  QuizRepository quizRepository, UserRepository userRepository) {
+							  QuizRepository quizRepository,  QuizAnswerRepository quizAnswerRepository, UserRepository userRepository) {
 		this.answerService = answerService;
 		this.questionRepository = questionRepository;
 		this.quizRepository = quizRepository;
+		this.quizAnswerRepository = quizAnswerRepository;
 		this.userRepository = userRepository;
 
 		SAXBuilder builder = new SAXBuilder();
@@ -77,13 +81,13 @@ public class AnswersXmlImport {
 	}
 
 	public void importAnswers(String answersXml, AnswerService answerService, QuestionRepository questionRepository,
-							  QuizRepository quizRepository, UserRepository userRepository) {
+							  QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, UserRepository userRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(answersXml.getBytes());
 
-		importAnswers(stream, answerService, questionRepository, quizRepository, userRepository);
+		importAnswers(stream, answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
 	}
 
 	private void importQuizAnswers(Document doc) {
@@ -113,7 +117,9 @@ public class AnswersXmlImport {
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
 		User user = userRepository.findByNumber(number);
 
-		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId());
+		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
+		System.out.println(quizAnswerDto.getId());
+		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId()).get();
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 

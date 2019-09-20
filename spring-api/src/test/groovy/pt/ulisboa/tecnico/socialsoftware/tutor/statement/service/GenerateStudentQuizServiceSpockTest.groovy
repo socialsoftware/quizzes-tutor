@@ -21,6 +21,8 @@ import java.util.stream.Collectors
 
 @DataJpaTest
 class GenerateStudentQuizServiceSpockTest extends Specification {
+    static final USERNAME = 'username'
+
     @Autowired
     StatementService statementService
 
@@ -41,7 +43,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     def questionTwo
 
     def setup() {
-        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
+        user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
         questionOne = new Question()
         questionOne.setNumber(1)
         questionOne.setActive(true)
@@ -56,7 +58,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
 
     def 'generate quiz for one question and there are two questions available'() {
         when:
-        statementService.generateStudentQuiz(user, 1)
+        statementService.generateStudentQuiz(USERNAME, 1)
 
         then:
         quizRepository.count() == 1L
@@ -76,7 +78,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
 
     def 'generate quiz for two question and there are two questions available'() {
         when:
-        statementService.generateStudentQuiz(user, 2)
+        statementService.generateStudentQuiz(USERNAME, 2)
 
         then:
         quizRepository.count() == 1L
@@ -94,7 +96,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
 
     def 'generate quiz for three question and there are two questions available'() {
         when:
-        statementService.generateStudentQuiz(user, 3)
+        statementService.generateStudentQuiz(USERNAME, 3)
 
         then:
         TutorException exception = thrown()

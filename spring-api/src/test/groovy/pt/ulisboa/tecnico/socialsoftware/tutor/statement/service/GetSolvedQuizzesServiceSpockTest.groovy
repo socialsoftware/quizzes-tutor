@@ -25,6 +25,8 @@ import java.time.LocalDateTime
 
 @DataJpaTest
 class GetSolvedQuizzesServiceSpockTest extends Specification {
+    static final USERNAME = 'username'
+
     @Autowired
     QuizService quizService
 
@@ -56,7 +58,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
     def quizQuestion
 
     def setup() {
-        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
+        user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
         given: "create a question"
         question = new Question()
         question.setNumber(1)
@@ -103,7 +105,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
 
     def 'get solved quizzes for the student'() {
         when:
-        def solvedQuizDtos = statementService.getSolvedQuizzes(user)
+        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME)
 
         then: 'returns correct data'
         solvedQuizDtos.size() == 1
