@@ -86,7 +86,8 @@ public class AnswerService {
             throw new TutorException(QUIZ_USER_MISMATCH, quizAnswer.getId().toString(), user.getUsername());
         }
 
-        for (ResultAnswerDto resultAnswerDto : answers.getAnswers()) {
+        for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
+            ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
             QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
                     .orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, resultAnswerDto.getQuizQuestionId()));
 
@@ -106,7 +107,7 @@ public class AnswerService {
                 }
             }
 
-            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
+            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
         }
 
         quizAnswer.setAnswerDate(answers.getAnswerDate());

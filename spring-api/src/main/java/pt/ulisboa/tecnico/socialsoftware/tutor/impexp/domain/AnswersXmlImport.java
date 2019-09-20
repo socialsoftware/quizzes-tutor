@@ -135,8 +135,9 @@ public class AnswersXmlImport {
 				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
 			}
 
-			Integer sequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
-			Integer quizQuestionId = mapQuizQuestionId.get(sequence);
+			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue("sequence"));
+			Integer questionSequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
+			Integer quizQuestionId = mapQuizQuestionId.get(questionSequence);
 
 			Integer optionId = null;
 			if (questionAnswerElement.getChild("option") != null) {
@@ -147,6 +148,7 @@ public class AnswersXmlImport {
 
 			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();
 			resultAnswerDto.setTimeTaken(timeTaken);
+            resultAnswerDto.setSequence(answerSequence);
 			resultAnswerDto.setQuizQuestionId(quizQuestionId);
 			resultAnswerDto.setOptionId(optionId);
 			resultAnswersDto.getAnswers().add(resultAnswerDto);

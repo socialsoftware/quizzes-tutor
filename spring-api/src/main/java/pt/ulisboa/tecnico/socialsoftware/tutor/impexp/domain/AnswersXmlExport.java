@@ -75,6 +75,8 @@ public class AnswersXmlExport {
 			questionAnswerElement.setAttribute("timeTaken", questionAnswer.getTimeTaken().toString());
 		}
 
+        questionAnswerElement.setAttribute("sequence", questionAnswer.getSequence().toString());
+
 		Element quizQuestionElement = new Element("quizQuestion");
 		quizQuestionElement.setAttribute("quizNumber", questionAnswer.getQuizQuestion().getQuiz().getNumber().toString());
 		quizQuestionElement.setAttribute("sequence", questionAnswer.getQuizQuestion().getSequence().toString());
