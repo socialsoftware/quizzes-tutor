@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     public User() {

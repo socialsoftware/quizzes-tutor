@@ -10,9 +10,11 @@ import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -24,10 +26,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 public class QuizzesXmlImport {
 	private QuizService quizService;
 	private QuestionRepository questionRepository;
+	private QuizQuestionRepository quizQuestionRepository;
 
-	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository) {
+	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository) {
 		this.quizService = quizService;
 		this.questionRepository = questionRepository;
+		this.quizQuestionRepository = quizQuestionRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
@@ -51,13 +55,13 @@ public class QuizzesXmlImport {
 		importQuizzes(doc);
 	}
 
-	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository) {
+	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());
 
-		importQuizzes(stream, quizService, questionRepository);
+		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository);
 	}
 
 	private void importQuizzes(Document doc) {
@@ -123,7 +127,9 @@ public class QuizzesXmlImport {
 			Question question = questionRepository.findByNumber(questionNumber)
 					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionNumber));
 
-			QuizQuestion quizQuestion = quizService.addQuestionToQuiz(question.getId(), quizId);
+			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizId);
+
+			QuizQuestion quizQuestion = quizQuestionRepository.findById(quizQuestionDto.getId()).get();
 
 			quizQuestion.setSequence(sequence);
 		}

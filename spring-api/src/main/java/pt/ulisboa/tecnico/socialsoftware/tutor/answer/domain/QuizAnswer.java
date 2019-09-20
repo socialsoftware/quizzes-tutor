@@ -25,7 +25,7 @@ public class QuizAnswer implements Serializable {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

@@ -12,6 +12,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.persistence.EntityManager;
@@ -34,12 +37,17 @@ public class QuizService {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
 
-    public List<Quiz> findAll(int pageIndex, int pageSize) {
-        return quizRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent();
+    public List<QuizDto> findAll(int pageIndex, int pageSize) {
+        return quizRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent()
+                .stream().map(quiz -> new QuizDto(quiz, true))
+                .collect(Collectors.toList());
     }
 
     @Transactional
@@ -111,7 +119,7 @@ public class QuizService {
     }
 
     @Transactional
-    public QuizQuestion addQuestionToQuiz(int questionId, int quizId) {
+    public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, questionId));
 
@@ -119,7 +127,7 @@ public class QuizService {
 
         entityManager.persist(quizQuestion);
 
-        return quizQuestion;
+        return new QuizQuestionDto(quizQuestion);
     }
 
     @Transactional
@@ -147,7 +155,7 @@ public class QuizService {
     public void importQuizzes(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
-        xmlImport.importQuizzes(quizzesXml, this, questionRepository);
+        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository);
     }
 
 }

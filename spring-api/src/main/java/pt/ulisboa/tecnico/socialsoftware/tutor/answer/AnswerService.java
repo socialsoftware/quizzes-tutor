@@ -6,10 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
@@ -56,7 +53,7 @@ public class AnswerService {
     EntityManager entityManager;
 
     @Transactional
-    public QuizAnswer createQuizAnswer(Integer userId, Integer quizId) {
+    public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -64,7 +61,7 @@ public class AnswerService {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
         entityManager.persist(quizAnswer);
 
-        return quizAnswer;
+        return new QuizAnswerDto(quizAnswer);
     }
 
     @Transactional
@@ -141,7 +138,7 @@ public class AnswerService {
     public void importAnswers(String answersXml) {
         AnswersXmlImport xmlImporter = new AnswersXmlImport();
 
-        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, userRepository);
+        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, quizAnswerRepository, userRepository);
     }
 
 }

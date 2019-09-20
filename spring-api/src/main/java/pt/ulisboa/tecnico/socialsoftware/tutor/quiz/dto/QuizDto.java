@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
