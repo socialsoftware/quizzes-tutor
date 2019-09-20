@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
@@ -38,7 +39,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "GENERATE");
 
-        return statementService.generateStudentQuiz(user, quizDetails.getNumberOfQuestions());
+        return statementService.generateStudentQuiz(user.getUsername(), quizDetails.getNumberOfQuestions());
     }
 
     @GetMapping("/available")
@@ -51,7 +52,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "LIST_AVAILABLE");
 
-        return statementService.getAvailableQuizzes(user);
+        return statementService.getAvailableQuizzes(user.getUsername());
     }
 
     @GetMapping("/solved")
@@ -64,7 +65,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "LIST_SOLVED");
 
-        return statementService.getSolvedQuizzes(user);
+        return statementService.getSolvedQuizzes(user.getUsername());
     }
 
     @PostMapping("/answer")
@@ -79,7 +80,7 @@ public class StatementController {
 
         answers.setAnswerDate(LocalDateTime.now());
 
-        return statementService.solveQuiz(user, answers);
+        return statementService.solveQuiz(user.getUsername(), answers);
     }
 
 
