@@ -28,7 +28,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 @RequestMapping("/auth")
 public class AuthController {
 
-    private static String COURSE_ACRONYM = "ASof";
+    private static String COURSE_ACRONYM = "ASof7";
     // Pedro, Professor Rito, Professor Prada, Professor Daniel Gonçalves, José
     private static String[] ADMINS = {"ist181002", "ist12628", "ist32219", "ist13898", "ist148794"};
 

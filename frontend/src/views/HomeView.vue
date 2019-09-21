@@ -34,7 +34,7 @@
         <a
           v-if="isLoggedIn"
           class="btn btn-block btn-social btn-github"
-          href="https://github.com/socialsoftware/tutor-private/issues"
+          href="https://github.com/socialsoftware/as-tutor/issues"
           target="_blank"
         >
           <span class="fab fa-github"></span> Bug report
