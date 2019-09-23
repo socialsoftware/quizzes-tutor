@@ -3,7 +3,9 @@
     <div class="img-container">
       <top-bar />
       <message-bar />
-      <router-view />
+      <div class="scrollbar">
+        <router-view />
+      </div>
     </div>
   </v-app>
 </template>
@@ -113,15 +115,10 @@ export default class App extends Vue {
   width: 100%;
   height: 100%;
   z-index: -1;
-  opacity: 0.7;
-  background-image: url("./assets/01.jpg");
+  background-image: url("./assets/background.jpg");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
-  -ms-background-size: cover;
-  -o-background-size: cover;
-  -moz-background-size: cover;
-  -webkit-background-size: cover;
-  background-size: cover;
 }
 
 /*noinspection CssUnusedSymbol*/

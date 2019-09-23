@@ -8,24 +8,22 @@
         <div class="col">Score</div>
         <div class="col last-col"></div>
       </li>
-    </ul>
-    <ul class="responsive-table scrollbar">
       <li
         class="table-row"
         v-for="quiz in quizzes"
         :key="quiz.quizAnswerId"
         @click="showResults(quiz)"
       >
-        <div class="col" data-label="title">
+        <div class="col" data-label="Title: ">
           {{ quiz.title }}
         </div>
-        <div class="col" data-label="solved-date">
+        <div class="col" data-label="Solved Date:">
           {{ quiz.answerDate }}
         </div>
-        <div class="col" data-label="score">
+        <div class="col" data-label="Score:">
           {{ calculateScore(quiz) }}
         </div>
-        <div class="col last-col" data-label="button">
+        <div class="col last-col">
           <i class="fas fa-chevron-circle-right"></i>
         </div>
       </li>

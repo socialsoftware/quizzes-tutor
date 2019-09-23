@@ -42,6 +42,7 @@ export default class MessageBar extends Vue {
 
 <style scoped lang="scss">
 .v-alert {
+  z-index: 1;
   position: absolute;
   width: calc(100% - 20px);
   margin: 10px !important;

@@ -9,7 +9,7 @@
         <div class="col"></div>
       </li>
     </ul>
-    <ul class="responsive-table scrollbar">
+    <ul class="responsive-table">
       <li class="table-row" v-for="quiz in quizzes" :key="quiz.quizAnswerId">
         <div class="col" data-label="title">
           {{ quiz.title }}

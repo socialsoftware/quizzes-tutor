@@ -11,11 +11,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
+
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 
 @Service
 public class StatsService {
@@ -29,40 +29,46 @@ public class StatsService {
 
         StatsDto statsDto = new StatsDto();
 
-        int totalAnswers = user.getQuizAnswers().stream()
-                .map(QuizAnswer::getQuestionAnswers)
-                .map(Set::size)
-                .reduce(0, Integer::sum);
+        int totalQuizzes = (int) user.getQuizAnswers().stream()
+                .filter(QuizAnswer::getCompleted)
+                .count();
 
-        int uniqueQuestions = user.getQuizAnswers().stream()
+        int totalAnswers = (int) user.getQuizAnswers().stream()
+                .filter(QuizAnswer::getCompleted)
+                .map(QuizAnswer::getQuestionAnswers)
+                .mapToLong(Collection::size)
+                .sum();
+
+        int uniqueQuestions = (int) user.getQuizAnswers().stream()
+                .filter(QuizAnswer::getCompleted)
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getQuizQuestion)
                 .map(QuizQuestion::getQuestion)
                 .map(Question::getId)
-                .collect(Collectors.toSet())
-                .size();
+                .distinct().count();
 
         int correctAnswers = (int) user.getQuizAnswers().stream()
+                .filter(QuizAnswer::getCompleted)
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
                 .filter(Objects::nonNull)
                 .filter(Option::getCorrect).count();
 
-        int uniqueCorrectAnswers = user.getQuizAnswers().stream()
+        int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
+                .filter(QuizAnswer::getCompleted)
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
+                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion().getId()))),
+                        ArrayList::new)).stream()
                 .map(QuestionAnswer::getOption)
                 .filter(Objects::nonNull)
                 .filter(Option::getCorrect)
-                .map(Option::getQuestion)
-                .map(Question::getId)
-                .collect(Collectors.toSet())
-                .size();
+                .count();
 
-        statsDto.setTotalQuizzes((int) user.getQuizAnswers().stream().filter(QuizAnswer::getCompleted).count());
+        statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         if (totalAnswers != 0) {
