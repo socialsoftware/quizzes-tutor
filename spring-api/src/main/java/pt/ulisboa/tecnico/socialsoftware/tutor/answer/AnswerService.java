@@ -6,10 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
@@ -30,7 +27,7 @@ import javax.validation.Valid;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class AnswerService {
@@ -56,21 +53,21 @@ public class AnswerService {
     EntityManager entityManager;
 
     @Transactional
-    public QuizAnswer createQuizAnswer(Integer userId, Integer quizId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, Integer.toString(userId)));
+    public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, Integer.toString(quizId)));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
         entityManager.persist(quizAnswer);
 
-        return quizAnswer;
+        return new QuizAnswerDto(quizAnswer);
     }
 
     @Transactional
     public void removeQuizAnswer(Integer quizAnswerId) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId.toString()));
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId));
 
         quizAnswer.remove();
 
@@ -80,33 +77,34 @@ public class AnswerService {
     @Transactional
     public CorrectAnswersDto submitQuestionsAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, Integer.toString(answers.getQuizAnswerId())));
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, answers.getQuizAnswerId()));
 
         if (isNotAssignedStudent(user, quizAnswer)) {
-            throw new TutorException(USER_MISMATCH, user.getUsername());
+            throw new TutorException(QUIZ_USER_MISMATCH, quizAnswer.getId().toString(), user.getUsername());
         }
 
-        for (ResultAnswerDto resultAnswerDto : answers.getAnswers()) {
+        for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
+            ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
             QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, Integer.toString(resultAnswerDto.getQuizQuestionId())));
+                    .orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, resultAnswerDto.getQuizQuestionId()));
 
             if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
-                throw new TutorException(QUIZ_MISMATCH, Integer.toString(quizQuestion.getQuiz().getId()));
+                throw new TutorException(QUIZ_MISMATCH, quizAnswer.getId(), quizQuestion.getQuiz().getId());
             }
 
             Option option = null;
 
             if (resultAnswerDto.getOptionId() != null) {
                 option = optionRepository.findById(resultAnswerDto.getOptionId())
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, Integer.toString(resultAnswerDto.getOptionId())));
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, resultAnswerDto.getOptionId()));
 
 
                 if (isNotQuestionOption(quizQuestion, option)) {
-                    throw new TutorException(QUIZ_MISMATCH, Integer.toString(option.getId()));
+                    throw new TutorException(QUIZ_OPTION_MISMATCH, quizQuestion.getId(), option.getId());
                 }
             }
 
-            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option));
+            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
         }
 
         quizAnswer.setAnswerDate(answers.getAnswerDate());
@@ -140,7 +138,7 @@ public class AnswerService {
     public void importAnswers(String answersXml) {
         AnswersXmlImport xmlImporter = new AnswersXmlImport();
 
-        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, userRepository);
+        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, quizAnswerRepository, userRepository);
     }
 
 }

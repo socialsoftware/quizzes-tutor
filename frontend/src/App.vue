@@ -1,20 +1,13 @@
 <template>
-  <div id="app">
-    <v-img
-      src="./assets/01.jpg"
-      gradient="to top, rgba(255,255,255,.4), rgba(255,255,255,.4)"
-      width="100vw"
-      height="100vh"
-      style="position: absolute; z-index: -1"
-    ></v-img>
-    <top-bar />
-    <message-bar />
-    <router-view />
-    <v-img
-      src="./assets/impress.png"
-      style="position: absolute; bottom:10px; left:10px"
-    ></v-img>
-  </div>
+  <v-app id="app">
+    <div class="img-container">
+      <top-bar />
+      <message-bar />
+      <div class="scrollbar">
+        <router-view />
+      </div>
+    </div>
+  </v-app>
 </template>
 
 <script lang="ts">
@@ -28,7 +21,7 @@ import "@/styles/_question.scss";
 @Component({
   components: { TopBar, MessageBar }
 })
-export default class HomeView extends Vue {
+export default class App extends Vue {
   // noinspection JSUnusedGlobalSymbols
 
   beforeCreate() {
@@ -96,9 +89,6 @@ export default class HomeView extends Vue {
 
 <style scoped>
 #app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
   display: flex;
@@ -107,15 +97,15 @@ export default class HomeView extends Vue {
 
 .img-container {
   position: absolute;
-  background: white;
   overflow: hidden;
   top: 0;
   margin: 0 !important;
-  z-index: -1;
+  min-height: 100vh;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
+  z-index: 1;
 }
-.img-container:before {
+.img-container:after {
   content: " ";
   display: block;
   position: absolute;
@@ -123,16 +113,11 @@ export default class HomeView extends Vue {
   top: 0;
   width: 100%;
   height: 100%;
-  z-index: 1;
-  opacity: 0.7;
-  background-image: url("./assets/01.jpg");
+  z-index: -1;
+  background-image: url("./assets/background.jpg");
+  background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;
-  -ms-background-size: cover;
-  -o-background-size: cover;
-  -moz-background-size: cover;
-  -webkit-background-size: cover;
-  background-size: cover;
 }
 
 /*noinspection CssUnusedSymbol*/

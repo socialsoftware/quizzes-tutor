@@ -8,9 +8,6 @@
     </header>
 
     <div class="question-navigation">
-      <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
-        ><i class="fas fa-chevron-left"></i
-      ></span>
       <div class="navigation-buttons">
         <span
           v-for="index in +statementManager.statementQuiz.questions.length"
@@ -24,6 +21,9 @@
           {{ index }}
         </span>
       </div>
+      <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
+        ><i class="fas fa-chevron-left"></i
+      ></span>
       <span
         class="right-button"
         @click="increaseOrder"

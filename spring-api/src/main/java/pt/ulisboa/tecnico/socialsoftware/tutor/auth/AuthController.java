@@ -7,8 +7,6 @@ import org.fenixedu.sdk.ApplicationConfiguration;
 import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -16,23 +14,21 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.tecnico.socialsoftware.tutor.access.AccessService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.InvalidFenixException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotEnrolledException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.FENIX_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
-    private static String COURSE_ACRONYM = "ASof";
+
+    private static String COURSE_ACRONYM = "ASof7";
     // Pedro, Professor Rito, Professor Prada, Professor Daniel Gonçalves, José
     private static String[] ADMINS = {"ist181002", "ist12628", "ist32219", "ist13898", "ist148794"};
 
@@ -52,10 +48,10 @@ public class AuthController {
     private String callbackUrl;
 
     @Autowired
-    private AccessService accessService;
+    private LogService logService;
 
     @PostMapping("/fenix")
-    public ResponseEntity<?> fenixAuth(@RequestBody FenixCode data) {
+    public ResponseEntity fenixAuth(@RequestBody FenixAuthenticationDto data) {
 
         ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         FenixEduClientImpl client;
@@ -64,16 +60,16 @@ public class AuthController {
         try {
             client = new FenixEduClientImpl(config);
         } catch (FenixEduClientException e) {
-            throw new InvalidFenixException("Wrong server configuration files");
+            throw new TutorException(FENIX_CONFIGURATION_ERROR);
         }
 
         // Get user's authorization data (access_token and refresh_token) client.
         try {
             userDetails = client.getUserDetailsFromCode(data.getCode());
         } catch (FenixEduClientException e) {
-            throw new InvalidFenixException("Wrong user Fenix code");
+            throw new TutorException(FENIX_ERROR);
         } catch (Exception e) {
-            throw new TutorException(FENIX_ERROR, "Wrong configuration");
+            throw new TutorException(FENIX_ERROR);
         }
 
 
@@ -110,15 +106,15 @@ public class AuthController {
                 if (isTeacher) {
                     user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
                 } else {
-                    throw new NotEnrolledException("User " + username + " is not enrolled");
+                    throw new TutorException(USER_NOT_ENROLLED);
                 }
             }
         }
 
-        accessService.create(user, LocalDateTime.now(), "LOGIN");
+        logService.create(user, LocalDateTime.now(), "LOGIN");
 
         String token = JwtTokenProvider.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationResponse(token, user.getRole()));
+        return ResponseEntity.ok(new JwtAuthenticationDto(token, user.getRole()));
 
     }
 

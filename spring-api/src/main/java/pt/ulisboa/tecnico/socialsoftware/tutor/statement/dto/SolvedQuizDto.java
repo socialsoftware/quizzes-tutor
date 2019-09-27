@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
@@ -23,7 +24,11 @@ public class SolvedQuizDto implements Serializable {
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
         this.answers = quizAnswer.getQuestionAnswers().stream()
-                .map(questionAnswer -> new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), questionAnswer.getOption().getId(), questionAnswer.getTimeTaken()))
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                .map(questionAnswer -> {
+                    Integer optionId = (questionAnswer.getOption() != null) ? questionAnswer.getOption().getId() : null;
+                    return new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), optionId, questionAnswer.getTimeTaken());
+                })
                 .collect(Collectors.toList());
         this.correctAnswers = quizAnswer.getQuiz()
                 .getQuizQuestions().stream()

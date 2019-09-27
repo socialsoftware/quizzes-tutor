@@ -49,18 +49,20 @@
               <datetime
                 type="datetime"
                 v-model="quiz.availableDate"
-                id="startDate"
+                id="availableDate"
               >
-                <label for="startDate" slot="before">Available Date:</label>
+                <label for="availableDate" slot="before">Available Date:</label>
               </datetime>
             </v-flex>
             <v-flex xs12 sm6 md4 class="text-left">
               <datetime
                 type="datetime"
                 v-model="quiz.conclusionDate"
-                id="startDate"
+                id="conclusionDate"
               >
-                <label for="startDate" slot="before">Conclusion Date:</label>
+                <label for="conclusionDate" slot="before"
+                  >Conclusion Date:</label
+                >
               </datetime>
             </v-flex>
             <v-flex xs12 sm6 md4>

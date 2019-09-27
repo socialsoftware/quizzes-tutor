@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -27,10 +28,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.NOT_ENOUGH_QUESTIONS;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.NOT_ENOUGH_QUESTIONS;
 
 @Service
 public class StatementService {
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -48,14 +52,16 @@ public class StatementService {
     EntityManager entityManager;
 
     @Transactional
-    public StatementQuizDto generateStudentQuiz(User user, int quizSize) {
+    public StatementQuizDto generateStudentQuiz(String username, int quizSize) {
+        User user = userRepository.findByUsername(username);
+
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
         List<Question> activeQuestions = questionRepository.getActiveQuestions();
 
         if (activeQuestions.size() < quizSize) {
-            throw new TutorException(NOT_ENOUGH_QUESTIONS, Integer.toString(activeQuestions.size()));
+            throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
         // TODO: to include knowhow about the student in the future
@@ -70,7 +76,8 @@ public class StatementService {
     }
 
     @Transactional
-    public List<StatementQuizDto> getAvailableQuizzes(User user) {
+    public List<StatementQuizDto> getAvailableQuizzes(String username) {
+        User user = userRepository.findByUsername(username);
 
         LocalDateTime now = LocalDateTime.now();
 
@@ -83,7 +90,7 @@ public class StatementService {
                 .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-                    if (quiz.getConclusionDate().isBefore(now)) {
+                    if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isBefore(now)) {
                         quizAnswer.setCompleted(true);
                     }
                     entityManager.persist(quizAnswer);
@@ -97,7 +104,9 @@ public class StatementService {
     }
 
     @Transactional
-    public List<SolvedQuizDto> getSolvedQuizzes(User user) {
+    public List<SolvedQuizDto> getSolvedQuizzes(String username) {
+        User user = userRepository.findByUsername(username);
+
         return user.getQuizAnswers().stream()
                 .filter(QuizAnswer::getCompleted)
                 .map(SolvedQuizDto::new)
@@ -106,7 +115,9 @@ public class StatementService {
     }
 
     @Transactional
-    public CorrectAnswersDto solveQuiz(User user, @Valid @RequestBody ResultAnswersDto answers) {
+    public CorrectAnswersDto solveQuiz(String username, @Valid @RequestBody ResultAnswersDto answers) {
+        User user = userRepository.findByUsername(username);
+
         return answerService.submitQuestionsAnswers(user, answers);
     }
 }

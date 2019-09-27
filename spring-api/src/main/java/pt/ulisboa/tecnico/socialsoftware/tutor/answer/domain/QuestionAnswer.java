@@ -28,10 +28,12 @@ public class QuestionAnswer implements Serializable {
     @JoinColumn(name = "option_id")
     private Option option;
 
+    private Integer sequence;
+
     public QuestionAnswer() {
     }
 
-    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, Option option){
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, Option option, int sequence){
         this.timeTaken = timeTaken;
         this.quizAnswer = quizAnswer;
         quizAnswer.addQuestionAnswer(this);
@@ -41,6 +43,7 @@ public class QuestionAnswer implements Serializable {
         if (option != null) {
             option.addQuestionAnswer(this);
         }
+        this.sequence = sequence;
 
         changeDifficulty();
     }
@@ -100,4 +103,11 @@ public class QuestionAnswer implements Serializable {
         quizQuestion.getQuestion().addAnswer(this);
     }
 
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 }

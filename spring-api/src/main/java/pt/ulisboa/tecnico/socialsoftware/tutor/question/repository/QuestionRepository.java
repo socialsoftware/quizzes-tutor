@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.DoubleStream;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {

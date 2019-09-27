@@ -11,6 +11,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.Calendar;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.DUPLICATE_USER;
+
 @Service
 public class UserService {
     @Autowired
@@ -35,7 +37,7 @@ public class UserService {
     @Transactional
     public User create(String name, String username, User.Role role) {
         if (findByUsername(username) != null) {
-            throw new TutorException(TutorException.ExceptionError.DUPLICATE_USER, username);
+            throw new TutorException(DUPLICATE_USER, username);
         }
         Calendar calendar = Calendar.getInstance();
 

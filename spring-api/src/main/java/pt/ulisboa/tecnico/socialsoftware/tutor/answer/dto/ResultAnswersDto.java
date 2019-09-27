@@ -10,9 +10,6 @@ public class ResultAnswersDto implements Serializable {
     private List<ResultAnswerDto> answers;
     private LocalDateTime answerDate;
 
-    public ResultAnswersDto(){
-    }
-
     public Integer getQuizAnswerId() {
         return quizAnswerId;
     }

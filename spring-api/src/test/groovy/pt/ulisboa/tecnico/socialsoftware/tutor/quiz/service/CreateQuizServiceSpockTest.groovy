@@ -4,11 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
@@ -99,7 +100,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -114,7 +115,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -129,7 +130,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -144,7 +145,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 

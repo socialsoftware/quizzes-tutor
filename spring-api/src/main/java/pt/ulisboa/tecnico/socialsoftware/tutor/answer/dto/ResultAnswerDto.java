@@ -7,6 +7,7 @@ public class ResultAnswerDto implements Serializable {
     private Integer quizQuestionId;
     private Integer optionId;
     private Integer timeTaken;
+    private Integer sequence;
 
     public ResultAnswerDto(){
     }
@@ -41,4 +42,11 @@ public class ResultAnswerDto implements Serializable {
         this.timeTaken = timeTaken;
     }
 
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
 }

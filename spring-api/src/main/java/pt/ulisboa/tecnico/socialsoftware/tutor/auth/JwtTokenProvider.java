@@ -1,14 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.ResourceNotFoundException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
@@ -16,6 +16,8 @@ import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USERNAME_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {
@@ -64,7 +66,7 @@ public class JwtTokenProvider {
         return req.getHeader("Authorization");
     }
 
-    static Boolean validateToken(String token) {
+    static boolean validateToken(String token) {
         try {
             Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
             return true;
@@ -92,7 +94,7 @@ public class JwtTokenProvider {
     Authentication getAuthentication(String token) {
         User user = this.userRepository.findByUsername(getUsername(token));
         if (user == null) {
-            throw new ResourceNotFoundException("User " + getUsername(token) + " not found!");
+            throw new TutorException(USERNAME_NOT_FOUND, getUsername(token));
         }
         return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }

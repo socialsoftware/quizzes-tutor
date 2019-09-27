@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.TOPICS_IMPORT_ERROR;
+
 public class TopicsXmlImport {
 	private QuestionService questionService;
 
@@ -28,15 +30,15 @@ public class TopicsXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File not found");
+			throw new TutorException(TOPICS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(TOPICS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(TOPICS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.TOPICS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(TOPICS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		importTopics(doc);
@@ -76,7 +78,7 @@ public class TopicsXmlImport {
 
 		questionDto.getTopics().add(name);
 
-		questionService.updateQuestionTopics(questionDto.getId(), questionDto.getTopics().stream().toArray(size -> new String[size]));
+		questionService.updateQuestionTopics(questionDto.getId(), questionDto.getTopics().toArray(new String[0]));
 	}
 
 }

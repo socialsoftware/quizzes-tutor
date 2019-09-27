@@ -1,22 +1,26 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import java.time.LocalDateTime;
 
 public class QuizAnswerDto {
     private Integer id;
-    private Boolean scramble;
-    private LocalDateTime availableDate;
     private LocalDateTime answerDate;
-    private Boolean completed;
+    private boolean completed;
+    private QuizDto quiz;
+    private String username;
 
+    public QuizAnswerDto() {
+    }
 
     public QuizAnswerDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getId();
-        this.scramble = quizAnswer.getQuiz().getScramble();
-        this.availableDate = quizAnswer.getQuiz().getAvailableDate();
+        this.answerDate = quizAnswer.getAnswerDate();
         this.completed = quizAnswer.getCompleted();
+        this.quiz = new QuizDto(quizAnswer.getQuiz(), false);
+        this.username = quizAnswer.getUser().getUsername();
     }
 
     public Integer getId() {
@@ -27,22 +31,6 @@ public class QuizAnswerDto {
         this.id = id;
     }
 
-    public Boolean getScramble() {
-        return scramble;
-    }
-
-    public void setScramble(Boolean scramble) {
-        this.scramble = scramble;
-    }
-
-    public LocalDateTime getAvailableDate() {
-        return availableDate;
-    }
-
-    public void setAvailableDate(LocalDateTime availableDate) {
-        this.availableDate = availableDate;
-    }
-
     public LocalDateTime getAnswerDate() {
         return answerDate;
     }
@@ -51,11 +39,28 @@ public class QuizAnswerDto {
         this.answerDate = answerDate;
     }
 
-    public Boolean getCompleted() {
+    public boolean isCompleted() {
         return completed;
     }
 
-    public void setCompleted(Boolean completed) {
+    public void setCompleted(boolean completed) {
         this.completed = completed;
     }
+
+    public QuizDto getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(QuizDto quiz) {
+        this.quiz = quiz;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
 }

@@ -19,7 +19,7 @@ public class Option implements Serializable {
     private Integer number;
 
     @Column(columnDefinition = "boolean default false")
-    private Boolean correct;
+    private boolean correct;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -58,11 +58,11 @@ public class Option implements Serializable {
         this.number = number;
     }
 
-    public Boolean getCorrect() {
+    public boolean getCorrect() {
         return correct;
     }
 
-    public void setCorrect(Boolean correct) {
+    public void setCorrect(boolean correct) {
         this.correct = correct;
     }
 

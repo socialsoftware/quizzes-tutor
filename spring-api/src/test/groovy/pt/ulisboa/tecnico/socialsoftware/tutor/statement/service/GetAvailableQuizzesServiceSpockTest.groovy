@@ -25,6 +25,8 @@ import java.util.stream.Collectors
 
 @DataJpaTest
 class GetAvailableQuizzesServiceSpockTest extends Specification {
+    static final USERNAME = 'username'
+
     @Autowired
     QuizService quizService
 
@@ -52,7 +54,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
     def quizQuestion
 
     def setup() {
-        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
+        user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
         given: "create a question"
         question = new Question()
         question.setNumber(1)
@@ -77,7 +79,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
 
     def 'get the quizzes for the student'() {
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(user)
+        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME)
 
         then: 'the quiz answer is created'
         quizAnswerRepository.count() == 1L
@@ -100,7 +102,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quiz.setAvailableDate(LocalDateTime.now().plusDays(1))
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(user)
+        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME)
 
         then: 'the quiz answer is not created'
         quizAnswerRepository.count() == 0L
@@ -116,7 +118,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(user)
+        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME)
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L
@@ -141,7 +143,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(user)
+        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME)
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L

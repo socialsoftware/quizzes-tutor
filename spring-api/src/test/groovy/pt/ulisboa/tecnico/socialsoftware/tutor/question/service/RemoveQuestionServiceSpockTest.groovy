@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -14,8 +15,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 @DataJpaTest
@@ -43,6 +46,9 @@ class RemoveQuestionServiceSpockTest extends Specification {
     @Autowired
     QuizQuestionRepository quizQuestionRepository
 
+    @Autowired
+    QuizRepository quizRepository
+
     def question
     def optionOK
     def optionKO
@@ -67,7 +73,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
         optionRepository.save(optionOK)
-        def options = new ArrayList<>()
+        def options = new ArrayList<Option>()
         options.add(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
@@ -91,16 +97,20 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
     def "remove a question used in a quiz"() {
         given: "a question with answers"
+        def quiz = new Quiz()
+        quizRepository.save(quiz)
         def quizQuestion = new QuizQuestion()
         quizQuestionRepository.save(quizQuestion)
         question.addQuizQuestion(quizQuestion)
+        quizQuestion.setQuiz(quiz)
+        quiz.addQuizQuestion(quizQuestion)
 
         when:
         questionService.removeQuestion(question.getId())
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getError() == TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ
+        exception.getError() == ExceptionError.QUESTION_IS_USED_IN_QUIZ
     }
 
     def "remove a question that has topics"() {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException.ExceptionError.OPTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Entity
 @Table(
@@ -42,7 +42,7 @@ public class Question implements Serializable {
     private Integer numberOfCorrect = 0;
 
     @Column(columnDefinition = "boolean default false")
-    private Boolean active = false;
+    private boolean active = false;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
@@ -68,9 +68,9 @@ public class Question implements Serializable {
         this.active = questionDto.getActive();
 
         if (questionDto.getImage() != null) {
-            Image image = new Image(questionDto.getImage());
-            setImage(image);
-            image.setQuestion(this);
+            Image img = new Image(questionDto.getImage());
+            setImage(img);
+            img.setQuestion(this);
         }
 
         int index = 0;
@@ -84,11 +84,7 @@ public class Question implements Serializable {
 
     public void remove() {
         canRemove();
-
-        getTopics().stream().forEach(topic -> {
-            topic.getQuestions().remove(this);
-        });
-
+        getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }
 
@@ -116,11 +112,11 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    public Boolean getActive() {
+    public boolean getActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -206,12 +202,10 @@ public class Question implements Serializable {
         // required because the import is done directely in the database
         if (numberOfAnswers == null || numberOfAnswers == 0) {
             numberOfAnswers = getQuizQuestions().stream()
-                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .collect(Collectors.reducing(0, e -> 1, Integer::sum));
+                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).map(e -> 1).reduce(0, Integer::sum);
             numberOfCorrect = getQuizQuestions().stream()
                     .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect() != null && questionAnswer.getOption().getCorrect())
-                    .collect(Collectors.reducing(0, e -> 1, Integer::sum));
+                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()).map(e -> 1).reduce(0, Integer::sum);
         }
 
         double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect / (double) numberOfAnswers : 0.0;
@@ -222,7 +216,7 @@ public class Question implements Serializable {
 
     public void addAnswer(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
-        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect() != null && questionAnswer.getOption().getCorrect()) {
+        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
             numberOfCorrect++;
         }
     }
@@ -233,10 +227,10 @@ public class Question implements Serializable {
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
 
-        questionDto.getOptions().stream().forEach(optionDto -> {
+        questionDto.getOptions().forEach(optionDto -> {
             Option option = getOptionById(optionDto.getId());
             if (option == null) {
-                throw new TutorException(OPTION_NOT_FOUND, optionDto.getId().toString());
+                throw new TutorException(OPTION_NOT_FOUND, optionDto.getId());
             }
             option.setContent(optionDto.getContent());
             option.setCorrect(optionDto.getCorrect());
@@ -259,18 +253,18 @@ public class Question implements Serializable {
         if (questionDto.getTitle().trim().length() == 0 ||
                 questionDto.getContent().trim().length() == 0 ||
                 questionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
-            throw new TutorException(TutorException.ExceptionError.QUESTION_MISSING_DATA, "");
+            throw new TutorException(QUESTION_MISSING_DATA);
         }
 
-        if (questionDto.getOptions().stream().filter(option -> option.getCorrect()).count() != 1) {
-            throw new TutorException(TutorException.ExceptionError.QUESTION_MULTIPLE_CORRECT_OPTIONS, "");
+        if (questionDto.getOptions().stream().filter(OptionDto::getCorrect).count() != 1) {
+            throw new TutorException(QUESTION_MULTIPLE_CORRECT_OPTIONS);
         }
 
         if (!questionDto.getOptions().stream().filter(OptionDto::getCorrect).findAny()
                 .equals(getOptions().stream().filter(Option::getCorrect).findAny())
                 && getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
                 .findAny().isPresent()) {
-            throw new TutorException(TutorException.ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS, "");
+            throw new TutorException(QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS);
         }
 
     }
@@ -278,7 +272,7 @@ public class Question implements Serializable {
     public void updateTopics(Set<Topic> newTopics) {
         Set<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic)).collect(Collectors.toSet());
 
-        toRemove.stream().forEach(topic -> {
+        toRemove.forEach(topic -> {
             this.topics.remove(topic);
             topic.getQuestions().remove(this);
         });
@@ -294,8 +288,8 @@ public class Question implements Serializable {
     }
 
     private void canRemove() {
-        if (getQuizQuestions().size() != 0) {
-            throw new TutorException(TutorException.ExceptionError.QUESTION_IS_USED_IN_QUIZ, getTitle());
+        if (!getQuizQuestions().isEmpty()) {
+            throw new TutorException(QUESTION_IS_USED_IN_QUIZ, getQuizQuestions().iterator().next().getQuiz().getTitle());
         }
     }
 

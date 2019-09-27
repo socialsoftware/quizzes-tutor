@@ -1,114 +1,178 @@
 <template>
-  <v-toolbar primary dark>
-    <v-toolbar-title class="white-">
-      <v-btn text href="/">
-        Software Architecture Quizzes
-      </v-btn></v-toolbar-title
-    >
+  <nav>
+    <v-app-bar color="primary" clipped-left>
+      <v-app-bar-nav-icon
+        @click.stop="drawer = !drawer"
+        class="hidden-md-and-up"
+      ></v-app-bar-nav-icon>
+      <v-toolbar-title class="white-text">
+        <v-btn href="/" text dark>
+          Software Architecture Quizzes
+        </v-btn></v-toolbar-title
+      >
 
-    <v-spacer></v-spacer>
+      <v-spacer></v-spacer>
 
-    <v-toolbar-items>
-      <!--v-btn v-if="isAdmin" to="/admin-management"   disabled>
+      <v-toolbar-items class="hidden-sm-and-down">
+        <!--v-btn v-if="isAdmin" to="/admin-management" text dark disabled>
           Admin Management
           <v-icon>fas fa-user</v-icon>
         </v-btn-->
 
-      <v-menu offset-y v-if="isTeacher" open-on-hover>
-        <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">
-            Management
-            <v-icon>fas fa-file-alt</v-icon>
-          </v-btn>
-        </template>
-        <v-list dense>
-          <v-list-item to="/management/questions">
-            <v-list-item-action>
-              <v-icon>question_answer</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Questions</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item to="/management/topics">
-            <v-list-item-action>
-              <v-icon>category</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Topics</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item to="/management/quizzes">
-            <v-list-item-action>
-              <v-icon>ballot</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Quizzes</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-      </v-menu>
+        <v-menu offset-y v-if="isTeacher" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Management
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/management/questions">
+              <v-list-item-action>
+                <v-icon>question_answer</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Questions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/topics">
+              <v-list-item-action>
+                <v-icon>category</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Topics</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/quizzes">
+              <v-list-item-action>
+                <v-icon>ballot</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Quizzes</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
 
-      <!--v-btn v-if="isTeacher" to="/student/stats"   disabled>
+        <!--v-btn v-if="isTeacher" to="/student/stats" text dark disabled>
           Students Stats
           <v-icon>fas fa-user</v-icon>
         </v-btn-->
 
-      <v-menu offset-y v-if="isStudent" open-on-hover>
-        <template v-slot:activator="{ on }">
-          <v-btn text v-on="on">
-            Quizzes
-            <v-icon>fas fa-file-alt</v-icon>
-          </v-btn>
-        </template>
-        <v-list dense>
-          <v-list-item to="/student/available">
+        <v-menu offset-y v-if="isStudent" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Quizzes
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/available">
+              <v-list-item-action>
+                <v-icon>assignment</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Available</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <!--v-list-item to="/student/create">
+              <v-list-item-action>
+                <v-icon>create</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item-->
+            <v-list-item to="/student/solved">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Solved</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-btn to="/student/stats" v-if="isStudent" text dark>
+          Stats
+          <v-icon>fas fa-user</v-icon>
+        </v-btn>
+
+        <v-btn v-if="isStudent" to="/achievements" text dark disabled>
+          Achievements
+          <v-icon>fas fa-user</v-icon>
+        </v-btn>
+
+        <v-btn v-if="isLoggedIn" @click="logout" text dark>
+          Logout
+          <v-icon>fas fa-sign-out-alt</v-icon>
+        </v-btn>
+
+        <v-btn v-else :href="fenix_url" text dark>
+          Login <v-icon>fas fa-sign-in-alt</v-icon>
+        </v-btn>
+      </v-toolbar-items>
+
+      <!-- Start of mobile side menu -->
+      <v-navigation-drawer
+        app
+        v-model="drawer"
+        absolute
+        dark
+        hide-overlay
+        style="overflow: initial; z-index: 20;"
+      >
+        <!-- Menu title -->
+        <v-toolbar flat>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title class="title">Menu</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-toolbar>
+
+        <!-- Menu Links -->
+        <v-list class="pt-0" dense>
+          <v-list-item to="/student/available" v-if="isStudent" exact>
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Available</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-content>Available Quizzes</v-list-item-content>
           </v-list-item>
-          <v-list-item to="/student/create" disabled>
-            <v-list-item-action>
-              <v-icon>create</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Create</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item to="/student/solved">
+
+          <v-list-item to="/student/solved" v-if="isStudent">
             <v-list-item-action>
               <v-icon>done</v-icon>
             </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Solved</v-list-item-title>
-            </v-list-item-content>
+            <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/stats" v-if="isStudent">
+            <v-list-item-action>
+              <v-icon>fas fa-user</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item @click="logout" v-if="isLoggedIn">
+            <v-list-item-action>
+              <v-icon>fas fa-sign-out-alt</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Logout</v-list-item-content>
+          </v-list-item>
+          <v-list-item :href="fenix_url" v-else>
+            <v-list-item-action>
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Login</v-list-item-content>
           </v-list-item>
         </v-list>
-      </v-menu>
+      </v-navigation-drawer>
 
-      <v-btn text to="/student/stats" v-if="isStudent">
-        Stats
-        <v-icon>fas fa-user</v-icon>
-      </v-btn>
-
-      <v-btn text v-if="isStudent" to="/achievements" disabled>
-        Achievements
-        <v-icon>fas fa-user</v-icon>
-      </v-btn>
-
-      <v-btn text v-if="isLoggedIn" @click="logout">
-        Logout
-        <v-icon>fas fa-sign-out-alt</v-icon>
-      </v-btn>
-
-      <v-btn text v-else :href="fenix_url">
-        Login <v-icon>fas fa-sign-in-alt</v-icon>
-      </v-btn>
-    </v-toolbar-items>
-  </v-toolbar>
+      <!-- End of mobile side menu -->
+    </v-app-bar>
+  </nav>
 </template>
 
 <script lang="ts">
@@ -121,6 +185,7 @@ export default class TopBar extends Vue {
     process.env.VUE_APP_FENIX_CLIENT_ID +
     "&redirect_uri=" +
     process.env.VUE_APP_FENIX_REDIRECT_URI;
+  drawer: boolean = false;
 
   get isLoggedIn() {
     return this.$store.getters.isLoggedIn;

@@ -8,9 +8,11 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -28,19 +30,23 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ANSWERS_IMPORT_ERROR;
+
 public class AnswersXmlImport {
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
 	private QuizRepository quizRepository;
+	private QuizAnswerRepository quizAnswerRepository;
 	private UserRepository userRepository;
 
 	private Map<Integer, Map<Integer,Integer>> questionMap;
 
 	public void importAnswers(InputStream inputStream, AnswerService answerService, QuestionRepository questionRepository,
-							  QuizRepository quizRepository, UserRepository userRepository) {
+							  QuizRepository quizRepository,  QuizAnswerRepository quizAnswerRepository, UserRepository userRepository) {
 		this.answerService = answerService;
 		this.questionRepository = questionRepository;
 		this.quizRepository = quizRepository;
+		this.quizAnswerRepository = quizAnswerRepository;
 		this.userRepository = userRepository;
 
 		SAXBuilder builder = new SAXBuilder();
@@ -51,15 +57,15 @@ public class AnswersXmlImport {
 			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
 			doc = builder.build(reader);
 		} catch (FileNotFoundException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found");
 		} catch (JDOMException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "Coding problem");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "Coding problem");
 		} catch (IOException e) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File type or format");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File type or format");
 		}
 
 		if (doc == null) {
-			throw new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR, "File not found ot format error");
+			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found ot format error");
 		}
 
 		loadQuestionMap();
@@ -75,13 +81,13 @@ public class AnswersXmlImport {
 	}
 
 	public void importAnswers(String answersXml, AnswerService answerService, QuestionRepository questionRepository,
-							  QuizRepository quizRepository, UserRepository userRepository) {
+							  QuizRepository quizRepository, QuizAnswerRepository quizAnswerRepository, UserRepository userRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(answersXml.getBytes());
 
-		importAnswers(stream, answerService, questionRepository, quizRepository, userRepository);
+		importAnswers(stream, answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
 	}
 
 	private void importQuizAnswers(Document doc) {
@@ -98,20 +104,22 @@ public class AnswersXmlImport {
 			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
 		}
 
-		Boolean completed = false;
+		boolean completed = false;
 		if (answerElement.getAttributeValue("completed") != null) {
-			completed = Boolean.valueOf(answerElement.getAttributeValue("completed"));
+			completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
 		}
 
 		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("quizNumber"));
 		Quiz quiz = quizRepository.findByNumber(quizNumber)
-				.orElseThrow(() -> new TutorException(TutorException.ExceptionError.ANSWERS_IMPORT_ERROR,
+				.orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
 						"quiz number does not exist " + quizNumber));
 
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
 		User user = userRepository.findByNumber(number);
 
-		QuizAnswer quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId());
+		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
+		System.out.println(quizAnswerDto.getId());
+		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId()).get();
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 
@@ -133,8 +141,9 @@ public class AnswersXmlImport {
 				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
 			}
 
-			Integer sequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
-			Integer quizQuestionId = mapQuizQuestionId.get(sequence);
+			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue("sequence"));
+			Integer questionSequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
+			Integer quizQuestionId = mapQuizQuestionId.get(questionSequence);
 
 			Integer optionId = null;
 			if (questionAnswerElement.getChild("option") != null) {
@@ -145,6 +154,7 @@ public class AnswersXmlImport {
 
 			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();
 			resultAnswerDto.setTimeTaken(timeTaken);
+            resultAnswerDto.setSequence(answerSequence);
 			resultAnswerDto.setQuizQuestionId(quizQuestionId);
 			resultAnswerDto.setOptionId(optionId);
 			resultAnswersDto.getAnswers().add(resultAnswerDto);

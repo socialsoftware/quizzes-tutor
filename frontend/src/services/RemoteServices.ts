@@ -13,7 +13,7 @@ interface AuthResponse {
 }
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 10000;
+httpClient.defaults.timeout = 20000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
@@ -23,8 +23,8 @@ export default class RemoteServices {
       .then(response => {
         return response.data as AuthResponse;
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -38,8 +38,8 @@ export default class RemoteServices {
       .then(response => {
         return response.data as StudentStats;
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -55,8 +55,8 @@ export default class RemoteServices {
           return new Question(question);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -72,8 +72,8 @@ export default class RemoteServices {
           return new Question(question);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -87,8 +87,8 @@ export default class RemoteServices {
       .then(response => {
         return response.data as Question;
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -99,8 +99,8 @@ export default class RemoteServices {
           Authorization: Store.getters.getToken
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -111,8 +111,8 @@ export default class RemoteServices {
           Authorization: Store.getters.getToken
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -123,8 +123,8 @@ export default class RemoteServices {
           Authorization: Store.getters.getToken
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -141,8 +141,8 @@ export default class RemoteServices {
       .then(response => {
         return response.data as string;
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -164,8 +164,8 @@ export default class RemoteServices {
       .then(response => {
         return response.data as string[];
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -179,8 +179,8 @@ export default class RemoteServices {
       .then(response => {
         return new StatementQuiz(response.data);
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -196,8 +196,8 @@ export default class RemoteServices {
           return new StatementQuiz(statementQuiz);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -213,8 +213,8 @@ export default class RemoteServices {
           return new SolvedQuiz(solvedQuiz);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -230,8 +230,8 @@ export default class RemoteServices {
           return new StatementCorrectAnswer(answer);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -243,8 +243,8 @@ export default class RemoteServices {
           "Content-Type": "text/plain"
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -256,8 +256,8 @@ export default class RemoteServices {
           "Content-Type": "text/plain"
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -268,8 +268,8 @@ export default class RemoteServices {
           Authorization: Store.getters.getToken
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -282,11 +282,11 @@ export default class RemoteServices {
       })
       .then(response => {
         return response.data.map((quiz: any) => {
-          return quiz as Quiz;
+          return new Quiz(quiz);
         });
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -297,8 +297,8 @@ export default class RemoteServices {
           Authorization: Store.getters.getToken
         }
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -310,10 +310,10 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as Quiz;
+        return new Quiz(response.data);
       })
-      .catch(error => {
-        throw Error(this.errorMessage(error));
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -326,10 +326,10 @@ export default class RemoteServices {
           }
         })
         .then(response => {
-          return response.data as Quiz;
+          return new Quiz(response.data);
         })
-        .catch(error => {
-          throw Error(this.errorMessage(error));
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
         });
     } else {
       return httpClient
@@ -341,19 +341,20 @@ export default class RemoteServices {
         .then(response => {
           return response.data as Quiz;
         })
-        .catch(error => {
-          throw Error(this.errorMessage(error));
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
         });
     }
   }
 
-  static errorMessage(error: any): string {
-    if (error.code === "ECONNABORTED") {
-      return "Timeout: Can not connect to server";
+  static async errorMessage(error: any): Promise<string> {
+    if (error.message === "Network Error") {
+      return "Unable to connect to server";
+    } else if (error.message === "Request failed with status code 403") {
+      await Store.dispatch("logout");
+      return "Unauthorized access or Expired token";
     } else if (error.response) {
       return error.response.data.message;
-    } else if (error.request) {
-      return "No response received";
     } else {
       return "Error";
     }

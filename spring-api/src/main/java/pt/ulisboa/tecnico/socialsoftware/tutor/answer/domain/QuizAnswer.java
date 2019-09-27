@@ -19,17 +19,17 @@ public class QuizAnswer implements Serializable {
     @Column(name = "answer_date")
     private LocalDateTime answerDate;
 
-    private Boolean completed;
+    private boolean completed;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.LAZY)
     private Set<QuestionAnswer> questionAnswers;
 
     public QuizAnswer() {
@@ -73,11 +73,11 @@ public class QuizAnswer implements Serializable {
         this.answerDate = answerDate;
     }
 
-    public Boolean getCompleted() {
+    public boolean getCompleted() {
         return completed;
     }
 
-    public void setCompleted(Boolean completed) {
+    public void setCompleted(boolean completed) {
         this.completed = completed;
     }
 

@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -35,6 +36,9 @@ public class ImpExpService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
@@ -150,11 +154,11 @@ public class ImpExpService {
 
                 File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();
-                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository);
+                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository);
 
                 File answersFile = new File(directory.getPath() + "/" + "answers.xml");
                 AnswersXmlImport answersXmlImport = new AnswersXmlImport();
-                answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, userRepository);
+                answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
             } catch (FileNotFoundException e) {
 
             }

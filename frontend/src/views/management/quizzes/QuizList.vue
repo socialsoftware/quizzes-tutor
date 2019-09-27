@@ -129,7 +129,7 @@ import Image from "@/models/management/Image";
 @Component
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
-  quiz: Quiz = new Quiz();
+  quiz: Quiz | null = null;
   search: string = "";
   dialog: boolean = false;
   headers: object = [
@@ -182,13 +182,13 @@ export default class QuizList extends Vue {
       this.quiz = await RemoteServices.getQuiz(quizId);
       this.dialog = true;
     } catch (error) {
-      confirm(error);
+      await this.$store.dispatch("error", error);
     }
   }
 
   closeQuiz() {
     this.dialog = false;
-    this.quiz = new Quiz();
+    this.quiz = null;
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
@@ -205,7 +205,7 @@ export default class QuizList extends Vue {
         await RemoteServices.deleteQuiz(quizId);
         this.$emit("deleteQuiz", quizId);
       } catch (error) {
-        confirm(error);
+        await this.$store.dispatch("error", error);
       }
     }
   }
