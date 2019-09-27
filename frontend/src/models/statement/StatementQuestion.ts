@@ -8,12 +8,14 @@ export default class StatementQuestion {
   options!: StatementOption[];
   image: Image | null = null;
 
-  constructor(jsonObj: StatementQuestion) {
-    this.quizQuestionId = jsonObj.quizQuestionId;
-    this.content = jsonObj.content;
-    if (jsonObj.options) {
-      this.options = _.shuffle(jsonObj.options);
+  constructor(jsonObj?: StatementQuestion) {
+    if (jsonObj) {
+      this.quizQuestionId = jsonObj.quizQuestionId;
+      this.content = jsonObj.content;
+      if (jsonObj.options) {
+        this.options = _.shuffle(jsonObj.options);
+      }
+      this.image = jsonObj.image;
     }
-    this.image = jsonObj.image;
   }
 }

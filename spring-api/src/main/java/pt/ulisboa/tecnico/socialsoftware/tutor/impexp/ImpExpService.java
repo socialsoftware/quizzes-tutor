@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
@@ -50,6 +51,9 @@ public class ImpExpService {
     private QuestionService questionService;
 
     @Autowired
+    private TopicService topicService;
+
+    @Autowired
     private QuizService quizService;
 
     @Autowired
@@ -65,37 +69,49 @@ public class ImpExpService {
     public String exportAll() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         File directory = new File(exportDir);
+        FileOutputStream fos = null;
 
         String filename = "tutor-" + timeStamp + ".zip";
-        FileOutputStream fos = new FileOutputStream(directory.getPath() + "/" + filename);
-        ZipOutputStream zos = new ZipOutputStream(fos);
+        try {
+            fos = new FileOutputStream(directory.getPath() + "/" + filename);
+            ZipOutputStream zos = new ZipOutputStream(fos);
 
-        zos.putNextEntry(new ZipEntry("users.xml"));
-        InputStream in = generateUsersInputStream();
-        copyToZipStream(zos, in);
-        zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("users.xml"));
+            InputStream in = generateUsersInputStream();
+            copyToZipStream(zos, in);
+            zos.closeEntry();
 
-        zos.putNextEntry(new ZipEntry("questions.xml"));
-        in = generateQuestionsInputStream();
-        copyToZipStream(zos, in);
-        zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("questions.xml"));
+            in = generateQuestionsInputStream();
+            copyToZipStream(zos, in);
+            zos.closeEntry();
 
-        zos.putNextEntry(new ZipEntry("topics.xml"));
-        in = generateTopicsInputStream();
-        copyToZipStream(zos, in);
-        zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("topics.xml"));
+            in = generateTopicsInputStream();
+            copyToZipStream(zos, in);
+            zos.closeEntry();
 
-        zos.putNextEntry(new ZipEntry("quizzes.xml"));
-        in = generateQuizzesInputStream();
-        copyToZipStream(zos, in);
-        zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("quizzes.xml"));
+            in = generateQuizzesInputStream();
+            copyToZipStream(zos, in);
+            zos.closeEntry();
 
-        zos.putNextEntry(new ZipEntry("answers.xml"));
-        in = generateAnswersInputStream();
-        copyToZipStream(zos, in);
-        zos.closeEntry();
+            zos.putNextEntry(new ZipEntry("answers.xml"));
+            in = generateAnswersInputStream();
+            copyToZipStream(zos, in);
+            zos.closeEntry();
+            zos.close();
+        }
+        catch (IOException ex)
+        {
+            // log/report exception, then delete the invalid file
+            IOUtils.closeQuietly(fos);
+        }
+        finally
+        {
+            IOUtils.closeQuietly(fos);
+        }
 
-        zos.close();
 
         return filename;
     }
@@ -150,7 +166,7 @@ public class ImpExpService {
 
                 File topicsFile = new File(directory.getPath() + "/" + "topics.xml");
                 TopicsXmlImport topicsXmlImport = new TopicsXmlImport();
-                topicsXmlImport.importTopics(new FileInputStream(topicsFile), questionService);
+                topicsXmlImport.importTopics(new FileInputStream(topicsFile), topicService, questionService);
 
                 File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();

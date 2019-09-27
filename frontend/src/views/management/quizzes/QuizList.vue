@@ -173,10 +173,6 @@ export default class QuizList extends Vue {
     }
   ];
 
-  constructor() {
-    super();
-  }
-
   async showQuiz(quizId: number) {
     try {
       this.quiz = await RemoteServices.getQuiz(quizId);

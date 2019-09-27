@@ -78,10 +78,6 @@ export default class ResultComponent extends Vue {
   hover: boolean = false;
   optionLetters: string[] = ["A", "B", "C", "D"];
 
-  constructor() {
-    super();
-  }
-
   @Emit()
   increaseOrder() {
     return 1;

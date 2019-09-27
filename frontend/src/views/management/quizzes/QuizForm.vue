@@ -376,10 +376,6 @@ export default class QuizForm extends Vue {
     }
   ];
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
   async created() {
     try {

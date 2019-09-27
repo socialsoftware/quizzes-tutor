@@ -59,10 +59,6 @@ export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   order: number = 0;
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {

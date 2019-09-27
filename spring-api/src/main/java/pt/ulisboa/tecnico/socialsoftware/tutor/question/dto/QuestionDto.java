@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class QuestionDto implements Serializable {
     private boolean active;
     private List<OptionDto> options;
     private ImageDto image;
-    private List<String> topics;
+    private List<TopicDto> topics;
     private Integer sequence;
 
     public QuestionDto() {
@@ -38,7 +39,7 @@ public class QuestionDto implements Serializable {
             this.image = new ImageDto(question.getImage());
         }
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
-        this.topics = question.getTopics().stream().map(Topic::getName).sorted().collect(Collectors.toList());
+        this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -125,11 +126,15 @@ public class QuestionDto implements Serializable {
         this.title = title;
     }
 
-    public List<String> getTopics() {
+    public boolean isActive() {
+        return active;
+    }
+
+    public List<TopicDto> getTopics() {
         return topics;
     }
 
-    public void setTopics(List<String> topics) {
+    public void setTopics(List<TopicDto> topics) {
         this.topics = topics;
     }
 

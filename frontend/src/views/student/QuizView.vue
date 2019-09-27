@@ -64,10 +64,6 @@ export default class QuizView extends Vue {
   startTime: Date = new Date();
   order: number = 0;
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     if (this.statementManager.isEmpty()) {

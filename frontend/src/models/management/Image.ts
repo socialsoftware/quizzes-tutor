@@ -1,9 +1,11 @@
 export default class Image {
-  url: string;
-  width: number | null;
+  url!: string;
+  width: number | null = null;
 
-  constructor(url: string, width: number | null) {
-    this.url = url;
-    this.width = width;
+  constructor(jsonObj?: Image) {
+    if (jsonObj) {
+      this.url = jsonObj.url;
+      this.width = jsonObj.width;
+    }
   }
 }

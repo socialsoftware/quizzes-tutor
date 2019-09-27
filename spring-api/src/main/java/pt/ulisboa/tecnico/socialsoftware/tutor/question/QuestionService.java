@@ -7,12 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
@@ -22,7 +20,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
 
 @Service
 public class QuestionService {
@@ -108,52 +106,10 @@ public class QuestionService {
     }
 
     @Transactional
-    public List<String> findAllTopics() {
-        return topicRepository.findAll().stream().map(Topic::getName).sorted().collect(Collectors.toList());
-    }
-
-    @Transactional
-    public void createTopic(String name) {
-        Topic topic = topicRepository.findByName(name);
-
-        if (topic != null) {
-            throw new TutorException(DUPLICATE_TOPIC, name);
-        }
-
-        topic = new Topic(name);
-
-        entityManager.persist(topic);
-    }
-
-    @Transactional
-    public void updateTopic(String oldName, String newName) {
-        Topic topic = topicRepository.findByName(oldName);
-
-        if (topic == null) {
-            throw new TutorException(TOPIC_NOT_FOUND, oldName);
-        }
-
-        topic.setName(newName);
-    }
-
-    @Transactional
-    public void removeTopic(String name) {
-        Topic topic = topicRepository.findByName(name);
-
-        if (topic == null) {
-            throw new TutorException(TOPIC_NOT_FOUND, name);
-        }
-
-        topic.remove();
-
-        entityManager.remove(topic);
-    }
-
-    @Transactional
-    public void updateQuestionTopics(Integer questionId, String[] topics) {
+    public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
-        question.updateTopics(Arrays.stream(topics).map(name -> topicRepository.findByName(name)).collect(Collectors.toSet()));
+        question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findByName(topicDto.getName())).collect(Collectors.toSet()));
     }
 
     public String exportQuestions() {
@@ -167,20 +123,6 @@ public class QuestionService {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 
         xmlImporter.importQuestions(questionsXML, this);
-    }
-
-    @Transactional
-    public String exportTopics() {
-        TopicsXmlExport xmlExport = new TopicsXmlExport();
-
-        return xmlExport.export(topicRepository.findAll());
-    }
-
-    @Transactional
-    public void importTopics(String topicsXML) {
-        TopicsXmlImport xmlImporter = new TopicsXmlImport();
-
-        xmlImporter.importTopics(topicsXML, this);
     }
 }
 

@@ -122,6 +122,7 @@ export default class HomeView extends Vue {
         color: white !important;
         width: 125px;
         margin: 0 auto;
+        font: normal normal 400 normal 14px / 21px Roboto, sans-serif;
       }
     }
   }

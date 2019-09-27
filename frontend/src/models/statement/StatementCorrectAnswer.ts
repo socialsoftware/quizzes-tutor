@@ -2,8 +2,10 @@ export default class StatementCorrectAnswer {
   quizQuestionId!: number;
   correctOptionId!: number;
 
-  constructor(answer: StatementCorrectAnswer) {
-    this.quizQuestionId = answer.quizQuestionId;
-    this.correctOptionId = answer.correctOptionId;
+  constructor(jsonObj?: StatementCorrectAnswer) {
+    if (jsonObj) {
+      this.quizQuestionId = jsonObj.quizQuestionId;
+      this.correctOptionId = jsonObj.correctOptionId;
+    }
   }
 }

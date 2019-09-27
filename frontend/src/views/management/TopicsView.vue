@@ -54,12 +54,12 @@
     >
       <template slot="items" slot-scope="props">
         <tr>
-          <td class="text-left">{{ props.item }}</td>
+          <td class="text-left">{{ props.item.name }}</td>
           <td>
-            <v-icon small class="mr-2" @click="editTopic(props.item)"
+            <v-icon small class="mr-2" @click="editTopic(props.item.name)"
               >edit</v-icon
             >
-            <v-icon small class="mr-2" @click="deleteTopic(props.item)"
+            <v-icon small class="mr-2" @click="deleteTopic(props.item.name)"
               >delete</v-icon
             >
           </td>
@@ -72,17 +72,18 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
+import { Topic } from "@/models/management/Topic";
 
 @Component
 export default class TopicsView extends Vue {
-  topics: String[] = [];
+  topics: Topic[] = [];
   editedTopic: string | null = null;
   oldTopic: string | null = null;
   error: string | null = null;
   dialog: boolean = false;
   search: string = "";
   headers: object = [
-    { text: "Topic", value: "topic", align: "left", width: "50%" },
+    { text: "Topic", value: "name", align: "left", width: "50%" },
     {
       text: "Actions",
       value: "action",
@@ -92,12 +93,8 @@ export default class TopicsView extends Vue {
     }
   ];
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     try {
       this.topics = await RemoteServices.getTopics();
     } catch (error) {

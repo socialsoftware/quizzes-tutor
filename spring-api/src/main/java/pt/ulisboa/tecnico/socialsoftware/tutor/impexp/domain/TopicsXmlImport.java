@@ -8,8 +8,10 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -18,9 +20,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 public class TopicsXmlImport {
 	private QuestionService questionService;
+    private TopicService topicService;
 
-	public void importTopics(InputStream inputStream, QuestionService questionService) {
-		this.questionService = questionService;
+	public void importTopics(InputStream inputStream, TopicService topicService, QuestionService questionService) {
+		this.topicService = topicService;
+        this.questionService = questionService;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
@@ -44,13 +48,13 @@ public class TopicsXmlImport {
 		importTopics(doc);
 	}
 
-	public void importTopics(String topicsXml, QuestionService questionService) {
+	public void importTopics(String topicsXml, TopicService topicService, QuestionService questionService) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(topicsXml.getBytes());
 
-		importTopics(stream, questionService);
+		importTopics(stream, topicService, questionService);
 	}
 
 	private void importTopics(Document doc) {
@@ -64,7 +68,7 @@ public class TopicsXmlImport {
 	private void importTopic(Element topicElement) {
 		String name = topicElement.getAttributeValue("name");
 
-		questionService.createTopic(name);
+		topicService.createTopic(name);
 
 		for (Element questionElement: topicElement.getChild("questions").getChildren("question")) {
 			importQuestion(questionElement, name);
@@ -75,10 +79,12 @@ public class TopicsXmlImport {
 		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
 
 		QuestionDto questionDto = questionService.findQuestionByNumber(number);
+        TopicDto topicDto = new TopicDto();
+        topicDto.setName(name);
 
-		questionDto.getTopics().add(name);
+		questionDto.getTopics().add(topicDto);
 
-		questionService.updateQuestionTopics(questionDto.getId(), questionDto.getTopics().toArray(new String[0]));
+		questionService.updateQuestionTopics(questionDto.getId(), questionDto.getTopics().toArray(new TopicDto[0]));
 	}
 
 }

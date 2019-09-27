@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -16,10 +17,10 @@ class RemoveTopicServiceSpockTest extends Specification {
     private static final String TOPIC_ONE = 'nameOne'
     private static final String TOPIC_TWO = 'nameTwo'
     private static final String TOPIC_THREE = 'nameThree'
-    private static final Integer NUMBER = 1;
+    private static final Integer NUMBER = 1
 
     @Autowired
-    QuestionService questionService
+    TopicService topicService
 
     @Autowired
     QuestionRepository questionRepository
@@ -51,7 +52,7 @@ class RemoveTopicServiceSpockTest extends Specification {
 
     def "remove topic"() {
         when:
-        questionService.removeTopic(TOPIC_ONE)
+        topicService.removeTopic(TOPIC_ONE)
 
         then:
         topicOne.getQuestions().size() == 0
@@ -62,10 +63,10 @@ class RemoveTopicServiceSpockTest extends Specification {
 
     def "remove topic has not question"() {
         when:
-        questionService.removeTopic(TOPIC_THREE)
+        topicService.removeTopic(TOPIC_THREE)
 
         then:
-        topicRepository.findAll().size() == 2L
+        topicRepository.findAll().size() == 2
         topicOne.getQuestions().size() == 1
         topicTwo.getQuestions().size() == 1
         question.getTopics().size() == 2
@@ -75,10 +76,13 @@ class RemoveTopicServiceSpockTest extends Specification {
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
-
         @Bean
         QuestionService questionService() {
             return new QuestionService()
+        }
+        @Bean
+        TopicService topicService() {
+            return new TopicService()
         }
     }
 

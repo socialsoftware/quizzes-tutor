@@ -6,6 +6,7 @@ import Store from "../store";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
+import { Topic } from "@/models/management/Topic";
 
 interface AuthResponse {
   token: string;
@@ -146,7 +147,7 @@ export default class RemoteServices {
       });
   }
 
-  static updateQuestionTopics(questionId: number, topics: string[]) {
+  static updateQuestionTopics(questionId: number, topics: Topic[]) {
     return httpClient.put("/questions/" + questionId + "/topics", topics, {
       headers: {
         Authorization: Store.getters.getToken
@@ -154,7 +155,7 @@ export default class RemoteServices {
     });
   }
 
-  static getTopics(): Promise<string[]> {
+  static getTopics(): Promise<Topic[]> {
     return httpClient
       .get("/topics", {
         headers: {
@@ -162,7 +163,9 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as string[];
+        return response.data.map((topic: any) => {
+          return new Topic(topic);
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -239,8 +242,7 @@ export default class RemoteServices {
     return httpClient
       .post("/topics/", topic, {
         headers: {
-          Authorization: Store.getters.getToken,
-          "Content-Type": "text/plain"
+          Authorization: Store.getters.getToken
         }
       })
       .catch(async error => {
@@ -252,8 +254,7 @@ export default class RemoteServices {
     return httpClient
       .put("/topics/" + topic, newName, {
         headers: {
-          Authorization: Store.getters.getToken,
-          "Content-Type": "text/plain"
+          Authorization: Store.getters.getToken
         }
       })
       .catch(async error => {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -119,7 +120,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}/topics")
-    public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody String[] topics) {
+    public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         logger.debug("updateQuestionTopics  questionId: {}: , topics: {}", questionId, Arrays.toString(topics));
 
         questionService.updateQuestionTopics(questionId, topics);

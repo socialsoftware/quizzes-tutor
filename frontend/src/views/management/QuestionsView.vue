@@ -153,9 +153,34 @@
               filled
               chips
               multiple
+              item-text="name"
+              item-value="name"
               @change="saveTopics(props.item.id)"
             >
               <!-- TODO @focus="getSelectedTopics(props.item.id)"-->
+              <template v-slot:selection="data">
+                <v-chip
+                  v-bind="data.attrs"
+                  :input-value="data.selected"
+                  close
+                  @click="data.select"
+                  @click:close="remove(data.item)"
+                >
+                  {{ data.item.name }}
+                </v-chip>
+              </template>
+              <template v-slot:item="data">
+                <template v-if="typeof data.item !== 'object'">
+                  <v-list-item-content v-text="data.item"></v-list-item-content>
+                </template>
+                <template v-else>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      v-html="data.item.name"
+                    ></v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </template>
             </v-autocomplete>
           </td>
           <td>{{ props.item.difficulty }}</td>
@@ -239,6 +264,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
+import { Topic } from "@/models/management/Topic";
 
 @Component
 export default class QuestionsView extends Vue {
@@ -247,7 +273,7 @@ export default class QuestionsView extends Vue {
   editedId: number = -1;
   error: string | null = null;
   dialog: boolean = false;
-  topics: string[] = [];
+  topics: Topic[] = [];
   showQuestion: boolean = false;
   questionToShow: Question | null | undefined = null;
   search: string = "";
@@ -280,14 +306,11 @@ export default class QuestionsView extends Vue {
     }
   ];
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     try {
       this.topics = await RemoteServices.getTopics();
+      this.topics.forEach(topic => console.log(topic.name));
       this.questions = await RemoteServices.getQuestions();
     } catch (error) {
       await this.$store.dispatch("error", error);
@@ -381,7 +404,8 @@ export default class QuestionsView extends Vue {
           target.files[0],
           questionId
         );
-        question.image = new Image(imageURL, null);
+        question.image = new Image();
+        question.image.url = imageURL;
         confirm("Image " + imageURL + " was uploaded!");
       } catch (error) {
         await this.$store.dispatch("error", error);

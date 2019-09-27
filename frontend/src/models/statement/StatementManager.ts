@@ -28,8 +28,11 @@ export default class StatementManager {
     this.statementQuiz = await RemoteServices.getQuizStatement(params);
 
     this.answers = this.statementQuiz.questions.map(
-      (question: StatementQuestion) =>
-        new StatementAnswer(question.quizQuestionId)
+      (question: StatementQuestion) => {
+        let answer = new StatementAnswer();
+        answer.quizQuestionId = question.quizQuestionId;
+        return answer;
+      }
     );
   }
 

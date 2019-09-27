@@ -33,10 +33,6 @@ export default class QuizzesView extends Vue {
   quiz: Quiz | null = null;
   editMode: boolean = false;
 
-  constructor() {
-    super();
-  }
-
   // noinspection JSUnusedGlobalSymbols
   async created() {
     try {

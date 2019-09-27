@@ -4,10 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
@@ -20,6 +21,9 @@ class ImportExportTopicsSpockTest extends Specification {
 
     @Autowired
     QuestionService questionService
+
+    @Autowired
+    TopicService topicService
 
     @Autowired
     TopicRepository topicRepository
@@ -39,8 +43,8 @@ class ImportExportTopicsSpockTest extends Specification {
 
         question = questionService.createQuestion(question)
 
-        questionService.createTopic(TOPIC_ONE)
-        questionService.createTopic(TOPIC_TWO)
+        topicService.createTopic(TOPIC_ONE)
+        topicService.createTopic(TOPIC_TWO)
 
         String[] topics = [TOPIC_ONE, TOPIC_TWO]
         questionService.updateQuestionTopics(question.getId(), topics)
@@ -48,13 +52,13 @@ class ImportExportTopicsSpockTest extends Specification {
 
     def 'export and import topics'() {
         given: 'a xml with questions'
-        def topicsXml = questionService.exportTopics()
+        def topicsXml = topicService.exportTopics()
         and: 'delete topics'
-        questionService.removeTopic(TOPIC_ONE)
-        questionService.removeTopic(TOPIC_TWO)
+        topicService.removeTopic(TOPIC_ONE)
+        topicService.removeTopic(TOPIC_TWO)
 
         when:
-        questionService.importTopics(topicsXml)
+        topicService.importTopics(topicsXml)
 
         then:
         topicRepository.findAll().size() == 2
@@ -75,11 +79,14 @@ class ImportExportTopicsSpockTest extends Specification {
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
-
         @Bean
         QuestionService questionService() {
             return new QuestionService()
         }
-    }
 
+        @Bean
+        TopicService topicService() {
+            return new TopicService()
+        }
+    }
 }
