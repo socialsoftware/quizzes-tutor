@@ -238,7 +238,7 @@ export default class RemoteServices {
       });
   }
 
-  static createTopic(topic: string) {
+  static createTopic(topic: Topic) {
     return httpClient
       .post("/topics/", topic, {
         headers: {
@@ -250,9 +250,9 @@ export default class RemoteServices {
       });
   }
 
-  static updateTopic(topic: string, newName: string) {
+  static updateTopic(topic: Topic) {
     return httpClient
-      .put("/topics/" + topic, newName, {
+      .put("/topics/" + topic.id, topic, {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -262,9 +262,9 @@ export default class RemoteServices {
       });
   }
 
-  static deleteTopic(topic: string) {
+  static deleteTopic(topic: Topic) {
     return httpClient
-      .delete("/topics/" + topic, {
+      .delete("/topics/" + topic.id, {
         headers: {
           Authorization: Store.getters.getToken
         }

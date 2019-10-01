@@ -3,6 +3,7 @@
 .DS_Store
 
 /scripts/
+scripts
 
 SQL/data.json
 spring-api/src/main/resources/static/images/questions/

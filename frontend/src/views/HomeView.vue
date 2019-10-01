@@ -75,14 +75,12 @@ export default class HomeView extends Vue {
   #home-title {
     box-sizing: border-box;
     color: rgb(255, 255, 255);
-    height: 68px;
     min-height: auto;
     min-width: auto;
     text-align: center;
     text-decoration: none solid rgb(255, 255, 255);
     text-rendering: optimizelegibility;
     text-size-adjust: 100%;
-    width: 459.844px;
     column-rule-color: rgb(255, 255, 255);
     perspective-origin: 229.922px 34px;
     transform-origin: 229.922px 34px;

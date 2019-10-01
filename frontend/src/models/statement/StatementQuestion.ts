@@ -4,18 +4,24 @@ import { _ } from "vue-underscore";
 
 export default class StatementQuestion {
   quizQuestionId!: number;
-  content!: string | null;
-  options!: StatementOption[];
+  content!: string;
   image: Image | null = null;
+
+  options: StatementOption[] = [];
 
   constructor(jsonObj?: StatementQuestion) {
     if (jsonObj) {
       this.quizQuestionId = jsonObj.quizQuestionId;
       this.content = jsonObj.content;
-      if (jsonObj.options) {
-        this.options = _.shuffle(jsonObj.options);
-      }
       this.image = jsonObj.image;
+
+      if (jsonObj.options) {
+        this.options = _.shuffle(
+          jsonObj.options.map(
+            (option: StatementOption) => new StatementOption(option)
+          )
+        );
+      }
     }
   }
 }

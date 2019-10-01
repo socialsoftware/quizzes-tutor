@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card class="table">
     <v-card-title>
       <v-flex xs12 sm6 md6>
         <v-text-field
@@ -20,10 +20,6 @@
           <v-card-title>
             <span class="headline">{{ formTitle() }}</span>
           </v-card-title>
-
-          <p class="red--text" v-if="error">
-            {{ error }}
-          </p>
 
           <v-card-text v-if="editedItem">
             <v-container grid-list-md fluid>
@@ -137,95 +133,66 @@
       :items-per-page="10"
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <tr>
-          <td
-            class="text-left"
-            @click="props.expanded = !props.expanded"
-            v-html="
-              convertMarkDownNoFigure(props.item.content, props.item.image)
-            "
-          ></td>
-          <td class="text-left">
-            <v-autocomplete
-              v-model="props.item.topics"
-              :items="topics"
-              filled
-              chips
-              multiple
-              item-text="name"
-              item-value="name"
-              @change="saveTopics(props.item.id)"
-            >
-              <!-- TODO @focus="getSelectedTopics(props.item.id)"-->
-              <template v-slot:selection="data">
-                <v-chip
-                  v-bind="data.attrs"
-                  :input-value="data.selected"
-                  close
-                  @click="data.select"
-                  @click:close="remove(data.item)"
-                >
-                  {{ data.item.name }}
-                </v-chip>
-              </template>
-              <template v-slot:item="data">
-                <template v-if="typeof data.item !== 'object'">
-                  <v-list-item-content v-text="data.item"></v-list-item-content>
-                </template>
-                <template v-else>
-                  <v-list-item-content>
-                    <v-list-item-title
-                      v-html="data.item.name"
-                    ></v-list-item-title>
-                  </v-list-item-content>
-                </template>
-              </template>
-            </v-autocomplete>
-          </td>
-          <td>{{ props.item.difficulty }}</td>
-          <td>{{ props.item.numberOfAnswers }}</td>
-          <td class="text-left">{{ props.item.title }}</td>
-          <td class="text-left">
-            <v-btn text small @click="switchActive(props.item.id)">
-              <span v-if="props.item.active">Enabled</span
-              ><span v-else>Disabled</span>
-            </v-btn>
-          </td>
-          <td class="text-center">
-            <label>
-              <!--suppress JSUnresolvedVariable -->
-              <input
-                type="file"
-                style="display:none"
-                @change="handleFileUpload($event, props.item.id)"
-                accept="image/*"
-                class="input-file"
-              />Upload</label
-            >
-            <!-- <v-file-input
-              @change="handleFileUpload($event, props.item.id)"
-              accept="image/*"
-              label="File input">Upload</v-file-input> -->
-          </td>
-          <td>
-            <v-icon
-              small
-              class="mr-2"
-              @click="openShowQuestionDialog(props.item.id)"
-              >visibility</v-icon
-            >
-            <v-icon small class="mr-2" @click="editItem(props.item.id)"
-              >edit</v-icon
-            >
-            <v-icon small class="mr-2" @click="duplicateItem(props.item.id)"
-              >cached</v-icon
-            >
-            <v-icon small class="mr-2" @click="deleteItem(props.item.id)"
-              >delete</v-icon
-            >
-          </td>
-        </tr>
+      <template v-slot:item.content="{ item }">
+        <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
+      </template>
+      <template v-slot:item.topics="{ item }">
+        <v-form>
+          <v-autocomplete
+            v-model="item.topics"
+            :items="topics"
+            chips
+            multiple
+            return-object
+            item-text="name"
+            item-value="name"
+            @change="saveTopics(item.id)"
+          >
+            <template v-slot:selection="data">
+              <v-chip
+                v-bind="data.attrs"
+                :input-value="data.selected"
+                close
+                @click="data.select"
+                @click:close="remove(item.id, data.item)"
+              >
+                {{ data.item.name }}
+              </v-chip>
+            </template>
+            <template v-slot:item="data">
+              <v-list-item-content>
+                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+              </v-list-item-content>
+            </template>
+          </v-autocomplete>
+        </v-form>
+      </template>
+      <template v-slot:item.active="{ item }">
+        <v-btn text small @click="switchActive(item.id)">
+          <span v-if="item.active">Enabled</span><span v-else>Disabled</span>
+        </v-btn>
+      </template>
+      <template v-slot:item.image="{ item }">
+        <label>
+          <!--suppress JSUnresolvedVariable -->
+          <input
+            type="file"
+            style="display:none"
+            @change="handleFileUpload($event, item.id)"
+            accept="image/*"
+            class="input-file"
+          />Upload</label
+        >
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="openShowQuestionDialog(item.id)"
+          >visibility</v-icon
+        >
+        <v-icon small class="mr-2" @click="editItem(item.id)">edit</v-icon>
+        <v-icon small class="mr-2" @click="duplicateItem(item.id)"
+          >cached</v-icon
+        >
+        <v-icon small class="mr-2" @click="deleteItem(item.id)">delete</v-icon>
       </template>
       <template slot="expand" slot-scope="props">
         <v-simple-table>
@@ -310,7 +277,6 @@ export default class QuestionsView extends Vue {
   async created() {
     try {
       this.topics = await RemoteServices.getTopics();
-      this.topics.forEach(topic => console.log(topic.name));
       this.questions = await RemoteServices.getQuestions();
     } catch (error) {
       await this.$store.dispatch("error", error);
@@ -363,6 +329,17 @@ export default class QuestionsView extends Vue {
         )
         .join(" <br/> ");
     return text;
+  }
+
+  remove(questionId: number, topic: Topic) {
+    let question = this.questions.find(
+      (question: Question) => (question.id = questionId)
+    );
+    if (question) {
+      let index = question.topics.map(element => element.id).indexOf(topic.id);
+      if (index >= 0) question.topics.splice(index, 1);
+      this.saveTopics(questionId);
+    }
   }
 
   closeShowQuestionDialog() {

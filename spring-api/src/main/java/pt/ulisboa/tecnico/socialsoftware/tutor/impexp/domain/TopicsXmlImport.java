@@ -68,7 +68,10 @@ public class TopicsXmlImport {
 	private void importTopic(Element topicElement) {
 		String name = topicElement.getAttributeValue("name");
 
-		topicService.createTopic(name);
+        TopicDto topicDto = new TopicDto();
+        topicDto.setName(name);
+
+		topicService.createTopic(topicDto);
 
 		for (Element questionElement: topicElement.getChild("questions").getChildren("question")) {
 			importQuestion(questionElement, name);

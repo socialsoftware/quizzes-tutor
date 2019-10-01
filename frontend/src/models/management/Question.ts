@@ -9,10 +9,12 @@ export class Question {
   numberOfAnswers!: number;
   difficulty!: number;
   content!: string;
-  options!: Option[];
-  image!: Image | null;
-  topics: Topic[] = [];
+
+  image: Image | null = null;
   sequence: number | null = null;
+
+  options: Option[] = [];
+  topics: Topic[] = [];
 
   constructor(jsonObj?: Question) {
     if (jsonObj) {
@@ -22,9 +24,13 @@ export class Question {
       this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;
-      this.options = jsonObj.options;
       this.image = jsonObj.image;
-      this.topics = jsonObj.topics;
+
+      this.options = jsonObj.options.map(
+        (option: Option) => new Option(option)
+      );
+
+      this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }
 }

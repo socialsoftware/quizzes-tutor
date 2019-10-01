@@ -1,5 +1,5 @@
 <template v-if="topics.empty === false">
-  <v-card>
+  <v-card class="table">
     <v-card-title>
       <v-flex xs12 sm6 md6>
         <v-text-field
@@ -18,10 +18,6 @@
           <v-card-title>
             <span class="headline">{{ formTitle() }}</span>
           </v-card-title>
-
-          <p class="red--text" v-if="error">
-            {{ error }}
-          </p>
 
           <v-card-text>
             <v-container grid-list-md fluid>
@@ -77,9 +73,8 @@ import { Topic } from "@/models/management/Topic";
 @Component
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
-  editedTopic: string | null = null;
-  oldTopic: string | null = null;
-  error: string | null = null;
+  editedTopic: Topic | null = null;
+  oldTopic: Topic | null = null;
   dialog: boolean = false;
   search: string = "";
   headers: object = [
@@ -118,17 +113,16 @@ export default class TopicsView extends Vue {
   open() {
     this.editedTopic = null;
     this.oldTopic = null;
-    this.error = null;
     this.dialog = true;
   }
 
-  editTopic(topic: string) {
+  editTopic(topic: Topic) {
     this.editedTopic = topic;
     this.oldTopic = topic;
     this.dialog = true;
   }
 
-  async deleteTopic(topic: string) {
+  async deleteTopic(topic: Topic) {
     if (confirm("Are you sure you want to delete this topic?")) {
       try {
         await RemoteServices.deleteTopic(topic);
@@ -140,14 +134,13 @@ export default class TopicsView extends Vue {
   }
 
   close() {
-    this.error = null;
     this.dialog = false;
   }
 
   async save() {
     if (this.oldTopic && this.editedTopic) {
       try {
-        await RemoteServices.updateTopic(this.oldTopic, this.editedTopic);
+        await RemoteServices.updateTopic(this.editedTopic);
         this.topics = this.topics.filter(topic => topic !== this.oldTopic);
         this.topics.unshift(this.editedTopic);
       } catch (error) {

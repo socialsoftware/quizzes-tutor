@@ -20,34 +20,30 @@ public class TopicController {
     @Autowired
     private TopicService topicService;
 
-
     @GetMapping("/topics")
     public List<TopicDto> getTopics() {
         return this.topicService.findAllTopics();
     }
 
     @PostMapping(value = "/topics")
-    public ResponseEntity createTopic(@Valid @RequestBody String topic) {
-        logger.debug("createTopic topic: {}", topic);
+    public TopicDto createTopic(@Valid @RequestBody TopicDto topicDto) {
+        logger.debug("createTopic topic: {}", topicDto.getName());
 
-        this.topicService.createTopic(topic);
-
-        return ResponseEntity.ok().build();
+        return this.topicService.createTopic(topicDto);
     }
 
-    @PutMapping(value = "/topics/{topic}")
-    public ResponseEntity updateTopic(@PathVariable String topic, @Valid @RequestBody String newName) {
-        logger.debug("updateTopic oldTopic: {}, newTopic: {}", topic, newName);
+    @PutMapping(value = "/topics/{topicId}")
+    public TopicDto updateTopic(@PathVariable Integer topicId, @Valid @RequestBody TopicDto topic) {
+        logger.debug("updateTopic newTopic: {}", topic.getName());
 
-        this.topicService.updateTopic(topic, newName);
-        return ResponseEntity.ok().build();
+        return this.topicService.updateTopic(topicId, topic);
     }
 
-    @DeleteMapping("/topics/{topic}")
-    public ResponseEntity removeTopic(@PathVariable String topic) {
-        logger.debug("removeTopic topic: {}: ", topic);
+    @DeleteMapping("/topics/{topicId}")
+    public ResponseEntity removeTopic(@PathVariable Integer topicId) {
+        logger.debug("removeTopic topic: {}: ", topicId);
 
-        topicService.removeTopic(topic);
+        topicService.removeTopic(topicId);
 
         return ResponseEntity.ok().build();
     }

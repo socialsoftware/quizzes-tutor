@@ -1,14 +1,5 @@
 <template>
-  <v-alert
-    v-model="error"
-    dismissible
-    border="top"
-    elevation="2"
-    colored-border
-    type="error"
-    dense
-    transition="scale-transition"
-  >
+  <v-alert v-model="error" type="error" close-text="Close Alert" dismissible>
     {{ errorMessage }}
   </v-alert>
 </template>
@@ -24,7 +15,7 @@ export default class MessageBar extends Vue {
   mounted() {
     this.$store.watch(
       (state, getters) => getters.getError,
-      (newValue, oldValue) => {
+      () => {
         this.error = this.$store.getters.getError;
         this.errorMessage = this.$store.getters.getErrorMessage;
       }

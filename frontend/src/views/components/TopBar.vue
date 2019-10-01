@@ -75,14 +75,14 @@
                 <v-list-item-title>Available</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <!--v-list-item to="/student/create">
+            <v-list-item to="/student/create">
               <v-list-item-action>
                 <v-icon>create</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
-            </v-list-item-->
+            </v-list-item>
             <v-list-item to="/student/solved">
               <v-list-item-action>
                 <v-icon>done</v-icon>
@@ -113,65 +113,64 @@
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-toolbar-items>
+    </v-app-bar>
 
-      <!-- Start of mobile side menu -->
-      <v-navigation-drawer
-        app
-        v-model="drawer"
-        absolute
-        dark
-        hide-overlay
-        style="overflow: initial; z-index: 20;"
-      >
-        <!-- Menu title -->
-        <v-toolbar flat>
-          <v-list>
-            <v-list-item>
-              <v-list-item-title class="title">Menu</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-toolbar>
-
-        <!-- Menu Links -->
-        <v-list class="pt-0" dense>
-          <v-list-item to="/student/available" v-if="isStudent" exact>
-            <v-list-item-action>
-              <v-icon>assignment</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Available Quizzes</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/student/solved" v-if="isStudent">
-            <v-list-item-action>
-              <v-icon>done</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Solved Quizzes</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item to="/student/stats" v-if="isStudent">
-            <v-list-item-action>
-              <v-icon>fas fa-user</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Stats</v-list-item-content>
-          </v-list-item>
-
-          <v-list-item @click="logout" v-if="isLoggedIn">
-            <v-list-item-action>
-              <v-icon>fas fa-sign-out-alt</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Logout</v-list-item-content>
-          </v-list-item>
-          <v-list-item :href="fenix_url" v-else>
-            <v-list-item-action>
-              <v-icon>fas fa-sign-in-alt</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>Login</v-list-item-content>
+    <!-- Start of mobile side menu -->
+    <v-navigation-drawer app v-model="drawer" absolute dark>
+      <!-- Menu title -->
+      <v-toolbar flat>
+        <v-list>
+          <v-list-item>
+            <v-list-item-title class="title">Menu</v-list-item-title>
           </v-list-item>
         </v-list>
-      </v-navigation-drawer>
+      </v-toolbar>
 
-      <!-- End of mobile side menu -->
-    </v-app-bar>
+      <!-- Menu Links -->
+      <v-list class="pt-0" dense>
+        <v-list-item to="/student/available" v-if="isStudent" exact>
+          <v-list-item-action>
+            <v-icon>assignment</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Available Quizzes</v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/student/create" v-if="isStudent">
+          <v-list-item-action>
+            <v-icon>create</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Create Quiz</v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/student/solved" v-if="isStudent">
+          <v-list-item-action>
+            <v-icon>done</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Solved Quizzes</v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/student/stats" v-if="isStudent">
+          <v-list-item-action>
+            <v-icon>fas fa-user</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Stats</v-list-item-content>
+        </v-list-item>
+
+        <v-list-item @click="logout" v-if="isLoggedIn">
+          <v-list-item-action>
+            <v-icon>fas fa-sign-out-alt</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Logout</v-list-item-content>
+        </v-list-item>
+        <v-list-item :href="fenix_url" v-else>
+          <v-list-item-action>
+            <v-icon>fas fa-sign-in-alt</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Login</v-list-item-content>
+        </v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+    <!-- End of mobile side menu -->
   </nav>
 </template>
 

@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.HashSet;
@@ -26,8 +28,8 @@ public class Topic implements Serializable {
     public Topic() {
     }
 
-    public Topic(String name) {
-        this.name = name;
+    public Topic(TopicDto topicDto) {
+        this.name = topicDto.getName();
     }
 
     public Integer getId() {

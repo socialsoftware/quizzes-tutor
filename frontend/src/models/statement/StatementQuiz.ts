@@ -17,8 +17,9 @@ export default class StatementQuiz {
           "pt"
         );
       }
-      jsonObj.questions.forEach(question => {
-        this.questions.push(new StatementQuestion(question));
+
+      this.questions = jsonObj.questions.map(question => {
+        return new StatementQuestion(question);
       });
     }
   }

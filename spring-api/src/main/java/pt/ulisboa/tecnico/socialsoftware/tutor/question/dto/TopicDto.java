@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import java.io.Serializable;
 
 public class TopicDto implements Serializable {
+    private Integer id;
     private String name;
     private String parentTopic;
 
@@ -13,10 +14,19 @@ public class TopicDto implements Serializable {
     }
 
     public TopicDto(Topic topic) {
+        this.id = topic.getId();
         this.name = topic.getName();
         if (topic.getParentTopic() != null) {
             this.parentTopic = topic.getParentTopic().getName();
         }
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getName() {

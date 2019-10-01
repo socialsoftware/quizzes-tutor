@@ -1,6 +1,6 @@
 <template>
   <v-content>
-    <v-card>
+    <v-card class="table">
       <v-card-title>
         <v-flex xs12 sm6 md6>
           <v-text-field

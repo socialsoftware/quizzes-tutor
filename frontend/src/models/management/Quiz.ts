@@ -15,7 +15,8 @@ export class Quiz {
   version!: string;
   numberOfQuestions!: number;
   numberOfAnswers!: number;
-  questions!: Question[] | null;
+
+  questions: Question[] = [];
 
   constructor(jsonObj?: Quiz) {
     if (jsonObj) {
@@ -33,7 +34,10 @@ export class Quiz {
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.questions = jsonObj.questions;
+
+      this.questions = jsonObj.questions.map(
+        (question: Question) => new Question(question)
+      );
     }
   }
 }

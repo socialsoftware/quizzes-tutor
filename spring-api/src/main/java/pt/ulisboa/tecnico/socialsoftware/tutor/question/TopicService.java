@@ -37,36 +37,28 @@ public class TopicService {
     }
 
     @Transactional
-    public void createTopic(String name) {
-        Topic topic = topicRepository.findByName(name);
-
-        if (topic != null) {
-            throw new TutorException(DUPLICATE_TOPIC, name);
+    public TopicDto createTopic(TopicDto topicDto) {
+        if (topicRepository.findByName(topicDto.getName()) != null) {
+            throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
         }
 
-        topic = new Topic(name);
-
-        entityManager.persist(topic);
+        Topic topic = new Topic(topicDto);
+        this.entityManager.persist(topic);
+        return new TopicDto(topic);
     }
 
     @Transactional
-    public void updateTopic(String oldName, String newName) {
-        Topic topic = topicRepository.findByName(oldName);
+    public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-        if (topic == null) {
-            throw new TutorException(TOPIC_NOT_FOUND, oldName);
-        }
-
-        topic.setName(newName);
+        topic.setName(topicDto.getName());
+        return new TopicDto(topic);
     }
 
     @Transactional
-    public void removeTopic(String name) {
-        Topic topic = topicRepository.findByName(name);
-
-        if (topic == null) {
-            throw new TutorException(TOPIC_NOT_FOUND, name);
-        }
+    public void removeTopic(Integer topicId) {
+        Topic topic = topicRepository.findById(topicId)
+                .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.remove();
 

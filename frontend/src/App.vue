@@ -16,6 +16,7 @@ import axios from "axios";
 import TopBar from "@/views/components/TopBar.vue";
 import MessageBar from "@/views/components/MessageBar.vue";
 import "@/styles/_global.scss";
+import "@/styles/_scrollbar.scss";
 import "@/styles/_question.scss";
 
 @Component({
