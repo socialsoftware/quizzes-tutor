@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
@@ -29,6 +30,9 @@ class RemoveTopicServiceSpockTest extends Specification {
     TopicRepository topicRepository
 
     def question
+    def topicDtoOne
+    def topicDtoTwo
+    def topicDtoThree
     def topicOne
     def topicTwo
     def topicThree
@@ -36,8 +40,16 @@ class RemoveTopicServiceSpockTest extends Specification {
     def setup() {
         question = new Question()
         question.setNumber(NUMBER)
-        topicOne = new Topic(TOPIC_ONE)
-        topicTwo = new Topic(TOPIC_TWO)
+
+        topicDtoOne = new TopicDto()
+        topicDtoOne.setName(TOPIC_ONE)
+        topicDtoTwo = new TopicDto()
+        topicDtoTwo.setName(TOPIC_TWO)
+        topicDtoThree = new TopicDto()
+        topicDtoThree.setName(TOPIC_THREE)
+
+        topicOne = new Topic(topicDtoOne)
+        topicTwo = new Topic(topicDtoTwo)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)
@@ -46,13 +58,13 @@ class RemoveTopicServiceSpockTest extends Specification {
         topicRepository.save(topicOne)
         topicRepository.save(topicTwo)
 
-        topicThree = new Topic(TOPIC_THREE)
+        topicThree = new Topic(topicDtoThree)
         topicRepository.save(topicThree)
     }
 
     def "remove topic"() {
         when:
-        topicService.removeTopic(TOPIC_ONE)
+        topicService.removeTopic(topicOne.getId())
 
         then:
         topicOne.getQuestions().size() == 0
@@ -63,7 +75,7 @@ class RemoveTopicServiceSpockTest extends Specification {
 
     def "remove topic has not question"() {
         when:
-        topicService.removeTopic(TOPIC_THREE)
+        topicService.removeTopic(topicThree.getId())
 
         then:
         topicRepository.findAll().size() == 2

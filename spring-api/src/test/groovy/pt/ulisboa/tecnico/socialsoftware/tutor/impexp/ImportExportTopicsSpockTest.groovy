@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
@@ -28,6 +29,9 @@ class ImportExportTopicsSpockTest extends Specification {
     @Autowired
     TopicRepository topicRepository
 
+    def topicDtoOne
+    def topicDtoTwo
+
     def setup() {
         def question = new QuestionDto()
         question.setTitle(QUESTION_TITLE)
@@ -43,10 +47,15 @@ class ImportExportTopicsSpockTest extends Specification {
 
         question = questionService.createQuestion(question)
 
-        topicService.createTopic(TOPIC_ONE)
-        topicService.createTopic(TOPIC_TWO)
+        topicDtoOne = new TopicDto()
+        topicDtoOne.setName(TOPIC_ONE)
+        topicDtoTwo = new TopicDto()
+        topicDtoTwo.setName(TOPIC_TWO)
 
-        String[] topics = [TOPIC_ONE, TOPIC_TWO]
+        topicDtoOne = topicService.createTopic(topicDtoOne)
+        topicDtoTwo = topicService.createTopic(topicDtoTwo)
+
+        TopicDto[] topics = [topicDtoOne, topicDtoTwo]
         questionService.updateQuestionTopics(question.getId(), topics)
     }
 
@@ -54,8 +63,8 @@ class ImportExportTopicsSpockTest extends Specification {
         given: 'a xml with questions'
         def topicsXml = topicService.exportTopics()
         and: 'delete topics'
-        topicService.removeTopic(TOPIC_ONE)
-        topicService.removeTopic(TOPIC_TWO)
+        topicService.removeTopic(topicDtoOne.getId())
+        topicService.removeTopic(topicDtoTwo.getId())
 
         when:
         topicService.importTopics(topicsXml)

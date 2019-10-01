@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -115,8 +116,11 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
     def "remove a question that has topics"() {
         given: 'a question with topics'
-        def topicOne = new Topic("name1")
-        def topicTwo = new Topic("name2")
+        def topicDto = new TopicDto()
+        topicDto.setName("name1")
+        def topicOne = new Topic(topicDto)
+        topicDto.setName("name2")
+        def topicTwo = new Topic(topicDto)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)

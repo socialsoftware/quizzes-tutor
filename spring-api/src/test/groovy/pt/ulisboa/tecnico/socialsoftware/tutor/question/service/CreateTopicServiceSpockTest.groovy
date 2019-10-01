@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
@@ -23,8 +24,12 @@ class CreateTopicServiceSpockTest extends Specification {
     TopicRepository topicRepository
 
     def "create a topic"() {
+        given:
+        def topicDto = new TopicDto()
+        topicDto.setName(NAME)
+
         when:
-        topicService.createTopic(NAME)
+        topicService.createTopic(topicDto)
 
         then: "the topic is inside the repository"
         topicRepository.count() == 1L
@@ -38,15 +43,17 @@ class CreateTopicServiceSpockTest extends Specification {
         Topic topic = new Topic()
         topic.setName(NAME)
         topicRepository.save(topic)
+        and: 'topic dto'
+        def topicDto = new TopicDto()
+        topicDto.setName(NAME)
 
         when: 'createQuestion another with the same name'
-        topicService.createTopic(NAME)
+        topicService.createTopic(topicDto)
 
         then: "an error occurs"
         def exception = thrown(TutorException)
         exception.error == ExceptionError.DUPLICATE_TOPIC
     }
-
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
