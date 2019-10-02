@@ -37,7 +37,7 @@ public class UsersXmlExport {
 	private void exportUser(Element element, User user) {
 		Element userElement = new Element("user");
 
-		userElement.setAttribute("number", user.getNumber().toString());
+		userElement.setAttribute("number", String.valueOf(user.getNumber()));
 
 		if (user.getUsername() != null) {
 			userElement.setAttribute("username", user.getUsername());
@@ -50,7 +50,7 @@ public class UsersXmlExport {
 		}
 
 		if (user.getYear() != null) {
-			userElement.setAttribute("year", user.getYear().toString());
+			userElement.setAttribute("year", String.valueOf(user.getYear()));
 		}
 
 		element.addContent(userElement);

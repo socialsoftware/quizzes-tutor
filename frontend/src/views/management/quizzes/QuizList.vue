@@ -76,8 +76,6 @@
         :headers="headers"
         :items="quizzes"
         :search="search"
-        :sort-by="['year']"
-        :sort-desc="[false]"
         multi-sort
         disable-pagination
         class="elevation-1"

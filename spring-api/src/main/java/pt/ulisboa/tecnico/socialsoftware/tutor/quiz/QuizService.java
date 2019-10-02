@@ -98,7 +98,7 @@ public class QuizService {
     @Transactional
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         quiz.setTitle(quizDto.getTitle());
         quiz.setAvailableDate(LocalDateTime.parse(quizDto.getAvailableDate(), formatter));

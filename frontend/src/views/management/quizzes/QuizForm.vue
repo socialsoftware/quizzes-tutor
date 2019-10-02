@@ -107,125 +107,111 @@
             :items-per-page="10"
             :custom-sort="customSort"
             must-sort
-            class="elevation-1"
+            show-expand
           >
-            <template slot="items" slot-scope="props">
-              <tr>
-                <td>{{ props.item.sequence }}</td>
-                <td
-                  class="text-left"
-                  @click="props.expanded = !props.expanded"
-                  v-html="
-                    convertMarkDownNoFigure(
-                      props.item.content,
-                      props.item.image
-                    )
-                  "
-                ></td>
-                <td class="text-left">
-                  <span v-for="prop in props.item.topics" :key="prop">{{
-                    prop
-                  }}</span>
-                </td>
-                <td>{{ props.item.difficulty }}</td>
-                <td>{{ props.item.numberOfAnswers }}</td>
-                <td class="text-left">{{ props.item.title }}</td>
-                <td>
-                  <v-icon
-                    small
-                    class="mr-2"
-                    @click="openShowQuestionDialog(props.item.id)"
-                  >
-                    visibility</v-icon
-                  >
-                  <v-icon
-                    v-if="!props.item.sequence"
-                    small
-                    class="mr-2"
-                    @click="addToQuiz(props.item.id)"
-                  >
-                    add</v-icon
-                  >
-                  <v-icon
-                    v-if="props.item.sequence"
-                    small
-                    class="mr-2"
-                    @click="removeFromQuiz(props.item.id)"
-                  >
-                    remove</v-icon
-                  >
-                  <v-icon
-                    v-if="props.item.sequence && props.item.sequence !== 1"
-                    small
-                    class="mr-2"
-                    @click="moveFirst(props.item.id)"
-                  >
-                    first_page</v-icon
-                  >
-                  <v-icon
-                    v-if="props.item.sequence && props.item.sequence !== 1"
-                    small
-                    class="mr-2"
-                    @click="moveLeft(props.item.id)"
-                  >
-                    chevron_left</v-icon
-                  >
-                  <v-icon
-                    v-if="props.item.sequence && quizQuestions.length > 1"
-                    small
-                    class="mr-2"
-                    @click="openSetPosition(props.item.id)"
-                  >
-                    expand_more</v-icon
-                  >
-                  <v-icon
-                    v-if="
-                      props.item.sequence &&
-                        props.item.sequence !== quizQuestions.length
-                    "
-                    small
-                    class="mr-2"
-                    @click="moveRight(props.item.id)"
-                  >
-                    chevron_right</v-icon
-                  >
-                  <v-icon
-                    v-if="
-                      props.item.sequence &&
-                        props.item.sequence !== quizQuestions.length
-                    "
-                    small
-                    class="mr-2"
-                    @click="moveLast(props.item.id)"
-                  >
-                    last_page</v-icon
-                  >
-                </td>
-              </tr>
+            <template v-slot:item.content="{ item }">
+              <div
+                class="text-left"
+                @click="props.expanded = !props.expanded"
+                v-html="convertMarkDownNoFigure(item.content, item.image)"
+              ></div>
             </template>
-            <template slot="expand" slot-scope="props">
-              <v-simple-table>
-                <thead>
-                  <tr>
-                    <th class="text-left">Id</th>
-                    <th class="text-left">Option</th>
-                    <th class="text-left">Correct</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="option in props.item.options" :key="option.id">
-                    <td class="text-left">{{ option.id }}</td>
-                    <td
-                      class="text-left"
-                      v-html="convertMarkDownNoFigure(option.content, null)"
-                    ></td>
-                    <td>
-                      <span v-if="option.correct">TRUE</span
-                      ><span v-else>FALSE</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
+
+            <template v-slot:item.topics="{ item }">
+              <span v-for="topic in item.topics" :key="topic.id">
+                {{ topic.name }}
+              </span>
+            </template>
+
+            <template v-slot:item.action="{ item }">
+              <v-icon
+                small
+                class="mr-2"
+                @click="openShowQuestionDialog(item.id)"
+              >
+                visibility</v-icon
+              >
+              <v-icon
+                v-if="!item.sequence"
+                small
+                class="mr-2"
+                @click="addToQuiz(item.id)"
+              >
+                add</v-icon
+              >
+              <v-icon
+                v-if="item.sequence"
+                small
+                class="mr-2"
+                @click="removeFromQuiz(item.id)"
+              >
+                remove</v-icon
+              >
+              <v-icon
+                v-if="item.sequence && item.sequence !== 1"
+                small
+                class="mr-2"
+                @click="moveFirst(item.id)"
+              >
+                first_page</v-icon
+              >
+              <v-icon
+                v-if="item.sequence && item.sequence !== 1"
+                small
+                class="mr-2"
+                @click="moveLeft(item.id)"
+              >
+                chevron_left</v-icon
+              >
+              <v-icon
+                v-if="item.sequence && quizQuestions.length > 1"
+                small
+                class="mr-2"
+                @click="openSetPosition(item.id)"
+              >
+                expand_more</v-icon
+              >
+              <v-icon
+                v-if="item.sequence && item.sequence !== quizQuestions.length"
+                small
+                class="mr-2"
+                @click="moveRight(item.id)"
+              >
+                chevron_right</v-icon
+              >
+              <v-icon
+                v-if="item.sequence && item.sequence !== quizQuestions.length"
+                small
+                class="mr-2"
+                @click="moveLast(item.id)"
+              >
+                last_page</v-icon
+              >
+            </template>
+
+            <template v-slot:expanded-item="{ item }">
+              <td :colspan="9">
+                <v-simple-table>
+                  <thead>
+                    <tr>
+                      <th class="text-left">Option</th>
+                      <th class="text-left">Correct</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="option in item.options" :key="option.id">
+                      <td
+                        class="text-left"
+                        v-html="convertMarkDownNoFigure(option.content, null)"
+                      ></td>
+                      <td>
+                        <span v-if="option.correct">TRUE</span
+                        ><span v-else>FALSE</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </v-simple-table>
+              </td>
             </template>
           </v-data-table>
         </v-container>
@@ -391,14 +377,14 @@ export default class QuizForm extends Vue {
       let questionIds: number[] = [];
       if (this.quiz.questions) {
         this.quiz.questions.forEach(question => {
-          if (!this.quizQuestions.includes(question)) {
+          if (!this.quizQuestions.includes(question) && question.id) {
             questionIds.push(question.id);
           }
         });
       }
 
       this.questions.forEach(question => {
-        if (questionIds.includes(question.id)) {
+        if (question.id && questionIds.includes(question.id)) {
           question.sequence = questionIds.indexOf(question.id) + 1;
           this.quizQuestions.push(question);
         }
@@ -425,10 +411,11 @@ export default class QuizForm extends Vue {
     }
   }
 
-  customFilter(value: string, search: string, item: string) {
+  customFilter(value: string, search: string) {
+    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
-      value != null &&
       search != null &&
+      typeof value === "string" &&
       value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }

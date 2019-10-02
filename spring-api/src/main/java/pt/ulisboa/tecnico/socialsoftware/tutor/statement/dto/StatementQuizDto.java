@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -24,10 +23,10 @@ public class StatementQuizDto implements Serializable {
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
-            this.availableDate = quizAnswer.getQuiz().getAvailableDate().toString();
+            this.availableDate = String.valueOf(quizAnswer.getQuiz().getAvailableDate());
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
-            this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().toString();
+            this.conclusionDate = String.valueOf(quizAnswer.getQuiz().getConclusionDate());
         }
         this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))

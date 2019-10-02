@@ -38,7 +38,7 @@ public class QuestionsXmlExport {
 
 	private void exportQuestion(Element element, Question question) {
 		Element questionElement = new Element("question");
-		questionElement.setAttribute("number", question.getNumber().toString());
+		questionElement.setAttribute("number", String.valueOf(question.getNumber()));
 		questionElement.setAttribute("content", question.getContent());
 		questionElement.setAttribute("title", question.getTitle());
 		questionElement.setAttribute("active", String.valueOf(question.getActive()));
@@ -54,7 +54,7 @@ public class QuestionsXmlExport {
 
 	private void exportImage(Element questionElement, Image image) {
 		Element imageElement = new Element("image");
-		imageElement.setAttribute("width", image.getWidth() != null ? image.getWidth().toString() : null);
+		imageElement.setAttribute("width", image.getWidth() != null ? String.valueOf(image.getWidth()) : null);
 		imageElement.setAttribute("url", image.getUrl());
 
 		questionElement.addContent(imageElement);
@@ -73,7 +73,7 @@ public class QuestionsXmlExport {
 	private void exportOption(Element optionsElement, Option option) {
 		Element optionElement = new Element("option");
 
-		optionElement.setAttribute("number", option.getNumber().toString());
+		optionElement.setAttribute("number", String.valueOf(option.getNumber()));
 		optionElement.setAttribute("content", option.getContent());
 		optionElement.setAttribute("correct", String.valueOf(option.getCorrect()));
 

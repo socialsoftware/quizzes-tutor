@@ -37,7 +37,7 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as StudentStats;
+        return new StudentStats(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -86,19 +86,22 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as Question;
+        return new Question(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  static updateQuestion(questionId: number, question: Question) {
+  static updateQuestion(question: Question): Promise<Question> {
     return httpClient
-      .put("/questions/" + questionId, question, {
+      .put("/questions/" + question.id, question, {
         headers: {
           Authorization: Store.getters.getToken
         }
+      })
+      .then(response => {
+        return new Question(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -117,12 +120,15 @@ export default class RemoteServices {
       });
   }
 
-  static questionSwitchActive(questionId: number) {
+  static questionSwitchActive(questionId: number): Promise<Question> {
     return httpClient
       .put("/questions/" + questionId + "/switchActive", null, {
         headers: {
           Authorization: Store.getters.getToken
         }
+      })
+      .then(response => {
+        return new Question(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -346,7 +352,7 @@ export default class RemoteServices {
           }
         })
         .then(response => {
-          return response.data as Quiz;
+          return new Quiz(response.data);
         })
         .catch(async error => {
           throw Error(await this.errorMessage(error));

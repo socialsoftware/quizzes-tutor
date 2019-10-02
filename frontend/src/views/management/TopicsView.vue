@@ -91,10 +91,11 @@ export default class TopicsView extends Vue {
     }
   }
 
-  customFilter(value: string, search: string, item: string) {
+  customFilter(value: string, search: string) {
+    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
-      value != null &&
       search != null &&
+      typeof value === "string" &&
       value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }

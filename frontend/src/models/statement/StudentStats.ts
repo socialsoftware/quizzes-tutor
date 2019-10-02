@@ -7,4 +7,16 @@ export default class StudentStats {
 
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
+
+  constructor(jsonObj?: StudentStats) {
+    if (jsonObj) {
+      this.totalQuizzes = jsonObj.totalQuizzes;
+      this.totalAnswers = jsonObj.totalAnswers;
+      this.totalUniqueQuestions = jsonObj.totalUniqueQuestions;
+      this.correctAnswers = jsonObj.correctAnswers;
+      this.improvedCorrectAnswers = jsonObj.improvedCorrectAnswers;
+      this.uniqueCorrectAnswers = jsonObj.uniqueCorrectAnswers;
+      this.uniqueWrongAnswers = jsonObj.uniqueWrongAnswers;
+    }
+  }
 }

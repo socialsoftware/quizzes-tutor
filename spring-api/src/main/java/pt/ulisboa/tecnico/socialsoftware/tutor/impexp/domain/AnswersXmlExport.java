@@ -40,17 +40,17 @@ public class AnswersXmlExport {
 		Element quizAnswerElement = new Element("quizAnswer");
 
 		if (quizAnswer.getAnswerDate() != null) {
-			quizAnswerElement.setAttribute("answerDate", quizAnswer.getAnswerDate().toString());
+			quizAnswerElement.setAttribute("answerDate", String.valueOf(quizAnswer.getAnswerDate()));
 		}
 
 		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.getCompleted()));
 
 		Element quizElement = new Element("quiz");
-		quizElement.setAttribute("quizNumber", quizAnswer.getQuiz().getNumber().toString());
+		quizElement.setAttribute("quizNumber", String.valueOf(quizAnswer.getQuiz().getNumber()));
 		quizAnswerElement.addContent(quizElement);
 
 		Element userElement = new Element("user");
-		userElement.setAttribute("number", quizAnswer.getUser().getNumber().toString());
+		userElement.setAttribute("number", String.valueOf(quizAnswer.getUser().getNumber()));
 		quizAnswerElement.addContent(userElement);
 
 		exportQuestionAnswers(quizAnswerElement, quizAnswer.getQuestionAnswers());
@@ -72,20 +72,20 @@ public class AnswersXmlExport {
 		Element questionAnswerElement = new Element("questionAnswer");
 
 		if (questionAnswer.getTimeTaken() != null) {
-			questionAnswerElement.setAttribute("timeTaken", questionAnswer.getTimeTaken().toString());
+			questionAnswerElement.setAttribute("timeTaken", String.valueOf(questionAnswer.getTimeTaken()));
 		}
 
-        questionAnswerElement.setAttribute("sequence", questionAnswer.getSequence().toString());
+        questionAnswerElement.setAttribute("sequence", String.valueOf(questionAnswer.getSequence()));
 
 		Element quizQuestionElement = new Element("quizQuestion");
-		quizQuestionElement.setAttribute("quizNumber", questionAnswer.getQuizQuestion().getQuiz().getNumber().toString());
-		quizQuestionElement.setAttribute("sequence", questionAnswer.getQuizQuestion().getSequence().toString());
+		quizQuestionElement.setAttribute("quizNumber", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getNumber()));
+		quizQuestionElement.setAttribute("sequence", String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
 		questionAnswerElement.addContent(quizQuestionElement);
 
 		if ( questionAnswer.getOption() != null) {
 			Element optionElement = new Element("option");
-			optionElement.setAttribute("questionNumber", questionAnswer.getOption().getQuestion().getNumber().toString());
-			optionElement.setAttribute("number", questionAnswer.getOption().getNumber().toString());
+			optionElement.setAttribute("questionNumber", String.valueOf(questionAnswer.getOption().getQuestion().getNumber()));
+			optionElement.setAttribute("number", String.valueOf(questionAnswer.getOption().getNumber()));
 			questionAnswerElement.addContent(optionElement);
 		}
 

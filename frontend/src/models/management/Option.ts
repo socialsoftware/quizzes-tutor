@@ -1,5 +1,5 @@
 export default class Option {
-  id!: number | null;
+  id: number | null = null;
   number!: number | null;
   content: string = "";
   correct: Boolean = false;

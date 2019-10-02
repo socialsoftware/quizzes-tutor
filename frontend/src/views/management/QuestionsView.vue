@@ -12,21 +12,27 @@
       </v-flex>
       <v-divider class="mx-4" inset vertical> </v-divider>
       <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="open"
+      <v-btn color="primary" dark class="mb-2" @click="newQuestion"
         >New Question</v-btn
       >
       <v-dialog v-model="dialog" max-width="1000px">
         <v-card>
           <v-card-title>
-            <span class="headline">{{ formTitle() }}</span>
+            <span class="headline">
+              {{
+                currentQuestion && currentQuestion.id === null
+                  ? "New Question"
+                  : "Edit Question"
+              }}
+            </span>
           </v-card-title>
 
-          <v-card-text v-if="editedItem">
+          <v-card-text v-if="currentQuestion">
             <v-container grid-list-md fluid>
               <v-layout column wrap>
                 <v-flex xs24 sm12 md8>
                   <v-text-field
-                    v-model="editedItem.title"
+                    v-model="currentQuestion.title"
                     label="Title"
                   ></v-text-field>
                 </v-flex>
@@ -34,60 +40,27 @@
                   <v-textarea
                     outline
                     rows="10"
-                    v-model="editedItem.content"
+                    v-model="currentQuestion.content"
                     label="Content"
                   ></v-textarea>
                 </v-flex>
-                <v-flex xs12 sm6 md10>
+                <v-flex
+                  xs24
+                  sm12
+                  md12
+                  v-for="index in currentQuestion.options.length"
+                  :key="index"
+                >
                   <v-switch
-                    v-model="editedItem.correctZero"
+                    v-model="currentQuestion.options[index - 1].correct"
                     class="ma-4"
                     label="Correct"
                   ></v-switch>
                   <v-textarea
                     outline
-                    rows="3"
-                    v-model="editedItem.optionZero"
-                    label="Option One"
-                  ></v-textarea>
-                </v-flex>
-                <v-flex xs24 sm12 md12>
-                  <v-switch
-                    v-model="editedItem.correctOne"
-                    class="ma-4"
-                    label="Correct"
-                  ></v-switch>
-                  <v-textarea
-                    outline
-                    rows="3"
-                    v-model="editedItem.optionOne"
-                    label="Option Two"
-                  ></v-textarea>
-                </v-flex>
-                <v-flex xs24 sm12 md12>
-                  <v-switch
-                    v-model="editedItem.correctTwo"
-                    class="ma-4"
-                    label="Correct"
-                  ></v-switch>
-                  <v-textarea
-                    outline
-                    rows="3"
-                    v-model="editedItem.optionTwo"
-                    label="Option Three"
-                  ></v-textarea>
-                </v-flex>
-                <v-flex xs24 sm12 md12>
-                  <v-switch
-                    v-model="editedItem.correctThree"
-                    class="ma-4"
-                    label="Correct"
-                  ></v-switch>
-                  <v-textarea
-                    outline
-                    rows="3"
-                    v-model="editedItem.optionThree"
-                    label="Option Four"
+                    :rows="index"
+                    v-model="currentQuestion.options[index - 1].content"
+                    :label="'Option ' + index"
                   ></v-textarea>
                 </v-flex>
               </v-layout>
@@ -96,21 +69,23 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+            <v-btn color="blue darken-1" text @click="closeDialogue"
+              >Cancel</v-btn
+            >
+            <v-btn color="blue darken-1" text @click="saveQuestion">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       <v-dialog v-model="showQuestion" max-width="1000px">
-        <v-card v-if="questionToShow">
+        <v-card v-if="currentQuestion">
           <v-card-title>
-            <span class="headline">{{ questionToShow.title }}</span>
+            <span class="headline">{{ currentQuestion.title }}</span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md fluid>
               <v-layout column wrap>
                 <v-flex class="text-left" xs24 sm12 md8>
-                  <p v-html="renderQuestion(questionToShow)"></p>
+                  <p v-html="renderQuestion(currentQuestion)"></p>
                 </v-flex>
               </v-layout>
             </v-container>
@@ -118,24 +93,26 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeShowQuestionDialog"
+            <v-btn color="blue darken-1" text @click="closeQuestionDialog"
               >Close</v-btn
             >
           </v-card-actions>
         </v-card>
       </v-dialog>
     </v-card-title>
+
     <v-data-table
       :headers="headers"
       :custom-filter="customFilter"
       :items="questions"
       :search="search"
       :items-per-page="10"
-      class="elevation-1"
+      show-expand
     >
       <template v-slot:item.content="{ item }">
         <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
       </template>
+
       <template v-slot:item.topics="{ item }">
         <v-form>
           <v-autocomplete
@@ -154,7 +131,7 @@
                 :input-value="data.selected"
                 close
                 @click="data.select"
-                @click:close="remove(item.id, data.item)"
+                @click:close="removeTopic(item.id, data.item)"
               >
                 {{ data.item.name }}
               </v-chip>
@@ -167,59 +144,59 @@
           </v-autocomplete>
         </v-form>
       </template>
+
       <template v-slot:item.active="{ item }">
         <v-btn text small @click="switchActive(item.id)">
           <span v-if="item.active">Enabled</span><span v-else>Disabled</span>
         </v-btn>
       </template>
+
       <template v-slot:item.image="{ item }">
-        <!--        <label><input
-            type="file"
-            style="display:none"
-            @change="handleFileUpload($event, item.id)"
-            accept="image/*"
-            class="input-file"
-          />Upload</label
-        >-->
         <v-file-input
-          @change="handleFileUpload($event, props.item.id)"
+          small-chips
+          show-size
+          outlined
+          dense
+          @change="handleFileUpload($event, item)"
           accept="image/*"
           label="File input"
-          >Upload</v-file-input
-        >
+        ></v-file-input>
       </template>
+
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="openShowQuestionDialog(item.id)"
+        <v-icon small class="mr-2" @click="showQuestionDialog(item)"
           >visibility</v-icon
         >
-        <v-icon small class="mr-2" @click="editItem(item.id)">edit</v-icon>
-        <v-icon small class="mr-2" @click="duplicateItem(item.id)"
+        <v-icon small class="mr-2" @click="editQuestion(item)">edit</v-icon>
+        <v-icon small class="mr-2" @click="duplicateQuestion(item)"
           >cached</v-icon
         >
-        <v-icon small class="mr-2" @click="deleteItem(item.id)">delete</v-icon>
+        <v-icon small class="mr-2" @click="deleteQuestion(item)">delete</v-icon>
       </template>
-      <template slot="expand" slot-scope="props">
-        <v-simple-table>
-          <thead>
-            <tr>
-              <th class="text-left">Id</th>
-              <th class="text-left">Option</th>
-              <th class="text-left">Correct</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="option in props.item.options" :key="option.id">
-              <td class="text-left">{{ option.id }}</td>
-              <td
-                class="text-left"
-                v-html="convertMarkDownNoFigure(option.content, null)"
-              ></td>
-              <td>
-                <span v-if="option.correct">TRUE</span><span v-else>FALSE</span>
-              </td>
-            </tr>
-          </tbody>
-        </v-simple-table>
+
+      <template v-slot:expanded-item="{ item }">
+        <td :colspan="9">
+          <v-simple-table>
+            <thead>
+              <tr>
+                <th class="text-left">Option</th>
+                <th class="text-left">Correct</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="option in item.options" :key="option.id">
+                <td
+                  class="text-left"
+                  v-html="convertMarkDownNoFigure(option.content, null)"
+                ></td>
+                <td>
+                  <span v-if="option.correct">TRUE</span
+                  ><span v-else>FALSE</span>
+                </td>
+              </tr>
+            </tbody>
+          </v-simple-table>
+        </td>
       </template>
     </v-data-table>
   </v-card>
@@ -227,26 +204,22 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import { Question } from "@/models/management/Question";
-import QuestionForm from "@/models/management/QuestionForm";
 import RemoteServices from "@/services/RemoteServices";
 import {
   convertMarkDown,
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
+import { Question } from "@/models/management/Question";
 import Image from "@/models/management/Image";
 import { Topic } from "@/models/management/Topic";
 
 @Component
 export default class QuestionsView extends Vue {
   questions: Question[] = [];
-  editedItem: QuestionForm = new QuestionForm();
-  editedId: number = -1;
-  error: string | null = null;
-  dialog: boolean = false;
+  currentQuestion: Question | null = null;
   topics: Topic[] = [];
+  dialog: boolean = false;
   showQuestion: boolean = false;
-  questionToShow: Question | null | undefined = null;
   search: string = "";
   headers: object = [
     { text: "Question", value: "content", align: "left", width: "70%" },
@@ -259,13 +232,13 @@ export default class QuestionsView extends Vue {
     },
     { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
     { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },
-    { text: "Title", value: "title", align: "left", width: "5%" },
+    { text: "Title", value: "title", align: "left", width: "3%" },
     { text: "Active", value: "active", align: "left", width: "1%" },
     {
       text: "Image",
       value: "image",
       align: "center",
-      width: "1%",
+      width: "3%",
       sortable: false
     },
     {
@@ -287,10 +260,11 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  customFilter(value: string, search: string, item: string) {
+  customFilter(value: string, search: string) {
+    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
-      value != null &&
       search != null &&
+      typeof value === "string" &&
       value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }
@@ -310,10 +284,8 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  openShowQuestionDialog(questionId: number) {
-    this.questionToShow = this.questions.find(
-      question => question.id === questionId
-    );
+  showQuestionDialog(question: Question) {
+    this.currentQuestion = question;
     this.showQuestion = true;
   }
 
@@ -334,7 +306,7 @@ export default class QuestionsView extends Vue {
     return text;
   }
 
-  remove(questionId: number, topic: Topic) {
+  removeTopic(questionId: number, topic: Topic) {
     let question = this.questions.find(
       (question: Question) => (question.id = questionId)
     );
@@ -346,19 +318,12 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  closeShowQuestionDialog() {
-    this.questionToShow = null;
+  closeQuestionDialog() {
     this.showQuestion = false;
   }
 
-  formTitle() {
-    return this.editedId === -1 ? "New Question" : "Edit Question";
-  }
-
-  open() {
-    this.editedId = -1;
-    this.editedItem = new QuestionForm();
-    this.error = null;
+  newQuestion() {
+    this.currentQuestion = new Question();
     this.dialog = true;
   }
 
@@ -376,15 +341,10 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  async handleFileUpload(event: Event, questionId: number) {
-    let question = this.questions.find(question => question.id === questionId);
-    let target: HTMLInputElement = event.target as HTMLInputElement;
-    if (question && event.target && target && target.files) {
+  async handleFileUpload(event: File, question: Question) {
+    if (question.id) {
       try {
-        const imageURL = await RemoteServices.uploadImage(
-          target.files[0],
-          questionId
-        );
+        const imageURL = await RemoteServices.uploadImage(event, question.id);
         question.image = new Image();
         question.image.url = imageURL;
         confirm("Image " + imageURL + " was uploaded!");
@@ -394,58 +354,26 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  duplicateItem(questionId: number) {
-    let question = this.questions.find(question => question.id === questionId);
-    if (question) {
-      this.editedId = -1;
-      this.editedItem = new QuestionForm();
-      this.editedItem.title = question.title;
-      this.editedItem.content =
-        question.content !== null ? question.content : "";
-      this.editedItem.optionZero = question.options[0].content;
-      this.editedItem.correctZero = question.options[0].correct;
-      this.editedItem.optionOne = question.options[1].content;
-      this.editedItem.correctOne = question.options[1].correct;
-      this.editedItem.optionTwo = question.options[2].content;
-      this.editedItem.correctTwo = question.options[2].correct;
-      this.editedItem.optionThree = question.options[3].content;
-      this.editedItem.correctThree = question.options[3].correct;
-      this.dialog = true;
-    }
+  duplicateQuestion(question: Question) {
+    this.currentQuestion = new Question(question);
+    this.currentQuestion.id = null;
+    this.dialog = true;
   }
 
-  editItem(questionId: number) {
-    let question = this.questions.find(question => question.id === questionId);
-    if (question) {
-      this.editedId = question.id;
-      this.editedItem = new QuestionForm();
-      this.editedItem.title = question.title;
-      this.editedItem.content =
-        question.content !== null ? question.content : "";
-      this.editedItem.optionZero = question.options[0].content;
-      this.editedItem.correctZero = question.options[0].correct;
-      this.editedItem.optionOne = question.options[1].content;
-      this.editedItem.correctOne = question.options[1].correct;
-      this.editedItem.optionTwo = question.options[2].content;
-      this.editedItem.correctTwo = question.options[2].correct;
-      this.editedItem.optionThree = question.options[3].content;
-      this.editedItem.correctThree = question.options[3].correct;
-      this.dialog = true;
-    }
+  editQuestion(question: Question) {
+    this.currentQuestion = question;
+    this.dialog = true;
   }
 
-  async deleteItem(questionId: number) {
-    const selectedQuestion = this.questions.find(
-      question => question.id === questionId
-    );
+  async deleteQuestion(toDeletequestion: Question) {
     if (
-      selectedQuestion &&
+      toDeletequestion.id &&
       confirm("Are you sure you want to delete this question?")
     ) {
       try {
-        await RemoteServices.deleteQuestion(selectedQuestion.id);
+        await RemoteServices.deleteQuestion(toDeletequestion.id);
         this.questions = this.questions.filter(
-          question => question.id != selectedQuestion.id
+          question => question.id != toDeletequestion.id
         );
       } catch (error) {
         await this.$store.dispatch("error", error);
@@ -453,90 +381,44 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  close() {
-    this.error = null;
+  closeDialogue() {
     this.dialog = false;
   }
 
-  async save() {
-    if (this.editedId > -1) {
-      let question = this.questions.find(
-        question => question.id === this.editedId
+  async saveQuestion() {
+    if (
+      this.currentQuestion &&
+      (!this.currentQuestion.title || !this.currentQuestion.content)
+    ) {
+      await this.$store.dispatch(
+        "error",
+        "Question must have title and content"
       );
-      if (question && this.editedItem.title && this.editedItem.content) {
-        let questionJson = {
-          title: this.editedItem.title,
-          content: this.editedItem.content,
-          options: question.options.map(option => Object.assign({}, option)),
-          image: Object.assign({}, question.image)
-        };
+      return;
+    }
 
-        questionJson.options[0].content = this.editedItem.optionZero;
-        questionJson.options[0].correct = this.editedItem.correctZero;
-        questionJson.options[1].content = this.editedItem.optionOne;
-        questionJson.options[1].correct = this.editedItem.correctOne;
-        questionJson.options[2].content = this.editedItem.optionTwo;
-        questionJson.options[2].correct = this.editedItem.correctTwo;
-        questionJson.options[3].content = this.editedItem.optionThree;
-        questionJson.options[3].correct = this.editedItem.correctThree;
-        try {
-          await RemoteServices.updateQuestion(
-            this.editedId,
-            new Question(questionJson as Question)
-          );
-          question.title = this.editedItem.title;
-          question.content = this.editedItem.content;
-          question.options[0].content = this.editedItem.optionZero;
-          question.options[0].correct = this.editedItem.correctZero;
-          question.options[1].content = this.editedItem.optionOne;
-          question.options[1].correct = this.editedItem.correctOne;
-          question.options[2].content = this.editedItem.optionTwo;
-          question.options[2].correct = this.editedItem.correctTwo;
-          question.options[3].content = this.editedItem.optionThree;
-          question.options[3].correct = this.editedItem.correctThree;
-        } catch (error) {
-          await this.$store.dispatch("error", error);
-        }
+    if (this.currentQuestion && this.currentQuestion.id != null) {
+      try {
+        this.currentQuestion = await RemoteServices.updateQuestion(
+          this.currentQuestion
+        );
+
+        this.closeDialogue();
+      } catch (error) {
+        await this.$store.dispatch("error", error);
       }
-    } else {
-      const questionJSON = {
-        title: this.editedItem.title,
-        content: this.editedItem.content,
-        options: [
-          {
-            id: -1,
-            content: this.editedItem.optionZero,
-            correct: this.editedItem.correctZero
-          },
-          {
-            id: -1,
-            content: this.editedItem.optionOne,
-            correct: this.editedItem.correctOne
-          },
-          {
-            id: -1,
-            content: this.editedItem.optionTwo,
-            correct: this.editedItem.correctTwo
-          },
-          {
-            id: -1,
-            content: this.editedItem.optionThree,
-            correct: this.editedItem.correctThree
-          }
-        ]
-      };
+    } else if (this.currentQuestion) {
       try {
         const question = await RemoteServices.createQuestion(
-          new Question(questionJSON as Question)
+          this.currentQuestion
         );
+
         this.questions.unshift(question);
+        this.closeDialogue();
       } catch (error) {
         await this.$store.dispatch("error", error);
       }
     }
-    this.close();
   }
 }
 </script>
-
-<style lang="scss"></style>

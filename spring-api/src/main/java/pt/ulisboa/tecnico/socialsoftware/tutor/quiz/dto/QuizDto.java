@@ -14,9 +14,9 @@ public class QuizDto implements Serializable {
     private Integer number;
     private boolean scramble;
     private String title;
-    private String creationDate;
-    private String availableDate;
-    private String conclusionDate;
+    private String creationDate = null;
+    private String availableDate = null;
+    private String conclusionDate = null;
     private Integer year;
     private String type;
     private Integer series;
@@ -33,16 +33,22 @@ public class QuizDto implements Serializable {
         this.number = quiz.getNumber();
         this.scramble = quiz.getScramble();
         this.title = quiz.getTitle();
-        this.creationDate = quiz.getCreationDate().toString();
-        this.availableDate = quiz.getAvailableDate().toString();
-        this.conclusionDate = quiz.getConclusionDate().toString();
-        this.availableDate = quiz.getAvailableDate().toString();
         this.year = quiz.getYear();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
         this.numberOfQuestions = quiz.getQuizQuestions().size();
         this.numberOfAnswers = quiz.getQuizAnswers().size();
+
+        if (quiz.getCreationDate() != null)
+            this.creationDate = String.valueOf(quiz.getCreationDate());
+        if (quiz.getAvailableDate() != null)
+            this.availableDate = String.valueOf(quiz.getAvailableDate());
+        if (quiz.getConclusionDate() != null)
+            this.conclusionDate = String.valueOf(quiz.getConclusionDate());
+        if (quiz.getAvailableDate() != null)
+            this.availableDate = String.valueOf(quiz.getAvailableDate());
+
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
                     .sorted(Comparator.comparing(QuizQuestion::getSequence))

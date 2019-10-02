@@ -57,7 +57,7 @@ public class TopicsXmlExport {
 	private void exportQuestion(Element questionsElement, Question question) {
 		Element questionElement = new Element("question");
 
-		questionElement.setAttribute("number", question.getNumber().toString());
+		questionElement.setAttribute("number", String.valueOf(question.getNumber()));
 
 		questionsElement.addContent(questionElement);
 	}

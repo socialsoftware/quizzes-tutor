@@ -35,7 +35,7 @@ public class SolvedQuizDto implements Serializable {
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
-        this.answerDate = quizAnswer.getAnswerDate().toString();
+        this.answerDate = String.valueOf(quizAnswer.getAnswerDate());
     }
 
     public StatementQuizDto getStatementQuiz() {

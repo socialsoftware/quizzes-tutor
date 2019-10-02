@@ -62,15 +62,15 @@ public class Quiz implements Serializable {
     public Quiz(QuizDto quiz) {
         checkQuestions(quiz.getQuestions());
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
         this.number = quiz.getNumber();
         setTitle(quiz.getTitle());
         this.type = quiz.getType();
         this.scramble = quiz.getScramble();
-        this.creationDate = LocalDateTime.parse(quiz.getCreationDate(), formatter);
-        setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate(), formatter));
-        setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate(), formatter));
+        if (quiz.getCreationDate() != null) this.creationDate = LocalDateTime.parse(quiz.getCreationDate(), formatter);
+        if (quiz.getAvailableDate() != null) setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate(), formatter));
+        if (quiz.getConclusionDate() != null) setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate(), formatter));
         this.year = quiz.getYear();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();

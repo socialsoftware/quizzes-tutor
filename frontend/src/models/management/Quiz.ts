@@ -5,10 +5,10 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   title!: string;
-  date: string = "-";
-  creationDate: string = "-";
-  availableDate: string = "-";
-  conclusionDate: string = "-";
+  date!: string;
+  creationDate!: string;
+  availableDate!: string;
+  conclusionDate!: string;
   type!: string;
   year!: number;
   series!: number;

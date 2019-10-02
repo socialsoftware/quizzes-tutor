@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -21,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-import java.util.stream.Collectors
 
 @DataJpaTest
 class GetAvailableQuizzesServiceSpockTest extends Specification {
@@ -92,7 +89,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         statmentQuizDtos.size() == 1
         def statementResult = statmentQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().toString()
+        statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -131,7 +128,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         statmentQuizDtos.size() == 1
         def statementResult = statmentQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().toString()
+        statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }

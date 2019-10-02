@@ -80,7 +80,7 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, answers.getQuizAnswerId()));
 
         if (isNotAssignedStudent(user, quizAnswer)) {
-            throw new TutorException(QUIZ_USER_MISMATCH, quizAnswer.getId().toString(), user.getUsername());
+            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getId()), user.getUsername());
         }
 
         for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {

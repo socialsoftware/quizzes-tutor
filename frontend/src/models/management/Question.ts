@@ -3,17 +3,17 @@ import Image from "@/models/management/Image";
 import { Topic } from "@/models/management/Topic";
 
 export class Question {
-  id!: number;
-  title!: string;
-  active!: boolean;
+  id: number | null = null;
+  title: string = "";
+  active: boolean = true;
   numberOfAnswers!: number;
   difficulty!: number;
-  content!: string;
+  content: string = "";
 
   image: Image | null = null;
   sequence: number | null = null;
 
-  options: Option[] = [];
+  options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
 
   constructor(jsonObj?: Question) {

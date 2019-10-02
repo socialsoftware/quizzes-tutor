@@ -38,23 +38,23 @@ public class QuizzesXmlExport {
 
 	private void exportQuiz(Element element, Quiz quiz) {
 		Element quizElement = new Element("quiz");
-		quizElement.setAttribute("number", quiz.getNumber().toString());
+		quizElement.setAttribute("number", String.valueOf(quiz.getNumber()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
 
 		quizElement.setAttribute("title", quiz.getTitle());
 		if (quiz.getCreationDate() != null) {
-			quizElement.setAttribute("creationDate", quiz.getCreationDate().toString());
+			quizElement.setAttribute("creationDate", String.valueOf(quiz.getCreationDate()));
 		}
 		if (quiz.getAvailableDate() != null) {
-			quizElement.setAttribute("availableDate", quiz.getAvailableDate().toString());
+			quizElement.setAttribute("availableDate", String.valueOf(quiz.getAvailableDate()));
 		}
         if (quiz.getConclusionDate() != null) {
-            quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().toString());
+            quizElement.setAttribute("conclusionDate", String.valueOf(quiz.getConclusionDate()));
         }
-		quizElement.setAttribute("year", quiz.getYear().toString());
+		quizElement.setAttribute("year", String.valueOf(quiz.getYear()));
 		quizElement.setAttribute("type", quiz.getType());
 		if (quiz.getSeries() != null) {
-			quizElement.setAttribute("series", quiz.getSeries().toString());
+			quizElement.setAttribute("series", String.valueOf(quiz.getSeries()));
 		}
 		if (quiz.getVersion() != null) {
 			quizElement.setAttribute("version", quiz.getVersion());
@@ -78,8 +78,8 @@ public class QuizzesXmlExport {
 	private void exportQuizQuestion(Element optionsElement, QuizQuestion quizQuestion) {
 		Element optionElement = new Element("quizQuestion");
 
-		optionElement.setAttribute("sequence", quizQuestion.getSequence().toString());
-		optionElement.setAttribute("questionNumber", quizQuestion.getQuestion().getNumber().toString());
+		optionElement.setAttribute("sequence", String.valueOf(quizQuestion.getSequence()));
+		optionElement.setAttribute("questionNumber", String.valueOf(quizQuestion.getQuestion().getNumber()));
 
 		optionsElement.addContent(optionElement);
 	}

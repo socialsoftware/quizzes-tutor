@@ -75,7 +75,7 @@ public class AuthController {
 
         // When requesting user's private data, the authorization object must be passed along.
         JsonObject person = client.getPerson(userDetails.getAuthorization());
-        String username = person.get("username").toString().replaceAll("^\"|\"$", "");
+        String username = String.valueOf(person.get("username")).replaceAll("^\"|\"$", "");
 
         // Find if user is in database
         User user = this.userService.findByUsername(username);
@@ -91,9 +91,9 @@ public class AuthController {
             }
 
             if (Arrays.asList(ADMINS).contains(username)){
-                user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
+                user = this.userService.create(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
             } else if (isStudent) {
-                user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
+                user = this.userService.create(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
             } else {
                 // Verify if user is teaching the course
                 courses = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
@@ -104,7 +104,7 @@ public class AuthController {
                 }
 
                 if (isTeacher) {
-                    user = this.userService.create(person.get("name").toString().replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
+                    user = this.userService.create(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
                 } else {
                     throw new TutorException(USER_NOT_ENROLLED);
                 }
