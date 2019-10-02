@@ -101,14 +101,13 @@ public class QuizzesXmlImport {
 		}
 		String version = quizElement.getAttributeValue("version");
 
-
 		QuizDto quizDto = new QuizDto();
 		quizDto.setNumber(number);
 		quizDto.setScramble(scramble);
 		quizDto.setTitle(title);
-		quizDto.setCreationDate(creationDate);
-        quizDto.setAvailableDate(availableDate);
-        quizDto.setConclusionDate(conclusionDate);
+		quizDto.setCreationDate(String.valueOf(creationDate));
+        quizDto.setAvailableDate(String.valueOf(availableDate));
+        quizDto.setConclusionDate(String.valueOf(conclusionDate));
 		quizDto.setYear(year);
 		quizDto.setType(type);
 		quizDto.setSeries(series);

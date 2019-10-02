@@ -173,15 +173,19 @@
         </v-btn>
       </template>
       <template v-slot:item.image="{ item }">
-        <label>
-          <!--suppress JSUnresolvedVariable -->
-          <input
+        <!--        <label><input
             type="file"
             style="display:none"
             @change="handleFileUpload($event, item.id)"
             accept="image/*"
             class="input-file"
           />Upload</label
+        >-->
+        <v-file-input
+          @change="handleFileUpload($event, props.item.id)"
+          accept="image/*"
+          label="File input"
+          >Upload</v-file-input
         >
       </template>
       <template v-slot:item.action="{ item }">
@@ -283,12 +287,11 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  customFilter(items: Question[], search: string) {
-    return items.filter(
-      (question: Question) =>
-        JSON.stringify(question)
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1
+  customFilter(value: string, search: string, item: string) {
+    return (
+      value != null &&
+      search != null &&
+      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }
 
@@ -336,8 +339,9 @@ export default class QuestionsView extends Vue {
       (question: Question) => (question.id = questionId)
     );
     if (question) {
-      let index = question.topics.map(element => element.id).indexOf(topic.id);
-      if (index >= 0) question.topics.splice(index, 1);
+      question.topics = question.topics.filter(
+        element => element.id !== topic.id
+      );
       this.saveTopics(questionId);
     }
   }

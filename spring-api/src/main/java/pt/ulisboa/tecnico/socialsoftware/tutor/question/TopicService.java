@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 @Service
 public class TopicService {
+    private static Logger logger = LoggerFactory.getLogger(TopicService.class);
 
     @Autowired
     private QuestionService questionService;
@@ -60,8 +63,9 @@ public class TopicService {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-        topic.remove();
+        logger.debug("removeTopic topic: {}: ", topicId);
 
+        topic.remove();
         entityManager.remove(topic);
     }
 

@@ -75,6 +75,17 @@ public class Topic implements Serializable {
     public void remove() {
         getQuestions().forEach(question -> question.getTopics().remove(this));
         getQuestions().clear();
+
+        if (this.parentTopic != null) {
+            parentTopic.getChildrenTopics().remove(this);
+            parentTopic.getChildrenTopics().addAll(this.getChildrenTopics());
+
+        }
+
+        this.childrenTopics.forEach(topic -> topic.parentTopic = this.parentTopic);
+
+        this.parentTopic = null;
+        this.childrenTopics.clear();
     }
 
 

@@ -238,24 +238,30 @@ export default class RemoteServices {
       });
   }
 
-  static createTopic(topic: Topic) {
+  static createTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .post("/topics/", topic, {
         headers: {
           Authorization: Store.getters.getToken
         }
       })
+      .then(response => {
+        return new Topic(response.data);
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  static updateTopic(topic: Topic) {
+  static updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .put("/topics/" + topic.id, topic, {
         headers: {
           Authorization: Store.getters.getToken
         }
+      })
+      .then(response => {
+        return new Topic(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -357,7 +363,8 @@ export default class RemoteServices {
     } else if (error.response) {
       return error.response.data.message;
     } else {
-      return "Error";
+      console.log(error);
+      return "Undefined Error";
     }
   }
 }

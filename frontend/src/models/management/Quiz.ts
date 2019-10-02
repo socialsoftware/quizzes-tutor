@@ -5,10 +5,10 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   title!: string;
-  date!: Date;
-  creationDate!: Date;
-  availableDate!: Date;
-  conclusionDate!: Date;
+  date: string = "-";
+  creationDate: string = "-";
+  availableDate: string = "-";
+  conclusionDate: string = "-";
   type!: string;
   year!: number;
   series!: number;
@@ -24,10 +24,6 @@ export class Quiz {
       this.number = jsonObj.number;
       this.scramble = jsonObj.scramble;
       this.title = jsonObj.title;
-      this.date = jsonObj.date;
-      this.creationDate = jsonObj.creationDate;
-      this.availableDate = jsonObj.availableDate;
-      this.conclusionDate = jsonObj.conclusionDate;
       this.type = jsonObj.type;
       this.year = jsonObj.year;
       this.series = jsonObj.series;
@@ -35,9 +31,26 @@ export class Quiz {
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
 
-      this.questions = jsonObj.questions.map(
-        (question: Question) => new Question(question)
-      );
+      if (jsonObj.date) this.date = new Date(jsonObj.date).toLocaleString("pt");
+
+      if (jsonObj.creationDate)
+        this.creationDate = new Date(jsonObj.creationDate).toLocaleString("pt");
+
+      if (jsonObj.availableDate)
+        this.availableDate = new Date(jsonObj.availableDate).toLocaleString(
+          "pt"
+        );
+
+      if (jsonObj.conclusionDate)
+        this.conclusionDate = new Date(jsonObj.conclusionDate).toLocaleString(
+          "pt"
+        );
+
+      if (jsonObj.questions) {
+        this.questions = jsonObj.questions.map(
+          (question: Question) => new Question(question)
+        );
+      }
     }
   }
 }

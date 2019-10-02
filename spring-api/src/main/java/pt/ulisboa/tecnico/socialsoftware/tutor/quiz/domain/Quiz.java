@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
@@ -61,13 +62,15 @@ public class Quiz implements Serializable {
     public Quiz(QuizDto quiz) {
         checkQuestions(quiz.getQuestions());
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
         this.number = quiz.getNumber();
         setTitle(quiz.getTitle());
         this.type = quiz.getType();
         this.scramble = quiz.getScramble();
-        this.creationDate = quiz.getCreationDate();
-        setAvailableDate(quiz.getAvailableDate());
-        setConclusionDate(quiz.getConclusionDate());
+        this.creationDate = LocalDateTime.parse(quiz.getCreationDate(), formatter);
+        setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate(), formatter));
+        setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate(), formatter));
         this.year = quiz.getYear();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();

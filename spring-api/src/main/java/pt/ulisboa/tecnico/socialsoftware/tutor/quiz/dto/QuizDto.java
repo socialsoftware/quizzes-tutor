@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,9 +14,9 @@ public class QuizDto implements Serializable {
     private Integer number;
     private boolean scramble;
     private String title;
-    private LocalDateTime creationDate;
-    private LocalDateTime availableDate;
-    private LocalDateTime conclusionDate;
+    private String creationDate;
+    private String availableDate;
+    private String conclusionDate;
     private Integer year;
     private String type;
     private Integer series;
@@ -34,10 +33,10 @@ public class QuizDto implements Serializable {
         this.number = quiz.getNumber();
         this.scramble = quiz.getScramble();
         this.title = quiz.getTitle();
-        this.creationDate = quiz.getCreationDate();
-        this.availableDate = quiz.getAvailableDate();
-        this.conclusionDate = quiz.getConclusionDate();
-        this.availableDate = quiz.getAvailableDate();
+        this.creationDate = quiz.getCreationDate().toString();
+        this.availableDate = quiz.getAvailableDate().toString();
+        this.conclusionDate = quiz.getConclusionDate().toString();
+        this.availableDate = quiz.getAvailableDate().toString();
         this.year = quiz.getYear();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
@@ -88,28 +87,32 @@ public class QuizDto implements Serializable {
         this.title = title;
     }
 
-    public LocalDateTime getCreationDate() {
+    public boolean isScramble() {
+        return scramble;
+    }
+
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getConclusionDate() {
-        return conclusionDate;
-    }
-
-    public void setConclusionDate(LocalDateTime conclusionDate) {
-        this.conclusionDate = conclusionDate;
-    }
-
-    public LocalDateTime getAvailableDate() {
+    public String getAvailableDate() {
         return availableDate;
     }
 
-    public void setAvailableDate(LocalDateTime availableDate) {
+    public void setAvailableDate(String availableDate) {
         this.availableDate = availableDate;
+    }
+
+    public String getConclusionDate() {
+        return conclusionDate;
+    }
+
+    public void setConclusionDate(String conclusionDate) {
+        this.conclusionDate = conclusionDate;
     }
 
     public Integer getYear() {

@@ -19,6 +19,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -96,9 +98,11 @@ public class QuizService {
     @Transactional
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
         quiz.setTitle(quizDto.getTitle());
-        quiz.setAvailableDate(quizDto.getAvailableDate());
+        quiz.setAvailableDate(LocalDateTime.parse(quizDto.getAvailableDate(), formatter));
+        quiz.setConclusionDate(LocalDateTime.parse(quizDto.getConclusionDate(), formatter));
         quiz.setScramble(quizDto.getScramble());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());

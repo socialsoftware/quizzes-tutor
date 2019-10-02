@@ -1,4 +1,4 @@
-<template v-if="topics.empty === false">
+<template v-if="topics">
   <v-card class="table">
     <v-card-title>
       <v-flex xs12 sm6 md6>
@@ -12,19 +12,21 @@
       </v-flex>
       <v-divider class="mx-4" inset vertical> </v-divider>
       <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="open">New Topic</v-btn>
+      <v-btn color="primary" dark class="mb-2" @click="newTopic"
+        >New Topic</v-btn
+      >
       <v-dialog v-model="dialog" max-width="1000px">
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle() }}</span>
           </v-card-title>
 
-          <v-card-text>
+          <v-card-text v-if="editedTopic">
             <v-container grid-list-md fluid>
               <v-layout column wrap>
                 <v-flex xs24 sm12 md8>
                   <v-text-field
-                    v-model="editedTopic"
+                    v-model="editedTopic.name"
                     label="Topic"
                   ></v-text-field>
                 </v-flex>
@@ -34,8 +36,10 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+            <v-btn color="blue darken-1" text @click="closeDialogue"
+              >Cancel</v-btn
+            >
+            <v-btn color="blue darken-1" text @click="saveTopic">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -48,18 +52,9 @@
       disable-pagination
       class="elevation-1"
     >
-      <template slot="items" slot-scope="props">
-        <tr>
-          <td class="text-left">{{ props.item.name }}</td>
-          <td>
-            <v-icon small class="mr-2" @click="editTopic(props.item.name)"
-              >edit</v-icon
-            >
-            <v-icon small class="mr-2" @click="deleteTopic(props.item.name)"
-              >delete</v-icon
-            >
-          </td>
-        </tr>
+      <template v-slot:item.action="{ item }">
+        <v-icon small class="mr-2" @click="editTopic(item)">edit</v-icon>
+        <v-icon small class="mr-2" @click="deleteTopic(item)">delete</v-icon>
       </template>
     </v-data-table>
   </v-card>
@@ -73,8 +68,7 @@ import { Topic } from "@/models/management/Topic";
 @Component
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
-  editedTopic: Topic | null = null;
-  oldTopic: Topic | null = null;
+  editedTopic: Topic = new Topic();
   dialog: boolean = false;
   search: string = "";
   headers: object = [
@@ -97,12 +91,11 @@ export default class TopicsView extends Vue {
     }
   }
 
-  customFilter(items: string[], search: string) {
-    return items.filter(
-      (topic: string) =>
-        JSON.stringify(topic)
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1
+  customFilter(value: string, search: string, item: string) {
+    return (
+      value != null &&
+      search != null &&
+      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }
 
@@ -110,51 +103,49 @@ export default class TopicsView extends Vue {
     return this.editedTopic === null ? "New Topic" : "Edit Topic";
   }
 
-  open() {
-    this.editedTopic = null;
-    this.oldTopic = null;
+  newTopic() {
+    this.editedTopic = new Topic();
     this.dialog = true;
+  }
+
+  closeDialogue() {
+    this.dialog = false;
   }
 
   editTopic(topic: Topic) {
     this.editedTopic = topic;
-    this.oldTopic = topic;
     this.dialog = true;
   }
 
-  async deleteTopic(topic: Topic) {
+  async deleteTopic(toDeleteTopic: Topic) {
     if (confirm("Are you sure you want to delete this topic?")) {
       try {
-        await RemoteServices.deleteTopic(topic);
-        this.topics = this.topics.filter(t => t != topic);
+        await RemoteServices.deleteTopic(toDeleteTopic);
+        this.topics = this.topics.filter(
+          topic => topic.id !== toDeleteTopic.id
+        );
       } catch (error) {
         await this.$store.dispatch("error", error);
       }
     }
   }
 
-  close() {
-    this.dialog = false;
-  }
+  async saveTopic() {
+    try {
+      if (this.editedTopic.id) {
+        this.editedTopic = await RemoteServices.updateTopic(this.editedTopic);
+        this.topics = this.topics.filter(
+          topic => topic.id !== this.editedTopic.id
+        );
+      } else if (this.editedTopic) {
+        this.editedTopic = await RemoteServices.createTopic(this.editedTopic);
+      }
 
-  async save() {
-    if (this.oldTopic && this.editedTopic) {
-      try {
-        await RemoteServices.updateTopic(this.editedTopic);
-        this.topics = this.topics.filter(topic => topic !== this.oldTopic);
-        this.topics.unshift(this.editedTopic);
-      } catch (error) {
-        await this.$store.dispatch("error", error);
-      }
-    } else if (this.editedTopic) {
-      try {
-        await RemoteServices.createTopic(this.editedTopic);
-        this.topics.unshift(this.editedTopic);
-      } catch (error) {
-        await this.$store.dispatch("error", error);
-      }
+      this.topics.unshift(this.editedTopic);
+    } catch (error) {
+      await this.$store.dispatch("error", error);
     }
-    this.close();
+    this.closeDialogue();
   }
 }
 </script>

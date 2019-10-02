@@ -425,12 +425,11 @@ export default class QuizForm extends Vue {
     }
   }
 
-  customFilter(items: Question[], search: string) {
-    return items.filter(
-      (question: Question) =>
-        JSON.stringify(question)
-          .toLowerCase()
-          .indexOf(search.toLowerCase()) !== -1
+  customFilter(value: string, search: string, item: string) {
+    return (
+      value != null &&
+      search != null &&
+      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }
 

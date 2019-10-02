@@ -82,37 +82,14 @@
         disable-pagination
         class="elevation-1"
       >
-        <template slot="items" slot-scope="props">
-          <tr>
-            <td class="text-left">{{ props.item.title }}</td>
-            <td class="text-center">{{ convertDate(props.item.date) }}</td>
-            <td class="text-center">
-              {{ convertDate(props.item.availableDate) }}
-            </td>
-            <td class="text-center">
-              {{ convertDate(props.item.conclusionDate) }}
-            </td>
-            <td class="text-center">
-              {{ props.item.scramble }}
-            </td>
-            <td class="text-center">{{ props.item.type }}</td>
-            <td class="text-center">{{ props.item.year }}</td>
-            <td class="text-center">{{ props.item.series }}</td>
-            <td class="text-center">{{ props.item.version }}</td>
-            <td class="text-center">{{ props.item.numberOfQuestions }}</td>
-            <td class="text-center">{{ props.item.numberOfAnswers }}</td>
-            <td>
-              <v-icon small class="mr-2" @click="showQuiz(props.item.id)"
-                >visibility</v-icon
-              >
-              <v-icon small class="mr-2" @click="editQuiz(props.item.id)"
-                >edit</v-icon
-              >
-              <v-icon small class="mr-2" @click="deleteQuiz(props.item.id)"
-                >delete</v-icon
-              >
-            </td>
-          </tr>
+        <template v-slot:item.action="{ item }">
+          <v-icon small class="mr-2" @click="showQuiz(item.id)"
+            >visibility</v-icon
+          >
+          <v-icon small class="mr-2" @click="editQuiz(item.id)">edit</v-icon>
+          <v-icon small class="mr-2" @click="deleteQuiz(item.id)"
+            >delete</v-icon
+          >
         </template>
       </v-data-table>
     </v-card>
@@ -203,16 +180,6 @@ export default class QuizList extends Vue {
       } catch (error) {
         await this.$store.dispatch("error", error);
       }
-    }
-  }
-
-  convertDate(date: string[]): string {
-    if (date == null) {
-      return "";
-    } else {
-      return (
-        date[0] + "/" + date[1] + "/" + date[2] + " " + date[3] + ":" + date[4]
-      );
     }
   }
 }
