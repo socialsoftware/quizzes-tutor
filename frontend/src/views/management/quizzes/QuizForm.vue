@@ -373,6 +373,7 @@ export default class QuizForm extends Vue {
 
   @Watch("quiz")
   onQuizChange() {
+    console.log(3, this.quiz.conclusionDate);
     if (this.quiz !== null) {
       let questionIds: number[] = [];
       if (this.quiz.questions) {

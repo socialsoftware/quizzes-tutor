@@ -1,14 +1,16 @@
-#https://stackoverflow.com/questions/31889867/docker-compose-not-overriding-dockerfile-environment-variables
+## build stage
 
-#https://cli.vuejs.org/guide/deployment.html#docker-nginx
 FROM node:lts-alpine as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+ARG NODE_ENV
+RUN if [ "$NODE_ENV" = "dev" ] ; then npm run build:dev ; else npm run build ; fi
 
-# production stage
+
+## production stage
+
 FROM nginx:stable-alpine as production-stage
 RUN mkdir /app
 COPY --from=build-stage /app/dist /app

@@ -1,0 +1,56 @@
+version: '3.3'
+
+services:
+  postgres:
+    image: postgres:alpine
+    container_name: postgres
+    ports:
+      - 5432:5432
+    restart: unless-stopped
+    volumes:
+      - ./scripts/dumps/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./scripts/dumps:/dumps
+    env_file:
+      - ./scripts/env/database.prod.env
+
+  spring-api:
+    build: ./spring-api/
+    image: tutor-spring-api
+    container_name: spring-api
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - 8080:8080
+    restart: unless-stopped
+    volumes:
+      - ./scripts/images:/images
+      - ./scripts/load:/load
+      - ./scripts/export:/export
+    env_file:
+      - ./scripts/env/spring-api.prod.env
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
+ 
+  frontend:
+    build:
+      context:  ./frontend/
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: prod
+    image: tutor-frontend
+    container_name: frontend
+    depends_on:
+      - spring-api
+    links:
+      - spring-api
+    ports:
+      - 80:80
+    restart: unless-stopped
+    volumes:
+      - ./scripts/nginx.conf:/etc/nginx/nginx.conf
+      - ./scripts/error.log:/var/log/nginx/error.log
+      - ./scripts/access.log:/var/log/nginx/access.log
+    env_file:
+      - ./scripts/env/spring-api.prod.env
