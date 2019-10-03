@@ -1,16 +1,6 @@
 <template>
   <v-card class="table">
     <v-card-title>
-      <v-flex xs12 sm6 md6>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-flex>
-      <v-divider class="mx-4" inset vertical> </v-divider>
       <v-spacer></v-spacer>
       <v-btn color="primary" dark class="mb-2" @click="newQuestion"
         >New Question</v-btn
@@ -109,6 +99,13 @@
       :items-per-page="10"
       show-expand
     >
+      <template v-slot:top>
+        <v-text-field
+          v-model="search"
+          label="Search"
+          class="mx-4"
+        ></v-text-field>
+      </template>
       <template v-slot:item.content="{ item }">
         <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
       </template>
@@ -260,12 +257,13 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  customFilter(value: string, search: string) {
+  customFilter(value: string, search: string, question: Question) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
-      typeof value === "string" &&
-      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+      JSON.stringify(question)
+        .toLowerCase()
+        .indexOf(search.toLowerCase()) !== -1
     );
   }
 

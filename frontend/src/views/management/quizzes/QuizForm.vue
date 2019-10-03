@@ -1,15 +1,15 @@
 <template>
   <v-content>
     <v-card>
+      <v-divider class="mx-4" inset vertical> </v-divider>
       <v-card-actions>
-        <v-flex class="text-xs-right">
-          <v-btn color="primary" dark class="mb-2" @click="switchMode">{{
-            editMode ? "Close" : "Create"
-          }}</v-btn>
-          <v-btn color="primary" dark class="mb-2" v-if="editMode" @click="save"
-            >Save</v-btn
-          >
-        </v-flex>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" dark class="mb-2" @click="switchMode">{{
+          editMode ? "Close" : "Create"
+        }}</v-btn>
+        <v-btn color="primary" dark class="mb-2" v-if="editMode" @click="save"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
     <v-card v-if="editMode">
@@ -79,15 +79,6 @@
         </v-container>
         <v-container grid-list-md fluid>
           <v-layout row wrap>
-            <v-flex xs12 sm6 md6>
-              <v-text-field
-                v-model="search"
-                append-icon="search"
-                label="Search"
-                single-line
-                hide-details
-              ></v-text-field>
-            </v-flex>
             <v-divider class="mx-4" inset vertical> </v-divider>
             <v-spacer></v-spacer>
             <v-btn
@@ -105,10 +96,19 @@
             :search="search"
             :custom-filter="customFilter"
             :items-per-page="10"
+            :sort-by="['sequence']"
+            :sort-desc="[false]"
             :custom-sort="customSort"
             must-sort
             show-expand
           >
+            <template v-slot:top>
+              <v-text-field
+                v-model="search"
+                label="Search"
+                class="mx-4"
+              ></v-text-field>
+            </template>
             <template v-slot:item.content="{ item }">
               <div
                 class="text-left"
@@ -329,7 +329,12 @@ export default class QuizForm extends Vue {
   position: number | null = null;
   showDialog: boolean = false;
   headers: object = [
-    { text: "Sequence", value: "sequence", align: "left", width: "1%" },
+    {
+      text: "Sequence",
+      value: "sequence",
+      align: "left",
+      width: "1%"
+    },
     {
       text: "Question",
       value: "content",
@@ -412,25 +417,26 @@ export default class QuizForm extends Vue {
     }
   }
 
-  customFilter(value: string, search: string) {
+  customFilter(value: string, search: string, question: Question) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
-      typeof value === "string" &&
-      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+      JSON.stringify(question)
+        .toLowerCase()
+        .indexOf(search.toLowerCase()) !== -1
     );
   }
 
-  customSort(items: Question[], index: string, isDesc: boolean) {
+  customSort(items: Question[], index: string, isDesc: string) {
     items.sort((a: any, b: any) => {
-      if (index === "sequence") {
-        if (!isDesc) {
+      if (index == "sequence") {
+        if (isDesc == "false") {
           return this.compare(a.sequence, b.sequence);
         } else {
           return this.compare(b.sequence, a.sequence);
         }
       } else {
-        if (!isDesc) {
+        if (isDesc == "false") {
           return a[index] < b[index] ? -1 : 1;
         } else {
           return b[index] < a[index] ? -1 : 1;
@@ -440,12 +446,12 @@ export default class QuizForm extends Vue {
     return items;
   }
 
-  compare(a: any, b: any) {
-    if (a === b) {
+  compare(a: number, b: number) {
+    if (a == b) {
       return 0;
-    } else if (a === null || a === undefined) {
+    } else if (a == null) {
       return 1;
-    } else if (b === null || b === undefined) {
+    } else if (b == null) {
       return -1;
     } else {
       return a < b ? -1 : 1;
