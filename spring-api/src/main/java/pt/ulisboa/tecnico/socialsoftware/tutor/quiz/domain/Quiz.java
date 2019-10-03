@@ -68,9 +68,17 @@ public class Quiz implements Serializable {
         setTitle(quiz.getTitle());
         this.type = quiz.getType();
         this.scramble = quiz.getScramble();
-        if (quiz.getCreationDate() != null && !quiz.getCreationDate().equals("")) this.creationDate = LocalDateTime.parse(quiz.getCreationDate(), formatter);
-        if (quiz.getAvailableDate() != null && !quiz.getAvailableDate().equals("")) setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate(), formatter));
-        if (quiz.getConclusionDate() != null && !quiz.getConclusionDate().equals("")) setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate(), formatter));
+        if (quiz.getCreationDate() != null && !quiz.getCreationDate().equals("")) {
+            this.creationDate = LocalDateTime.parse(quiz.getCreationDate(), formatter);
+        }
+        if (quiz.getAvailableDate() != null && !quiz.getAvailableDate().equals("")) {
+            setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate(), formatter));
+        } else {
+            setAvailableDate(null);
+        }
+        if (quiz.getConclusionDate() != null && !quiz.getConclusionDate().equals("")) {
+            setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate(), formatter));
+        }
         this.year = quiz.getYear();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();

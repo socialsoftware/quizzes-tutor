@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class ImportExportQuizzesSpockTest extends Specification {
@@ -27,6 +28,7 @@ class ImportExportQuizzesSpockTest extends Specification {
     def creationDate
     def availableDate
     def conclusionDate
+    def formatter
 
     @Autowired
     QuizService quizService
@@ -38,6 +40,8 @@ class ImportExportQuizzesSpockTest extends Specification {
     QuizRepository quizRepository
 
     def setup() {
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         def question = new QuestionDto()
         question.setNumber(1)
         question.setTitle(QUESTION_TITLE)
@@ -59,9 +63,9 @@ class ImportExportQuizzesSpockTest extends Specification {
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(2)
-        quizDto.setCreationDate(creationDate)
-        quizDto.setAvailableDate(availableDate)
-        quizDto.setConclusionDate(conclusionDate)
+        quizDto.setCreationDate(creationDate.format(formatter))
+        quizDto.setAvailableDate(availableDate.format(formatter))
+        quizDto.setConclusionDate(conclusionDate.format(formatter))
         quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM.name())
         quizDto.setSeries(1)
@@ -87,9 +91,9 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizResult.getNumber() == 1
         !quizResult.getScramble()
         quizResult.getTitle() == QUIZ_TITLE
-        quizResult.getCreationDate() == creationDate
-        quizResult.getAvailableDate() == availableDate
-        quizResult.getConclusionDate() == conclusionDate
+        quizResult.getCreationDate().format(formatter) == creationDate.format(formatter)
+        quizResult.getAvailableDate().format(formatter) == availableDate.format(formatter)
+        quizResult.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
         quizResult.getYear() == 2019
         quizResult.getType() == Quiz.QuizType.EXAM.name()
         quizResult.getSeries() == 1

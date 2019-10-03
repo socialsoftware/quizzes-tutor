@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class ImportExportAnswersSpockTest extends Specification {
@@ -37,6 +38,7 @@ class ImportExportAnswersSpockTest extends Specification {
     def answerDate
     def timeTaken
     def quizQuestion
+    def formatter
 
     @Autowired
     UserService userService
@@ -57,6 +59,8 @@ class ImportExportAnswersSpockTest extends Specification {
     QuizAnswerRepository quizAnswerRepository
 
     def setup() {
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         def question = new QuestionDto()
         question.setNumber(1)
         question.setTitle(QUESTION_TITLE)
@@ -77,9 +81,9 @@ class ImportExportAnswersSpockTest extends Specification {
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now()
-        quizDto.setCreationDate(creationDate)
-        quizDto.setAvailableDate(availableDate)
-        quizDto.setConclusionDate(conclusionDate)
+        quizDto.setCreationDate(creationDate.format(formatter))
+        quizDto.setAvailableDate(availableDate.format(formatter))
+        quizDto.setConclusionDate(conclusionDate.format(formatter))
         quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM.name())
         quizDto.setSeries(1)

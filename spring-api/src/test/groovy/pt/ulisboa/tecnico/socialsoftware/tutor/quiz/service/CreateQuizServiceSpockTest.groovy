@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class CreateQuizServiceSpockTest extends Specification {
@@ -37,17 +38,20 @@ class CreateQuizServiceSpockTest extends Specification {
     def availableDate
     def conclusionDate
     def questionDto
+    def formatter
 
     def setup() {
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
         quiz = new QuizDto()
         quiz.setNumber(1)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
-        quiz.setCreationDate(creationDate)
-        quiz.setAvailableDate(availableDate)
-        quiz.setConclusionDate(conclusionDate)
+        quiz.setCreationDate(creationDate.format(formatter))
+        quiz.setAvailableDate(availableDate.format(formatter))
+        quiz.setConclusionDate(conclusionDate.format(formatter))
         quiz.setYear(2019)
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
@@ -81,9 +85,9 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getNumber() != null
         result.getScramble()
         result.getTitle() == QUIZ_TITLE
-        result.getCreationDate() == creationDate
-        result.getAvailableDate() == availableDate
-        result.getConclusionDate() == conclusionDate
+        result.getCreationDate().format(formatter) == creationDate.format(formatter)
+        result.getAvailableDate().format(formatter) == availableDate.format(formatter)
+        result.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
         result.getYear() == 2019
         result.getType() == Quiz.QuizType.STUDENT.name()
         result.getSeries() == 1
@@ -107,7 +111,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a TEACHER quiz no available date"() {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setAvailableDate(null);
+        quiz.setAvailableDate(null)
         quiz.setType(Quiz.QuizType.TEACHER.name())
 
         when:
@@ -122,7 +126,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a TEACHER quiz with available date after conclusion"() {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setConclusionDate(getAvailableDate().minusDays(1))
+        quiz.setConclusionDate(getAvailableDate().minusDays(1).format(formatter))
         quiz.setType(Quiz.QuizType.TEACHER.name())
 
         when:

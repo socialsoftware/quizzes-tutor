@@ -7,6 +7,7 @@ import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Set;
 
@@ -37,19 +38,21 @@ public class QuizzesXmlExport {
 	}
 
 	private void exportQuiz(Element element, Quiz quiz) {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("number", String.valueOf(quiz.getNumber()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
 
 		quizElement.setAttribute("title", quiz.getTitle());
 		if (quiz.getCreationDate() != null) {
-			quizElement.setAttribute("creationDate", String.valueOf(quiz.getCreationDate()));
+			quizElement.setAttribute("creationDate", quiz.getCreationDate().format(formatter));
 		}
 		if (quiz.getAvailableDate() != null) {
-			quizElement.setAttribute("availableDate", String.valueOf(quiz.getAvailableDate()));
+			quizElement.setAttribute("availableDate", quiz.getAvailableDate().format(formatter));
 		}
         if (quiz.getConclusionDate() != null) {
-            quizElement.setAttribute("conclusionDate", String.valueOf(quiz.getConclusionDate()));
+            quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().format(formatter));
         }
 		quizElement.setAttribute("year", String.valueOf(quiz.getYear()));
 		quizElement.setAttribute("type", quiz.getType());

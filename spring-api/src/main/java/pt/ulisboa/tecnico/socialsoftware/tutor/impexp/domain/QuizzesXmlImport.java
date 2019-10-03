@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZZES_IMPORT_ERROR;
@@ -79,19 +80,19 @@ public class QuizzesXmlImport {
 			scramble = Boolean.parseBoolean(quizElement.getAttributeValue("scramble"));
 		}
 		String title = quizElement.getAttributeValue("title");
-		LocalDateTime creationDate = null;
+		String creationDate = null;
 		if (quizElement.getAttributeValue("creationDate") != null) {
-            creationDate = LocalDateTime.parse(quizElement.getAttributeValue("creationDate"));
+            creationDate = quizElement.getAttributeValue("creationDate");
 		}
 
-		LocalDateTime availableDate = null;
+		String availableDate = null;
 		if (quizElement.getAttributeValue("availableDate") != null) {
-			availableDate = LocalDateTime.parse(quizElement.getAttributeValue("availableDate"));
+			availableDate = quizElement.getAttributeValue("availableDate");
 		}
 
-		LocalDateTime conclusionDate = null;
+		String conclusionDate = null;
         if (quizElement.getAttributeValue("conclusionDate") != null) {
-            conclusionDate = LocalDateTime.parse(quizElement.getAttributeValue("conclusionDate"));
+            conclusionDate = quizElement.getAttributeValue("conclusionDate");
         }
 		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
@@ -105,9 +106,9 @@ public class QuizzesXmlImport {
 		quizDto.setNumber(number);
 		quizDto.setScramble(scramble);
 		quizDto.setTitle(title);
-		quizDto.setCreationDate(String.valueOf(creationDate));
-        quizDto.setAvailableDate(String.valueOf(availableDate));
-        quizDto.setConclusionDate(String.valueOf(conclusionDate));
+		quizDto.setCreationDate(creationDate);
+        quizDto.setAvailableDate(availableDate);
+        quizDto.setConclusionDate(conclusionDate);
 		quizDto.setYear(year);
 		quizDto.setType(type);
 		quizDto.setSeries(series);
