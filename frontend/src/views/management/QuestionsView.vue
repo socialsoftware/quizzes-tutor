@@ -313,8 +313,6 @@ export default class QuestionsView extends Vue {
       question.topics = question.topics.filter(
         element => element.id != topic.id
       );
-      alert(questionId);
-      alert(topic.id);
       this.saveTopics(questionId);
     }
   }

@@ -5,6 +5,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +27,8 @@ public class QuizDto implements Serializable {
     private int numberOfAnswers;
     private List<QuestionDto> questions;
 
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+
     public QuizDto(){
     }
 
@@ -41,13 +45,11 @@ public class QuizDto implements Serializable {
         this.numberOfAnswers = quiz.getQuizAnswers().size();
 
         if (quiz.getCreationDate() != null)
-            this.creationDate = String.valueOf(quiz.getCreationDate());
+            this.creationDate = quiz.getCreationDate().format(formatter);
         if (quiz.getAvailableDate() != null)
-            this.availableDate = String.valueOf(quiz.getAvailableDate());
+            this.availableDate = quiz.getAvailableDate().format(formatter);
         if (quiz.getConclusionDate() != null)
-            this.conclusionDate = String.valueOf(quiz.getConclusionDate());
-        if (quiz.getAvailableDate() != null)
-            this.availableDate = String.valueOf(quiz.getAvailableDate());
+            this.conclusionDate = quiz.getConclusionDate().format(formatter);
 
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
@@ -100,6 +102,8 @@ public class QuizDto implements Serializable {
     public String getCreationDate() {
         return creationDate;
     }
+
+
 
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
@@ -175,5 +179,26 @@ public class QuizDto implements Serializable {
 
     public void setQuestions(List<QuestionDto> questions) {
         this.questions = questions;
+    }
+
+    public LocalDateTime getCreationDateDate() {
+        if (getCreationDate() == null || getCreationDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getCreationDate(), formatter);
+    }
+
+    public LocalDateTime getAvailableDateDate() {
+        if (getAvailableDate() == null || getAvailableDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getAvailableDate(), formatter);
+    }
+
+    public LocalDateTime getConclusionDateDate() {
+        if (getConclusionDate() == null || getConclusionDate().isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(getConclusionDate(), formatter);
     }
 }
