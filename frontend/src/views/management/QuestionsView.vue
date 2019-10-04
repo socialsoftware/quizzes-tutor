@@ -102,10 +102,11 @@
       <template v-slot:top>
         <v-text-field
           v-model="search"
-          label="Search"
-          class="mx-4"
+          label="Search Content"
+          class="mx-2"
         ></v-text-field>
       </template>
+
       <template v-slot:item.content="{ item }">
         <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
       </template>
@@ -306,12 +307,14 @@ export default class QuestionsView extends Vue {
 
   removeTopic(questionId: number, topic: Topic) {
     let question = this.questions.find(
-      (question: Question) => (question.id = questionId)
+      (question: Question) => question.id == questionId
     );
     if (question) {
       question.topics = question.topics.filter(
-        element => element.id !== topic.id
+        element => element.id != topic.id
       );
+      alert(questionId);
+      alert(topic.id);
       this.saveTopics(questionId);
     }
   }
