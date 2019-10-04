@@ -14,13 +14,13 @@
         :key="quiz.quizAnswerId"
         @click="showResults(quiz)"
       >
-        <div class="col" data-label="Title: ">
-          {{ quiz.title }}
+        <div class="col">
+          {{ quiz.statementQuiz.title }}
         </div>
-        <div class="col" data-label="Solved Date:">
+        <div class="col">
           {{ quiz.answerDate }}
         </div>
-        <div class="col" data-label="Score:">
+        <div class="col">
           {{ calculateScore(quiz) }}
         </div>
         <div class="col last-col">
@@ -41,6 +41,7 @@ import StatementManager from "@/models/statement/StatementManager";
 export default class AvailableQuizzesView extends Vue {
   quizzes: SolvedQuiz[] = [];
 
+  // noinspection JSUnusedGlobalSymbols
   async beforeMount() {
     try {
       this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
@@ -88,7 +89,6 @@ export default class AvailableQuizzesView extends Vue {
 
   .responsive-table {
     padding: 0 5px;
-    max-height: 70vh;
 
     li {
       border-radius: 3px;
@@ -99,7 +99,8 @@ export default class AvailableQuizzesView extends Vue {
     }
 
     .table-header {
-      background-color: #95a5a6;
+      background-color: #1976d2;
+      color: white;
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -112,7 +113,12 @@ export default class AvailableQuizzesView extends Vue {
 
     .table-row {
       background-color: #ffffff;
-      box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .table-row:hover {
+      background-color: #c8c8c8;
     }
 
     @media all and (max-width: 767px) {
