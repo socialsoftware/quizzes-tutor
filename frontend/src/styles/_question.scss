@@ -4,7 +4,7 @@
   font: normal normal 400 normal 16px / 16px "Varela Round", Helvetica, Arial,
   sans-serif;
   flex-grow: 1;
-  background-image: linear-gradient(to top, rgba(0, 0, 0, 0), white 40%);
+  background-image: linear-gradient(to top, rgba(0, 0, 0, 0), white 20%);
 
   header {
     bottom: 0;
@@ -369,7 +369,6 @@
   .option-list {
     bottom: 0;
     color: rgb(51, 51, 51);
-    height: 280px;
     left: 0;
     position: relative;
     right: 0;
@@ -406,6 +405,7 @@
       border: 0 none rgb(51, 51, 51);
       list-style: none outside none;
       outline: rgb(51, 51, 51) none 0;
+      padding-top: 10px;
 
 
       .option-letter {
@@ -413,11 +413,10 @@
         cursor: pointer;
         display: block;
         float: left;
-        height: 70px;
+        height: 100%;
         text-align: center;
         text-decoration: none solid rgb(105, 105, 105);
         text-size-adjust: 100%;
-        vertical-align: middle;
         width: 70px;
         column-rule-color: rgb(105, 105, 105);
         perspective-origin: 35px 35px;
@@ -429,7 +428,9 @@
         list-style: none outside none;
         outline: rgb(105, 105, 105) none 0;
         font-size: 44px;
-        line-height: 70px;
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
       }
 
       .option-content {

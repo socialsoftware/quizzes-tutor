@@ -6,24 +6,27 @@
         <div class="col">Title</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
-        <div class="col"></div>
+        <div class="col last-col"></div>
       </li>
     </ul>
     <ul class="responsive-table">
-      <li class="table-row" v-for="quiz in quizzes" :key="quiz.quizAnswerId">
-        <div class="col" data-label="title">
+      <li
+        class="table-row"
+        v-for="quiz in quizzes"
+        :key="quiz.quizAnswerId"
+        @click="solveQuiz(quiz)"
+      >
+        <div class="col">
           {{ quiz.title }}
         </div>
-        <div class="col" data-label="solved-date">
+        <div class="col">
           {{ quiz.availableDate }}
         </div>
-        <div class="col" data-label="score">
+        <div class="col">
           {{ quiz.conclusionDate }}
         </div>
-        <div class="col" data-label="button">
-          <v-btn small color="primary" dark @click="solveQuiz(quiz)"
-            >Solve Quiz</v-btn
-          >
+        <div class="col last-col">
+          <i class="fas fa-chevron-circle-right"></i>
         </div>
       </li>
     </ul>
@@ -85,7 +88,6 @@ export default class AvailableQuizzesView extends Vue {
 
   .responsive-table {
     padding: 0 5px;
-    max-height: 70vh;
 
     li {
       border-radius: 3px;
@@ -96,7 +98,8 @@ export default class AvailableQuizzesView extends Vue {
     }
 
     .table-header {
-      background-color: #95a5a6;
+      background-color: #1976d2;
+      color: white;
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -111,7 +114,7 @@ export default class AvailableQuizzesView extends Vue {
 
     .table-row {
       background-color: #ffffff;
-      box-shadow: 0px 0px 9px 0px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
       display: flex;
     }
 

@@ -361,7 +361,6 @@ export default class RemoteServices {
   }
 
   static async errorMessage(error: any): Promise<string> {
-    console.log(error);
     if (error.message === "Network Error") {
       return "Unable to connect to server";
     } else if (error.message === "Request failed with status code 403") {
