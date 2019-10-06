@@ -96,6 +96,7 @@
       :custom-filter="customFilter"
       :items="questions"
       :search="search"
+      multi-sort
       :items-per-page="10"
       show-expand
     >
