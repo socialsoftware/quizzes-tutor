@@ -396,6 +396,31 @@ export default class RemoteServices {
       });
   }
 
+  static async exportAll() {
+    return httpClient
+      .get("/admin/export", {
+        headers: {
+          Authorization: Store.getters.getToken
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        let dateTime = new Date();
+        link.setAttribute(
+          "download",
+          "export-" + dateTime.toLocaleString() + ".zip"
+        );
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === "Network Error") {
       return "Unable to connect to server";

@@ -21,6 +21,7 @@ import StatsView from "./views/student/StatsView.vue";
 
 import AdminManagementView from "./views/AdminManagementView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
+import ImpExpView from "@/views/management/impexp/ImpExpView.vue";
 
 Vue.use(Router);
 
@@ -78,6 +79,15 @@ let router = new Router({
           component: StudentsView,
           meta: {
             title: "Software Architecture - Students",
+            requiredAuth: "Teacher"
+          }
+        },
+        {
+          path: "impexp",
+          name: "impexp-management",
+          component: ImpExpView,
+          meta: {
+            title: "Software Architecture - ImpExp",
             requiredAuth: "Teacher"
           }
         }

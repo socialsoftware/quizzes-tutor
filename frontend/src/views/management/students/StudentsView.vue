@@ -102,9 +102,11 @@ export default class StudentsView extends Vue {
   @Watch("year")
   async onYearChange() {
     try {
-      this.students = await RemoteServices.getCourseExecutionStudents(
-        this.year
-      );
+      if (this.year) {
+        this.students = await RemoteServices.getCourseExecutionStudents(
+          this.year
+        );
+      }
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
