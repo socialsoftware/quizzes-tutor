@@ -10,6 +10,7 @@ import QuestionsView from "./views/management/QuestionsView.vue";
 import TopicsView from "./views/management/TopicsView.vue";
 import StudentStatsView from "./views/StudentStatsView.vue";
 import QuizzesView from "./views/management/quizzes/QuizzesView.vue";
+import StudentsView from "./views/management/students/StudentsView.vue";
 import StudentView from "@/views/student/StudentView.vue";
 import AvailableQuizzesView from "./views/student/AvailableQuizzesView.vue";
 import CreateQuizzesView from "./views/student/CreateQuizzesView.vue";
@@ -17,10 +18,10 @@ import SolvedQuizzesView from "./views/student/SolvedQuizzesView.vue";
 import QuizView from "./views/student/QuizView.vue";
 import ResultsView from "./views/student/ResultsView.vue";
 import StatsView from "./views/student/StatsView.vue";
-import AchievementsView from "./views/student/AchievementsView.vue";
 
 import AdminManagementView from "./views/AdminManagementView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
+import ImpExpView from "@/views/management/impexp/ImpExpView.vue";
 
 Vue.use(Router);
 
@@ -69,6 +70,24 @@ let router = new Router({
           component: QuizzesView,
           meta: {
             title: "Software Architecture - Quizzes",
+            requiredAuth: "Teacher"
+          }
+        },
+        {
+          path: "students",
+          name: "students-management",
+          component: StudentsView,
+          meta: {
+            title: "Software Architecture - Students",
+            requiredAuth: "Teacher"
+          }
+        },
+        {
+          path: "impexp",
+          name: "impexp-management",
+          component: ImpExpView,
+          meta: {
+            title: "Software Architecture - ImpExp",
             requiredAuth: "Teacher"
           }
         }

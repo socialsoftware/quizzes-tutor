@@ -54,7 +54,9 @@ public class QuestionsXmlExport {
 
 	private void exportImage(Element questionElement, Image image) {
 		Element imageElement = new Element("image");
-		imageElement.setAttribute("width", image.getWidth() != null ? String.valueOf(image.getWidth()) : null);
+		if (image.getWidth() != null) {
+			imageElement.setAttribute("width",String.valueOf(image.getWidth()));
+		}
 		imageElement.setAttribute("url", image.getUrl());
 
 		questionElement.addContent(imageElement);

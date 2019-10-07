@@ -7,6 +7,8 @@ import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
 import { Topic } from "@/models/management/Topic";
+import { CourseExecution } from "@/models/management/CourseExecution";
+import { Student } from "@/models/management/Student";
 
 interface AuthResponse {
   token: string;
@@ -358,6 +360,65 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
     }
+  }
+
+  static async getCourseExecutions(): Promise<CourseExecution[]> {
+    return httpClient
+      .get("/courses/executions", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data.map((courseExecution: any) => {
+          return new CourseExecution(courseExecution);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCourseExecutionStudents(year: number) {
+    return httpClient
+      .get("/courses/executions/" + year + "/students", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data.map((student: any) => {
+          return new Student(student);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async exportAll() {
+    return httpClient
+      .get("/admin/export", {
+        headers: {
+          Authorization: Store.getters.getToken
+        },
+        responseType: "blob"
+      })
+      .then(response => {
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement("a");
+        link.href = url;
+        let dateTime = new Date();
+        link.setAttribute(
+          "download",
+          "export-" + dateTime.toLocaleString() + ".zip"
+        );
+        document.body.appendChild(link);
+        link.click();
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async errorMessage(error: any): Promise<string> {
