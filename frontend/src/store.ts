@@ -15,8 +15,10 @@ interface AuthResponse {
 }
 
 const state: State = {
-  token: localStorage.getItem("token") || "",
-  userRole: localStorage.getItem("userRole") || "",
+  // token: localStorage.getItem("token") || "",
+  // userRole: localStorage.getItem("userRole") || "",
+  token: "",
+  userRole: "",
   error: false,
   errorMessage: ""
 };
