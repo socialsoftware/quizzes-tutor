@@ -116,7 +116,7 @@ let router = new Router({
             requiredAuth: "Student"
           }
         },
-        {
+        /*        {
           path: "create",
           name: "create-quizzes",
           component: CreateQuizzesView,
@@ -124,7 +124,7 @@ let router = new Router({
             title: "Software Architecture - Create Quizzes",
             requiredAuth: "Student"
           }
-        },
+        },*/
         {
           path: "solved",
           name: "solved-quizzes",

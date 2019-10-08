@@ -91,14 +91,14 @@
                 <v-list-item-title>Available</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/create">
+            <!--            <v-list-item to="/student/create">
               <v-list-item-action>
                 <v-icon>create</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item>-->
             <v-list-item to="/student/solved">
               <v-list-item-action>
                 <v-icon>done</v-icon>
@@ -151,12 +151,12 @@
           <v-list-item-content>Available Quizzes</v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/student/create" v-if="isStudent">
+        <!--        <v-list-item to="/student/create" v-if="isStudent">
           <v-list-item-action>
             <v-icon>create</v-icon>
           </v-list-item-action>
           <v-list-item-content>Create Quiz</v-list-item-content>
-        </v-list-item>
+        </v-list-item>-->
 
         <v-list-item to="/student/solved" v-if="isStudent">
           <v-list-item-action>

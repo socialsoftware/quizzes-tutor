@@ -21,18 +21,15 @@ export default class MessageBar extends Vue {
       () => {
         this.dialog = this.$store.getters.getError;
         this.errorMessage = this.$store.getters.getErrorMessage;
-        console.log(2, this.dialog, this.$store.getters.getError);
       }
     );
   }
 
   @Watch("dialog")
   closeError() {
-    console.log(1, this.dialog, this.$store.getters.getError);
     if (!this.dialog) {
       this.$store.dispatch("clearError");
     }
-    console.log(3, this.dialog, this.$store.getters.getError);
   }
 }
 </script>
