@@ -7,7 +7,7 @@ public class UserDto {
     private String username;
     private String name;
     private int year;
-    private String role;
+    private User.Role role;
     private LocalDateTime creationDate;
 
     public UserDto(User user) {
@@ -52,11 +52,11 @@ public class UserDto {
         this.year = year;
     }
 
-    public String getRole() {
+    public User.Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(User.Role role) {
         this.role = role;
     }
 

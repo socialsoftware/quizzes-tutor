@@ -10,6 +10,11 @@ import java.util.Set;
 @Entity
 @Table(name = "topics")
 public class Topic implements Serializable {
+    @SuppressWarnings("unused")
+    public enum Status {
+        DISABLED, REMOVED, AVAILABLE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

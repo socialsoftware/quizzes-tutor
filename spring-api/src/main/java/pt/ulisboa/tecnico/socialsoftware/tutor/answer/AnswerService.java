@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -52,7 +53,7 @@ public class AnswerService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -64,7 +65,7 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeQuizAnswer(Integer quizAnswerId) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId));
@@ -74,7 +75,7 @@ public class AnswerService {
         entityManager.remove(quizAnswer);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public CorrectAnswersDto submitQuestionsAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, answers.getQuizAnswerId()));
@@ -82,33 +83,33 @@ public class AnswerService {
         if (isNotAssignedStudent(user, quizAnswer)) {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getId()), user.getUsername());
         }
+        if (!quizAnswer.getCompleted()){
+            for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
+                ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
+                QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
+                        .orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, resultAnswerDto.getQuizQuestionId()));
 
-        for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
-            ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
-            QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
-                    .orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, resultAnswerDto.getQuizQuestionId()));
-
-            if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
-                throw new TutorException(QUIZ_MISMATCH, quizAnswer.getId(), quizQuestion.getQuiz().getId());
-            }
-
-            Option option = null;
-
-            if (resultAnswerDto.getOptionId() != null) {
-                option = optionRepository.findById(resultAnswerDto.getOptionId())
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, resultAnswerDto.getOptionId()));
-
-
-                if (isNotQuestionOption(quizQuestion, option)) {
-                    throw new TutorException(QUIZ_OPTION_MISMATCH, quizQuestion.getId(), option.getId());
+                if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
+                    throw new TutorException(QUIZ_MISMATCH, quizAnswer.getId(), quizQuestion.getQuiz().getId());
                 }
+
+                Option option = null;
+                if (resultAnswerDto.getOptionId() != null) {
+                    option = optionRepository.findById(resultAnswerDto.getOptionId())
+                            .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, resultAnswerDto.getOptionId()));
+
+
+                    if (isNotQuestionOption(quizQuestion, option)) {
+                        throw new TutorException(QUIZ_OPTION_MISMATCH, quizQuestion.getId(), option.getId());
+                    }
+                }
+                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
+
             }
 
-            entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
+            quizAnswer.setAnswerDate(answers.getAnswerDate());
+            quizAnswer.setCompleted(true);
         }
-
-        quizAnswer.setAnswerDate(answers.getAnswerDate());
-        quizAnswer.setCompleted(true);
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
@@ -127,14 +128,14 @@ public class AnswerService {
         return !user.getId().equals(quizAnswer.getUser().getId());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String exportAnswers() {
         AnswersXmlExport xmlExport = new AnswersXmlExport();
 
         return xmlExport.export(quizAnswerRepository.findAll());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importAnswers(String answersXml) {
         AnswersXmlImport xmlImporter = new AnswersXmlImport();
 

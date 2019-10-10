@@ -58,7 +58,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         and: 'a teacher quiz and quiz question'
         quiz = new Quiz()
         quiz.setNumber(1)
-        quiz.setType(Quiz.QuizType.TEACHER.name())
+        quiz.setType(Quiz.QuizType.TEACHER)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
         quiz.setYear(2019)
         quizQuestion = new QuizQuestion()

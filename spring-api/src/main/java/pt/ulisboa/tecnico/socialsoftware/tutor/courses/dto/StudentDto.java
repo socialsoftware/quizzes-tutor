@@ -21,10 +21,10 @@ public class StudentDto {
         this.name = user.getName();
         this.year = user.getYear();
         this.numberOfTeacherQuizzes = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER.name()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .count();
         this.numberOfStudentQuizzes = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT.name()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
                 .count();
         this.numberOfAnswers = user.getQuizAnswers().stream()
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
@@ -37,11 +37,11 @@ public class StudentDto {
         this.percentageOfCorrectAnswers =
                 this.numberOfAnswers != 0 ? (float)numberOfCorrectAnswers / this.numberOfAnswers : 0;
         this.numberOfTeacherAnswers = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER.name()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                 .sum();
         long numberOfCorrectTeacherAnswers = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER.name()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(questionAnswer -> questionAnswer.getOption() != null &&
                         questionAnswer.getOption().getCorrect())

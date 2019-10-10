@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
@@ -45,9 +44,11 @@ public class Quiz implements Serializable {
     @Column(nullable = false)
     private String title = "Title";
 
+    @Enumerated(EnumType.STRING)
+    private QuizType type;
+
     private Integer number;
     private Integer year;
-    private String type;
     private Integer series;
     private String version;
 
@@ -82,16 +83,16 @@ public class Quiz implements Serializable {
     }
 
     private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.type.equals(QuizType.TEACHER.name()) && availableDate == null) {
+        if (this.type.equals(QuizType.TEACHER) && availableDate == null) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
-        if (this.type.equals(QuizType.TEACHER.name()) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+        if (this.type.equals(QuizType.TEACHER) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.TEACHER.name()) &&
+        if (this.type.equals(QuizType.TEACHER) &&
             conclusionDate != null &&
             availableDate != null &&
             conclusionDate.isBefore(availableDate)) {
@@ -121,21 +122,21 @@ public class Quiz implements Serializable {
         getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
     }
 
-    public void generate(int quizSize, List<Question> activeQuestions) {
-        int numberOfActiveQuestions = activeQuestions.size();
+    public void generate(int quizSize, List<Question> availableQuestions) {
+        int numberOfAvailableQuestions = availableQuestions.size();
         Set <Integer> usedQuestions = new HashSet<>();
 
         int numberOfQuestions = 0;
         while (numberOfQuestions < quizSize) {
-            int next = new Random().nextInt(numberOfActiveQuestions);
+            int next = new Random().nextInt(numberOfAvailableQuestions);
             if(!usedQuestions.contains(next)) {
                 usedQuestions.add(next);
-                new QuizQuestion(this, activeQuestions.get(next), numberOfQuestions++);
+                new QuizQuestion(this, availableQuestions.get(next), numberOfQuestions++);
             }
         }
 
         this.setCreationDate(LocalDateTime.now());
-        this.setType(QuizType.STUDENT.name());
+        this.setType(QuizType.STUDENT);
 
         // TODO change based on fenix info
         Calendar calendar = Calendar.getInstance();
@@ -217,11 +218,11 @@ public class Quiz implements Serializable {
     this.year = year;
     }
 
-    public String getType() {
-    return type;
+    public QuizType getType() {
+        return type;
     }
 
-    public void setType(String type) {
+    public void setType(QuizType type) {
     this.type = type;
     }
 
@@ -250,7 +251,7 @@ public class Quiz implements Serializable {
     }
 
     public Set<QuizAnswer> getQuizAnswers() {
-    return quizAnswers;
+        return quizAnswers;
     }
 
     public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {

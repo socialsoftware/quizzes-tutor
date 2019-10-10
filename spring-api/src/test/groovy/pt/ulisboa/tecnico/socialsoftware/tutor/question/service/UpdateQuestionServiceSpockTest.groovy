@@ -61,7 +61,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         question.setNumber(1)
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         and: 'an image'
@@ -75,7 +75,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
         optionRepository.save(optionOK)
-        def options = new ArrayList<>()
+        def options = new ArrayList<Option>()
         options.add(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
@@ -92,7 +92,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
-        questionDto.setActive(false)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
         and: 'a optionId'
@@ -100,7 +100,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         optionDto.setId(optionOK.getId())
         optionDto.setContent(NEW_OPTION_CONTENT)
         optionDto.setCorrect(false)
-        def options = new ArrayList<>()
+        def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto()
         optionDto.setId(optionKO.getId())
@@ -119,17 +119,17 @@ class UpdateQuestionServiceSpockTest extends Specification {
         result.getTitle() == NEW_QUESTION_TITLE
         result.getContent() == NEW_QUESTION_CONTENT
         and: 'are not changed'
-        result.getActive()
+        result.getStatus() == Question.Status.AVAILABLE
         result.getNumberOfAnswers() == 2
         result.getNumberOfCorrect() == 1
         result.getDifficulty() == new Double(0.5)
         result.getImage() != null
         and: 'an option is changed'
         result.getOptions().size() == 2
-        def resOptionOne = result.getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null);
+        def resOptionOne = result.getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
         resOptionOne.getContent() == NEW_OPTION_CONTENT
         !resOptionOne.getCorrect()
-        def resOptionTwo = result.getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null);
+        def resOptionTwo = result.getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
         resOptionTwo.getContent() == OPTION_CONTENT
         resOptionTwo.getCorrect()
 
@@ -141,14 +141,14 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setId(question.getId())
         questionDto.setTitle('     ')
         questionDto.setContent(NEW_QUESTION_CONTENT)
-        questionDto.setActive(false)
+        questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
         def optionDto = new OptionDto()
         optionDto.setId(optionOK.getId())
         optionDto.setContent(NEW_OPTION_CONTENT)
         optionDto.setCorrect(true)
-        def options = new ArrayList<>()
+        def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto()
         optionDto.setId(optionKO.getId())
@@ -172,14 +172,14 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
-        questionDto.setActive(false)
+        questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
         def optionDto = new OptionDto()
         optionDto.setId(optionOK.getId())
         optionDto.setContent(NEW_OPTION_CONTENT)
         optionDto.setCorrect(true)
-        def options = new ArrayList<>()
+        def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto()
         optionDto.setId(optionKO.getId())
@@ -214,7 +214,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         questionDto.setId(question.getId())
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
-        questionDto.setActive(false)
+        questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
         and: 'a optionId'
@@ -222,7 +222,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         optionDto.setId(optionOK.getId())
         optionDto.setContent(NEW_OPTION_CONTENT)
         optionDto.setCorrect(false)
-        def options = new ArrayList<>()
+        def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto()
         optionDto.setId(optionKO.getId())

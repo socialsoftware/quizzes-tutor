@@ -17,7 +17,7 @@ public class QuestionDto implements Serializable {
     private double difficulty;
     private int numberOfAnswers;
     private int numberOfCorrect;
-    private boolean active;
+    private String status;
     private List<OptionDto> options;
     private ImageDto image;
     private List<TopicDto> topics;
@@ -34,7 +34,7 @@ public class QuestionDto implements Serializable {
         this.difficulty = question.getDifficulty();
         this.numberOfAnswers = question.getNumberOfAnswers();
         this.numberOfCorrect = question.getNumberOfCorrect();
-        this.active = question.getActive();
+        this.status = question.getStatus().name();
         if (question.getImage() != null) {
             this.image = new ImageDto(question.getImage());
         }
@@ -94,12 +94,12 @@ public class QuestionDto implements Serializable {
         this.numberOfCorrect = numberOfCorrect;
     }
 
-    public boolean getActive() {
-        return active;
+    public String getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public List<OptionDto> getOptions() {
@@ -124,10 +124,6 @@ public class QuestionDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public boolean isActive() {
-        return active;
     }
 
     public List<TopicDto> getTopics() {

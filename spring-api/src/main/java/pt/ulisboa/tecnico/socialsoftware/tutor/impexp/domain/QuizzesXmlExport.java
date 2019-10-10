@@ -55,7 +55,7 @@ public class QuizzesXmlExport {
             quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().format(formatter));
         }
 		quizElement.setAttribute("year", String.valueOf(quiz.getYear()));
-		quizElement.setAttribute("type", quiz.getType());
+		quizElement.setAttribute("type", quiz.getType().name());
 		if (quiz.getSeries() != null) {
 			quizElement.setAttribute("series", String.valueOf(quiz.getSeries()));
 		}

@@ -46,10 +46,10 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
         questionOne = new Question()
         questionOne.setNumber(1)
-        questionOne.setActive(true)
+        questionOne.setStatus(Question.Status.AVAILABLE)
         questionTwo = new Question()
         questionTwo.setNumber(2)
-        questionTwo.setActive(true)
+        questionTwo.setStatus(Question.Status.AVAILABLE)
 
         userRepository.save(user)
         questionRepository.save(questionOne)

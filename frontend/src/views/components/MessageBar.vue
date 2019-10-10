@@ -37,7 +37,7 @@ export default class MessageBar extends Vue {
 <style scoped lang="scss">
 /*https://github.com/vuetifyjs/vuetify/issues/9175*/
 .v-dialog__container {
-  display: unset;
+  display: unset !important;
 }
 
 .v-alert {

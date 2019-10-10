@@ -118,7 +118,6 @@ public class AnswersXmlImport {
 		User user = userRepository.findByNumber(number);
 
 		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
-		System.out.println(quizAnswerDto.getId());
 		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId()).get();
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);

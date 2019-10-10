@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -40,21 +41,22 @@ class ImportExportQuizzesSpockTest extends Specification {
     QuizRepository quizRepository
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-        def question = new QuestionDto()
-        question.setNumber(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
-        def option = new OptionDto()
-        option.setNumber(1)
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
+        def questionDto = new QuestionDto()
+        questionDto.setNumber(1)
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
+
+        def optionDto = new OptionDto()
+        optionDto.setNumber(1)
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
-        options.add(option)
-        question.setOptions(options)
-        question = questionService.createQuestion(question)
+        options.add(optionDto)
+        questionDto.setOptions(options)
+        questionDto = questionService.createQuestion(questionDto)
 
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
@@ -67,12 +69,12 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
         quizDto.setYear(2019)
-        quizDto.setType(Quiz.QuizType.EXAM.name())
+        quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
         quiz = quizService.createQuiz(quizDto)
 
-        quizService.addQuestionToQuiz(question.getId(), quiz.getId())
+        quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
     }
 
     def 'export and import quizzes'() {
@@ -95,7 +97,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizResult.getAvailableDate().format(formatter) == availableDate.format(formatter)
         quizResult.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
         quizResult.getYear() == 2019
-        quizResult.getType() == Quiz.QuizType.EXAM.name()
+        quizResult.getType() == Quiz.QuizType.EXAM
         quizResult.getSeries() == 1
         quizResult.getVersion() == VERSION
         quizResult.getQuizQuestions().size() == 1

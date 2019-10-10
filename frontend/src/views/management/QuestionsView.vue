@@ -117,7 +117,6 @@
           <v-autocomplete
             v-model="item.topics"
             :items="topics"
-            chips
             multiple
             return-object
             item-text="name"
@@ -144,21 +143,23 @@
         </v-form>
       </template>
 
-      <template v-slot:item.active="{ item }">
-        <v-btn text small @click="switchActive(item.id)">
-          <span v-if="item.active">Enabled</span><span v-else>Disabled</span>
-        </v-btn>
+      <template v-slot:item.status="{ item }">
+        <v-select
+          v-model="item.status"
+          :items="statusList"
+          small-chips
+          dense
+          @change="setStatus(item.id, item.status)"
+        ></v-select>
       </template>
 
       <template v-slot:item.image="{ item }">
         <v-file-input
-          small-chips
           show-size
-          outlined
           dense
+          small-chips
           @change="handleFileUpload($event, item)"
           accept="image/*"
-          label="File input"
         ></v-file-input>
       </template>
 
@@ -220,6 +221,7 @@ export default class QuestionsView extends Vue {
   dialog: boolean = false;
   showQuestion: boolean = false;
   search: string = "";
+  statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
   headers: object = [
     { text: "Question", value: "content", align: "left", width: "70%" },
     {
@@ -232,7 +234,7 @@ export default class QuestionsView extends Vue {
     { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
     { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },
     { text: "Title", value: "title", align: "left", width: "3%" },
-    { text: "Active", value: "active", align: "left", width: "1%" },
+    { text: "Status", value: "status", align: "left", width: "1%" },
     {
       text: "Image",
       value: "image",
@@ -327,14 +329,14 @@ export default class QuestionsView extends Vue {
     this.dialog = true;
   }
 
-  async switchActive(questionId: number) {
+  async setStatus(questionId: number, status: string) {
     try {
-      await RemoteServices.questionSwitchActive(questionId);
+      await RemoteServices.setQuestionStatus(questionId, status);
       let question = this.questions.find(
         question => question.id === questionId
       );
       if (question) {
-        question.active = !question.active;
+        question.status = status;
       }
     } catch (error) {
       await this.$store.dispatch("error", error);

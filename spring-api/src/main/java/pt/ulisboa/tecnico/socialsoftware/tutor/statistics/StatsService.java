@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
@@ -23,7 +24,7 @@ public class StatsService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public StatsDto getStats(String username) {
         User user = userRepository.findByUsername(username);
 

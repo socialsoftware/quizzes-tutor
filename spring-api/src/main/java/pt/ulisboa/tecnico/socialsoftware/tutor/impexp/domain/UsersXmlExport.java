@@ -46,7 +46,7 @@ public class UsersXmlExport {
 		userElement.setAttribute("name", user.getName());
 
 		if (user.getRole() != null){
-			userElement.setAttribute("role", user.getRole());
+			userElement.setAttribute("role", user.getRole().name());
 		}
 
 		if (user.getYear() != null) {

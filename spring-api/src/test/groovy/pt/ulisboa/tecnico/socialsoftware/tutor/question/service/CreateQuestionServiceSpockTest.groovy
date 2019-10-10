@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -26,28 +27,28 @@ class CreateQuestionServiceSpockTest extends Specification {
 
     def "create a question with no image and one option"() {
         given: "a questionDto"
-        def question = new QuestionDto()
-        question.setNumber(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        def questionDto = new QuestionDto()
+        questionDto.setNumber(1)
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
         and: 'a optionId'
-        def option = new OptionDto()
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
-        def options = new ArrayList<>()
-        options.add(option)
-        question.setOptions(options)
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(question)
+        questionService.createQuestion(questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
         result.getNumber() == 1
-        result.getActive()
+        result.getStatus() == Question.Status.AVAILABLE
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage() == null
@@ -60,38 +61,38 @@ class CreateQuestionServiceSpockTest extends Specification {
 
     def "create a question with image and two options"() {
         given: "a questionDto"
-        def question = new QuestionDto()
-        question.setNumber(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        def questionDto = new QuestionDto()
+        questionDto.setNumber(1)
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
 
         and: 'an image'
         def image = new ImageDto()
         image.setUrl(URL)
         image.setWidth(20)
-        question.setImage(image)
+        questionDto.setImage(image)
         and: 'two options'
-        def option = new OptionDto()
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
-        def options = new ArrayList<>()
-        options.add(option)
-        option = new OptionDto()
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(false)
-        options.add(option)
-        question.setOptions(options)
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(false)
+        options.add(optionDto)
+        questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(question)
+        questionService.createQuestion(questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
         result.getNumber() == 1
-        result.getActive()
+        result.getStatus() == Question.Status.AVAILABLE
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
         result.getImage().getId() != null
@@ -102,22 +103,22 @@ class CreateQuestionServiceSpockTest extends Specification {
 
     def "create two questions"() {
         given: "a questionDto"
-        def question = new QuestionDto()
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        def questionDto = new QuestionDto()
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
         and: 'a optionId'
-        def option = new OptionDto()
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
-        def options = new ArrayList<>()
-        options.add(option)
-        question.setOptions(options)
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createQuestion(question)
-        question.setNumber(null)
-        questionService.createQuestion(question)
+        questionService.createQuestion(questionDto)
+        questionDto.setNumber(null)
+        questionService.createQuestion(questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L

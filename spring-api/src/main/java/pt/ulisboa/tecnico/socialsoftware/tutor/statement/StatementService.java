@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
@@ -51,21 +52,21 @@ public class StatementService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public StatementQuizDto generateStudentQuiz(String username, int quizSize) {
         User user = userRepository.findByUsername(username);
 
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
-        List<Question> activeQuestions = questionRepository.getActiveQuestions();
+        List<Question> availableQuestions = questionRepository.getAvailableQuestions();
 
-        if (activeQuestions.size() < quizSize) {
+        if (availableQuestions.size() < quizSize) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
         // TODO: to include knowhow about the student in the future
-        quiz.generate(quizSize, activeQuestions);
+        quiz.generate(quizSize, availableQuestions);
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
@@ -75,7 +76,7 @@ public class StatementService {
         return new StatementQuizDto(quizAnswer);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<StatementQuizDto> getAvailableQuizzes(String username) {
         User user = userRepository.findByUsername(username);
 
@@ -97,13 +98,13 @@ public class StatementService {
                 });
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> !quizAnswer.getCompleted() && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER.name()))
+                .filter(quizAnswer -> !quizAnswer.getCompleted() && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate))
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<SolvedQuizDto> getSolvedQuizzes(String username) {
         User user = userRepository.findByUsername(username);
 
@@ -114,7 +115,7 @@ public class StatementService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public CorrectAnswersDto solveQuiz(String username, @Valid @RequestBody ResultAnswersDto answers) {
         User user = userRepository.findByUsername(username);
 

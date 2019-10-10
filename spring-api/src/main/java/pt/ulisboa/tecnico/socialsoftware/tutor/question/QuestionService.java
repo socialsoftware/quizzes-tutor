@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
@@ -34,29 +35,29 @@ public class QuestionService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuestionDto findQuestionByNumber(Integer number) {
         return questionRepository.findByNumber(number).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, number));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<QuestionDto> findAllQuestions(Integer pageIndex, Integer pageSize) {
         return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
-    @Transactional
-    public List<QuestionDto> findActiveQuestions() {
-        return questionRepository.getActiveQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public List<QuestionDto> findAvailableQuestions() {
+        return questionRepository.getAvailableQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuestionDto createQuestion(QuestionDto questionDto) {
         if (questionDto.getNumber() == null) {
             int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
@@ -69,26 +70,26 @@ public class QuestionService {
         return new QuestionDto(question);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void updateQuestion(Integer questionId, QuestionDto questionDto) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.remove();
         entityManager.remove(question);
     }
 
-    @Transactional
-    public void questionSwitchActive(Integer questionId) {
+    @Transactional(isolation = Isolation.SERIALIZABLE)
+    public void questionSetStatus(Integer questionId, Question.Status status) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-        question.switchActive();
+        question.setStatus(status);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
@@ -105,7 +106,7 @@ public class QuestionService {
         question.getImage().setUrl(question.getNumber() + "." + type);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
@@ -118,7 +119,7 @@ public class QuestionService {
         return xmlExporter.export(questionRepository.findAll());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importQuestions(String questionsXML) {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 

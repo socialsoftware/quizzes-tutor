@@ -370,7 +370,7 @@ export default class QuizForm extends Vue {
   // noinspection JSUnusedGlobalSymbols
   async created() {
     try {
-      this.questions = await RemoteServices.getActiveQuestions();
+      this.questions = await RemoteServices.getAvailableQuestions();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }

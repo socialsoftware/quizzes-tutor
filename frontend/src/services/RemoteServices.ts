@@ -63,9 +63,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getActiveQuestions(): Promise<Question[]> {
+  static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
-      .get("/questions/active", {
+      .get("/questions/available", {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -122,11 +122,15 @@ export default class RemoteServices {
       });
   }
 
-  static questionSwitchActive(questionId: number): Promise<Question> {
+  static setQuestionStatus(
+    questionId: number,
+    status: String
+  ): Promise<Question> {
     return httpClient
-      .put("/questions/" + questionId + "/switchActive", null, {
+      .post("/questions/" + questionId + "/setStatus", status, {
         headers: {
-          Authorization: Store.getters.getToken
+          Authorization: Store.getters.getToken,
+          "Content-Type": "text/html"
         }
       })
       .then(response => {
@@ -424,11 +428,11 @@ export default class RemoteServices {
   static async errorMessage(error: any): Promise<string> {
     if (error.message === "Network Error") {
       return "Unable to connect to server";
-    } else if (error.message === "Request failed with status code 403") {
-      await Store.dispatch("logout");
-      return "Unauthorized access or Expired token";
     } else if (error.response) {
       return error.response.data.message;
+    } else if (error.message === "Request failed with status code 403") {
+      Store.dispatch("logout");
+      return "Unauthorized access or Expired token";
     } else {
       return "Undefined Error";
     }

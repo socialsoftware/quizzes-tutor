@@ -14,11 +14,11 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "select MAX(number) from questions", nativeQuery = true)
     Integer getMaxQuestionNumber();
 
-    @Query(value = "select * from questions q where q.active = true", nativeQuery = true)
-    List<Question> getActiveQuestions();
+    @Query(value = "select * from questions q where q.status = 'AVAILABLE'", nativeQuery = true)
+    List<Question> getAvailableQuestions();
 
-    @Query(value = "select COUNT(*) from questions q where q.active = true", nativeQuery = true)
-    Integer getTotalActiveQuestions();
+    @Query(value = "select COUNT(*) from questions q where q.status = 'AVAILABLE'", nativeQuery = true)
+    Integer getTotalAvailableQuestions();
 
     @Query(value = "select * from questions q where q.number = :number", nativeQuery = true)
     Optional<Question> findByNumber(Integer number);

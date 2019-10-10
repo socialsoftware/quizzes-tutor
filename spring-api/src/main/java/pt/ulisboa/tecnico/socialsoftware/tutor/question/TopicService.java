@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
@@ -34,12 +35,12 @@ public class TopicService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<TopicDto> findAllTopics() {
         return topicRepository.findAll().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TopicDto createTopic(TopicDto topicDto) {
         if (topicRepository.findByName(topicDto.getName()) != null) {
             throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
@@ -50,7 +51,7 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
@@ -58,7 +59,7 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeTopic(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
@@ -69,14 +70,14 @@ public class TopicService {
         entityManager.remove(topic);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String exportTopics() {
         TopicsXmlExport xmlExport = new TopicsXmlExport();
 
         return xmlExport.export(topicRepository.findAll());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();
 

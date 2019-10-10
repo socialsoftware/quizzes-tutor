@@ -60,7 +60,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
         question.setNumber(1)
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         and: 'an image'

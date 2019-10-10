@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -25,30 +26,30 @@ class ImportExportQuestionsSpockTest extends Specification {
     QuestionRepository questionRepository
 
     def setup() {
-        def question = new QuestionDto()
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        def questionDto = new QuestionDto()
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
 
         def image = new ImageDto()
         image.setUrl(URL)
         image.setWidth(20)
-        question.setImage(image)
+        questionDto.setImage(image)
 
-        def option = new OptionDto()
-        option.setNumber(0)
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
+        def optionDto = new OptionDto()
+        optionDto.setNumber(0)
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
-        options.add(option)
-        option = new OptionDto()
-        option.setNumber(1)
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(false)
-        options.add(option)
-        question.setOptions(options)
+        options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setNumber(1)
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(false)
+        options.add(optionDto)
+        questionDto.setOptions(options)
 
-        questionService.createQuestion(question)
+        questionService.createQuestion(questionDto)
     }
 
     def 'export and import questions'() {
@@ -65,7 +66,7 @@ class ImportExportQuestionsSpockTest extends Specification {
         def questionResult = questionRepository.findAll().get(0)
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
-        questionResult.getActive()
+        questionResult.getStatus() == Question.Status.AVAILABLE
         def imageResult = questionResult.getImage()
         imageResult.getWidth() == 20
         imageResult.getUrl() == URL

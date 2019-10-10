@@ -24,7 +24,7 @@ class CreateQuizControllerSpockTest extends Specification {
             "id": 0,
             "questions": [
                 "additionalProp1": [
-                    "active": true,
+                    "status": "AVAILABLE",
                     "content": "string",
                     "difficulty": 0,
                     "image": [
@@ -40,7 +40,7 @@ class CreateQuizControllerSpockTest extends Specification {
                     ]
                 ],
                 "additionalProp2": [
-                    "active": true,
+                    "status": "AVAILABLE",
                     "content": "string",
                     "difficulty": 0,
                     "image": [
@@ -56,7 +56,7 @@ class CreateQuizControllerSpockTest extends Specification {
                     ]
                 ],
                 "additionalProp3": [
-                    "active": true,
+                    "status": "AVAILABLE",
                     "content": "string",
                     "difficulty": 0,
                     "image": [

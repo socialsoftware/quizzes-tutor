@@ -18,11 +18,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     private Integer number;
     private String username;
     private String name;
     private Integer year;
-    private String role;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -37,7 +39,7 @@ public class User implements UserDetails {
         this.name = name;
         setUsername(username);
         if (role != null) {
-            this.role = role.name();
+            this.role = role;
         }
 
         this.number = number;
@@ -86,11 +88,11 @@ public class User implements UserDetails {
         this.year = year;
     }
 
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 

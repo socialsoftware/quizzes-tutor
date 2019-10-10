@@ -5,7 +5,7 @@ import { Topic } from "@/models/management/Topic";
 export class Question {
   id: number | null = null;
   title: string = "";
-  active: boolean = true;
+  status: string = "AVAILABLE";
   numberOfAnswers!: number;
   difficulty!: number;
   content: string = "";
@@ -20,7 +20,7 @@ export class Question {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.title = jsonObj.title;
-      this.active = jsonObj.active;
+      this.status = jsonObj.status;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;

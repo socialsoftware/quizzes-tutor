@@ -47,7 +47,7 @@ class FindAllServiceSpockTest extends Specification {
         def question = new Question()
         question.setNumber(1)
         question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(0)
         question.setNumberOfCorrect(0)
         and: 'an image'
@@ -92,7 +92,7 @@ class FindAllServiceSpockTest extends Specification {
         result.size() == 1
         def resQuestion = result.get(0)
         resQuestion.getId() != null
-        resQuestion.getActive() == true
+        resQuestion.getStatus() == Question.Status.AVAILABLE.name()
         resQuestion.getContent() == QUESTION_CONTENT
         resQuestion.getNumberOfAnswers() == 2
         resQuestion.getNumberOfCorrect() == 1

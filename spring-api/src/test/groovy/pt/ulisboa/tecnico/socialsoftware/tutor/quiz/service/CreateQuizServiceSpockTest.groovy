@@ -73,7 +73,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a quiz"() {
         given: 'student quiz with title'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.STUDENT.name())
+        quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
         quizService.createQuiz(quiz)
@@ -89,7 +89,7 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getAvailableDate().format(formatter) == availableDate.format(formatter)
         result.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
         result.getYear() == 2019
-        result.getType() == Quiz.QuizType.STUDENT.name()
+        result.getType() == Quiz.QuizType.STUDENT
         result.getSeries() == 1
         result.getVersion() == VERSION
         result.getQuizQuestions().size() == 1
@@ -97,7 +97,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
     def "create a quiz no title"() {
         given: 'student quiz'
-        quiz.setType(Quiz.QuizType.STUDENT.name())
+        quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
         quizService.createQuiz(quiz)
@@ -112,7 +112,7 @@ class CreateQuizServiceSpockTest extends Specification {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
         quiz.setAvailableDate(null)
-        quiz.setType(Quiz.QuizType.TEACHER.name())
+        quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
         quizService.createQuiz(quiz)
@@ -127,7 +127,7 @@ class CreateQuizServiceSpockTest extends Specification {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
         quiz.setConclusionDate(getAvailableDate().minusDays(1).format(formatter))
-        quiz.setType(Quiz.QuizType.TEACHER.name())
+        quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
         quizService.createQuiz(quiz)
@@ -141,7 +141,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a TEACHER quiz wrong sequence"() {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.STUDENT.name())
+        quiz.setType(Quiz.QuizType.STUDENT)
         questionDto.setSequence(3)
 
         when:

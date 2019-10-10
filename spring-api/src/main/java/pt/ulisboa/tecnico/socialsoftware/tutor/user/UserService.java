@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
@@ -34,7 +35,7 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public User create(String name, String username, User.Role role) {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
@@ -58,7 +59,7 @@ public class UserService {
        return xmlExporter.export(userRepository.findAll());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importUsers(String usersXML) {
         UsersXmlImport xmlImporter = new UsersXmlImport();
 

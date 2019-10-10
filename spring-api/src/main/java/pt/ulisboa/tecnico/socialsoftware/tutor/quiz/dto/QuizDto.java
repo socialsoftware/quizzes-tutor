@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
+import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -20,13 +21,14 @@ public class QuizDto implements Serializable {
     private String availableDate = null;
     private String conclusionDate = null;
     private Integer year;
-    private String type;
+    private Quiz.QuizType type;
     private Integer series;
     private String version;
     private int numberOfQuestions;
     private int numberOfAnswers;
     private List<QuestionDto> questions;
 
+    @Transient
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public QuizDto(){
@@ -103,8 +105,6 @@ public class QuizDto implements Serializable {
         return creationDate;
     }
 
-
-
     public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
@@ -133,11 +133,11 @@ public class QuizDto implements Serializable {
         this.year = year;
     }
 
-    public String getType() {
+    public Quiz.QuizType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(Quiz.QuizType type) {
         this.type = type;
     }
 

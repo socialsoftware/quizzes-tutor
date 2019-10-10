@@ -8,6 +8,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
@@ -46,9 +47,9 @@ public class QuestionController {
         return this.questionService.findAllQuestions(pageIndex, pageSize);
     }
 
-    @GetMapping("/questions/active")
-    public List<QuestionDto> getActiveQuestions(){
-        return this.questionService.findActiveQuestions();
+    @GetMapping("/questions/available")
+    public List<QuestionDto> getAvailableQuestions(){
+        return this.questionService.findAvailableQuestions();
     }
 
     @GetMapping("/questions/{questionId}")
@@ -62,7 +63,7 @@ public class QuestionController {
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
-        question.setActive(true);
+        question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(question);
     }
 
@@ -91,10 +92,10 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/questions/{questionId}/switchActive")
-    public ResponseEntity questionSwitchActive(@PathVariable Integer questionId) {
-        logger.debug("questionSwitchActive questionId: {}: ", questionId);
-        questionService.questionSwitchActive(questionId);
+    @PostMapping("/questions/{questionId}/setStatus")
+    public ResponseEntity questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
+        logger.debug("questionSetStatus questionId: {}: ", questionId);
+        questionService.questionSetStatus(questionId, Question.Status.valueOf(status));
         return ResponseEntity.ok().build();
     }
 

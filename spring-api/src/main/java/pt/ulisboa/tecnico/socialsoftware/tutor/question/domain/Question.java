@@ -23,6 +23,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
                 @Index(name = "question_indx_0", columnList = "number")
         })
 public class Question implements Serializable {
+    @SuppressWarnings("unused")
+    public enum Status {
+        DISABLED, REMOVED, AVAILABLE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -41,8 +46,9 @@ public class Question implements Serializable {
     @Column(name = "number_of_correct", columnDefinition = "integer default 0")
     private Integer numberOfCorrect = 0;
 
-    @Column(columnDefinition = "boolean default false")
-    private boolean active = false;
+    //    @Column(columnDefinition = "boolean default false")
+    @Enumerated(EnumType.STRING)
+    private Status status = Status.DISABLED;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
@@ -65,7 +71,7 @@ public class Question implements Serializable {
         this.title = questionDto.getTitle();
         this.number = questionDto.getNumber();
         this.content = questionDto.getContent();
-        this.active = questionDto.getActive();
+        this.status = Status.valueOf(questionDto.getStatus());
 
         if (questionDto.getImage() != null) {
             Image img = new Image(questionDto.getImage());
@@ -112,12 +118,12 @@ public class Question implements Serializable {
         this.content = content;
     }
 
-    public boolean getActive() {
-        return active;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public List<Option> getOptions() {
@@ -240,10 +246,6 @@ public class Question implements Serializable {
         //new Image(questionDto.getImage());
     }
 
-    public void switchActive() {
-        this.active = !this.active;
-    }
-
     public void addImage(Image image) {
         this.image = image;
         image.setQuestion(this);
@@ -261,7 +263,7 @@ public class Question implements Serializable {
         }
 
         if (!questionDto.getOptions().stream().filter(OptionDto::getCorrect).findAny()
-                .equals(getOptions().stream().filter(Option::getCorrect).findAny())
+                .equals(getOptions().stream().filter(Option::getCorrect).findAny().map(OptionDto::new))
                 && getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
                 .findAny().isPresent()) {
             throw new TutorException(QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS);

@@ -214,7 +214,7 @@ router.beforeEach(async (to, from, next) => {
     next("/");
   }
 
-  await Store.dispatch("clearError");
+  // await Store.dispatch("clearError");
 });
 
 router.afterEach((to, from) => {

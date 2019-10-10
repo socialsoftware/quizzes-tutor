@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -59,21 +60,21 @@ class ImportExportAnswersSpockTest extends Specification {
     QuizAnswerRepository quizAnswerRepository
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 
-        def question = new QuestionDto()
-        question.setNumber(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
-        def option = new OptionDto()
-        option.setNumber(0)
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
+        def questionDto = new QuestionDto()
+        questionDto.setNumber(1)
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
+        def optionDto = new OptionDto()
+        optionDto.setNumber(0)
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
-        options.add(option)
-        question.setOptions(options)
-        question = questionService.createQuestion(question)
+        options.add(optionDto)
+        questionDto.setOptions(options)
+        def question = questionService.createQuestion(questionDto)
 
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
@@ -85,7 +86,7 @@ class ImportExportAnswersSpockTest extends Specification {
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
         quizDto.setYear(2019)
-        quizDto.setType(Quiz.QuizType.EXAM.name())
+        quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
         quiz = quizService.createQuiz(quizDto)

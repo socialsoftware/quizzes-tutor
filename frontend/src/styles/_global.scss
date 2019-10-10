@@ -13,3 +13,8 @@ html,body {
   margin: 2%;
   width: 96%;
 }
+
+.table td, .table th {
+  display: table-cell;
+  vertical-align: inherit;
+}

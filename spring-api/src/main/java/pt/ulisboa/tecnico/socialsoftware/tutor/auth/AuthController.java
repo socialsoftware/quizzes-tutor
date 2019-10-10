@@ -67,8 +67,10 @@ public class AuthController {
         try {
             userDetails = client.getUserDetailsFromCode(data.getCode());
         } catch (FenixEduClientException e) {
+            e.printStackTrace();
             throw new TutorException(FENIX_ERROR);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new TutorException(FENIX_ERROR);
         }
 
@@ -114,7 +116,7 @@ public class AuthController {
         logService.create(user, LocalDateTime.now(), "LOGIN");
 
         String token = JwtTokenProvider.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationDto(token, user.getRole()));
+        return ResponseEntity.ok(new JwtAuthenticationDto(token, user.getRole().name()));
 
     }
 

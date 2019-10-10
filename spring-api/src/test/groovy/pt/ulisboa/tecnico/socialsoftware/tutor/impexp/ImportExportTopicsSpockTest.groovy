@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -33,19 +34,19 @@ class ImportExportTopicsSpockTest extends Specification {
     def topicDtoTwo
 
     def setup() {
-        def question = new QuestionDto()
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
-        question.setActive(true)
+        def questionDto = new QuestionDto()
+        questionDto.setTitle(QUESTION_TITLE)
+        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setStatus(Question.Status.AVAILABLE.name())
 
-        def option = new OptionDto()
-        option.setContent(OPTION_CONTENT)
-        option.setCorrect(true)
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
-        options.add(option)
-        question.setOptions(options)
+        options.add(optionDto)
+        questionDto.setOptions(options)
 
-        question = questionService.createQuestion(question)
+        questionDto = questionService.createQuestion(questionDto)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_ONE)
@@ -56,7 +57,7 @@ class ImportExportTopicsSpockTest extends Specification {
         topicDtoTwo = topicService.createTopic(topicDtoTwo)
 
         TopicDto[] topics = [topicDtoOne, topicDtoTwo]
-        questionService.updateQuestionTopics(question.getId(), topics)
+        questionService.updateQuestionTopics(questionDto.getId(), topics)
     }
 
     def 'export and import topics'() {

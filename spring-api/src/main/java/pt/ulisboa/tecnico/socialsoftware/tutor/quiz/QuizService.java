@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
@@ -19,8 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -52,13 +51,13 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizDto findById(Integer quizId) {
         return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<QuizDto> findAllNonGenerated() {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
@@ -75,7 +74,7 @@ public class QuizService {
         return maxQuizNumber != null ? maxQuizNumber : 0;
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizDto createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
             quizDto.setNumber(getMaxQuizNumber() + 1);
@@ -95,7 +94,7 @@ public class QuizService {
         return new QuizDto(quiz, true);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -121,7 +120,7 @@ public class QuizService {
         return new QuizDto(quiz, true);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -133,7 +132,7 @@ public class QuizService {
         return new QuizQuestionDto(quizQuestion);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -147,14 +146,14 @@ public class QuizService {
         entityManager.remove(quiz);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public String exportQuizzes() {
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
 
         return xmlExport.export(quizRepository.findAll());
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void importQuizzes(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 

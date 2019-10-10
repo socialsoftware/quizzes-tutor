@@ -8,10 +8,10 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -70,13 +70,13 @@ public class QuestionsXmlImport {
 		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
-		boolean active = Boolean.parseBoolean(questionElement.getAttributeValue("active"));
+		String status = questionElement.getAttributeValue("status");
 
 		QuestionDto questionDto = new QuestionDto();
 		questionDto.setNumber(number);
 		questionDto.setContent(content);
 		questionDto.setTitle(title);
-		questionDto.setActive(active);
+		questionDto.setStatus(status);
 
 		Element imageElement = questionElement.getChild("image");
 		if (imageElement != null) {

@@ -41,7 +41,7 @@ public class QuestionsXmlExport {
 		questionElement.setAttribute("number", String.valueOf(question.getNumber()));
 		questionElement.setAttribute("content", question.getContent());
 		questionElement.setAttribute("title", question.getTitle());
-		questionElement.setAttribute("active", String.valueOf(question.getActive()));
+		questionElement.setAttribute("status", question.getStatus().name());
 
 		if (question.getImage() != null) {
 			exportImage(questionElement, question.getImage());

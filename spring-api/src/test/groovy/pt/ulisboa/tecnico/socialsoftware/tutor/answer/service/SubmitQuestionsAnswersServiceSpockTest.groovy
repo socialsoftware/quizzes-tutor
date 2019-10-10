@@ -58,6 +58,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     def user
     def quizQuestion
     def optionOk
+    def optionKO
     def quizAnswer
     def date
 
@@ -69,9 +70,9 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         def question = new Question()
         question.setNumber(1)
         quizQuestion = new QuizQuestion(quiz, question, 0)
-        def optionError = new Option()
-        optionError.setCorrect(false)
-        question.addOption(optionError)
+        optionKO = new Option()
+        optionKO.setCorrect(false)
+        question.addOption(optionKO)
         optionOk = new Option()
         optionOk.setCorrect(true)
         question.addOption(optionOk)
@@ -84,7 +85,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         quizQuestionRepository.save(quizQuestion)
         quizAnswerRepository.save(quizAnswer)
         optionRepository.save(optionOk)
-        optionRepository.save(optionError)
+        optionRepository.save(optionKO)
     }
 
     def 'create for one question and two options'() {
@@ -197,6 +198,53 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         TutorException exception = thrown()
         exception.getError() == QUIZ_OPTION_MISMATCH
         questionAnswerRepository.findAll().size() == 0
+    }
+
+
+    def 'double submition of the same answers'() {
+        given:
+        def resultsDto = new ArrayList<ResultAnswerDto>()
+        def resultDto = new ResultAnswerDto()
+        resultDto.setQuizQuestionId(quizQuestion.getId())
+        resultDto.setOptionId(optionOk.getId())
+        resultsDto.add(resultDto)
+        def resultAnswersDto = new ResultAnswersDto()
+        resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
+        resultAnswersDto.setAnswerDate(date)
+        resultAnswersDto.setAnswers(resultsDto)
+        and: "Submit answer for the first time"
+        answerService.submitQuestionsAnswers(user, resultAnswersDto)
+
+        and: "Second submission with different option"
+        def secondResultsDto = new ArrayList<ResultAnswerDto>()
+        def secondResultDto = new ResultAnswerDto()
+        secondResultDto.setQuizQuestionId(quizQuestion.getId())
+        secondResultDto.setOptionId(optionKO.getId())
+        secondResultsDto.add(secondResultDto)
+        def secondResultAnswersDto = new ResultAnswersDto()
+        secondResultAnswersDto.setQuizAnswerId(quizAnswer.getId())
+        secondResultAnswersDto.setAnswerDate(date)
+        secondResultAnswersDto.setAnswers(secondResultsDto)
+
+        when: "Second submission"
+        def correctAnswersDto = answerService.submitQuestionsAnswers(user, secondResultAnswersDto)
+
+        then: 'the value is createQuestion and persistent'
+        quizAnswer.getCompleted()
+        quizAnswer.getAnswerDate() == date
+        questionAnswerRepository.findAll().size() == 1
+        def result = questionAnswerRepository.findAll().get(0)
+        result.getQuizAnswer() == quizAnswer
+        quizAnswer.getQuestionAnswers().contains(result)
+        result.getQuizQuestion() == quizQuestion
+        quizQuestion.getQuestionAnswers().contains(result)
+        result.getOption() == optionOk
+        optionOk.getQuestionAnswers().contains(result)
+        and: 'the return value is OK'
+        correctAnswersDto.getAnswers().size() == 1
+        def correctAnswerDto = correctAnswersDto.getAnswers().get(0)
+        correctAnswerDto.getQuizQuestionId() == quizQuestion.getId()
+        correctAnswerDto.getCorrectOptionId() == optionOk.getId()
     }
 
     @TestConfiguration

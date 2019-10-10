@@ -55,8 +55,10 @@ public class QuestionAnswer implements Serializable {
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
 
-        option.getQuestionAnswers().remove(this);
-        option = null;
+        if (option != null) {
+            option.getQuestionAnswers().remove(this);
+            option = null;
+        }
     }
 
     public Integer getId() {
