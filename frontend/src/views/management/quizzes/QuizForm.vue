@@ -389,7 +389,13 @@ export default class QuizForm extends Vue {
       }
 
       this.questions.forEach(question => {
-        if (question.id && questionIds.includes(question.id)) {
+        if (
+          question.id &&
+          questionIds.includes(question.id) &&
+          !this.quizQuestions
+            .map(quizQuestion => quizQuestion.id)
+            .includes(question.id)
+        ) {
           question.sequence = questionIds.indexOf(question.id) + 1;
           this.quizQuestions.push(question);
         }

@@ -62,7 +62,7 @@ export default class QuizzesView extends Vue {
 
   updateQuiz(updatedQuiz: Quiz) {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== updatedQuiz.id);
-    this.quizzes.push(updatedQuiz);
+    this.quizzes.unshift(updatedQuiz);
     this.editMode = false;
     this.quiz = null;
   }
