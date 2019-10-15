@@ -1,14 +1,15 @@
 import axios from "axios";
-import { Question } from "@/models/management/Question";
+import Question from "@/models/management/Question";
 import { Quiz } from "@/models/management/Quiz";
 import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 import Store from "../store";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
-import { Topic } from "@/models/management/Topic";
+import Topic from "@/models/management/Topic";
 import { CourseExecution } from "@/models/management/CourseExecution";
 import { Student } from "@/models/management/Student";
+import Assessment from "@/models/management/Assessment";
 
 interface AuthResponse {
   token: string;
@@ -127,7 +128,7 @@ export default class RemoteServices {
     status: String
   ): Promise<Question> {
     return httpClient
-      .post("/questions/" + questionId + "/setStatus", status, {
+      .post("/questions/" + questionId + "/set-status", status, {
         headers: {
           Authorization: Store.getters.getToken,
           "Content-Type": "text/html"
@@ -394,6 +395,82 @@ export default class RemoteServices {
         return response.data.map((student: any) => {
           return new Student(student);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getAssessments(): Promise<Assessment[]> {
+    return httpClient
+      .get("/assessments", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data.map((assessment: any) => {
+          return new Assessment(assessment);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAvailableAssessments() {
+    return httpClient
+      .get("/assessments/available", {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
+      })
+      .then(response => {
+        return response.data.map((assessment: any) => {
+          return new Assessment(assessment);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async saveAssessment(assessment: Assessment) {
+    if (assessment.id) {
+      return httpClient
+        .put("/assessment-topics/" + assessment.id, assessment, {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
+        })
+        .then(response => {
+          return new Assessment(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    } else {
+      return httpClient
+        .post("/assessment-topics/", assessment, {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
+        })
+        .then(response => {
+          return new Assessment(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    }
+  }
+
+  static async deleteAssessment(assessmentId: number) {
+    return httpClient
+      .delete("/assessment-topics/" + assessmentId, {
+        headers: {
+          Authorization: Store.getters.getToken
+        }
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

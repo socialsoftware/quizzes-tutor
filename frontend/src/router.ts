@@ -13,7 +13,6 @@ import QuizzesView from "./views/management/quizzes/QuizzesView.vue";
 import StudentsView from "./views/management/students/StudentsView.vue";
 import StudentView from "@/views/student/StudentView.vue";
 import AvailableQuizzesView from "./views/student/AvailableQuizzesView.vue";
-import CreateQuizzesView from "./views/student/CreateQuizzesView.vue";
 import SolvedQuizzesView from "./views/student/SolvedQuizzesView.vue";
 import QuizView from "./views/student/QuizView.vue";
 import ResultsView from "./views/student/ResultsView.vue";
@@ -22,6 +21,8 @@ import StatsView from "./views/student/StatsView.vue";
 import AdminManagementView from "./views/AdminManagementView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
 import ImpExpView from "@/views/management/impexp/ImpExpView.vue";
+import AssessmentsView from "@/views/management/assessments/AssessmentsView.vue";
+import CreateQuizzesView from "@/views/student/CreateQuizzesView.vue";
 
 Vue.use(Router);
 
@@ -74,6 +75,15 @@ let router = new Router({
           }
         },
         {
+          path: "assessments",
+          name: "assessments-management",
+          component: AssessmentsView,
+          meta: {
+            title: "Software Architecture - Assessment Topics",
+            requiredAuth: "Teacher"
+          }
+        },
+        {
           path: "students",
           name: "students-management",
           component: StudentsView,
@@ -116,7 +126,7 @@ let router = new Router({
             requiredAuth: "Student"
           }
         },
-        /*        {
+        {
           path: "create",
           name: "create-quizzes",
           component: CreateQuizzesView,
@@ -124,7 +134,7 @@ let router = new Router({
             title: "Software Architecture - Create Quizzes",
             requiredAuth: "Student"
           }
-        },*/
+        },
         {
           path: "solved",
           name: "solved-quizzes",

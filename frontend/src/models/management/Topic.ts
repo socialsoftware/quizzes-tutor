@@ -1,4 +1,4 @@
-export class Topic {
+export default class Topic {
   id!: number;
   name!: string;
   parentTopic: string | null = null;

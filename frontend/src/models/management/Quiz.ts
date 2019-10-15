@@ -1,4 +1,4 @@
-import { Question } from "@/models/management/Question";
+import Question from "@/models/management/Question";
 
 export class Quiz {
   id!: number;

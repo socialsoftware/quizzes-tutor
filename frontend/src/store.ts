@@ -16,10 +16,10 @@ interface AuthResponse {
 
 const state: State = {
   // TODO SWAP ME
-  // token: localStorage.getItem("token") || "",
-  // userRole: localStorage.getItem("userRole") || "",
-  token: "",
-  userRole: "",
+  token: localStorage.getItem("token") || "",
+  userRole: localStorage.getItem("userRole") || "",
+  // token: "",
+  // userRole: "",
   error: false,
   errorMessage: ""
 };

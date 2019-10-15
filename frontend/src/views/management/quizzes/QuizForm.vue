@@ -217,29 +217,6 @@
         </v-container>
       </v-card-text>
     </v-card>
-    <v-dialog v-if="position" v-model="dialog" persistent max-width="200px">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="position" label="position" required>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" text @click="closeSetPosition"
-            >Close</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="saveSetPosition"
-            >Save</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-dialog
       v-model="showDialog"
       @keydown.esc="closeShowDialog"
@@ -295,6 +272,29 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialog" persistent max-width="200px">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="position" label="position" required>
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="blue darken-1" text @click="closeSetPosition"
+            >Close</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="saveSetPosition"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
@@ -308,7 +308,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import { Quiz } from "@/models/management/Quiz";
-import { Question } from "@/models/management/Question";
+import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 
 @Component({

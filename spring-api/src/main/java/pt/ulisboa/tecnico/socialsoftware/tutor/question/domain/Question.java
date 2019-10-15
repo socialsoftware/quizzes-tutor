@@ -46,7 +46,6 @@ public class Question implements Serializable {
     @Column(name = "number_of_correct", columnDefinition = "integer default 0")
     private Integer numberOfCorrect = 0;
 
-    //    @Column(columnDefinition = "boolean default false")
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
 

@@ -4,7 +4,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,6 +31,9 @@ public class Topic implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentTopic", fetch=FetchType.EAGER)
     private Set<Topic> childrenTopics = new HashSet<>();
+
+    @ManyToMany
+    private List<TopicConjuction> topicConjuctions = new ArrayList<>();
 
     public Topic() {
     }
@@ -75,6 +80,18 @@ public class Topic implements Serializable {
 
     public void setChildrenTopics(Set<Topic> childrenTopics) {
         this.childrenTopics = childrenTopics;
+    }
+
+    public List<TopicConjuction> getTopicConjuctions() {
+        return topicConjuctions;
+    }
+
+    public void setTopicConjuctions(List<TopicConjuction> topicConjuctions) {
+        this.topicConjuctions = topicConjuctions;
+    }
+
+    public void addTopicConjuction(TopicConjuction topicConjuction) {
+        this.topicConjuctions.add(topicConjuction);
     }
 
     public void remove() {

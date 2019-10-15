@@ -1,31 +1,30 @@
 <template>
   <v-container fill-height>
-    <v-container grid-list-md text-xs-center>
+    <v-container class="create-buttons">
+      <v-container>
+        <p>Topic</p>
+        <v-btn-toggle v-model="statementManager.assessment" mandatory>
+          <v-btn
+            v-for="assessment in availableAssessments"
+            text
+            :value="assessment.id"
+            :key="assessment.id"
+            >{{ assessment.title }}</v-btn
+          >
+          <v-btn text value="all">All</v-btn>
+        </v-btn-toggle>
+      </v-container>
+
+      <v-container>
+        <p class="pl-0">Questions</p>
+        <v-btn-toggle v-model="statementManager.questionType" mandatory>
+          <v-btn text value="failed">Failed</v-btn>
+          <v-btn text value="new">New</v-btn>
+          <v-btn text value="all">All</v-btn>
+        </v-btn-toggle>
+      </v-container>
+
       <!--      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p>Topic</p>
-          <v-btn-toggle v-model="statementManager.topic" multiple mandatory>
-            <v-btn text value="1">1</v-btn>
-            <v-btn text value="2">2</v-btn>
-            <v-btn text value="3">3</v-btn>
-            <v-btn text value="4">4</v-btn>
-            <v-btn text value="all">All</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p class="pl-0">Questions</p>
-          <v-btn-toggle v-model="statementManager.questionType" mandatory>
-            <v-btn text value="failed">Failed</v-btn>
-            <v-btn text value="new">New</v-btn>
-            <v-btn text value="all">All</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>
-
-      <v-layout row wrap align-center>
         <v-flex xs12>
           <p class="pl-0">Number of Questions</p>
           <v-btn-toggle v-model="statementManager.numberOfQuestions" mandatory>
@@ -35,10 +34,11 @@
           </v-btn-toggle>
         </v-flex>
       </v-layout>-->
-
-      <v-btn @click="createQuiz" depressed color="primary">
-        Create quiz
-      </v-btn>
+      <v-container>
+        <v-btn @click="createQuiz" depressed color="primary">
+          Create quiz
+        </v-btn>
+      </v-container>
     </v-container>
   </v-container>
 </template>
@@ -46,14 +46,22 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import StatementManager from "@/models/statement/StatementManager";
+import Assessment from "@/models/management/Assessment";
+import RemoteServices from "@/services/RemoteServices";
 
 @Component
 export default class CreateQuizzesView extends Vue {
-  private statementManager: StatementManager = StatementManager.getInstance;
+  statementManager: StatementManager = StatementManager.getInstance;
+  availableAssessments: Assessment[] = [];
 
   // noinspection JSUnusedGlobalSymbols
-  beforeMount() {
+  async beforeMount() {
     this.statementManager.reset();
+    try {
+      this.availableAssessments = await RemoteServices.getAvailableAssessments();
+    } catch (error) {
+      await this.$store.dispatch("error", error);
+    }
   }
 
   async createQuiz() {
@@ -67,4 +75,9 @@ export default class CreateQuizzesView extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.create-buttons div {
+  width: 50%;
+  background-color: white;
+}
+</style>

@@ -1,4 +1,4 @@
-## build stage
+## Build stage
 
 FROM node:lts-alpine as build-stage
 WORKDIR /app
@@ -9,7 +9,7 @@ ARG NODE_ENV
 RUN if [ "$NODE_ENV" = "dev" ] ; then npm run build:dev ; else npm run build ; fi
 
 
-## production stage
+## Production stage
 
 FROM nginx:stable-alpine as production-stage
 RUN mkdir /app

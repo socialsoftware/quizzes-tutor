@@ -63,7 +63,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import { Topic } from "@/models/management/Topic";
+import Topic from "@/models/management/Topic";
 
 @Component
 export default class TopicsView extends Vue {

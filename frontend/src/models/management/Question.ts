@@ -1,8 +1,8 @@
 import Option from "@/models/management/Option";
 import Image from "@/models/management/Image";
-import { Topic } from "@/models/management/Topic";
+import Topic from "@/models/management/Topic";
 
-export class Question {
+export default class Question {
   id: number | null = null;
   title: string = "";
   status: string = "AVAILABLE";

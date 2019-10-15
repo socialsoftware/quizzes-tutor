@@ -209,9 +209,9 @@ import {
   convertMarkDown,
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
-import { Question } from "@/models/management/Question";
+import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
-import { Topic } from "@/models/management/Topic";
+import Topic from "@/models/management/Topic";
 
 @Component
 export default class QuestionsView extends Vue {

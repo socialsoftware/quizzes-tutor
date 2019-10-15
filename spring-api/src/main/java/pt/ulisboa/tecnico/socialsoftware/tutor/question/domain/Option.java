@@ -24,7 +24,7 @@ public class Option implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 

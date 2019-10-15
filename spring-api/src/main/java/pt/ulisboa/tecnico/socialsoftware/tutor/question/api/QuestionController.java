@@ -92,7 +92,7 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/questions/{questionId}/setStatus")
+    @PostMapping("/questions/{questionId}/set-status")
     public ResponseEntity questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
         logger.debug("questionSetStatus questionId: {}: ", questionId);
         questionService.questionSetStatus(questionId, Question.Status.valueOf(status));

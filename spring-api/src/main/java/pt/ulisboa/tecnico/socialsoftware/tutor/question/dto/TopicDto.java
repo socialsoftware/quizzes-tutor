@@ -21,6 +21,9 @@ public class TopicDto implements Serializable {
         }
     }
 
+    public TopicDto(TopicDto topicDto) {
+    }
+
     public Integer getId() {
         return id;
     }
