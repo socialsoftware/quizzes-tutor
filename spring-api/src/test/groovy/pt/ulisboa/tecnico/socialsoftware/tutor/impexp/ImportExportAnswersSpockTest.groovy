@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -58,6 +59,9 @@ class ImportExportAnswersSpockTest extends Specification {
 
     @Autowired
     QuizAnswerRepository quizAnswerRepository
+
+    @Autowired
+    QuestionAnswerRepository questionAnswerRepository
 
     def setup() {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
@@ -129,12 +133,9 @@ class ImportExportAnswersSpockTest extends Specification {
         quizAnswerResult.getCompleted()
         quizAnswerResult.getUser().getUsername() == 'pc'
         quizAnswerResult.getQuiz().getNumber() == 1
-        quizAnswerResult.getQuestionAnswers().size() == 1
-        def questionAnswerResult = quizAnswerResult.getQuestionAnswers().stream().findAny().orElse(null)
-        questionAnswerResult.getQuizAnswer() == quizAnswerResult
+        questionAnswerRepository.findAll().size() == 1
+        def questionAnswerResult = questionAnswerRepository.findAll().get(0)
         questionAnswerResult.getTimeTaken() == timeTaken
-        questionAnswerResult.getQuizQuestion().getId() == quizQuestion.getId()
-        questionAnswerResult.getOption().getNumber() == 0
     }
 
     @TestConfiguration

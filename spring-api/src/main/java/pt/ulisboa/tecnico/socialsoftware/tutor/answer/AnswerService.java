@@ -106,7 +106,6 @@ public class AnswerService {
                 entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
 
             }
-
             quizAnswer.setAnswerDate(answers.getAnswerDate());
             quizAnswer.setCompleted(true);
         }

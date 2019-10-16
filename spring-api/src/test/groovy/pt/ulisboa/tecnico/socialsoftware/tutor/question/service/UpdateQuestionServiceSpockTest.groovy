@@ -74,12 +74,14 @@ class UpdateQuestionServiceSpockTest extends Specification {
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
+        optionOK.setQuestion(question)
         optionRepository.save(optionOK)
         def options = new ArrayList<Option>()
         options.add(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
+        optionKO.setQuestion(question)
         optionRepository.save(optionKO)
         options.add(optionKO)
         question.setOptions(options)
@@ -132,7 +134,6 @@ class UpdateQuestionServiceSpockTest extends Specification {
         def resOptionTwo = result.getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
         resOptionTwo.getContent() == OPTION_CONTENT
         resOptionTwo.getCorrect()
-
     }
 
     def "update question with missing data"() {
@@ -164,7 +165,6 @@ class UpdateQuestionServiceSpockTest extends Specification {
         def exception = thrown(TutorException)
         exception.getError() == QUESTION_MISSING_DATA
     }
-
 
     def "update question with two options true"() {
         given: 'a question'
@@ -238,7 +238,6 @@ class UpdateQuestionServiceSpockTest extends Specification {
         def exception = thrown(TutorException)
         exception.getError() == ExceptionError.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS
     }
-
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
