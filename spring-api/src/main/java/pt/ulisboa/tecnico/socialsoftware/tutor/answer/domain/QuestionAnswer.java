@@ -4,11 +4,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "question_answers")
-public class QuestionAnswer implements Serializable {
+public class QuestionAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

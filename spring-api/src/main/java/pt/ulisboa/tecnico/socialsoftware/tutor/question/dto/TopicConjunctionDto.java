@@ -1,19 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjuction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TopicConjuctionDto {
+public class TopicConjunctionDto {
     private Integer id;
     private List<TopicDto> topics;
 
-    public TopicConjuctionDto(){}
+    public TopicConjunctionDto(){}
 
-    public TopicConjuctionDto(TopicConjuction topicConjuction) {
-        this.id = topicConjuction.getId();
-        this.topics = topicConjuction.getTopics().stream().map(TopicDto::new).collect(Collectors.toList());
+    public TopicConjunctionDto(TopicConjunction topicConjunction) {
+        this.id = topicConjunction.getId();
+        this.topics = topicConjunction.getTopics().stream().map(TopicDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {

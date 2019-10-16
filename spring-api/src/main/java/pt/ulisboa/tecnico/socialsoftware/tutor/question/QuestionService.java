@@ -98,7 +98,7 @@ public class QuestionService {
         if (image == null) {
             image = new Image();
 
-            question.addImage(image);
+            question.setImage(image);
 
             entityManager.persist(image);
         }

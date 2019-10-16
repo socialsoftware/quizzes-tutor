@@ -3,15 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "topics")
-public class Topic implements Serializable {
+public class Topic {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -33,7 +29,7 @@ public class Topic implements Serializable {
     private Set<Topic> childrenTopics = new HashSet<>();
 
     @ManyToMany
-    private List<TopicConjuction> topicConjuctions = new ArrayList<>();
+    private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Topic() {
     }
@@ -82,16 +78,40 @@ public class Topic implements Serializable {
         this.childrenTopics = childrenTopics;
     }
 
-    public List<TopicConjuction> getTopicConjuctions() {
-        return topicConjuctions;
+    public List<TopicConjunction> getTopicConjunctions() {
+        return topicConjunctions;
     }
 
-    public void setTopicConjuctions(List<TopicConjuction> topicConjuctions) {
-        this.topicConjuctions = topicConjuctions;
+    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
     }
 
-    public void addTopicConjuction(TopicConjuction topicConjuction) {
-        this.topicConjuctions.add(topicConjuction);
+    public void addTopicConjunction(TopicConjunction topicConjunction) {
+        this.topicConjunctions.add(topicConjunction);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return id.equals(topic.id) &&
+                name.equals(topic.name) &&
+                Objects.equals(parentTopic, topic.parentTopic);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
+    }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parentTopic=" + parentTopic +
+                '}';
     }
 
     public void remove() {
@@ -109,6 +129,4 @@ public class Topic implements Serializable {
         this.parentTopic = null;
         this.childrenTopics.clear();
     }
-
-
 }

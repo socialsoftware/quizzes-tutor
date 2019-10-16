@@ -5,14 +5,13 @@ import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessment_topics")
-public class Assessment implements Serializable {
+public class Assessment {
     private static Logger logger = LoggerFactory.getLogger(Assessment.class);
 
     @SuppressWarnings("unused")
@@ -33,7 +32,7 @@ public class Assessment implements Serializable {
     private Status status = Status.DISABLED;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER)
-    private List<TopicConjuction> topicConjuctions = new ArrayList<>();
+    private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Assessment() {
     }
@@ -42,15 +41,15 @@ public class Assessment implements Serializable {
         this.title = assessmentDto.getTitle();
         this.number = assessmentDto.getNumber();
         this.status = Status.valueOf(assessmentDto.getStatus());
-        this.topicConjuctions = assessmentDto.getTopicConjuctions().stream().map(topicConjuctionsDto -> {
-            TopicConjuction topicConjuction = new TopicConjuction(topicConjuctionsDto);
-            topicConjuction.setAssessment(this);
-            return topicConjuction;
+        this.topicConjunctions = assessmentDto.getTopicConjunctions().stream().map(topicConjunctionsDto -> {
+            TopicConjunction topicConjunction = new TopicConjunction(topicConjunctionsDto);
+            topicConjunction.setAssessment(this);
+            return topicConjunction;
         }).collect(Collectors.toList());
     }
 
     public void remove() {
-        getTopicConjuctions().clear();
+        getTopicConjunctions().clear();
     }
 
     public Integer getId() {
@@ -85,18 +84,22 @@ public class Assessment implements Serializable {
         this.title = title;
     }
 
-    public List<TopicConjuction> getTopicConjuctions() {
-        return topicConjuctions;
+    public List<TopicConjunction> getTopicConjunctions() {
+        return topicConjunctions;
     }
 
-    public void setTopicConjuctions(List<TopicConjuction> topicConjuctions) {
-        this.topicConjuctions = topicConjuctions;
+    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
+    }
+
+    public void addTopicConjunctions(TopicConjunction topicConjunction) {
+        this.topicConjunctions.add(topicConjunction);
     }
 
     public void update(AssessmentDto assessmentDto) {
         setTitle(assessmentDto.getTitle());
         setStatus(Status.valueOf(assessmentDto.getStatus()));
-        setTopicConjuctions(assessmentDto.getTopicConjuctions().stream()
-                .map(TopicConjuction::new).collect(Collectors.toList()));
+        setTopicConjunctions(assessmentDto.getTopicConjunctions().stream()
+                .map(TopicConjunction::new).collect(Collectors.toList()));
     }
 }

@@ -10,12 +10,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -29,6 +33,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ASSESSMENT_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.NOT_ENOUGH_QUESTIONS;
 
 @Service
@@ -44,6 +49,9 @@ public class StatementService {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private AssessmentRepository assessmentRepository;
+
+    @Autowired
     private QuizService quizService;
 
     @Autowired
@@ -53,7 +61,7 @@ public class StatementService {
     EntityManager entityManager;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public StatementQuizDto generateStudentQuiz(String username, int quizSize) {
+    public StatementQuizDto generateStudentQuiz(String username, StatementCreationDto quizDetails) {
         User user = userRepository.findByUsername(username);
 
         Quiz quiz = new Quiz();
@@ -61,12 +69,15 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.getAvailableQuestions();
 
-        if (availableQuestions.size() < quizSize) {
+        availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
+        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
+        availableQuestions = filterAnsweredQuestions(availableQuestions, quizDetails, user);
+
+        if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
-        // TODO: to include knowhow about the student in the future
-        quiz.generate(quizSize, availableQuestions);
+        quiz.generate(quizDetails.getNumberOfQuestions(), availableQuestions);
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
@@ -120,5 +131,41 @@ public class StatementService {
         User user = userRepository.findByUsername(username);
 
         return answerService.submitQuestionsAnswers(user, answers);
+    }
+
+    public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
+        if (!quizDetails.getAssessment().equals("all")) {
+            Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
+                    .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
+
+            return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+        }
+        return availableQuestions;
+    }
+
+    public List<Question> filterCorrectlyAnsweredQuestions(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
+        if (quizDetails.getQuestionType().equals("failed")) {
+            List<Question> failedQuestions = user.getQuizAnswers().stream()
+                    .map(QuizAnswer::getQuiz)
+                    .flatMap(q -> q.getQuizQuestions().stream())
+                    .map(QuizQuestion::getQuestion)
+                    .collect(Collectors.toList());
+
+            return availableQuestions.stream().filter(failedQuestions::contains).collect(Collectors.toList());
+        }
+        return availableQuestions;
+    }
+
+    public List<Question> filterAnsweredQuestions(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
+        if (quizDetails.getQuestionType().equals("new")) {
+            List<Question> failedQuestions = user.getQuizAnswers().stream()
+                    .map(QuizAnswer::getQuiz)
+                    .flatMap(q -> q.getQuizQuestions().stream())
+                    .map(QuizQuestion::getQuestion)
+                    .collect(Collectors.toList());
+
+            return availableQuestions.stream().filter(failedQuestions::contains).collect(Collectors.toList());
+        }
+        return availableQuestions;
     }
 }

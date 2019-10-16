@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,7 +21,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
         indexes = {
                 @Index(name = "question_indx_0", columnList = "number")
         })
-public class Question implements Serializable {
+public class Question {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -56,7 +55,7 @@ public class Question implements Serializable {
     private List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
-    private Set<QuizQuestion> quizQuestions;
+    private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
     private Set<Topic> topics = new HashSet<>();
@@ -139,6 +138,7 @@ public class Question implements Serializable {
 
     public void setImage(Image image) {
         this.image = image;
+        image.setQuestion(this);
     }
 
     public String getTitle() {
@@ -150,9 +150,6 @@ public class Question implements Serializable {
     }
 
     public Set<QuizQuestion> getQuizQuestions() {
-        if (quizQuestions == null) {
-            quizQuestions = new HashSet<>();
-        }
         return quizQuestions;
     }
 
@@ -176,16 +173,24 @@ public class Question implements Serializable {
         this.quizQuestions = quizQuestions;
     }
 
-    public void addOption(Option option) {
-        options.add(option);
-    }
-
     public Set<Topic> getTopics() {
         return topics;
     }
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public void addOption(Option option) {
+        options.add(option);
+    }
+
+    public void addQuizQuestion(QuizQuestion quizQuestion) {
+        quizQuestions.add(quizQuestion);
+    }
+
+    public void addTopic(Topic topic) {
+        topics.add(topic);
     }
 
     public Integer getCorrectOptionId() {
@@ -196,12 +201,13 @@ public class Question implements Serializable {
                 .orElse(null);
     }
 
-    public void addQuizQuestion(QuizQuestion quizQuestion) {
-        if (quizQuestions == null) {
-            quizQuestions = new HashSet<>();
+    public void addAnswer(QuestionAnswer questionAnswer) {
+        numberOfAnswers++;
+        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
+            numberOfCorrect++;
         }
-        quizQuestions.add(quizQuestion);
     }
+
 
     public double getDifficulty() {
         // required because the import is done directely in the database
@@ -217,13 +223,6 @@ public class Question implements Serializable {
         result = result * 100;
         result = Math.round(result);
         return result / 100;
-    }
-
-    public void addAnswer(QuestionAnswer questionAnswer) {
-        numberOfAnswers++;
-        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
-            numberOfCorrect++;
-        }
     }
 
     public void update(QuestionDto questionDto) {
@@ -243,11 +242,6 @@ public class Question implements Serializable {
 
         // TODO: not yet implemented
         //new Image(questionDto.getImage());
-    }
-
-    public void addImage(Image image) {
-        this.image = image;
-        image.setQuestion(this);
     }
 
     private void checkConsistentQuestion(QuestionDto questionDto) {
@@ -299,5 +293,9 @@ public class Question implements Serializable {
         for (Option option: getOptions()) {
             option.setNumber(index++);
         }
+    }
+
+    public boolean belongsToAssessment(Assessment chosenAssessment) {
+        return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
     }
 }

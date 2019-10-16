@@ -20,6 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 @Service
 public class AssessmentService {
+    @SuppressWarnings("unused")
     private static Logger logger = LoggerFactory.getLogger(AssessmentService.class);
 
     @Autowired

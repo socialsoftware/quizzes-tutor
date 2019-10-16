@@ -42,7 +42,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "GENERATE");
 
-        return statementService.generateStudentQuiz(user.getUsername(), quizDetails.getNumberOfQuestions());
+        return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
     }
 
     @GetMapping("/available")

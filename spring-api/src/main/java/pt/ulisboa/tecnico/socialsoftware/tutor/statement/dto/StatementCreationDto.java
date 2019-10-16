@@ -1,9 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 public class StatementCreationDto {
-    private Integer numberOfQuestions;
-    private String questionType;
-    private String[] topics;
+    private Integer numberOfQuestions = 5;
+    private String questionType = "all";
+    private String assessment = "all";
+//    private String[] topics;
 
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;
@@ -21,11 +22,19 @@ public class StatementCreationDto {
         this.questionType = questionType;
     }
 
-    public String[] getTopics() {
+    public String getAssessment() {
+        return assessment;
+    }
+
+    public void setAssessment(String assessment) {
+        this.assessment = assessment;
+    }
+
+    /*    public String[] getTopics() {
         return topics;
     }
 
     public void setTopics(String[] topics) {
         this.topics = topics;
-    }
+    }*/
 }

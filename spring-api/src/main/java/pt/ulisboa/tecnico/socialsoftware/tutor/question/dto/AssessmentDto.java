@@ -11,7 +11,7 @@ public class AssessmentDto implements Serializable {
     private Integer number;
     private String title;
     private String status;
-    private List<TopicConjuctionDto> topicConjuctions;
+    private List<TopicConjunctionDto> topicConjunctions;
 
     public AssessmentDto() {
     }
@@ -21,7 +21,7 @@ public class AssessmentDto implements Serializable {
         this.number = assessment.getNumber();
         this.title = assessment.getTitle();
         this.status = assessment.getStatus().name();
-        this.topicConjuctions = assessment.getTopicConjuctions().stream().map(TopicConjuctionDto::new).collect(Collectors.toList());
+        this.topicConjunctions = assessment.getTopicConjunctions().stream().map(TopicConjunctionDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -56,11 +56,11 @@ public class AssessmentDto implements Serializable {
         this.title = title;
     }
 
-    public List<TopicConjuctionDto> getTopicConjuctions() {
-        return topicConjuctions;
+    public List<TopicConjunctionDto> getTopicConjunctions() {
+        return topicConjunctions;
     }
 
-    public void setTopicConjuctions(List<TopicConjuctionDto> topicConjuctions) {
-        this.topicConjuctions = topicConjuctions;
+    public void setTopicConjunctions(List<TopicConjunctionDto> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
     }
 }

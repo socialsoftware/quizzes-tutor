@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -20,7 +19,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
         indexes = {
                 @Index(name = "quizzes_indx_0", columnList = "number")
         })
-public class Quiz implements Serializable {
+public class Quiz {
     public enum QuizType {
         EXAM, TEST, STUDENT, TEACHER
     }

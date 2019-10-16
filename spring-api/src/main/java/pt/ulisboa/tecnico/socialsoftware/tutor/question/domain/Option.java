@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option implements Serializable {
+public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
