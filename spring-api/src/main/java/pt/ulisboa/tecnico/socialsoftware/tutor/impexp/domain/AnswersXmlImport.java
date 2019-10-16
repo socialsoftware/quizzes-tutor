@@ -158,7 +158,6 @@ public class AnswersXmlImport {
 			resultAnswerDto.setOptionId(optionId);
 			resultAnswersDto.getAnswers().add(resultAnswerDto);
 		}
-
 		answerService.submitQuestionsAnswers(user, resultAnswersDto);
 	}
 
