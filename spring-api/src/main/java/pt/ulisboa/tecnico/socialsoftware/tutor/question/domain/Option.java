@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option {
+public class Option implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +29,7 @@ public class Option {
     private Question question;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer")
-    private Set<QuestionAnswer> questionAnswers;
+    private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option(){}
 
@@ -91,9 +91,16 @@ public class Option {
     }
 
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
-        if (questionAnswers == null) {
-            questionAnswers = new HashSet<>();
-        }
         questionAnswers.add(questionAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "Option{" +
+                "id=" + id +
+                ", number=" + number +
+                ", correct=" + correct +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

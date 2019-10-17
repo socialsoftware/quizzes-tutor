@@ -78,14 +78,20 @@
             class="mx-4"
           ></v-text-field>
         </template>
+        <template v-slot:item.status="{ item }">
+          <v-select
+            v-model="item.status"
+            :items="statusList"
+            small-chips
+            dense
+            @change="setStatus(item.id, item.status)"
+          ></v-select>
+        </template>
         <template v-slot:item.action="{ item }">
-          <v-icon small class="mr-2" @click="showAssessment(item.id)"
-            >visibility</v-icon
-          >
           <v-icon small class="mr-2" @click="editAssessment(item.id)"
             >edit</v-icon
           >
-          <v-icon small class="mr-2" @click="deleteAsessment(item.id)"
+          <v-icon small class="mr-2" @click="deleteAssessment(item.id)"
             >delete</v-icon
           >
         </template>
@@ -106,6 +112,7 @@ export default class AssessmentList extends Vue {
   @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
   assessment: Assessment | null = null;
   search: string = "";
+  statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
   dialog: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
@@ -119,28 +126,31 @@ export default class AssessmentList extends Vue {
     }
   ];
 
-  async showAssessment(assessmentId: number) {
-    try {
-      this.assessment = this.assessments.find(
-        assessment => assessment.id == assessmentId
-      )!;
-      this.dialog = true;
-    } catch (error) {
-      await this.$store.dispatch("error", error);
-    }
-  }
-
   closeAssessment() {
     this.dialog = false;
     this.assessment = null;
+  }
+
+  async setStatus(assessmentId: number, status: string) {
+    try {
+      await RemoteServices.setAssessmentStatus(assessmentId, status);
+      let assessment = this.assessments.find(
+        assessment => assessment.id === assessmentId
+      );
+      if (assessment) {
+        assessment.status = status;
+      }
+    } catch (error) {
+      await this.$store.dispatch("error", error);
+    }
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 
-  editAssessement(assessmentId: number) {
-    this.$emit("editAssessement", assessmentId);
+  editAssessment(assessmentId: number) {
+    this.$emit("editAssessment", assessmentId);
   }
 
   async deleteAssessment(assessmentId: number) {

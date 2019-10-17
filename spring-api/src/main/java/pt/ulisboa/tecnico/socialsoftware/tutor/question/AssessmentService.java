@@ -16,7 +16,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ASSESSMENT_NOT_FOUND;
 
 @Service
 public class AssessmentService {
@@ -31,6 +31,7 @@ public class AssessmentService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<AssessmentDto> findAll() {
+        System.out.println(assessmentRepository.findAll());
         return assessmentRepository.findAll().stream().map(AssessmentDto::new).collect(Collectors.toList());
     }
 
@@ -50,21 +51,22 @@ public class AssessmentService {
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
-        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, assessmentId));
+    public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.update(assessmentDto);
+        return new AssessmentDto(assessment);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void removeAssessment(Integer assessmentId) {
-        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, assessmentId));
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.remove();
         entityManager.remove(assessment);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public void assessmentSetStatus(Integer assessmentId, Assessment.Status status) {
-        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, assessmentId));
+        Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.setStatus(status);
     }
 

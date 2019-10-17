@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Entity
 @Table(name = "images")
-public class Image {
+public class Image implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -58,4 +58,12 @@ public class Image {
         this.width = width;
     }
 
+    @Override
+    public String toString() {
+        return "Image{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", width=" + width +
+                '}';
+    }
 }

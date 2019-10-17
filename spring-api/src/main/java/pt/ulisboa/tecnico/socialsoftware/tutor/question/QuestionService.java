@@ -71,9 +71,10 @@ public class QuestionService {
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
-    public void updateQuestion(Integer questionId, QuestionDto questionDto) {
+    public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
+        return new QuestionDto(question);
     }
 
     @Transactional(isolation = Isolation.SERIALIZABLE)

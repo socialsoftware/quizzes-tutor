@@ -31,4 +31,6 @@ public class TopicConjunctionDto {
     public void setTopics(List<TopicDto> topics) {
         this.topics = topics;
     }
+
+
 }

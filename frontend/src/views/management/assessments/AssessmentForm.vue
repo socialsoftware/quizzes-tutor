@@ -17,7 +17,7 @@
         >
       </v-card-actions>
     </v-card>
-    <v-card v-if="editMode">
+    <v-card v-if="editMode && assessment">
       <v-card-title>
         <span class="headline">Create Assessment</span>
         <v-dialog v-model="showAssessment" max-width="1000px">
@@ -60,7 +60,7 @@
         <v-container grid-list-md fluid>
           <v-data-table
             :headers="topicHeaders"
-            :items="assessment.topicConjuctions"
+            :items="assessment.topicConjunctions"
             :items-per-page="10"
           >
             <template v-slot:item.topics="{ item }">
@@ -100,7 +100,7 @@
               <v-icon
                 small
                 class="mr-2"
-                @click="removeTopicConjuction(item.sequence)"
+                @click="removeTopicConjunction(item.sequence)"
               >
                 close</v-icon
               >
@@ -111,8 +111,8 @@
             dark
             class="mb-2"
             v-if="editMode"
-            @click="newTopicConjuction"
-            >Add Topic Conjuction</v-btn
+            @click="newTopicConjunction"
+            >Add Topic Conjunction</v-btn
           >
         </v-container>
         <v-container grid-list-md fluid>
@@ -180,7 +180,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
-import TopicConjuctions from "@/models/management/TopicConjuction";
+import TopicConjunctions from "@/models/management/TopicConjunction";
 
 @Component({
   components: {
@@ -253,6 +253,11 @@ export default class AssessmentForm extends Vue {
   }
 
   async saveAssessment() {
+    if (this.assessment && !this.assessment.title) {
+      await this.$store.dispatch("error", "Assessment must have title");
+      return;
+    }
+
     try {
       let updatedAssessment: Assessment = await RemoteServices.saveAssessment(
         this.assessment
@@ -263,31 +268,31 @@ export default class AssessmentForm extends Vue {
     }
   }
 
-  removeTopicConjuction(sequence: number) {
-    this.assessment.topicConjuctions = this.assessment.topicConjuctions.filter(
-      topicConjuction => topicConjuction.sequence != sequence
+  removeTopicConjunction(sequence: number) {
+    this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
+      topicConjunction => topicConjunction.sequence != sequence
     );
   }
 
   removeTopic(sequence: number, toRemoveTopic: Topic) {
-    this.assessment.topicConjuctions.find(
-      topicConjuction => topicConjuction.sequence == sequence
-    )!.topics = this.assessment.topicConjuctions
-      .find(topicConjuction => topicConjuction.sequence == sequence)!
+    this.assessment.topicConjunctions.find(
+      topicConjunction => topicConjunction.sequence == sequence
+    )!.topics = this.assessment.topicConjunctions
+      .find(topicConjunction => topicConjunction.sequence == sequence)!
       .topics.filter(topic => topic.id != toRemoveTopic.id);
   }
 
-  newTopicConjuction() {
-    this.assessment.topicConjuctions.push(new TopicConjuctions());
+  newTopicConjunction() {
+    this.assessment.topicConjunctions.push(new TopicConjunctions());
   }
 
-  @Watch("assessment.topicConjuctions", { deep: true })
+  @Watch("assessment.topicConjunctions", { deep: true })
   recalculateQuestionList() {
     this.questions = this.allQuestions.filter(question => {
-      return this.assessment.topicConjuctions.find(topicConjuction => {
+      return this.assessment.topicConjunctions.find(topicConjunction => {
         return (
           String(question.topics.map(topic => topic.id).sort()) ===
-          String(topicConjuction.topics.map(topic => topic.id).sort())
+          String(topicConjunction.topics.map(topic => topic.id).sort())
         );
       });
     });

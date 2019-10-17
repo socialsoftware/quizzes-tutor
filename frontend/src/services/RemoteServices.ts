@@ -438,7 +438,7 @@ export default class RemoteServices {
   static async saveAssessment(assessment: Assessment) {
     if (assessment.id) {
       return httpClient
-        .put("/assessment-topics/" + assessment.id, assessment, {
+        .put("/assessments/" + assessment.id, assessment, {
           headers: {
             Authorization: Store.getters.getToken
           }
@@ -451,7 +451,7 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post("/assessment-topics/", assessment, {
+        .post("/assessments/", assessment, {
           headers: {
             Authorization: Store.getters.getToken
           }
@@ -467,10 +467,29 @@ export default class RemoteServices {
 
   static async deleteAssessment(assessmentId: number) {
     return httpClient
-      .delete("/assessment-topics/" + assessmentId, {
+      .delete("/assessments/" + assessmentId, {
         headers: {
           Authorization: Store.getters.getToken
         }
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async setAssessmentStatus(
+    assessmentId: number,
+    status: string
+  ): Promise<Assessment> {
+    return httpClient
+      .post("/assessments/" + assessmentId + "/set-status", status, {
+        headers: {
+          Authorization: Store.getters.getToken,
+          "Content-Type": "text/html"
+        }
+      })
+      .then(response => {
+        return new Assessment(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

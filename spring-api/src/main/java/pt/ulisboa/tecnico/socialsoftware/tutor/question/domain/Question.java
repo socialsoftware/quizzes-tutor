@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -21,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
         indexes = {
                 @Index(name = "question_indx_0", columnList = "number")
         })
-public class Question {
+public class Question implements Serializable {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -84,12 +85,6 @@ public class Question {
             this.options.add(option);
             option.setQuestion(this);
         }
-    }
-
-    public void remove() {
-        canRemove();
-        getTopics().forEach(topic -> topic.getQuestions().remove(this));
-        getTopics().clear();
     }
 
     public Integer getId() {
@@ -191,6 +186,28 @@ public class Question {
 
     public void addTopic(Topic topic) {
         topics.add(topic);
+    }
+
+    public void remove() {
+        canRemove();
+        getTopics().forEach(topic -> topic.getQuestions().remove(this));
+        getTopics().clear();
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", number=" + number +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", status=" + status +
+                ", image=" + image +
+                ", options=" + options +
+                ", topics=" + topics +
+                '}';
     }
 
     public Integer getCorrectOptionId() {

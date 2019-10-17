@@ -30,7 +30,7 @@ import AssessmentList from "@/views/management/assessments/AssessmentList.vue";
 })
 export default class AssessmentsView extends Vue {
   assessments: Assessment[] = [];
-  assessment: Assessment | null = new Assessment();
+  assessment: Assessment | null = null;
   editMode: boolean = false;
 
   // noinspection JSUnusedGlobalSymbols
@@ -53,22 +53,26 @@ export default class AssessmentsView extends Vue {
 
   async editAssessment(assessmentId: number) {
     try {
-      this.assessment = this.assessments.filter(
+      this.assessment = this.assessments.find(
         assessment => assessment.id === assessmentId
-      )[0];
+      )!;
       this.editMode = true;
+      console.log(JSON.stringify(this.assessments));
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
   }
 
   updateAssessment(updatedAssessment: Assessment) {
+    console.log(JSON.stringify(updatedAssessment));
+
     this.assessments = this.assessments.filter(
       assessment => assessment.id !== updatedAssessment.id
     );
-    this.assessments.push(updatedAssessment);
+    this.assessments.unshift(updatedAssessment);
     this.editMode = false;
     this.assessment = null;
+    console.log(JSON.stringify(this.assessments));
   }
 
   deleteAssessment(assessmentId: number) {

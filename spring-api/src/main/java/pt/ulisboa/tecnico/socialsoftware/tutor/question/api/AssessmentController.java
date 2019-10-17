@@ -40,9 +40,8 @@ public class AssessmentController {
     }
 
     @PutMapping("/assessments/{assessmentId}")
-    public ResponseEntity updateAssessment(@PathVariable Integer assessmentId, @Valid @RequestBody AssessmentDto assessment) {
-        this.assessmentService.updateAssessment(assessmentId, assessment);
-        return ResponseEntity.ok().build();
+    public AssessmentDto updateAssessment(@PathVariable Integer assessmentId, @Valid @RequestBody AssessmentDto assessment) {
+        return this.assessmentService.updateAssessment(assessmentId, assessment);
     }
 
     @DeleteMapping("/assessments/{assessmentId}")

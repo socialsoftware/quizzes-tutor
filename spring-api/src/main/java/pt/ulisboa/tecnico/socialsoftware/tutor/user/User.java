@@ -113,10 +113,20 @@ public class User implements UserDetails {
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
-        if (quizAnswers == null) {
-            quizAnswers = new HashSet<>();
-        }
         this.quizAnswers.add(quizAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", role=" + role +
+                ", number=" + number +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", year=" + year +
+                ", creationDate=" + creationDate +
+                '}';
     }
 
     @Override

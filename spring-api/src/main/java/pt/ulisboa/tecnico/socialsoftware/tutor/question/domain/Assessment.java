@@ -5,18 +5,19 @@ import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "assessment_topics")
-public class Assessment {
+@Table(name = "assessments")
+public class Assessment implements Serializable {
     private static Logger logger = LoggerFactory.getLogger(Assessment.class);
 
     @SuppressWarnings("unused")
     public enum Status {
-        DISABLED, AVAILABLE
+        DISABLED, AVAILABLE, REMOVED
     }
 
     @Id
@@ -49,7 +50,7 @@ public class Assessment {
     }
 
     public void remove() {
-        getTopicConjunctions().clear();
+        getTopicConjunctions().forEach(TopicConjunction::remove);
     }
 
     public Integer getId() {
@@ -92,8 +93,19 @@ public class Assessment {
         this.topicConjunctions = topicConjunctions;
     }
 
-    public void addTopicConjunctions(TopicConjunction topicConjunction) {
+    public void addTopicConjunction(TopicConjunction topicConjunction) {
         this.topicConjunctions.add(topicConjunction);
+    }
+
+    @Override
+    public String toString() {
+        return "Assessment{" +
+                "id=" + id +
+                ", number=" + number +
+                ", title='" + title + '\'' +
+                ", status=" + status +
+                ", topicConjunctions=" + topicConjunctions +
+                '}';
     }
 
     public void update(AssessmentDto assessmentDto) {

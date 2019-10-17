@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -12,7 +13,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 @Entity
 @Table(name="quiz_questions")
-public class QuizQuestion {
+public class QuizQuestion implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -40,19 +41,6 @@ public class QuizQuestion {
         this.question = question;
         question.addQuizQuestion(this);
         this.sequence = sequence;
-    }
-
-    public void remove() {
-        quiz.getQuizQuestions().remove(this);
-        quiz = null;
-        question.getQuizQuestions().remove(this);
-        question = null;
-    }
-
-    void checkCanRemove() {
-        if (!questionAnswers.isEmpty()) {
-            throw new TutorException(QUIZ_QUESTION_HAS_ANSWERS);
-        }
     }
 
     public Quiz getQuiz() {
@@ -95,12 +83,28 @@ public class QuizQuestion {
         this.sequence = sequence;
     }
 
-
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
-        if (questionAnswers == null) {
-            questionAnswers = new HashSet<>();
-        }
         questionAnswers.add(questionAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "QuizQuestion{" +
+                "id=" + id +
+                '}';
+    }
+
+    public void remove() {
+        quiz.getQuizQuestions().remove(this);
+        quiz = null;
+        question.getQuizQuestions().remove(this);
+        question = null;
+    }
+
+    void checkCanRemove() {
+        if (!questionAnswers.isEmpty()) {
+            throw new TutorException(QUIZ_QUESTION_HAS_ANSWERS);
+        }
     }
 
 }
