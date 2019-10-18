@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_NOT_CONSISTENT;
@@ -253,18 +254,9 @@ public class Quiz implements Serializable {
         getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
     }
 
-    public void generate(int quizSize, List<Question> availableQuestions) {
-        int numberOfAvailableQuestions = availableQuestions.size();
-        Set <Integer> usedQuestions = new HashSet<>();
-
-        int numberOfQuestions = 0;
-        while (numberOfQuestions < quizSize) {
-            int next = new Random().nextInt(numberOfAvailableQuestions);
-            if(!usedQuestions.contains(next)) {
-                usedQuestions.add(next);
-                new QuizQuestion(this, availableQuestions.get(next), numberOfQuestions++);
-            }
-        }
+    public void generate(List<Question> questions) {
+        IntStream.range(0,questions.size())
+                .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
         this.setCreationDate(LocalDateTime.now());
         this.setType(QuizType.STUDENT);

@@ -121,4 +121,8 @@ public class QuestionAnswer implements Serializable {
                 ", sequence=" + sequence +
                 '}';
     }
+
+    public boolean isCorrect() {
+        return getOption() != null && getOption().getCorrect();
+    }
 }

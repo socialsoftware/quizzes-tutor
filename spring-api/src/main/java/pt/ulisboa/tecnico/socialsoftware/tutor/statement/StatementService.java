@@ -70,14 +70,16 @@ public class StatementService {
         List<Question> availableQuestions = questionRepository.getAvailableQuestions();
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
-        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
-        availableQuestions = filterAnsweredQuestions(availableQuestions, quizDetails, user);
+//        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
+//        availableQuestions = filterAnsweredQuestions(availableQuestions, quizDetails, user);
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
         }
 
-        quiz.generate(quizDetails.getNumberOfQuestions(), availableQuestions);
+        availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
+
+        quiz.generate(availableQuestions);
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
