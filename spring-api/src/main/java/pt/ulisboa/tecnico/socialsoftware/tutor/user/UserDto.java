@@ -1,8 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class UserDto {
+public class UserDto implements Serializable {
     private int id;
     private String username;
     private String name;
@@ -66,5 +67,17 @@ public class UserDto {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    @Override
+    public String toString() {
+        return "UserDto{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", year=" + year +
+                ", role=" + role +
+                ", creationDate=" + creationDate +
+                '}';
     }
 }

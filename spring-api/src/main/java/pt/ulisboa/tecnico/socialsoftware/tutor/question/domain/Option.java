@@ -4,13 +4,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option implements Serializable {
+public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

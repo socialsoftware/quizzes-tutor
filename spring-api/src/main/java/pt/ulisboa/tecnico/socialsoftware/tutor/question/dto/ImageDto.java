@@ -42,4 +42,13 @@ public class ImageDto implements Serializable {
     public void setWidth(Integer width) {
         this.width = width;
     }
+
+    @Override
+    public String toString() {
+        return "ImageDto{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", width=" + width +
+                '}';
+    }
 }

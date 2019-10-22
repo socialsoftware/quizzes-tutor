@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-public class FenixAuthenticationDto {
+import java.io.Serializable;
+
+public class FenixAuthenticationDto implements Serializable {
     private String code;
 
     public String getCode() {
@@ -9,5 +11,12 @@ public class FenixAuthenticationDto {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    @Override
+    public String toString() {
+        return "FenixAuthenticationDto{" +
+                "code='" + code + '\'' +
+                '}';
     }
 }

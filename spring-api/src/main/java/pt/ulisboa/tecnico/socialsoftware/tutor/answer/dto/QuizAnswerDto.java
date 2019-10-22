@@ -3,9 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class QuizAnswerDto {
+public class QuizAnswerDto implements Serializable {
     private Integer id;
     private LocalDateTime answerDate;
     private boolean completed;
@@ -63,4 +64,14 @@ public class QuizAnswerDto {
         this.username = username;
     }
 
+    @Override
+    public String toString() {
+        return "QuizAnswerDto{" +
+                "id=" + id +
+                ", answerDate=" + answerDate +
+                ", completed=" + completed +
+                ", quiz=" + quiz +
+                ", username='" + username + '\'' +
+                '}';
+    }
 }

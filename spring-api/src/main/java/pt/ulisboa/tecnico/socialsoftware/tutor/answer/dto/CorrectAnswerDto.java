@@ -29,4 +29,12 @@ public class CorrectAnswerDto implements Serializable {
     public void setCorrectOptionId(Integer correctOptionId) {
         this.correctOptionId = correctOptionId;
     }
+
+    @Override
+    public String toString() {
+        return "CorrectAnswerDto{" +
+                "quizQuestionId=" + quizQuestionId +
+                ", correctOptionId=" + correctOptionId +
+                '}';
+    }
 }

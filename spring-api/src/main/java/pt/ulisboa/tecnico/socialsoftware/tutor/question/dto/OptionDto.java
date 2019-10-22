@@ -52,4 +52,14 @@ public class OptionDto implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "OptionDto{" +
+                "id=" + id +
+                ", number=" + number +
+                ", correct=" + correct +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

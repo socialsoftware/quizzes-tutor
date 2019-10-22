@@ -67,4 +67,17 @@ public class StatsDto implements Serializable {
     public void setUniqueWrongAnswers(Integer uniqueWrongAnswers) {
         this.uniqueWrongAnswers = uniqueWrongAnswers;
     }
+
+    @Override
+    public String toString() {
+        return "StatsDto{" +
+                "totalQuizzes=" + totalQuizzes +
+                ", totalAnswers=" + totalAnswers +
+                ", totalUniqueQuestions=" + totalUniqueQuestions +
+                ", correctAnswers=" + correctAnswers +
+                ", improvedCorrectAnswers=" + improvedCorrectAnswers +
+                ", uniqueCorrectAnswers=" + uniqueCorrectAnswers +
+                ", uniqueWrongAnswers=" + uniqueWrongAnswers +
+                '}';
+    }
 }

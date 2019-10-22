@@ -6,10 +6,12 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
 @DataJpaTest
@@ -25,6 +27,9 @@ class UpdateAssessmentServiceSpockTest extends Specification {
     @Autowired
     AssessmentRepository assessmentRepository
 
+    @Autowired
+    TopicRepository topicRepository
+
     def assessmentDto
     def topicList
 
@@ -33,10 +38,11 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         assessmentDto.setTitle(ASSESSMENT_TITLE_1)
         assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         def topicConjunction = new TopicConjunctionDto()
-        def topic = new TopicDto()
+        def topic = new Topic()
         topic.setName(TOPIC_NAME_1)
+        topicRepository.save(topic)
         topicList = new ArrayList()
-        topicList.add(topic)
+        topicList.add(new TopicDto(topic))
         topicConjunction.setTopics(topicList)
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunction)
@@ -44,32 +50,71 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         assessmentDto = assessmentService.createAssessment(assessmentDto)
     }
 
-        def "update an assessment title and topic conjuntions"() {
-            given: "a created assessment"
-            assessmentDto.setTitle(ASSESSMENT_TITLE_2)
-            def topicConjunctions = assessmentDto.getTopicConjunctions()
-            def topic2 = new TopicDto()
-            topic2.setName(TOPIC_NAME_2)
-            topicList = new ArrayList()
-            topicList.add(topic2)
+    def "update an assessment title and single topic conjuntion"() {
+        given: "a created assessment"
+        assessmentDto.setTitle(ASSESSMENT_TITLE_2)
+        assessmentDto.setStatus(Assessment.Status.DISABLED.name())
+        def topicConjunction = new TopicConjunctionDto()
+        def topic = new Topic()
+        topic.setName(TOPIC_NAME_2)
+        topicRepository.save(topic)
+        topicList = new ArrayList()
+        topicList.add(new TopicDto(topic))
+        topicConjunction.setTopics(topicList)
+        def topicConjunctionList = new ArrayList()
+        topicConjunctionList.add(topicConjunction)
+        assessmentDto.setTopicConjunctions(topicConjunctionList)
 
-            when:
-            assessmentDto = assessmentService.updateAssessment(assessmentDto.getId(), assessmentDto)
+        when:
+        assessmentDto = assessmentService.updateAssessment(assessmentDto.getId(), assessmentDto)
 
-            then: "the correct assessment is inside the repository"
-            assessmentRepository.count() == 1L
-            def result = assessmentRepository.findAll().get(0)
-            result.getId() != null
-            result.getStatus() == Assessment.Status.AVAILABLE
-            result.getTitle() == ASSESSMENT_TITLE_2
-            result.getTopicConjunctions().size() == 1
-            def resTopicConjunction = result.getTopicConjunctions().first()
-            resTopicConjunction.getId() != null
-            resTopicConjunction.getTopics().size() == 1
-            def resTopic = resTopicConjunction.getTopics().first()
-            resTopic.getId() != null
-            resTopic.getName() == TOPIC_NAME_2
-        }
+        then: "the updated assessment is inside the repository"
+        assessmentRepository.count() == 1L
+        def result = assessmentRepository.findAll().get(0)
+        result.getId() != null
+        result.getStatus() == Assessment.Status.DISABLED
+        result.getTitle() == ASSESSMENT_TITLE_2
+        result.getTopicConjunctions().size() == 1
+        def resTopicConjunction = result.getTopicConjunctions().first()
+        resTopicConjunction.getId() != null
+        resTopicConjunction.getTopics().size() == 1
+        def resTopic = resTopicConjunction.getTopics().first()
+        resTopic.getId() != null
+        resTopic.getName() == TOPIC_NAME_2
+    }
+
+    def "update an assessment adding a topic, a conjuntion with topic and an empty conjunction"() {
+        given: "a created assessment"
+        def topic = new Topic()
+        topic.setName(TOPIC_NAME_2)
+        topicRepository.save(topic)
+
+        topicList.add(new TopicDto(topic))
+        assessmentDto.getTopicConjunctions()[0].setTopics(topicList)
+
+        def newTopicConjunction = new TopicConjunctionDto()
+        newTopicConjunction.topics.add(new TopicDto(topic))
+        assessmentDto.addTopicConjunction(newTopicConjunction)
+
+        assessmentDto.addTopicConjunction(new TopicConjunctionDto())
+
+        when:
+        assessmentDto = assessmentService.updateAssessment(assessmentDto.getId(), assessmentDto)
+
+        then: "the updated assessment is inside the repository"
+        assessmentRepository.count() == 1L
+        def result = assessmentRepository.findAll().get(0)
+        result.getId() != null
+        result.getStatus() == Assessment.Status.AVAILABLE
+        result.getTitle() == ASSESSMENT_TITLE_1
+        result.getTopicConjunctions().size() == 3
+        def resTopicConjunction1 = result.getTopicConjunctions().get(0)
+        def resTopicConjunction2 = result.getTopicConjunctions().get(1)
+        def resTopicConjunction3 = result.getTopicConjunctions().get(2)
+        resTopicConjunction1.topics.size() == 2
+        resTopicConjunction2.topics.size() == 1
+        resTopicConjunction3.topics.size() == 0
+    }
 
 
     @TestConfiguration

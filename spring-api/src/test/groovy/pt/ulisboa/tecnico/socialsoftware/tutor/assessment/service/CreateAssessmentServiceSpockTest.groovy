@@ -6,10 +6,12 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
 @DataJpaTest
@@ -23,16 +25,21 @@ class CreateAssessmentServiceSpockTest extends Specification {
     @Autowired
     AssessmentRepository assessmentRepository
 
+
+    @Autowired
+    TopicRepository topicRepository
+
     def "create a assessment with one topicConjunction with one topic"() {
         given: "a assessmentDto"
         def assessmentDto = new AssessmentDto()
         assessmentDto.setTitle(ASSESSMENT_TITLE)
         assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         def topicConjunction = new TopicConjunctionDto()
-        def topic = new TopicDto()
+        def topic = new Topic()
         topic.setName(TOPIC_NAME)
+        topic = topicRepository.save(topic)
         def topicList = new ArrayList()
-        topicList.add(topic)
+        topicList.add(new TopicDto(topic))
         topicConjunction.setTopics(topicList)
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunction)
@@ -43,6 +50,7 @@ class CreateAssessmentServiceSpockTest extends Specification {
 
         then: "the correct assessment is inside the repository"
         assessmentRepository.count() == 1L
+        topicRepository.count() == 1L
         def result = assessmentRepository.findAll().get(0)
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE

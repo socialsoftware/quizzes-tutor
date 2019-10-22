@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,7 +12,7 @@ public class AssessmentDto implements Serializable {
     private Integer number;
     private String title;
     private String status;
-    private List<TopicConjunctionDto> topicConjunctions;
+    private List<TopicConjunctionDto> topicConjunctions = new ArrayList<>();
 
     public AssessmentDto() {
     }
@@ -62,5 +63,21 @@ public class AssessmentDto implements Serializable {
 
     public void setTopicConjunctions(List<TopicConjunctionDto> topicConjunctions) {
         this.topicConjunctions = topicConjunctions;
+    }
+
+    public void addTopicConjunction(TopicConjunctionDto topicConjunctionDto) {
+        this.topicConjunctions.add(topicConjunctionDto);
+    }
+
+
+    @Override
+    public String toString() {
+        return "AssessmentDto{" +
+                "id=" + id +
+                ", number=" + number +
+                ", title='" + title + '\'' +
+                ", status='" + status + '\'' +
+                ", topicConjunctions=" + topicConjunctions +
+                '}';
     }
 }

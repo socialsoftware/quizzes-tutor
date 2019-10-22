@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
@@ -57,8 +58,12 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     }
 
     def 'generate quiz for one question and there are two questions available'() {
+        given:
+        def quizForm = new StatementCreationDto()
+        quizForm.setNumberOfQuestions(1)
+
         when:
-        statementService.generateStudentQuiz(USERNAME, 1)
+        statementService.generateStudentQuiz(USERNAME, quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -77,8 +82,12 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     }
 
     def 'generate quiz for two question and there are two questions available'() {
+        given:
+        def quizForm = new StatementCreationDto()
+        quizForm.setNumberOfQuestions(2)
+
         when:
-        statementService.generateStudentQuiz(USERNAME, 2)
+        statementService.generateStudentQuiz(USERNAME, quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -95,8 +104,12 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     }
 
     def 'generate quiz for three question and there are two questions available'() {
+        given:
+        def quizForm = new StatementCreationDto()
+        quizForm.setNumberOfQuestions(3)
+
         when:
-        statementService.generateStudentQuiz(USERNAME, 3)
+        statementService.generateStudentQuiz(USERNAME, quizForm)
 
         then:
         TutorException exception = thrown()

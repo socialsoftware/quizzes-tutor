@@ -2,12 +2,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class TopicConjunctionDto {
+public class TopicConjunctionDto implements Serializable {
     private Integer id;
-    private List<TopicDto> topics;
+    private List<TopicDto> topics = new ArrayList<>();
 
     public TopicConjunctionDto(){}
 
@@ -32,5 +34,11 @@ public class TopicConjunctionDto {
         this.topics = topics;
     }
 
-
+    @Override
+    public String toString() {
+        return "TopicConjunctionDto{" +
+                "id=" + id +
+                ", topics=" + topics +
+                '}';
+    }
 }

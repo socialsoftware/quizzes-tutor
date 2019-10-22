@@ -8,7 +8,7 @@ export default class StatementManager {
   questionType: string = "all";
   assessment: string = "all";
   // topic: string[] = [];
-  // numberOfQuestions: string = "5";
+  numberOfQuestions: string = "5";
   statementQuiz: StatementQuiz | null = null;
   answers: StatementAnswer[] = [];
   correctAnswers: StatementCorrectAnswer[] = [];
@@ -23,8 +23,8 @@ export default class StatementManager {
     let params = {
       // topic: this.topic,
       questionType: this.questionType,
-      assessment: this.assessment
-      // numberOfQuestions: +this.numberOfQuestions
+      assessment: this.assessment,
+      numberOfQuestions: +this.numberOfQuestions
     };
 
     this.statementQuiz = await RemoteServices.getQuizStatement(params);

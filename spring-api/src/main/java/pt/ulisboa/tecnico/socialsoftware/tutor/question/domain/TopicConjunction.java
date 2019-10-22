@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -11,7 +10,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "topic_conjunctions")
-public class TopicConjunction implements Serializable {
+public class TopicConjunction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,12 +24,8 @@ public class TopicConjunction implements Serializable {
 
     public TopicConjunction(){}
 
-    public TopicConjunction(TopicConjunctionDto topicConjunctionDto) {
-        this.topics = topicConjunctionDto.getTopics().stream().map(topicDto -> {
-            Topic topic = new Topic(topicDto);
-            topic.addTopicConjunction(this);
-            return topic;
-        }).collect(Collectors.toSet());
+    public TopicConjunction(TopicConjunctionDto topicConjunctionsDto) {
+        //this.updateTopics(topicConjunctionsDto.getTopics().stream().map(Topic::new).collect(Collectors.toSet()));
     }
 
     public Integer getId() {
@@ -64,6 +59,7 @@ public class TopicConjunction implements Serializable {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
+        this.assessment = null;
     }
 
     @Override
@@ -98,7 +94,7 @@ public class TopicConjunction implements Serializable {
 
         newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
             this.topics.add(topic);
-            topic.getTopicConjunctions().add(this);
+            topic.addTopicConjunction(this);
         });
     }
 }

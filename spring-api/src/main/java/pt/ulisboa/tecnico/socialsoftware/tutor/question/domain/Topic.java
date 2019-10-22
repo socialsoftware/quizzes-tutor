@@ -3,12 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.*;
 
 @Entity
 @Table(name = "topics")
-public class Topic implements Serializable {
+public class Topic {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -29,7 +28,7 @@ public class Topic implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentTopic", fetch=FetchType.EAGER)
     private Set<Topic> childrenTopics = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.MERGE, fetch=FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Topic() {
@@ -101,7 +100,7 @@ public class Topic implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(name);
     }
 
     @Override
@@ -120,10 +119,10 @@ public class Topic implements Serializable {
         if (this.parentTopic != null) {
             parentTopic.getChildrenTopics().remove(this);
             parentTopic.getChildrenTopics().addAll(this.getChildrenTopics());
-
         }
 
         this.childrenTopics.forEach(topic -> topic.parentTopic = this.parentTopic);
+        this.topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
 
         this.parentTopic = null;
         this.childrenTopics.clear();

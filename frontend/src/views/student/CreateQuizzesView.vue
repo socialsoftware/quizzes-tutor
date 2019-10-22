@@ -2,8 +2,12 @@
   <v-container fill-height>
     <v-container class="create-buttons">
       <v-container>
-        <p>Topic</p>
-        <v-btn-toggle v-model="statementManager.assessment" mandatory>
+        <p>Assessment</p>
+        <v-btn-toggle
+          v-model="statementManager.assessment"
+          mandatory
+          class="button-group"
+        >
           <v-btn
             v-for="assessment in availableAssessments"
             text
@@ -15,25 +19,31 @@
         </v-btn-toggle>
       </v-container>
 
-      <v-container>
+      <!--      <v-container>
         <p class="pl-0">Questions</p>
-        <v-btn-toggle v-model="statementManager.questionType" mandatory>
-          <v-btn text value="failed">Failed</v-btn>
-          <v-btn text value="new">New</v-btn>
+        <v-btn-toggle
+          v-model="statementManager.questionType"
+          mandatory
+          class="button-group"
+        >
+          <v-btn text value="failed">Only Failed</v-btn>
+          <v-btn text value="new">Only New</v-btn>
           <v-btn text value="all">All</v-btn>
         </v-btn-toggle>
-      </v-container>
+      </v-container>-->
 
-      <!--      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p class="pl-0">Number of Questions</p>
-          <v-btn-toggle v-model="statementManager.numberOfQuestions" mandatory>
-            <v-btn text value="5">5</v-btn>
-            <v-btn text value="10">10</v-btn>
-            <v-btn text value="20">20</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>-->
+      <v-container>
+        <p class="pl-0">Number of Questions</p>
+        <v-btn-toggle
+          v-model="statementManager.numberOfQuestions"
+          mandatory
+          class="button-group"
+        >
+          <v-btn text value="5">5</v-btn>
+          <v-btn text value="10">10</v-btn>
+          <v-btn text value="20">20</v-btn>
+        </v-btn-toggle>
+      </v-container>
       <v-container>
         <v-btn @click="createQuiz" depressed color="primary">
           Create quiz
@@ -76,8 +86,16 @@ export default class CreateQuizzesView extends Vue {
 </script>
 
 <style lang="scss">
-.create-buttons div {
-  width: 50%;
+.create-buttons {
+  width: 50% !important;
   background-color: white;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #818181;
+}
+
+.button-group {
+  flex-wrap: wrap;
+  justify-content: center;
 }
 </style>

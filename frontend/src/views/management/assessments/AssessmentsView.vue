@@ -57,22 +57,18 @@ export default class AssessmentsView extends Vue {
         assessment => assessment.id === assessmentId
       )!;
       this.editMode = true;
-      console.log(JSON.stringify(this.assessments));
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
   }
 
   updateAssessment(updatedAssessment: Assessment) {
-    console.log(JSON.stringify(updatedAssessment));
-
     this.assessments = this.assessments.filter(
       assessment => assessment.id !== updatedAssessment.id
     );
     this.assessments.unshift(updatedAssessment);
     this.editMode = false;
     this.assessment = null;
-    console.log(JSON.stringify(this.assessments));
   }
 
   deleteAssessment(assessmentId: number) {

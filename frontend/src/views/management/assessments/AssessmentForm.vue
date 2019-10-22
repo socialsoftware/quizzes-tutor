@@ -288,14 +288,16 @@ export default class AssessmentForm extends Vue {
 
   @Watch("assessment.topicConjunctions", { deep: true })
   recalculateQuestionList() {
-    this.questions = this.allQuestions.filter(question => {
-      return this.assessment.topicConjunctions.find(topicConjunction => {
-        return (
-          String(question.topics.map(topic => topic.id).sort()) ===
-          String(topicConjunction.topics.map(topic => topic.id).sort())
-        );
+    if (this.assessment) {
+      this.questions = this.allQuestions.filter(question => {
+        return this.assessment.topicConjunctions.find(topicConjunction => {
+          return (
+            String(question.topics.map(topic => topic.id).sort()) ===
+            String(topicConjunction.topics.map(topic => topic.id).sort())
+          );
+        });
       });
-    });
+    }
   }
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {

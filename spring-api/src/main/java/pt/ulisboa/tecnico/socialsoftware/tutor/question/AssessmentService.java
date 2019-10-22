@@ -8,15 +8,21 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ASSESSMENT_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.TOPIC_CONJUNCTION_NOT_FOUND;
 
 @Service
 public class AssessmentService {
@@ -26,12 +32,17 @@ public class AssessmentService {
     @Autowired
     private AssessmentRepository assessmentRepository;
 
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Autowired
+    private TopicConjunctionRepository topicConjunctionRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<AssessmentDto> findAll() {
-        System.out.println(assessmentRepository.findAll());
         return assessmentRepository.findAll().stream().map(AssessmentDto::new).collect(Collectors.toList());
     }
 
@@ -45,7 +56,18 @@ public class AssessmentService {
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public AssessmentDto createAssessment(AssessmentDto assessmentDto) {
-        Assessment assessment = new Assessment(assessmentDto);
+        Assessment assessment = new Assessment();
+        assessment.setTitle(assessmentDto.getTitle());
+        assessment.setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
+        assessment.setTopicConjunctions(assessmentDto.getTopicConjunctions().stream()
+                .map(topicConjunctionDto -> {
+                    TopicConjunction topicConjunction = new TopicConjunction();
+                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
+                    topicConjunction.updateTopics(newTopics);
+                    return topicConjunction;
+                }).collect(Collectors.toList()));
+        assessment.getTopicConjunctions().forEach(topicConjunction -> topicConjunction.setAssessment(assessment));
+
         this.entityManager.persist(assessment);
         return new AssessmentDto(assessment);
     }
@@ -53,7 +75,25 @@ public class AssessmentService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
-        assessment.update(assessmentDto);
+
+        assessment.setTitle(assessmentDto.getTitle());
+        assessment.setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
+        assessment.remove();
+        assessment.setTopicConjunctions(assessmentDto.getTopicConjunctions().stream()
+                .map(topicConjunctionDto -> {
+                    TopicConjunction topicConjunction;
+                    if(topicConjunctionDto.getId() != null) {
+                        topicConjunction = topicConjunctionRepository.findById(topicConjunctionDto.getId()).orElseThrow(() -> new TutorException(TOPIC_CONJUNCTION_NOT_FOUND, topicConjunctionDto.getId()));
+                    } else {
+                        topicConjunction = new TopicConjunction();
+                    }
+
+                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
+                    topicConjunction.updateTopics(newTopics);
+                    return topicConjunction;
+                }).collect(Collectors.toList()));
+        assessment.getTopicConjunctions().forEach(topicConjunction -> topicConjunction.setAssessment(assessment));
+
         return new AssessmentDto(assessment);
     }
 

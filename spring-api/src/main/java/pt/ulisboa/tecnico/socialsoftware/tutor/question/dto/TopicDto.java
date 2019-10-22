@@ -47,4 +47,13 @@ public class TopicDto implements Serializable {
     public void setParentTopic(String parentTopic) {
         this.parentTopic = parentTopic;
     }
+
+    @Override
+    public String toString() {
+        return "TopicDto{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parentTopic='" + parentTopic + '\'' +
+                '}';
+    }
 }

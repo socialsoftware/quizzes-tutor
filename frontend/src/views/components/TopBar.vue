@@ -5,8 +5,8 @@
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title class="white-text">
-        <v-btn href="/" text dark>
+      <v-toolbar-title>
+        <v-btn to="/" text dark>
           Software Architecture Quizzes
         </v-btn></v-toolbar-title
       >

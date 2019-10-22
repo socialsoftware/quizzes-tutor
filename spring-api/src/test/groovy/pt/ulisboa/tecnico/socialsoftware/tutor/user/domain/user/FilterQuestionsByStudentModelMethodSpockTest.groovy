@@ -87,8 +87,8 @@ class FilterQuestionsByStudentModelMethodSpockTest extends Specification {
 
         then:
         result.size() == 5
-        and: 'it contains one of the not answered questions'
-        result.contains(questionOne) || result.contains(questionTwo)
+        and: 'it contains both not answered questions'
+        result.contains(questionOne) && result.contains(questionTwo)
     }
 
     def 'the user answered 5 questions' () {
