@@ -74,6 +74,12 @@ export default class TopicsView extends Vue {
   headers: object = [
     { text: "Topic", value: "name", align: "left", width: "50%" },
     {
+      text: "Questions",
+      value: "numberOfQuestions",
+      align: "center",
+      width: "10%"
+    },
+    {
       text: "Actions",
       value: "action",
       align: "center",
