@@ -11,11 +11,9 @@ export default class StatementQuiz {
     if (jsonObj) {
       this.quizAnswerId = jsonObj.quizAnswerId;
       this.title = jsonObj.title;
-      this.availableDate = new Date(jsonObj.availableDate).toLocaleString("pt");
+      this.availableDate = jsonObj.availableDate;
       if (jsonObj.conclusionDate) {
-        this.conclusionDate = new Date(jsonObj.conclusionDate).toLocaleString(
-          "pt"
-        );
+        this.conclusionDate = jsonObj.conclusionDate;
       }
 
       this.questions = jsonObj.questions.map(question => {

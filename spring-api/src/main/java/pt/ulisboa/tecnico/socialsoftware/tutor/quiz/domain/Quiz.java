@@ -63,19 +63,19 @@ public class Quiz {
 
     public Quiz() {}
 
-    public Quiz(QuizDto quiz) {
-        checkQuestions(quiz.getQuestions());
+    public Quiz(QuizDto quizDto) {
+        checkQuestions(quizDto.getQuestions());
 
-        this.number = quiz.getNumber();
-        setTitle(quiz.getTitle());
-        this.type = quiz.getType();
-        this.scramble = quiz.getScramble();
-        this.creationDate = quiz.getCreationDateDate();
-        setAvailableDate(quiz.getAvailableDateDate());
-        setConclusionDate(quiz.getConclusionDateDate());
-        this.year = quiz.getYear();
-        this.series = quiz.getSeries();
-        this.version = quiz.getVersion();
+        this.number = quizDto.getNumber();
+        setTitle(quizDto.getTitle());
+        this.type = quizDto.getType();
+        this.scramble = quizDto.getScramble();
+        this.creationDate = quizDto.getCreationDateDate();
+        setAvailableDate(quizDto.getAvailableDateDate());
+        setConclusionDate(quizDto.getConclusionDateDate());
+        this.year = quizDto.getYear();
+        this.series = quizDto.getSeries();
+        this.version = quizDto.getVersion();
     }
 
     public Integer getId() {

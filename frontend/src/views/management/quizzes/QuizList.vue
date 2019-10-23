@@ -105,16 +105,16 @@ export default class QuizList extends Vue {
   dialog: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Date", value: "date", align: "center", width: "10%" },
+    { text: "Date", value: "stringDate", align: "center", width: "10%" },
     {
       text: "Available Date",
-      value: "availableDate",
+      value: "stringAvailableDate",
       align: "center",
       width: "10%"
     },
     {
       text: "Conclusion Date",
-      value: "conclusionDate",
+      value: "stringConclusionDate",
       align: "center",
       width: "10%"
     },

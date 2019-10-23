@@ -169,8 +169,6 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { Datetime } from "vue-datetime";
-import "vue-datetime/dist/vue-datetime.css";
 import RemoteServices from "@/services/RemoteServices";
 import Assessment from "@/models/management/Assessment";
 import Topic from "@/models/management/Topic";
@@ -182,11 +180,7 @@ import {
 import Image from "@/models/management/Image";
 import TopicConjunctions from "@/models/management/TopicConjunction";
 
-@Component({
-  components: {
-    Datetime
-  }
-})
+@Component
 export default class AssessmentForm extends Vue {
   @Prop(Assessment) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;

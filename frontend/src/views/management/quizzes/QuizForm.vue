@@ -12,7 +12,7 @@
         >
       </v-card-actions>
     </v-card>
-    <v-card v-if="editMode">
+    <v-card v-if="editMode && quiz">
       <v-card-title>
         <span class="headline">Edit Quiz</span>
         <v-dialog v-model="showQuestion" max-width="1000px">
@@ -44,26 +44,19 @@
             <v-flex xs18 sm9 md6>
               <v-text-field v-model="quiz.title" label="Title"></v-text-field>
             </v-flex>
-            <v-flex xs12 sm6 md4 class="text-left">
-              <br />
-              <datetime
-                type="datetime"
+            <v-flex xs6 sm3 md2 class="text-left">
+              <v-datetime-picker
+                label="Available Date"
                 v-model="quiz.availableDate"
-                id="availableDate"
               >
-                <label for="availableDate" slot="before">Available Date:</label>
-              </datetime>
+              </v-datetime-picker>
             </v-flex>
-            <v-flex xs12 sm6 md4 class="text-left">
-              <datetime
-                type="datetime"
+            <v-flex xs6 sm3 md2 class="text-left">
+              <v-datetime-picker
+                label="Conclusion Date"
                 v-model="quiz.conclusionDate"
-                id="conclusionDate"
               >
-                <label for="conclusionDate" slot="before"
-                  >Conclusion Date:</label
-                >
-              </datetime>
+              </v-datetime-picker>
             </v-flex>
             <v-flex xs12 sm6 md4>
               <v-switch
@@ -300,8 +293,6 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { Datetime } from "vue-datetime";
-import "vue-datetime/dist/vue-datetime.css";
 import RemoteServices from "@/services/RemoteServices";
 import {
   convertMarkDown,
@@ -311,11 +302,7 @@ import { Quiz } from "@/models/management/Quiz";
 import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 
-@Component({
-  components: {
-    Datetime
-  }
-})
+@Component
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
@@ -328,6 +315,10 @@ export default class QuizForm extends Vue {
   questionPosition: Question | undefined;
   position: number | null = null;
   showDialog: boolean = false;
+  timeProps = {
+    useSeconds: true,
+    ampmInTitle: true
+  };
   headers: object = [
     {
       text: "Sequence",

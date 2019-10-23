@@ -5,10 +5,10 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   title!: string;
-  date!: string;
-  creationDate!: string;
-  availableDate!: string;
-  conclusionDate!: string;
+  date!: string | Date;
+  creationDate!: string | Date;
+  availableDate!: string | Date;
+  conclusionDate!: string | Date;
   type!: string;
   year!: number;
   series!: number;
@@ -31,20 +31,16 @@ export class Quiz {
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
 
-      if (jsonObj.date) this.date = new Date(jsonObj.date).toLocaleString("pt");
+      if (jsonObj.date) this.date = new Date(jsonObj.date);
 
       if (jsonObj.creationDate)
-        this.creationDate = new Date(jsonObj.creationDate).toLocaleString("pt");
+        this.creationDate = new Date(jsonObj.creationDate);
 
       if (jsonObj.availableDate)
-        this.availableDate = new Date(jsonObj.availableDate).toLocaleString(
-          "pt"
-        );
+        this.availableDate = new Date(jsonObj.availableDate);
 
       if (jsonObj.conclusionDate)
-        this.conclusionDate = new Date(jsonObj.conclusionDate).toLocaleString(
-          "pt"
-        );
+        this.conclusionDate = new Date(jsonObj.conclusionDate);
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(
@@ -52,5 +48,33 @@ export class Quiz {
         );
       }
     }
+  }
+
+  get stringDate(): string {
+    if (this.date) {
+      return this.date.toLocaleString("pt");
+    }
+    return "-";
+  }
+
+  get stringCreationDate(): string {
+    if (this.creationDate) {
+      return this.creationDate.toLocaleString("pt");
+    }
+    return "-";
+  }
+
+  get stringAvailableDate(): string {
+    if (this.availableDate) {
+      return this.availableDate.toLocaleString("pt");
+    }
+    return "-";
+  }
+
+  get stringConclusionDate(): string {
+    if (this.conclusionDate) {
+      return this.conclusionDate.toLocaleString("pt");
+    }
+    return "-";
   }
 }
