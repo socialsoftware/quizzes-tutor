@@ -9,6 +9,7 @@ public class TopicDto implements Serializable {
     private Integer id;
     private String name;
     private String parentTopic;
+    private Integer numberOfQuestions;
 
     public TopicDto() {
     }
@@ -19,6 +20,7 @@ public class TopicDto implements Serializable {
         if (topic.getParentTopic() != null) {
             this.parentTopic = topic.getParentTopic().getName();
         }
+        this.numberOfQuestions = topic.getQuestions().size();
     }
 
     public TopicDto(TopicDto topicDto) {
@@ -46,6 +48,14 @@ public class TopicDto implements Serializable {
 
     public void setParentTopic(String parentTopic) {
         this.parentTopic = parentTopic;
+    }
+
+    public Integer getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
+
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
+        this.numberOfQuestions = numberOfQuestions;
     }
 
     @Override
