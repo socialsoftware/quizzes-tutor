@@ -6,7 +6,7 @@
         class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
       <v-toolbar-title>
-        <v-btn to="/" text dark>
+        <v-btn dark active-class="toolbar-title" text tile to="/">
           Software Architecture Quizzes
         </v-btn></v-toolbar-title
       >
@@ -234,5 +234,9 @@ export default class TopBar extends Vue {
 <style scoped lang="scss">
 .v-icon {
   padding-left: 10px;
+}
+
+.toolbar-title::before {
+  opacity: 0 !important;
 }
 </style>
