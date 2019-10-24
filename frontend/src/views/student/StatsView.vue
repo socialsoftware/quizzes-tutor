@@ -61,13 +61,14 @@ import AnimatedNumber from "@/views/components/AnimatedNumber.vue";
 export default class StatsView extends Vue {
   stats: StudentStats | null = null;
 
-  // noinspection JSUnusedGlobalSymbols
-  async mounted() {
+  async created() {
+    await this.$store.dispatch("loading");
     try {
       this.stats = await RemoteServices.getUserStats();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 }
 </script>

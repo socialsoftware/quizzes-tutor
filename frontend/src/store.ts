@@ -7,6 +7,7 @@ interface State {
   userRole: string;
   error: boolean;
   errorMessage: string;
+  loading: boolean;
 }
 
 interface AuthResponse {
@@ -21,7 +22,8 @@ const state: State = {
   // token: "",
   // userRole: "",
   error: false,
-  errorMessage: ""
+  errorMessage: "",
+  loading: false
 };
 
 Vue.use(Vuex);
@@ -45,6 +47,12 @@ export default new Vuex.Store({
     clearError(state) {
       state.error = false;
       state.errorMessage = "";
+    },
+    loading(state) {
+      state.loading = true;
+    },
+    clearLoading(state) {
+      state.loading = false;
     }
   },
   actions: {
@@ -53,6 +61,12 @@ export default new Vuex.Store({
     },
     clearError({ commit }) {
       commit("clearError");
+    },
+    loading({ commit }) {
+      commit("loading");
+    },
+    clearLoading({ commit }) {
+      commit("clearLoading");
     },
     async login({ commit }, code) {
       try {
@@ -66,7 +80,7 @@ export default new Vuex.Store({
       }
     },
     logout({ commit }) {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         commit("logout");
         localStorage.removeItem("token");
         localStorage.removeItem("userRole");
@@ -101,6 +115,9 @@ export default new Vuex.Store({
     },
     getErrorMessage(state): string {
       return state.errorMessage;
+    },
+    getLoading(state): boolean {
+      return state.loading;
     }
   }
 });

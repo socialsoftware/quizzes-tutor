@@ -227,8 +227,9 @@ router.beforeEach(async (to, from, next) => {
   // await Store.dispatch("clearError");
 });
 
-router.afterEach((to, from) => {
+router.afterEach(async (to, from) => {
   document.title = to.meta.title;
+  await Store.dispatch("clearLoading");
 });
 
 export default router;

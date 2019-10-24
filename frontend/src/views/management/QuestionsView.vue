@@ -251,14 +251,15 @@ export default class QuestionsView extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.topics = await RemoteServices.getTopics();
       this.questions = await RemoteServices.getQuestions();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   customFilter(value: string, search: string, question: Question) {

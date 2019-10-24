@@ -33,13 +33,14 @@ export default class AssessmentsView extends Vue {
   assessment: Assessment | null = null;
   editMode: boolean = false;
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.assessments = await RemoteServices.getAssessments();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   changeMode() {

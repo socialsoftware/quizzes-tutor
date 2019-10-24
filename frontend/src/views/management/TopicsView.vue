@@ -88,13 +88,14 @@ export default class TopicsView extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.topics = await RemoteServices.getTopics();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   customFilter(value: string, search: string) {

@@ -64,14 +64,15 @@ export default class CreateQuizzesView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   availableAssessments: Assessment[] = [];
 
-  // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
+    await this.$store.dispatch("loading");
     this.statementManager.reset();
     try {
       this.availableAssessments = await RemoteServices.getAvailableAssessments();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   async createQuiz() {

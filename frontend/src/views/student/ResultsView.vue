@@ -59,8 +59,7 @@ export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   order: number = 0;
 
-  // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: "create-quiz" });
     }

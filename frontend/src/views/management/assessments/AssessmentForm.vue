@@ -231,8 +231,8 @@ export default class AssessmentForm extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.topics = await RemoteServices.getTopics();
       this.allQuestions = await RemoteServices.getQuestions();
@@ -240,6 +240,7 @@ export default class AssessmentForm extends Vue {
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   switchMode() {

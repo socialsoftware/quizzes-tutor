@@ -4,9 +4,10 @@
       <top-bar />
       <div class="scrollbar">
         <router-view />
+        <loading />
       </div>
     </div>
-    <message-bar />
+    <error-message />
   </v-app>
 </template>
 
@@ -14,13 +15,14 @@
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
 import TopBar from "@/views/components/TopBar.vue";
-import MessageBar from "@/views/components/MessageBar.vue";
+import ErrorMessage from "@/views/components/ErrorMessage.vue";
+import Loading from "@/views/components/Loading.vue";
 import "@/styles/_global.scss";
 import "@/styles/_scrollbar.scss";
 import "@/styles/_question.scss";
 
 @Component({
-  components: { TopBar, MessageBar }
+  components: { TopBar, ErrorMessage, Loading }
 })
 export default class App extends Vue {
   created() {

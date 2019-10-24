@@ -11,7 +11,6 @@ export default class AnimatedNumber extends Vue {
   displayNumber: number = 0;
   interval: number = 0;
 
-  // noinspection JSUnusedGlobalSymbols
   created() {
     this.updateNumber();
   }

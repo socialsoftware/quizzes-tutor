@@ -33,13 +33,14 @@ export default class QuizzesView extends Vue {
   quiz: Quiz | null = null;
   editMode: boolean = false;
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.quizzes = await RemoteServices.getNonGeneratedQuizzes();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   changeMode() {
