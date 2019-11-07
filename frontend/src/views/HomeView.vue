@@ -9,7 +9,7 @@
 
     <div class="bottom-row-container">
       <img
-        :src="require('../assets/ist.png')"
+        :src="require('../assets/ist_optimized.png')"
         class="logo"
         alt="Técnico Logo"
       />
@@ -34,7 +34,7 @@
         </a>
       </div>
       <img
-        :src="require('../assets/impress.png')"
+        :src="require('../assets/impress_optimized.png')"
         class="logo"
         alt="IMPRESS Logo"
       />
@@ -98,7 +98,7 @@ export default class HomeView extends Vue {
     display: flex; /* or inline-flex */
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-content: space-between;
+    justify-conteqnt: space-between;
     align-items: center;
     width: 100%;
     max-height: 100px;
@@ -110,6 +110,7 @@ export default class HomeView extends Vue {
       flex-shrink: 1;
       width: 20%;
       max-width: 200px;
+      min-width: 100px;
       padding: 2%;
     }
 

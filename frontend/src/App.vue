@@ -47,6 +47,8 @@ export default class App extends Vue {
 }
 
 .img-container {
+  display: flex;
+  flex-direction: column;
   position: absolute;
   overflow: hidden;
   top: 0;

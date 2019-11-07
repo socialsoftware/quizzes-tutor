@@ -20,7 +20,6 @@ export default class ErrorMessage extends Vue {
     this.$store.watch(
       (state, getters) => getters.getError,
       () => {
-        console.log(11, this.$store.getters.getError);
         this.dialog = this.$store.getters.getError;
         this.errorMessage = this.$store.getters.getErrorMessage;
       }

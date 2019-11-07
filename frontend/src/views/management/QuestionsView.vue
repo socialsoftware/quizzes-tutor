@@ -210,7 +210,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import Question from "@/models/management/Question";
-import Image from "@/models/management/Image";
+import Image from "@/models/management/Image.ts";
 import Topic from "@/models/management/Topic";
 
 @Component
