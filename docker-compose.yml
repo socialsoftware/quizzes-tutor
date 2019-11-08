@@ -49,8 +49,7 @@ services:
       - 8081:80
     restart: unless-stopped
     volumes:
-      - ./scripts/ssl:/etc/ssl
-      - ./scripts/nginx.conf:/etc/nginx/nginx.conf
+      - ./scripts/localhost-nginx.conf:/etc/nginx/nginx.conf
       - ./scripts/error.log:/var/log/nginx/error.log
       - ./scripts/access.log:/var/log/nginx/access.log
     env_file:

@@ -124,6 +124,7 @@ module.exports = {
     port: 8081,
     https: false,
     hotOnly: false,
+    disableHostCheck: true,
     proxy: null, // string | Object
     before: app => {}
   },
