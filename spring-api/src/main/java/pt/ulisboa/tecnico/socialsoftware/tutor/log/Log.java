@@ -61,4 +61,14 @@ public class Log {
     public void setOperation(String operation) {
         this.operation = operation;
     }
+
+    @Override
+    public String toString() {
+        return "Log{" +
+                "id=" + id +
+                ", user=" + user +
+                ", time=" + time +
+                ", operation='" + operation + '\'' +
+                '}';
+    }
 }

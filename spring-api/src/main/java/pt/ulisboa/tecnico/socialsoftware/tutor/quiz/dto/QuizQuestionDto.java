@@ -2,8 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
+import java.io.Serializable;
 
-public class QuizQuestionDto {
+
+public class QuizQuestionDto implements Serializable {
     private Integer id;
     private Integer sequence;
 
@@ -28,5 +30,13 @@ public class QuizQuestionDto {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    @Override
+    public String toString() {
+        return "QuizQuestionDto{" +
+                "id=" + id +
+                ", sequence=" + sequence +
+                '}';
     }
 }

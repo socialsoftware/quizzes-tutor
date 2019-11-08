@@ -3,13 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "topics")
-public class Topic implements Serializable {
+public class Topic {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -29,6 +27,9 @@ public class Topic implements Serializable {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "parentTopic", fetch=FetchType.EAGER)
     private Set<Topic> childrenTopics = new HashSet<>();
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Topic() {
     }
@@ -77,6 +78,40 @@ public class Topic implements Serializable {
         this.childrenTopics = childrenTopics;
     }
 
+    public List<TopicConjunction> getTopicConjunctions() {
+        return topicConjunctions;
+    }
+
+    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
+    }
+
+    public void addTopicConjunction(TopicConjunction topicConjunction) {
+        this.topicConjunctions.add(topicConjunction);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Topic topic = (Topic) o;
+        return name.equals(topic.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name);
+    }
+
+    @Override
+    public String toString() {
+        return "Topic{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", parentTopic=" + parentTopic +
+                '}';
+    }
+
     public void remove() {
         getQuestions().forEach(question -> question.getTopics().remove(this));
         getQuestions().clear();
@@ -84,14 +119,12 @@ public class Topic implements Serializable {
         if (this.parentTopic != null) {
             parentTopic.getChildrenTopics().remove(this);
             parentTopic.getChildrenTopics().addAll(this.getChildrenTopics());
-
         }
 
         this.childrenTopics.forEach(topic -> topic.parentTopic = this.parentTopic);
+        this.topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
 
         this.parentTopic = null;
         this.childrenTopics.clear();
     }
-
-
 }

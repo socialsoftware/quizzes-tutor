@@ -1,8 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.log;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
-public class LogDto {
+public class LogDto implements Serializable {
     private Integer id;
     private Integer userId;
     private LocalDateTime time;
@@ -45,5 +46,15 @@ public class LogDto {
 
     public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    @Override
+    public String toString() {
+        return "LogDto{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", time=" + time +
+                ", operation='" + operation + '\'' +
+                '}';
     }
 }

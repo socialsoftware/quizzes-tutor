@@ -12,7 +12,7 @@
         >
       </v-card-actions>
     </v-card>
-    <v-card v-if="editMode">
+    <v-card v-if="editMode && quiz">
       <v-card-title>
         <span class="headline">Edit Quiz</span>
         <v-dialog v-model="showQuestion" max-width="1000px">
@@ -44,26 +44,19 @@
             <v-flex xs18 sm9 md6>
               <v-text-field v-model="quiz.title" label="Title"></v-text-field>
             </v-flex>
-            <v-flex xs12 sm6 md4 class="text-left">
-              <br />
-              <datetime
-                type="datetime"
+            <v-flex xs6 sm3 md2 class="text-left">
+              <v-datetime-picker
+                label="Available Date"
                 v-model="quiz.availableDate"
-                id="availableDate"
               >
-                <label for="availableDate" slot="before">Available Date:</label>
-              </datetime>
+              </v-datetime-picker>
             </v-flex>
-            <v-flex xs12 sm6 md4 class="text-left">
-              <datetime
-                type="datetime"
+            <v-flex xs6 sm3 md2 class="text-left">
+              <v-datetime-picker
+                label="Conclusion Date"
                 v-model="quiz.conclusionDate"
-                id="conclusionDate"
               >
-                <label for="conclusionDate" slot="before"
-                  >Conclusion Date:</label
-                >
-              </datetime>
+              </v-datetime-picker>
             </v-flex>
             <v-flex xs12 sm6 md4>
               <v-switch
@@ -217,29 +210,6 @@
         </v-container>
       </v-card-text>
     </v-card>
-    <v-dialog v-if="position" v-model="dialog" persistent max-width="200px">
-      <v-card>
-        <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="position" label="position" required>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" text @click="closeSetPosition"
-            >Close</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="saveSetPosition"
-            >Save</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
     <v-dialog
       v-model="showDialog"
       @keydown.esc="closeShowDialog"
@@ -295,27 +265,44 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="dialog" persistent max-width="200px">
+      <v-card>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" sm="6" md="4">
+                <v-text-field v-model="position" label="position" required>
+                </v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <div class="flex-grow-1"></div>
+          <v-btn color="blue darken-1" text @click="closeSetPosition"
+            >Close</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="saveSetPosition"
+            >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import { Datetime } from "vue-datetime";
-import "vue-datetime/dist/vue-datetime.css";
 import RemoteServices from "@/services/RemoteServices";
 import {
   convertMarkDown,
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import { Quiz } from "@/models/management/Quiz";
-import { Question } from "@/models/management/Question";
+import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 
-@Component({
-  components: {
-    Datetime
-  }
-})
+@Component
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
@@ -328,6 +315,10 @@ export default class QuizForm extends Vue {
   questionPosition: Question | undefined;
   position: number | null = null;
   showDialog: boolean = false;
+  timeProps = {
+    useSeconds: true,
+    ampmInTitle: true
+  };
   headers: object = [
     {
       text: "Sequence",
@@ -367,13 +358,14 @@ export default class QuizForm extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.questions = await RemoteServices.getAvailableQuestions();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   @Watch("quiz")
@@ -389,7 +381,13 @@ export default class QuizForm extends Vue {
       }
 
       this.questions.forEach(question => {
-        if (question.id && questionIds.includes(question.id)) {
+        if (
+          question.id &&
+          questionIds.includes(question.id) &&
+          !this.quizQuestions
+            .map(quizQuestion => quizQuestion.id)
+            .includes(question.id)
+        ) {
           question.sequence = questionIds.indexOf(question.id) + 1;
           this.quizQuestions.push(question);
         }

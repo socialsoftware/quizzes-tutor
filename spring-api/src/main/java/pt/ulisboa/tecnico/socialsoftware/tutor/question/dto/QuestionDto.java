@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,9 +19,9 @@ public class QuestionDto implements Serializable {
     private int numberOfAnswers;
     private int numberOfCorrect;
     private String status;
-    private List<OptionDto> options;
+    private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
-    private List<TopicDto> topics;
+    private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
 
     public QuestionDto() {
@@ -140,5 +141,23 @@ public class QuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    @Override
+    public String toString() {
+        return "QuestionDto{" +
+                "id=" + id +
+                ", number=" + number +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", difficulty=" + difficulty +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", status='" + status + '\'' +
+                ", options=" + options +
+                ", image=" + image +
+                ", topics=" + topics +
+                ", sequence=" + sequence +
+                '}';
     }
 }

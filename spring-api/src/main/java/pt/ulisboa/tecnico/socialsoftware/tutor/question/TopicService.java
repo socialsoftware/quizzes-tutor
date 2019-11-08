@@ -64,8 +64,6 @@ public class TopicService {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-        logger.debug("removeTopic topic: {}: ", topicId);
-
         topic.remove();
         entityManager.remove(topic);
     }

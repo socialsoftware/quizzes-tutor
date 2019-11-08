@@ -3,11 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
 @Table(name = "images")
-public class Image implements Serializable {
+public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -58,4 +57,12 @@ public class Image implements Serializable {
         this.width = width;
     }
 
+    @Override
+    public String toString() {
+        return "Image{" +
+                "id=" + id +
+                ", url='" + url + '\'' +
+                ", width=" + width +
+                '}';
+    }
 }

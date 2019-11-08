@@ -28,4 +28,11 @@ public class StatementOptionDto implements Serializable {
         this.content = content;
     }
 
+    @Override
+    public String toString() {
+        return "StatementOptionDto{" +
+                "optionId=" + optionId +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }

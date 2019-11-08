@@ -63,7 +63,7 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import { Topic } from "@/models/management/Topic";
+import Topic from "@/models/management/Topic";
 
 @Component
 export default class TopicsView extends Vue {
@@ -74,6 +74,12 @@ export default class TopicsView extends Vue {
   headers: object = [
     { text: "Topic", value: "name", align: "left", width: "50%" },
     {
+      text: "Questions",
+      value: "numberOfQuestions",
+      align: "center",
+      width: "10%"
+    },
+    {
       text: "Actions",
       value: "action",
       align: "center",
@@ -82,13 +88,14 @@ export default class TopicsView extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.topics = await RemoteServices.getTopics();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   customFilter(value: string, search: string) {

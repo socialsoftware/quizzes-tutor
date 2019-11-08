@@ -41,19 +41,23 @@ import StatementManager from "@/models/statement/StatementManager";
 export default class AvailableQuizzesView extends Vue {
   quizzes: SolvedQuiz[] = [];
 
-  // noinspection JSUnusedGlobalSymbols
-  async beforeMount() {
+  async created() {
+    await this.$store.dispatch("loading");
     try {
       this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   calculateScore(quiz: SolvedQuiz) {
     let correct = 0;
     for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {
-      if (quiz.correctAnswers[i].correctOptionId === quiz.answers[i].optionId) {
+      if (
+        quiz.answers[i] &&
+        quiz.correctAnswers[i].correctOptionId === quiz.answers[i].optionId
+      ) {
         correct += 1;
       }
     }

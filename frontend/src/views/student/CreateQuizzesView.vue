@@ -1,44 +1,54 @@
 <template>
   <v-container fill-height>
-    <v-container grid-list-md text-xs-center>
-      <!--      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p>Topic</p>
-          <v-btn-toggle v-model="statementManager.topic" multiple mandatory>
-            <v-btn text value="1">1</v-btn>
-            <v-btn text value="2">2</v-btn>
-            <v-btn text value="3">3</v-btn>
-            <v-btn text value="4">4</v-btn>
-            <v-btn text value="all">All</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>
+    <v-container class="create-buttons">
+      <v-container>
+        <p>Assessment</p>
+        <v-btn-toggle
+          v-model="statementManager.assessment"
+          mandatory
+          class="button-group"
+        >
+          <v-btn
+            v-for="assessment in availableAssessments"
+            text
+            :value="assessment.id"
+            :key="assessment.id"
+            >{{ assessment.title }}</v-btn
+          >
+          <v-btn text value="all">All</v-btn>
+        </v-btn-toggle>
+      </v-container>
 
-      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p class="pl-0">Questions</p>
-          <v-btn-toggle v-model="statementManager.questionType" mandatory>
-            <v-btn text value="failed">Failed</v-btn>
-            <v-btn text value="new">New</v-btn>
-            <v-btn text value="all">All</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>
+      <!--      <v-container>
+        <p class="pl-0">Questions</p>
+        <v-btn-toggle
+          v-model="statementManager.questionType"
+          mandatory
+          class="button-group"
+        >
+          <v-btn text value="failed">Only Failed</v-btn>
+          <v-btn text value="new">Only New</v-btn>
+          <v-btn text value="all">All</v-btn>
+        </v-btn-toggle>
+      </v-container>-->
 
-      <v-layout row wrap align-center>
-        <v-flex xs12>
-          <p class="pl-0">Number of Questions</p>
-          <v-btn-toggle v-model="statementManager.numberOfQuestions" mandatory>
-            <v-btn text value="5">5</v-btn>
-            <v-btn text value="10">10</v-btn>
-            <v-btn text value="20">20</v-btn>
-          </v-btn-toggle>
-        </v-flex>
-      </v-layout>-->
-
-      <v-btn @click="createQuiz" depressed color="primary">
-        Create quiz
-      </v-btn>
+      <v-container>
+        <p class="pl-0">Number of Questions</p>
+        <v-btn-toggle
+          v-model="statementManager.numberOfQuestions"
+          mandatory
+          class="button-group"
+        >
+          <v-btn text value="5">5</v-btn>
+          <v-btn text value="10">10</v-btn>
+          <v-btn text value="20">20</v-btn>
+        </v-btn-toggle>
+      </v-container>
+      <v-container>
+        <v-btn @click="createQuiz" depressed color="primary">
+          Create quiz
+        </v-btn>
+      </v-container>
     </v-container>
   </v-container>
 </template>
@@ -46,14 +56,23 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import StatementManager from "@/models/statement/StatementManager";
+import Assessment from "@/models/management/Assessment";
+import RemoteServices from "@/services/RemoteServices";
 
 @Component
 export default class CreateQuizzesView extends Vue {
-  private statementManager: StatementManager = StatementManager.getInstance;
+  statementManager: StatementManager = StatementManager.getInstance;
+  availableAssessments: Assessment[] = [];
 
-  // noinspection JSUnusedGlobalSymbols
-  beforeMount() {
+  async created() {
+    await this.$store.dispatch("loading");
     this.statementManager.reset();
+    try {
+      this.availableAssessments = await RemoteServices.getAvailableAssessments();
+    } catch (error) {
+      await this.$store.dispatch("error", error);
+    }
+    await this.$store.dispatch("clearLoading");
   }
 
   async createQuiz() {
@@ -67,4 +86,17 @@ export default class CreateQuizzesView extends Vue {
 }
 </script>
 
-<style></style>
+<style lang="scss">
+.create-buttons {
+  width: 50% !important;
+  background-color: white;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #818181;
+}
+
+.button-group {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+</style>

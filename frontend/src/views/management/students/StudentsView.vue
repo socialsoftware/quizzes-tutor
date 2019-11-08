@@ -86,8 +86,8 @@ export default class StudentsView extends Vue {
     }
   ];
 
-  // noinspection JSUnusedGlobalSymbols
   async created() {
+    await this.$store.dispatch("loading");
     try {
       this.courseExecutions = await RemoteServices.getCourseExecutions();
       this.year = this.courseExecutions[0].year;
@@ -97,6 +97,7 @@ export default class StudentsView extends Vue {
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   @Watch("year")

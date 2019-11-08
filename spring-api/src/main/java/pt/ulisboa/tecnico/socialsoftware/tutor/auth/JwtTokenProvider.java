@@ -70,6 +70,8 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
             return true;
+        } catch (SignatureException ex) {
+            logger.error("Server security keys have changed");
         } catch (MalformedJwtException ex) {
             logger.error("Invalid JWT token");
         } catch (ExpiredJwtException ex) {

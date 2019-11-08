@@ -36,7 +36,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import SolvedQuiz from "@/models/statement/SolvedQuiz";
 import StatementManager from "@/models/statement/StatementManager";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import StatementQuestion from "@/models/statement/StatementQuestion";
@@ -46,12 +45,14 @@ import StatementAnswer from "@/models/statement/StatementAnswer";
 export default class AvailableQuizzesView extends Vue {
   quizzes: StatementQuiz[] = [];
 
-  async beforeMount() {
+  async created() {
+    await this.$store.dispatch("loading");
     try {
       this.quizzes = (await RemoteServices.getAvailableQuizzes()).reverse();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
   }
 
   async solveQuiz(quiz: StatementQuiz) {

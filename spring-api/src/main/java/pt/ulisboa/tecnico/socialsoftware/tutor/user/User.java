@@ -3,16 +3,21 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
-    public enum Role {STUDENT, TEACHER, ADMIN}
+     public enum Role {STUDENT, TEACHER, ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +34,7 @@ public class User implements UserDetails {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     public User() {
@@ -113,10 +118,20 @@ public class User implements UserDetails {
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
-        if (quizAnswers == null) {
-            quizAnswers = new HashSet<>();
-        }
         this.quizAnswers.add(quizAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", role=" + role +
+                ", number=" + number +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", year=" + year +
+                ", creationDate=" + creationDate +
+                '}';
     }
 
     @Override
@@ -152,4 +167,46 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public List<Question> filterQuestionsByStudentModel(Integer numberOfQuestions, List<Question> availableQuestions) {
+        List<Question> studentAnsweredQuestions = getQuizAnswers().stream()
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> availableQuestions.contains(questionAnswer.getQuizQuestion().getQuestion()))
+                .map(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion())
+                .collect(Collectors.toList());
+
+        List<Question> notAnsweredQuestions = availableQuestions.stream()
+                .filter(question -> !studentAnsweredQuestions.contains(question))
+                .collect(Collectors.toList());
+
+        List<Question> result = new ArrayList<>();
+
+        // add 80% of notanswered questions
+        // may add less if not enough notanswered
+        int numberOfAddedQuestions = 0;
+        while (numberOfAddedQuestions < numberOfQuestions * 0.8
+                && notAnsweredQuestions.size() >= numberOfAddedQuestions + 1) {
+            result.add(notAnsweredQuestions.get(numberOfAddedQuestions++));
+        }
+
+        // add notanswered questions if there is not enough answered questions
+        // it is ok because the total number of available questions > numberOfQuestions
+        while (studentAnsweredQuestions.size() + numberOfAddedQuestions < numberOfQuestions) {
+            result.add(notAnsweredQuestions.get(numberOfAddedQuestions++));
+        }
+
+        // add answered questions
+        Random rand = new Random(System.currentTimeMillis());
+        while (numberOfAddedQuestions < numberOfQuestions) {
+            int next = rand.nextInt(studentAnsweredQuestions.size());
+            if(!result.contains(studentAnsweredQuestions.get(next))) {
+                result.add(studentAnsweredQuestions.get(next));
+                numberOfAddedQuestions++;
+            }
+        }
+
+        return result;
+    }
+
+
 }

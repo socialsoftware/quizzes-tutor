@@ -69,4 +69,14 @@ public class SolvedQuizDto implements Serializable {
     public void setAnswerDate(String answerDate) {
         this.answerDate = answerDate;
     }
+
+    @Override
+    public String toString() {
+        return "SolvedQuizDto{" +
+                "statementQuiz=" + statementQuiz +
+                ", answers=" + answers +
+                ", correctAnswers=" + correctAnswers +
+                ", answerDate='" + answerDate + '\'' +
+                '}';
+    }
 }

@@ -11,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "quiz_answers")
-public class QuizAnswer implements Serializable {
+public class QuizAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

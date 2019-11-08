@@ -4,13 +4,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option implements Serializable {
+public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,12 +23,12 @@ public class Option implements Serializable {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
     private Question question;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer")
-    private Set<QuestionAnswer> questionAnswers;
+    private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option(){}
 
@@ -91,9 +90,16 @@ public class Option implements Serializable {
     }
 
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
-        if (questionAnswers == null) {
-            questionAnswers = new HashSet<>();
-        }
         questionAnswers.add(questionAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "Option{" +
+                "id=" + id +
+                ", number=" + number +
+                ", correct=" + correct +
+                ", content='" + content + '\'' +
+                '}';
     }
 }

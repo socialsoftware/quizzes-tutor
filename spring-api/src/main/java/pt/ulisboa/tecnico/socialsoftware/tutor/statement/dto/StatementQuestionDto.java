@@ -3,15 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
 public class StatementQuestionDto implements Serializable {
-
     private Integer quizQuestionId;
     private String content;
-    private List<StatementOptionDto> options;
+    private List<StatementOptionDto> options = new ArrayList<>();
     private ImageDto image;
 
     public StatementQuestionDto(QuizQuestion quizQuestion) {
@@ -53,5 +53,15 @@ public class StatementQuestionDto implements Serializable {
 
     public void setImage(ImageDto image) {
         this.image = image;
+    }
+
+    @Override
+    public String toString() {
+        return "StatementQuestionDto{" +
+                "quizQuestionId=" + quizQuestionId +
+                ", content='" + content + '\'' +
+                ", options=" + options +
+                ", image=" + image +
+                '}';
     }
 }

@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-public class JwtAuthenticationDto {
+import java.io.Serializable;
+
+public class JwtAuthenticationDto implements Serializable {
     private String token;
     private String userRole;
 
@@ -23,5 +25,13 @@ public class JwtAuthenticationDto {
 
     public void setUser(String userRole) {
         this.userRole = userRole;
+    }
+
+    @Override
+    public String toString() {
+        return "JwtAuthenticationDto{" +
+                "token='" + token + '\'' +
+                ", userRole='" + userRole + '\'' +
+                '}';
     }
 }

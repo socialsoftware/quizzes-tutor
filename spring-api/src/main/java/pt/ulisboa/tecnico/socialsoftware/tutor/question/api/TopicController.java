@@ -27,22 +27,16 @@ public class TopicController {
 
     @PostMapping(value = "/topics")
     public TopicDto createTopic(@Valid @RequestBody TopicDto topicDto) {
-        logger.debug("createTopic topic: {}", topicDto.getName());
-
         return this.topicService.createTopic(topicDto);
     }
 
     @PutMapping(value = "/topics/{topicId}")
     public TopicDto updateTopic(@PathVariable Integer topicId, @Valid @RequestBody TopicDto topic) {
-        logger.debug("updateTopic newTopic: {}", topic.getName());
-
         return this.topicService.updateTopic(topicId, topic);
     }
 
     @DeleteMapping("/topics/{topicId}")
     public ResponseEntity removeTopic(@PathVariable Integer topicId) {
-        logger.debug("removeTopic topic: {}: ", topicId);
-
         topicService.removeTopic(topicId);
 
         return ResponseEntity.ok().build();

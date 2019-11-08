@@ -5,8 +5,8 @@
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
       ></v-app-bar-nav-icon>
-      <v-toolbar-title class="white-text">
-        <v-btn href="/" text dark>
+      <v-toolbar-title>
+        <v-btn dark active-class="toolbar-title" text tile to="/">
           Software Architecture Quizzes
         </v-btn></v-toolbar-title
       >
@@ -51,6 +51,14 @@
                 <v-list-item-title>Quizzes</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/assessments">
+              <v-list-item-action>
+                <v-icon>book</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Assessments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/students">
               <v-list-item-action>
                 <v-icon>school</v-icon>
@@ -91,14 +99,14 @@
                 <v-list-item-title>Available</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <!--            <v-list-item to="/student/create">
+            <v-list-item to="/student/create">
               <v-list-item-action>
                 <v-icon>create</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>-->
+            </v-list-item>
             <v-list-item to="/student/solved">
               <v-list-item-action>
                 <v-icon>done</v-icon>
@@ -132,8 +140,7 @@
     </v-app-bar>
 
     <!-- Start of mobile side menu -->
-    <v-navigation-drawer app v-model="drawer" absolute dark>
-      <!-- Menu title -->
+    <v-navigation-drawer app v-model="drawer" absolute dark temporary>
       <v-toolbar flat>
         <v-list>
           <v-list-item>
@@ -142,7 +149,6 @@
         </v-list>
       </v-toolbar>
 
-      <!-- Menu Links -->
       <v-list class="pt-0" dense>
         <v-list-item to="/student/available" v-if="isStudent" exact>
           <v-list-item-action>
@@ -151,12 +157,12 @@
           <v-list-item-content>Available Quizzes</v-list-item-content>
         </v-list-item>
 
-        <!--        <v-list-item to="/student/create" v-if="isStudent">
+        <v-list-item to="/student/create" v-if="isStudent">
           <v-list-item-action>
             <v-icon>create</v-icon>
           </v-list-item-action>
           <v-list-item-content>Create Quiz</v-list-item-content>
-        </v-list-item>-->
+        </v-list-item>
 
         <v-list-item to="/student/solved" v-if="isStudent">
           <v-list-item-action>
@@ -228,5 +234,9 @@ export default class TopBar extends Vue {
 <style scoped lang="scss">
 .v-icon {
   padding-left: 10px;
+}
+
+.toolbar-title::before {
+  opacity: 0 !important;
 }
 </style>

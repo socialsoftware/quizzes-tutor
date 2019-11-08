@@ -40,9 +40,9 @@ public class StatementController {
             return null;
         }
 
-        logService.create(user, LocalDateTime.now(), "GENERATE");
+        logService.create(user, LocalDateTime.now(), "STUDENT");
 
-        return statementService.generateStudentQuiz(user.getUsername(), quizDetails.getNumberOfQuestions());
+        return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
     }
 
     @GetMapping("/available")

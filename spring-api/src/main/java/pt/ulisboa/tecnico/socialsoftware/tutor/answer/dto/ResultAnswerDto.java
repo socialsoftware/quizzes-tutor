@@ -49,4 +49,14 @@ public class ResultAnswerDto implements Serializable {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
+
+    @Override
+    public String toString() {
+        return "ResultAnswerDto{" +
+                "quizQuestionId=" + quizQuestionId +
+                ", optionId=" + optionId +
+                ", timeTaken=" + timeTaken +
+                ", sequence=" + sequence +
+                '}';
+    }
 }

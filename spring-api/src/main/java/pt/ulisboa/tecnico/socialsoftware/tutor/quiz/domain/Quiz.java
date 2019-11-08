@@ -7,9 +7,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_NOT_CONSISTENT;
@@ -20,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
         indexes = {
                 @Index(name = "quizzes_indx_0", columnList = "number")
         })
-public class Quiz implements Serializable {
+public class Quiz {
     public enum QuizType {
         EXAM, TEST, STUDENT, TEACHER
     }
@@ -60,95 +63,19 @@ public class Quiz implements Serializable {
 
     public Quiz() {}
 
-    public Quiz(QuizDto quiz) {
-        checkQuestions(quiz.getQuestions());
+    public Quiz(QuizDto quizDto) {
+        checkQuestions(quizDto.getQuestions());
 
-        this.number = quiz.getNumber();
-        setTitle(quiz.getTitle());
-        this.type = quiz.getType();
-        this.scramble = quiz.getScramble();
-        this.creationDate = quiz.getCreationDateDate();
-        setAvailableDate(quiz.getAvailableDateDate());
-        setConclusionDate(quiz.getConclusionDateDate());
-        this.year = quiz.getYear();
-        this.series = quiz.getSeries();
-        this.version = quiz.getVersion();
-    }
-
-
-    private void checkTitle(String title) {
-        if (title == null || title.trim().length() == 0) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Title");
-        }
-    }
-
-    private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.type.equals(QuizType.TEACHER) && availableDate == null) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
-        }
-        if (this.type.equals(QuizType.TEACHER) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
-        }
-    }
-
-    private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.TEACHER) &&
-            conclusionDate != null &&
-            availableDate != null &&
-            conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
-        }
-    }
-
-    private void checkQuestions(List<QuestionDto> questions) {
-        if (questions != null) {
-            for (QuestionDto questionDto : questions) {
-                if (questionDto.getSequence() != questions.indexOf(questionDto) + 1) {
-                    throw new TutorException(QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
-                }
-            }
-        }
-    }
-
-    public void remove() {
-        getQuizQuestions().forEach(QuizQuestion::remove);
-        quizQuestions.clear();
-    }
-
-    public void checkCanRemove() {
-        if (!quizAnswers.isEmpty()) {
-            throw new TutorException(QUIZ_HAS_ANSWERS);
-        }
-        getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
-    }
-
-    public void generate(int quizSize, List<Question> availableQuestions) {
-        int numberOfAvailableQuestions = availableQuestions.size();
-        Set <Integer> usedQuestions = new HashSet<>();
-
-        int numberOfQuestions = 0;
-        while (numberOfQuestions < quizSize) {
-            int next = new Random().nextInt(numberOfAvailableQuestions);
-            if(!usedQuestions.contains(next)) {
-                usedQuestions.add(next);
-                new QuizQuestion(this, availableQuestions.get(next), numberOfQuestions++);
-            }
-        }
-
-        this.setCreationDate(LocalDateTime.now());
-        this.setType(QuizType.STUDENT);
-
-        // TODO change based on fenix info
-        Calendar calendar = Calendar.getInstance();
-
-        int year = calendar.get(Calendar.YEAR);
-
-        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
-            year -= 1;
-        }
-
-        this.setYear(year);
-        this.title = "Generated Quiz";
+        this.number = quizDto.getNumber();
+        setTitle(quizDto.getTitle());
+        this.type = quizDto.getType();
+        this.scramble = quizDto.getScramble();
+        this.creationDate = quizDto.getCreationDateDate();
+        setAvailableDate(quizDto.getAvailableDateDate());
+        setConclusionDate(quizDto.getConclusionDateDate());
+        this.year = quizDto.getYear();
+        this.series = quizDto.getSeries();
+        this.version = quizDto.getVersion();
     }
 
     public Integer getId() {
@@ -259,16 +186,93 @@ public class Quiz implements Serializable {
     }
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {
-        if (quizQuestions == null) {
-            quizQuestions = new HashSet<>();
-        }
         this.quizQuestions.add(quizQuestion);
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
-        if (quizAnswers == null) {
-            quizAnswers = new HashSet<>();
-        }
         this.quizAnswers.add(quizAnswer);
+    }
+
+    @Override
+    public String toString() {
+        return "Quiz{" +
+                "id=" + id +
+                ", creationDate=" + creationDate +
+                ", availableDate=" + availableDate +
+                ", conclusionDate=" + conclusionDate +
+                ", scramble=" + scramble +
+                ", title='" + title + '\'' +
+                ", type=" + type +
+                ", number=" + number +
+                ", year=" + year +
+                ", series=" + series +
+                ", version='" + version + '\'' +
+                '}';
+    }
+
+    private void checkTitle(String title) {
+        if (title == null || title.trim().length() == 0) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Title");
+        }
+    }
+
+    private void checkAvailableDate(LocalDateTime availableDate) {
+        if (this.type.equals(QuizType.TEACHER) && availableDate == null) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+        }
+        if (this.type.equals(QuizType.TEACHER) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
+        }
+    }
+
+    private void checkConclusionDate(LocalDateTime conclusionDate) {
+        if (this.type.equals(QuizType.TEACHER) &&
+                conclusionDate != null &&
+                availableDate != null &&
+                conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
+        }
+    }
+
+    private void checkQuestions(List<QuestionDto> questions) {
+        if (questions != null) {
+            for (QuestionDto questionDto : questions) {
+                if (questionDto.getSequence() != questions.indexOf(questionDto) + 1) {
+                    throw new TutorException(QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
+                }
+            }
+        }
+    }
+
+    public void remove() {
+        getQuizQuestions().forEach(QuizQuestion::remove);
+        quizQuestions.clear();
+    }
+
+    public void checkCanRemove() {
+        if (!quizAnswers.isEmpty()) {
+            throw new TutorException(QUIZ_HAS_ANSWERS);
+        }
+        getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
+    }
+
+    public void generate(List<Question> questions) {
+        IntStream.range(0,questions.size())
+                .forEach(index -> new QuizQuestion(this, questions.get(index), index));
+
+        this.setCreationDate(LocalDateTime.now());
+        this.setType(QuizType.STUDENT);
+
+        // TODO change based on fenix info
+        Calendar calendar = Calendar.getInstance();
+
+        int year = calendar.get(Calendar.YEAR);
+
+        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
+            year -= 1;
+        }
+
+        this.setYear(year);
+        this.title = "Generated Quiz";
     }
 }

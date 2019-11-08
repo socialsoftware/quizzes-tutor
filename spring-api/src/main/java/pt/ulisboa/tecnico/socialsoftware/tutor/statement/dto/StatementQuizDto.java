@@ -73,4 +73,15 @@ public class StatementQuizDto implements Serializable {
     public void setQuestions(List<StatementQuestionDto> questions) {
         this.questions = questions;
     }
+
+    @Override
+    public String toString() {
+        return "StatementQuizDto{" +
+                "quizAnswerId=" + quizAnswerId +
+                ", title='" + title + '\'' +
+                ", availableDate='" + availableDate + '\'' +
+                ", conclusionDate='" + conclusionDate + '\'' +
+                ", questions=" + questions +
+                '}';
+    }
 }

@@ -10,7 +10,7 @@ export default class SolvedQuiz {
 
   constructor(jsonObj?: SolvedQuiz) {
     if (jsonObj) {
-      this.answerDate = new Date(jsonObj.answerDate).toLocaleString("pt");
+      this.answerDate = jsonObj.answerDate;
       this.statementQuiz = new StatementQuiz(jsonObj.statementQuiz);
 
       this.answers = jsonObj.answers.map(answer => {

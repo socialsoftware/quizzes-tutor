@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
-public class StudentDto {
+import java.io.Serializable;
+
+public class StudentDto implements Serializable {
     private Integer number;
     private String username;
     private String name;
@@ -128,5 +130,21 @@ public class StudentDto {
 
     public void setPercentageOfCorrectTeacherAnswers(Float percentageOfCorrectTeacherAnswers) {
         this.percentageOfCorrectTeacherAnswers = percentageOfCorrectTeacherAnswers;
+    }
+
+    @Override
+    public String toString() {
+        return "StudentDto{" +
+                "number=" + number +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", year=" + year +
+                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", percentageOfCorrectAnswers=" + percentageOfCorrectAnswers +
+                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", percentageOfCorrectTeacherAnswers=" + percentageOfCorrectTeacherAnswers +
+                '}';
     }
 }

@@ -68,13 +68,8 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}")
-    public ResponseEntity updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
-        logger.debug("updateQuestion questionId: {}, title: {}, content: {}, options: {}: ", questionId,
-                question.getTitle(), question.getContent(),
-                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
-                        .collect(Collectors.joining("\n")));
-        this.questionService.updateQuestion(questionId, question);
-        return ResponseEntity.ok().build();
+    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
+        return this.questionService.updateQuestion(questionId, question);
     }
 
     @DeleteMapping("/questions/{questionId}")
@@ -92,7 +87,7 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/questions/{questionId}/setStatus")
+    @PostMapping("/questions/{questionId}/set-status")
     public ResponseEntity questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
         logger.debug("questionSetStatus questionId: {}: ", questionId);
         questionService.questionSetStatus(questionId, Question.Status.valueOf(status));

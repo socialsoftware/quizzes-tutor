@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +27,7 @@ public class QuizDto implements Serializable {
     private String version;
     private int numberOfQuestions;
     private int numberOfAnswers;
-    private List<QuestionDto> questions;
+    private List<QuestionDto> questions = new ArrayList<>();
 
     @Transient
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
@@ -200,5 +201,26 @@ public class QuizDto implements Serializable {
             return null;
         }
         return LocalDateTime.parse(getConclusionDate(), formatter);
+    }
+
+    @Override
+    public String toString() {
+        return "QuizDto{" +
+                "id=" + id +
+                ", number=" + number +
+                ", scramble=" + scramble +
+                ", title='" + title + '\'' +
+                ", creationDate='" + creationDate + '\'' +
+                ", availableDate='" + availableDate + '\'' +
+                ", conclusionDate='" + conclusionDate + '\'' +
+                ", year=" + year +
+                ", type=" + type +
+                ", series=" + series +
+                ", version='" + version + '\'' +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", questions=" + questions +
+                ", formatter=" + formatter +
+                '}';
     }
 }

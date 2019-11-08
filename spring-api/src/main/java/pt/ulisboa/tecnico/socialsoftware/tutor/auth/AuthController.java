@@ -67,10 +67,8 @@ public class AuthController {
         try {
             userDetails = client.getUserDetailsFromCode(data.getCode());
         } catch (FenixEduClientException e) {
-            e.printStackTrace();
             throw new TutorException(FENIX_ERROR);
         } catch (Exception e) {
-            e.printStackTrace();
             throw new TutorException(FENIX_ERROR);
         }
 
