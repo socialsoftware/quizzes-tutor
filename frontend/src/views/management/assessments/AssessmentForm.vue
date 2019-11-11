@@ -1,63 +1,20 @@
 <template>
   <v-content>
-    <v-card>
-      <v-divider class="mx-4" inset vertical> </v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
+    <v-card v-if="editMode && assessment" class="table">
+      <v-card-title>
+        <span class="headline">Create Assessment</span>
         <v-btn color="primary" dark class="mb-2" @click="switchMode">
           {{ editMode ? "Close" : "Create" }}
         </v-btn>
-        <v-btn
-          color="primary"
-          dark
-          class="mb-2"
-          v-if="editMode"
-          @click="saveAssessment"
+
+        <v-btn color="primary" dark class="mb-2" @click="saveAssessment"
           >Save</v-btn
         >
-      </v-card-actions>
-    </v-card>
-    <v-card v-if="editMode && assessment">
-      <v-card-title>
-        <span class="headline">Create Assessment</span>
-        <v-dialog v-model="showAssessment" max-width="1000px">
-          <v-card v-if="assessmentToShow">
-            <v-card-title>
-              <span class="headline">{{ assessmentToShow.title }}</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container grid-list-md fluid>
-                <v-layout column wrap>
-                  <v-flex class="text-left" xs24 sm12 md8>
-                    <p>assessmentToShow</p>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn
-                color="blue darken-1"
-                text
-                @click="closeShowAssessmentDialog"
-                >Close</v-btn
-              >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <v-flex xs18 sm9 md6>
-              <v-text-field
-                v-model="assessment.title"
-                label="Title"
-              ></v-text-field>
-            </v-flex>
-          </v-layout>
-        </v-container>
-        <v-container grid-list-md fluid>
+          <v-text-field v-model="assessment.title" label="Title"></v-text-field>
+
           <v-data-table
             :headers="topicHeaders"
             :items="assessment.topicConjunctions"
@@ -115,10 +72,10 @@
             >Add Topic Conjunction</v-btn
           >
         </v-container>
-        <v-container grid-list-md fluid>
+        <v-container grid-list-md fluid v-if="unselectedQuestions.length !== 0">
           <v-data-table
             :headers="questionHeaders"
-            :items="questions"
+            :items="unselectedQuestions"
             :items-per-page="10"
             show-expand
           >
@@ -134,6 +91,16 @@
               <span v-for="topic in item.topics" :key="topic.id">
                 {{ topic.name }}
               </span>
+            </template>
+
+            <template v-slot:item.action="{ item }">
+              <v-icon
+                small
+                class="mr-2"
+                @click="addTopicConjunction(item.topics)"
+              >
+                add</v-icon
+              >
             </template>
 
             <template v-slot:expanded-item="{ item }">
@@ -162,8 +129,39 @@
             </template>
           </v-data-table>
         </v-container>
+        <v-btn
+          color="primary"
+          dark
+          class="mb-2"
+          v-if="editMode"
+          @click="showSelectedQuestions"
+          >Show {{ selectedQuestions.length }} selected questions</v-btn
+        >
       </v-card-text>
     </v-card>
+
+    <v-dialog v-model="showAssessment" max-width="1000px">
+      <v-card v-if="assessmentToShow">
+        <v-card-title>
+          <span class="headline">{{ assessmentToShow.title }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex class="text-left" xs24 sm12 md8>
+                <p>assessmentToShow</p>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeShowAssessmentDialog"
+            >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-content>
 </template>
 
@@ -186,7 +184,8 @@ export default class AssessmentForm extends Vue {
   @Prop(Boolean) readonly editMode!: boolean;
   topics: Topic[] = [];
   allQuestions: Question[] = [];
-  questions: Question[] = [];
+  selectedQuestions: Question[] = [];
+  unselectedQuestions: Question[] = [];
   showAssessment: boolean = false;
   assessmentToShow: Assessment | null | undefined = null;
   position: number | null = null;
@@ -228,6 +227,13 @@ export default class AssessmentForm extends Vue {
       align: "left",
       width: "5%",
       sortable: false
+    },
+    {
+      text: "Actions",
+      value: "action",
+      align: "center",
+      width: "1%",
+      sortable: false
     }
   ];
 
@@ -236,7 +242,7 @@ export default class AssessmentForm extends Vue {
     try {
       this.topics = await RemoteServices.getTopics();
       this.allQuestions = await RemoteServices.getQuestions();
-      this.questions = this.allQuestions;
+      this.unselectedQuestions = this.allQuestions;
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
@@ -263,6 +269,8 @@ export default class AssessmentForm extends Vue {
     }
   }
 
+  showSelectedQuestions() {}
+
   removeTopicConjunction(sequence: number) {
     this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
       topicConjunction => topicConjunction.sequence != sequence
@@ -281,10 +289,16 @@ export default class AssessmentForm extends Vue {
     this.assessment.topicConjunctions.push(new TopicConjunctions());
   }
 
+  addTopicConjunction(topics: Topic[]) {
+    let topicConjunction = new TopicConjunctions();
+    topicConjunction.topics = topics;
+    this.assessment.topicConjunctions.push(topicConjunction);
+  }
+
   @Watch("assessment.topicConjunctions", { deep: true })
   recalculateQuestionList() {
     if (this.assessment) {
-      this.questions = this.allQuestions.filter(question => {
+      this.selectedQuestions = this.allQuestions.filter(question => {
         return this.assessment.topicConjunctions.find(topicConjunction => {
           return (
             String(question.topics.map(topic => topic.id).sort()) ===
@@ -292,6 +306,10 @@ export default class AssessmentForm extends Vue {
           );
         });
       });
+
+      this.unselectedQuestions = this.allQuestions.filter(
+        question => !this.selectedQuestions.find(q => q.id === question.id)
+      );
     }
   }
 

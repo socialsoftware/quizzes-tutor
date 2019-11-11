@@ -1,96 +1,5 @@
 <template>
   <v-card class="table">
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="newQuestion"
-        >New Question</v-btn
-      >
-      <v-dialog v-model="dialog" max-width="1000px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">
-              {{
-                currentQuestion && currentQuestion.id === null
-                  ? "New Question"
-                  : "Edit Question"
-              }}
-            </span>
-          </v-card-title>
-
-          <v-card-text v-if="currentQuestion">
-            <v-container grid-list-md fluid>
-              <v-layout column wrap>
-                <v-flex xs24 sm12 md8>
-                  <v-text-field
-                    v-model="currentQuestion.title"
-                    label="Title"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs24 sm12 md12>
-                  <v-textarea
-                    outline
-                    rows="10"
-                    v-model="currentQuestion.content"
-                    label="Content"
-                  ></v-textarea>
-                </v-flex>
-                <v-flex
-                  xs24
-                  sm12
-                  md12
-                  v-for="index in currentQuestion.options.length"
-                  :key="index"
-                >
-                  <v-switch
-                    v-model="currentQuestion.options[index - 1].correct"
-                    class="ma-4"
-                    label="Correct"
-                  ></v-switch>
-                  <v-textarea
-                    outline
-                    :rows="index"
-                    v-model="currentQuestion.options[index - 1].content"
-                    :label="'Option ' + index"
-                  ></v-textarea>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeDialogue"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="saveQuestion">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="showQuestion" max-width="1000px">
-        <v-card v-if="currentQuestion">
-          <v-card-title>
-            <span class="headline">{{ currentQuestion.title }}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md fluid>
-              <v-layout column wrap>
-                <v-flex class="text-left" xs24 sm12 md8>
-                  <p v-html="renderQuestion(currentQuestion)"></p>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeQuestionDialog"
-              >Close</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-card-title>
-
     <v-data-table
       :headers="headers"
       :custom-filter="customFilter"
@@ -101,11 +10,19 @@
       show-expand
     >
       <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          label="Search Content"
-          class="mx-2"
-        ></v-text-field>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          ></v-text-field>
+
+          <v-spacer></v-spacer>
+          <v-btn color="primary" dark class="b-2" @click="newQuestion"
+            >New Question</v-btn
+          >
+        </v-card-title>
       </template>
 
       <template v-slot:item.content="{ item }">
@@ -199,6 +116,91 @@
         </td>
       </template>
     </v-data-table>
+
+    <v-dialog v-model="dialog" max-width="1000px">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            {{
+              currentQuestion && currentQuestion.id === null
+                ? "New Question"
+                : "Edit Question"
+            }}
+          </span>
+        </v-card-title>
+
+        <v-card-text v-if="currentQuestion">
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex xs24 sm12 md8>
+                <v-text-field
+                  v-model="currentQuestion.title"
+                  label="Title"
+                ></v-text-field>
+              </v-flex>
+              <v-flex xs24 sm12 md12>
+                <v-textarea
+                  outline
+                  rows="10"
+                  v-model="currentQuestion.content"
+                  label="Content"
+                ></v-textarea>
+              </v-flex>
+              <v-flex
+                xs24
+                sm12
+                md12
+                v-for="index in currentQuestion.options.length"
+                :key="index"
+              >
+                <v-switch
+                  v-model="currentQuestion.options[index - 1].correct"
+                  class="ma-4"
+                  label="Correct"
+                ></v-switch>
+                <v-textarea
+                  outline
+                  :rows="index"
+                  v-model="currentQuestion.options[index - 1].content"
+                  :label="'Option ' + index"
+                ></v-textarea>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeDialogue"
+            >Cancel</v-btn
+          >
+          <v-btn color="blue darken-1" text @click="saveQuestion">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showQuestion" max-width="1000px">
+      <v-card v-if="currentQuestion">
+        <v-card-title>
+          <span class="headline">{{ currentQuestion.title }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex class="text-left" xs24 sm12 md8>
+                <p v-html="renderQuestion(currentQuestion)"></p>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeQuestionDialog"
+            >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -210,7 +212,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import Question from "@/models/management/Question";
-import Image from "@/models/management/Image.ts";
+import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
 
 @Component

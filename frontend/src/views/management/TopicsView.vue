@@ -1,16 +1,13 @@
 <template v-if="topics">
   <v-card class="table">
     <v-card-title>
-      <v-flex xs12 sm6 md6>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-flex>
-      <v-divider class="mx-4" inset vertical> </v-divider>
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        label="Search"
+        single-line
+        hide-details
+      ></v-text-field>
       <v-spacer></v-spacer>
       <v-btn color="primary" dark class="mb-2" @click="newTopic"
         >New Topic</v-btn

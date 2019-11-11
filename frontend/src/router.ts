@@ -6,7 +6,7 @@ import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
 
 import ManagementView from "@/views/management/ManagementView.vue";
-import QuestionsView from "./views/management/QuestionsView.vue";
+import QuestionsView from "./views/management/questions/QuestionsView.vue";
 import TopicsView from "./views/management/TopicsView.vue";
 import StudentStatsView from "./views/StudentStatsView.vue";
 import QuizzesView from "./views/management/quizzes/QuizzesView.vue";

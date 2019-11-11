@@ -1,74 +1,41 @@
 <template>
   <v-content>
-    <v-card>
-      <v-divider class="mx-4" inset vertical> </v-divider>
-      <v-card-actions>
-        <v-spacer></v-spacer>
-        <v-btn color="primary" dark class="mb-2" @click="switchMode">{{
-          editMode ? "Close" : "Create"
-        }}</v-btn>
+    <v-card v-if="editMode && quiz" class="table">
+      <v-card-title>
+        <span class="headline">Edit Quiz</span>
+        <v-btn color="primary" dark class="mb-2" @click="switchMode">
+          {{ editMode ? "Close" : "Create" }}
+        </v-btn>
+
         <v-btn color="primary" dark class="mb-2" v-if="editMode" @click="save"
           >Save</v-btn
         >
-      </v-card-actions>
-    </v-card>
-    <v-card v-if="editMode && quiz">
-      <v-card-title>
-        <span class="headline">Edit Quiz</span>
-        <v-dialog v-model="showQuestion" max-width="1000px">
-          <v-card v-if="questionToShow">
-            <v-card-title>
-              <span class="headline">{{ questionToShow.title }}</span>
-            </v-card-title>
-            <v-card-text>
-              <v-container grid-list-md fluid>
-                <v-layout column wrap>
-                  <v-flex class="text-left" xs24 sm12 md8>
-                    <p v-html="renderQuestion(questionToShow)"></p>
-                  </v-flex>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="closeShowQuestionDialog"
-                >Close</v-btn
-              >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <v-flex xs18 sm9 md6>
-              <v-text-field v-model="quiz.title" label="Title"></v-text-field>
-            </v-flex>
-            <v-flex xs6 sm3 md2 class="text-left">
+          <v-text-field v-model="quiz.title" label="Title"></v-text-field>
+          <v-layout row wrap>
+            <v-flex class="text-left">
               <v-datetime-picker
                 label="Available Date"
                 v-model="quiz.availableDate"
               >
               </v-datetime-picker>
             </v-flex>
-            <v-flex xs6 sm3 md2 class="text-left">
+            <v-flex class="text-left">
               <v-datetime-picker
                 label="Conclusion Date"
                 v-model="quiz.conclusionDate"
               >
               </v-datetime-picker>
             </v-flex>
-            <v-flex xs12 sm6 md4>
-              <v-switch
-                v-model="quiz.scramble"
-                :label="
-                  `Scramble: ${
-                    quiz.scramble ? quiz.scramble.toString() : 'false'
-                  }`
-                "
-              ></v-switch>
-            </v-flex>
           </v-layout>
+          <v-switch
+            v-model="quiz.scramble"
+            :label="
+              `Scramble: ${quiz.scramble ? quiz.scramble.toString() : 'false'}`
+            "
+          ></v-switch>
         </v-container>
         <v-container grid-list-md fluid>
           <v-layout row wrap>
@@ -284,6 +251,28 @@
           >
           <v-btn color="blue darken-1" text @click="saveSetPosition"
             >Save</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showQuestion" max-width="1000px">
+      <v-card v-if="questionToShow">
+        <v-card-title>
+          <span class="headline">{{ questionToShow.title }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex class="text-left" xs24 sm12 md8>
+                <p v-html="renderQuestion(questionToShow)"></p>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="blue darken-1" text @click="closeShowQuestionDialog"
+            >Close</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -606,4 +595,13 @@ export default class QuizForm extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.headline {
+  flex: 1 1 auto;
+  text-align: left;
+}
+
+.headline + button {
+  margin: 0 20px;
+}
+</style>
