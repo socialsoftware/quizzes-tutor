@@ -16,7 +16,7 @@
   "dependencies": {
     "@johmun/vue-tags-input": "^2.1.0",
     "axios": "^0.19.0",
-    "chart.js": "^2.9.1",
+    "chart.js": "^2.9.2",
     "css-loader": "^2.1.1",
     "luxon": "^1.21.0",
     "material-design-icons-iconfont": "^5.0.1",
