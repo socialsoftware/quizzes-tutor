@@ -3,161 +3,171 @@
     <v-card v-if="editMode && assessment" class="table">
       <v-card-title>
         <span class="headline">Create Assessment</span>
-        <v-btn color="primary" dark class="mb-2" @click="switchMode">
+        <v-btn color="primary" dark @click="$emit('switchMode')">
           {{ editMode ? "Close" : "Create" }}
         </v-btn>
 
-        <v-btn color="primary" dark class="mb-2" @click="saveAssessment"
-          >Save</v-btn
-        >
+        <v-btn color="primary" dark @click="saveAssessment">Save</v-btn>
       </v-card-title>
       <v-card-text>
-        <v-container grid-list-md fluid>
-          <v-text-field v-model="assessment.title" label="Title"></v-text-field>
-
-          <v-data-table
-            :headers="topicHeaders"
-            :items="assessment.topicConjunctions"
-            :items-per-page="10"
-          >
-            <template v-slot:item.topics="{ item }">
-              <v-form>
+        <v-text-field v-model="assessment.title" label="Title"></v-text-field>
+        <v-layout row wrap>
+          <v-flex class="text-left">
+            <v-data-table
+              :headers="topicHeaders"
+              :items="assessment.topicConjunctions"
+              :items-per-page="10"
+              :custom-filter="topicFilter"
+            >
+              <template v-slot:top>
                 <v-autocomplete
-                  v-model="item.topics"
-                  :items="topics"
+                  label="Search"
+                  :items="allTopics"
+                  :filter="topicSearch"
+                  v-model="currentTopicsSearch"
+                  chips
+                  clearable
+                  deletable-chips
                   multiple
-                  return-object
-                  item-text="name"
-                  item-value="name"
+                  class="mx-4"
                 >
-                  <!--                  @change="saveAssessment(item.id)"-->
+                  <template v-slot:selection="data">
+                    <v-chip v-bind="data.attrs" :input-value="data.selected">
+                      {{ data.item.name }}
+                    </v-chip>
+                  </template>
+                  <template v-slot:item="data">
+                    <v-list-item-content
+                      v-text="data.item.name"
+                    ></v-list-item-content>
+                  </template>
+                </v-autocomplete>
+              </template>
+
+              <template v-slot:item.topics="{ item }">
+                <v-chip v-for="topic in item.topics" :key="topic.id">
+                  {{ topic.name }}
+                </v-chip>
+              </template>
+
+              <template v-slot:item.action="{ item }">
+                <v-icon
+                  small
+                  class="mr-2"
+                  @click="removeTopicConjunction(item)"
+                >
+                  remove</v-icon
+                >
+                <v-icon small class="mr-2" @click="showQuestionsDialog(item)">
+                  visibility</v-icon
+                >
+              </template>
+            </v-data-table>
+          </v-flex>
+          <v-flex class="text-left">
+            <v-data-table
+              :headers="topicHeaders"
+              :items="topicConjunctions"
+              :items-per-page="10"
+              :search="JSON.stringify(allTopicsSearch)"
+              :custom-filter="topicFilter"
+            >
+              <template v-slot:top>
+                <v-autocomplete
+                  label="Search"
+                  :items="allTopics"
+                  :filter="topicSearch"
+                  v-model="allTopicsSearch"
+                  :search-input.sync="allTopicsSearchText"
+                  @change="allTopicsSearchText = ''"
+                  chips
+                  clearable
+                  deletable-chips
+                  multiple
+                  class="mx-4"
+                >
                   <template v-slot:selection="data">
                     <v-chip
                       v-bind="data.attrs"
                       :input-value="data.selected"
                       close
-                      @click="data.select"
-                      @click:close="removeTopic(item.sequence, data.item)"
                     >
                       {{ data.item.name }}
                     </v-chip>
                   </template>
                   <template v-slot:item="data">
-                    <v-list-item-content>
-                      <v-list-item-title
-                        v-html="data.item.name"
-                      ></v-list-item-title>
-                    </v-list-item-content>
+                    <v-list-item-content
+                      v-text="data.item.name"
+                    ></v-list-item-content>
                   </template>
                 </v-autocomplete>
-              </v-form>
-            </template>
+              </template>
 
-            <template v-slot:item.action="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                @click="removeTopicConjunction(item.sequence)"
-              >
-                close</v-icon
-              >
-            </template>
-          </v-data-table>
-          <v-btn
-            color="primary"
-            dark
-            class="mb-2"
-            v-if="editMode"
-            @click="newTopicConjunction"
-            >Add Topic Conjunction</v-btn
-          >
-        </v-container>
-        <v-container grid-list-md fluid v-if="unselectedQuestions.length !== 0">
-          <v-data-table
-            :headers="questionHeaders"
-            :items="unselectedQuestions"
-            :items-per-page="10"
-            show-expand
-          >
-            <template v-slot:item.content="{ item }">
-              <div
-                class="text-left"
-                @click="props.expanded = !props.expanded"
-                v-html="convertMarkDownNoFigure(item.content, item.image)"
-              ></div>
-            </template>
+              <template v-slot:item.topics="{ item }">
+                <v-chip v-for="topic in item.topics" :key="topic.id">
+                  {{ topic.name }}
+                </v-chip>
+              </template>
 
-            <template v-slot:item.topics="{ item }">
-              <span v-for="topic in item.topics" :key="topic.id">
-                {{ topic.name }}
-              </span>
-            </template>
-
-            <template v-slot:item.action="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                @click="addTopicConjunction(item.topics)"
-              >
-                add</v-icon
-              >
-            </template>
-
-            <template v-slot:expanded-item="{ item }">
-              <td :colspan="9">
-                <v-simple-table>
-                  <thead>
-                    <tr>
-                      <th class="text-left">Option</th>
-                      <th class="text-left">Correct</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr v-for="option in item.options" :key="option.id">
-                      <td
-                        class="text-left"
-                        v-html="convertMarkDownNoFigure(option.content, null)"
-                      ></td>
-                      <td>
-                        <span v-if="option.correct">TRUE</span
-                        ><span v-else>FALSE</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </v-simple-table>
-              </td>
-            </template>
-          </v-data-table>
-        </v-container>
+              <template v-slot:item.action="{ item }">
+                <v-icon small class="mr-2" @click="addTopicConjunction(item)">
+                  add</v-icon
+                >
+                <v-icon small class="mr-2" @click="showQuestionsDialog(item)">
+                  visibility</v-icon
+                >
+              </template>
+            </v-data-table>
+          </v-flex>
+        </v-layout>
         <v-btn
           color="primary"
           dark
-          class="mb-2"
           v-if="editMode"
-          @click="showSelectedQuestions"
+          @click="showQuestionsDialog(null)"
           >Show {{ selectedQuestions.length }} selected questions</v-btn
         >
       </v-card-text>
     </v-card>
-
-    <v-dialog v-model="showAssessment" max-width="1000px">
-      <v-card v-if="assessmentToShow">
-        <v-card-title>
-          <span class="headline">{{ assessmentToShow.title }}</span>
-        </v-card-title>
+    <v-dialog
+      v-model="showQuestions"
+      @keydown.esc="closeQuestionsDialog"
+      max-width="75%"
+    >
+      <v-card v-if="questionsToShow">
         <v-card-text>
           <v-container grid-list-md fluid>
             <v-layout column wrap>
-              <v-flex class="text-left" xs24 sm12 md8>
-                <p>assessmentToShow</p>
-              </v-flex>
+              <ol>
+                <li
+                  v-for="question in questionsToShow"
+                  :key="question.id"
+                  class="text-left"
+                >
+                  <span
+                    v-html="convertMarkDown(question.content, question.image)"
+                  ></span>
+                  <ul>
+                    <li v-for="option in question.options" :key="option.number">
+                      <span
+                        v-html="convertMarkDown(option.content, null)"
+                        v-bind:class="[
+                          option.correct ? 'font-weight-bold' : ''
+                        ]"
+                      ></span>
+                    </li>
+                  </ul>
+                  <br />
+                </li>
+              </ol>
             </v-layout>
           </v-container>
         </v-card-text>
+
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeShowAssessmentDialog"
-            >Close</v-btn
+          <v-btn dark color="primary" @click="closeQuestionsDialog"
+            >close</v-btn
           >
         </v-card-actions>
       </v-card>
@@ -169,26 +179,28 @@
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
 import Assessment from "@/models/management/Assessment";
-import Topic from "@/models/management/Topic";
 import Question from "@/models/management/Question";
-import {
-  convertMarkDown,
-  convertMarkDownNoFigure
-} from "@/services/ConvertMarkdownService";
+import { convertMarkDown } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
-import TopicConjunctions from "@/models/management/TopicConjunction";
+import TopicConjunction from "@/models/management/TopicConjunction";
+import { _ } from "vue-underscore";
+import Topic from "@/models/management/Topic";
 
 @Component
 export default class AssessmentForm extends Vue {
   @Prop(Assessment) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;
-  topics: Topic[] = [];
+  currentTopicsSearch: string = "";
+  allTopicsSearch: string = "";
+  allTopicsSearchText: string = "";
+
+  showQuestions: boolean = false;
+  allTopics: Topic[] = [];
+  topicConjunctions: TopicConjunction[] = [];
+  questionsToShow: Question[] = [];
   allQuestions: Question[] = [];
   selectedQuestions: Question[] = [];
-  unselectedQuestions: Question[] = [];
-  showAssessment: boolean = false;
-  assessmentToShow: Assessment | null | undefined = null;
-  position: number | null = null;
+
   topicHeaders: object = [
     {
       text: "Topics",
@@ -206,51 +218,67 @@ export default class AssessmentForm extends Vue {
     }
   ];
 
-  questionHeaders: object = [
-    {
-      text: "Question",
-      value: "content",
-      align: "left",
-      width: "70%",
-      sortable: false
-    },
-    {
-      text: "Topics",
-      value: "topics",
-      align: "left",
-      width: "20%",
-      sortable: false
-    },
-    {
-      text: "Title",
-      value: "title",
-      align: "left",
-      width: "5%",
-      sortable: false
-    },
-    {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "1%",
-      sortable: false
-    }
-  ];
-
   async created() {
     await this.$store.dispatch("loading");
     try {
-      this.topics = await RemoteServices.getTopics();
       this.allQuestions = await RemoteServices.getQuestions();
-      this.unselectedQuestions = this.allQuestions;
+      this.allTopics = await RemoteServices.getTopics();
+      this.calculateTopicCombinations();
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
     await this.$store.dispatch("clearLoading");
   }
 
-  switchMode() {
-    this.$emit("switchMode");
+  @Watch("assessment")
+  calculateTopicCombinations() {
+    if (this.editMode) {
+      let currentTopicConjunctions = this.assessment.topicConjunctions.map(
+        topicConjunction => topicConjunction
+      );
+      this.allQuestions.map((question: Question) => {
+        if (
+          !this.contains(this.topicConjunctions, question.topics) &&
+          !this.contains(currentTopicConjunctions, question.topics)
+        ) {
+          let topicConjunction = new TopicConjunction();
+          topicConjunction.topics = question.topics;
+          this.topicConjunctions.push(topicConjunction);
+        }
+      });
+    }
+  }
+
+  contains(topicConjunctions: TopicConjunction[], topicArray: Topic[]) {
+    return (
+      topicConjunctions.filter(topicConjunction =>
+        _.isEqual(topicConjunction.topics, topicArray)
+      ).length !== 0
+    );
+  }
+
+  topicFilter(
+    value: string,
+    search: string,
+    topicConjunction: TopicConjunction
+  ) {
+    let searchTopics = JSON.parse(search);
+
+    if (searchTopics !== "") {
+      return searchTopics
+        .map((searchTopic: Topic) => searchTopic.name)
+        .every((v: string) =>
+          topicConjunction.topics.map(topic => topic.name).includes(v)
+        );
+    }
+    return true;
+  }
+
+  topicSearch(topic: Topic, search: string) {
+    return (
+      search != null &&
+      topic.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    );
   }
 
   async saveAssessment() {
@@ -269,30 +297,40 @@ export default class AssessmentForm extends Vue {
     }
   }
 
-  showSelectedQuestions() {}
+  showQuestionsDialog(topicConjunction: TopicConjunction) {
+    if (topicConjunction !== null) {
+      this.questionsToShow = this.allQuestions.filter(question => {
+        return _.isEqual(topicConjunction.topics, question.topics);
+      });
+    } else {
+      this.questionsToShow = this.allQuestions.filter(question => {
+        return (
+          this.assessment.topicConjunctions.filter(topicConjunction => {
+            return _.isEqual(topicConjunction.topics, question.topics);
+          }).length !== 0
+        );
+      });
+    }
+    this.showQuestions = true;
+  }
 
-  removeTopicConjunction(sequence: number) {
+  closeQuestionsDialog() {
+    this.showQuestions = false;
+    this.questionsToShow = [];
+  }
+
+  removeTopicConjunction(topicConjuntion: TopicConjunction) {
+    this.topicConjunctions.push(topicConjuntion);
     this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
-      topicConjunction => topicConjunction.sequence != sequence
+      tc => tc.sequence != topicConjuntion.sequence
     );
   }
 
-  removeTopic(sequence: number, toRemoveTopic: Topic) {
-    this.assessment.topicConjunctions.find(
-      topicConjunction => topicConjunction.sequence == sequence
-    )!.topics = this.assessment.topicConjunctions
-      .find(topicConjunction => topicConjunction.sequence == sequence)!
-      .topics.filter(topic => topic.id != toRemoveTopic.id);
-  }
-
-  newTopicConjunction() {
-    this.assessment.topicConjunctions.push(new TopicConjunctions());
-  }
-
-  addTopicConjunction(topics: Topic[]) {
-    let topicConjunction = new TopicConjunctions();
-    topicConjunction.topics = topics;
-    this.assessment.topicConjunctions.push(topicConjunction);
+  addTopicConjunction(topicConjuntion: TopicConjunction) {
+    this.assessment.topicConjunctions.push(topicConjuntion);
+    this.topicConjunctions = this.topicConjunctions.filter(
+      tc => tc.sequence !== topicConjuntion.sequence
+    );
   }
 
   @Watch("assessment.topicConjunctions", { deep: true })
@@ -306,32 +344,11 @@ export default class AssessmentForm extends Vue {
           );
         });
       });
-
-      this.unselectedQuestions = this.allQuestions.filter(
-        question => !this.selectedQuestions.find(q => q.id === question.id)
-      );
     }
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
-  }
-
-  renderQuestion(question: Question): string {
-    let text =
-      convertMarkDown(question.content, question.image) + " <br/> <br/> ";
-    text =
-      text +
-      question.options
-        .map(
-          (option, index) =>
-            index.toString() +
-            " - " +
-            option.content +
-            (option.correct ? " (correct)" : "")
-        )
-        .join(" <br/> ");
-    return text;
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 }
 </script>

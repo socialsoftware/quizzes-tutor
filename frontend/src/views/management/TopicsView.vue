@@ -9,10 +9,8 @@
         hide-details
       ></v-text-field>
       <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="newTopic"
-        >New Topic</v-btn
-      >
-      <v-dialog v-model="dialog" max-width="1000px">
+      <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
+      <v-dialog v-model="dialog" max-width="75%">
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle() }}</span>
@@ -33,10 +31,8 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeDialogue"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="saveTopic">Save</v-btn>
+            <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+            <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>

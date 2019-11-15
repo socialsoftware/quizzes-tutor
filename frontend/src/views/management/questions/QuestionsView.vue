@@ -19,9 +19,7 @@
           ></v-text-field>
 
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="b-2" @click="newQuestion"
-            >New Question</v-btn
-          >
+          <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
         </v-card-title>
       </template>
 
@@ -117,7 +115,7 @@
       </template>
     </v-data-table>
 
-    <v-dialog v-model="dialog" max-width="1000px">
+    <v-dialog v-model="dialog" max-width="75%">
       <v-card>
         <v-card-title>
           <span class="headline">
@@ -171,14 +169,12 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeDialogue"
-            >Cancel</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="saveQuestion">Save</v-btn>
+          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showQuestion" max-width="1000px">
+    <v-dialog v-model="showQuestion" max-width="75%">
       <v-card v-if="currentQuestion">
         <v-card-title>
           <span class="headline">{{ currentQuestion.title }}</span>
@@ -195,7 +191,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue darken-1" text @click="closeQuestionDialog"
+          <v-btn color="blue darken-1" @click="closeQuestionDialog"
             >Close</v-btn
           >
         </v-card-actions>

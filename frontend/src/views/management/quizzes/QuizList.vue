@@ -18,9 +18,7 @@
           ></v-text-field>
 
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="b-2" @click="newQuiz"
-            >New Quiz</v-btn
-          >
+          <v-btn color="primary" dark @click="newQuiz">New Quiz</v-btn>
         </v-card-title>
       </template>
       <template v-slot:item.action="{ item }">
@@ -31,12 +29,9 @@
         <v-icon small class="mr-2" @click="deleteQuiz(item.id)">delete</v-icon>
       </template>
     </v-data-table>
-    <v-dialog v-model="previewQuiz" @keydown.esc="closeQuiz">
+    <v-dialog v-model="previewQuiz" @keydown.esc="closeQuiz" max-width="75%">
       <v-card v-if="quiz">
-        <v-card-title>
-          <span>{{ quiz.title }}</span>
-          <v-btn dark color="primary" text @click="closeQuiz">Close</v-btn>
-        </v-card-title>
+        <v-card-title>{{ quiz.title }}</v-card-title>
 
         <v-card-text>
           <v-container grid-list-md fluid>
@@ -69,7 +64,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn dark color="primary" text @click="closeQuiz">close</v-btn>
+          <v-btn dark color="primary" @click="closeQuiz">close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

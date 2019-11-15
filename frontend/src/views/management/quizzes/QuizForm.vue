@@ -3,13 +3,11 @@
     <v-card v-if="editMode && quiz" class="table">
       <v-card-title>
         <span class="headline">Edit Quiz</span>
-        <v-btn color="primary" dark class="mb-2" @click="switchMode">
+        <v-btn color="primary" dark @click="switchMode">
           {{ editMode ? "Close" : "Create" }}
         </v-btn>
 
-        <v-btn color="primary" dark class="mb-2" v-if="editMode" @click="save"
-          >Save</v-btn
-        >
+        <v-btn color="primary" dark v-if="editMode" @click="save">Save</v-btn>
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md fluid>
@@ -45,8 +43,7 @@
               v-if="quizQuestions.length !== 0"
               color="primary"
               dark
-              class="mb-2"
-              @click="openShowDialog"
+              @click="openShowQuiz"
               >Show Quiz</v-btn
             >
           </v-layout>
@@ -177,23 +174,9 @@
         </v-container>
       </v-card-text>
     </v-card>
-    <v-dialog
-      v-model="showDialog"
-      @keydown.esc="closeShowDialog"
-      fullscreen
-      hide-overlay
-      max-width="1000px"
-    >
+    <v-dialog v-model="showQuiz" @keydown.esc="closeShowQuiz" max-width="75%">
       <v-card v-if="quiz">
-        <v-toolbar dark color="primary">
-          <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
-          <div class="flex-grow-1"></div>
-          <v-toolbar-items>
-            <v-btn dark color="primary" text @click="closeShowDialog"
-              >Close</v-btn
-            >
-          </v-toolbar-items>
-        </v-toolbar>
+        <v-card-title>{{ quiz.title }}</v-card-title>
 
         <v-card-text>
           <v-container grid-list-md fluid>
@@ -226,13 +209,11 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn dark color="primary" text @click="closeShowDialog"
-            >close</v-btn
-          >
+          <v-btn dark color="primary" @click="closeShowQuiz">close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="dialog" persistent max-width="200px">
+    <v-dialog v-model="positionDialog" persistent max-width="200px">
       <v-card>
         <v-card-text>
           <v-container>
@@ -246,16 +227,12 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" text @click="closeSetPosition"
-            >Close</v-btn
-          >
-          <v-btn color="blue darken-1" text @click="saveSetPosition"
-            >Save</v-btn
-          >
+          <v-btn color="blue darken-1" @click="closeSetPosition">Close</v-btn>
+          <v-btn color="blue darken-1" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showQuestion" max-width="1000px">
+    <v-dialog v-model="showQuestion" max-width="75%">
       <v-card v-if="questionToShow">
         <v-card-title>
           <span class="headline">{{ questionToShow.title }}</span>
@@ -300,10 +277,10 @@ export default class QuizForm extends Vue {
   showQuestion: boolean = false;
   questionToShow: Question | null | undefined = null;
   quizQuestions: Question[] = [];
-  dialog: boolean = false;
+  positionDialog: boolean = false;
   questionPosition: Question | undefined;
   position: number | null = null;
-  showDialog: boolean = false;
+  showQuiz: boolean = false;
   timeProps = {
     useSeconds: true,
     ampmInTitle: true
@@ -534,14 +511,14 @@ export default class QuizForm extends Vue {
   openSetPosition(questionId: number) {
     let question = this.quizQuestions.find(q => q.id === questionId);
     if (question && question.sequence) {
-      this.dialog = true;
+      this.positionDialog = true;
       this.position = question.sequence;
       this.questionPosition = question;
     }
   }
 
   closeSetPosition() {
-    this.dialog = false;
+    this.positionDialog = false;
     this.position = null;
     this.questionPosition = undefined;
   }
@@ -580,13 +557,13 @@ export default class QuizForm extends Vue {
     this.quizQuestions = [];
   }
 
-  openShowDialog() {
-    this.showDialog = true;
+  openShowQuiz() {
+    this.showQuiz = true;
     this.quiz.questions = this.quizQuestions;
   }
 
-  closeShowDialog() {
-    this.showDialog = false;
+  closeShowQuiz() {
+    this.showQuiz = false;
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

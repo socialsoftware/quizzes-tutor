@@ -18,7 +18,7 @@
           ></v-text-field>
 
           <v-spacer></v-spacer>
-          <v-btn color="primary" dark class="b-2" @click="newAssessment"
+          <v-btn color="primary" dark @click="newAssessment"
             >New Assessment</v-btn
           >
         </v-card-title>
@@ -53,9 +53,7 @@
           <v-toolbar-title>{{ assessment.title }}</v-toolbar-title>
           <div class="flex-grow-1"></div>
           <v-toolbar-items>
-            <v-btn dark color="primary" text @click="closeAssessment"
-              >Close</v-btn
-            >
+            <v-btn dark color="primary" @click="closeAssessment">Close</v-btn>
           </v-toolbar-items>
         </v-toolbar>
 
@@ -90,9 +88,7 @@
 
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn dark color="primary" text @click="closeAssessment"
-            >close</v-btn
-          >
+          <v-btn dark color="primary" @click="closeAssessment">close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
