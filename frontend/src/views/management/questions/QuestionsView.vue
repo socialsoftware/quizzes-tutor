@@ -79,14 +79,46 @@
       </template>
 
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="showQuestionDialog(item)"
-          >visibility</v-icon
-        >
-        <v-icon small class="mr-2" @click="editQuestion(item)">edit</v-icon>
-        <v-icon small class="mr-2" @click="duplicateQuestion(item)"
-          >cached</v-icon
-        >
-        <v-icon small class="mr-2" @click="deleteQuestion(item)">delete</v-icon>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="showQuestionDialog(item)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Questions</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editQuestion(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="duplicateQuestion(item)"
+              >cached</v-icon
+            >
+          </template>
+          <span>Duplicate Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="deleteQuestion(item)"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Question</span>
+        </v-tooltip>
       </template>
 
       <template v-slot:expanded-item="{ item }">

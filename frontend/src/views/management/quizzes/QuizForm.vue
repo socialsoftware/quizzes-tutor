@@ -81,69 +81,121 @@
             </template>
 
             <template v-slot:item.action="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                @click="openShowQuestionDialog(item.id)"
-              >
-                visibility</v-icon
-              >
-              <v-icon
-                v-if="!item.sequence"
-                small
-                class="mr-2"
-                @click="addToQuiz(item.id)"
-              >
-                add</v-icon
-              >
-              <v-icon
-                v-if="item.sequence"
-                small
-                class="mr-2"
-                @click="removeFromQuiz(item.id)"
-              >
-                remove</v-icon
-              >
-              <v-icon
-                v-if="item.sequence && item.sequence !== 1"
-                small
-                class="mr-2"
-                @click="moveFirst(item.id)"
-              >
-                first_page</v-icon
-              >
-              <v-icon
-                v-if="item.sequence && item.sequence !== 1"
-                small
-                class="mr-2"
-                @click="moveLeft(item.id)"
-              >
-                chevron_left</v-icon
-              >
-              <v-icon
-                v-if="item.sequence && quizQuestions.length > 1"
-                small
-                class="mr-2"
-                @click="openSetPosition(item.id)"
-              >
-                expand_more</v-icon
-              >
-              <v-icon
-                v-if="item.sequence && item.sequence !== quizQuestions.length"
-                small
-                class="mr-2"
-                @click="moveRight(item.id)"
-              >
-                chevron_right</v-icon
-              >
-              <v-icon
-                v-if="item.sequence && item.sequence !== quizQuestions.length"
-                small
-                class="mr-2"
-                @click="moveLast(item.id)"
-              >
-                last_page</v-icon
-              >
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    @click="openShowQuestionDialog(item.id)"
+                  >
+                    visibility</v-icon
+                  >
+                </template>
+                <span>Show Questions</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="!item.sequence"
+                    @click="addToQuiz(item.id)"
+                  >
+                    add</v-icon
+                  >
+                </template>
+                <span>Add to Quiz</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="item.sequence"
+                    @click="removeFromQuiz(item.id)"
+                  >
+                    remove</v-icon
+                  >
+                </template>
+                <span>Remove from Quiz</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="item.sequence && item.sequence !== 1"
+                    @click="moveFirst(item.id)"
+                  >
+                    first_page</v-icon
+                  >
+                </template>
+                <span>Move to beginning</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="item.sequence && item.sequence !== 1"
+                    @click="moveLeft(item.id)"
+                  >
+                    chevron_left</v-icon
+                  >
+                </template>
+                <span>Move to the left</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="item.sequence && quizQuestions.length > 1"
+                    @click="openSetPosition(item.id)"
+                  >
+                    expand_more</v-icon
+                  >
+                </template>
+                <span>Set Position</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="
+                      item.sequence && item.sequence !== quizQuestions.length
+                    "
+                    @click="moveRight(item.id)"
+                  >
+                    chevron_right</v-icon
+                  >
+                </template>
+                <span>Move right</span>
+              </v-tooltip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="mr-2"
+                    v-on="on"
+                    v-if="
+                      item.sequence && item.sequence !== quizQuestions.length
+                    "
+                    @click="moveLast(item.id)"
+                  >
+                    last_page</v-icon
+                  >
+                </template>
+                <span>Move last</span>
+              </v-tooltip>
             </template>
 
             <template v-slot:expanded-item="{ item }">
@@ -281,10 +333,6 @@ export default class QuizForm extends Vue {
   questionPosition: Question | undefined;
   position: number | null = null;
   showQuiz: boolean = false;
-  timeProps = {
-    useSeconds: true,
-    ampmInTitle: true
-  };
   headers: object = [
     {
       text: "Sequence",

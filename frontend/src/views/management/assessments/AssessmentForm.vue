@@ -17,50 +17,62 @@
               :headers="topicHeaders"
               :items="assessment.topicConjunctions"
               :items-per-page="10"
+              :search="JSON.stringify(currentTopicsSearch)"
               :custom-filter="topicFilter"
             >
               <template v-slot:top>
                 <v-autocomplete
+                  v-model="currentTopicsSearch"
                   label="Search"
                   :items="allTopics"
                   :filter="topicSearch"
-                  v-model="currentTopicsSearch"
+                  :search-input.sync="currentTopicsSearchText"
+                  @change="currentTopicsSearchText = ''"
+                  item-text="name"
+                  return-object
                   chips
+                  small-chips
                   clearable
                   deletable-chips
                   multiple
+                  dense
                   class="mx-4"
                 >
-                  <template v-slot:selection="data">
-                    <v-chip v-bind="data.attrs" :input-value="data.selected">
-                      {{ data.item.name }}
-                    </v-chip>
-                  </template>
-                  <template v-slot:item="data">
-                    <v-list-item-content
-                      v-text="data.item.name"
-                    ></v-list-item-content>
-                  </template>
                 </v-autocomplete>
               </template>
-
               <template v-slot:item.topics="{ item }">
                 <v-chip v-for="topic in item.topics" :key="topic.id">
                   {{ topic.name }}
                 </v-chip>
               </template>
-
               <template v-slot:item.action="{ item }">
-                <v-icon
-                  small
-                  class="mr-2"
-                  @click="removeTopicConjunction(item)"
-                >
-                  remove</v-icon
-                >
-                <v-icon small class="mr-2" @click="showQuestionsDialog(item)">
-                  visibility</v-icon
-                >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      v-on="on"
+                      @click="removeTopicConjunction(item)"
+                    >
+                      remove</v-icon
+                    >
+                  </template>
+                  <span>Remove from Assessment</span>
+                </v-tooltip>
+
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      v-on="on"
+                      @click="showQuestionsDialog(item)"
+                    >
+                      visibility</v-icon
+                    >
+                  </template>
+                  <span>Show Questions</span>
+                </v-tooltip>
               </template>
             </v-data-table>
           </v-flex>
@@ -74,48 +86,56 @@
             >
               <template v-slot:top>
                 <v-autocomplete
+                  v-model="allTopicsSearch"
                   label="Search"
                   :items="allTopics"
                   :filter="topicSearch"
-                  v-model="allTopicsSearch"
                   :search-input.sync="allTopicsSearchText"
                   @change="allTopicsSearchText = ''"
+                  item-text="name"
+                  return-object
                   chips
+                  small-chips
                   clearable
                   deletable-chips
                   multiple
+                  dense
                   class="mx-4"
                 >
-                  <template v-slot:selection="data">
-                    <v-chip
-                      v-bind="data.attrs"
-                      :input-value="data.selected"
-                      close
-                    >
-                      {{ data.item.name }}
-                    </v-chip>
-                  </template>
-                  <template v-slot:item="data">
-                    <v-list-item-content
-                      v-text="data.item.name"
-                    ></v-list-item-content>
-                  </template>
                 </v-autocomplete>
               </template>
-
               <template v-slot:item.topics="{ item }">
                 <v-chip v-for="topic in item.topics" :key="topic.id">
                   {{ topic.name }}
                 </v-chip>
               </template>
-
               <template v-slot:item.action="{ item }">
-                <v-icon small class="mr-2" @click="addTopicConjunction(item)">
-                  add</v-icon
-                >
-                <v-icon small class="mr-2" @click="showQuestionsDialog(item)">
-                  visibility</v-icon
-                >
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      v-on="on"
+                      @click="addTopicConjunction(item)"
+                    >
+                      add</v-icon
+                    >
+                  </template>
+                  <span>Add to Assessment</span>
+                </v-tooltip>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                      small
+                      class="mr-2"
+                      v-on="on"
+                      @click="showQuestionsDialog(item)"
+                    >
+                      visibility</v-icon
+                    >
+                  </template>
+                  <span>Show Questions</span>
+                </v-tooltip>
               </template>
             </v-data-table>
           </v-flex>
@@ -191,6 +211,7 @@ export default class AssessmentForm extends Vue {
   @Prop(Assessment) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;
   currentTopicsSearch: string = "";
+  currentTopicsSearchText: string = "";
   allTopicsSearch: string = "";
   allTopicsSearchText: string = "";
 
@@ -230,16 +251,15 @@ export default class AssessmentForm extends Vue {
     await this.$store.dispatch("clearLoading");
   }
 
+  // Calculates the ((set of (topics of all the questions)) not present in the current assessment)
   @Watch("assessment")
   calculateTopicCombinations() {
     if (this.editMode) {
-      let currentTopicConjunctions = this.assessment.topicConjunctions.map(
-        topicConjunction => topicConjunction
-      );
+      this.topicConjunctions = [];
       this.allQuestions.map((question: Question) => {
         if (
           !this.contains(this.topicConjunctions, question.topics) &&
-          !this.contains(currentTopicConjunctions, question.topics)
+          !this.contains(this.assessment.topicConjunctions, question.topics)
         ) {
           let topicConjunction = new TopicConjunction();
           topicConjunction.topics = question.topics;
@@ -249,10 +269,14 @@ export default class AssessmentForm extends Vue {
     }
   }
 
+  // Checks if the topics of one topicConjunction has an exact match to the topicArray
   contains(topicConjunctions: TopicConjunction[], topicArray: Topic[]) {
     return (
       topicConjunctions.filter(topicConjunction =>
-        _.isEqual(topicConjunction.topics, topicArray)
+        _.isEqual(
+          topicConjunction.topics.sort((a, b) => (a.name > b.name ? 1 : -1)),
+          topicArray.sort((a, b) => (a.name > b.name ? 1 : -1))
+        )
       ).length !== 0
     );
   }
@@ -267,8 +291,8 @@ export default class AssessmentForm extends Vue {
     if (searchTopics !== "") {
       return searchTopics
         .map((searchTopic: Topic) => searchTopic.name)
-        .every((v: string) =>
-          topicConjunction.topics.map(topic => topic.name).includes(v)
+        .every((t: string) =>
+          topicConjunction.topics.map(topic => topic.name).includes(t)
         );
     }
     return true;

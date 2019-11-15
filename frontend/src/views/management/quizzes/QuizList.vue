@@ -22,11 +22,30 @@
         </v-card-title>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="showQuiz(item.id)"
-          >visibility</v-icon
-        >
-        <v-icon small class="mr-2" @click="editQuiz(item.id)">edit</v-icon>
-        <v-icon small class="mr-2" @click="deleteQuiz(item.id)">delete</v-icon>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="showQuiz(item.id)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Questions</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editQuiz(item.id)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Quiz</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="deleteQuiz(item.id)"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Quiz</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <v-dialog v-model="previewQuiz" @keydown.esc="closeQuiz" max-width="75%">

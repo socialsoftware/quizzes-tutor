@@ -46,8 +46,22 @@
       class="elevation-1"
     >
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editTopic(item)">edit</v-icon>
-        <v-icon small class="mr-2" @click="deleteTopic(item)">delete</v-icon>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editTopic(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Topic</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="deleteTopic(item)"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Topic</span>
+        </v-tooltip>
       </template>
     </v-data-table>
   </v-card>

@@ -14,11 +14,6 @@
       <v-spacer></v-spacer>
 
       <v-toolbar-items class="hidden-sm-and-down">
-        <!--v-btn v-if="isAdmin" to="/admin-management" text dark disabled>
-          Admin Management
-          <v-icon>fas fa-user</v-icon>
-        </v-btn-->
-
         <v-menu offset-y v-if="isTeacher" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>

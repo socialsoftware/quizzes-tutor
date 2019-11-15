@@ -33,12 +33,30 @@
         ></v-select>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editAssessment(item.id)"
-          >edit</v-icon
-        >
-        <v-icon small class="mr-2" @click="deleteAssessment(item.id)"
-          >delete</v-icon
-        >
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editAssessment(item.id)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Assessment</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteAssessment(item.id)"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Assessment</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <v-dialog
