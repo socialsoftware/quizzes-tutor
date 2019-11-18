@@ -89,7 +89,7 @@
               >visibility</v-icon
             >
           </template>
-          <span>Show Questions</span>
+          <span>Show Question</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
