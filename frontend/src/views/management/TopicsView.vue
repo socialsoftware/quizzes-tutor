@@ -56,7 +56,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="deleteTopic(item)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteTopic(item)"
+              color="red"
               >delete</v-icon
             >
           </template>

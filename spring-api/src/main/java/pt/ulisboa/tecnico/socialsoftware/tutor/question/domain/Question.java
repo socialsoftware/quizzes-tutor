@@ -225,7 +225,7 @@ public class Question {
     }
 
 
-    public double getDifficulty() {
+    public Integer getDifficulty() {
         // required because the import is done directely in the database
         if (numberOfAnswers == null || numberOfAnswers == 0) {
             numberOfAnswers = getQuizQuestions().stream()
@@ -235,10 +235,11 @@ public class Question {
                     .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()).map(e -> 1).reduce(0, Integer::sum);
         }
 
-        double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect / (double) numberOfAnswers : 0.0;
-        result = result * 100;
-        result = Math.round(result);
-        return result / 100;
+        if (numberOfAnswers == 0) {
+            return null;
+        }
+
+        return numberOfCorrect * 100 / numberOfAnswers;
     }
 
     public void update(QuestionDto questionDto) {

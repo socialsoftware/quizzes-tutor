@@ -6,8 +6,8 @@ export class Student {
   numberOfTeacherQuizzes!: number;
   numberOfStudentQuizzes!: number;
   numberOfAnswers!: number;
-  percentageOfCorrectAnswers!: number;
   numberOfTeacherAnswers!: number;
+  percentageOfCorrectAnswers!: number;
   percentageOfCorrectTeacherAnswers!: number;
 
   constructor(jsonObj?: Student) {
@@ -19,8 +19,8 @@ export class Student {
       this.numberOfTeacherQuizzes = jsonObj.numberOfTeacherQuizzes;
       this.numberOfStudentQuizzes = jsonObj.numberOfStudentQuizzes;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.percentageOfCorrectAnswers = jsonObj.percentageOfCorrectAnswers;
       this.numberOfTeacherAnswers = jsonObj.numberOfTeacherAnswers;
+      this.percentageOfCorrectAnswers = jsonObj.percentageOfCorrectAnswers;
       this.percentageOfCorrectTeacherAnswers =
         jsonObj.percentageOfCorrectTeacherAnswers;
     }

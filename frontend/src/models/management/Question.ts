@@ -7,7 +7,7 @@ export default class Question {
   title: string = "";
   status: string = "AVAILABLE";
   numberOfAnswers!: number;
-  difficulty!: number;
+  difficulty!: number | null;
   content: string = "";
 
   image: Image | null = null;

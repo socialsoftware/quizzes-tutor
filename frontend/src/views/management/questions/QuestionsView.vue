@@ -6,7 +6,8 @@
       :items="questions"
       :search="search"
       multi-sort
-      :items-per-page="10"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       show-expand
     >
       <template v-slot:top>
@@ -58,6 +59,15 @@
         </v-form>
       </template>
 
+      <template v-slot:item.difficulty="{ item }">
+        <v-chip
+          v-if="item.difficulty"
+          :color="getDifficultyColor(item.difficulty)"
+          dark
+          >{{ item.difficulty + "%" }}</v-chip
+        >
+      </template>
+
       <template v-slot:item.status="{ item }">
         <v-select
           v-model="item.status"
@@ -65,7 +75,13 @@
           small-chips
           dense
           @change="setStatus(item.id, item.status)"
-        ></v-select>
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip :color="getStatusColor(item)">
+              <span>{{ item }}</span>
+            </v-chip>
+          </template>
+        </v-select>
       </template>
 
       <template v-slot:item.image="{ item }">
@@ -113,7 +129,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="deleteQuestion(item)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteQuestion(item)"
+              color="red"
               >delete</v-icon
             >
           </template>
@@ -416,6 +437,19 @@ export default class QuestionsView extends Vue {
 
   closeDialogue() {
     this.dialog = false;
+  }
+
+  getDifficultyColor(difficulty: number) {
+    if (difficulty < 25) return "green";
+    else if (difficulty < 50) return "lime";
+    else if (difficulty < 75) return "orange";
+    else return "red";
+  }
+
+  getStatusColor(status: string) {
+    if (status === "REMOVED") return "red";
+    else if (status === "DISABLED") return "orange";
+    else return "green";
   }
 
   async saveQuestion() {

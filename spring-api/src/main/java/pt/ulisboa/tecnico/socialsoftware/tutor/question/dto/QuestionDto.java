@@ -15,7 +15,7 @@ public class QuestionDto implements Serializable {
     private Integer number;
     private String title;
     private String content;
-    private double difficulty;
+    private Integer difficulty;
     private int numberOfAnswers;
     private int numberOfCorrect;
     private String status;
@@ -67,15 +67,11 @@ public class QuestionDto implements Serializable {
         this.content = content;
     }
 
-    public double getDifficulty() {
+    public Integer getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(Integer difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public void setDifficulty(double difficulty) {
         this.difficulty = difficulty;
     }
 

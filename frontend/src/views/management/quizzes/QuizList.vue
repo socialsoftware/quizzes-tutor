@@ -5,7 +5,8 @@
       :items="quizzes"
       :search="search"
       multi-sort
-      :items-per-page="20"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -40,7 +41,12 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="deleteQuiz(item.id)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteQuiz(item.id)"
+              color="red"
               >delete</v-icon
             >
           </template>

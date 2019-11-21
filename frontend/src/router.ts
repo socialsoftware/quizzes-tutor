@@ -160,8 +160,7 @@ let router = new Router({
           component: ResultsView,
           meta: {
             title: "Software Architecture - Results",
-            requiredAuth: "Student",
-            requiresVerification: true
+            requiredAuth: "Student"
           }
         },
         {
@@ -203,15 +202,15 @@ let router = new Router({
 });
 
 router.beforeEach(async (to, from, next) => {
-  /*TODO
   if (from.matched.some(record => record.meta.requiresVerification)) {
-    if (confirm("are you sure?")) {
-      next();
-    } else {
+    let a = confirm("Are you sure?");
+    console.log(a);
+    if (!a) {
       next(false);
+      return;
     }
-    return;
-  }*/
+  }
+
   if (to.meta.requiredAuth == "None") {
     next();
   } else if (to.meta.requiredAuth == "Admin" && Store.getters.isAdmin) {

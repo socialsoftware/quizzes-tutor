@@ -16,7 +16,8 @@
             <v-data-table
               :headers="topicHeaders"
               :items="assessment.topicConjunctions"
-              :items-per-page="10"
+              :items-per-page="15"
+              :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
               :search="JSON.stringify(currentTopicsSearch)"
               :custom-filter="topicFilter"
             >
@@ -80,7 +81,8 @@
             <v-data-table
               :headers="topicHeaders"
               :items="topicConjunctions"
-              :items-per-page="10"
+              :items-per-page="15"
+              :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
               :search="JSON.stringify(allTopicsSearch)"
               :custom-filter="topicFilter"
             >

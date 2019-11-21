@@ -5,7 +5,8 @@
       :items="assessments"
       :search="search"
       multi-sort
-      :items-per-page="20"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       class="elevation-1"
     >
       <template v-slot:top>
@@ -52,6 +53,7 @@
               class="mr-2"
               v-on="on"
               @click="deleteAssessment(item.id)"
+              color="red"
               >delete</v-icon
             >
           </template>
