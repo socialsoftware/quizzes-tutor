@@ -14,8 +14,8 @@ public class StudentDto implements Serializable {
     private int numberOfStudentQuizzes;
     private int numberOfAnswers;
     private int numberOfTeacherAnswers;
-    private Integer percentageOfCorrectAnswers;
-    private Integer percentageOfCorrectTeacherAnswers;
+    private Integer percentageOfCorrectAnswers = 0;
+    private Integer percentageOfCorrectTeacherAnswers = 0;
 
     public StudentDto(User user) {
         this.number = user.getNumber();
