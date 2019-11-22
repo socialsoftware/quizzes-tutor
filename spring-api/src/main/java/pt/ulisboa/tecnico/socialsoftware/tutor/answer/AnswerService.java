@@ -84,6 +84,8 @@ public class AnswerService {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getId()), user.getUsername());
         }
         if (!quizAnswer.getCompleted()){
+            int correctAnswers = 0;
+
             for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
                 ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
                 QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
@@ -98,6 +100,10 @@ public class AnswerService {
                     option = optionRepository.findById(resultAnswerDto.getOptionId())
                             .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, resultAnswerDto.getOptionId()));
 
+                    if (option.getCorrect()) {
+                        correctAnswers += 1;
+                    }
+
 
                     if (isNotQuestionOption(quizQuestion, option)) {
                         throw new TutorException(QUIZ_OPTION_MISMATCH, quizQuestion.getId(), option.getId());
@@ -108,6 +114,18 @@ public class AnswerService {
             }
             quizAnswer.setAnswerDate(answers.getAnswerDate());
             quizAnswer.setCompleted(true);
+
+            // Increase stats to be shown in user list
+            if (quizAnswer.getQuiz().getType() == Quiz.QuizType.TEACHER) {
+                user.increaseNumberOfTeacherQuizzes();
+                user.increaseNumberOfTeacherAnswers(answers.getAnswers().size());
+                user.increaseNumberOfCorrectTeacherAnswers(correctAnswers);
+
+            } else {
+                user.increaseNumberOfStudentQuizzes();
+            }
+            user.increaseNumberOfAnswers(answers.getAnswers().size());
+            user.increaseNumberOfCorrectAnswers(correctAnswers);
         }
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()

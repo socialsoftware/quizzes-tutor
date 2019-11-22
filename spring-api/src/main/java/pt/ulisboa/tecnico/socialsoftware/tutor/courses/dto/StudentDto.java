@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -10,54 +9,32 @@ public class StudentDto implements Serializable {
     private String username;
     private String name;
     private Integer year;
-    private int numberOfTeacherQuizzes;
-    private int numberOfStudentQuizzes;
-    private int numberOfAnswers;
-    private int numberOfTeacherAnswers;
-    private Integer percentageOfCorrectAnswers = 0;
-    private Integer percentageOfCorrectTeacherAnswers = 0;
+    private Integer numberOfTeacherQuizzes;
+    private Integer numberOfStudentQuizzes;
+    private Integer numberOfAnswers;
+    private Integer numberOfTeacherAnswers;
+    private int percentageOfCorrectAnswers = 0;
+    private int percentageOfCorrectTeacherAnswers = 0;
 
     public StudentDto(User user) {
         this.number = user.getNumber();
         this.username = user.getUsername();
         this.name = user.getName();
         this.year = user.getYear();
-        this.numberOfTeacherQuizzes = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .count();
-
-        this.numberOfStudentQuizzes = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
-                .count();
-
-        this.numberOfAnswers = user.getQuizAnswers().stream()
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-                .sum();
-
-        int numberOfCorrectAnswers = (int) user.getQuizAnswers().stream()
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
-
-        this.numberOfTeacherAnswers = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-                .sum();
-
-        int numberOfCorrectTeacherAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
+        if (user.getNumberOfTeacherQuizzes() == null) {
+           user.calculateNumbers();
+        }
+        this.numberOfTeacherQuizzes = user.getNumberOfTeacherQuizzes();
+        this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
+        this.numberOfAnswers = user.getNumberOfAnswers();
+        this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
 
         if (this.numberOfAnswers != 0) {
-            this.percentageOfCorrectAnswers = numberOfCorrectAnswers * 100 / this.numberOfAnswers;
+            this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;
         }
 
         if (this.numberOfTeacherAnswers != 0) {
-            this.percentageOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers * 100 / this.numberOfTeacherAnswers;
+            this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
         }
     }
 

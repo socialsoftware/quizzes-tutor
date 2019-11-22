@@ -3,21 +3,19 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
-     public enum Role {STUDENT, TEACHER, ADMIN}
+    public enum Role {STUDENT, TEACHER, ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,6 +28,13 @@ public class User implements UserDetails {
     private String username;
     private String name;
     private Integer year;
+
+    private Integer numberOfTeacherQuizzes;
+    private Integer numberOfStudentQuizzes ;
+    private Integer numberOfAnswers;
+    private Integer numberOfTeacherAnswers;
+    private Integer numberOfCorrectAnswers;
+    private Integer numberOfCorrectTeacherAnswers;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -115,6 +120,85 @@ public class User implements UserDetails {
 
     public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
         this.quizAnswers = quizAnswers;
+    }
+
+    public Integer getNumberOfTeacherQuizzes() {
+        return numberOfTeacherQuizzes;
+    }
+
+    public void setNumberOfTeacherQuizzes(Integer numberOfTeacherQuizzes) {
+        this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
+    }
+
+    public Integer getNumberOfStudentQuizzes() {
+        return numberOfStudentQuizzes;
+    }
+
+    public void setNumberOfStudentQuizzes(Integer numberOfStudentQuizzes) {
+        this.numberOfStudentQuizzes = numberOfStudentQuizzes;
+    }
+
+    public Integer getNumberOfAnswers() {
+        return numberOfAnswers;
+    }
+
+    public void setNumberOfAnswers(Integer numberOfAnswers) {
+        this.numberOfAnswers = numberOfAnswers;
+    }
+
+    public Integer getNumberOfTeacherAnswers() {
+        return numberOfTeacherAnswers;
+    }
+
+    public void setNumberOfTeacherAnswers(Integer numberOfTeacherAnswers) {
+        this.numberOfTeacherAnswers = numberOfTeacherAnswers;
+    }
+
+    public Integer getNumberOfCorrectAnswers() {
+        return numberOfCorrectAnswers;
+    }
+
+    public void setNumberOfCorrectAnswers(Integer numberOfCorrectAnswers) {
+        this.numberOfCorrectAnswers = numberOfCorrectAnswers;
+    }
+
+    public Integer getNumberOfCorrectTeacherAnswers() {
+        return numberOfCorrectTeacherAnswers;
+    }
+
+    public void setNumberOfCorrectTeacherAnswers(Integer numberOfCorrectTeacherAnswers) {
+        this.numberOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers;
+    }
+
+
+    public void increaseNumberOfTeacherQuizzes() {
+        if (numberOfTeacherQuizzes == null) this.calculateNumbers();
+        this.numberOfTeacherQuizzes += 1;
+    }
+
+    public void increaseNumberOfTeacherAnswers(int size) {
+        if (numberOfTeacherAnswers == null) this.calculateNumbers();
+        this.numberOfTeacherAnswers += size;
+    }
+
+    public void increaseNumberOfStudentQuizzes() {
+        if (numberOfStudentQuizzes == null) this.calculateNumbers();
+        this.numberOfStudentQuizzes += 1;
+    }
+
+    public void increaseNumberOfAnswers(int size) {
+        if (numberOfAnswers == null) this.calculateNumbers();
+        this.numberOfAnswers += size;
+    }
+
+    public void increaseNumberOfCorrectTeacherAnswers(int size) {
+        if (numberOfCorrectTeacherAnswers == null) this.calculateNumbers();
+        this.numberOfCorrectTeacherAnswers += size;
+    }
+
+    public void increaseNumberOfCorrectAnswers(int size) {
+        if (numberOfCorrectAnswers == null) this.calculateNumbers();
+        this.numberOfCorrectAnswers += size;
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
@@ -208,5 +292,35 @@ public class User implements UserDetails {
         return result;
     }
 
+    public void calculateNumbers() {
+        this.numberOfTeacherQuizzes = (int) this.getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .count();
 
+        this.numberOfStudentQuizzes = (int) this.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
+            .count();
+
+        this.numberOfAnswers = this.getQuizAnswers().stream()
+                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+            .sum();
+
+        this.numberOfCorrectAnswers = (int) this.getQuizAnswers().stream()
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                        questionAnswer.getOption().getCorrect())
+                .count();
+
+        this.numberOfTeacherAnswers = this.getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                .sum();
+
+        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                        questionAnswer.getOption().getCorrect())
+                .count();
+    }
 }
