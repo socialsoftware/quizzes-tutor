@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -23,6 +24,9 @@ public class StatsService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public StatsDto getStats(String username) {
@@ -69,9 +73,12 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
+        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize();
+
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
+        statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
         if (totalAnswers != 0) {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);

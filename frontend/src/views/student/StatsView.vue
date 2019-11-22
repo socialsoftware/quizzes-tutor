@@ -45,6 +45,22 @@
         <p>Improved Correct Questions</p>
       </div>
     </div>
+    <div class="items">
+      <div class="icon-wrapper" ref="number">
+        <animated-number
+          :number="
+            (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
+          "
+          >%</animated-number
+        >
+      </div>
+      <div class="project-name">
+        <p>Percentage of questions seen</p>
+      </div>
+    </div>
+    <span>{{ stats.totalUniqueQuestions }}</span>
+    <br />
+    <span>{{ stats.totalAvailableQuestions }}</span>
   </div>
 </template>
 
