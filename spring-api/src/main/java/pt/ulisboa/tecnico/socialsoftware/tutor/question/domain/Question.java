@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +51,9 @@ public class Question {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
@@ -173,6 +177,14 @@ public class Question {
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
     }
 
     public void addOption(Option option) {

@@ -11,7 +11,7 @@
       </v-card-title>
       <v-card-text>
         <v-container grid-list-md fluid>
-          <v-text-field v-model="quiz.title" label="Title"></v-text-field>
+          <v-text-field v-model="quiz.title" label="Title" />
           <v-layout row wrap>
             <v-flex class="text-left">
               <v-datetime-picker
@@ -33,12 +33,12 @@
             :label="
               `Scramble: ${quiz.scramble ? quiz.scramble.toString() : 'false'}`
             "
-          ></v-switch>
+          />
         </v-container>
         <v-container grid-list-md fluid>
           <v-layout row wrap>
             <v-divider class="mx-4" inset vertical> </v-divider>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn
               v-if="quizQuestions.length !== 0"
               color="primary"
@@ -61,11 +61,7 @@
             show-expand
           >
             <template v-slot:top>
-              <v-text-field
-                v-model="search"
-                label="Search"
-                class="mx-4"
-              ></v-text-field>
+              <v-text-field v-model="search" label="Search" class="mx-4" />
             </template>
             <template v-slot:item.content="{ item }">
               <div
@@ -352,8 +348,7 @@ export default class QuizForm extends Vue {
       text: "Topics",
       value: "topics",
       align: "left",
-      width: "20%",
-      sortable: false
+      width: "20%"
     },
     { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
     { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },

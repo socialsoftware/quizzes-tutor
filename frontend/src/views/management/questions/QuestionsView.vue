@@ -17,15 +17,15 @@
             append-icon="search"
             label="Search"
             class="mx-2"
-          ></v-text-field>
+          />
 
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
         </v-card-title>
       </template>
 
       <template v-slot:item.content="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
+        <p v-html="convertMarkDownNoFigure(item.content, null)" />
       </template>
 
       <template v-slot:item.topics="{ item }">
@@ -52,7 +52,7 @@
             </template>
             <template v-slot:item="data">
               <v-list-item-content>
-                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                <v-list-item-title v-html="data.item.name" />
               </v-list-item-content>
             </template>
           </v-autocomplete>
@@ -84,6 +84,10 @@
         </v-select>
       </template>
 
+      <template v-slot:item.sortingCreationDate="{ item }">
+        {{ item.stringCreationDate }}
+      </template>
+
       <template v-slot:item.image="{ item }">
         <v-file-input
           show-size
@@ -91,7 +95,7 @@
           small-chips
           @change="handleFileUpload($event, item)"
           accept="image/*"
-        ></v-file-input>
+        />
       </template>
 
       <template v-slot:item.action="{ item }">
@@ -156,7 +160,7 @@
                 <td
                   class="text-left"
                   v-html="convertMarkDownNoFigure(option.content, null)"
-                ></td>
+                />
                 <td>
                   <span v-if="option.correct">TRUE</span
                   ><span v-else>FALSE</span>
@@ -168,7 +172,7 @@
       </template>
     </v-data-table>
 
-    <v-dialog v-model="dialog" max-width="75%">
+    <v-dialog v-model="editQuestionDialog" max-width="75%">
       <v-card>
         <v-card-title>
           <span class="headline">
@@ -184,18 +188,14 @@
           <v-container grid-list-md fluid>
             <v-layout column wrap>
               <v-flex xs24 sm12 md8>
-                <v-text-field
-                  v-model="currentQuestion.title"
-                  label="Title"
-                ></v-text-field>
+                <v-text-field v-model="currentQuestion.title" label="Title" />
               </v-flex>
               <v-flex xs24 sm12 md12>
-                <v-textarea
-                  outline
-                  rows="10"
+                <vue-simplemde
                   v-model="currentQuestion.content"
-                  label="Content"
-                ></v-textarea>
+                  class="question-textarea"
+                  :configs="markdownConfigs"
+                />
               </v-flex>
               <v-flex
                 xs24
@@ -208,20 +208,19 @@
                   v-model="currentQuestion.options[index - 1].correct"
                   class="ma-4"
                   label="Correct"
-                ></v-switch>
-                <v-textarea
-                  outline
-                  :rows="index"
+                />
+                <vue-simplemde
                   v-model="currentQuestion.options[index - 1].content"
-                  :label="'Option ' + index"
-                ></v-textarea>
+                  class="option-textarea"
+                  :configs="markdownConfigs"
+                />
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
           <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
         </v-card-actions>
@@ -236,14 +235,14 @@
           <v-container grid-list-md fluid>
             <v-layout column wrap>
               <v-flex class="text-left" xs24 sm12 md8>
-                <p v-html="renderQuestion(currentQuestion)"></p>
+                <p v-html="renderQuestion(currentQuestion)" />
               </v-flex>
             </v-layout>
           </v-container>
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="blue darken-1" @click="closeQuestionDialog"
             >Close</v-btn
           >
@@ -269,35 +268,47 @@ export default class QuestionsView extends Vue {
   questions: Question[] = [];
   currentQuestion: Question | null = null;
   topics: Topic[] = [];
-  dialog: boolean = false;
+  editQuestionDialog: boolean = false;
   showQuestion: boolean = false;
   search: string = "";
   statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
+
+  // https://github.com/F-loat/vue-simplemde/blob/master/doc/configuration_en.md
+  markdownConfigs: object = {
+    status: false,
+    spellChecker: false,
+    insertTexts: {
+      image: ["![image][image]", ""]
+    }
+  };
+
   headers: object = [
-    { text: "Question", value: "content", align: "left", width: "70%" },
+    { text: "Question", value: "content", align: "left" },
     {
       text: "Topics",
       value: "topics",
-      align: "left",
-      width: "20%",
+      align: "center",
       sortable: false
     },
-    { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
-    { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },
-    { text: "Title", value: "title", align: "left", width: "3%" },
-    { text: "Status", value: "status", align: "left", width: "1%" },
+    { text: "Difficulty", value: "difficulty", align: "center" },
+    { text: "Answers", value: "numberOfAnswers", align: "center" },
+    { text: "Title", value: "title", align: "center" },
+    { text: "Status", value: "status", align: "center" },
+    {
+      text: "Creation Date",
+      value: "sortingCreationDate",
+      align: "center"
+    },
     {
       text: "Image",
       value: "image",
       align: "center",
-      width: "3%",
       sortable: false
     },
     {
       text: "Actions",
       value: "action",
       align: "center",
-      width: "1%",
       sortable: false
     }
   ];
@@ -378,7 +389,7 @@ export default class QuestionsView extends Vue {
 
   newQuestion() {
     this.currentQuestion = new Question();
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   async setStatus(questionId: number, status: string) {
@@ -411,12 +422,12 @@ export default class QuestionsView extends Vue {
   duplicateQuestion(question: Question) {
     this.currentQuestion = new Question(question);
     this.currentQuestion.id = null;
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   editQuestion(question: Question) {
     this.currentQuestion = question;
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   async deleteQuestion(toDeletequestion: Question) {
@@ -436,7 +447,7 @@ export default class QuestionsView extends Vue {
   }
 
   closeDialogue() {
-    this.dialog = false;
+    this.editQuestionDialog = false;
   }
 
   getDifficultyColor(difficulty: number) {
@@ -489,3 +500,22 @@ export default class QuestionsView extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.question-textarea {
+  text-align: left;
+
+  .CodeMirror,
+  .CodeMirror-scroll {
+    min-height: 200px !important;
+  }
+}
+.option-textarea {
+  text-align: left;
+
+  .CodeMirror,
+  .CodeMirror-scroll {
+    min-height: 100px !important;
+  }
+}
+</style>

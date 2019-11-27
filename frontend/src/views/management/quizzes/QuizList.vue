@@ -16,12 +16,25 @@
             append-icon="search"
             label="Search"
             class="mx-2"
-          ></v-text-field>
+          />
 
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="primary" dark @click="newQuiz">New Quiz</v-btn>
         </v-card-title>
       </template>
+
+      <template v-slot:item.sortingDate="{ item }">
+        {{ item.stringDate }}
+      </template>
+
+      <template v-slot:item.sortingAvailableDate="{ item }">
+        {{ item.stringAvailableDate }}
+      </template>
+
+      <template v-slot:item.sortingConclusionDate="{ item }">
+        {{ item.stringConclusionDate }}
+      </template>
+
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -69,7 +82,7 @@
                 >
                   <span
                     v-html="convertMarkDown(question.content, question.image)"
-                  ></span>
+                  />
                   <ul>
                     <li v-for="option in question.options" :key="option.number">
                       <span
@@ -77,7 +90,7 @@
                         v-bind:class="[
                           option.correct ? 'font-weight-bold' : ''
                         ]"
-                      ></span>
+                      />
                     </li>
                   </ul>
                   <br />
@@ -88,7 +101,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn dark color="primary" @click="closeQuiz">close</v-btn>
         </v-card-actions>
       </v-card>
@@ -111,16 +124,16 @@ export default class QuizList extends Vue {
   previewQuiz: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Date", value: "stringDate", align: "center", width: "10%" },
+    { text: "Date", value: "sortingDate", align: "center", width: "10%" },
     {
       text: "Available Date",
-      value: "stringAvailableDate",
+      value: "sortingAvailableDate",
       align: "center",
       width: "10%"
     },
     {
       text: "Conclusion Date",
-      value: "stringConclusionDate",
+      value: "sortingConclusionDate",
       align: "center",
       width: "10%"
     },
@@ -189,4 +202,4 @@ export default class QuizList extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

@@ -10,7 +10,7 @@
               item-text="year"
               item-value="year"
               label="Year"
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-card-title>
@@ -23,11 +23,7 @@
         class="elevation-1"
       >
         <template v-slot:top>
-          <v-text-field
-            v-model="search"
-            label="Search"
-            class="mx-4"
-          ></v-text-field>
+          <v-text-field v-model="search" label="Search" class="mx-4" />
         </template>
 
         <template v-slot:item.percentageOfCorrectAnswers="{ item }">
@@ -137,4 +133,4 @@ export default class StudentsView extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

@@ -24,14 +24,14 @@
         </span>
       </div>
       <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
-        ><i class="fas fa-chevron-left"></i
-      ></span>
+        ><i class="fas fa-chevron-left"
+      /></span>
       <span
         class="right-button"
         @click="increaseOrder"
         v-if="order !== statementManager.statementQuiz.questions.length - 1"
-        ><i class="fas fa-chevron-right"></i
-      ></span>
+        ><i class="fas fa-chevron-right"
+      /></span>
     </div>
     <result-component
       v-model="order"
@@ -41,7 +41,7 @@
       :questionNumber="statementManager.statementQuiz.questions.length"
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
-    ></result-component>
+    />
   </div>
 </template>
 

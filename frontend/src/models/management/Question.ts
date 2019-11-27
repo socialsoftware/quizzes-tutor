@@ -9,7 +9,7 @@ export default class Question {
   numberOfAnswers!: number;
   difficulty!: number | null;
   content: string = "";
-
+  creationDate!: string | Date;
   image: Image | null = null;
   sequence: number | null = null;
 
@@ -31,6 +31,23 @@ export default class Question {
       );
 
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
+
+      if (jsonObj.creationDate)
+        this.creationDate = new Date(jsonObj.creationDate);
     }
+  }
+
+  get stringCreationDate(): string {
+    if (this.creationDate) {
+      return this.creationDate.toLocaleString("pt");
+    }
+    return "-";
+  }
+
+  get sortingCreationDate(): number {
+    if (this.creationDate) {
+      return (this.creationDate as Date).getTime();
+    }
+    return 0;
   }
 }

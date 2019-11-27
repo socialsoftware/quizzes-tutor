@@ -5,14 +5,14 @@
       @updateQuiz="updateQuiz"
       :edit-mode="editMode"
       :quiz="quiz"
-    ></quiz-form>
+    />
     <quiz-list
       v-if="!editMode"
       @editQuiz="editQuiz"
       @deleteQuiz="deleteQuiz"
       @newQuiz="newQuiz"
       :quizzes="quizzes"
-    ></quiz-list>
+    />
   </v-content>
 </template>
 
@@ -80,4 +80,4 @@ export default class QuizzesView extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />
