@@ -1,13 +1,15 @@
 {
   "name": "tutor-frontend",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
     "build": "vue-cli-service build --mode production",
     "build:dev": "vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
-    "prod": "vue-cli-service serve --mode production"
+    "prod": "vue-cli-service serve --mode production",
+    "prettier": "prettier --write \"**/**/*.{js,css,scss,vue}\""
   },
   "engines": {
     "node": ">=10.16.0",
@@ -57,5 +59,32 @@
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.2.2"
+  },
+  "babel": {
+    "presets": [
+      "@vue/app"
+    ]
+  },
+  "eslintConfig": {
+    "root": true,
+    "env": {
+      "node": true
+    },
+    "extends": [
+      "plugin:vue/essential",
+      "prettier",
+      "@vue/typescript"
+    ],
+    "rules": {
+      "no-console": 0,
+      "error": "off",
+      "no-debugger": 0
+    },
+    "parserOptions": {
+      "parser": "@typescript-eslint/parser"
+    },
+    "plugins": [
+      "prettier"
+    ]
   }
 }
