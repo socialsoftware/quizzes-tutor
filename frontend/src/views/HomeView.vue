@@ -20,7 +20,7 @@
           href="https://github.com/socialsoftware/as-tutor"
           target="_blank"
         >
-          <span class="fab fa-github"></span> View code
+          <span class="fab fa-github" /> View code
         </a>
       </div>
       <div>
@@ -30,7 +30,7 @@
           href="https://github.com/socialsoftware/as-tutor/issues"
           target="_blank"
         >
-          <span class="fab fa-github"></span> Bug report
+          <span class="fab fa-github" /> Bug report
         </a>
       </div>
       <img
@@ -98,7 +98,7 @@ export default class HomeView extends Vue {
     display: flex; /* or inline-flex */
     flex-direction: row;
     flex-wrap: nowrap;
-    justify-conteqnt: space-between;
+    justify-content: space-between;
     align-items: center;
     width: 100%;
     max-height: 100px;

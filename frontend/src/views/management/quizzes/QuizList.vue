@@ -1,93 +1,112 @@
 <template>
-  <v-content>
-    <v-card class="table">
-      <v-card-title>
-        <v-dialog
-          v-model="dialog"
-          @keydown.esc="closeQuiz"
-          fullscreen
-          hide-overlay
-          max-width="1000px"
-        >
-          <v-card v-if="quiz">
-            <v-toolbar dark color="primary">
-              <v-toolbar-title>{{ quiz.title }}</v-toolbar-title>
-              <div class="flex-grow-1"></div>
-              <v-toolbar-items>
-                <v-btn dark color="primary" text @click="closeQuiz"
-                  >Close</v-btn
-                >
-              </v-toolbar-items>
-            </v-toolbar>
-
-            <v-card-text>
-              <v-container grid-list-md fluid>
-                <v-layout column wrap>
-                  <ol>
-                    <li
-                      v-for="question in quiz.questions"
-                      :key="question.sequence"
-                      class="text-left"
-                    >
-                      <span
-                        v-html="
-                          convertMarkDown(question.content, question.image)
-                        "
-                      ></span>
-                      <ul>
-                        <li
-                          v-for="option in question.options"
-                          :key="option.number"
-                        >
-                          <span
-                            v-html="convertMarkDown(option.content, null)"
-                            v-bind:class="[
-                              option.correct ? 'font-weight-bold' : ''
-                            ]"
-                          ></span>
-                        </li>
-                      </ul>
-                      <br />
-                    </li>
-                  </ol>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn dark color="primary" text @click="closeQuiz">close</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="quizzes"
-        :search="search"
-        multi-sort
-        :items-per-page="20"
-        class="elevation-1"
-      >
-        <template v-slot:top>
+  <v-card class="table">
+    <v-data-table
+      :headers="headers"
+      :items="quizzes"
+      :search="search"
+      multi-sort
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-card-title>
           <v-text-field
             v-model="search"
+            append-icon="search"
             label="Search"
-            class="mx-4"
-          ></v-text-field>
-        </template>
-        <template v-slot:item.action="{ item }">
-          <v-icon small class="mr-2" @click="showQuiz(item.id)"
-            >visibility</v-icon
-          >
-          <v-icon small class="mr-2" @click="editQuiz(item.id)">edit</v-icon>
-          <v-icon small class="mr-2" @click="deleteQuiz(item.id)"
-            >delete</v-icon
-          >
-        </template>
-      </v-data-table>
-    </v-card>
-  </v-content>
+            class="mx-2"
+          />
+
+          <v-spacer />
+          <v-btn color="primary" dark @click="newQuiz">New Quiz</v-btn>
+        </v-card-title>
+      </template>
+
+      <template v-slot:item.sortingDate="{ item }">
+        {{ item.stringDate }}
+      </template>
+
+      <template v-slot:item.sortingAvailableDate="{ item }">
+        {{ item.stringAvailableDate }}
+      </template>
+
+      <template v-slot:item.sortingConclusionDate="{ item }">
+        {{ item.stringConclusionDate }}
+      </template>
+
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="showQuiz(item.id)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Questions</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editQuiz(item.id)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Quiz</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteQuiz(item.id)"
+              color="red"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Quiz</span>
+        </v-tooltip>
+      </template>
+    </v-data-table>
+    <v-dialog v-model="previewQuiz" @keydown.esc="closeQuiz" max-width="75%">
+      <v-card v-if="quiz">
+        <v-card-title>{{ quiz.title }}</v-card-title>
+
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <ol>
+                <li
+                  v-for="question in quiz.questions"
+                  :key="question.sequence"
+                  class="text-left"
+                >
+                  <span
+                    v-html="convertMarkDown(question.content, question.image)"
+                  />
+                  <ul>
+                    <li v-for="option in question.options" :key="option.number">
+                      <span
+                        v-html="convertMarkDown(option.content, null)"
+                        v-bind:class="[
+                          option.correct ? 'font-weight-bold' : ''
+                        ]"
+                      />
+                    </li>
+                  </ul>
+                  <br />
+                </li>
+              </ol>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn dark color="primary" @click="closeQuiz">close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -102,19 +121,19 @@ export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
   search: string = "";
-  dialog: boolean = false;
+  previewQuiz: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Date", value: "stringDate", align: "center", width: "10%" },
+    { text: "Date", value: "sortingDate", align: "center", width: "10%" },
     {
       text: "Available Date",
-      value: "stringAvailableDate",
+      value: "sortingAvailableDate",
       align: "center",
       width: "10%"
     },
     {
       text: "Conclusion Date",
-      value: "stringConclusionDate",
+      value: "sortingConclusionDate",
       align: "center",
       width: "10%"
     },
@@ -147,19 +166,19 @@ export default class QuizList extends Vue {
   async showQuiz(quizId: number) {
     try {
       this.quiz = await RemoteServices.getQuiz(quizId);
-      this.dialog = true;
+      this.previewQuiz = true;
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
   }
 
   closeQuiz() {
-    this.dialog = false;
+    this.previewQuiz = false;
     this.quiz = null;
   }
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
+  newQuiz() {
+    this.$emit("newQuiz");
   }
 
   editQuiz(quizId: number) {
@@ -176,7 +195,11 @@ export default class QuizList extends Vue {
       }
     }
   }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

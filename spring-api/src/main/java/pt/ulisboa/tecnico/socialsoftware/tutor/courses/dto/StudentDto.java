@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -10,46 +9,33 @@ public class StudentDto implements Serializable {
     private String username;
     private String name;
     private Integer year;
-    private long numberOfTeacherQuizzes;
-    private long numberOfStudentQuizzes;
-    private int numberOfAnswers;
-    private Float percentageOfCorrectAnswers;
-    private int numberOfTeacherAnswers;
-    private Float percentageOfCorrectTeacherAnswers;
+    private Integer numberOfTeacherQuizzes;
+    private Integer numberOfStudentQuizzes;
+    private Integer numberOfAnswers;
+    private Integer numberOfTeacherAnswers;
+    private int percentageOfCorrectAnswers = 0;
+    private int percentageOfCorrectTeacherAnswers = 0;
 
     public StudentDto(User user) {
         this.number = user.getNumber();
         this.username = user.getUsername();
         this.name = user.getName();
         this.year = user.getYear();
-        this.numberOfTeacherQuizzes = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .count();
-        this.numberOfStudentQuizzes = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
-                .count();
-        this.numberOfAnswers = user.getQuizAnswers().stream()
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-                .sum();
-        long numberOfCorrectAnswers = user.getQuizAnswers().stream()
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
-        this.percentageOfCorrectAnswers =
-                this.numberOfAnswers != 0 ? (float)numberOfCorrectAnswers / this.numberOfAnswers : 0;
-        this.numberOfTeacherAnswers = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-                .sum();
-        long numberOfCorrectTeacherAnswers = user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
-        this.percentageOfCorrectTeacherAnswers =
-                this.numberOfTeacherAnswers != 0 ? (float)numberOfCorrectTeacherAnswers / this.numberOfTeacherAnswers : 0;
+        if (user.getNumberOfTeacherQuizzes() == null) {
+           user.calculateNumbers();
+        }
+        this.numberOfTeacherQuizzes = user.getNumberOfTeacherQuizzes();
+        this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
+        this.numberOfAnswers = user.getNumberOfAnswers();
+        this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
+
+        if (this.numberOfAnswers != 0) {
+            this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;
+        }
+
+        if (this.numberOfTeacherAnswers != 0) {
+            this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
+        }
     }
 
     public Integer getNumber() {
@@ -88,7 +74,7 @@ public class StudentDto implements Serializable {
         return numberOfTeacherQuizzes;
     }
 
-    public void setNumberOfTeacherQuizzes(long numberOfTeacherQuizzes) {
+    public void setNumberOfTeacherQuizzes(int numberOfTeacherQuizzes) {
         this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
     }
 
@@ -96,7 +82,7 @@ public class StudentDto implements Serializable {
         return numberOfStudentQuizzes;
     }
 
-    public void setNumberOfStudentQuizzes(long numberOfStudentQuizzes) {
+    public void setNumberOfStudentQuizzes(int numberOfStudentQuizzes) {
         this.numberOfStudentQuizzes = numberOfStudentQuizzes;
     }
 
@@ -108,11 +94,11 @@ public class StudentDto implements Serializable {
         this.numberOfAnswers = numberOfAnswers;
     }
 
-    public Float getPercentageOfCorrectAnswers() {
+    public Integer getPercentageOfCorrectAnswers() {
         return percentageOfCorrectAnswers;
     }
 
-    public void setPercentageOfCorrectAnswers(Float percentageOfCorrectAnswers) {
+    public void setPercentageOfCorrectAnswers(Integer percentageOfCorrectAnswers) {
         this.percentageOfCorrectAnswers = percentageOfCorrectAnswers;
     }
 
@@ -124,11 +110,11 @@ public class StudentDto implements Serializable {
         this.numberOfTeacherAnswers = numberOfTeacherAnswers;
     }
 
-    public Float getPercentageOfCorrectTeacherAnswers() {
+    public Integer getPercentageOfCorrectTeacherAnswers() {
         return percentageOfCorrectTeacherAnswers;
     }
 
-    public void setPercentageOfCorrectTeacherAnswers(Float percentageOfCorrectTeacherAnswers) {
+    public void setPercentageOfCorrectTeacherAnswers(Integer percentageOfCorrectTeacherAnswers) {
         this.percentageOfCorrectTeacherAnswers = percentageOfCorrectTeacherAnswers;
     }
 

@@ -5,13 +5,14 @@
       @updateQuiz="updateQuiz"
       :edit-mode="editMode"
       :quiz="quiz"
-    ></quiz-form>
+    />
     <quiz-list
       v-if="!editMode"
       @editQuiz="editQuiz"
       @deleteQuiz="deleteQuiz"
+      @newQuiz="newQuiz"
       :quizzes="quizzes"
-    ></quiz-list>
+    />
   </v-content>
 </template>
 
@@ -71,7 +72,12 @@ export default class QuizzesView extends Vue {
   deleteQuiz(quizId: number) {
     this.quizzes = this.quizzes.filter(quiz => quiz.id !== quizId);
   }
+
+  newQuiz() {
+    this.editMode = true;
+    this.quiz = new Quiz();
+  }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

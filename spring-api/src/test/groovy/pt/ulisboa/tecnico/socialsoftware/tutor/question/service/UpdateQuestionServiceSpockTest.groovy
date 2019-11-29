@@ -124,7 +124,7 @@ class UpdateQuestionServiceSpockTest extends Specification {
         result.getStatus() == Question.Status.AVAILABLE
         result.getNumberOfAnswers() == 2
         result.getNumberOfCorrect() == 1
-        result.getDifficulty() == new Double(0.5)
+        result.getDifficulty() == 50
         result.getImage() != null
         and: 'an option is changed'
         result.getOptions().size() == 2

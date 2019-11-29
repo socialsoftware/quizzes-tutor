@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
-
 import java.io.Serializable;
 
 public class StatsDto implements Serializable {
@@ -11,6 +10,7 @@ public class StatsDto implements Serializable {
     private float improvedCorrectAnswers = 0;
     private Integer uniqueCorrectAnswers = 0;
     private Integer uniqueWrongAnswers = 0;
+    private Integer totalAvailableQuestions = 0;
 
     public Integer getTotalQuizzes() {
         return totalQuizzes;
@@ -66,6 +66,14 @@ public class StatsDto implements Serializable {
 
     public void setUniqueWrongAnswers(Integer uniqueWrongAnswers) {
         this.uniqueWrongAnswers = uniqueWrongAnswers;
+    }
+
+    public Integer getTotalAvailableQuestions() {
+        return totalAvailableQuestions;
+    }
+
+    public void setTotalAvailableQuestions(Integer totalAvailableQuestions) {
+        this.totalAvailableQuestions = totalAvailableQuestions;
     }
 
     @Override

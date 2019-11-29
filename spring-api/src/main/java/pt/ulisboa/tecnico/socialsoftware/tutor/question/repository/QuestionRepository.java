@@ -17,6 +17,9 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "select * from questions q where q.status = 'AVAILABLE'", nativeQuery = true)
     List<Question> getAvailableQuestions();
 
+    @Query(value = "select count(*) from questions q where q.status = 'AVAILABLE'", nativeQuery = true)
+    Integer getAvailableQuestionsSize();
+
     @Query(value = "select COUNT(*) from questions q where q.status = 'AVAILABLE'", nativeQuery = true)
     Integer getTotalAvailableQuestions();
 

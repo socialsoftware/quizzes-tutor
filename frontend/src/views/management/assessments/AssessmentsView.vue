@@ -10,6 +10,7 @@
       v-if="!editMode"
       @editAssessment="editAssessment"
       @deleteAssessment="deleteAssessment"
+      @newAssessment="newAssessment"
       :assessments="assessments"
     ></assessment-list>
   </v-content>
@@ -70,6 +71,11 @@ export default class AssessmentsView extends Vue {
     this.assessments.unshift(updatedAssessment);
     this.editMode = false;
     this.assessment = null;
+  }
+
+  newAssessment() {
+    this.assessment = new Assessment();
+    this.editMode = true;
   }
 
   deleteAssessment(assessmentId: number) {

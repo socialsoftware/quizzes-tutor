@@ -77,4 +77,32 @@ export class Quiz {
     }
     return "-";
   }
+
+  get sortinggDate(): number {
+    if (this.date) {
+      return (this.date as Date).getTime();
+    }
+    return 0;
+  }
+
+  get sortingCreationDate(): number {
+    if (this.creationDate) {
+      return (this.creationDate as Date).getTime();
+    }
+    return 0;
+  }
+
+  get sortingAvailableDate(): number {
+    if (this.availableDate) {
+      return (this.availableDate as Date).getTime();
+    }
+    return 0;
+  }
+
+  get sortingConclusionDate(): number {
+    if (this.conclusionDate) {
+      return (this.conclusionDate as Date).getTime();
+    }
+    return 0;
+  }
 }

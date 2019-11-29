@@ -17,7 +17,7 @@
         @mouseleave="hover = false"
         class="square"
       >
-        <i v-if="hover && order !== 0" class="fas fa-chevron-left"></i>
+        <i v-if="hover && order !== 0" class="fas fa-chevron-left" />
         <span v-else>{{ order + 1 }}</span>
       </span>
       <div
@@ -25,7 +25,7 @@
         v-html="convertMarkDown(question.content, question.image)"
       ></div>
       <div @click="increaseOrder" class="square">
-        <i v-if="order !== questionNumber - 1" class="fas fa-chevron-right"></i>
+        <i v-if="order !== questionNumber - 1" class="fas fa-chevron-right" />
       </div>
     </div>
     <ul class="option-list">
@@ -45,16 +45,16 @@
             correctAnswer.correctOptionId === question.options[index].optionId
           "
           class="fas fa-check option-letter"
-        ></i>
+        />
         <i
           v-else-if="answer.optionId === question.options[index].optionId"
           class="fas fa-times option-letter"
-        ></i>
+        />
         <span v-else class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
           v-html="convertMarkDown(question.options[index].content)"
-        ></span>
+        />
       </li>
     </ul>
   </div>

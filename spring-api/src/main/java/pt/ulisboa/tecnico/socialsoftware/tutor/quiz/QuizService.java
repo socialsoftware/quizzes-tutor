@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -88,7 +89,7 @@ public class QuizService {
                 new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
             }
         }
-
+        quiz.setCreationDate(LocalDateTime.now());
         entityManager.persist(quiz);
 
         return new QuizDto(quiz, true);

@@ -3,8 +3,9 @@
 const path = require("path");
 const SizePlugin = require("size-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
+const PrerenderSpaPlugin = require("prerender-spa-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const isProductionEnvFlag = process.env.NODE_ENV === "production";
-const isOpenPrerenderSPA = false;
 
 module.exports = {
   publicPath: "/",
@@ -24,18 +25,6 @@ module.exports = {
       .set("@services", path.join(__dirname, "src/services"))
       .set("@styles", path.join(__dirname, "src/styles"))
       .set("@views", path.join(__dirname, "src/views"));
-
-    // remove the old loader & add new one
-    config.module.rules.delete("svg");
-    config.module
-      .rule("svg")
-      .test(/\.svg$/)
-      .use("svg-sprite-loader")
-      .loader("svg-sprite-loader")
-      .options({
-        name: "[name]-[hash:7]",
-        prefixize: true
-      });
 
     const splitOptions = config.optimization.get("splitChunks");
     config.optimization.splitChunks(
@@ -75,16 +64,17 @@ module.exports = {
 
   configureWebpack: {
     plugins: [
-      new CompressionPlugin(),
-      isProductionEnvFlag && isOpenPrerenderSPA
-        ? new require("prerender-spa-plugin")({
+      isProductionEnvFlag
+        ? new PrerenderSpaPlugin({
             // Required - The path to the webpack-outputted app to prerender.
             staticDir: path.join(__dirname, "dist"),
             // Required - Routes to render.
             routes: ["/", "/explore"]
           })
         : () => {},
-      isProductionEnvFlag ? new SizePlugin() : () => {}
+      isProductionEnvFlag ? new SizePlugin() : () => {},
+      isProductionEnvFlag ? new CompressionPlugin() : () => {},
+      isProductionEnvFlag ? new TerserPlugin() : () => {}
     ]
   },
 

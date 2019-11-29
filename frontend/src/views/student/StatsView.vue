@@ -1,11 +1,9 @@
 <template>
   <div v-if="stats != null" class="stats-container">
-    <!--p>Total quizzes done: {{ stats.totalQuizzes }}</p>
-    <p>Total questions done: {{ stats.totalAnswers }}</p>
-    <chart :stats="stats"></chart-->
+    <!--    <chart :stats="stats"></chart>-->
     <div class="items">
       <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalQuizzes"></animated-number>
+        <animated-number :number="stats.totalQuizzes" />
       </div>
       <div class="project-name">
         <p>Total Quizzes Solved</p>
@@ -13,7 +11,7 @@
     </div>
     <div class="items">
       <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalAnswers"></animated-number>
+        <animated-number :number="stats.totalAnswers" />
       </div>
       <div class="project-name">
         <p>Total Questions Solved</p>
@@ -21,7 +19,7 @@
     </div>
     <div class="items">
       <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalUniqueQuestions"></animated-number>
+        <animated-number :number="stats.totalUniqueQuestions" />
       </div>
       <div class="project-name">
         <p>Unique Questions Solved</p>
@@ -43,6 +41,19 @@
       </div>
       <div class="project-name">
         <p>Improved Correct Questions</p>
+      </div>
+    </div>
+    <div class="items">
+      <div class="icon-wrapper" ref="number">
+        <animated-number
+          :number="
+            (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
+          "
+          >%</animated-number
+        >
+      </div>
+      <div class="project-name">
+        <p>Percentage of questions seen</p>
       </div>
     </div>
   </div>

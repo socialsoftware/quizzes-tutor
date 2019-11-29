@@ -10,7 +10,7 @@
               item-text="year"
               item-value="year"
               label="Year"
-            ></v-select>
+            />
           </v-col>
         </v-row>
       </v-card-title>
@@ -23,11 +23,23 @@
         class="elevation-1"
       >
         <template v-slot:top>
-          <v-text-field
-            v-model="search"
-            label="Search"
-            class="mx-4"
-          ></v-text-field>
+          <v-text-field v-model="search" label="Search" class="mx-4" />
+        </template>
+
+        <template v-slot:item.percentageOfCorrectAnswers="{ item }">
+          <v-chip
+            :color="getPercentageColor(item.percentageOfCorrectAnswers)"
+            dark
+            >{{ item.percentageOfCorrectAnswers + "%" }}</v-chip
+          >
+        </template>
+
+        <template v-slot:item.percentageOfCorrectTeacherAnswers="{ item }">
+          <v-chip
+            :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
+            dark
+            >{{ item.percentageOfCorrectTeacherAnswers + "%" }}</v-chip
+          >
         </template>
       </v-data-table>
     </v-card>
@@ -55,7 +67,7 @@ export default class StudentsView extends Vue {
       width: "10%"
     },
     {
-      text: "Student Quizzes",
+      text: "Generated Quizzes",
       value: "numberOfStudentQuizzes",
       align: "center",
       width: "10%"
@@ -91,9 +103,6 @@ export default class StudentsView extends Vue {
     try {
       this.courseExecutions = await RemoteServices.getCourseExecutions();
       this.year = this.courseExecutions[0].year;
-      this.students = await RemoteServices.getCourseExecutionStudents(
-        this.year
-      );
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
@@ -102,6 +111,7 @@ export default class StudentsView extends Vue {
 
   @Watch("year")
   async onYearChange() {
+    await this.$store.dispatch("loading");
     try {
       if (this.year) {
         this.students = await RemoteServices.getCourseExecutionStudents(
@@ -111,8 +121,16 @@ export default class StudentsView extends Vue {
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
+    await this.$store.dispatch("clearLoading");
+  }
+
+  getPercentageColor(percentage: number) {
+    if (percentage < 25) return "red";
+    else if (percentage < 50) return "orange";
+    else if (percentage < 75) return "lime";
+    else return "green";
   }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

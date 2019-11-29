@@ -1,115 +1,31 @@
 <template>
   <v-card class="table">
-    <v-card-title>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="newQuestion"
-        >New Question</v-btn
-      >
-      <v-dialog v-model="dialog" max-width="1000px">
-        <v-card>
-          <v-card-title>
-            <span class="headline">
-              {{
-                currentQuestion && currentQuestion.id === null
-                  ? "New Question"
-                  : "Edit Question"
-              }}
-            </span>
-          </v-card-title>
-
-          <v-card-text v-if="currentQuestion">
-            <v-container grid-list-md fluid>
-              <v-layout column wrap>
-                <v-flex xs24 sm12 md8>
-                  <v-text-field
-                    v-model="currentQuestion.title"
-                    label="Title"
-                  ></v-text-field>
-                </v-flex>
-                <v-flex xs24 sm12 md12>
-                  <v-textarea
-                    outline
-                    rows="10"
-                    v-model="currentQuestion.content"
-                    label="Content"
-                  ></v-textarea>
-                </v-flex>
-                <v-flex
-                  xs24
-                  sm12
-                  md12
-                  v-for="index in currentQuestion.options.length"
-                  :key="index"
-                >
-                  <v-switch
-                    v-model="currentQuestion.options[index - 1].correct"
-                    class="ma-4"
-                    label="Correct"
-                  ></v-switch>
-                  <v-textarea
-                    outline
-                    :rows="index"
-                    v-model="currentQuestion.options[index - 1].content"
-                    :label="'Option ' + index"
-                  ></v-textarea>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeDialogue"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="saveQuestion">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-dialog v-model="showQuestion" max-width="1000px">
-        <v-card v-if="currentQuestion">
-          <v-card-title>
-            <span class="headline">{{ currentQuestion.title }}</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container grid-list-md fluid>
-              <v-layout column wrap>
-                <v-flex class="text-left" xs24 sm12 md8>
-                  <p v-html="renderQuestion(currentQuestion)"></p>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeQuestionDialog"
-              >Close</v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-card-title>
-
     <v-data-table
       :headers="headers"
       :custom-filter="customFilter"
       :items="questions"
       :search="search"
       multi-sort
-      :items-per-page="10"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       show-expand
     >
       <template v-slot:top>
-        <v-text-field
-          v-model="search"
-          label="Search Content"
-          class="mx-2"
-        ></v-text-field>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          />
+
+          <v-spacer />
+          <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
+        </v-card-title>
       </template>
 
       <template v-slot:item.content="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.content, null)"></p>
+        <p v-html="convertMarkDownNoFigure(item.content, null)" />
       </template>
 
       <template v-slot:item.topics="{ item }">
@@ -136,21 +52,39 @@
             </template>
             <template v-slot:item="data">
               <v-list-item-content>
-                <v-list-item-title v-html="data.item.name"></v-list-item-title>
+                <v-list-item-title v-html="data.item.name" />
               </v-list-item-content>
             </template>
           </v-autocomplete>
         </v-form>
       </template>
 
+      <template v-slot:item.difficulty="{ item }">
+        <v-chip
+          v-if="item.difficulty"
+          :color="getDifficultyColor(item.difficulty)"
+          dark
+          >{{ item.difficulty + "%" }}</v-chip
+        >
+      </template>
+
       <template v-slot:item.status="{ item }">
         <v-select
           v-model="item.status"
           :items="statusList"
-          small-chips
           dense
           @change="setStatus(item.id, item.status)"
-        ></v-select>
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip :color="getStatusColor(item)" small>
+              <span>{{ item }}</span>
+            </v-chip>
+          </template>
+        </v-select>
+      </template>
+
+      <template v-slot:item.sortingCreationDate="{ item }">
+        {{ item.stringCreationDate }}
       </template>
 
       <template v-slot:item.image="{ item }">
@@ -160,18 +94,55 @@
           small-chips
           @change="handleFileUpload($event, item)"
           accept="image/*"
-        ></v-file-input>
+        />
       </template>
 
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="showQuestionDialog(item)"
-          >visibility</v-icon
-        >
-        <v-icon small class="mr-2" @click="editQuestion(item)">edit</v-icon>
-        <v-icon small class="mr-2" @click="duplicateQuestion(item)"
-          >cached</v-icon
-        >
-        <v-icon small class="mr-2" @click="deleteQuestion(item)">delete</v-icon>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="showQuestionDialog(item)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editQuestion(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="duplicateQuestion(item)"
+              >cached</v-icon
+            >
+          </template>
+          <span>Duplicate Question</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteQuestion(item)"
+              color="red"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Question</span>
+        </v-tooltip>
       </template>
 
       <template v-slot:expanded-item="{ item }">
@@ -188,7 +159,7 @@
                 <td
                   class="text-left"
                   v-html="convertMarkDownNoFigure(option.content, null)"
-                ></td>
+                />
                 <td>
                   <span v-if="option.correct">TRUE</span
                   ><span v-else>FALSE</span>
@@ -199,6 +170,84 @@
         </td>
       </template>
     </v-data-table>
+
+    <v-dialog v-model="editQuestionDialog" max-width="75%">
+      <v-card>
+        <v-card-title>
+          <span class="headline">
+            {{
+              currentQuestion && currentQuestion.id === null
+                ? "New Question"
+                : "Edit Question"
+            }}
+          </span>
+        </v-card-title>
+
+        <v-card-text v-if="currentQuestion">
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex xs24 sm12 md8>
+                <v-text-field v-model="currentQuestion.title" label="Title" />
+              </v-flex>
+              <v-flex xs24 sm12 md12>
+                <vue-simplemde
+                  v-model="currentQuestion.content"
+                  class="question-textarea"
+                  :configs="markdownConfigs"
+                />
+              </v-flex>
+              <v-flex
+                xs24
+                sm12
+                md12
+                v-for="index in currentQuestion.options.length"
+                :key="index"
+              >
+                <v-switch
+                  v-model="currentQuestion.options[index - 1].correct"
+                  class="ma-4"
+                  label="Correct"
+                />
+                <vue-simplemde
+                  v-model="currentQuestion.options[index - 1].content"
+                  class="option-textarea"
+                  :configs="markdownConfigs"
+                />
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <v-dialog v-model="showQuestion" max-width="75%">
+      <v-card v-if="currentQuestion">
+        <v-card-title>
+          <span class="headline">{{ currentQuestion.title }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex class="text-left" xs24 sm12 md8>
+                <p v-html="renderQuestion(currentQuestion)" />
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="blue darken-1" @click="closeQuestionDialog"
+            >Close</v-btn
+          >
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -210,7 +259,7 @@ import {
   convertMarkDownNoFigure
 } from "@/services/ConvertMarkdownService";
 import Question from "@/models/management/Question";
-import Image from "@/models/management/Image.ts";
+import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
 
 @Component
@@ -218,35 +267,47 @@ export default class QuestionsView extends Vue {
   questions: Question[] = [];
   currentQuestion: Question | null = null;
   topics: Topic[] = [];
-  dialog: boolean = false;
+  editQuestionDialog: boolean = false;
   showQuestion: boolean = false;
   search: string = "";
   statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
+
+  // https://github.com/F-loat/vue-simplemde/blob/master/doc/configuration_en.md
+  markdownConfigs: object = {
+    status: false,
+    spellChecker: false,
+    insertTexts: {
+      image: ["![image][image]", ""]
+    }
+  };
+
   headers: object = [
-    { text: "Question", value: "content", align: "left", width: "70%" },
+    { text: "Question", value: "content", align: "left" },
     {
       text: "Topics",
       value: "topics",
-      align: "left",
-      width: "20%",
+      align: "center",
       sortable: false
     },
-    { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
-    { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },
-    { text: "Title", value: "title", align: "left", width: "3%" },
-    { text: "Status", value: "status", align: "left", width: "1%" },
+    { text: "Difficulty", value: "difficulty", align: "center" },
+    { text: "Answers", value: "numberOfAnswers", align: "center" },
+    { text: "Title", value: "title", align: "center" },
+    { text: "Status", value: "status", align: "center" },
+    {
+      text: "Creation Date",
+      value: "sortingCreationDate",
+      align: "center"
+    },
     {
       text: "Image",
       value: "image",
       align: "center",
-      width: "3%",
       sortable: false
     },
     {
       text: "Actions",
       value: "action",
       align: "center",
-      width: "1%",
       sortable: false
     }
   ];
@@ -327,7 +388,7 @@ export default class QuestionsView extends Vue {
 
   newQuestion() {
     this.currentQuestion = new Question();
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   async setStatus(questionId: number, status: string) {
@@ -360,12 +421,12 @@ export default class QuestionsView extends Vue {
   duplicateQuestion(question: Question) {
     this.currentQuestion = new Question(question);
     this.currentQuestion.id = null;
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   editQuestion(question: Question) {
     this.currentQuestion = question;
-    this.dialog = true;
+    this.editQuestionDialog = true;
   }
 
   async deleteQuestion(toDeletequestion: Question) {
@@ -385,7 +446,20 @@ export default class QuestionsView extends Vue {
   }
 
   closeDialogue() {
-    this.dialog = false;
+    this.editQuestionDialog = false;
+  }
+
+  getDifficultyColor(difficulty: number) {
+    if (difficulty < 25) return "green";
+    else if (difficulty < 50) return "lime";
+    else if (difficulty < 75) return "orange";
+    else return "red";
+  }
+
+  getStatusColor(status: string) {
+    if (status === "REMOVED") return "red";
+    else if (status === "DISABLED") return "orange";
+    else return "green";
   }
 
   async saveQuestion() {
@@ -425,3 +499,22 @@ export default class QuestionsView extends Vue {
   }
 }
 </script>
+
+<style lang="scss">
+.question-textarea {
+  text-align: left;
+
+  .CodeMirror,
+  .CodeMirror-scroll {
+    min-height: 200px !important;
+  }
+}
+.option-textarea {
+  text-align: left;
+
+  .CodeMirror,
+  .CodeMirror-scroll {
+    min-height: 100px !important;
+  }
+}
+</style>

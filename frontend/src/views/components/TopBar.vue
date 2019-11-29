@@ -4,21 +4,16 @@
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
-      ></v-app-bar-nav-icon>
+      />
       <v-toolbar-title>
         <v-btn dark active-class="toolbar-title" text tile to="/">
           Software Architecture Quizzes
         </v-btn></v-toolbar-title
       >
 
-      <v-spacer></v-spacer>
+      <v-spacer />
 
-      <v-toolbar-items class="hidden-sm-and-down">
-        <!--v-btn v-if="isAdmin" to="/admin-management" text dark disabled>
-          Admin Management
-          <v-icon>fas fa-user</v-icon>
-        </v-btn-->
-
+      <v-toolbar-items class="hidden-sm-and-down" hide-details>
         <v-menu offset-y v-if="isTeacher" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>

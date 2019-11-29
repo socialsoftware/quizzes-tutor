@@ -1,103 +1,123 @@
 <template>
-  <v-content>
-    <v-card class="table">
-      <v-card-title>
-        <v-dialog
-          v-model="dialog"
-          @keydown.esc="closeAssessment"
-          fullscreen
-          hide-overlay
-          max-width="1000px"
-        >
-          <v-card v-if="assessment">
-            <v-toolbar dark color="primary">
-              <v-toolbar-title>{{ assessment.title }}</v-toolbar-title>
-              <div class="flex-grow-1"></div>
-              <v-toolbar-items>
-                <v-btn dark color="primary" text @click="closeAssessment"
-                  >Close</v-btn
-                >
-              </v-toolbar-items>
-            </v-toolbar>
-
-            <v-card-text>
-              <v-container grid-list-md fluid>
-                <v-layout column wrap>
-                  <ol>
-                    <li
-                      v-for="question in assessment.questions"
-                      :key="question.sequence"
-                      class="text-left"
-                    >
-                      <span
-                        v-html="
-                          convertMarkDown(question.content, question.image)
-                        "
-                      ></span>
-                      <ul>
-                        <li
-                          v-for="option in question.options"
-                          :key="option.number"
-                        >
-                          <span
-                            v-html="convertMarkDown(option.content, null)"
-                            v-bind:class="[
-                              option.correct ? 'font-weight-bold' : ''
-                            ]"
-                          ></span>
-                        </li>
-                      </ul>
-                      <br />
-                    </li>
-                  </ol>
-                </v-layout>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn dark color="primary" text @click="closeAssessment"
-                >close</v-btn
-              >
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="assessments"
-        :search="search"
-        multi-sort
-        :items-per-page="20"
-        class="elevation-1"
-      >
-        <template v-slot:top>
+  <v-card class="table">
+    <v-data-table
+      :headers="headers"
+      :items="assessments"
+      :search="search"
+      multi-sort
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-card-title>
           <v-text-field
             v-model="search"
+            append-icon="search"
             label="Search"
             class="mx-4"
-          ></v-text-field>
-        </template>
-        <template v-slot:item.status="{ item }">
-          <v-select
-            v-model="item.status"
-            :items="statusList"
-            small-chips
-            dense
-            @change="setStatus(item.id, item.status)"
-          ></v-select>
-        </template>
-        <template v-slot:item.action="{ item }">
-          <v-icon small class="mr-2" @click="editAssessment(item.id)"
-            >edit</v-icon
+          />
+
+          <v-spacer />
+          <v-btn color="primary" dark @click="newAssessment"
+            >New Assessment</v-btn
           >
-          <v-icon small class="mr-2" @click="deleteAssessment(item.id)"
-            >delete</v-icon
-          >
-        </template>
-      </v-data-table>
-    </v-card>
-  </v-content>
+        </v-card-title>
+      </template>
+      <template v-slot:item.status="{ item }">
+        <v-select
+          v-model="item.status"
+          :items="statusList"
+          dense
+          @change="setStatus(item.id, item.status)"
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip :color="getStatusColor(item)" small>
+              <span>{{ item }}</span>
+            </v-chip>
+          </template>
+        </v-select>
+      </template>
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="editAssessment(item.id)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Assessment</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteAssessment(item.id)"
+              color="red"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Assessment</span>
+        </v-tooltip>
+      </template>
+    </v-data-table>
+    <v-dialog
+      v-model="dialog"
+      @keydown.esc="closeAssessment"
+      fullscreen
+      hide-overlay
+      max-width="1000px"
+    >
+      <v-card v-if="assessment">
+        <v-toolbar dark color="primary">
+          <v-toolbar-title>{{ assessment.title }}</v-toolbar-title>
+          <div class="flex-grow-1"></div>
+          <v-toolbar-items>
+            <v-btn dark color="primary" @click="closeAssessment">Close</v-btn>
+          </v-toolbar-items>
+        </v-toolbar>
+
+        <v-card-text>
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <ol>
+                <li
+                  v-for="question in assessment.questions"
+                  :key="question.sequence"
+                  class="text-left"
+                >
+                  <span
+                    v-html="convertMarkDown(question.content, question.image)"
+                  />
+                  <ul>
+                    <li v-for="option in question.options" :key="option.number">
+                      <span
+                        v-html="convertMarkDown(option.content, null)"
+                        v-bind:class="[
+                          option.correct ? 'font-weight-bold' : ''
+                        ]"
+                      />
+                    </li>
+                  </ul>
+                  <br />
+                </li>
+              </ol>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn dark color="primary" @click="closeAssessment">close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-card>
 </template>
 
 <script lang="ts">
@@ -116,7 +136,7 @@ export default class AssessmentList extends Vue {
   dialog: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Status", value: "status", align: "left", width: "1%" },
+    { text: "Status", value: "status", align: "center", width: "1%" },
     {
       text: "Actions",
       value: "action",
@@ -145,8 +165,8 @@ export default class AssessmentList extends Vue {
     }
   }
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
+  newAssessment() {
+    this.$emit("newAssessment");
   }
 
   editAssessment(assessmentId: number) {
@@ -163,7 +183,17 @@ export default class AssessmentList extends Vue {
       }
     }
   }
+
+  getStatusColor(status: string) {
+    if (status === "REMOVED") return "red";
+    else if (status === "DISABLED") return "orange";
+    else return "green";
+  }
+
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
+  }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

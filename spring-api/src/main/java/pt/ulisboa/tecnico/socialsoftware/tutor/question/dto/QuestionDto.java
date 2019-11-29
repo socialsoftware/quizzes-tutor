@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
+import org.springframework.data.annotation.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -15,14 +17,18 @@ public class QuestionDto implements Serializable {
     private Integer number;
     private String title;
     private String content;
-    private double difficulty;
+    private Integer difficulty;
     private int numberOfAnswers;
     private int numberOfCorrect;
+    private String creationDate = null;
     private String status;
     private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
+
+    @Transient
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public QuestionDto() {
     }
@@ -36,11 +42,14 @@ public class QuestionDto implements Serializable {
         this.numberOfAnswers = question.getNumberOfAnswers();
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
-        if (question.getImage() != null) {
-            this.image = new ImageDto(question.getImage());
-        }
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+
+        if (question.getImage() != null)
+            this.image = new ImageDto(question.getImage());
+
+        if (question.getCreationDate() != null)
+            this.creationDate = question.getCreationDate().format(formatter);
     }
 
     public Integer getId() {
@@ -67,15 +76,11 @@ public class QuestionDto implements Serializable {
         this.content = content;
     }
 
-    public double getDifficulty() {
+    public Integer getDifficulty() {
         return difficulty;
     }
 
     public void setDifficulty(Integer difficulty) {
-        this.difficulty = difficulty;
-    }
-
-    public void setDifficulty(double difficulty) {
         this.difficulty = difficulty;
     }
 
@@ -141,6 +146,14 @@ public class QuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
     @Override

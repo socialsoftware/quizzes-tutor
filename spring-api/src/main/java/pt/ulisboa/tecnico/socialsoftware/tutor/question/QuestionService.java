@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -66,6 +67,7 @@ public class QuestionService {
         }
 
         Question question = new Question(questionDto);
+        question.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(question);
         return new QuestionDto(question);
     }

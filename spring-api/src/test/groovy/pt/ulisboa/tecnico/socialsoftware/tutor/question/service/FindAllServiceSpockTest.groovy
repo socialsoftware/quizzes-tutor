@@ -96,7 +96,7 @@ class FindAllServiceSpockTest extends Specification {
         resQuestion.getContent() == QUESTION_CONTENT
         resQuestion.getNumberOfAnswers() == 2
         resQuestion.getNumberOfCorrect() == 1
-        resQuestion.getDifficulty() == 0.5
+        resQuestion.getDifficulty() == 50
         resQuestion.getImage().getId() != null
         resQuestion.getImage().getUrl() == URL
         resQuestion.getImage().getWidth() == 20

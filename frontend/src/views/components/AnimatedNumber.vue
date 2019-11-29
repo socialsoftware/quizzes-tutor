@@ -1,5 +1,5 @@
 <template>
-  <span>{{ displayNumber }}<slot></slot></span>
+  <span>{{ displayNumber }}<slot /></span>
 </template>
 
 <script lang="ts">
@@ -32,4 +32,4 @@ export default class AnimatedNumber extends Vue {
 }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss" />

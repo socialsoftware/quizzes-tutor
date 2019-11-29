@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,6 +51,9 @@ public class Question {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
     private Image image;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER)
     private List<Option> options = new ArrayList<>();
@@ -175,6 +179,14 @@ public class Question {
         this.topics = topics;
     }
 
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
     public void addOption(Option option) {
         options.add(option);
     }
@@ -225,7 +237,7 @@ public class Question {
     }
 
 
-    public double getDifficulty() {
+    public Integer getDifficulty() {
         // required because the import is done directely in the database
         if (numberOfAnswers == null || numberOfAnswers == 0) {
             numberOfAnswers = getQuizQuestions().stream()
@@ -235,10 +247,11 @@ public class Question {
                     .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()).map(e -> 1).reduce(0, Integer::sum);
         }
 
-        double result = numberOfAnswers != 0 ? 1.0 - numberOfCorrect / (double) numberOfAnswers : 0.0;
-        result = result * 100;
-        result = Math.round(result);
-        return result / 100;
+        if (numberOfAnswers == 0) {
+            return null;
+        }
+
+        return numberOfCorrect * 100 / numberOfAnswers;
     }
 
     public void update(QuestionDto questionDto) {

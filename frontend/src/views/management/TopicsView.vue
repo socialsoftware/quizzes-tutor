@@ -1,21 +1,16 @@
 <template v-if="topics">
   <v-card class="table">
     <v-card-title>
-      <v-flex xs12 sm6 md6>
-        <v-text-field
-          v-model="search"
-          append-icon="search"
-          label="Search"
-          single-line
-          hide-details
-        ></v-text-field>
-      </v-flex>
-      <v-divider class="mx-4" inset vertical> </v-divider>
-      <v-spacer></v-spacer>
-      <v-btn color="primary" dark class="mb-2" @click="newTopic"
-        >New Topic</v-btn
-      >
-      <v-dialog v-model="dialog" max-width="1000px">
+      <v-text-field
+        v-model="search"
+        append-icon="search"
+        label="Search"
+        single-line
+        hide-details
+      />
+      <v-spacer />
+      <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
+      <v-dialog v-model="dialog" max-width="75%">
         <v-card>
           <v-card-title>
             <span class="headline">{{ formTitle() }}</span>
@@ -25,21 +20,16 @@
             <v-container grid-list-md fluid>
               <v-layout column wrap>
                 <v-flex xs24 sm12 md8>
-                  <v-text-field
-                    v-model="editedTopic.name"
-                    label="Topic"
-                  ></v-text-field>
+                  <v-text-field v-model="editedTopic.name" label="Topic" />
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="closeDialogue"
-              >Cancel</v-btn
-            >
-            <v-btn color="blue darken-1" text @click="saveTopic">Save</v-btn>
+            <v-spacer />
+            <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+            <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -51,10 +41,31 @@
       :search="search"
       disable-pagination
       class="elevation-1"
+      :items-per-page="50"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
       <template v-slot:item.action="{ item }">
-        <v-icon small class="mr-2" @click="editTopic(item)">edit</v-icon>
-        <v-icon small class="mr-2" @click="deleteTopic(item)">delete</v-icon>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="editTopic(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Topic</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="deleteTopic(item)"
+              color="red"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Topic</span>
+        </v-tooltip>
       </template>
     </v-data-table>
   </v-card>
@@ -158,4 +169,4 @@ export default class TopicsView extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />
