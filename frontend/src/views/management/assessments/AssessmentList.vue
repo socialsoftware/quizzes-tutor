@@ -16,9 +16,9 @@
             append-icon="search"
             label="Search"
             class="mx-4"
-          ></v-text-field>
+          />
 
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn color="primary" dark @click="newAssessment"
             >New Assessment</v-btn
           >
@@ -28,10 +28,15 @@
         <v-select
           v-model="item.status"
           :items="statusList"
-          small-chips
           dense
           @change="setStatus(item.id, item.status)"
-        ></v-select>
+        >
+          <template v-slot:selection="{ item }">
+            <v-chip :color="getStatusColor(item)" small>
+              <span>{{ item }}</span>
+            </v-chip>
+          </template>
+        </v-select>
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -88,7 +93,7 @@
                 >
                   <span
                     v-html="convertMarkDown(question.content, question.image)"
-                  ></span>
+                  />
                   <ul>
                     <li v-for="option in question.options" :key="option.number">
                       <span
@@ -96,7 +101,7 @@
                         v-bind:class="[
                           option.correct ? 'font-weight-bold' : ''
                         ]"
-                      ></span>
+                      />
                     </li>
                   </ul>
                   <br />
@@ -107,7 +112,7 @@
         </v-card-text>
 
         <v-card-actions>
-          <v-spacer></v-spacer>
+          <v-spacer />
           <v-btn dark color="primary" @click="closeAssessment">close</v-btn>
         </v-card-actions>
       </v-card>
@@ -131,7 +136,7 @@ export default class AssessmentList extends Vue {
   dialog: boolean = false;
   headers: object = [
     { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Status", value: "status", align: "left", width: "1%" },
+    { text: "Status", value: "status", align: "center", width: "1%" },
     {
       text: "Actions",
       value: "action",
@@ -179,10 +184,16 @@ export default class AssessmentList extends Vue {
     }
   }
 
+  getStatusColor(status: string) {
+    if (status === "REMOVED") return "red";
+    else if (status === "DISABLED") return "orange";
+    else return "green";
+  }
+
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

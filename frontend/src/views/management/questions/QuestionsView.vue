@@ -72,12 +72,11 @@
         <v-select
           v-model="item.status"
           :items="statusList"
-          small-chips
           dense
           @change="setStatus(item.id, item.status)"
         >
           <template v-slot:selection="{ item }">
-            <v-chip :color="getStatusColor(item)">
+            <v-chip :color="getStatusColor(item)" small>
               <span>{{ item }}</span>
             </v-chip>
           </template>

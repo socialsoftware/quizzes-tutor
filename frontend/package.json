@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "start": "vue-cli-service serve",
-    "build": "vue-cli-service build --mode production",
-    "build:dev": "vue-cli-service build --mode development",
+    "build": "NODE_ENV=production vue-cli-service build --mode production",
+    "build:dev": "NODE_ENV=development vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
     "prod": "vue-cli-service serve --mode production",
     "prettier": "prettier --write \"**/**/*.{js,css,scss,vue}\""
@@ -33,9 +33,7 @@
     "vue-underscore": "^0.1.4",
     "vuetify": "^2.1.9",
     "vuetify-datetime-picker": "^2.1.1",
-    "vuex": "^3.1.1",
-    "webpack-bundle-analyzer": "latest",
-    "weekstart": "^1.0.0"
+    "vuex": "^3.1.1"
   },
   "devDependencies": {
     "@mdi/font": "^4.4.95",
@@ -50,15 +48,17 @@
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
     "fibers": "^3.1.1",
+    "prerender-spa-plugin": "^3.4.0",
     "prettier": "^1.18.2",
     "sass": "^1.22.12",
     "sass-loader": "^7.3.1",
     "size-plugin": "^2.0.1",
+    "terser-webpack-plugin": "^2.2.1",
     "typescript": "3.5.3",
-    "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10",
-    "vuetify-loader": "^1.2.2"
+    "vuetify-loader": "^1.2.2",
+    "webpack-bundle-analyzer": "latest"
   },
   "babel": {
     "presets": [

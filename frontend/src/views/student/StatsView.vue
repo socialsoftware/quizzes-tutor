@@ -1,8 +1,6 @@
 <template>
   <div v-if="stats != null" class="stats-container">
-    <!--p>Total quizzes done: {{ stats.totalQuizzes }}</p>
-    <p>Total questions done: {{ stats.totalAnswers }}</p>
-    <chart :stats="stats"></chart-->
+    <!--    <chart :stats="stats"></chart>-->
     <div class="items">
       <div class="icon-wrapper" ref="number">
         <animated-number :number="stats.totalQuizzes" />
@@ -58,9 +56,6 @@
         <p>Percentage of questions seen</p>
       </div>
     </div>
-    <span>{{ stats.totalUniqueQuestions }}</span>
-    <br />
-    <span>{{ stats.totalAvailableQuestions }}</span>
   </div>
 </template>
 

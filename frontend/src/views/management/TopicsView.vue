@@ -7,8 +7,8 @@
         label="Search"
         single-line
         hide-details
-      ></v-text-field>
-      <v-spacer></v-spacer>
+      />
+      <v-spacer />
       <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
       <v-dialog v-model="dialog" max-width="75%">
         <v-card>
@@ -20,17 +20,14 @@
             <v-container grid-list-md fluid>
               <v-layout column wrap>
                 <v-flex xs24 sm12 md8>
-                  <v-text-field
-                    v-model="editedTopic.name"
-                    label="Topic"
-                  ></v-text-field>
+                  <v-text-field v-model="editedTopic.name" label="Topic" />
                 </v-flex>
               </v-layout>
             </v-container>
           </v-card-text>
 
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <v-spacer />
             <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
             <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
           </v-card-actions>
@@ -44,6 +41,8 @@
       :search="search"
       disable-pagination
       class="elevation-1"
+      :items-per-page="50"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
@@ -170,4 +169,4 @@ export default class TopicsView extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss" />

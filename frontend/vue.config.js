@@ -3,9 +3,9 @@
 const path = require("path");
 const SizePlugin = require("size-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const PrerenderSpaPlugin = require("prerender-spa-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 const isProductionEnvFlag = process.env.NODE_ENV === "production";
-const isOpenPrerenderSPA = false;
 
 module.exports = {
   publicPath: "/",
@@ -64,8 +64,8 @@ module.exports = {
 
   configureWebpack: {
     plugins: [
-      isProductionEnvFlag && isOpenPrerenderSPA
-        ? new require("prerender-spa-plugin")({
+      isProductionEnvFlag
+        ? new PrerenderSpaPlugin({
             // Required - The path to the webpack-outputted app to prerender.
             staticDir: path.join(__dirname, "dist"),
             // Required - Routes to render.
@@ -74,7 +74,7 @@ module.exports = {
         : () => {},
       isProductionEnvFlag ? new SizePlugin() : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
-      isProductionEnvFlag ? new UglifyJsPlugin() : () => {}
+      isProductionEnvFlag ? new TerserPlugin() : () => {}
     ]
   },
 
