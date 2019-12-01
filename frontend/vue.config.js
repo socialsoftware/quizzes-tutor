@@ -1,9 +1,7 @@
 /** @format */
 
 const path = require("path");
-const SizePlugin = require("size-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
-const PrerenderSpaPlugin = require("prerender-spa-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const isProductionEnvFlag = process.env.NODE_ENV === "production";
 
@@ -23,6 +21,7 @@ module.exports = {
       .set("@models", path.join(__dirname, "src/models"))
       .set("@plugins", path.join(__dirname, "src/plugins"))
       .set("@services", path.join(__dirname, "src/services"))
+      .set("@view-components", path.join(__dirname, "src/view-components"))
       .set("@styles", path.join(__dirname, "src/styles"))
       .set("@views", path.join(__dirname, "src/views"));
 
@@ -64,15 +63,6 @@ module.exports = {
 
   configureWebpack: {
     plugins: [
-      isProductionEnvFlag
-        ? new PrerenderSpaPlugin({
-            // Required - The path to the webpack-outputted app to prerender.
-            staticDir: path.join(__dirname, "dist"),
-            // Required - Routes to render.
-            routes: ["/", "/explore"]
-          })
-        : () => {},
-      isProductionEnvFlag ? new SizePlugin() : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
       isProductionEnvFlag ? new TerserPlugin() : () => {}
     ]

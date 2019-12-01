@@ -204,7 +204,6 @@ let router = new Router({
 router.beforeEach(async (to, from, next) => {
   if (from.matched.some(record => record.meta.requiresVerification)) {
     let a = confirm("Are you sure?");
-    console.log(a);
     if (!a) {
       next(false);
       return;

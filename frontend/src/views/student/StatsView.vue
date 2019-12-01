@@ -1,6 +1,5 @@
 <template>
   <div v-if="stats != null" class="stats-container">
-    <!--    <chart :stats="stats"></chart>-->
     <div class="items">
       <div class="icon-wrapper" ref="number">
         <animated-number :number="stats.totalQuizzes" />
@@ -63,11 +62,10 @@
 import { Component, Vue } from "vue-property-decorator";
 import StudentStats from "@/models/statement/StudentStats";
 import RemoteServices from "@/services/RemoteServices";
-import Chart from "@/views/components/Chart.vue";
-import AnimatedNumber from "@/views/components/AnimatedNumber.vue";
+import AnimatedNumber from "@/view-components/AnimatedNumber.vue";
 
 @Component({
-  components: { AnimatedNumber, Chart }
+  components: { AnimatedNumber }
 })
 export default class StatsView extends Vue {
   stats: StudentStats | null = null;

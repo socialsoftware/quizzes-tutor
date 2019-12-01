@@ -4,7 +4,9 @@
       <v-app-bar-nav-icon
         @click.stop="drawer = !drawer"
         class="hidden-md-and-up"
+        aria-label="Menu"
       />
+
       <v-toolbar-title>
         <v-btn dark active-class="toolbar-title" text tile to="/">
           Software Architecture Quizzes

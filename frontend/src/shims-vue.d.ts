@@ -1,5 +1,4 @@
 declare module "showdown";
-declare module "chart.js";
 declare module "vue-underscore";
 declare module "vuetify/lib";
 declare module "vuetify-datetime-picker";

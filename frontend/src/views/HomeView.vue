@@ -45,7 +45,6 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Store from "@/store";
-import "@/styles/bootstrap-social.css";
 
 @Component
 export default class HomeView extends Vue {
@@ -122,6 +121,9 @@ export default class HomeView extends Vue {
         width: 125px;
         margin: 0 auto;
         font: normal normal 400 normal 14px / 21px Roboto, sans-serif;
+        display: block;
+        border-radius: 4px 4px 4px 4px;
+        padding: 6px 12px 6px 44px;
       }
     }
   }

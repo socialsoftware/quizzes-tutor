@@ -50,7 +50,7 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import QuestionComponent from "@/views/components/QuestionComponent.vue";
+import QuestionComponent from "@/view-components/QuestionComponent.vue";
 import StatementManager from "@/models/statement/StatementManager";
 
 Component.registerHooks([
