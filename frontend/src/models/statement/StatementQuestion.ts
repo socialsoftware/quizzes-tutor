@@ -1,6 +1,5 @@
 import StatementOption from "@/models/statement/StatementOption";
 import Image from "@/models/management/Image";
-import { _ } from "vue-underscore";
 
 export default class StatementQuestion {
   quizQuestionId!: number;
@@ -16,11 +15,13 @@ export default class StatementQuestion {
       this.image = jsonObj.image;
 
       if (jsonObj.options) {
-        this.options = _.shuffle(
-          jsonObj.options.map(
-            (option: StatementOption) => new StatementOption(option)
-          )
-        );
+        import("vue-underscore").then(_ => {
+          this.options = _.shuffle(
+            jsonObj.options.map(
+              (option: StatementOption) => new StatementOption(option)
+            )
+          );
+        });
       }
     }
   }

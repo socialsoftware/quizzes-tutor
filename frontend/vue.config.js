@@ -3,6 +3,11 @@
 const path = require("path");
 const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+const PurgecssPlugin = require("purgecss-webpack-plugin");
+const glob = require("glob-all");
+const PrerenderSPAPlugin = require("prerender-spa-plugin");
+const PuppeteerRenderer = PrerenderSPAPlugin.PuppeteerRenderer;
+
 const isProductionEnvFlag = process.env.NODE_ENV === "production";
 
 module.exports = {
@@ -32,6 +37,7 @@ module.exports = {
         maxInitialRequests: 16,
         minChunks: 1,
         minSize: 30000,
+        maxSize: 200000,
         automaticNameDelimiter: "~",
         name: true,
         cacheGroups: {
@@ -61,10 +67,29 @@ module.exports = {
     }
   },
 
+  transpileDependencies: ["vuetify"],
   configureWebpack: {
     plugins: [
+      // https://github.com/FullHuman/purgecss/issues/67
+      isProductionEnvFlag
+        ? new PurgecssPlugin({
+            paths: glob.sync([
+              path.join(__dirname, "./public/index.html"),
+              path.join(__dirname, "./**/*.vue"),
+              path.join(__dirname, "./src/**/*.js"),
+              path.join(__dirname, "./node_modules/vuetify/src/**/*.ts")
+            ])
+          })
+        : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
-      isProductionEnvFlag ? new TerserPlugin() : () => {}
+      isProductionEnvFlag ? new TerserPlugin() : () => {},
+      isProductionEnvFlag
+        ? new PrerenderSPAPlugin({
+            staticDir: path.join(__dirname, "./dist"), // The path to the folder where index.html is.
+            routes: ["/"], // List of routes to prerender.
+            renderer: new PuppeteerRenderer()
+          })
+        : () => {}
     ]
   },
 
@@ -75,7 +100,7 @@ module.exports = {
   // options for the PWA plugin.
   // see => https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
   // https://developers.google.com/web/tools/workbox/modules/workbox-webpack-plugin
-  pwa: {
+  /*  pwa: {
     name: "Vue-Cli3 实践",
     themeColor: "#4DBA87",
     msTileColor: "#000000",
@@ -95,7 +120,7 @@ module.exports = {
       swSrc: "public/service-worker.js"
       // ...other Workbox options...
     }
-  },
+  },*/
 
   // configure webpack-dev-server behavior
   devServer: {
