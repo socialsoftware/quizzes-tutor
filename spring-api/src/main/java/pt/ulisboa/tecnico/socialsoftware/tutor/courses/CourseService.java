@@ -19,7 +19,7 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseExecutionDto> findCourseExecutions() {
         return userRepository.getCourseYears().stream()
                 .sorted(Comparator.reverseOrder())
@@ -27,7 +27,7 @@ public class CourseService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> courseStudents(Integer year) {
         return userRepository.courseStudents(year).stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))

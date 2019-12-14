@@ -28,7 +28,7 @@ public class StatsService {
     @Autowired
     private QuestionRepository questionRepository;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(String username) {
         User user = userRepository.findByUsername(username);
 
