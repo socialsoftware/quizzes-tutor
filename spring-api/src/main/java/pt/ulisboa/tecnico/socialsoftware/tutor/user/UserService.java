@@ -35,7 +35,7 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User create(String name, String username, User.Role role) {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
@@ -59,7 +59,7 @@ public class UserService {
        return xmlExporter.export(userRepository.findAll());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importUsers(String usersXML) {
         UsersXmlImport xmlImporter = new UsersXmlImport();
 

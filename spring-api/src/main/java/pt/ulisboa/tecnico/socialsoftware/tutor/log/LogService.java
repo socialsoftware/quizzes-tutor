@@ -14,7 +14,7 @@ public class LogService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Log create(User user, LocalDateTime time, String operation) {
         Log log = new Log(user, time, operation);
         entityManager.persist(log);

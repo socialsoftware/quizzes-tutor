@@ -66,7 +66,7 @@ public class ImpExpService {
     @Value("${export.dir}")
     private String exportDir;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportAll() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         File directory = new File(exportDir);
@@ -151,7 +151,7 @@ public class ImpExpService {
         return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAll() throws IOException {
         if (userRepository.findAll().isEmpty()) {
             try {

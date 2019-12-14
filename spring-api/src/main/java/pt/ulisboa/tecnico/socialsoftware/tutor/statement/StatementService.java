@@ -60,7 +60,7 @@ public class StatementService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto generateStudentQuiz(String username, StatementCreationDto quizDetails) {
         User user = userRepository.findByUsername(username);
 
@@ -89,7 +89,7 @@ public class StatementService {
         return new StatementQuizDto(quizAnswer);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StatementQuizDto> getAvailableQuizzes(String username) {
         User user = userRepository.findByUsername(username);
 
@@ -117,7 +117,7 @@ public class StatementService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SolvedQuizDto> getSolvedQuizzes(String username) {
         User user = userRepository.findByUsername(username);
 
@@ -128,7 +128,7 @@ public class StatementService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CorrectAnswersDto solveQuiz(String username, @Valid @RequestBody ResultAnswersDto answers) {
         User user = userRepository.findByUsername(username);
 

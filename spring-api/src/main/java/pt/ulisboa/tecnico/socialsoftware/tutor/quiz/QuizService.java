@@ -52,13 +52,13 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizDto findById(Integer quizId) {
         return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuizDto> findAllNonGenerated() {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
@@ -75,7 +75,7 @@ public class QuizService {
         return maxQuizNumber != null ? maxQuizNumber : 0;
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizDto createQuiz(QuizDto quizDto) {
         if (quizDto.getNumber() == null) {
             quizDto.setNumber(getMaxQuizNumber() + 1);
@@ -95,7 +95,7 @@ public class QuizService {
         return new QuizDto(quiz, true);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -121,7 +121,7 @@ public class QuizService {
         return new QuizDto(quiz, true);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -133,7 +133,7 @@ public class QuizService {
         return new QuizQuestionDto(quizQuestion);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -147,14 +147,14 @@ public class QuizService {
         entityManager.remove(quiz);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportQuizzes() {
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
 
         return xmlExport.export(quizRepository.findAll());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importQuizzes(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 

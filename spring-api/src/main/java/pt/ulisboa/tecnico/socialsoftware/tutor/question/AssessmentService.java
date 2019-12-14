@@ -41,12 +41,12 @@ public class AssessmentService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAll() {
         return assessmentRepository.findAll().stream().map(AssessmentDto::new).collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAllAvailable() {
         return assessmentRepository.findAll().stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
@@ -54,7 +54,7 @@ public class AssessmentService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto createAssessment(AssessmentDto assessmentDto) {
         Assessment assessment = new Assessment();
         assessment.setTitle(assessmentDto.getTitle());
@@ -72,7 +72,7 @@ public class AssessmentService {
         return new AssessmentDto(assessment);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
 
@@ -97,20 +97,20 @@ public class AssessmentService {
         return new AssessmentDto(assessment);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeAssessment(Integer assessmentId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.remove();
         entityManager.remove(assessment);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void assessmentSetStatus(Integer assessmentId, Assessment.Status status) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
         assessment.setStatus(status);
     }
 
-/*    @Transactional(isolation = Isolation.SERIALIZABLE)
+/*    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAssessment(String assessmentXML) {
         AssessmentXmlImport xmlImporter = new AssessmentXmlImport();
 

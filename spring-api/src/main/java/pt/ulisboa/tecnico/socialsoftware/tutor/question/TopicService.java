@@ -35,12 +35,12 @@ public class TopicService {
     @PersistenceContext
     EntityManager entityManager;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TopicDto> findAllTopics() {
         return topicRepository.findAll().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto createTopic(TopicDto topicDto) {
         if (topicRepository.findByName(topicDto.getName()) != null) {
             throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
@@ -51,7 +51,7 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
@@ -59,7 +59,7 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTopic(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
@@ -68,14 +68,14 @@ public class TopicService {
         entityManager.remove(topic);
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportTopics() {
         TopicsXmlExport xmlExport = new TopicsXmlExport();
 
         return xmlExport.export(topicRepository.findAll());
     }
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();
 
