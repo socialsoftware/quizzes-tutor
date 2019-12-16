@@ -5,8 +5,6 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
 const PurgecssPlugin = require("purgecss-webpack-plugin");
 const glob = require("glob-all");
-const PrerenderSPAPlugin = require("prerender-spa-plugin");
-const PuppeteerRenderer = PrerenderSPAPlugin.PuppeteerRenderer;
 
 const isProductionEnvFlag = process.env.NODE_ENV === "production";
 
@@ -82,14 +80,7 @@ module.exports = {
           })
         : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
-      isProductionEnvFlag ? new TerserPlugin() : () => {},
-      isProductionEnvFlag
-        ? new PrerenderSPAPlugin({
-            staticDir: path.join(__dirname, "./dist"), // The path to the folder where index.html is.
-            routes: ["/"], // List of routes to prerender.
-            renderer: new PuppeteerRenderer()
-          })
-        : () => {}
+      isProductionEnvFlag ? new TerserPlugin() : () => {}
     ]
   },
 

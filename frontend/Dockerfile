@@ -1,6 +1,6 @@
 ## Build stage
 
-FROM node:10-alpine as build-stage
+FROM node:10.17.0-alpine3.10 as build-stage
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
