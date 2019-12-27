@@ -18,8 +18,8 @@ class ImportExportUsersSpockTest extends Specification {
     UserRepository userRepository
 
     def setup() {
-        userService.create('Rito', 'ar', User.Role.TEACHER)
-        userService.create('Pedro', 'pc', User.Role.STUDENT)
+        userService.createUser('Rito', 'ar', User.Role.TEACHER)
+        userService.createUser('Pedro', 'pc', User.Role.STUDENT)
     }
 
     def 'export and import users'() {

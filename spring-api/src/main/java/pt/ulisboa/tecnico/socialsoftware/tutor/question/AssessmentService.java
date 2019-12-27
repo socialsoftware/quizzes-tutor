@@ -41,11 +41,20 @@ public class AssessmentService {
     @PersistenceContext
     EntityManager entityManager;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAll() {
         return assessmentRepository.findAll().stream().map(AssessmentDto::new).collect(Collectors.toList());
     }
 
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<AssessmentDto> findAllAvailable() {
         return assessmentRepository.findAll().stream()
@@ -54,6 +63,11 @@ public class AssessmentService {
                 .collect(Collectors.toList());
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto createAssessment(AssessmentDto assessmentDto) {
         Assessment assessment = new Assessment();
@@ -72,6 +86,11 @@ public class AssessmentService {
         return new AssessmentDto(assessment);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
@@ -97,6 +116,11 @@ public class AssessmentService {
         return new AssessmentDto(assessment);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeAssessment(Integer assessmentId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
@@ -104,6 +128,11 @@ public class AssessmentService {
         entityManager.remove(assessment);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void assessmentSetStatus(Integer assessmentId, Assessment.Status status) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));

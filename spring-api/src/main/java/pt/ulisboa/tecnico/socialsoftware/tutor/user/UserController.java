@@ -35,7 +35,7 @@ public class UserController {
 
     @PostMapping("/users")
     public User createUser(@Valid @RequestBody UserDto user) {
-        return userService.create(user.getName(), user.getUsername(), user.getRole());
+        return userService.createUser(user.getName(), user.getUsername(), user.getRole());
     }
 
     @PutMapping("/users/{userId}")

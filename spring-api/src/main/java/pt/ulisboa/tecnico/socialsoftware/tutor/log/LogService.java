@@ -14,6 +14,11 @@ public class LogService {
     @PersistenceContext
     EntityManager entityManager;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public Log create(User user, LocalDateTime time, String operation) {
         Log log = new Log(user, time, operation);

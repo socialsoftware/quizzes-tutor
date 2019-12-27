@@ -28,6 +28,11 @@ public class StatsService {
     @Autowired
     private QuestionRepository questionRepository;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(String username) {
         User user = userRepository.findByUsername(username);

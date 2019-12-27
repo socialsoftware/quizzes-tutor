@@ -66,6 +66,11 @@ public class ImpExpService {
     @Value("${export.dir}")
     private String exportDir;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportAll() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
@@ -151,6 +156,11 @@ public class ImpExpService {
         return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAll() throws IOException {
         if (userRepository.findAll().isEmpty()) {

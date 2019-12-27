@@ -68,7 +68,7 @@ public class UsersXmlImport {
 					role = User.Role.valueOf(element.getAttributeValue("role"));
 				}
 
-				User user = userService.create(name, username, role);
+				User user = userService.createUser(name, username, role);
 				user.setNumber(number);
 
 				if (element.getAttributeValue("year") != null) {

@@ -97,7 +97,7 @@ class ImportExportAnswersSpockTest extends Specification {
 
         quizQuestion = quizService.addQuestionToQuiz(question.getId(), quiz.getId())
 
-        def user = userService.create('Pedro', 'pc', User.Role.STUDENT)
+        def user = userService.createUser('Pedro', 'pc', User.Role.STUDENT)
 
         quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId())
 

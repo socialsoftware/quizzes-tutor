@@ -53,6 +53,12 @@ public class AnswerService {
     @PersistenceContext
     EntityManager entityManager;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -65,6 +71,12 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuizAnswer(Integer quizAnswerId) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
@@ -75,7 +87,6 @@ public class AnswerService {
         entityManager.remove(quizAnswer);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CorrectAnswersDto submitQuestionsAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, answers.getQuizAnswerId()));
@@ -145,12 +156,23 @@ public class AnswerService {
         return !user.getId().equals(quizAnswer.getUser().getId());
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportAnswers() {
         AnswersXmlExport xmlExport = new AnswersXmlExport();
 
         return xmlExport.export(quizAnswerRepository.findAll());
     }
+
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAnswers(String answersXml) {

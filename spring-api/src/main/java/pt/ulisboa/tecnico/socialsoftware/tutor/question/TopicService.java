@@ -35,11 +35,22 @@ public class TopicService {
     @PersistenceContext
     EntityManager entityManager;
 
+
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TopicDto> findAllTopics() {
         return topicRepository.findAll().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto createTopic(TopicDto topicDto) {
         if (topicRepository.findByName(topicDto.getName()) != null) {
@@ -51,6 +62,11 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
@@ -59,6 +75,11 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTopic(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
@@ -68,6 +89,11 @@ public class TopicService {
         entityManager.remove(topic);
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportTopics() {
         TopicsXmlExport xmlExport = new TopicsXmlExport();
@@ -75,6 +101,11 @@ public class TopicService {
         return xmlExport.export(topicRepository.findAll());
     }
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();

@@ -19,6 +19,12 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
 
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseExecutionDto> findCourseExecutions() {
         return userRepository.getCourseYears().stream()
@@ -26,6 +32,12 @@ public class CourseService {
                 .map(CourseExecutionDto::new)
                 .collect(Collectors.toList());
     }
+
+
+    /*@Retryable(
+      value = { SQLException.class },
+      maxAttempts = 2,
+      backoff = @Backoff(delay = 5000))*/
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> courseStudents(Integer year) {
