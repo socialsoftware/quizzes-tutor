@@ -15,17 +15,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
@@ -47,15 +46,12 @@ public class AuthService {
     private String callbackUrl;
 
     @Autowired
-    private LogService logService;
-
-    @Autowired
-    private CourseRepository courseRepository;
+    private CourseExecutionRepository courseExecutionRepository;
 
     @Retryable(
-      value = { SQLException.class },
-      maxAttempts = 3,
-      backoff = @Backoff(delay = 5000))
+            value = { SQLException.class },
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthenticationResponseDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
 
@@ -78,71 +74,55 @@ public class AuthService {
             throw new TutorException(FENIX_ERROR);
         }
 
-
         // When requesting user's private data, the authorization object must be passed along.
         JsonObject person = client.getPerson(userDetails.getAuthorization());
         String username = String.valueOf(person.get("username")).replaceAll("^\"|\"$", "");
-        ArrayList<Course> courses = new ArrayList<>();
 
-        // Find if user is in database
+        JsonObject coursesJson = client.getPersonCourses(userDetails.getAuthorization());
+
+        JsonArray attendingCoursesJson = coursesJson.get("attending").getAsJsonArray();
+        Set<CourseExecution> attendingCourses = getCourseExecutions(attendingCoursesJson);
+
+        JsonArray teachingCoursesJson = coursesJson.get("teaching").getAsJsonArray();
+        Set<CourseExecution> teachingCourses = getCourseExecutions(teachingCoursesJson);
+
         User user = this.userService.findByUsername(username);
 
-        // If user is in database
-        if (user != null){
-            logService.create(user, LocalDateTime.now(), "LOGIN");
+        // If user is student not in db
+        if (user == null && !attendingCourses.isEmpty()) {
+            user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
+        }
 
+        // If user is teacher not in db
+        if (user == null && !teachingCourses.isEmpty()) {
+            user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
+        }
+
+        // Update student courses
+        if (!attendingCourses.isEmpty()) {
+            User student = user;
+            attendingCourses.stream().filter(courseExecution -> !student.getCourses().contains(courseExecution)).forEach(user::addCourse);
             return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
-            // Verify if user is attending the course
-            JsonObject coursesJson = client.getPersonCourses(userDetails.getAuthorization());
-            JsonArray attendingCoursesJson = coursesJson.get("attending").getAsJsonArray();
 
-            boolean isStudent = false;
-            for (JsonElement courseJson : attendingCoursesJson) {
-                Course course = courseRepository.findByName(courseJson.getAsJsonObject().get("name").getAsString());
-                if (course != null) {
-                    isStudent = true;
-                    courses.add(course);
-                }
-            }
-
-            if (isStudent) {
-                user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
-                logService.create(user, LocalDateTime.now(), "LOGIN");
-
-                String token = JwtTokenProvider.generateToken(user);
-                return new AuthenticationResponseDto(token, user.getRole().name());
-
-
-
-
-
-            JsonArray teachingCoursesJson = coursesJson.get("teaching").getAsJsonArray();
-
-
-
-            if (isStudent) {
-                user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
-            } else {
-                // Verify if user is teaching the course
-                coursesJson = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
-
-                boolean isTeacher = false;
-                for (JsonElement course : coursesJson) {
-                    isTeacher |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
-                }
-
-                if (isTeacher) {
-                    user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.TEACHER);
-                } else {
-                    throw new TutorException(USER_NOT_ENROLLED);
-                }
-            }
+        // Update teacher courses
+        if (!teachingCourses.isEmpty()) {
+            User teacher = user;
+            teachingCourses.stream().filter(courseExecution -> !teacher.getCourses().contains(courseExecution)).forEach(user::addCourse);
+            return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
-        logService.create(user, LocalDateTime.now(), "LOGIN");
+        throw new TutorException(USER_NOT_ENROLLED);
+    }
 
-        String token = JwtTokenProvider.generateToken(user);
-        return new AuthenticationResponseDto(token, user.getRole().name());
+    private Set<CourseExecution> getCourseExecutions(JsonArray attendingCoursesJson) {
+        Set<CourseExecution> courses = new HashSet<>();
+        for (JsonElement courseJson : attendingCoursesJson) {
+            CourseExecution course = courseExecutionRepository.findByAcronym(courseJson.getAsJsonObject().get("acronym").getAsString());
+            if (course != null) {
+                courses.add(course);
+            }
+        }
+        return courses;
     }
 }

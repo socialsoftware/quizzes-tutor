@@ -4,7 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
@@ -45,18 +45,14 @@ public class User implements UserDetails {
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToMany
-    private Set<Course> courses = new HashSet<>();
+    private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     public User() {
     }
 
-    public User(String name, String username, Role role, Integer number, Integer year) {
+    public User(String name, String username, Integer number, Integer year) {
         this.name = name;
         setUsername(username);
-        if (role != null) {
-            this.role = role;
-        }
-
         this.number = number;
         this.year = year;
         this.creationDate = LocalDateTime.now();
@@ -128,12 +124,12 @@ public class User implements UserDetails {
         this.quizAnswers = quizAnswers;
     }
 
-    public Set<Course> getCourses() {
-        return courses;
+    public Set<CourseExecution> getCourseExecutions() {
+        return courseExecutions;
     }
 
-    public void setCourses(Set<Course> courses) {
-        this.courses = courses;
+    public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
+        this.courseExecutions = courseExecutions;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -219,8 +215,8 @@ public class User implements UserDetails {
         this.quizAnswers.add(quizAnswer);
     }
 
-    public void addCourse(Course course) {
-        this.courses.add(course);
+    public void addCourse(CourseExecution course) {
+        this.courseExecutions.add(course);
     }
 
     @Override

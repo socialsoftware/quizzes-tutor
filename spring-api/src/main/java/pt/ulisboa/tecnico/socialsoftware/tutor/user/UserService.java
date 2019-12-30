@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.DUPLICATE_USER;
@@ -24,6 +26,9 @@ public class UserService {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Autowired
+    private LogService logService;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
@@ -38,7 +43,7 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    public User createUser(String name, String username, User.Role role) {
+    public User createUser(String name, String username, User.Role student) {
 
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
@@ -51,8 +56,9 @@ public class UserService {
             year -= 1;
         }
 
-        User user = new User(name, username, role, getMaxUserNumber() + 1, year);
+        User user = new User(name, username, getMaxUserNumber() + 1, year);
         entityManager.persist(user);
+        logService.create(user, LocalDateTime.now(), "LOGIN");
         return user;
     }
 

@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity(name = "Courses")
@@ -13,13 +15,16 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToMany(mappedBy = "courses")
-    private Set<User> users;
+    private String name;
 
-    private Integer name;
-    private Integer acronym;
-    private Integer year;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY)
+    private Set<CourseExecution> courseExecutions = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY)
+    private Set<Question> questions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY)
+    private Set<Topic> topics = new HashSet<>();
 
     public Course() {
     }
@@ -32,35 +37,27 @@ public class Course {
         this.id = id;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
-    public Integer getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Integer name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Integer getAcronym() {
-        return acronym;
+    public Set<CourseExecution> getCourseExecutions() {
+        return courseExecutions;
     }
 
-    public void setAcronym(Integer acronym) {
-        this.acronym = acronym;
+    public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
+        this.courseExecutions = courseExecutions;
     }
 
-    public Integer getYear() {
-        return year;
+    public Set<Question> getQuestions() {
+        return questions;
     }
 
-    public void setYear(Integer year) {
-        this.year = year;
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
     }
 }

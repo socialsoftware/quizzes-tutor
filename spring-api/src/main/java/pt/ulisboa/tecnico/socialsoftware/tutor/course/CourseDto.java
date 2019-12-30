@@ -3,37 +3,28 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 import java.io.Serializable;
 
 public class CourseDto implements Serializable {
-    private Integer name;
-    private Integer acronym;
-    private Integer year;
+    private String name;
+    private String acronym;
 
-    public CourseDto(Course course) {
+    public CourseDto(CourseExecution course) {
         this.name = course.getName();
         this.acronym = course.getAcronym();
-        this.year = year;
     }
 
-    public Integer getName() {
+    public String getName() {
         return name;
     }
 
-    public void setName(Integer name) {
+    public void setName(String name) {
         this.name = name;
     }
 
-    public Integer getAcronym() {
+    public String getAcronym() {
         return acronym;
     }
 
-    public void setAcronym(Integer acronym) {
+    public void setAcronym(String acronym) {
         this.acronym = acronym;
     }
 
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
 }
