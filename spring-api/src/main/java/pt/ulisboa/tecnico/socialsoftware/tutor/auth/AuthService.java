@@ -9,28 +9,28 @@ import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class AuthService {
-
-    private static String COURSE_ACRONYM = "ASof7";
-
     @Autowired
     private UserService userService;
 
@@ -49,12 +49,15 @@ public class AuthService {
     @Autowired
     private LogService logService;
 
+    @Autowired
+    private CourseRepository courseRepository;
+
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ResponseEntity fenixAuth(@RequestBody FenixAuthenticationDto data) {
+    public AuthenticationResponseDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
 
         ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         FenixEduClientImpl client;
@@ -79,28 +82,53 @@ public class AuthService {
         // When requesting user's private data, the authorization object must be passed along.
         JsonObject person = client.getPerson(userDetails.getAuthorization());
         String username = String.valueOf(person.get("username")).replaceAll("^\"|\"$", "");
+        ArrayList<Course> courses = new ArrayList<>();
 
         // Find if user is in database
         User user = this.userService.findByUsername(username);
 
-        // If user is not in database
-        if (user == null){
+        // If user is in database
+        if (user != null){
+            logService.create(user, LocalDateTime.now(), "LOGIN");
+
+            return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+        }
             // Verify if user is attending the course
-            JsonArray courses = client.getPersonCourses(userDetails.getAuthorization()).get("attending").getAsJsonArray();
+            JsonObject coursesJson = client.getPersonCourses(userDetails.getAuthorization());
+            JsonArray attendingCoursesJson = coursesJson.get("attending").getAsJsonArray();
 
             boolean isStudent = false;
-            for (JsonElement course : courses) {
-                isStudent |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
+            for (JsonElement courseJson : attendingCoursesJson) {
+                Course course = courseRepository.findByName(courseJson.getAsJsonObject().get("name").getAsString());
+                if (course != null) {
+                    isStudent = true;
+                    courses.add(course);
+                }
             }
+
+            if (isStudent) {
+                user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
+                logService.create(user, LocalDateTime.now(), "LOGIN");
+
+                String token = JwtTokenProvider.generateToken(user);
+                return new AuthenticationResponseDto(token, user.getRole().name());
+
+
+
+
+
+            JsonArray teachingCoursesJson = coursesJson.get("teaching").getAsJsonArray();
+
+
 
             if (isStudent) {
                 user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
             } else {
                 // Verify if user is teaching the course
-                courses = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
+                coursesJson = client.getPersonCourses(userDetails.getAuthorization()).get("teaching").getAsJsonArray();
 
                 boolean isTeacher = false;
-                for (JsonElement course : courses) {
+                for (JsonElement course : coursesJson) {
                     isTeacher |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
                 }
 
@@ -115,6 +143,6 @@ public class AuthService {
         logService.create(user, LocalDateTime.now(), "LOGIN");
 
         String token = JwtTokenProvider.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationDto(token, user.getRole().name()));
+        return new AuthenticationResponseDto(token, user.getRole().name());
     }
 }

@@ -1,4 +1,6 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user;
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,7 +20,6 @@ public class UserDto implements Serializable {
         this.year = user.getYear();
         this.role = user.getRole();
         this.creationDate = user.getCreationDate();
-
     }
 
     public int getId() {

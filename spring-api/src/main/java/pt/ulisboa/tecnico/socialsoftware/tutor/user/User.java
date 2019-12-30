@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
 @Entity(name = "Users")
 @Table(name = "users")
 public class User implements UserDetails {
+
     public enum Role {STUDENT, TEACHER, ADMIN}
 
     @Id
@@ -42,6 +44,9 @@ public class User implements UserDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
+    @ManyToMany
+    private Set<Course> courses = new HashSet<>();
+
     public User() {
     }
 
@@ -56,6 +61,7 @@ public class User implements UserDetails {
         this.year = year;
         this.creationDate = LocalDateTime.now();
     }
+
 
     public Integer getId() {
         return id;
@@ -120,6 +126,14 @@ public class User implements UserDetails {
 
     public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
         this.quizAnswers = quizAnswers;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -203,6 +217,10 @@ public class User implements UserDetails {
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
         this.quizAnswers.add(quizAnswer);
+    }
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
     }
 
     @Override

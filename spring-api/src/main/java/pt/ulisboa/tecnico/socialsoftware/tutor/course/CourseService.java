@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.courses;
+package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -6,8 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -28,10 +27,10 @@ public class CourseService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<CourseExecutionDto> findCourseExecutions() {
+    public List<CourseDto> findCourseExecutions() {
         return userRepository.getCourseYears().stream()
                 .sorted(Comparator.reverseOrder())
-                .map(CourseExecutionDto::new)
+                .map(CourseDto::new)
                 .collect(Collectors.toList());
     }
 
