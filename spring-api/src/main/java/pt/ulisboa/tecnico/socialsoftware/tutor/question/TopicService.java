@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -37,20 +40,20 @@ public class TopicService {
 
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TopicDto> findAllTopics() {
         return topicRepository.findAll().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto createTopic(TopicDto topicDto) {
         if (topicRepository.findByName(topicDto.getName()) != null) {
@@ -63,10 +66,10 @@ public class TopicService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
@@ -76,10 +79,10 @@ public class TopicService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTopic(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
@@ -90,10 +93,10 @@ public class TopicService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportTopics() {
         TopicsXmlExport xmlExport = new TopicsXmlExport();
@@ -102,10 +105,10 @@ public class TopicService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();

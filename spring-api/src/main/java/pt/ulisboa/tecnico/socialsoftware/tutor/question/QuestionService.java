@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -37,10 +40,10 @@ public class QuestionService {
     EntityManager entityManager;
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
@@ -48,10 +51,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionByNumber(Integer number) {
         return questionRepository.findByNumber(number).map(QuestionDto::new)
@@ -59,30 +62,30 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findAllQuestions(Integer pageIndex, Integer pageSize) {
         return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findAvailableQuestions() {
         return questionRepository.getAvailableQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto createQuestion(QuestionDto questionDto) {
         if (questionDto.getNumber() == null) {
@@ -98,10 +101,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -110,10 +113,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -122,10 +125,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void questionSetStatus(Integer questionId, Question.Status status) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -133,11 +136,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
-
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -156,10 +158,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -174,11 +176,10 @@ public class QuestionService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
-
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importQuestions(String questionsXML) {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();

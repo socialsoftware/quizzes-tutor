@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.courses;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.courses.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,11 +23,10 @@ public class CourseService {
     private UserRepository userRepository;
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
-
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseExecutionDto> findCourseExecutions() {
         return userRepository.getCourseYears().stream()
@@ -34,11 +36,10 @@ public class CourseService {
     }
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
-
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> courseStudents(Integer year) {
         return userRepository.courseStudents(year).stream()

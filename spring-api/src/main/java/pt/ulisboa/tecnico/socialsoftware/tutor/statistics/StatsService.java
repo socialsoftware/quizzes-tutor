@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
+import java.sql.SQLException;
 import java.util.*;
 
 import static java.util.Comparator.comparingInt;
@@ -29,10 +32,10 @@ public class StatsService {
     private QuestionRepository questionRepository;
 
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatsDto getStats(String username) {
         User user = userRepository.findByUsername(username);

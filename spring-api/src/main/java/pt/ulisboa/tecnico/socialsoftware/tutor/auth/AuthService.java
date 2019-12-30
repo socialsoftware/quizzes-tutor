@@ -10,6 +10,8 @@ import org.fenixedu.sdk.exception.FenixEduClientException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,8 +21,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
@@ -28,8 +30,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 public class AuthService {
 
     private static String COURSE_ACRONYM = "ASof7";
-    // Pedro, Professor Rito, Professor Prada, Professor Daniel Gonçalves, José
-    private static String[] ADMINS = {"ist181002", "ist12628", "ist32219", "ist13898", "ist148794"};
 
     @Autowired
     private UserService userService;
@@ -49,10 +49,10 @@ public class AuthService {
     @Autowired
     private LogService logService;
 
-    /*@Retryable(
+    @Retryable(
       value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
+      maxAttempts = 3,
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ResponseEntity fenixAuth(@RequestBody FenixAuthenticationDto data) {
 
@@ -93,9 +93,7 @@ public class AuthService {
                 isStudent |= course.getAsJsonObject().get("acronym").getAsString().equals(COURSE_ACRONYM);
             }
 
-            if (Arrays.asList(ADMINS).contains(username)){
-                user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.ADMIN);
-            } else if (isStudent) {
+            if (isStudent) {
                 user = this.userService.createUser(String.valueOf(person.get("name")).replaceAll("^\"|\"$", ""), username, User.Role.STUDENT);
             } else {
                 // Verify if user is teaching the course
@@ -113,20 +111,6 @@ public class AuthService {
                 }
             }
         }
-
-        logService.create(user, LocalDateTime.now(), "LOGIN");
-
-        String token = JwtTokenProvider.generateToken(user);
-        return ResponseEntity.ok(new JwtAuthenticationDto(token, user.getRole().name()));
-    }
-
-    /*@Retryable(
-      value = { SQLException.class },
-      maxAttempts = 2,
-      backoff = @Backoff(delay = 5000))*/
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-    public ResponseEntity demoAuth() {
-        User user = this.userService.createUser("My(chael) Name", LocalDateTime.now().toString() + Math.random(), User.Role.ADMIN);
 
         logService.create(user, LocalDateTime.now(), "LOGIN");
 

@@ -32,10 +32,10 @@ module.exports = {
     config.optimization.splitChunks(
       Object.assign({}, splitOptions, {
         maxAsyncRequests: 16,
-        maxInitialRequests: 16,
+        maxInitialRequests: 5,
         minChunks: 1,
-        minSize: 30000,
-        maxSize: 200000,
+        minSize: 50000,
+        maxSize: 245000,
         automaticNameDelimiter: "~",
         name: true,
         cacheGroups: {
