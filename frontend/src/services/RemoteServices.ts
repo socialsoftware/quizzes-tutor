@@ -7,25 +7,20 @@ import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
 import Topic from "@/models/management/Topic";
-import { CourseExecution } from "@/models/management/CourseExecution";
 import { Student } from "@/models/management/Student";
 import Assessment from "@/models/management/Assessment";
-
-interface AuthResponse {
-  token: string;
-  userRole: string;
-}
+import AuthDto from "@/models/auth/AuthDto";
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
-  static async authenticate(code: string): Promise<AuthResponse> {
+  static async authenticate(code: string): Promise<AuthDto> {
     return httpClient
       .post("/auth/fenix", { code: code })
       .then(response => {
-        return response.data as AuthResponse;
+        return new AuthDto(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -367,7 +362,7 @@ export default class RemoteServices {
     }
   }
 
-  static async getCourseExecutions(): Promise<CourseExecution[]> {
+  /*  static async getCourseExecutions(): Promise<CourseExecution[]> {
     return httpClient
       .get("/courses/executions", {
         headers: {
@@ -382,7 +377,7 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-  }
+  }*/
 
   static async getCourseExecutionStudents(year: number) {
     return httpClient

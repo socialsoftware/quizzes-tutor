@@ -19,17 +19,19 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     // Prevent the same error from cluttering the logs
     private List errorList = new ArrayList<>();
 
+    @ExceptionHandler(TutorException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public TutorException tutorException(TutorException e) {
+        return e;
+    }
+
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Exception exception(Exception e) {
-        if (e instanceof TutorException) {
-            return e;
-        } else {
-            if (!errorList.contains(e.getMessage())) {
-                errorList.add(e.getMessage());
-                e.printStackTrace();
-            }
-            return null;
+        if (!errorList.contains(e.getMessage())) {
+            errorList.add(e.getMessage());
+            e.printStackTrace();
         }
+        return null;
     }
 }

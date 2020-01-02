@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -23,7 +24,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
@@ -53,7 +56,7 @@ public class AuthService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AuthenticationResponseDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
+    public AuthDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
 
         ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         FenixEduClientImpl client;
@@ -81,10 +84,10 @@ public class AuthService {
         JsonObject coursesJson = client.getPersonCourses(userDetails.getAuthorization());
 
         JsonArray attendingCoursesJson = coursesJson.get("attending").getAsJsonArray();
-        Set<CourseExecution> attendingCourses = getCourseExecutions(attendingCoursesJson);
+        Set<CourseExecution> attendingCourses = getActiveCourses(attendingCoursesJson);
 
         JsonArray teachingCoursesJson = coursesJson.get("teaching").getAsJsonArray();
-        Set<CourseExecution> teachingCourses = getCourseExecutions(teachingCoursesJson);
+        Set<CourseExecution> teachingCourses = getActiveCourses(teachingCoursesJson);
 
         User user = this.userService.findByUsername(username);
 
@@ -102,25 +105,40 @@ public class AuthService {
         if (!attendingCourses.isEmpty()) {
             User student = user;
             attendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
-            return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         // Update teacher courses
         if (!teachingCourses.isEmpty()) {
             User teacher = user;
             teachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
-            return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, getOtherCourses(teachingCoursesJson) ));
+        }
+
+        if (user != null && user.getRole() == User.Role.ADMIN) {
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
-    private Set<CourseExecution> getCourseExecutions(JsonArray attendingCoursesJson) {
+    private Set<CourseExecution> getActiveCourses(JsonArray coursesJson) {
         Set<CourseExecution> courses = new HashSet<>();
-        for (JsonElement courseJson : attendingCoursesJson) {
+        for (JsonElement courseJson : coursesJson) {
             CourseExecution course = courseExecutionRepository.findByAcronym(courseJson.getAsJsonObject().get("acronym").getAsString());
             if (course != null) {
                 courses.add(course);
+            }
+        }
+        return courses;
+    }
+
+    private  List<CourseDto>  getOtherCourses(JsonArray coursesJson) {
+        List<CourseDto> courses = new ArrayList<>();
+        for (JsonElement courseJson : coursesJson) {
+            CourseExecution course = courseExecutionRepository.findByAcronym(courseJson.getAsJsonObject().get("acronym").getAsString());
+            if (course == null) {
+                courses.add(new CourseDto(courseJson.getAsJsonObject().get("name").getAsString(), courseJson.getAsJsonObject().get("acronym").getAsString(), courseJson.getAsJsonObject().get("academicTerm").getAsString()));
             }
         }
         return courses;

@@ -5,12 +5,11 @@ import Store from "./store";
 import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
 
-import ManagementView from "@/views/management/ManagementView.vue";
-import QuestionsView from "./views/management/questions/QuestionsView.vue";
-import TopicsView from "./views/management/TopicsView.vue";
-import StudentStatsView from "./views/StudentStatsView.vue";
-import QuizzesView from "./views/management/quizzes/QuizzesView.vue";
-import StudentsView from "./views/management/students/StudentsView.vue";
+import ManagementView from "@/views/teacher/ManagementView.vue";
+import QuestionsView from "./views/teacher/questions/QuestionsView.vue";
+import TopicsView from "./views/teacher/TopicsView.vue";
+import QuizzesView from "./views/teacher/quizzes/QuizzesView.vue";
+import StudentsView from "./views/teacher/students/StudentsView.vue";
 import StudentView from "@/views/student/StudentView.vue";
 import AvailableQuizzesView from "./views/student/AvailableQuizzesView.vue";
 import SolvedQuizzesView from "./views/student/SolvedQuizzesView.vue";
@@ -18,10 +17,10 @@ import QuizView from "./views/student/QuizView.vue";
 import ResultsView from "./views/student/ResultsView.vue";
 import StatsView from "./views/student/StatsView.vue";
 
-import AdminManagementView from "./views/AdminManagementView.vue";
+import AdminManagementView from "./views/admin/AdminManagementView.vue";
 import NotFoundView from "./views/NotFoundView.vue";
-import ImpExpView from "@/views/management/impexp/ImpExpView.vue";
-import AssessmentsView from "@/views/management/assessments/AssessmentsView.vue";
+import ImpExpView from "@/views/teacher/impexp/ImpExpView.vue";
+import AssessmentsView from "@/views/teacher/assessments/AssessmentsView.vue";
 import CreateQuizzesView from "@/views/student/CreateQuizzesView.vue";
 
 Vue.use(Router);
@@ -102,15 +101,6 @@ let router = new Router({
           }
         }
       ]
-    },
-    {
-      path: "/students-stats",
-      name: "students-stats",
-      component: StudentStatsView,
-      meta: {
-        title: "Software Architecture - StudentsStats",
-        requiredAuth: "Teacher"
-      }
     },
     {
       path: "/student",

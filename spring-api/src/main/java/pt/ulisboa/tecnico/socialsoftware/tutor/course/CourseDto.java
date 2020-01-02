@@ -5,10 +5,18 @@ import java.io.Serializable;
 public class CourseDto implements Serializable {
     private String name;
     private String acronym;
+    private String academicTerm;
 
     public CourseDto(CourseExecution courseExecution) {
         this.name = courseExecution.getCourse().getName();
         this.acronym = courseExecution.getAcronym();
+        this.academicTerm = courseExecution.getAcademicTerm();
+    }
+
+    public CourseDto(String name, String acronym, String academicTerm) {
+        this.name = name;
+        this.acronym = acronym;
+        this.academicTerm = academicTerm;
     }
 
     public String getName() {
@@ -27,4 +35,11 @@ public class CourseDto implements Serializable {
         this.acronym = acronym;
     }
 
+    public String getAcademicTerm() {
+        return academicTerm;
+    }
+
+    public void setAcademicTerm(String academicTerm) {
+        this.academicTerm = academicTerm;
+    }
 }

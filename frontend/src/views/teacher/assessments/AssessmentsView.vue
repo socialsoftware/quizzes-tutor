@@ -20,8 +20,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
 import Assessment from "@/models/management/Assessment";
-import AssessmentForm from "@/views/management/assessments/AssessmentForm.vue";
-import AssessmentList from "@/views/management/assessments/AssessmentList.vue";
+import AssessmentForm from "@/views/teacher/assessments/AssessmentForm.vue";
+import AssessmentList from "@/views/teacher/assessments/AssessmentList.vue";
 
 @Component({
   components: {
