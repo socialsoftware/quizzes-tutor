@@ -112,7 +112,7 @@ public class AuthService {
             return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
-        throw new TutorException(USER_NOT_ENROLLED);
+        throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
     private Set<CourseExecution> getCourseExecutions(JsonArray attendingCoursesJson) {

@@ -17,7 +17,7 @@ interface AuthResponse {
 }
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 30000;
+httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
@@ -524,13 +524,15 @@ export default class RemoteServices {
   static async errorMessage(error: any): Promise<string> {
     if (error.message === "Network Error") {
       return "Unable to connect to server";
+    } else if (error.message.split(" ")[0] === "timeout") {
+      return "Request timeout - Server took too long to respond";
     } else if (error.response) {
       return error.response.data.message;
     } else if (error.message === "Request failed with status code 403") {
       Store.dispatch("logout");
       return "Unauthorized access or Expired token";
     } else {
-      return "Undefined Error";
+      return "Unknown Error - Contact admin";
     }
   }
 }
