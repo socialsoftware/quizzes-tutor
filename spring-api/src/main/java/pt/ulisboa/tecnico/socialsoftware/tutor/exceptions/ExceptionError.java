@@ -33,6 +33,7 @@ public enum ExceptionError {
 
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     QUIZ_NOT_CONSISTENT("Field %s of quiz is not consistent"),
+    USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
 
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me
@@ -41,8 +42,7 @@ public enum ExceptionError {
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
-    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
-    USER_NOT_ENROLLED("Only Software Architecture students can access this page");
+    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix");
 
     public final String label;
 

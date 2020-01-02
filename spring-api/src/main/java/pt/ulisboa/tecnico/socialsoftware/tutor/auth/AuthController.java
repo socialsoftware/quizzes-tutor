@@ -14,7 +14,7 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/fenix")
-    public AuthenticationResponseDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
+    public AuthDto fenixAuth(@RequestBody FenixAuthenticationDto data) {
         return this.authService.fenixAuth(data);
     }
 

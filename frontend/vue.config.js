@@ -24,8 +24,8 @@ module.exports = {
       .set("@models", path.join(__dirname, "src/models"))
       .set("@plugins", path.join(__dirname, "src/plugins"))
       .set("@services", path.join(__dirname, "src/services"))
-      .set("@view-components", path.join(__dirname, "src/view-components"))
-      .set("@styles", path.join(__dirname, "src/styles"))
+      .set("@components", path.join(__dirname, "src/components"))
+      .set("@css", path.join(__dirname, "src/css"))
       .set("@views", path.join(__dirname, "src/views"));
 
     const splitOptions = config.optimization.get("splitChunks");

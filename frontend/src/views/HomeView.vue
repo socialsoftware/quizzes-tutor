@@ -9,7 +9,7 @@
 
     <div class="bottom-row-container">
       <img
-        :src="require('../assets/ist_optimized.png')"
+        :src="require('../assets/img/ist_optimized.png')"
         class="logo"
         alt="Técnico Logo"
       />
@@ -34,7 +34,7 @@
         </a>
       </div>
       <img
-        :src="require('../assets/impress_optimized.png')"
+        :src="require('../assets/img/impress_optimized.png')"
         class="logo"
         alt="IMPRESS Logo"
       />

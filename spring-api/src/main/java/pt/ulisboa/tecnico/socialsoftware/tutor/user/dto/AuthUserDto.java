@@ -11,13 +11,22 @@ public class AuthUserDto implements Serializable {
     private String name;
     private String username;
     private User.Role role;
-    private List<CourseDto> courses;
+    private List<CourseDto> activeCourses;
+    private List<CourseDto> otherCourses;
 
     public AuthUserDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();
         this.role = user.getRole();
-        this.courses = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+        this.activeCourses = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+    }
+
+    public AuthUserDto(User user, List<CourseDto> otherCourses) {
+        this.name = user.getName();
+        this.username = user.getUsername();
+        this.role = user.getRole();
+        this.activeCourses = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+        this.otherCourses = otherCourses;
     }
 
     public String getName() {
@@ -44,11 +53,19 @@ public class AuthUserDto implements Serializable {
         this.role = role;
     }
 
-    public List<CourseDto> getCourses() {
-        return courses;
+    public List<CourseDto> getActiveCourses() {
+        return activeCourses;
     }
 
-    public void setCourses(List<CourseDto> courses) {
-        this.courses = courses;
+    public void setActiveCourses(List<CourseDto> activeCourses) {
+        this.activeCourses = activeCourses;
+    }
+
+    public List<CourseDto> getOtherCourses() {
+        return otherCourses;
+    }
+
+    public void setOtherCourses(List<CourseDto> otherCourses) {
+        this.otherCourses = otherCourses;
     }
 }

@@ -14,13 +14,13 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import axios from "axios";
-import TopBar from "@/view-components/TopBar.vue";
-import ErrorMessage from "@/view-components/ErrorMessage.vue";
-import Loading from "@/view-components/Loading.vue";
-import "@/styles/_global.scss";
-import "@/styles/_scrollbar.scss";
-import "@/styles/_question.scss";
-import "@/styles/bootstrap-social.css";
+import TopBar from "@/components/TopBar.vue";
+import ErrorMessage from "@/components/ErrorMessage.vue";
+import Loading from "@/components/Loading.vue";
+import "@/assets/css/_global.scss";
+import "@/assets/css/_scrollbar.scss";
+import "@/assets/css/_question.scss";
+import "@/assets/css/bootstrap-social.css";
 require("typeface-roboto");
 
 @Component({
@@ -69,7 +69,7 @@ export default class App extends Vue {
   width: 100%;
   height: 100%;
   z-index: -1;
-  background-image: url("./assets/background_optimized.webp");
+  background-image: url("assets/img/background_optimized.webp");
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: 0 0;

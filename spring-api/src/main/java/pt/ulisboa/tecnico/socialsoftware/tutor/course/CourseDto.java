@@ -8,7 +8,6 @@ public class CourseDto implements Serializable {
     private String academicTerm;
 
     public CourseDto() {
-
     }
 
     public CourseDto(Course course) {
@@ -19,6 +18,13 @@ public class CourseDto implements Serializable {
         this.name = courseExecution.getCourse().getName();
         this.acronym = courseExecution.getAcronym();
         this.academicTerm = courseExecution.getAcademicTerm();
+
+    }
+
+    public CourseDto(String name, String acronym, String academicTerm) {
+        this.name = name;
+        this.acronym = acronym;
+        this.academicTerm = academicTerm;
     }
 
     public String getName() {

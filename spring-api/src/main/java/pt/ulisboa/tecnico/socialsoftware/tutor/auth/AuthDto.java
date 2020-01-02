@@ -4,11 +4,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.io.Serializable;
 
-public class AuthenticationResponseDto implements Serializable {
+public class AuthDto implements Serializable {
     private String token;
     private AuthUserDto user;
 
-    public AuthenticationResponseDto(String token, AuthUserDto user) {
+    public AuthDto(String token, AuthUserDto user) {
         this.token = token;
         this.user = user;
     }

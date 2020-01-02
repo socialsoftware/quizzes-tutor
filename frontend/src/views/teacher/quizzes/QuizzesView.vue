@@ -20,8 +20,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
 import { Quiz } from "@/models/management/Quiz";
-import QuizForm from "@/views/management/quizzes/QuizForm.vue";
-import QuizList from "@/views/management/quizzes/QuizList.vue";
+import QuizForm from "@/views/teacher/quizzes/QuizForm.vue";
+import QuizList from "@/views/teacher/quizzes/QuizList.vue";
 
 @Component({
   components: {

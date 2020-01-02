@@ -1,18 +1,17 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import RemoteServices from "@/services/RemoteServices";
+import AuthDto from "@/models/auth/AuthDto";
+import Course from "@/models/auth/Course";
+import User from "@/models/auth/User";
 
 interface State {
   token: string;
-  userRole: string;
+  user: User | null;
+  currentCourse: Course | null;
   error: boolean;
   errorMessage: string;
   loading: boolean;
-}
-
-interface AuthResponse {
-  token: string;
-  userRole: string;
 }
 
 const state: State = {
@@ -20,7 +19,8 @@ const state: State = {
   // token: localStorage.getItem("token") || "",
   // userRole: localStorage.getItem("userRole") || "",
   token: "",
-  userRole: "",
+  user: null,
+  currentCourse: null,
   error: false,
   errorMessage: "",
   loading: false
@@ -32,13 +32,14 @@ Vue.config.devtools = true;
 export default new Vuex.Store({
   state: state,
   mutations: {
-    login(state, authResponse: AuthResponse) {
+    login(state, authResponse: AuthDto) {
       state.token = authResponse.token;
-      state.userRole = authResponse.userRole;
+      state.user = authResponse.user;
     },
     logout(state) {
       state.token = "";
-      state.userRole = "";
+      state.user = null;
+      state.currentCourse = null;
     },
     error(state, errorMessage: string) {
       state.error = true;
@@ -73,7 +74,7 @@ export default new Vuex.Store({
         const authResponse = await RemoteServices.authenticate(code);
         commit("login", authResponse);
         localStorage.setItem("token", authResponse.token);
-        localStorage.setItem("userRole", authResponse.userRole);
+        localStorage.setItem("userRole", authResponse.user.role);
       } catch (error) {
         commit("logout");
         commit("error", error);
@@ -93,22 +94,30 @@ export default new Vuex.Store({
       return !!state.token;
     },
     isAdmin(state): boolean {
-      return !!state.token && state.userRole == "ADMIN";
+      return !!state.token && state.user !== null && state.user.role == "ADMIN";
     },
     isTeacher(state): boolean {
       return (
         !!state.token &&
-        (state.userRole == "TEACHER" || state.userRole == "ADMIN")
+        state.user !== null &&
+        (state.user.role == "TEACHER" || state.user.role == "ADMIN")
       );
     },
     isStudent(state): boolean {
       return (
         !!state.token &&
-        (state.userRole == "STUDENT" || state.userRole == "ADMIN")
+        state.user !== null &&
+        (state.user.role == "STUDENT" || state.user.role == "ADMIN")
       );
     },
     getToken(state): string {
       return state.token;
+    },
+    getUser(state): User | null {
+      return state.user;
+    },
+    getCurrentCourse(state): Course | null {
+      return state.currentCourse;
     },
     getError(state): boolean {
       return state.error;
