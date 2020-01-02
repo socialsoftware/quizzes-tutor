@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-    @Query("select u from Courses u where u.name = :name")
+    @Query("select u from Course u where u.name = :name")
     Course findByName(String name);
 }

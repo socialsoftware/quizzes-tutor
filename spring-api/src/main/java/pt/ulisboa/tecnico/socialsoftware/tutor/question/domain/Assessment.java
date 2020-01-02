@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -28,6 +29,10 @@ public class Assessment {
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "course_execution_id")
+    private CourseExecution courseExecution;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();

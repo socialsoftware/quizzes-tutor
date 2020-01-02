@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
@@ -7,10 +8,11 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "Courses")
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_NAME_IS_EMPTY;
+
+@Entity
 @Table(name = "courses")
 public class Course {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -26,7 +28,14 @@ public class Course {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY)
     private Set<Topic> topics = new HashSet<>();
 
-    public Course() {
+    public Course() {}
+
+    public Course(String name) {
+        if (name.trim().isEmpty()) {
+            throw new TutorException(COURSE_NAME_IS_EMPTY);
+        }
+
+        this.name = name;
     }
 
     public Integer getId() {
@@ -67,5 +76,9 @@ public class Course {
 
     public void setTopics(Set<Topic> topics) {
         this.topics = topics;
+    }
+
+    public void addCourseExecution(CourseExecution courseExecution) {
+        courseExecutions.add(courseExecution);
     }
 }

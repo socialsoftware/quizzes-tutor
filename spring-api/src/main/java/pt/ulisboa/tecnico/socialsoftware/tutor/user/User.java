@@ -58,7 +58,6 @@ public class User implements UserDetails {
         this.creationDate = LocalDateTime.now();
     }
 
-
     public Integer getId() {
         return id;
     }

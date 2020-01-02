@@ -12,6 +12,10 @@ public enum ExceptionError {
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
 
+    COURSE_NOT_FOUND("Course not found with name %s"),
+    COURSE_NAME_IS_EMPTY("The course name is empty"),
+    COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
+    COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY("The course execution academic term is empty"),
     USERNAME_NOT_FOUND("Username %s not found"),
 
     QUIZ_USER_MISMATCH("Quiz %s is not assigned to student %s"),
