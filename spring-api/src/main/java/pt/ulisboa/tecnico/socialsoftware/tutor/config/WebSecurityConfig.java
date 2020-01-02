@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(securedEnabled = true)
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired

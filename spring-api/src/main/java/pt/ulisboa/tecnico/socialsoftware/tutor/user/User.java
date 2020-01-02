@@ -30,6 +30,7 @@ public class User implements UserDetails {
     private String username;
     private String name;
     private Integer year;
+    private String courseExecutionAcronyms;
 
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes ;
@@ -97,6 +98,14 @@ public class User implements UserDetails {
 
     public void setYear(Integer year) {
         this.year = year;
+    }
+
+    public String getCourseExecutionAcronyms() {
+        return courseExecutionAcronyms;
+    }
+
+    public void setCourseExecutionAcronyms(String courseExecutionAcronyms) {
+        this.courseExecutionAcronyms = courseExecutionAcronyms;
     }
 
     public Role getRole() {

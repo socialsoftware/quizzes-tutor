@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -16,6 +17,8 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Calendar;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.DUPLICATE_USER;
 
@@ -60,6 +63,20 @@ public class UserService {
         entityManager.persist(user);
         logService.create(user, LocalDateTime.now(), "LOGIN");
         return user;
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String getCourseExecutionAcronyms(String username) {
+        User user =  this.userRepository.findByUsername(username);
+
+        return user.getCourseExecutionAcronyms();
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<CourseDto> getCourseExecutions(String username) {
+        User user =  this.userRepository.findByUsername(username);
+
+        return user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
     }
 
     public String exportUsers() {
