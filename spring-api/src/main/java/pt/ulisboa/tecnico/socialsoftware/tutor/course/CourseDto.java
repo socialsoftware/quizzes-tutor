@@ -6,9 +6,9 @@ public class CourseDto implements Serializable {
     private String name;
     private String acronym;
 
-    public CourseDto(CourseExecution course) {
-        this.name = course.getName();
-        this.acronym = course.getAcronym();
+    public CourseDto(CourseExecution courseExecution) {
+        this.name = courseExecution.getCourse().getName();
+        this.acronym = courseExecution.getAcronym();
     }
 
     public String getName() {

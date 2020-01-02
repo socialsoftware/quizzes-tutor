@@ -181,6 +181,8 @@ public class User implements UserDetails {
     }
 
 
+
+
     public void increaseNumberOfTeacherQuizzes() {
         if (numberOfTeacherQuizzes == null) this.calculateNumbers();
         this.numberOfTeacherQuizzes += 1;

@@ -17,7 +17,7 @@ public class AuthUserDto implements Serializable {
         this.name = user.getName();
         this.username = user.getUsername();
         this.role = user.getRole();
-        this.courses = user.getCourses().stream().map(CourseDto::new).collect(Collectors.toList());
+        this.courses = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
     }
 
     public String getName() {

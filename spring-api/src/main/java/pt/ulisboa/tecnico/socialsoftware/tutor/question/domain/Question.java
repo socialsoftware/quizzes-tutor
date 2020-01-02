@@ -192,6 +192,14 @@ public class Question {
         this.creationDate = creationDate;
     }
 
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
+    }
+
     public void addOption(Option option) {
         options.add(option);
     }

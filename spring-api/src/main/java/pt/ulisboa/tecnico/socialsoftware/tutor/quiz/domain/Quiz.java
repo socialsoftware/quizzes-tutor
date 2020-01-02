@@ -190,6 +190,18 @@ public class Quiz {
     this.quizAnswers = quizAnswers;
     }
 
+    public boolean isScramble() {
+        return scramble;
+    }
+
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
+    }
+
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+    }
+
     public void addQuizQuestion(QuizQuestion quizQuestion) {
         this.quizQuestions.add(quizQuestion);
     }

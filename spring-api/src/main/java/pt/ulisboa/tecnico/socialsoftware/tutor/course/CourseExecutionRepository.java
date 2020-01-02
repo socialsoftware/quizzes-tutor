@@ -8,6 +8,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 @Transactional
 public interface CourseExecutionRepository extends JpaRepository<CourseExecution, Integer> {
-    @Query("select u from CourseExecutions u where u.acronym = :acronym")
+    @Query("select u from CourseExecution u where u.acronym = :acronym")
     CourseExecution findByAcronym(String acronym);
 }

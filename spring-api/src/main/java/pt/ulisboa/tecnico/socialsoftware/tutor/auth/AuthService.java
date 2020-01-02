@@ -101,14 +101,14 @@ public class AuthService {
         // Update student courses
         if (!attendingCourses.isEmpty()) {
             User student = user;
-            attendingCourses.stream().filter(courseExecution -> !student.getCourses().contains(courseExecution)).forEach(user::addCourse);
+            attendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
             return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         // Update teacher courses
         if (!teachingCourses.isEmpty()) {
             User teacher = user;
-            teachingCourses.stream().filter(courseExecution -> !teacher.getCourses().contains(courseExecution)).forEach(user::addCourse);
+            teachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
             return new AuthenticationResponseDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 

@@ -60,4 +60,12 @@ public class Course {
     public void setQuestions(Set<Question> questions) {
         this.questions = questions;
     }
+
+    public Set<Topic> getTopics() {
+        return topics;
+    }
+
+    public void setTopics(Set<Topic> topics) {
+        this.topics = topics;
+    }
 }

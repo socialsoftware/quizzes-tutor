@@ -7,8 +7,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity(name = "CourseExecutions")
-@Table(name = "course-executions")
+@Entity
+@Table(name = "course_executions")
 public class CourseExecution {
 
     @Id
@@ -18,7 +18,7 @@ public class CourseExecution {
     private String acronym;
     private String academicTerm;
 
-    @ManyToMany(mappedBy = "courseExecution")
+    @ManyToMany(mappedBy = "courseExecutions")
     private Set<User> users;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY)
@@ -67,5 +67,21 @@ public class CourseExecution {
 
     public void setAcademicTerm(String academicTerm) {
         this.academicTerm = academicTerm;
+    }
+
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(Set<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
+    public Course getCourse() {
+        return course;
+    }
+
+    public void setCourse(Course course) {
+        this.course = course;
     }
 }
