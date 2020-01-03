@@ -238,7 +238,15 @@ public class User implements UserDetails {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", year=" + year +
+                ", courseExecutionAcronyms='" + courseExecutionAcronyms + '\'' +
+                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", numberOfCorrectAnswers=" + numberOfCorrectAnswers +
+                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", creationDate=" + creationDate +
+                ", courseExecutions=" + courseExecutions +
                 '}';
     }
 

@@ -15,7 +15,7 @@ import User from "@/models/auth/User";
 @Component
 export default class HomeView extends Vue {
   chosenCourse: Course | null = null;
-  courseList!: Course[];
+  courseList: Course[] = [];
 
   async created() {
     await this.$store.dispatch("loading");

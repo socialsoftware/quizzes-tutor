@@ -7,39 +7,23 @@ import org.fenixedu.sdk.ApplicationConfiguration;
 import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.FENIX_CONFIGURATION_ERROR;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.FENIX_ERROR;
 
-@Component
+
 public class FenixEduInterface {
-    @Value("${base.url}")
-    private String baseUrl;
-
-    @Value("${oauth.consumer.key}")
-    private String oauthConsumerKey;
-
-    @Value("${oauth.consumer.secret}")
-    private String oauthConsumerSecret;
-
-    @Value("${callback.url}")
-    private String callbackUrl;
-
     private FenixEduClientImpl client;
     private FenixEduUserDetails userDetails;
     private JsonObject person;
     private JsonObject courses;
 
-    @PostConstruct
-    public void configuration() {
+    public FenixEduInterface(String baseUrl, String oauthConsumerKey, String oauthConsumerSecret, String callbackUrl) {
         ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         try {
             client = new FenixEduClientImpl(config);
@@ -64,7 +48,7 @@ public class FenixEduInterface {
     }
 
     public String getPersonUsername() {
-        return String.valueOf(person.get("name")).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get("username")).replaceAll("^\"|\"$", "");
     }
 
     private JsonObject getPersonCourses() {
