@@ -1,8 +1,9 @@
 import axios from "axios";
+import Store from "@/store";
 import Question from "@/models/management/Question";
 import { Quiz } from "@/models/management/Quiz";
+import CourseExecution from "@/models/auth/CourseExecution";
 import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
-import Store from "../store";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
 import SolvedQuiz from "@/models/statement/SolvedQuiz";
@@ -360,9 +361,9 @@ export default class RemoteServices {
     }
   }
 
-  /*  static async getCourseExecutions(): Promise<CourseExecution[]> {
+  static async getCourseExecutions(): Promise<CourseExecution[]> {
     return httpClient
-      .get("/courses/executions", {
+      .get("/courses/" + Store.getters.getCurrentCourse.name + "/executions", {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -375,15 +376,24 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-  }*/
+  }
 
-  static async getCourseExecutionStudents(year: number) {
+  static async getCourseExecutionStudents(academicTerm: string) {
     return httpClient
-      .get("/courses/executions/" + year + "/students", {
-        headers: {
-          Authorization: Store.getters.getToken
+      .get(
+        "/courses/" +
+          Store.getters.getCurrentCourse.name +
+          "/executions/" +
+          Store.getters.getCurrentCourse.acronym +
+          "/" +
+          academicTerm.replace("/", "_") +
+          "/students",
+        {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
         }
-      })
+      )
       .then(response => {
         return response.data.map((student: any) => {
           return new Student(student);

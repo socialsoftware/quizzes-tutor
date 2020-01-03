@@ -5,11 +5,11 @@
         <v-row align="center">
           <v-col class="d-flex" cols="12" sm="6">
             <v-select
-              v-model="year"
+              v-model="academicTerm"
               :items="courseExecutions"
-              item-text="year"
-              item-value="year"
-              label="Year"
+              item-text="academicTerm"
+              item-value="academicTerm"
+              label="Semestre"
             />
           </v-col>
         </v-row>
@@ -54,7 +54,7 @@ import { Student } from "@/models/management/Student";
 
 @Component
 export default class StudentsView extends Vue {
-  year: number | null = null;
+  academicTerm: string | null = null;
   courseExecutions: CourseExecution[] = [];
   students: Student[] = [];
   search: string = "";
@@ -102,20 +102,20 @@ export default class StudentsView extends Vue {
     await this.$store.dispatch("loading");
     try {
       this.courseExecutions = await RemoteServices.getCourseExecutions();
-      this.year = this.courseExecutions[0].year;
+      this.academicTerm = this.courseExecutions[0].academicTerm;
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
     await this.$store.dispatch("clearLoading");
   }
 
-  @Watch("year")
-  async onYearChange() {
+  @Watch("academicTerm")
+  async onAcademicTermChange() {
     await this.$store.dispatch("loading");
     try {
-      if (this.year) {
+      if (this.academicTerm) {
         this.students = await RemoteServices.getCourseExecutionStudents(
-          this.year
+          this.academicTerm
         );
       }
     } catch (error) {

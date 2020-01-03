@@ -34,9 +34,9 @@ public class CourseController {
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#acronym, 'ACCESS'))")
-    @GetMapping("/{name}/executions/{acronym}/{academicterm}")
+    @GetMapping("/{name}/executions/{acronym}/{academicterm}/students")
     public List<StudentDto> getCourseStudents(@PathVariable String name,@PathVariable String acronym,@PathVariable String academicterm) {
-        return courseService.courseStudents(name, acronym, academicterm);
+        return courseService.courseStudents(name, acronym, academicterm.replace("_", "/"));
     }
 
 
