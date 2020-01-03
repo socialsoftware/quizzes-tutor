@@ -15,9 +15,6 @@ interface State {
 }
 
 const state: State = {
-  // TODO SWAP ME
-  // token: localStorage.getItem("token") || "",
-  // userRole: localStorage.getItem("userRole") || "",
   token: "",
   user: null,
   currentCourse: null,

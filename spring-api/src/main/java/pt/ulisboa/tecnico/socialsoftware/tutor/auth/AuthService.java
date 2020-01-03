@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -17,11 +15,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USER_NOT_ENROLLED;
 
 @Service
 public class AuthService {
@@ -41,30 +39,30 @@ public class AuthService {
         List<CourseDto> attendingCourses = client.getPersonAttendingCourses();
         List<CourseDto> teachingCourses = client.getPersonTeachingCourses();
 
-        Set<CourseExecution> activeAttendingCourses = getActiveCourses(attendingCourses);
-        Set<CourseExecution> activeTeachingCourses = getActiveCourses(teachingCourses);
+        List<CourseExecution> activeAttendingCourses = getActiveCourses(attendingCourses);
+        List<CourseExecution> activeTeachingCourses = getActiveCourses(teachingCourses);
 
         User user = this.userService.findByUsername(username);
 
         // If user is student not in db
-        if (user == null && !activeAttendingCourses.isEmpty()) {
+        if (user == null && !attendingCourses.isEmpty()) {
             user = this.userService.createUser(client.getPersonName(), username, User.Role.STUDENT);
         }
 
         // If user is teacher not in db
-        if (user == null && !activeTeachingCourses.isEmpty()) {
+        if (user == null && !teachingCourses.isEmpty()) {
             user = this.userService.createUser(client.getPersonName(), username, User.Role.TEACHER);
         }
 
         // Update student courses
-        if (!activeAttendingCourses.isEmpty()) {
+        if (!attendingCourses.isEmpty()) {
             User student = user;
             activeAttendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         // Update teacher courses
-        if (!activeTeachingCourses.isEmpty()) {
+        if (!teachingCourses.isEmpty()) {
             User teacher = user;
             activeTeachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
@@ -77,17 +75,18 @@ public class AuthService {
         }
 
         if (user != null && user.getRole() == User.Role.ADMIN) {
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList())));
         }
 
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
-    private Set<CourseExecution> getActiveCourses(List<CourseDto> courses) {
+    private List<CourseExecution> getActiveCourses(List<CourseDto> courses) {
         return courses.stream()
                 .map(courseDto -> courseExecutionRepository.findByAcronym(courseDto.getAcronym()))
                 .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+
     }
 
     private List<CourseDto> getOtherCourses(List<CourseDto> courses) {
