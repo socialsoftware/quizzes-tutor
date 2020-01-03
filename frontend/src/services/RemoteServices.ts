@@ -17,14 +17,12 @@ httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
 
 export default class RemoteServices {
   static async authenticate(code: string): Promise<AuthDto> {
-    return httpClient
-      .post("/auth/fenix", { code: code })
-      .then(response => {
-        return new AuthDto(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+    return httpClient.post("/auth/fenix", { code: code }).then(response => {
+      return new AuthDto(response.data);
+    });
+    // .catch(async error => {
+    //   throw Error(await this.errorMessage(error));
+    // });
   }
 
   static async getUserStats(): Promise<StudentStats> {

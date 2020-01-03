@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <h1 id="home-title" class="display-2 font-weight-thin mb-3">
-      Software Architecture
+      {{ name }}
     </h1>
     <v-btn v-if="!isLoggedIn" :href="fenix_url" depressed color="primary"
       >Log in</v-btn
@@ -55,6 +55,13 @@ export default class HomeView extends Vue {
     process.env.VUE_APP_FENIX_CLIENT_ID +
     "&redirect_uri=" +
     process.env.VUE_APP_FENIX_REDIRECT_URI;
+  name: string = "Quizzer";
+
+  created() {
+    if (this.isLoggedIn) {
+      this.name = this.$store.getters.getCurrentCourse.name;
+    }
+  }
 
   get isLoggedIn() {
     return Store.state.token;

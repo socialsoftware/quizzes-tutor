@@ -1,5 +1,6 @@
 <template>
-  <v-container fill-height>
+  <div class="container">
+    <h2>Create Random Quiz</h2>
     <v-container class="create-buttons">
       <v-container>
         <p>Assessment</p>
@@ -50,7 +51,7 @@
         </v-btn>
       </v-container>
     </v-container>
-  </v-container>
+  </div>
 </template>
 
 <script lang="ts">
@@ -88,7 +89,7 @@ export default class CreateQuizzesView extends Vue {
 
 <style lang="scss">
 .create-buttons {
-  width: 50% !important;
+  width: 80% !important;
   background-color: white;
   border-width: 10px;
   border-style: solid;

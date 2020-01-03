@@ -1,16 +1,10 @@
 <template>
-  <div>
-    <p>Choose course {{ courseList[0].acronym }}</p>
-    <div v-for="course in courseList" :key="course.acronym">
-      {{ course.name + course.acronym }}
-    </div>
-  </div>
+  <div></div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Course from "@/models/auth/Course";
-import User from "@/models/auth/User";
 
 @Component
 export default class HomeView extends Vue {
@@ -24,9 +18,7 @@ export default class HomeView extends Vue {
       await this.$router.push({ name: "home" });
     } else {
       await this.$store.dispatch("login", this.$route.query.code);
-      this.courseList = await this.$store.getters.getUser.otherCourses;
-      console.log(this.courseList);
-      // await this.$router.push({ name: "home" });
+      await this.$router.push({ name: "course" });
     }
     await this.$store.dispatch("clearLoading");
   }

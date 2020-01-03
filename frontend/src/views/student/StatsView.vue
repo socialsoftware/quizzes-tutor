@@ -1,58 +1,61 @@
 <template>
-  <div v-if="stats != null" class="stats-container">
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalQuizzes" />
+  <div class="container">
+    <h2>Statistics</h2>
+    <div v-if="stats != null" class="stats-container">
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.totalQuizzes" />
+        </div>
+        <div class="project-name">
+          <p>Total Quizzes Solved</p>
+        </div>
       </div>
-      <div class="project-name">
-        <p>Total Quizzes Solved</p>
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.totalAnswers" />
+        </div>
+        <div class="project-name">
+          <p>Total Questions Solved</p>
+        </div>
       </div>
-    </div>
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalAnswers" />
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.totalUniqueQuestions" />
+        </div>
+        <div class="project-name">
+          <p>Unique Questions Solved</p>
+        </div>
       </div>
-      <div class="project-name">
-        <p>Total Questions Solved</p>
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.correctAnswers">%</animated-number>
+        </div>
+        <div class="project-name">
+          <p>Total Correct Answers</p>
+        </div>
       </div>
-    </div>
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.totalUniqueQuestions" />
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number :number="stats.improvedCorrectAnswers"
+            >%</animated-number
+          >
+        </div>
+        <div class="project-name">
+          <p>Improved Correct Questions</p>
+        </div>
       </div>
-      <div class="project-name">
-        <p>Unique Questions Solved</p>
-      </div>
-    </div>
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.correctAnswers">%</animated-number>
-      </div>
-      <div class="project-name">
-        <p>Total Correct Answers</p>
-      </div>
-    </div>
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number :number="stats.improvedCorrectAnswers"
-          >%</animated-number
-        >
-      </div>
-      <div class="project-name">
-        <p>Improved Correct Questions</p>
-      </div>
-    </div>
-    <div class="items">
-      <div class="icon-wrapper" ref="number">
-        <animated-number
-          :number="
-            (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
-          "
-          >%</animated-number
-        >
-      </div>
-      <div class="project-name">
-        <p>Percentage of questions seen</p>
+      <div class="items">
+        <div class="icon-wrapper" ref="number">
+          <animated-number
+            :number="
+              (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
+            "
+            >%</animated-number
+          >
+        </div>
+        <div class="project-name">
+          <p>Percentage of questions seen</p>
+        </div>
       </div>
     </div>
   </div>

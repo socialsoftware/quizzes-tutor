@@ -51,6 +51,9 @@ export default new Vuex.Store({
     },
     clearLoading(state) {
       state.loading = false;
+    },
+    currentCourse(state, currentCourse: string) {
+      state.currentCourse = currentCourse;
     }
   },
   actions: {
@@ -84,6 +87,9 @@ export default new Vuex.Store({
         localStorage.removeItem("userRole");
         resolve();
       });
+    },
+    currentCourse({ commit }, currentCourse) {
+      commit("currentCourse", currentCourse);
     }
   },
   getters: {
