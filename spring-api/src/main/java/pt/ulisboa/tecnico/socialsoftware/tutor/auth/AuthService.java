@@ -34,10 +34,10 @@ public class AuthService {
             maxAttempts = 3,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AuthDto fenixAuth(FenixEduInterface client) {
-        String username = client.getPersonUsername();
-        List<CourseDto> attendingCourses = client.getPersonAttendingCourses();
-        List<CourseDto> teachingCourses = client.getPersonTeachingCourses();
+    public AuthDto fenixAuth(FenixEduInterface fenix) {
+        String username = fenix.getPersonUsername();
+        List<CourseDto> attendingCourses = fenix.getPersonAttendingCourses();
+        List<CourseDto> teachingCourses = fenix.getPersonTeachingCourses();
 
         List<CourseExecution> activeAttendingCourses = getActiveCourses(attendingCourses);
         List<CourseExecution> activeTeachingCourses = getActiveCourses(teachingCourses);
@@ -46,12 +46,12 @@ public class AuthService {
 
         // If user is student not in db
         if (user == null && !attendingCourses.isEmpty()) {
-            user = this.userService.createUser(client.getPersonName(), username, User.Role.STUDENT);
+            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.STUDENT);
         }
 
         // If user is teacher not in db
         if (user == null && !teachingCourses.isEmpty()) {
-            user = this.userService.createUser(client.getPersonName(), username, User.Role.TEACHER);
+            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.TEACHER);
         }
 
         // Update student courses
