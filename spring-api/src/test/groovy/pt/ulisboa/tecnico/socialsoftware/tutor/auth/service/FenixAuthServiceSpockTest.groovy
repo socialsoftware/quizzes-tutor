@@ -1,28 +1,45 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
-import com.google.gson.JsonObject
-import net.minidev.json.parser.JSONParser
-import org.fenixedu.sdk.Authorization
-import org.fenixedu.sdk.FenixEduUserDetails
+
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixAuthenticationDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
+
+import java.util.stream.Collectors
 
 @DataJpaTest
 class FenixAuthServiceSpockTest extends Specification {
     public static final String IST12628 = "ist12628"
-    public static final String NAME = "NAME"
+    public static final String USER_NAME = "NAME"
+    public static final String COURSE_NAME = "Arquitecturas de Software"
+    public static final String ACRONYM = "ASof7"
+    public static final String ACADEMIC_TERM = "1º Semestre 2019/2020"
 
     @Autowired
-    AuthService authService
+    private AuthService authService
+
+    @Autowired
+    private UserRepository userRepository
+
+    @Autowired
+    private CourseRepository courseRepository
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository
 
     def client
     def courses
@@ -31,15 +48,15 @@ class FenixAuthServiceSpockTest extends Specification {
         client = Mock(FenixEduInterface)
 
         courses = new ArrayList<>()
-        def courseDto = new CourseDto("Arquitecturas de Software", "ASof7", "1º Semestre 2019/2020")
+        def courseDto = new CourseDto(COURSE_NAME, ACRONYM, ACADEMIC_TERM)
         courses.add(courseDto)
-        courseDto = new CourseDto("Tópicos Avançados em Engenharia de Software", "TAES", "1º Semestre 2019/2020")
+        courseDto = new CourseDto("Tópicos Avançados em Engenharia de Software", "TAES", ACADEMIC_TERM)
         courses.add(courseDto)
     }
 
-    def "teacher auth no user in db"() {
+    def "no teacher has courses create teacher"() {
         given:
-        client.getPersonName() >> NAME
+        client.getPersonName() >> USER_NAME
         client.getPersonUsername() >> IST12628
         client.getPersonAttendingCourses() >> new ArrayList<>()
         client.getPersonTeachingCourses() >> courses
@@ -49,6 +66,319 @@ class FenixAuthServiceSpockTest extends Specification {
 
         then: "the returned data are correct"
         result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628) != null
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "no teacher does not have courses throw exception"() {
+        given:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        authService.fenixAuth(client)
+
+        then:
+        thrown(TutorException)
+        and: 'the user is not created db'
+        userRepository.findAll().size() == 0
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "teacher has courses"() {
+        given: 'a teacher'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> courses
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628) != null
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "teacher does not have courses"() {
+        given: 'a teacher'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628) != null
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "no student no courses, throw exception"() {
+        given:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        authService.fenixAuth(client)
+
+        then:
+        thrown(TutorException)
+        and: 'the user is not created in the db'
+        userRepository.findAll().size() == 0
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "no student has courses but not in database, throw exception"() {
+        given:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        authService.fenixAuth(client)
+
+        then:
+        thrown(TutorException)
+        and: 'the user is not created in the db'
+        userRepository.findAll().size() == 0
+        and: 'no courses are created'
+        courseRepository.findAll().size() == 0
+        courseExecutionRepository.findAll().size() == 0
+    }
+
+    def "no student has courses and in database, create student with attending course"() {
+        given: 'a course execution'
+        def course = new Course(COURSE_NAME)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseRepository.save(course)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        User user = userRepository.findByUsername(IST12628)
+        user.getRole() == User.Role.STUDENT
+        and: 'is enrolled'
+        user.getCourseExecutions().size() == 1
+        user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == ACRONYM
+    }
+
+    def "student does not have courses, throw exception"() {
+        given: 'a student'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.STUDENT)
+        userRepository.save(user)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        thrown(TutorException)
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        and: 'is not enrolled'
+        user.getCourseExecutions().size() == 0
+    }
+
+    def "student has courses but not in the database, throw exception"() {
+        given: 'a student'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.STUDENT)
+        userRepository.save(user)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        thrown(TutorException)
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        and: 'is not enrolled'
+        user.getCourseExecutions().size() == 0
+    }
+
+    def "student has courses and in the database, add course"() {
+        given: 'a student'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.STUDENT)
+        userRepository.save(user)
+        and: 'a course execution'
+        def course = new Course(COURSE_NAME)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseRepository.save(course)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628).getRole() == User.Role.STUDENT
+        and: 'is enrolled'
+        user.getCourseExecutions().size() == 1
+        user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == ACRONYM
+    }
+
+    def "student has teaching courses, throw exception"() {
+        given: 'a student'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.STUDENT)
+        userRepository.save(user)
+        and: 'a course execution'
+        def course = new Course(COURSE_NAME)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseRepository.save(course)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> new ArrayList<>()
+        client.getPersonTeachingCourses() >> courses
+
+        when:
+        authService.fenixAuth(client)
+
+        then:
+        thrown(TutorException)
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628).getRole() == User.Role.STUDENT
+        and: 'is not enrolled'
+        user.getCourseExecutions().size() == 0
+    }
+
+    def "teacher has attending courses, does not add course"() {
+        given: 'a teacher'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+        and: 'a course execution'
+        def course = new Course(COURSE_NAME)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseRepository.save(course)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> new ArrayList<>()
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628).getRole() == User.Role.TEACHER
+        and: 'is enrolled'
+        user.getCourseExecutions().size() == 0
+    }
+
+    def "student has attending and teaching courses, add attending course"() {
+        given: 'a teacher'
+        def user = new User()
+        user.setUsername(IST12628)
+        user.setName(USER_NAME)
+        user.setRole(User.Role.TEACHER)
+        userRepository.save(user)
+        and: 'a course execution'
+        def course = new Course(COURSE_NAME)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseRepository.save(course)
+        and:
+        client.getPersonName() >> USER_NAME
+        client.getPersonUsername() >> IST12628
+        client.getPersonAttendingCourses() >> courses
+        client.getPersonTeachingCourses() >> courses
+
+        when:
+        def result = authService.fenixAuth(client)
+
+        then: "the returned data are correct"
+        result.user.username == IST12628
+        result.user.name == USER_NAME
+        and: 'the user is created in the db'
+        userRepository.findAll().size() == 1
+        userRepository.findByUsername(IST12628).getRole() == User.Role.TEACHER
+        and: 'is enrolled'
+        user.getCourseExecutions().size() == 1
+        user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == ACRONYM
     }
 
     @TestConfiguration

@@ -51,11 +51,12 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, Integer number, Integer year) {
+    public User(String name, String username, Integer number, Integer year, User.Role role) {
         this.name = name;
         setUsername(username);
         this.number = number;
         this.year = year;
+        this.role = role;
         this.creationDate = LocalDateTime.now();
     }
 

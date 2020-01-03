@@ -6,6 +6,7 @@ public class CourseDto implements Serializable {
     private String name;
     private String acronym;
     private String academicTerm;
+    private boolean active = true;
 
     public CourseDto() {
     }
@@ -49,5 +50,13 @@ public class CourseDto implements Serializable {
 
     public void setAcademicTerm(String academicTerm) {
         this.academicTerm = academicTerm;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

@@ -15,7 +15,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -45,7 +47,7 @@ public class AuthService {
         User user = this.userService.findByUsername(username);
 
         // If user is student not in db
-        if (user == null && !attendingCourses.isEmpty()) {
+        if (user == null && !activeAttendingCourses.isEmpty()) {
             user = this.userService.createUser(fenix.getPersonName(), username, User.Role.STUDENT);
         }
 
@@ -54,15 +56,19 @@ public class AuthService {
             user = this.userService.createUser(fenix.getPersonName(), username, User.Role.TEACHER);
         }
 
+        if (user != null && user.getRole() == User.Role.ADMIN) {
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList())));
+        }
+
         // Update student courses
-        if (!attendingCourses.isEmpty()) {
+        if (!activeAttendingCourses.isEmpty() && user.getRole() == User.Role.STUDENT) {
             User student = user;
             activeAttendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         // Update teacher courses
-        if (!teachingCourses.isEmpty()) {
+        if (!teachingCourses.isEmpty() && (user.getRole() == User.Role.TEACHER || user.getRole() == User.Role.ADMIN)) {
             User teacher = user;
             activeTeachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
@@ -71,11 +77,11 @@ public class AuthService {
                     .collect(Collectors.joining(","));
 
             user.setCourseExecutionAcronyms(acronyms);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, getOtherCourses(teachingCourses) ));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  teachingCourses));
         }
 
-        if (user != null && user.getRole() == User.Role.ADMIN) {
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList())));
+        if (user != null && user.getRole() == User.Role.TEACHER) {
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 
         throw new TutorException(USER_NOT_ENROLLED, username);
@@ -89,9 +95,4 @@ public class AuthService {
 
     }
 
-    private List<CourseDto> getOtherCourses(List<CourseDto> courses) {
-        return courses.stream()
-                .filter(courseDto -> courseExecutionRepository.findByAcronym(courseDto.getAcronym()) == null)
-                .collect(Collectors.toList());
-    }
 }

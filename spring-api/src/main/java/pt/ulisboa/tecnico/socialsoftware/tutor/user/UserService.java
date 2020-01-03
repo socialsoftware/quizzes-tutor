@@ -46,7 +46,7 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    public User createUser(String name, String username, User.Role student) {
+    public User createUser(String name, String username, User.Role role) {
 
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
@@ -59,7 +59,7 @@ public class UserService {
             year -= 1;
         }
 
-        User user = new User(name, username, getMaxUserNumber() + 1, year);
+        User user = new User(name, username, getMaxUserNumber() + 1, year, role);
         entityManager.persist(user);
         logService.create(user, LocalDateTime.now(), "LOGIN");
         return user;
