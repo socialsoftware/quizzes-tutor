@@ -24,14 +24,24 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "CREATE":
-                    return userService.getCourseExecutionAcronyms(username).contains(courseDto.getAcronym());
-                case "ACCESS":
-                    return userService.getCourseExecutions(username).stream()
-                            .anyMatch(course -> course.getAcronym().equals(courseDto.getAcronym()));
+                    return userService.getCourseExecutionIds(username).contains(courseDto.getAcronym() + courseDto.getAcademicTerm());
                 default:
                     assert false;
             }
         }
+
+        if (targetDomainObject instanceof String) {
+            String acronym = (String) targetDomainObject;
+            String permissionValue = (String) permission;
+            switch (permissionValue) {
+                case "ACCESS":
+                    return userService.getCourseExecutions(username).stream()
+                            .anyMatch(course -> course.getAcronym().equals(acronym));
+                default:
+                    assert false;
+            }
+        }
+
 
         return false;
     }

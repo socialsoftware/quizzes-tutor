@@ -30,7 +30,7 @@ public class User implements UserDetails {
     private String username;
     private String name;
     private Integer year;
-    private String courseExecutionAcronyms;
+    private String courseExecutionIds;
 
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes ;
@@ -101,12 +101,12 @@ public class User implements UserDetails {
         this.year = year;
     }
 
-    public String getCourseExecutionAcronyms() {
-        return courseExecutionAcronyms;
+    public String getCourseExecutionIds() {
+        return courseExecutionIds;
     }
 
-    public void setCourseExecutionAcronyms(String courseExecutionAcronyms) {
-        this.courseExecutionAcronyms = courseExecutionAcronyms;
+    public void setCourseExecutionIds(String courseExecutionIds) {
+        this.courseExecutionIds = courseExecutionIds;
     }
 
     public Role getRole() {
@@ -239,7 +239,7 @@ public class User implements UserDetails {
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", year=" + year +
-                ", courseExecutionAcronyms='" + courseExecutionAcronyms + '\'' +
+                ", courseExecutionIds='" + courseExecutionIds + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +

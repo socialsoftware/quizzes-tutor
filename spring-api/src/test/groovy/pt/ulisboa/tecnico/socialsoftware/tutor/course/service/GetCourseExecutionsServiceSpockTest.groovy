@@ -45,13 +45,13 @@ class GetCourseExecutionsServiceSpockTest extends Specification {
 
         then: "the returned data are correct"
         result.size() == 2
-        and: "correctly sorted"
+        and: "correctly reverse sorted"
         result.get(0).name == COURSE_ONE
-        result.get(0).acronym == ACRONYM_ONE
-        result.get(0).academicTerm == ACADEMIC_TERM_ONE
+        result.get(0).acronym == ACRONYM_TWO
+        result.get(0).academicTerm == ACADEMIC_TERM_TWO
         result.get(1).name == COURSE_ONE
-        result.get(1).acronym == ACRONYM_TWO
-        result.get(1).academicTerm == ACADEMIC_TERM_TWO
+        result.get(1).acronym == ACRONYM_ONE
+        result.get(1).academicTerm == ACADEMIC_TERM_ONE
     }
 
     def "does not exist course with the name"() {

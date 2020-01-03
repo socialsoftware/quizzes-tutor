@@ -24,6 +24,7 @@ public enum ExceptionError {
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
+    DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
 
     USERS_IMPORT_ERROR("Error importing users: %s"),
     QUESTIONS_IMPORT_ERROR("Error importing questions: %s"),

@@ -47,7 +47,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         result.academicTerm == ACADEMIC_TERM_ONE
         and: 'is in the database'
         courseExecutionRepository.findAll().size() == 1
-        def courseExecution = courseExecutionRepository.findByAcronym(ACRONYM_ONE)
+        def courseExecution = courseExecutionRepository.findAll().get(0)
         courseExecution != null
         and: 'has the correct value'
         courseExecution.acronym ==ACRONYM_ONE
@@ -76,7 +76,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         course.getCourseExecutions().size() == 1
         and: 'course execution is in the database'
         courseExecutionRepository.findAll().size() == 1
-        def courseExecution = courseExecutionRepository.findByAcronym(ACRONYM_ONE)
+        def courseExecution = courseExecutionRepository.findAll().get(0)
         courseExecution != null
         and: 'has the correct value'
         courseExecution.acronym ==ACRONYM_ONE
@@ -117,7 +117,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseService.createCourseExecution(courseDto)
 
         then:
-        TutorException ex = thrown()
+        thrown(TutorException)
     }
 
     def "execution course acronym is empty"() {
@@ -131,7 +131,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseService.createCourseExecution(courseDto)
 
         then:
-        TutorException ex = thrown()
+        thrown(TutorException)
     }
 
     def "execution course academic term is empty"() {
@@ -145,7 +145,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseService.createCourseExecution(courseDto)
 
         then:
-        TutorException ex = thrown()
+        thrown(TutorException)
     }
 
 

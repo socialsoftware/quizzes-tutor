@@ -33,10 +33,10 @@ public class CourseController {
         return courseService.createCourseExecution(courseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_TEACHER')")
-    @GetMapping("/executions/{year}/students")
-    public List<StudentDto> getCourseStudents(@PathVariable Integer year) {
-        return courseService.courseStudents(year);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#acronym, 'ACCESS'))")
+    @GetMapping("/{name}/executions/{acronym}/{academicterm}")
+    public List<StudentDto> getCourseStudents(@PathVariable String name,@PathVariable String acronym,@PathVariable String academicterm) {
+        return courseService.courseStudents(name, acronym, academicterm);
     }
 
 

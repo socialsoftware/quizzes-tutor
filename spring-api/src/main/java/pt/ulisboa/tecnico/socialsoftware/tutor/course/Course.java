@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_NAME_IS_EMPTY;
@@ -36,6 +37,13 @@ public class Course {
         }
 
         this.name = name;
+    }
+
+    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm) {
+        return getCourseExecutions().stream()
+                .filter(courseExecution -> courseExecution.getAcronym().equals(acronym)
+                                            && courseExecution.getAcademicTerm().equals(academicTerm))
+                .findAny();
     }
 
     public Integer getId() {
@@ -81,4 +89,5 @@ public class Course {
     public void addCourseExecution(CourseExecution courseExecution) {
         courseExecutions.add(courseExecution);
     }
+
 }

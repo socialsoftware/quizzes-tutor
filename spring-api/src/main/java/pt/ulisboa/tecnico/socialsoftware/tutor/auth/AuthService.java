@@ -6,9 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -27,6 +25,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 public class AuthService {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -72,11 +73,11 @@ public class AuthService {
             User teacher = user;
             activeTeachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
-            String acronyms = teachingCourses.stream()
-                    .map(CourseDto::getAcronym)
+            String ids = teachingCourses.stream()
+                    .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
-            user.setCourseExecutionAcronyms(acronyms);
+            user.setCourseExecutionIds(ids);
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  teachingCourses));
         }
 
@@ -89,7 +90,14 @@ public class AuthService {
 
     private List<CourseExecution> getActiveCourses(List<CourseDto> courses) {
         return courses.stream()
-                .map(courseDto -> courseExecutionRepository.findByAcronym(courseDto.getAcronym()))
+                .map(courseDto ->  {
+                    Course course = courseRepository.findByName(courseDto.getName());
+                    if (course == null) {
+                        return null;
+                    }
+                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm())
+                                .orElse(null);
+                })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 

@@ -16,3 +16,6 @@ oauth.consumer.key=<FENIX CLIENT KEY>
 oauth.consumer.secret=<FENIX SECRET>
 callback.url=<URL FENIX REDIRECTS TO>
 base.url=https://fenix.tecnico.ulisboa.pt
+
+# Restart server
+spring.devtools.restart.enabled=true

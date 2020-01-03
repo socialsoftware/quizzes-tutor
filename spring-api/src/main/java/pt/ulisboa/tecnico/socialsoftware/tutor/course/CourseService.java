@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -55,7 +56,7 @@ public class CourseService {
         }
         return course.getCourseExecutions().stream()
                 .map(CourseDto::new)
-                .sorted(Comparator.comparing(CourseDto::getAcademicTerm))
+                .sorted(Comparator.comparing(CourseDto::getAcademicTerm).reversed())
                 .collect(Collectors.toList());
     }
 
@@ -72,9 +73,7 @@ public class CourseService {
         }
 
         Course existingCourse = course;
-        return existingCourse.getCourseExecutions().stream()
-                .filter(courseExecution -> courseExecution.getAcronym().equals(courseDto.getAcronym()))
-                .findAny()
+        return existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm())
                 .or(() ->  {
                     CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm());
                     courseExecutionRepository.save(courseExecution);
@@ -89,8 +88,12 @@ public class CourseService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StudentDto> courseStudents(Integer year) {
-        return userRepository.courseStudents(year).stream()
+    public List<StudentDto> courseStudents(String name, String acronym, String academicTerm) {
+        CourseExecution courseExecution = courseRepository.findByName(name).getCourseExecution(acronym, academicTerm).orElse(null);
+        if (courseExecution == null) {
+            return new ArrayList<>();
+        }
+        return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getNumber))
                 .map(StudentDto::new)

@@ -10,6 +10,4 @@ import java.util.List;
 @Repository
 @Transactional
 public interface CourseExecutionRepository extends JpaRepository<CourseExecution, Integer> {
-    @Query("select u from CourseExecution u where u.acronym = :acronym")
-    CourseExecution findByAcronym(String acronym);
 }

@@ -18,10 +18,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select MAX(number) from users", nativeQuery = true)
     Integer getMaxUserNumber();
-
-    @Query(value = "select distinct u.year from Users u", nativeQuery = true)
-    List<Integer> getCourseYears();
-
-    @Query("select u from Users u where u.year = :year")
-    List<User> courseStudents(Integer year);
 }

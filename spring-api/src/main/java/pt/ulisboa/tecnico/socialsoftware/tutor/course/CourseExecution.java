@@ -9,8 +9,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_EXECUTION_ACRONYM_IS_EMPTY;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Entity
 @Table(name = "course_executions")
@@ -44,6 +43,11 @@ public class CourseExecution {
         }
         if (academicTerm.trim().isEmpty()) {
             throw new TutorException(COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY);
+        }
+        if (course.getCourseExecutions().stream()
+                .anyMatch(courseExecution -> courseExecution.getAcronym().equals(acronym)
+                        && courseExecution.getAcademicTerm().equals(academicTerm))) {
+            throw new TutorException(DUPLICATE_COURSE_EXECUTION,acronym + academicTerm);
         }
 
         this.course = course;

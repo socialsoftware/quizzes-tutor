@@ -66,10 +66,10 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public String getCourseExecutionAcronyms(String username) {
+    public String getCourseExecutionIds(String username) {
         User user =  this.userRepository.findByUsername(username);
 
-        return user.getCourseExecutionAcronyms();
+        return user.getCourseExecutionIds();
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
