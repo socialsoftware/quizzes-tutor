@@ -15,8 +15,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import { CourseExecution } from "@/models/management/CourseExecution";
-import { Student } from "@/models/management/Student";
 
 @Component
 export default class ImpExptView extends Vue {

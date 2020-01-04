@@ -378,15 +378,15 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseExecutionStudents(academicTerm: string) {
+  static async getCourseExecutionStudents(courseExecution: CourseExecution) {
     return httpClient
       .get(
         "/courses/" +
-          Store.getters.getCurrentCourse.name +
+          courseExecution.name +
           "/executions/" +
-          Store.getters.getCurrentCourse.acronym +
+          courseExecution.acronym +
           "/" +
-          academicTerm.replace("/", "_") +
+          courseExecution.academicTerm.replace("/", "_") +
           "/students",
         {
           headers: {

@@ -5,10 +5,11 @@
         <v-row align="center">
           <v-col class="d-flex" cols="12" sm="6">
             <v-select
-              v-model="academicTerm"
+              v-model="courseExecution"
               :items="courseExecutions"
               item-text="academicTerm"
               item-value="academicTerm"
+              return-object
               label="Semestre"
             />
           </v-col>
@@ -49,12 +50,12 @@
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import { CourseExecution } from "@/models/management/CourseExecution";
+import CourseExecution from "@/models/auth/CourseExecution";
 import { Student } from "@/models/management/Student";
 
 @Component
 export default class StudentsView extends Vue {
-  academicTerm: string | null = null;
+  courseExecution: CourseExecution | null = null;
   courseExecutions: CourseExecution[] = [];
   students: Student[] = [];
   search: string = "";
@@ -102,20 +103,20 @@ export default class StudentsView extends Vue {
     await this.$store.dispatch("loading");
     try {
       this.courseExecutions = await RemoteServices.getCourseExecutions();
-      this.academicTerm = this.courseExecutions[0].academicTerm;
+      this.courseExecution = this.$store.getters.getCurrentCourse;
     } catch (error) {
       await this.$store.dispatch("error", error);
     }
     await this.$store.dispatch("clearLoading");
   }
 
-  @Watch("academicTerm")
+  @Watch("courseExecution")
   async onAcademicTermChange() {
     await this.$store.dispatch("loading");
     try {
-      if (this.academicTerm) {
+      if (this.courseExecution) {
         this.students = await RemoteServices.getCourseExecutionStudents(
-          this.academicTerm
+          this.courseExecution
         );
       }
     } catch (error) {
