@@ -3,10 +3,19 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import java.io.Serializable;
 
 public class StatementCreationDto implements Serializable {
+    private String courseName;
     private Integer numberOfQuestions = 5;
     private String questionType = "all";
     private String assessment = "all";
 //    private String[] topics;
+
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
+    }
 
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;

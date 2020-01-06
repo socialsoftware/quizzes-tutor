@@ -7,6 +7,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
@@ -31,6 +34,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 public class QuestionService {
 
     @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -38,7 +44,6 @@ public class QuestionService {
 
     @PersistenceContext
     EntityManager entityManager;
-
 
     @Retryable(
       value = { SQLException.class },
@@ -50,7 +55,6 @@ public class QuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
@@ -61,40 +65,42 @@ public class QuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, number));
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findAllQuestions(Integer pageIndex, Integer pageSize) {
-        return questionRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent().stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findCourseQuestions(String courseName) {
+        return questionRepository.findCourseQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findAvailableQuestions() {
-        return questionRepository.getAvailableQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findCourseAvailableQuestions(String courseName) {
+        return questionRepository.findCourseAvailableQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto createQuestion(QuestionDto questionDto) {
+    public QuestionDto createQuestion(String courseName, QuestionDto questionDto) {
+        Course course = courseRepository.findByName(courseName);
+        if (course == null) {
+            throw new TutorException(ExceptionError.COURSE_NOT_FOUND);
+        }
+
         if (questionDto.getNumber() == null) {
             int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
                     questionRepository.getMaxQuestionNumber() : 0;
             questionDto.setNumber(maxQuestionNumber + 1);
         }
 
-        Question question = new Question(questionDto);
+        Question question = new Question(course, questionDto);
         question.setCreationDate(LocalDateTime.now());
         this.entityManager.persist(question);
         return new QuestionDto(question);

@@ -72,13 +72,16 @@ public class Question {
     public Question() {
     }
 
-    public Question(QuestionDto questionDto) {
+    public Question(Course course, QuestionDto questionDto) {
         checkConsistentQuestion(questionDto);
 
         this.title = questionDto.getTitle();
         this.number = questionDto.getNumber();
         this.content = questionDto.getContent();
         this.status = Status.valueOf(questionDto.getStatus());
+
+        this.course = course;
+        course.addQuestion(this);
 
         if (questionDto.getImage() != null) {
             Image img = new Image(questionDto.getImage());
@@ -214,6 +217,8 @@ public class Question {
 
     public void remove() {
         canRemove();
+        getCourse().getQuestions().remove(this);
+        course = null;
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }

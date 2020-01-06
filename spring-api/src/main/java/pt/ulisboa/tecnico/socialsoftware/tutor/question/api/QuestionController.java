@@ -37,34 +37,29 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/questions")
-    public List<QuestionDto> getQuestions(@RequestParam(value = "page", defaultValue = "-1") int pageIndex, @RequestParam(value = "size", defaultValue = "-1") int pageSize){
-        if (pageIndex == -1 && pageSize == -1) {
-            pageIndex = 0;
-            pageSize = Integer.MAX_VALUE;
-        }
-
-        return this.questionService.findAllQuestions(pageIndex, pageSize);
+    @GetMapping("/courses/{name}/questions")
+    public List<QuestionDto> getCourseQuestions(@PathVariable String name){
+        return this.questionService.findCourseQuestions(name);
     }
 
-    @GetMapping("/questions/available")
-    public List<QuestionDto> getAvailableQuestions(){
-        return this.questionService.findAvailableQuestions();
+    @GetMapping("/courses/{name}/questions/available")
+    public List<QuestionDto> getCourseAvailableQuestions(@PathVariable String name){
+        return this.questionService.findCourseAvailableQuestions(name);
+    }
+
+    @PostMapping("/courses/{name}/questions")
+    public QuestionDto createCourseQuestion(@PathVariable String name, @Valid @RequestBody QuestionDto question) {
+        logger.debug("createCourseQuestion title: {}, content: {}, options: {}: ",
+                question.getTitle(), question.getContent(),
+                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
+                        .collect(Collectors.joining("\n")));
+        question.setStatus(Question.Status.AVAILABLE.name());
+        return this.questionService.createQuestion(name, question);
     }
 
     @GetMapping("/questions/{questionId}")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
         return this.questionService.findQuestionById(questionId);
-    }
-
-    @PostMapping("/questions")
-    public QuestionDto createQuestion(@Valid @RequestBody QuestionDto question) {
-        logger.debug("createQuestion title: {}, content: {}, options: {}: ",
-                question.getTitle(), question.getContent(),
-                question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
-                        .collect(Collectors.joining("\n")));
-        question.setStatus(Question.Status.AVAILABLE.name());
-        return this.questionService.createQuestion(question);
     }
 
     @PutMapping("/questions/{questionId}")

@@ -43,7 +43,7 @@ export default class RemoteServices {
 
   static async getQuestions(): Promise<Question[]> {
     return httpClient
-      .get("/questions", {
+      .get("/courses/" + Store.getters.getCurrentCourse.name + "/questions", {
         headers: {
           Authorization: Store.getters.getToken
         }
@@ -60,11 +60,16 @@ export default class RemoteServices {
 
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
-      .get("/questions/available", {
-        headers: {
-          Authorization: Store.getters.getToken
+      .get(
+        "/courses/" +
+          Store.getters.getCurrentCourse.name +
+          "/questions/available",
+        {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
         }
-      })
+      )
       .then(response => {
         return response.data.map((question: any) => {
           return new Question(question);
@@ -77,11 +82,15 @@ export default class RemoteServices {
 
   static createQuestion(question: Question): Promise<Question> {
     return httpClient
-      .post("/questions/", question, {
-        headers: {
-          Authorization: Store.getters.getToken
+      .post(
+        "/courses/" + Store.getters.getCurrentCourse.name + "/questions/",
+        question,
+        {
+          headers: {
+            Authorization: Store.getters.getToken
+          }
         }
-      })
+      )
       .then(response => {
         return new Question(response.data);
       })

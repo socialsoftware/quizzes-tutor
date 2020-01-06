@@ -67,6 +67,7 @@ public class QuestionsXmlImport {
 	}
 
 	private void importQuestion(Element questionElement) {
+		String courseName = questionElement.getAttributeValue("course");
 		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
@@ -106,7 +107,7 @@ public class QuestionsXmlImport {
 		}
 		questionDto.setOptions(optionDtos);
 
-		questionService.createQuestion(questionDto);
+		questionService.createQuestion(courseName, questionDto);
 	}
 
 }

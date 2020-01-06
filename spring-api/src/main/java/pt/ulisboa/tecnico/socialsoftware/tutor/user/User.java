@@ -189,9 +189,6 @@ public class User implements UserDetails {
         this.numberOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers;
     }
 
-
-
-
     public void increaseNumberOfTeacherQuizzes() {
         if (numberOfTeacherQuizzes == null) this.calculateNumbers();
         this.numberOfTeacherQuizzes += 1;
