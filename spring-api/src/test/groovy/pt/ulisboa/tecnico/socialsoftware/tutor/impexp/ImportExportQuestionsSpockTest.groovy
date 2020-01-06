@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
@@ -17,11 +16,11 @@ import spock.lang.Specification
 
 @DataJpaTest
 class ImportExportQuestionsSpockTest extends Specification {
+    public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
-    public static final String COURSE_NAME = "Arquitetura de Software"
 
     @Autowired
     QuestionService questionService
@@ -62,7 +61,7 @@ class ImportExportQuestionsSpockTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionId = questionService.createQuestion(COURSE_NAME, questionDto).getId()
+        questionId = questionService.createCourseQuestion(COURSE_NAME, questionDto).getId()
     }
 
     def 'export and import questions'() {

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -15,6 +17,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class ImportExportTopicsSpockTest extends Specification {
+    public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -28,12 +31,19 @@ class ImportExportTopicsSpockTest extends Specification {
     TopicService topicService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
     TopicRepository topicRepository
 
     def topicDtoOne
     def topicDtoTwo
 
     def setup() {
+        def course = new Course()
+        course.setName(COURSE_NAME)
+        courseRepository.save(course)
+
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
@@ -46,15 +56,15 @@ class ImportExportTopicsSpockTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionDto = questionService.createQuestion(questionDto)
+        questionDto = questionService.createCourseQuestion(COURSE_NAME, questionDto)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_ONE)
         topicDtoTwo = new TopicDto()
         topicDtoTwo.setName(TOPIC_TWO)
 
-        topicDtoOne = topicService.createTopic(topicDtoOne)
-        topicDtoTwo = topicService.createTopic(topicDtoTwo)
+        topicDtoOne = topicService.createCourseTopic(COURSE_NAME, topicDtoOne)
+        topicDtoTwo = topicService.createCourseTopic(COURSE_NAME, topicDtoTwo)
 
         TopicDto[] topics = [topicDtoOne, topicDtoTwo]
         questionService.updateQuestionTopics(questionDto.getId(), topics)

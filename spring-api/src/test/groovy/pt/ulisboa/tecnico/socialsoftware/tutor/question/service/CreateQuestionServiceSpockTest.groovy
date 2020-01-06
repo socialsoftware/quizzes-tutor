@@ -55,7 +55,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createCourseQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -101,7 +101,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createCourseQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -132,9 +132,9 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createCourseQuestion(COURSE_NAME, questionDto)
         questionDto.setNumber(null)
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createCourseQuestion(COURSE_NAME, questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L

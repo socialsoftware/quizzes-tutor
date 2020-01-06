@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -24,6 +26,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class RemoveQuestionServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -31,6 +34,9 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
     @Autowired
     QuestionService questionService
+
+    @Autowired
+    CourseRepository courseRepository
 
     @Autowired
     QuestionRepository questionRepository
@@ -50,12 +56,16 @@ class RemoveQuestionServiceSpockTest extends Specification {
     @Autowired
     QuizRepository quizRepository
 
+    def course
     def question
     def optionOK
     def optionKO
 
     def setup() {
-        given: "create a question"
+        course = new Course()
+        course.setName(COURSE_NAME)
+        courseRepository.save(course)
+
         question = new Question()
         question.setNumber(1)
         question.setContent(QUESTION_TITLE)
@@ -63,13 +73,15 @@ class RemoveQuestionServiceSpockTest extends Specification {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        and: 'an image'
+        question.setCourse(course)
+        course.addQuestion(question)
+
         def image = new Image()
         image.setUrl(URL)
         image.setWidth(20)
         imageRepository.save(image)
         question.setImage(image)
-        and: 'two options'
+
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
@@ -93,7 +105,6 @@ class RemoveQuestionServiceSpockTest extends Specification {
         questionRepository.count() == 0L
         imageRepository.count() == 0L
         optionRepository.count() == 0L
-
     }
 
     def "remove a question used in a quiz"() {
@@ -118,9 +129,9 @@ class RemoveQuestionServiceSpockTest extends Specification {
         given: 'a question with topics'
         def topicDto = new TopicDto()
         topicDto.setName("name1")
-        def topicOne = new Topic(topicDto)
+        def topicOne = new Topic(course, topicDto)
         topicDto.setName("name2")
-        def topicTwo = new Topic(topicDto)
+        def topicTwo = new Topic(course, topicDto)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)

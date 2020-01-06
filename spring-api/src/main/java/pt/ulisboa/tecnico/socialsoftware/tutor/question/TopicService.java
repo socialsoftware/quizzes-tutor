@@ -8,6 +8,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
@@ -33,20 +36,21 @@ public class TopicService {
     private QuestionService questionService;
 
     @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
     private TopicRepository topicRepository;
 
     @PersistenceContext
     EntityManager entityManager;
-
-
 
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TopicDto> findAllTopics() {
-        return topicRepository.findAll().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+    public List<TopicDto> findCourseTopics(String course_name) {
+        return topicRepository.findCourseTopics(course_name).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
 
@@ -55,12 +59,16 @@ public class TopicService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TopicDto createTopic(TopicDto topicDto) {
-        if (topicRepository.findByName(topicDto.getName()) != null) {
+    public TopicDto createCourseTopic(String courseName, TopicDto topicDto) {
+        if (topicRepository.findCourseTopicByName(courseName, topicDto.getName()) != null) {
             throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
         }
+        Course course = courseRepository.findByName(courseName);
+        if (course == null) {
+            throw new TutorException(ExceptionError.COURSE_NOT_FOUND);
+        }
 
-        Topic topic = new Topic(topicDto);
+        Topic topic = new Topic(course, topicDto);
         this.entityManager.persist(topic);
         return new TopicDto(topic);
     }

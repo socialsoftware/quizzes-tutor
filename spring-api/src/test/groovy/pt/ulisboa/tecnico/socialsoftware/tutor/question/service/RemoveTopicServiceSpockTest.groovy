@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -15,6 +17,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class RemoveTopicServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Arquitetura de Software"
     private static final String TOPIC_ONE = 'nameOne'
     private static final String TOPIC_TWO = 'nameTwo'
     private static final String TOPIC_THREE = 'nameThree'
@@ -24,11 +27,15 @@ class RemoveTopicServiceSpockTest extends Specification {
     TopicService topicService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
     QuestionRepository questionRepository
 
     @Autowired
     TopicRepository topicRepository
 
+    def course
     def question
     def topicDtoOne
     def topicDtoTwo
@@ -38,6 +45,10 @@ class RemoveTopicServiceSpockTest extends Specification {
     def topicThree
 
     def setup() {
+        course = new Course()
+        course.setName(COURSE_NAME)
+        courseRepository.save(course)
+
         question = new Question()
         question.setNumber(NUMBER)
 
@@ -48,8 +59,8 @@ class RemoveTopicServiceSpockTest extends Specification {
         topicDtoThree = new TopicDto()
         topicDtoThree.setName(TOPIC_THREE)
 
-        topicOne = new Topic(topicDtoOne)
-        topicTwo = new Topic(topicDtoTwo)
+        topicOne = new Topic(course, topicDtoOne)
+        topicTwo = new Topic(course, topicDtoTwo)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)
@@ -58,7 +69,7 @@ class RemoveTopicServiceSpockTest extends Specification {
         topicRepository.save(topicOne)
         topicRepository.save(topicTwo)
 
-        topicThree = new Topic(topicDtoThree)
+        topicThree = new Topic(course, topicDtoThree)
         topicRepository.save(topicThree)
     }
 

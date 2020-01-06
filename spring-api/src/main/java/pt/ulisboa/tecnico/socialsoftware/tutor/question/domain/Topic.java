@@ -39,8 +39,10 @@ public class Topic {
     public Topic() {
     }
 
-    public Topic(TopicDto topicDto) {
+    public Topic(Course course, TopicDto topicDto) {
         this.name = topicDto.getName();
+        this.course = course;
+        course.addTopic(this);
     }
 
     public Integer getId() {
@@ -113,6 +115,7 @@ public class Topic {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(name);
     }
 
@@ -126,6 +129,9 @@ public class Topic {
     }
 
     public void remove() {
+        getCourse().getTopics().remove(this);
+        course = null;
+
         getQuestions().forEach(question -> question.getTopics().remove(this));
         getQuestions().clear();
 

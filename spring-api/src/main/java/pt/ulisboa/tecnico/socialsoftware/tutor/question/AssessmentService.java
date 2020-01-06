@@ -44,7 +44,6 @@ public class AssessmentService {
     @PersistenceContext
     EntityManager entityManager;
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,

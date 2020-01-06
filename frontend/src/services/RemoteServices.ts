@@ -56,11 +56,7 @@ export default class RemoteServices {
 
   static async getQuestions(): Promise<Question[]> {
     return httpClient
-      .get("/courses/" + Store.getters.getCurrentCourse.name + "/questions", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/courses/" + Store.getters.getCurrentCourse.name + "/questions")
       .then(response => {
         return response.data.map((question: any) => {
           return new Question(question);
@@ -76,12 +72,7 @@ export default class RemoteServices {
       .get(
         "/courses/" +
           Store.getters.getCurrentCourse.name +
-          "/questions/available",
-        {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        }
+          "/questions/available"
       )
       .then(response => {
         return response.data.map((question: any) => {
@@ -97,12 +88,7 @@ export default class RemoteServices {
     return httpClient
       .post(
         "/courses/" + Store.getters.getCurrentCourse.name + "/questions/",
-        question,
-        {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        }
+        question
       )
       .then(response => {
         return new Question(response.data);
@@ -166,7 +152,7 @@ export default class RemoteServices {
 
   static getTopics(): Promise<Topic[]> {
     return httpClient
-      .get("/topics")
+      .get("/courses/" + Store.getters.getCurrentCourse.name + "/topics")
       .then(response => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -229,7 +215,10 @@ export default class RemoteServices {
 
   static createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post("/topics/", topic)
+      .post(
+        "/courses/" + Store.getters.getCurrentCourse.name + "/topics/",
+        topic
+      )
       .then(response => {
         return new Topic(response.data);
       })

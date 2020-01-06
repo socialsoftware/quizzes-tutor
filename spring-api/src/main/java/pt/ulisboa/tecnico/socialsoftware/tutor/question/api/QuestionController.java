@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.validation.Valid;
+import java.awt.desktop.SystemEventListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -54,7 +55,7 @@ public class QuestionController {
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
         question.setStatus(Question.Status.AVAILABLE.name());
-        return this.questionService.createQuestion(name, question);
+        return this.questionService.createCourseQuestion(name, question);
     }
 
     @GetMapping("/questions/{questionId}")

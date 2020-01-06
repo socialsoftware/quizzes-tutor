@@ -93,4 +93,8 @@ public class Course {
     public void addQuestion(Question question) {
         questions.add(question);
     }
+
+    public void addTopic(Topic topic) {
+        topics.add(topic);
+    }
 }

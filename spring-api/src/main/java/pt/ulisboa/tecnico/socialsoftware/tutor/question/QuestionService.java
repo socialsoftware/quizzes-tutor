@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -88,7 +87,7 @@ public class QuestionService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto createQuestion(String courseName, QuestionDto questionDto) {
+    public QuestionDto createCourseQuestion(String courseName, QuestionDto questionDto) {
         Course course = courseRepository.findByName(courseName);
         if (course == null) {
             throw new TutorException(ExceptionError.COURSE_NOT_FOUND);
@@ -172,7 +171,7 @@ public class QuestionService {
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
-        question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findByName(topicDto.getName())).collect(Collectors.toSet()));
+        question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findCourseTopicByName(question.getCourse().getName(), topicDto.getName())).collect(Collectors.toSet()));
     }
 
     public String exportQuestions() {

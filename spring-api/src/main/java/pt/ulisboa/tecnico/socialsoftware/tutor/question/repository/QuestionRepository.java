@@ -25,6 +25,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT MAX(number) FROM questions", nativeQuery = true)
     Integer getMaxQuestionNumber();
 
-    @Query(value = "SELECT * FROM questions WHERE q.number = :number", nativeQuery = true)
+    @Query(value = "SELECT * FROM questions q WHERE q.number = :number", nativeQuery = true)
     Optional<Question> findByNumber(Integer number);
 }
