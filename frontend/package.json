@@ -9,8 +9,13 @@
     "build:dev": "NODE_ENV=development vue-cli-service build --mode development",
     "lint": "vue-cli-service lint",
     "prod": "vue-cli-service serve --mode production",
-    "prettier": "prettier --write \"**/**/*.{js,css,scss,vue}\""
+    "prettier": "prettier --write \"**/**/*.{js,css,scss,vue}\"",
+    "test:unit": "vue-cli-service test:unit",
+    "test:e2e": "vue-cli-service test:e2e"
   },
+  "pre-commit": [
+    "test:unit"
+  ],
   "engines": {
     "node": ">=10.16.0",
     "npm": ">=6.12.0"
@@ -33,33 +38,37 @@
   },
   "devDependencies": {
     "@mdi/font": "^4.4.95",
-    "@vue/cli-plugin-babel": "^3.11.0",
-    "@vue/cli-plugin-eslint": "^3.11.0",
-    "@vue/cli-plugin-typescript": "^3.11.0",
+    "@types/jest": "^24.0.19",
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-e2e-cypress": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-plugin-pwa": "^4.1.0",
+    "@vue/cli-plugin-router": "^4.1.0",
+    "@vue/cli-plugin-typescript": "^4.1.0",
+    "@vue/cli-plugin-unit-jest": "^4.1.0",
+    "@vue/cli-plugin-vuex": "^4.1.0",
     "@vue/cli-service": "^4.1.1",
-    "@vue/eslint-config-prettier": "^4.0.1",
+    "@vue/eslint-config-prettier": "^5.0.0",
     "@vue/eslint-config-typescript": "^4.0.0",
+    "@vue/test-utils": "1.0.0-beta.29",
     "babel-eslint": "^10.0.3",
     "compression-webpack-plugin": "^3.0.0",
     "eslint": "^5.16.0",
+    "eslint-plugin-prettier": "^3.1.1",
     "eslint-plugin-vue": "^5.2.3",
     "fibers": "^3.1.1",
     "glob-all": "^3.1.0",
-    "prettier": "^1.18.2",
+    "pre-commit": "^1.2.2",
+    "prettier": "^1.19.1",
     "purgecss-webpack-plugin": "^1.6.0",
-    "sass": "^1.22.12",
-    "sass-loader": "^7.3.1",
+    "sass": "^1.23.7",
+    "sass-loader": "^8.0.0",
     "terser-webpack-plugin": "^2.2.1",
     "typescript": "3.5.3",
     "vue-cli-plugin-vuetify": "^0.6.3",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.2.2",
     "webpack-bundle-analyzer": "latest"
-  },
-  "babel": {
-    "presets": [
-      "@vue/app"
-    ]
   },
   "eslintConfig": {
     "root": true,
@@ -81,6 +90,24 @@
     },
     "plugins": [
       "prettier"
+    ],
+    "overrides": [
+      {
+        "files": [
+          "**/__tests__/*.{j,t}s?(x)",
+          "**/tests/unit/**/*.spec.{j,t}s?(x)"
+        ],
+        "env": {
+          "jest": true
+        }
+      }
     ]
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions"
+  ],
+  "jest": {
+    "preset": "@vue/cli-plugin-unit-jest/presets/typescript-and-babel"
   }
 }
