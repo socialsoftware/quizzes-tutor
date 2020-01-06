@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "outDir": "./built/",
     "target": "esnext",
     "module": "esnext",
     "strict": true,
@@ -14,7 +13,8 @@
     "baseUrl": ".",
     "types": [
       "webpack-env",
-      "vuetify"
+      "vuetify",
+      "jest"
     ],
     "paths": {
       "@/*": [
@@ -25,8 +25,7 @@
       "esnext",
       "dom",
       "dom.iterable",
-      "scripthost",
-      "es2018"
+      "scripthost"
     ]
   },
   "include": [
