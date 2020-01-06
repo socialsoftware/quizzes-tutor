@@ -90,4 +90,7 @@ public class Course {
         courseExecutions.add(courseExecution);
     }
 
+    public void addQuestion(Question question) {
+        questions.add(question);
+    }
 }

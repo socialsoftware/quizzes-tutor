@@ -81,7 +81,7 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize();
+        int totalAvailableQuestions = questionRepository.getCourseAvailableQuestionsSize();
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);

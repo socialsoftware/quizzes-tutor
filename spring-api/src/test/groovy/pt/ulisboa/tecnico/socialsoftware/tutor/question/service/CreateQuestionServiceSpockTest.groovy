@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
@@ -14,6 +16,7 @@ import spock.lang.Specification
 
 @DataJpaTest
 class CreateQuestionServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -23,7 +26,18 @@ class CreateQuestionServiceSpockTest extends Specification {
     QuestionService questionService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
     QuestionRepository questionRepository
+
+    def course;
+
+    def setup() {
+        course = new Course(COURSE_NAME)
+
+        courseRepository.save(course)
+    }
 
     def "create a question with no image and one option"() {
         given: "a questionDto"
@@ -41,7 +55,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -53,6 +67,8 @@ class CreateQuestionServiceSpockTest extends Specification {
         result.getContent() == QUESTION_CONTENT
         result.getImage() == null
         result.getOptions().size() == 1
+        result.getCourse().getName() == COURSE_NAME
+        course.getQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         resOption.getContent() == OPTION_CONTENT
         resOption.getCorrect()
@@ -85,7 +101,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -116,9 +132,9 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createQuestion(questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
         questionDto.setNumber(null)
-        questionService.createQuestion(questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L
@@ -126,8 +142,6 @@ class CreateQuestionServiceSpockTest extends Specification {
         def resultTwo = questionRepository.findAll().get(1)
         resultOne.getNumber() + resultTwo.getNumber() == 3
     }
-
-
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {

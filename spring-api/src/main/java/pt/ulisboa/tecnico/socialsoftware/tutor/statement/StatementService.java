@@ -74,7 +74,7 @@ public class StatementService {
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
-        List<Question> availableQuestions = questionRepository.getAvailableQuestions();
+        List<Question> availableQuestions = questionRepository.findCourseAvailableQuestions(quizDetails.getCourseName());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 //        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);

@@ -3,6 +3,7 @@ import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 import StatementAnswer from "@/models/statement/StatementAnswer";
 import RemoteServices from "@/services/RemoteServices";
 import StatementQuiz from "@/models/statement/StatementQuiz";
+import Store from "@/store";
 
 export default class StatementManager {
   questionType: string = "all";
@@ -22,6 +23,7 @@ export default class StatementManager {
   async getQuizStatement() {
     let params = {
       // topic: this.topic,
+      courseName: Store.getters.courseExecution.name,
       questionType: this.questionType,
       assessment: this.assessment,
       numberOfQuestions: +this.numberOfQuestions

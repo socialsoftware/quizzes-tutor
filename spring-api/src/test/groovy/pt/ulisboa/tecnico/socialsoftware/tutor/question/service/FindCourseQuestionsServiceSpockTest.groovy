@@ -6,6 +6,8 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -18,13 +20,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import spock.lang.Specification
 
 @DataJpaTest
-class FindAllServiceSpockTest extends Specification {
+class FindCourseQuestionsServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
 
     @Autowired
     QuestionService questionService
+
+    @Autowired
+    CourseRepository courseRepository
 
     @Autowired
     QuestionRepository questionRepository
@@ -41,6 +47,13 @@ class FindAllServiceSpockTest extends Specification {
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
 
+    def course
+
+    def setup() {
+        course = new Course(COURSE_NAME)
+
+        courseRepository.save(course)
+    }
 
     def "create a question with image and two options and a quiz questions with two answers"() {
         given: "createQuestion a question"
@@ -50,6 +63,7 @@ class FindAllServiceSpockTest extends Specification {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(0)
         question.setNumberOfCorrect(0)
+        question.setCourse(course)
         and: 'an image'
         def image = new Image()
         image.setUrl(URL)
@@ -86,7 +100,7 @@ class FindAllServiceSpockTest extends Specification {
 
 
         when:
-        def result = questionService.findAllQuestions(0, Integer.MAX_VALUE)
+        def result = questionService.findCourseQuestions(COURSE_NAME)
 
         then: "the returned data are correct"
         result.size() == 1
@@ -102,8 +116,6 @@ class FindAllServiceSpockTest extends Specification {
         resQuestion.getImage().getWidth() == 20
         resQuestion.getOptions().size() == 2
     }
-
-
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {

@@ -4,6 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
@@ -18,14 +21,24 @@ class ImportExportQuestionsSpockTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
+    public static final String COURSE_NAME = "Arquitetura de Software"
 
     @Autowired
     QuestionService questionService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
     QuestionRepository questionRepository
 
+    def questionId
+
     def setup() {
+        def course = new Course()
+        course.setName(COURSE_NAME)
+        courseRepository.save(course)
+
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
@@ -49,24 +62,24 @@ class ImportExportQuestionsSpockTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionService.createQuestion(questionDto)
+        questionId = questionService.createQuestion(COURSE_NAME, questionDto).getId()
     }
 
     def 'export and import questions'() {
         given: 'a xml with questions'
         def questionsXml = questionService.exportQuestions()
         and: 'a clean database'
-        questionRepository.deleteAll()
+        questionService.removeQuestion(questionId)
 
         when:
         questionService.importQuestions(questionsXml)
 
         then:
-        questionRepository.findAll().size() == 1
-        def questionResult = questionRepository.findAll().get(0)
+        questionService.findCourseQuestions(COURSE_NAME).size() == 1
+        def questionResult = questionService.findCourseQuestions(COURSE_NAME).get(0)
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
-        questionResult.getStatus() == Question.Status.AVAILABLE
+        questionResult.getStatus() == Question.Status.AVAILABLE.name()
         def imageResult = questionResult.getImage()
         imageResult.getWidth() == 20
         imageResult.getUrl() == URL
