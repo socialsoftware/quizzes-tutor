@@ -63,7 +63,11 @@ public class JwtTokenProvider {
     }
 
     static String getToken(HttpServletRequest req) {
-        return req.getHeader("Authorization");
+        String authHeader = req.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        return "";
     }
 
     static boolean validateToken(String token) {

@@ -52,7 +52,7 @@ export default new Vuex.Store({
     clearLoading(state) {
       state.loading = false;
     },
-    currentCourse(state, currentCourse: string) {
+    currentCourse(state, currentCourse: Course) {
       state.currentCourse = currentCourse;
     }
   },

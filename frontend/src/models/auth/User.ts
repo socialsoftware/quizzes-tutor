@@ -1,13 +1,10 @@
-import CourseExecution from "@/models/auth/CourseExecution";
+import Course from "@/models/auth/Course";
 
 export default class User {
   name!: string;
   username!: string;
   role!: string;
-  courses: Map<string, CourseExecution[]> = new Map<
-    string,
-    CourseExecution[]
-  >();
+  courses: Map<string, Course[]> = new Map<string, Course[]>();
 
   constructor(jsonObj?: User) {
     if (jsonObj) {

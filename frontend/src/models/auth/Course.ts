@@ -1,13 +1,13 @@
-import CourseExecution from "@/models/auth/CourseExecution";
-
 export default class Course {
   name!: string;
-  executions: CourseExecution[] = [];
+  acronym!: string;
+  academicTerm!: string;
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
-      // this.name = jsonObj.name;
-      console.log({ jsonObj });
+      this.name = jsonObj.name;
+      this.acronym = jsonObj.acronym;
+      this.academicTerm = jsonObj.academicTerm;
     }
   }
 }
