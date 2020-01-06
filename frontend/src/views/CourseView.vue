@@ -30,14 +30,10 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import Course from "@/models/auth/Course";
-import CourseExecution from "@/models/auth/CourseExecution";
 
 @Component
 export default class HomeView extends Vue {
-  courseMap: Map<string, CourseExecution[]> = new Map<
-    string,
-    CourseExecution[]
-  >();
+  courseMap: Map<string, Course[]> = new Map<string, Course[]>();
 
   async created() {
     this.courseMap = await this.$store.getters.getUser.courses;

@@ -2,7 +2,7 @@ import axios from "axios";
 import Store from "@/store";
 import Question from "@/models/management/Question";
 import { Quiz } from "@/models/management/Quiz";
-import CourseExecution from "@/models/auth/CourseExecution";
+import Course from "@/models/auth/Course";
 import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
 import StudentStats from "@/models/statement/StudentStats";
 import StatementQuiz from "@/models/statement/StatementQuiz";
@@ -15,24 +15,37 @@ import AuthDto from "@/models/auth/AuthDto";
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
+httpClient.defaults.headers.post["Content-Type"] = "application/json";
+httpClient.interceptors.request.use(
+  config => {
+    if (!config.headers.Authorization) {
+      const token = Store.getters.getToken;
+
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    }
+
+    return config;
+  },
+  error => Promise.reject(error)
+);
 
 export default class RemoteServices {
   static async authenticate(code: string): Promise<AuthDto> {
-    return httpClient.post("/auth/fenix", { code: code }).then(response => {
-      return new AuthDto(response.data);
-    });
-    // .catch(async error => {
-    //   throw Error(await this.errorMessage(error));
-    // });
+    return httpClient
+      .post("/auth/fenix", { code: code })
+      .then(response => {
+        return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
-      .get("/stats", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/stats")
       .then(response => {
         return new StudentStats(response.data);
       })
@@ -101,11 +114,7 @@ export default class RemoteServices {
 
   static updateQuestion(question: Question): Promise<Question> {
     return httpClient
-      .put("/questions/" + question.id, question, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .put("/questions/" + question.id, question)
       .then(response => {
         return new Question(response.data);
       })
@@ -115,15 +124,9 @@ export default class RemoteServices {
   }
 
   static deleteQuestion(questionId: number) {
-    return httpClient
-      .delete("/questions/" + questionId, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+    return httpClient.delete("/questions/" + questionId).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static setQuestionStatus(
@@ -131,12 +134,7 @@ export default class RemoteServices {
     status: String
   ): Promise<Question> {
     return httpClient
-      .post("/questions/" + questionId + "/set-status", status, {
-        headers: {
-          Authorization: Store.getters.getToken,
-          "Content-Type": "text/html"
-        }
-      })
+      .post("/questions/" + questionId + "/set-status", status, {})
       .then(response => {
         return new Question(response.data);
       })
@@ -151,7 +149,6 @@ export default class RemoteServices {
     return httpClient
       .put("/questions/" + questionId + "/image", formData, {
         headers: {
-          Authorization: Store.getters.getToken,
           "Content-Type": "multipart/form-data"
         }
       })
@@ -164,20 +161,12 @@ export default class RemoteServices {
   }
 
   static updateQuestionTopics(questionId: number, topics: Topic[]) {
-    return httpClient.put("/questions/" + questionId + "/topics", topics, {
-      headers: {
-        Authorization: Store.getters.getToken
-      }
-    });
+    return httpClient.put("/questions/" + questionId + "/topics", topics);
   }
 
   static getTopics(): Promise<Topic[]> {
     return httpClient
-      .get("/topics", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/topics")
       .then(response => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -190,11 +179,7 @@ export default class RemoteServices {
 
   static getQuizStatement(params: object): Promise<StatementQuiz> {
     return httpClient
-      .post("/student/quizzes/generate", params, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .post("/student/quizzes/generate", params)
       .then(response => {
         return new StatementQuiz(response.data);
       })
@@ -205,11 +190,7 @@ export default class RemoteServices {
 
   static getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
-      .get("/student/quizzes/available", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/student/quizzes/available")
       .then(response => {
         return response.data.map((statementQuiz: any) => {
           return new StatementQuiz(statementQuiz);
@@ -222,11 +203,7 @@ export default class RemoteServices {
 
   static getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
-      .get("/student/quizzes/solved", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/student/quizzes/solved")
       .then(response => {
         return response.data.map((solvedQuiz: any) => {
           return new SolvedQuiz(solvedQuiz);
@@ -239,11 +216,7 @@ export default class RemoteServices {
 
   static getCorrectAnswers(params: object): Promise<StatementCorrectAnswer[]> {
     return httpClient
-      .post("/student/quizzes/answer", params, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .post("/student/quizzes/answer", params)
       .then(response => {
         return response.data.answers.map((answer: any) => {
           return new StatementCorrectAnswer(answer);
@@ -256,11 +229,7 @@ export default class RemoteServices {
 
   static createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post("/topics/", topic, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .post("/topics/", topic)
       .then(response => {
         return new Topic(response.data);
       })
@@ -271,11 +240,7 @@ export default class RemoteServices {
 
   static updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .put("/topics/" + topic.id, topic, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .put("/topics/" + topic.id, topic)
       .then(response => {
         return new Topic(response.data);
       })
@@ -285,24 +250,14 @@ export default class RemoteServices {
   }
 
   static deleteTopic(topic: Topic) {
-    return httpClient
-      .delete("/topics/" + topic.id, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+    return httpClient.delete("/topics/" + topic.id).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
-      .get("/quizzes/non-generated", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/quizzes/non-generated")
       .then(response => {
         return response.data.map((quiz: any) => {
           return new Quiz(quiz);
@@ -314,24 +269,14 @@ export default class RemoteServices {
   }
 
   static async deleteQuiz(quizId: number) {
-    return httpClient
-      .delete("/quizzes/" + quizId, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+    return httpClient.delete("/quizzes/" + quizId).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
   }
 
   static async getQuiz(quizId: number): Promise<Quiz> {
     return httpClient
-      .get("/quizzes/" + quizId, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/quizzes/" + quizId)
       .then(response => {
         return new Quiz(response.data);
       })
@@ -343,11 +288,7 @@ export default class RemoteServices {
   static async saveQuiz(quiz: Quiz): Promise<Quiz> {
     if (quiz.id) {
       return httpClient
-        .put("/quizzes/" + quiz.id, quiz, {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        })
+        .put("/quizzes/" + quiz.id, quiz)
         .then(response => {
           return new Quiz(response.data);
         })
@@ -356,11 +297,7 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post("/quizzes/", quiz, {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        })
+        .post("/quizzes/", quiz)
         .then(response => {
           return new Quiz(response.data);
         })
@@ -370,16 +307,12 @@ export default class RemoteServices {
     }
   }
 
-  static async getCourseExecutions(): Promise<CourseExecution[]> {
+  static async getCourses(): Promise<Course[]> {
     return httpClient
-      .get("/courses/" + Store.getters.getCurrentCourse.name + "/executions", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/courses/" + Store.getters.getCurrentCourse.name + "/executions")
       .then(response => {
-        return response.data.map((courseExecution: any) => {
-          return new CourseExecution(courseExecution);
+        return response.data.map((course: any) => {
+          return new Course(course);
         });
       })
       .catch(async error => {
@@ -387,21 +320,16 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseExecutionStudents(courseExecution: CourseExecution) {
+  static async getCourseStudents(course: Course) {
     return httpClient
       .get(
         "/courses/" +
-          courseExecution.name +
+          course.name +
           "/executions/" +
-          courseExecution.acronym +
+          course.acronym +
           "/" +
-          courseExecution.academicTerm.replace("/", "_") +
-          "/students",
-        {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        }
+          course.academicTerm.replace("/", "_") +
+          "/students"
       )
       .then(response => {
         return response.data.map((student: any) => {
@@ -415,11 +343,7 @@ export default class RemoteServices {
 
   static getAssessments(): Promise<Assessment[]> {
     return httpClient
-      .get("/assessments", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/assessments")
       .then(response => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
@@ -432,11 +356,7 @@ export default class RemoteServices {
 
   static async getAvailableAssessments() {
     return httpClient
-      .get("/assessments/available", {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .get("/assessments/available")
       .then(response => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
@@ -450,11 +370,7 @@ export default class RemoteServices {
   static async saveAssessment(assessment: Assessment) {
     if (assessment.id) {
       return httpClient
-        .put("/assessments/" + assessment.id, assessment, {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        })
+        .put("/assessments/" + assessment.id, assessment)
         .then(response => {
           return new Assessment(response.data);
         })
@@ -463,11 +379,7 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post("/assessments/", assessment, {
-          headers: {
-            Authorization: Store.getters.getToken
-          }
-        })
+        .post("/assessments/", assessment)
         .then(response => {
           return new Assessment(response.data);
         })
@@ -479,11 +391,7 @@ export default class RemoteServices {
 
   static async deleteAssessment(assessmentId: number) {
     return httpClient
-      .delete("/assessments/" + assessmentId, {
-        headers: {
-          Authorization: Store.getters.getToken
-        }
-      })
+      .delete("/assessments/" + assessmentId)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -496,7 +404,6 @@ export default class RemoteServices {
     return httpClient
       .post("/assessments/" + assessmentId + "/set-status", status, {
         headers: {
-          Authorization: Store.getters.getToken,
           "Content-Type": "text/html"
         }
       })
