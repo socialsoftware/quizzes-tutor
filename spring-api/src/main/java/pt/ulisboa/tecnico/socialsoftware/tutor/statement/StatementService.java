@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -102,7 +103,7 @@ public class StatementService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StatementQuizDto> getAvailableQuizzes(String username) {
+    public List<StatementQuizDto> getAvailableQuizzes(String username, CourseDto courseDto) {
         User user = userRepository.findByUsername(username);
 
         LocalDateTime now = LocalDateTime.now();
@@ -112,7 +113,7 @@ public class StatementService {
                 .map(Quiz::getId)
                 .collect(Collectors.toSet());
 
-        quizRepository.findAvailableTeacherQuizzes(user.getYear()).stream()
+        quizRepository.findCourseExecutionAvailableTeacherQuizzes(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
                 .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);

@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -20,6 +24,9 @@ import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class CreateQuizServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_CONTENT = 'question content'
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String VERSION = 'B'
@@ -28,11 +35,19 @@ class CreateQuizServiceSpockTest extends Specification {
     QuizService quizService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuizRepository quizRepository
 
     @Autowired
     QuestionRepository questionRepository
 
+    def course
+    def courseExecution
     def quiz
     def creationDate
     def availableDate
@@ -41,7 +56,13 @@ class CreateQuizServiceSpockTest extends Specification {
     def formatter
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+        course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
 
         quiz = new QuizDto()
         quiz.setNumber(1)
@@ -49,7 +70,6 @@ class CreateQuizServiceSpockTest extends Specification {
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
         quiz.setScramble(true)
-        quiz.setCreationDate(creationDate.format(formatter))
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
         quiz.setYear(2019)
@@ -76,7 +96,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
-        quizService.createQuiz(quiz)
+        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
@@ -85,7 +105,7 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getNumber() != null
         result.getScramble()
         result.getTitle() == QUIZ_TITLE
-        result.getCreationDate().format(formatter) == creationDate.format(formatter)
+        result.getCreationDate() != null
         result.getAvailableDate().format(formatter) == availableDate.format(formatter)
         result.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
         result.getYear() == 2019
@@ -100,7 +120,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
-        quizService.createQuiz(quiz)
+        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -115,7 +135,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
-        quizService.createQuiz(quiz)
+        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -130,7 +150,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
-        quizService.createQuiz(quiz)
+        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -145,7 +165,7 @@ class CreateQuizServiceSpockTest extends Specification {
         questionDto.setSequence(3)
 
         when:
-        quizService.createQuiz(quiz)
+        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
 
         then:
         def exception = thrown(TutorException)

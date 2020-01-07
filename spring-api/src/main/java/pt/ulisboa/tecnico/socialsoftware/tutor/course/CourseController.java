@@ -30,14 +30,14 @@ public class CourseController {
 
     @PostMapping("/{name}/executions")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'CREATE'))")
-    public CourseDto createCourseExecution(@PathVariable String name, @ModelAttribute CourseDto courseDto) {
+    public CourseDto createCourseExecution(@PathVariable String name, @RequestBody CourseDto courseDto) {
         return courseService.createCourseExecution(courseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#acronym, 'ACCESS'))")
-    @GetMapping("/{name}/executions/{acronym}/{academicterm}/students")
-    public List<StudentDto> getCourseStudents(@PathVariable String name,@PathVariable String acronym,@PathVariable String academicterm) {
-        return courseService.courseStudents(name, acronym, academicterm.replace("_", "/"));
+    @GetMapping("/{name}/executions/{acronym}/{academicTerm}/students")
+    public List<StudentDto> getCourseStudents(@PathVariable String name, @PathVariable String acronym, @PathVariable String academicTerm) {
+        return courseService.courseStudents(name, acronym, academicTerm.replace("_", "/"));
     }
 
 

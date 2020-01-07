@@ -103,4 +103,8 @@ public class CourseExecution {
     public void setCourse(Course course) {
         this.course = course;
     }
+
+    public void addQuiz(Quiz quiz) {
+        quizzes.add(quiz);
+    }
 }

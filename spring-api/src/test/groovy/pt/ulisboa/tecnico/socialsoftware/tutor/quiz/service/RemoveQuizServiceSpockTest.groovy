@@ -6,6 +6,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -19,12 +23,21 @@ import spock.lang.Specification
 
 @DataJpaTest
 class RemoveQuizServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
 
     @Autowired
     QuizService quizService
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     QuestionRepository questionRepository
@@ -38,20 +51,29 @@ class RemoveQuizServiceSpockTest extends Specification {
     @Autowired
     QuizAnswerRepository quizAnswerRepository
 
+    def course
+    def courseExecution
     def question
     def quiz
     def quizQuestion
 
     def setup() {
-        given: "create a question"
+        course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
         question = new Question()
         question.setNumber(1)
-        and: 'a quiz and quiz question'
+
         quiz = new Quiz()
         quiz.setNumber(1)
+        quiz.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz)
+
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
-
         quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
         question.addQuizQuestion(quizQuestion)
@@ -70,8 +92,6 @@ class RemoveQuizServiceSpockTest extends Specification {
         quizQuestionRepository.count() == 0L
         questionRepository.count() == 1L
         question.getQuizQuestions().size() == 0
-
-
     }
 
     def "remove a qiz that has an answer"() {

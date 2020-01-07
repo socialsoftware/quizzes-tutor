@@ -25,6 +25,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             switch (permissionValue) {
                 case "CREATE":
                     return userService.getCourseExecutionIds(username).contains(courseDto.getAcronym() + courseDto.getAcademicTerm());
+                case "ACCESS":
+                    return userService.getCourseExecutions(username).stream()
+                                .anyMatch(course -> course.getAcronym().equals(courseDto.getAcronym()) && course.getAcademicTerm().equals(courseDto.getAcademicTerm()));
                 default:
                     assert false;
             }

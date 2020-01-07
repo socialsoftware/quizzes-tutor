@@ -200,6 +200,7 @@ public class Quiz {
 
     public void setCourseExecution(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
+        courseExecution.addQuiz(this);
     }
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {
@@ -262,8 +263,10 @@ public class Quiz {
     }
 
     public void remove() {
-        getQuizQuestions().forEach(QuizQuestion::remove);
-        quizQuestions.clear();
+        checkCanRemove();
+
+        courseExecution.getQuizzes().remove(this);
+        courseExecution = null;
     }
 
     public void checkCanRemove() {

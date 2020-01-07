@@ -31,7 +31,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     @Autowired
     QuestionRepository questionRepository
 
-    def course;
+    def course
 
     def setup() {
         course = new Course(COURSE_NAME)

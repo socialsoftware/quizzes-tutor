@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.validation.Valid;
@@ -16,24 +18,20 @@ public class QuizController {
     @Autowired
     private QuizService quizService;
 
-    @GetMapping("/quizzes")
-    public List<QuizDto> getQuizzes(@RequestParam("page") int pageIndex, @RequestParam("size") int pageSize){
-        return quizService.findAll(pageIndex, pageSize);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'ACCESS'))")
+    @PostMapping("/quizzes/non-generated")
+    public List<QuizDto> findCourseExecutionNonGeneratedQuizzes(@Valid @RequestBody CourseDto courseDto) {
+        return quizService.findCourseExecutionNonGeneratedQuizzes(courseDto);
     }
 
-    @GetMapping("/quizzes/non-generated")
-    public List<QuizDto> getNonGeneratedQuizzes() {
-        return quizService.findAllNonGenerated();
+    @PostMapping("/courses/{name}/executions/{acronym}/{academicTerm}/quizzes")
+    public QuizDto createQuiz(@PathVariable String name, @PathVariable String acronym, @PathVariable String academicTerm, @Valid @RequestBody QuizDto quiz) {
+        return this.quizService.createQuiz(acronym, academicTerm.replace("_", "/"), quiz);
     }
 
     @GetMapping("/quizzes/{quizId}")
     public QuizDto getQuiz(@PathVariable Integer quizId) {
         return this.quizService.findById(quizId);
-    }
-
-    @PostMapping("/quizzes")
-    public QuizDto createQuiz(@Valid @RequestBody QuizDto quiz) {
-        return this.quizService.createQuiz(quiz);
     }
 
     @PutMapping("/quizzes/{quizId}")
