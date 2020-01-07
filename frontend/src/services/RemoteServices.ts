@@ -163,7 +163,7 @@ export default class RemoteServices {
 
   static getQuizStatement(params: object): Promise<StatementQuiz> {
     return httpClient
-      .post("/student/quizzes/generate", params)
+      .post("/quizzes/generate", params)
       .then(response => {
         return new StatementQuiz(response.data);
       })
@@ -174,7 +174,7 @@ export default class RemoteServices {
 
   static getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
-      .get("/student/quizzes/available")
+      .post("/quizzes/available", Store.getters.getCurrentCourse)
       .then(response => {
         return response.data.map((statementQuiz: any) => {
           return new StatementQuiz(statementQuiz);
@@ -187,7 +187,7 @@ export default class RemoteServices {
 
   static getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
-      .get("/student/quizzes/solved")
+      .post("/quizzes/solved", Store.getters.getCurrentCourse)
       .then(response => {
         return response.data.map((solvedQuiz: any) => {
           return new SolvedQuiz(solvedQuiz);
@@ -200,7 +200,7 @@ export default class RemoteServices {
 
   static getCorrectAnswers(params: object): Promise<StatementCorrectAnswer[]> {
     return httpClient
-      .post("/student/quizzes/answer", params)
+      .post("/quizzes/answer", params)
       .then(response => {
         return response.data.answers.map((answer: any) => {
           return new StatementCorrectAnswer(answer);

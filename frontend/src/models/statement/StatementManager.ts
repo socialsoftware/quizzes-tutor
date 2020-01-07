@@ -23,7 +23,7 @@ export default class StatementManager {
   async getQuizStatement() {
     let params = {
       // topic: this.topic,
-      courseName: Store.getters.courseExecution.name,
+      course: Store.getters.getCurrentCourse,
       questionType: this.questionType,
       assessment: this.assessment,
       numberOfQuestions: +this.numberOfQuestions

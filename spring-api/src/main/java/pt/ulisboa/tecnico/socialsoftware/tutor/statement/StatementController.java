@@ -23,7 +23,7 @@ import java.util.List;
 
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_STUDENT" })
-@RequestMapping("/student/quizzes")
+@RequestMapping("/quizzes")
 public class StatementController {
     private static Logger logger = LoggerFactory.getLogger(StatementController.class);
 
@@ -33,20 +33,7 @@ public class StatementController {
     @Autowired
     private LogService logService;
 
-    @PostMapping("/generate")
-    public StatementQuizDto getNewQuiz(Principal principal, @RequestBody StatementCreationDto quizDetails) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if(user == null){
-            return null;
-        }
-
-        logService.create(user, LocalDateTime.now(), "STUDENT");
-
-        return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
-    }
-
-    @GetMapping("/available")
+    @PostMapping("/available")
     public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -59,8 +46,21 @@ public class StatementController {
         return statementService.getAvailableQuizzes(user.getUsername(), courseDto);
     }
 
-    @GetMapping("/solved")
-    public List<SolvedQuizDto> getSolvedQuizzes(Principal principal) {
+    @PostMapping("/generate")
+    public StatementQuizDto getNewQuiz(Principal principal, @RequestBody StatementCreationDto quizDetails) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            return null;
+        }
+
+        logService.create(user, LocalDateTime.now(), "STUDENT");
+        
+        return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
+    }
+
+    @PostMapping("/solved")
+    public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
@@ -69,7 +69,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "LIST_SOLVED");
 
-        return statementService.getSolvedQuizzes(user.getUsername());
+        return statementService.getSolvedQuizzes(user.getUsername(), courseDto);
     }
 
     @PostMapping("/answer")

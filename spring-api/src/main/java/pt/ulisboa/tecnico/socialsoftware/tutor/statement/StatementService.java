@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -47,6 +49,9 @@ public class StatementService {
     private UserRepository userRepository;
 
     @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
     private QuizRepository quizRepository;
 
     @Autowired
@@ -75,7 +80,7 @@ public class StatementService {
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
-        List<Question> availableQuestions = questionRepository.findCourseAvailableQuestions(quizDetails.getCourseName());
+        List<Question> availableQuestions = questionRepository.findCourseAvailableQuestions(quizDetails.getCourse().getName());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 //        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
@@ -136,10 +141,13 @@ public class StatementService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<SolvedQuizDto> getSolvedQuizzes(String username) {
+    public List<SolvedQuizDto> getSolvedQuizzes(String username, CourseDto courseDto) {
         User user = userRepository.findByUsername(username);
 
+        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(courseDto.getAcronym(), courseDto.getAcademicTerm());
+
         return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getCompleted() && quizAnswer.getQuiz().getCourseExecution() == courseExecution)
                 .filter(QuizAnswer::getCompleted)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
