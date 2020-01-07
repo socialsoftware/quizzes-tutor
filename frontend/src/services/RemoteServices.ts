@@ -45,7 +45,7 @@ export default class RemoteServices {
 
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
-      .get("/stats")
+      .get(`/courses/${Store.getters.getCurrentCourse.name}/stats`)
       .then(response => {
         return new StudentStats(response.data);
       })
@@ -56,7 +56,7 @@ export default class RemoteServices {
 
   static async getQuestions(): Promise<Question[]> {
     return httpClient
-      .get("/courses/" + Store.getters.getCurrentCourse.name + "/questions")
+      .get(`/courses/${Store.getters.getCurrentCourse.name}/questions`)
       .then(response => {
         return response.data.map((question: any) => {
           return new Question(question);
@@ -70,9 +70,7 @@ export default class RemoteServices {
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
       .get(
-        "/courses/" +
-          Store.getters.getCurrentCourse.name +
-          "/questions/available"
+        `/courses/${Store.getters.getCurrentCourse.name}/questions/available`
       )
       .then(response => {
         return response.data.map((question: any) => {
@@ -87,7 +85,7 @@ export default class RemoteServices {
   static createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
-        "/courses/" + Store.getters.getCurrentCourse.name + "/questions/",
+        `/courses/${Store.getters.getCurrentCourse.name}/questions/`,
         question
       )
       .then(response => {
@@ -100,7 +98,7 @@ export default class RemoteServices {
 
   static updateQuestion(question: Question): Promise<Question> {
     return httpClient
-      .put("/questions/" + question.id, question)
+      .put(`/questions/${question.id}`, question)
       .then(response => {
         return new Question(response.data);
       })
@@ -110,7 +108,7 @@ export default class RemoteServices {
   }
 
   static deleteQuestion(questionId: number) {
-    return httpClient.delete("/questions/" + questionId).catch(async error => {
+    return httpClient.delete(`/questions/${questionId}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
@@ -120,7 +118,7 @@ export default class RemoteServices {
     status: String
   ): Promise<Question> {
     return httpClient
-      .post("/questions/" + questionId + "/set-status", status, {})
+      .post(`/questions/${questionId}/set-status`, status, {})
       .then(response => {
         return new Question(response.data);
       })
@@ -133,7 +131,7 @@ export default class RemoteServices {
     let formData = new FormData();
     formData.append("file", file);
     return httpClient
-      .put("/questions/" + questionId + "/image", formData, {
+      .put(`/questions/${questionId}/image`, formData, {
         headers: {
           "Content-Type": "multipart/form-data"
         }
@@ -147,12 +145,12 @@ export default class RemoteServices {
   }
 
   static updateQuestionTopics(questionId: number, topics: Topic[]) {
-    return httpClient.put("/questions/" + questionId + "/topics", topics);
+    return httpClient.put(`/questions/${questionId}/topics`, topics);
   }
 
   static getTopics(): Promise<Topic[]> {
     return httpClient
-      .get("/courses/" + Store.getters.getCurrentCourse.name + "/topics")
+      .get(`/courses/${Store.getters.getCurrentCourse.name}/topics`)
       .then(response => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -215,10 +213,7 @@ export default class RemoteServices {
 
   static createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post(
-        "/courses/" + Store.getters.getCurrentCourse.name + "/topics/",
-        topic
-      )
+      .post(`/courses/${Store.getters.getCurrentCourse.name}/topics/`, topic)
       .then(response => {
         return new Topic(response.data);
       })
@@ -229,7 +224,7 @@ export default class RemoteServices {
 
   static updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .put("/topics/" + topic.id, topic)
+      .put(`/topics/${topic.id}`, topic)
       .then(response => {
         return new Topic(response.data);
       })
@@ -239,7 +234,7 @@ export default class RemoteServices {
   }
 
   static deleteTopic(topic: Topic) {
-    return httpClient.delete("/topics/" + topic.id).catch(async error => {
+    return httpClient.delete(`/topics/${topic.id}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
@@ -258,14 +253,14 @@ export default class RemoteServices {
   }
 
   static async deleteQuiz(quizId: number) {
-    return httpClient.delete("/quizzes/" + quizId).catch(async error => {
+    return httpClient.delete(`/quizzes/${quizId}`).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
   }
 
   static async getQuiz(quizId: number): Promise<Quiz> {
     return httpClient
-      .get("/quizzes/" + quizId)
+      .get(`/quizzes/${quizId}`)
       .then(response => {
         return new Quiz(response.data);
       })
@@ -277,7 +272,7 @@ export default class RemoteServices {
   static async saveQuiz(quiz: Quiz): Promise<Quiz> {
     if (quiz.id) {
       return httpClient
-        .put("/quizzes/" + quiz.id, quiz)
+        .put(`/quizzes/${quiz.id}`, quiz)
         .then(response => {
           return new Quiz(response.data);
         })
@@ -298,7 +293,7 @@ export default class RemoteServices {
 
   static async getCourses(): Promise<Course[]> {
     return httpClient
-      .get("/courses/" + Store.getters.getCurrentCourse.name + "/executions")
+      .get(`/courses/${Store.getters.getCurrentCourse.name}/executions`)
       .then(response => {
         return response.data.map((course: any) => {
           return new Course(course);
@@ -312,13 +307,9 @@ export default class RemoteServices {
   static async getCourseStudents(course: Course) {
     return httpClient
       .get(
-        "/courses/" +
-          course.name +
-          "/executions/" +
-          course.acronym +
-          "/" +
-          course.academicTerm.replace("/", "_") +
-          "/students"
+        `/courses/${course.name}/executions/${
+          course.acronym
+        }/${course.academicTerm.replace("/", "_")}/students`
       )
       .then(response => {
         return response.data.map((student: any) => {
@@ -359,7 +350,7 @@ export default class RemoteServices {
   static async saveAssessment(assessment: Assessment) {
     if (assessment.id) {
       return httpClient
-        .put("/assessments/" + assessment.id, assessment)
+        .put(`/assessments/${assessment.id}`, assessment)
         .then(response => {
           return new Assessment(response.data);
         })
@@ -380,7 +371,7 @@ export default class RemoteServices {
 
   static async deleteAssessment(assessmentId: number) {
     return httpClient
-      .delete("/assessments/" + assessmentId)
+      .delete(`/assessments/${assessmentId}`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -391,7 +382,7 @@ export default class RemoteServices {
     status: string
   ): Promise<Assessment> {
     return httpClient
-      .post("/assessments/" + assessmentId + "/set-status", status, {
+      .post(`/assessments/${assessmentId}/set-status`, status, {
         headers: {
           "Content-Type": "text/html"
         }
@@ -406,10 +397,7 @@ export default class RemoteServices {
 
   static async exportAll() {
     return httpClient
-      .get("/admin/export", {
-        headers: {
-          Authorization: Store.getters.getToken
-        },
+      .get(`/admin/export`, {
         responseType: "blob"
       })
       .then(response => {
@@ -419,7 +407,7 @@ export default class RemoteServices {
         let dateTime = new Date();
         link.setAttribute(
           "download",
-          "export-" + dateTime.toLocaleString() + ".zip"
+          `export-${dateTime.toLocaleString()}.zip`
         );
         document.body.appendChild(link);
         link.click();
@@ -437,7 +425,7 @@ export default class RemoteServices {
     } else if (error.response) {
       return error.response.data.message;
     } else if (error.message === "Request failed with status code 403") {
-      Store.dispatch("logout");
+      await Store.dispatch("logout");
       return "Unauthorized access or Expired token";
     } else {
       return "Unknown Error - Contact admin";

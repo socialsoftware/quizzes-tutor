@@ -37,7 +37,7 @@ public class StatsService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(String username) {
+    public StatsDto getStats(String username, String courseName) {
         User user = userRepository.findByUsername(username);
 
         StatsDto statsDto = new StatsDto();
@@ -81,7 +81,7 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        int totalAvailableQuestions = questionRepository.getCourseAvailableQuestionsSize();
+        int totalAvailableQuestions = questionRepository.getCourseAvailableQuestionsSize(courseName);
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);

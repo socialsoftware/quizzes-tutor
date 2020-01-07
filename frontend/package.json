@@ -53,6 +53,7 @@
     "@vue/eslint-config-prettier": "^5.0.0",
     "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
+    "axios-mock-adapter": "^1.17.0",
     "babel-eslint": "^10.0.3",
     "compression-webpack-plugin": "^3.0.0",
     "eslint": "^5.16.0",
@@ -110,6 +111,9 @@
     "last 2 versions"
   ],
   "jest": {
-    "preset": "@vue/cli-plugin-unit-jest/presets/typescript-and-babel"
+    "preset": "@vue/cli-plugin-unit-jest/presets/typescript-and-babel",
+    "transformIgnorePatterns": [
+      "node_modules/(?!(vue-underscore)/)"
+    ]
   }
 }

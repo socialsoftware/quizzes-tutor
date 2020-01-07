@@ -3,7 +3,7 @@
     <h2>Statistics</h2>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="totalQuizzes">
           <animated-number :number="stats.totalQuizzes" />
         </div>
         <div class="project-name">
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="totalAnswers">
           <animated-number :number="stats.totalAnswers" />
         </div>
         <div class="project-name">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="totalUniqueQuestions">
           <animated-number :number="stats.totalUniqueQuestions" />
         </div>
         <div class="project-name">
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="correctAnswers">
           <animated-number :number="stats.correctAnswers">%</animated-number>
         </div>
         <div class="project-name">
@@ -35,7 +35,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
           <animated-number :number="stats.improvedCorrectAnswers"
             >%</animated-number
           >
@@ -45,7 +45,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="number">
+        <div class="icon-wrapper" ref="percentageOfSeenQuestions">
           <animated-number
             :number="
               (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions

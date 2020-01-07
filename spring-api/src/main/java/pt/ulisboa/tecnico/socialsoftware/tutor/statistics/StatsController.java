@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -21,8 +22,8 @@ public class StatsController {
     @Autowired
     private LogService logService;
 
-    @GetMapping("/stats")
-    public StatsDto getStats(Principal principal) {
+    @GetMapping("/courses/{courseName}/stats")
+    public StatsDto getStats(Principal principal, @PathVariable String courseName) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
@@ -31,7 +32,7 @@ public class StatsController {
 
         logService.create(user, LocalDateTime.now(), "GET_STATS");
 
-        return statsService.getStats(user.getUsername());
+        return statsService.getStats(user.getUsername(), courseName);
 
 
     }
