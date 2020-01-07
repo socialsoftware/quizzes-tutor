@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -19,6 +23,9 @@ import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class ImportExportQuizzesSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String VERSION = 'B'
     public static final String QUESTION_TITLE = 'question title'
@@ -35,6 +42,12 @@ class ImportExportQuizzesSpockTest extends Specification {
     QuizService quizService
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuestionService questionService
 
     @Autowired
@@ -42,6 +55,12 @@ class ImportExportQuizzesSpockTest extends Specification {
 
     def setup() {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+
+        def course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
         questionDto.setNumber(1)
@@ -56,7 +75,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         questionDto.setOptions(options)
-        questionDto = questionService.createCourseQuestion(questionDto)
+        questionDto = questionService.createCourseQuestion(COURSE_NAME, questionDto)
 
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
@@ -72,7 +91,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
-        quiz = quizService.createQuiz(quizDto)
+        quiz = quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quizDto)
 
         quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
     }

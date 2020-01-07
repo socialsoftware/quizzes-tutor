@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
@@ -46,7 +47,7 @@ public class StatementController {
     }
 
     @GetMapping("/available")
-    public List<StatementQuizDto> getAvailableQuizzes(Principal principal) {
+    public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
@@ -55,7 +56,7 @@ public class StatementController {
 
         logService.create(user, LocalDateTime.now(), "LIST_AVAILABLE");
 
-        return statementService.getAvailableQuizzes(user.getUsername());
+        return statementService.getAvailableQuizzes(user.getUsername(), courseDto);
     }
 
     @GetMapping("/solved")

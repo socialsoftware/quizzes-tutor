@@ -241,7 +241,7 @@ export default class RemoteServices {
 
   static getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
-      .get("/quizzes/non-generated")
+      .post("/quizzes/non-generated", Store.getters.getCurrentCourse)
       .then(response => {
         return response.data.map((quiz: any) => {
           return new Quiz(quiz);
@@ -281,7 +281,15 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post("/quizzes/", quiz)
+        .post(
+          `/courses/${Store.getters.getCurrentCourse.name}/executions/${
+            Store.getters.getCurrentCourse.acronym
+          }/${Store.getters.getCurrentCourse.academicTerm.replace(
+            "/",
+            "_"
+          )}/quizzes/`,
+          quiz
+        )
         .then(response => {
           return new Quiz(response.data);
         })
@@ -397,7 +405,7 @@ export default class RemoteServices {
 
   static async exportAll() {
     return httpClient
-      .get(`/admin/export`, {
+      .get("/admin/export", {
         responseType: "blob"
       })
       .then(response => {

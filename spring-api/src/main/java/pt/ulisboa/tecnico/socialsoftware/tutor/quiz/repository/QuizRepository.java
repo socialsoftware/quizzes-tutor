@@ -13,15 +13,12 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
-    @Query(value = "select * from quizzes q where q.type <> 'STUDENT'", nativeQuery = true)
-    List<Quiz> findAllNonGenerated();
+    @Query(value = "SELECT * FROM quizzes q INNER JOIN course_executions ce ON ce.id = q.course_execution_id WHERE ce.acronym = :acronym AND ce.academic_term = :academicTerm AND q.type <> 'STUDENT'", nativeQuery = true)
+    List<Quiz> findCourseExecutionAvailableTeacherQuizzes(String acronym, String academicTerm);
 
-    @Query(value = "select * from quizzes q where q.type <> 'STUDENT' and q.year = :year", nativeQuery = true)
-    List<Quiz> findAvailableTeacherQuizzes(Integer year);
-
-    @Query(value = "select MAX(number) from quizzes", nativeQuery = true)
+    @Query(value = "SELECT MAX(number) FROM quizzes", nativeQuery = true)
     Integer getMaxQuizNumber();
 
-    @Query(value = "select * from quizzes q where q.number = :number", nativeQuery = true)
+    @Query(value = "SELECT * FROM quizzes q WHERE q.number = :number", nativeQuery = true)
     Optional<Quiz> findByNumber(Integer number);
 }

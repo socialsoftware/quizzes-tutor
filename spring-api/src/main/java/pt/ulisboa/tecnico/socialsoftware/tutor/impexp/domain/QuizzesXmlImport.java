@@ -7,6 +7,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -73,6 +74,10 @@ public class QuizzesXmlImport {
 	}
 
 	private void importQuiz(Element quizElement) {
+		String courseName = quizElement.getAttributeValue("courseName");
+		String acronym = quizElement.getAttributeValue("acronym");
+		String academicTerm = quizElement.getAttributeValue("academicTerm");
+
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
 		boolean scramble = false;
 		if (quizElement.getAttributeValue("scramble") != null) {
@@ -113,7 +118,7 @@ public class QuizzesXmlImport {
 		quizDto.setSeries(series);
 		quizDto.setVersion(version);
 
-		QuizDto quiz = quizService.createQuiz(quizDto);
+		QuizDto quiz = quizService.createQuiz(acronym, academicTerm, quizDto);
 
 		importQuizQuestions(quizElement.getChild("quizQuestions"), quiz.getId());
 	}

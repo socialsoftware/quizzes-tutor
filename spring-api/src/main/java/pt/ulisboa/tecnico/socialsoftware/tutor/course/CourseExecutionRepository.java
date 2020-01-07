@@ -10,4 +10,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface CourseExecutionRepository extends JpaRepository<CourseExecution, Integer> {
+    @Query(value = "SELECT * FROM course_executions ce WHERE ce.acronym = :acronym AND ce.academic_term = :academicTerm", nativeQuery = true)
+    CourseExecution findByAcronymAndAcademicTerm(String acronym, String academicTerm);
 }

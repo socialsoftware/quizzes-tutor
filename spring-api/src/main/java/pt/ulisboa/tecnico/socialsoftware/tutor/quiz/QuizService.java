@@ -7,6 +7,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
@@ -24,6 +29,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -35,6 +41,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 @Service
 public class QuizService {
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -48,14 +56,6 @@ public class QuizService {
     @PersistenceContext
     EntityManager entityManager;
 
-
-    public List<QuizDto> findAll(int pageIndex, int pageSize) {
-        return quizRepository.findAll(PageRequest.of(pageIndex, pageSize)).getContent()
-                .stream().map(quiz -> new QuizDto(quiz, true))
-                .collect(Collectors.toList());
-    }
-
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
@@ -66,40 +66,43 @@ public class QuizService {
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuizDto> findAllNonGenerated() {
-        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getYear, Comparator.nullsFirst(Comparator.reverseOrder()))
+    public List<QuizDto> findCourseExecutionNonGeneratedQuizzes(CourseDto courseDto) {
+        Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
-        return quizRepository.findAllNonGenerated().stream()
+        return quizRepository.findCourseExecutionAvailableTeacherQuizzes(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());
     }
-
 
     public Integer getMaxQuizNumber() {
         Integer maxQuizNumber = quizRepository.getMaxQuizNumber();
         return maxQuizNumber != null ? maxQuizNumber : 0;
     }
 
-
     @Retryable(
       value = { SQLException.class },
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuizDto createQuiz(QuizDto quizDto) {
+    public QuizDto createQuiz(String acronym, String academicTerm, QuizDto quizDto) {
+        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(acronym, academicTerm);
+        if (courseExecution == null) {
+            throw new TutorException(ExceptionError.COURSE_EXECUTION_NOT_FOUND,acronym + " " + academicTerm);
+        }
+
         if (quizDto.getNumber() == null) {
             quizDto.setNumber(getMaxQuizNumber() + 1);
         }
         Quiz quiz = new Quiz(quizDto);
+        quiz.setCourseExecution(courseExecution);
 
         if (quizDto.getQuestions() != null) {
             for (QuestionDto questionDto : quizDto.getQuestions()) {
@@ -108,7 +111,12 @@ public class QuizService {
                 new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
             }
         }
-        quiz.setCreationDate(LocalDateTime.now());
+        if (quizDto.getCreationDate() == null) {
+            quiz.setCreationDate(LocalDateTime.now());
+        } else {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            quiz.setCreationDate(LocalDateTime.parse(quizDto.getCreationDate(), formatter));
+        }
         entityManager.persist(quiz);
 
         return new QuizDto(quiz, true);
@@ -171,7 +179,7 @@ public class QuizService {
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        quiz.checkCanRemove();
+        quiz.remove();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
