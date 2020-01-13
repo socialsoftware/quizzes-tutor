@@ -331,7 +331,7 @@ export default class RemoteServices {
 
   static getAssessments(): Promise<Assessment[]> {
     return httpClient
-      .get("/assessments")
+      .post("/assessments/all", Store.getters.getCurrentCourse)
       .then(response => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
@@ -344,7 +344,7 @@ export default class RemoteServices {
 
   static async getAvailableAssessments() {
     return httpClient
-      .get("/assessments/available")
+      .post("/assessments/available", Store.getters.getCurrentCourse)
       .then(response => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
@@ -367,7 +367,15 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post("/assessments/", assessment)
+        .post(
+          `/courses/${Store.getters.getCurrentCourse.name}/executions/${
+            Store.getters.getCurrentCourse.acronym
+          }/${Store.getters.getCurrentCourse.academicTerm.replace(
+            "/",
+            "_"
+          )}/assessments`,
+          assessment
+        )
         .then(response => {
           return new Assessment(response.data);
         })

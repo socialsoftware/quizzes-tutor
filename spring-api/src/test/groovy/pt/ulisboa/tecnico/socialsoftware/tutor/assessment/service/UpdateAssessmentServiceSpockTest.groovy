@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -16,6 +20,9 @@ import spock.lang.Specification
 
 @DataJpaTest
 class UpdateAssessmentServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String ASSESSMENT_TITLE_1 = 'assessment title 1'
     public static final String ASSESSMENT_TITLE_2 = 'assessment title 2'
     public static final String TOPIC_NAME_1 = "topic name 1"
@@ -23,6 +30,12 @@ class UpdateAssessmentServiceSpockTest extends Specification {
 
     @Autowired
     AssessmentService assessmentService
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     AssessmentRepository assessmentRepository
@@ -47,7 +60,14 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunction)
         assessmentDto.setTopicConjunctions(topicConjunctionList)
-        assessmentDto = assessmentService.createAssessment(assessmentDto)
+
+        def course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
+        assessmentDto = assessmentService.createAssessment(ACRONYM, ACADEMIC_TERM, assessmentDto)
     }
 
     def "update an assessment title and single topic conjuntion"() {

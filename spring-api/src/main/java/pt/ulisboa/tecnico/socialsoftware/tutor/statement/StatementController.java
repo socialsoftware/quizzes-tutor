@@ -55,7 +55,7 @@ public class StatementController {
         }
 
         logService.create(user, LocalDateTime.now(), "STUDENT");
-        
+
         return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
     }
 

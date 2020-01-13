@@ -4,6 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -14,8 +18,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
+import java.time.format.DateTimeFormatter
+
 @DataJpaTest
 class CreateAssessmentServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String ASSESSMENT_TITLE = 'assessment title'
     public static final String TOPIC_NAME = "topic name"
 
@@ -23,11 +32,27 @@ class CreateAssessmentServiceSpockTest extends Specification {
     AssessmentService assessmentService
 
     @Autowired
-    AssessmentRepository assessmentRepository
+    CourseRepository courseRepository
 
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
+    AssessmentRepository assessmentRepository
 
     @Autowired
     TopicRepository topicRepository
+
+    def course
+    def courseExecution
+
+    def setup() {
+        course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+    }
 
     def "create a assessment with one topicConjunction with one topic"() {
         given: "a assessmentDto"
@@ -46,15 +71,17 @@ class CreateAssessmentServiceSpockTest extends Specification {
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
-        assessmentService.createAssessment(assessmentDto)
+        assessmentService.createAssessment(ACRONYM, ACADEMIC_TERM, assessmentDto)
 
         then: "the correct assessment is inside the repository"
+        courseExecutionRepository.count() == 1L
         assessmentRepository.count() == 1L
         topicRepository.count() == 1L
-        def result = assessmentRepository.findAll().get(0)
+        def result = courseExecutionRepository.findAll().get(0).getAssessments().stream().findAny().get()
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE
         result.getTitle() == ASSESSMENT_TITLE
+        result.getCourseExecution() == courseExecution
         result.getTopicConjunctions().size() == 1
         def resTopicConjunction = result.getTopicConjunctions().first()
         resTopicConjunction.getId() != null

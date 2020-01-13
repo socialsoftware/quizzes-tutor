@@ -8,6 +8,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -41,6 +45,9 @@ public class AssessmentService {
     @Autowired
     private TopicConjunctionRepository topicConjunctionRepository;
 
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -49,8 +56,10 @@ public class AssessmentService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<AssessmentDto> findAll() {
-        return assessmentRepository.findAll().stream().map(AssessmentDto::new).collect(Collectors.toList());
+    public List<AssessmentDto> findExecutionCourseAssessments(CourseDto courseDto) {
+        return assessmentRepository.findExecutionCourseAssessments(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
+                .map(AssessmentDto::new)
+                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -58,8 +67,8 @@ public class AssessmentService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<AssessmentDto> findAllAvailable() {
-        return assessmentRepository.findAll().stream()
+    public List<AssessmentDto> findExecutionCourseAvailableAssessments(CourseDto courseDto) {
+        return assessmentRepository.findExecutionCourseAssessments(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
                 .map(AssessmentDto::new)
                 .collect(Collectors.toList());
@@ -71,18 +80,23 @@ public class AssessmentService {
       maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AssessmentDto createAssessment(AssessmentDto assessmentDto) {
-        Assessment assessment = new Assessment();
-        assessment.setTitle(assessmentDto.getTitle());
-        assessment.setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
-        assessment.setTopicConjunctions(assessmentDto.getTopicConjunctions().stream()
+    public AssessmentDto createAssessment(String acronym, String academicTerm, AssessmentDto assessmentDto) {
+        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(acronym, academicTerm);
+        if (courseExecution == null) {
+            throw new TutorException(ExceptionError.COURSE_EXECUTION_NOT_FOUND,acronym + " " + academicTerm);
+        }
+
+        List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
                 .map(topicConjunctionDto -> {
                     TopicConjunction topicConjunction = new TopicConjunction();
                     Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
                     topicConjunction.updateTopics(newTopics);
                     return topicConjunction;
-                }).collect(Collectors.toList()));
-        assessment.getTopicConjunctions().forEach(topicConjunction -> topicConjunction.setAssessment(assessment));
+                }).collect(Collectors.toList());
+
+
+        Assessment assessment = new Assessment(courseExecution, topicConjunctions, assessmentDto);
+
 
         this.entityManager.persist(assessment);
         return new AssessmentDto(assessment);

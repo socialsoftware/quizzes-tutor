@@ -104,7 +104,15 @@ public class CourseExecution {
         this.course = course;
     }
 
+    public Set<Assessment> getAssessments() {
+        return assessments;
+    }
+
     public void addQuiz(Quiz quiz) {
         quizzes.add(quiz);
+    }
+
+    public void addAssessment(Assessment assessment) {
+        assessments.add(assessment);
     }
 }

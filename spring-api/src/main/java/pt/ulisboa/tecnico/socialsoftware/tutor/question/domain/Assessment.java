@@ -3,10 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessments")
@@ -38,6 +41,17 @@ public class Assessment {
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Assessment() {
+    }
+
+    public Assessment(CourseExecution courseExecution, List<TopicConjunction> topicConjunctions, AssessmentDto assessmentDto) {
+        setTitle(assessmentDto.getTitle());
+        setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
+        setCourseExecution(courseExecution);
+
+        courseExecution.addAssessment(this);
+
+        setTopicConjunctions(topicConjunctions);
+        topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
     }
 
     public void remove() {
@@ -87,6 +101,14 @@ public class Assessment {
 
     public void addTopicConjunction(TopicConjunction topicConjunction) {
         this.topicConjunctions.add(topicConjunction);
+    }
+
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
+    }
+
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
     }
 
     @Override

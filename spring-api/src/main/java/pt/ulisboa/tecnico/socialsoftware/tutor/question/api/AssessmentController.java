@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
@@ -23,20 +24,20 @@ public class AssessmentController {
         this.assessmentService = assessmentService;
     }
 
-    @GetMapping("/assessments")
-    public List<AssessmentDto> getAssessment(){
-        return this.assessmentService.findAll();
+    @PostMapping("/assessments/all")
+    public List<AssessmentDto> getExecutionCourseAssessments(@Valid @RequestBody CourseDto courseDto){
+        return this.assessmentService.findExecutionCourseAssessments(courseDto);
     }
 
     @Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT" })
     @GetMapping("/assessments/available")
-    public List<AssessmentDto> getAvailableAssessment(){
-        return this.assessmentService.findAllAvailable();
+    public List<AssessmentDto> getExecutionCourseAvailableAssessments(@Valid @RequestBody CourseDto courseDto){
+        return this.assessmentService.findExecutionCourseAvailableAssessments(courseDto);
     }
 
-    @PostMapping("/assessments")
-    public AssessmentDto createAssessment(@Valid @RequestBody AssessmentDto assessment) {
-        return this.assessmentService.createAssessment(assessment);
+    @PostMapping("/courses/{name}/executions/{acronym}/{academicTerm}/assessments")
+    public AssessmentDto createAssessment(@PathVariable String name, @PathVariable String acronym, @PathVariable String academicTerm, @Valid @RequestBody AssessmentDto assessment) {
+        return this.assessmentService.createAssessment(acronym, academicTerm.replace("_", "/"), assessment);
     }
 
     @PutMapping("/assessments/{assessmentId}")
