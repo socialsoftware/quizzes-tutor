@@ -7,15 +7,25 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USERS_IMPORT_ERROR;
 
+@Component
 public class UsersXmlImport {
 	private UserService userService;
 
@@ -74,7 +84,19 @@ public class UsersXmlImport {
 				if (element.getAttributeValue("year") != null) {
 					user.setYear(Integer.valueOf(element.getAttributeValue("year")));
 				}
+
+				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
+		}
+	}
+
+	private void importCourseExecutions(Element courseExecutions, User user) {
+		for (Element courseExecutionElement: courseExecutions.getChildren("courseExecution")) {
+			String courseName = courseExecutionElement.getAttributeValue("courseName");
+			String acronym = courseExecutionElement.getAttributeValue("acronym");
+			String academicTerm = courseExecutionElement.getAttributeValue("academicTerm");
+
+			userService.addCourseExecution(user.getUsername(), acronym, academicTerm);
 		}
 	}
 

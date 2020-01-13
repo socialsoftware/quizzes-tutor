@@ -26,7 +26,7 @@ public class CourseExecution {
     private Course course;
 
     @ManyToMany(mappedBy = "courseExecutions")
-    private Set<User> users;
+    private Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY)
     private Set<Quiz> quizzes = new HashSet<>();
@@ -114,5 +114,9 @@ public class CourseExecution {
 
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
+    }
+
+    public void addUser(User user) {
+        users.add(user);
     }
 }

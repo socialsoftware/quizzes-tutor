@@ -4,9 +4,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.util.List;
+import java.util.Set;
 
 public class UsersXmlExport {
 	public String export(List<User> users) {
@@ -53,7 +55,23 @@ public class UsersXmlExport {
 			userElement.setAttribute("year", String.valueOf(user.getYear()));
 		}
 
+		exportUserCourseExecutions(userElement, user.getCourseExecutions());
+
 		element.addContent(userElement);
+	}
+
+	private void exportUserCourseExecutions(Element userElement, Set<CourseExecution> courseExecutions) {
+		Element courseExecutionsElement = new Element("courseExecutions");
+		for (CourseExecution courseExecution : courseExecutions) {
+			Element courseExecutionElement = new Element("courseExecution");
+
+			courseExecutionElement.setAttribute("courseName", courseExecution.getCourse().getName());
+			courseExecutionElement.setAttribute("acronym", courseExecution.getAcronym());
+			courseExecutionElement.setAttribute("academicTerm", courseExecution.getAcademicTerm());
+
+			courseExecutionsElement.addContent(courseExecutionElement);
+		}
+		userElement.addContent(courseExecutionsElement);
 	}
 
 }

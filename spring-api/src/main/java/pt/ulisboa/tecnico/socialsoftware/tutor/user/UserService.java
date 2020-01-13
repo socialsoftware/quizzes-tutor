@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -26,6 +28,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -77,6 +82,17 @@ public class UserService {
         User user =  this.userRepository.findByUsername(username);
 
         return user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void addCourseExecution(String username, String acronym, String academicTerm) {
+
+        User user =  this.userRepository.findByUsername(username);
+
+        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(acronym, academicTerm);
+
+        user.addCourse(courseExecution);
+        courseExecution.addUser(user);
     }
 
     public String exportUsers() {
