@@ -10,6 +10,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -31,11 +35,21 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.
 
 @DataJpaTest
 class SubmitQuestionsAnswersServiceSpockTest extends Specification {
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
+
     @Autowired
     AnswerService answerService
 
     @Autowired
     UserRepository userRepository
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     QuizRepository quizRepository
@@ -56,6 +70,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     QuestionAnswerRepository questionAnswerRepository
 
     def user
+    def courseExecution
     def quizQuestion
     def optionOk
     def optionKO
@@ -63,12 +78,29 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     def date
 
     def setup() {
+        def course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
+        user = new User('name', "username", 1, 2019, User.Role.STUDENT)
+        user.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user)
+
         def quiz = new Quiz()
         quiz.setNumber(1)
-        user = new User('name', 'username', User.Role.STUDENT, 1, 2019)
+        quiz.setType(Quiz.QuizType.STUDENT)
+        quiz.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz)
+
         quizAnswer = new QuizAnswer(user, quiz)
+
         def question = new Question()
         question.setNumber(1)
+        question.setCourse(course)
+        course.addQuestion(question)
+
         quizQuestion = new QuizQuestion(quiz, question, 0)
         optionKO = new Option()
         optionKO.setCorrect(false)
@@ -77,7 +109,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         optionOk.setCorrect(true)
         question.addOption(optionOk)
 
-        def date = LocalDateTime.now()
+        date = LocalDateTime.now()
 
         userRepository.save(user)
         quizRepository.save(quiz)
@@ -132,7 +164,9 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
         resultAnswersDto.setAnswers(resultsDto)
         and: 'another user'
-        def otherUser = new User('name', 'username2', User.Role.STUDENT, 2, 2019)
+        def otherUser = new User('name', "usernam2", 2, 2019, User.Role.STUDENT)
+        user.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user)
         userRepository.save(otherUser)
 
 

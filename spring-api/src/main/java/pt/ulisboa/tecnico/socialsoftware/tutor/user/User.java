@@ -323,34 +323,34 @@ public class User implements UserDetails {
     }
 
     public void calculateNumbers() {
-        this.numberOfTeacherQuizzes = (int) this.getQuizAnswers().stream()
+        this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .count();
 
-        this.numberOfStudentQuizzes = (int) this.getQuizAnswers().stream()
+        this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
             .count();
 
-        this.numberOfAnswers = this.getQuizAnswers().stream()
+        this.numberOfAnswers = getQuizAnswers().stream()
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
             .sum();
 
-        this.numberOfCorrectAnswers = (int) this.getQuizAnswers().stream()
+        this.numberOfCorrectAnswers = (int) getQuizAnswers().stream()
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(questionAnswer -> questionAnswer.getOption() != null &&
                         questionAnswer.getOption().getCorrect())
                 .count();
 
-        this.numberOfTeacherAnswers = this.getQuizAnswers().stream()
+        this.numberOfTeacherAnswers = getQuizAnswers().stream()
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                 .sum();
-
-        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
+//
+//        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
+//                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+//                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+//                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+//                        questionAnswer.getOption().getCorrect())
+//                .count();
     }
 }

@@ -5,6 +5,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -23,6 +28,9 @@ import java.util.stream.Collectors
 @DataJpaTest
 class GenerateStudentQuizServiceSpockTest extends Specification {
     static final USERNAME = 'username'
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
 
     @Autowired
     StatementService statementService
@@ -34,23 +42,49 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     UserRepository userRepository
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuestionRepository questionRepository
 
     @Autowired
     OptionRepository optionRepository
 
     def user
+    def courseDto
     def questionOne
     def questionTwo
 
     def setup() {
-        user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
+        def course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
+        courseDto = new CourseDto()
+        courseDto.setName(COURSE_NAME)
+        courseDto.setAcronym(ACRONYM)
+        courseDto.setAcademicTerm(ACADEMIC_TERM)
+
+        user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
+        user.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user)
+
         questionOne = new Question()
         questionOne.setNumber(1)
         questionOne.setStatus(Question.Status.AVAILABLE)
+        questionOne.setCourse(course)
+        course.addQuestion(questionOne)
+
         questionTwo = new Question()
         questionTwo.setNumber(2)
         questionTwo.setStatus(Question.Status.AVAILABLE)
+        questionTwo.setCourse(course)
+        course.addQuestion(questionTwo)
 
         userRepository.save(user)
         questionRepository.save(questionOne)
@@ -61,6 +95,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(1)
+        quizForm.setCourse(courseDto)
 
         when:
         statementService.generateStudentQuiz(USERNAME, quizForm)
@@ -85,6 +120,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(2)
+        quizForm.setCourse(courseDto)
 
         when:
         statementService.generateStudentQuiz(USERNAME, quizForm)
@@ -107,6 +143,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(3)
+        quizForm.setCourse(courseDto)
 
         when:
         statementService.generateStudentQuiz(USERNAME, quizForm)

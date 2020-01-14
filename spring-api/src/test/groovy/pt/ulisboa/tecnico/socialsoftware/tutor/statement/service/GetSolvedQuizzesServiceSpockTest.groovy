@@ -9,6 +9,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -26,6 +31,9 @@ import java.time.LocalDateTime
 @DataJpaTest
 class GetSolvedQuizzesServiceSpockTest extends Specification {
     static final USERNAME = 'username'
+    public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
 
     @Autowired
     QuizService quizService
@@ -40,6 +48,12 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
     UserRepository userRepository
 
     @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuizRepository quizRepository
 
     @Autowired
@@ -52,26 +66,46 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
     QuestionAnswerRepository questionAnswerRepository
 
     def user
+    def courseDto
     def question
     def option
     def quiz
     def quizQuestion
 
     def setup() {
-        user = new User('name', USERNAME, User.Role.STUDENT, 1, 2019)
-        given: "create a question"
+        def course = new Course(COURSE_NAME)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
+
+        courseDto = new CourseDto()
+        courseDto.setName(COURSE_NAME)
+        courseDto.setAcronym(ACRONYM)
+        courseDto.setAcademicTerm(ACADEMIC_TERM)
+
+        user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
+        user.getCourseExecutions().add(courseExecution)
+        courseExecution.getUsers().add(user)
+
         question = new Question()
         question.setNumber(1)
+        question.setCourse(course)
+        course.addQuestion(question)
+
         option = new Option()
         option.setCorrect(true)
         option.setQuestion(question)
         question.addOption(option)
-        and: 'a teacher quiz and quiz question'
+
         quiz = new Quiz()
         quiz.setNumber(1)
         quiz.setType(Quiz.QuizType.TEACHER)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
         quiz.setYear(2019)
+        quiz.setCourseExecution(courseExecution)
+        courseExecution.addQuiz(quiz)
+
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
 
@@ -105,7 +139,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
 
     def 'get solved quizzes for the student'() {
         when:
-        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME)
+        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto)
 
         then: 'returns correct data'
         solvedQuizDtos.size() == 1

@@ -134,7 +134,7 @@ public class AnswerService {
                 user.increaseNumberOfCorrectTeacherAnswers(correctAnswers);
 
             } else {
-                user.increaseNumberOfStudentQuizzes();
+               user.increaseNumberOfStudentQuizzes();
             }
             user.increaseNumberOfAnswers(answers.getAnswers().size());
             user.increaseNumberOfCorrectAnswers(correctAnswers);
