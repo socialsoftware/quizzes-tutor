@@ -33,9 +33,9 @@ public class FenixEduInterface {
         }
     }
 
-    public void authenticate(FenixAuthenticationDto authentication) {
+    public void authenticate(String code) {
         try {
-            userDetails = client.getUserDetailsFromCode(authentication.getCode());
+            userDetails = client.getUserDetailsFromCode(code);
         } catch (Exception e) {
             throw new TutorException(FENIX_ERROR);
         }

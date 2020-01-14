@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
@@ -30,9 +29,6 @@ public class StatementController {
     @Autowired
     private StatementService statementService;
 
-    @Autowired
-    private LogService logService;
-
     @PostMapping("/available")
     public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
@@ -40,8 +36,6 @@ public class StatementController {
         if(user == null){
             return Collections.emptyList();
         }
-
-        logService.create(user, LocalDateTime.now(), "LIST_AVAILABLE");
 
         return statementService.getAvailableQuizzes(user.getUsername(), courseDto);
     }
@@ -54,8 +48,6 @@ public class StatementController {
             return null;
         }
 
-        logService.create(user, LocalDateTime.now(), "STUDENT");
-
         return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
     }
 
@@ -67,8 +59,6 @@ public class StatementController {
             return Collections.emptyList();
         }
 
-        logService.create(user, LocalDateTime.now(), "LIST_SOLVED");
-
         return statementService.getSolvedQuizzes(user.getUsername(), courseDto);
     }
 
@@ -79,8 +69,6 @@ public class StatementController {
         if(user == null){
             return null;
         }
-
-        logService.create(user, LocalDateTime.now(), "ANSWER");
 
         answers.setAnswerDate(LocalDateTime.now());
 

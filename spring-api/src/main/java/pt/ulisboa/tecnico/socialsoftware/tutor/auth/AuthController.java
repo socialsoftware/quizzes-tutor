@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -25,10 +25,20 @@ public class AuthController {
     @Value("${callback.url}")
     private String callbackUrl;
 
-    @PostMapping("/fenix")
-    public AuthDto fenixAuth(@RequestBody FenixAuthenticationDto authentication) {
+    @GetMapping("/fenix/{code}")
+    public AuthDto fenixAuth(@PathVariable String code) {
         FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
-        fenix.authenticate(authentication);
+        fenix.authenticate(code);
         return this.authService.fenixAuth(fenix);
+    }
+
+    @GetMapping("/demo/student")
+    public AuthDto demoStudentAuth() {
+        return this.authService.demoStudentAuth();
+    }
+
+    @GetMapping("/demo/teacher")
+    public AuthDto demoTeacherAuth() {
+        return this.authService.demoTeacherAuth();
     }
 }

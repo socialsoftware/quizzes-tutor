@@ -12,12 +12,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.log.LogService;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,9 +32,6 @@ public class UserService {
 
     @PersistenceContext
     EntityManager entityManager;
-
-    @Autowired
-    private LogService logService;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
@@ -66,7 +61,6 @@ public class UserService {
 
         User user = new User(name, username, getMaxUserNumber() + 1, year, role);
         entityManager.persist(user);
-        logService.create(user, LocalDateTime.now(), "LOGIN");
         return user;
     }
 
@@ -113,4 +107,12 @@ public class UserService {
         xmlImporter.importUsers(usersXML, this);
     }
 
+    //TODO make sure this makes sense
+    public User getDemoTeacher() {
+        return this.userRepository.findByUsername("DEMO-TEACHER");
+    }
+
+    public User getDemoStudent() {
+        return this.userRepository.findByUsername("DEMO-STUDENT");
+    }
 }

@@ -13,9 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -103,4 +101,25 @@ public class AuthService {
 
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            maxAttempts = 2,
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public AuthDto demoStudentAuth() {
+        User user = this.userService.getDemoStudent();
+
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            maxAttempts = 2,
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public AuthDto demoTeacherAuth() {
+        User user = this.userService.getDemoTeacher();
+
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
 }

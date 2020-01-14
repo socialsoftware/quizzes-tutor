@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @Column(name = "last_access")
+    private LocalDateTime lastAccess;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
