@@ -28,6 +28,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Exception exception(Exception e) {
+        logger.error(e.getMessage());
         if (!errorList.contains(e.getMessage())) {
             errorList.add(e.getMessage());
             e.printStackTrace();

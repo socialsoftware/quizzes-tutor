@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -49,6 +50,9 @@ public class ImpExpService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
     private UserService userService;
 
     @Autowired
@@ -72,7 +76,6 @@ public class ImpExpService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportAll() throws IOException {
@@ -162,7 +165,6 @@ public class ImpExpService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAll() throws IOException {
@@ -184,7 +186,7 @@ public class ImpExpService {
 
                 File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();
-                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository);
+                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository, courseExecutionRepository);
 
                 File answersFile = new File(directory.getPath() + "/" + "answers.xml");
                 AnswersXmlImport answersXmlImport = new AnswersXmlImport();

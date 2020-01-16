@@ -1,62 +1,60 @@
 <template v-if="year">
-  <v-container fluid>
-    <v-card class="table">
-      <v-card-title>
-        <v-row align="center">
-          <v-col class="d-flex" cols="12" sm="6">
-            <v-select
-              v-model="course"
-              :items="courses"
-              item-text="academicTerm"
-              item-value="academicTerm"
-              return-object
-              label="Semestre"
-            />
-          </v-col>
-        </v-row>
-      </v-card-title>
-      <v-data-table
-        :headers="headers"
-        :items="students"
-        :search="search"
-        multi-sort
-        disable-pagination
-        class="elevation-1"
-      >
-        <template v-slot:top>
-          <v-text-field v-model="search" label="Search" class="mx-4" />
-        </template>
+  <v-card class="table">
+    <v-card-title>
+      <v-row align="center">
+        <v-col class="d-flex" cols="12" sm="6">
+          <v-select
+            v-model="course"
+            :items="courseExecutions"
+            item-text="academicTerm"
+            item-value="academicTerm"
+            return-object
+            label="Semestre"
+          />
+        </v-col>
+      </v-row>
+    </v-card-title>
+    <v-data-table
+      :headers="headers"
+      :items="students"
+      :search="search"
+      multi-sort
+      disable-pagination
+      class="elevation-1"
+    >
+      <template v-slot:top>
+        <v-text-field v-model="search" label="Search" class="mx-4" />
+      </template>
 
-        <template v-slot:item.percentageOfCorrectAnswers="{ item }">
-          <v-chip
-            :color="getPercentageColor(item.percentageOfCorrectAnswers)"
-            dark
-            >{{ item.percentageOfCorrectAnswers + "%" }}</v-chip
-          >
-        </template>
+      <template v-slot:item.percentageOfCorrectAnswers="{ item }">
+        <v-chip
+          :color="getPercentageColor(item.percentageOfCorrectAnswers)"
+          dark
+          >{{ item.percentageOfCorrectAnswers + "%" }}</v-chip
+        >
+      </template>
 
-        <template v-slot:item.percentageOfCorrectTeacherAnswers="{ item }">
-          <v-chip
-            :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
-            dark
-            >{{ item.percentageOfCorrectTeacherAnswers + "%" }}</v-chip
-          >
-        </template>
-      </v-data-table>
-    </v-card>
-  </v-container>
+      <template v-slot:item.percentageOfCorrectTeacherAnswers="{ item }">
+        <v-chip
+          :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
+          dark
+          >{{ item.percentageOfCorrectTeacherAnswers + "%" }}</v-chip
+        >
+      </template>
+    </v-data-table>
+  </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import Course from "@/models/auth/Course";
+import Course from "@/models/user/Course";
 import { Student } from "@/models/management/Student";
 
 @Component
 export default class StudentsView extends Vue {
   course: Course | null = null;
-  courses: Course[] = [];
+  courseExecutions: Course[] = [];
   students: Student[] = [];
   search: string = "";
   headers: object = [
@@ -102,7 +100,7 @@ export default class StudentsView extends Vue {
   async created() {
     await this.$store.dispatch("loading");
     try {
-      this.courses = await RemoteServices.getCourses();
+      this.courseExecutions = await RemoteServices.getCourseExecutions();
       this.course = this.$store.getters.getCurrentCourse;
     } catch (error) {
       await this.$store.dispatch("error", error);

@@ -23,8 +23,8 @@ public class FenixEduInterface {
     private JsonObject person;
     private JsonObject courses;
 
-    public FenixEduInterface(String baseUrl, String oauthConsumerKey, String oauthConsumerSecret, String callbackUrl) {
-        ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
+    public FenixEduInterface(String baseUrl, String oauthConsumerId, String oauthConsumerSecret, String callbackUrl) {
+        ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerId, oauthConsumerSecret, callbackUrl);
         try {
             client = new FenixEduClientImpl(config);
         } catch (

@@ -32,7 +32,6 @@ public class AuthService {
 
     @Retryable(
             value = { SQLException.class },
-            maxAttempts = 3,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthDto fenixAuth(FenixEduInterface fenix) {
@@ -75,7 +74,7 @@ public class AuthService {
                     .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
-            user.setCourseExecutionIds(ids);
+            user.setEnrolledCoursesAcronyms(ids);
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  teachingCourses));
         }
 
@@ -89,7 +88,7 @@ public class AuthService {
     private List<CourseExecution> getActiveCourses(List<CourseDto> courses) {
         return courses.stream()
                 .map(courseDto ->  {
-                    Course course = courseRepository.findByName(courseDto.getName());
+                    Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
                     if (course == null) {
                         return null;
                     }

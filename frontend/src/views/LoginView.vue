@@ -1,26 +1,46 @@
 <template>
-  <div></div>
+  <div class="container"></div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Course from "@/models/auth/Course";
 
 @Component
-export default class HomeView extends Vue {
-  chosenCourse: Course | null = null;
-  courseList: Course[] = [];
-
+export default class LoginView extends Vue {
   async created() {
     await this.$store.dispatch("loading");
     if (this.$route.query.error) {
       await this.$store.dispatch("error", "Fenix authentication error");
       await this.$router.push({ name: "home" });
     } else {
-      await this.$store.dispatch("login", this.$route.query.code);
-      await this.$router.push({ name: "course" });
+      await this.$store.dispatch("fenixLogin", this.$route.query.code);
+      console.log(this.$store.getters.getUser.coursesNumber);
+      if (this.$store.getters.getUser.coursesNumber === 1) {
+        await this.$store.dispatch(
+          "currentCourse",
+          Object.values(this.$store.getters.getUser.courses)[0]
+        );
+      } else {
+        await this.$router.push({ name: "courses" });
+      }
     }
     await this.$store.dispatch("clearLoading");
   }
 }
 </script>
+
+<style lang="scss">
+.btns-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  align-content: center;
+  height: 100%;
+
+  .v-btn {
+    margin: 5px;
+  }
+}
+</style>

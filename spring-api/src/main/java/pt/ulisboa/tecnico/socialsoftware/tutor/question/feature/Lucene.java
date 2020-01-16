@@ -170,7 +170,7 @@ public class Indexer {
 
     public Map<String, Double> getTFIDF(Fragment fragment, List<String> terms) throws IOException, ParseException {
         Map<String, Double> TFIDFMap = new HashMap<>(getTFIDF(fragment));
-        TFIDFMap.keySet().retainAll(terms);
+        TFIDFMap.idSet().retainAll(terms);
         return TFIDFMap;
     }
 
@@ -209,7 +209,7 @@ public class Indexer {
 
     private Map<String, Double> getTFIDF(Fragment fragment) throws IOException, ParseException {
         String id = fragment.getExternalId();
-        if (termsTFIDFCache.containsKey(id)) {
+        if (termsTFIDFCache.containsId(id)) {
             return termsTFIDFCache.get(id);
         }
         Map<String, Double> tf = getTermFrequency(fragment);
@@ -255,8 +255,8 @@ public class Indexer {
                 TFMap.put(term, tf);
                 totalFrequency += tf;
             }
-            for (String key : TFMap.keySet()) {
-                TFMap.put(key, TFMap.get(key) / totalFrequency);
+            for (String id : TFMap.idSet()) {
+                TFMap.put(id, TFMap.get(id) / totalFrequency);
             }
         }
         reader.close();
@@ -275,12 +275,12 @@ public class Indexer {
 
         Map<String, Double> TFIDFMap = new ConcurrentHashMap<>();
         for (Entry<String, Double> entry : tf.entrySet()) {
-            query = this.queryParser.parse(REP + ":true" + " AND " + entry.getKey());
+            query = this.queryParser.parse(REP + ":true" + " AND " + entry.getId());
             searcher = new IndexSearcher(reader);
             results = searcher.search(query, (int) numDocs);
             long df = results.totalHits;
             double tfidf = entry.getValue() * calculateIDF(numDocs, 1 + df);
-            TFIDFMap.put(entry.getKey(), tfidf);
+            TFIDFMap.put(entry.getId(), tfidf);
         }
 
         reader.close();
@@ -290,7 +290,7 @@ public class Indexer {
         TFIDFMap = new HashMap<>();
         int size = list.size();
         for (int i = 0; i < size && i < SIGNIFICATIVE_TERMS; i++) {
-            TFIDFMap.put(list.get(i).getKey(), list.get(i).getValue());
+            TFIDFMap.put(list.get(i).getId(), list.get(i).getValue());
         }
         return TFIDFMap;
     }
@@ -309,7 +309,7 @@ public class Indexer {
         List<String> terms = new ArrayList<>();
         int size = list.size();
         for (int i = 0; i < size && i < numberOfTerms; i++) {
-            terms.add(list.get(i).getKey());
+            terms.add(list.get(i).getId());
         }
         return terms;
     }

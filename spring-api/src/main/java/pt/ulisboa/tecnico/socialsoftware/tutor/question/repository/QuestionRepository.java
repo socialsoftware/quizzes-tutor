@@ -13,18 +13,18 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    @Query(value = "SELECT * FROM questions q INNER JOIN courses c ON c.id = q.course_id WHERE c.name = :courseName", nativeQuery = true)
-    List<Question> findCourseQuestions(String courseName);
+    @Query(value = "SELECT * FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id", nativeQuery = true)
+    List<Question> findQuestions(String courseName);
 
-    @Query(value = "SELECT * FROM questions q INNER JOIN courses c ON c.id = q.course_id WHERE c.name = :courseName AND q.status = 'AVAILABLE'", nativeQuery = true)
-    List<Question> findCourseAvailableQuestions(String courseName);
+    @Query(value = "SELECT * FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id AND q.status = 'AVAILABLE'", nativeQuery = true)
+    List<Question> findAvailableQuestions(String courseName);
 
-    @Query(value = "SELECT count(*) FROM questions q INNER JOIN courses c ON c.id = q.course_id WHERE c.name = :courseName AND q.status = 'AVAILABLE'", nativeQuery = true)
-    Integer getCourseAvailableQuestionsSize(String courseName);
+    @Query(value = "SELECT count(*) FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id AND q.status = 'AVAILABLE'", nativeQuery = true)
+    Integer getAvailableQuestionsSize(String courseName);
 
     @Query(value = "SELECT MAX(number) FROM questions", nativeQuery = true)
     Integer getMaxQuestionNumber();
 
-    @Query(value = "SELECT * FROM questions q WHERE q.number = :number", nativeQuery = true)
-    Optional<Question> findByNumber(Integer number);
+    @Query(value = "SELECT * FROM questions q WHERE q.id = :id", nativeQuery = true)
+    Optional<Question> findByNumber(Integer id);
 }

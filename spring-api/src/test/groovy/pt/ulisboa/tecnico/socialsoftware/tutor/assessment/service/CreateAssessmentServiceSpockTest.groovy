@@ -18,8 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
-import java.time.format.DateTimeFormatter
-
 @DataJpaTest
 class CreateAssessmentServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
@@ -71,7 +69,7 @@ class CreateAssessmentServiceSpockTest extends Specification {
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
-        assessmentService.createAssessment(ACRONYM, ACADEMIC_TERM, assessmentDto)
+        assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
 
         then: "the correct assessment is inside the repository"
         courseExecutionRepository.count() == 1L

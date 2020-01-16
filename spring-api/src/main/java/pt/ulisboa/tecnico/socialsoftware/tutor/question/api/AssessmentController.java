@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
@@ -24,20 +23,20 @@ public class AssessmentController {
         this.assessmentService = assessmentService;
     }
 
-    @PostMapping("/assessments/all")
-    public List<AssessmentDto> getExecutionCourseAssessments(@Valid @RequestBody CourseDto courseDto){
-        return this.assessmentService.findExecutionCourseAssessments(courseDto);
+    @GetMapping("/executions/{executionId}/assessments")
+    public List<AssessmentDto> getExecutionCourseAssessments(@PathVariable int executionId){
+        return this.assessmentService.findAssessments(executionId);
     }
 
     @Secured({ "ROLE_ADMIN", "ROLE_TEACHER", "ROLE_STUDENT" })
-    @GetMapping("/assessments/available")
-    public List<AssessmentDto> getExecutionCourseAvailableAssessments(@Valid @RequestBody CourseDto courseDto){
-        return this.assessmentService.findExecutionCourseAvailableAssessments(courseDto);
+    @GetMapping("/executions/{executionId}/assessments/available")
+    public List<AssessmentDto> getAvailableAssessments(@PathVariable int executionId){
+        return this.assessmentService.findAvailableAssessments(executionId);
     }
 
-    @PostMapping("/courses/{name}/executions/{acronym}/{academicTerm}/assessments")
-    public AssessmentDto createAssessment(@PathVariable String name, @PathVariable String acronym, @PathVariable String academicTerm, @Valid @RequestBody AssessmentDto assessment) {
-        return this.assessmentService.createAssessment(acronym, academicTerm.replace("_", "/"), assessment);
+    @PostMapping("/executions/{executionId}/assessments")
+    public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
+        return this.assessmentService.createAssessment(executionId, assessment);
     }
 
     @PutMapping("/assessments/{assessmentId}")

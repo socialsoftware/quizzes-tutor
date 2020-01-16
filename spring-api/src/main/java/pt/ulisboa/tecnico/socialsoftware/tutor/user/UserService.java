@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_EXECUTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.DUPLICATE_USER;
 
 @Service
@@ -37,8 +38,8 @@ public class UserService {
         return this.userRepository.findByUsername(username);
     }
 
-    public User findByNumber(Integer number) {
-        return this.userRepository.findByNumber(number);
+    public User findByNumber(Integer id) {
+        return this.userRepository.findByNumber(id);
     }
 
     public Integer getMaxUserNumber() {
@@ -65,10 +66,10 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public String getCourseExecutionIds(String username) {
+    public String getEnrolledCoursesAcronyms(String username) {
         User user =  this.userRepository.findByUsername(username);
 
-        return user.getCourseExecutionIds();
+        return user.getEnrolledCoursesAcronyms();
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -79,11 +80,11 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void addCourseExecution(String username, String acronym, String academicTerm) {
+    public void addCourseExecution(String username, int executionId) {
 
         User user =  this.userRepository.findByUsername(username);
 
-        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(acronym, academicTerm);
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         user.addCourse(courseExecution);
         courseExecution.addUser(user);
@@ -98,7 +99,6 @@ public class UserService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importUsers(String usersXML) {
@@ -107,12 +107,11 @@ public class UserService {
         xmlImporter.importUsers(usersXML, this);
     }
 
-    //TODO make sure this makes sense
     public User getDemoTeacher() {
-        return this.userRepository.findByUsername("DEMO-TEACHER");
+        return this.userRepository.findByUsername("Demo-Teacher");
     }
 
     public User getDemoStudent() {
-        return this.userRepository.findByUsername("DEMO-STUDENT");
+        return this.userRepository.findByUsername("Demo-Student");
     }
 }

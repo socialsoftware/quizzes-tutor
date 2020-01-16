@@ -8,10 +8,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -28,8 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ASSESSMENT_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.TOPIC_CONJUNCTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class AssessmentService {
@@ -53,22 +50,20 @@ public class AssessmentService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<AssessmentDto> findExecutionCourseAssessments(CourseDto courseDto) {
-        return assessmentRepository.findExecutionCourseAssessments(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
+    public List<AssessmentDto> findAssessments(int courseExecutionId) {
+        return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .map(AssessmentDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<AssessmentDto> findExecutionCourseAvailableAssessments(CourseDto courseDto) {
-        return assessmentRepository.findExecutionCourseAssessments(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
+    public List<AssessmentDto> findAvailableAssessments(int courseExecutionId) {
+        return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
                 .map(AssessmentDto::new)
                 .collect(Collectors.toList());
@@ -77,14 +72,10 @@ public class AssessmentService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public AssessmentDto createAssessment(String acronym, String academicTerm, AssessmentDto assessmentDto) {
-        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(acronym, academicTerm);
-        if (courseExecution == null) {
-            throw new TutorException(ExceptionError.COURSE_EXECUTION_NOT_FOUND,acronym + " " + academicTerm);
-        }
+    public AssessmentDto createAssessment(int executionId, AssessmentDto assessmentDto) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
                 .map(topicConjunctionDto -> {
@@ -105,7 +96,6 @@ public class AssessmentService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AssessmentDto updateAssessment(Integer assessmentId, AssessmentDto assessmentDto) {
@@ -135,7 +125,6 @@ public class AssessmentService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeAssessment(Integer assessmentId) {
@@ -147,7 +136,6 @@ public class AssessmentService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void assessmentSetStatus(Integer assessmentId, Assessment.Status status) {

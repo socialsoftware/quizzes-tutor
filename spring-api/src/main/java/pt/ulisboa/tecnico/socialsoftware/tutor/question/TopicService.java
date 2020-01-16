@@ -10,7 +10,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
@@ -25,8 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.DUPLICATE_TOPIC;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.TOPIC_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class TopicService {
@@ -46,26 +44,24 @@ public class TopicService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TopicDto> findCourseTopics(String course_name) {
-        return topicRepository.findCourseTopics(course_name).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+    public List<TopicDto> findTopics(String courseName) {
+        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+        return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TopicDto createCourseTopic(String courseName, TopicDto topicDto) {
-        if (topicRepository.findCourseTopicByName(courseName, topicDto.getName()) != null) {
+    public TopicDto createTopic(String courseName, TopicDto topicDto) {
+
+        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+
+        if (topicRepository.findTopicByName(course.getId(), topicDto.getName()) != null) {
             throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
-        }
-        Course course = courseRepository.findByName(courseName);
-        if (course == null) {
-            throw new TutorException(ExceptionError.COURSE_NOT_FOUND);
         }
 
         Topic topic = new Topic(course, topicDto);
@@ -76,7 +72,6 @@ public class TopicService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
@@ -89,7 +84,6 @@ public class TopicService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTopic(Integer topicId) {
@@ -103,7 +97,6 @@ public class TopicService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportTopics() {
@@ -115,7 +108,6 @@ public class TopicService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importTopics(String topicsXML) {

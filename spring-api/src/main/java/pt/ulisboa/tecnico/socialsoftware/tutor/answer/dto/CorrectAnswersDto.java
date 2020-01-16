@@ -1,11 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CorrectAnswersDto implements Serializable {
-    private List<CorrectAnswerDto> answers = new ArrayList<>();
+    private List<CorrectAnswerDto> answers;
 
     public CorrectAnswersDto(List<CorrectAnswerDto> answers) {
         this.answers = answers;

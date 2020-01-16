@@ -1,5 +1,5 @@
 <template>
-  <v-content>
+  <div>
     <quiz-form
       @switchMode="changeMode"
       @updateQuiz="updateQuiz"
@@ -13,7 +13,7 @@
       @newQuiz="newQuiz"
       :quizzes="quizzes"
     />
-  </v-content>
+  </div>
 </template>
 
 <script lang="ts">

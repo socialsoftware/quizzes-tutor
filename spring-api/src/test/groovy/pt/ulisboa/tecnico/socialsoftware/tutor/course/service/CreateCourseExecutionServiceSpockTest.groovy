@@ -71,7 +71,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         result.academicTerm == ACADEMIC_TERM_ONE
         and: 'course is in the database'
         courseRepository.findAll().size() == 1
-        def course = courseRepository.findByName(COURSE_ONE)
+        def course = courseRepository.findByName(COURSE_ONE).get()
         course != null
         course.getCourseExecutions().size() == 1
         and: 'course execution is in the database'

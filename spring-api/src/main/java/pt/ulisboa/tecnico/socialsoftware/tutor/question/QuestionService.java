@@ -8,7 +8,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
@@ -27,7 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class QuestionService {
@@ -46,7 +45,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionById(Integer questionId) {
@@ -56,42 +54,35 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto findQuestionByNumber(Integer number) {
-        return questionRepository.findByNumber(number).map(QuestionDto::new)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, number));
+    public QuestionDto findQuestionByNumber(Integer id) {
+        return questionRepository.findByNumber(id).map(QuestionDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, id));
     }
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findCourseQuestions(String courseName) {
-        return questionRepository.findCourseQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findQuestions(String courseName) {
+        return questionRepository.findQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findCourseAvailableQuestions(String courseName) {
-        return questionRepository.findCourseAvailableQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findAvailableQuestions(String courseName) {
+        return questionRepository.findAvailableQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto createCourseQuestion(String courseName, QuestionDto questionDto) {
-        Course course = courseRepository.findByName(courseName);
-        if (course == null) {
-            throw new TutorException(ExceptionError.COURSE_NOT_FOUND);
-        }
+    public QuestionDto createQuestion(String courseName, QuestionDto questionDto) {
+        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 
         if (questionDto.getNumber() == null) {
             int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
@@ -108,7 +99,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
@@ -120,7 +110,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuestion(Integer questionId) {
@@ -132,7 +121,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void questionSetStatus(Integer questionId, Question.Status status) {
@@ -143,7 +131,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void uploadImage(Integer questionId, String type) {
@@ -162,16 +149,14 @@ public class QuestionService {
         question.getImage().setUrl(question.getNumber() + "." + type);
     }
 
-
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
-        question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findCourseTopicByName(question.getCourse().getName(), topicDto.getName())).collect(Collectors.toSet()));
+        question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(question.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
     }
 
     public String exportQuestions() {
@@ -183,7 +168,6 @@ public class QuestionService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importQuestions(String questionsXML) {

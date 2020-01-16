@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -21,6 +24,7 @@ import java.util.*;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_EXECUTION_NOT_FOUND;
 
 @Service
 public class StatsService {
@@ -31,13 +35,14 @@ public class StatsService {
     @Autowired
     private QuestionRepository questionRepository;
 
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatsDto getStats(String username, String courseName) {
+    public StatsDto getStats(String username, int executionId) {
         User user = userRepository.findByUsername(username);
 
         StatsDto statsDto = new StatsDto();
@@ -81,7 +86,9 @@ public class StatsService {
                 .filter(Option::getCorrect)
                 .count();
 
-        int totalAvailableQuestions = questionRepository.getCourseAvailableQuestionsSize(courseName);
+        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
+
+        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getName());
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);

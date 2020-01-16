@@ -160,7 +160,7 @@ public class QuestionDto implements Serializable {
     public String toString() {
         return "QuestionDto{" +
                 "id=" + id +
-                ", number=" + number +
+                ", id=" + id +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", difficulty=" + difficulty +

@@ -3,14 +3,14 @@
     <h2>Select Course</h2>
 
     <v-container fluid grid-list-xl>
-      <v-layout wrap>
-        <v-flex v-for="(courseList, name) in courseMap" :key="name">
-          <v-card width="150px" class="mx-auto" max-width="344" elevation="10">
+      <v-layout wrap v-if="courseExecutions">
+        <v-flex v-for="name in Object.keys(courseExecutions)" :key="name">
+          <v-card class="mx-auto" elevation="10">
             <v-list rounded>
               <v-subheader class="title">{{ name }}</v-subheader>
               <v-list-item-group color="primary">
                 <v-list-item
-                  v-for="course in courseList"
+                  v-for="course in courseExecutions[name]"
                   :key="course.acronym"
                   @click="selectCourse(course)"
                 >
@@ -29,14 +29,18 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import Course from "@/models/auth/Course";
+import Course from "@/models/user/Course";
+
+interface CourseMap {
+  [key: string]: Course[];
+}
 
 @Component
-export default class HomeView extends Vue {
-  courseMap: Map<string, Course[]> = new Map<string, Course[]>();
+export default class CourseSelectionView extends Vue {
+  courseExecutions: CourseMap | null = null;
 
   async created() {
-    this.courseMap = await this.$store.getters.getUser.courses;
+    this.courseExecutions = await this.$store.getters.getUser.courses;
   }
 
   async selectCourse(currentCourse: Course) {

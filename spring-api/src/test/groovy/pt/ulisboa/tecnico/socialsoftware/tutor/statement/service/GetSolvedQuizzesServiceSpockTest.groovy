@@ -79,10 +79,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
         def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        courseDto = new CourseDto()
-        courseDto.setName(COURSE_NAME)
-        courseDto.setAcronym(ACRONYM)
-        courseDto.setAcademicTerm(ACADEMIC_TERM)
+        courseDto = new CourseDto(courseExecution)
 
         user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
@@ -139,7 +136,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
 
     def 'get solved quizzes for the student'() {
         when:
-        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto)
+        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto.getId())
 
         then: 'returns correct data'
         solvedQuizDtos.size() == 1

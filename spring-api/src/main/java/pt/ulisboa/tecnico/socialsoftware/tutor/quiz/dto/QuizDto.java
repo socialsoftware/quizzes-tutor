@@ -75,11 +75,11 @@ public class QuizDto implements Serializable {
     }
 
     public Integer getNumber() {
-        return number;
+        return id;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setNumber(Integer id) {
+        this.id = id;
     }
 
     public boolean getScramble() {
@@ -207,7 +207,7 @@ public class QuizDto implements Serializable {
     public String toString() {
         return "QuizDto{" +
                 "id=" + id +
-                ", number=" + number +
+                ", id=" + id +
                 ", scramble=" + scramble +
                 ", title='" + title + '\'' +
                 ", creationDate='" + creationDate + '\'' +

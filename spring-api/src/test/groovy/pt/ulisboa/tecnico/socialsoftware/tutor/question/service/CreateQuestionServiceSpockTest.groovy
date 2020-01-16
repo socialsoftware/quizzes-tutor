@@ -5,6 +5,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -17,6 +19,8 @@ import spock.lang.Specification
 @DataJpaTest
 class CreateQuestionServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -29,14 +33,20 @@ class CreateQuestionServiceSpockTest extends Specification {
     CourseRepository courseRepository
 
     @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuestionRepository questionRepository
 
     def course
+    def courseExecution
 
     def setup() {
         course = new Course(COURSE_NAME)
-
         courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
     }
 
     def "create a question with no image and one option"() {
@@ -55,7 +65,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createCourseQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -101,7 +111,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createCourseQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -132,9 +142,9 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createCourseQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
         questionDto.setNumber(null)
-        questionService.createCourseQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L

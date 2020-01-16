@@ -4,11 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/auth")
 public class AuthController {
     @Autowired
     private AuthService authService;
@@ -25,19 +23,19 @@ public class AuthController {
     @Value("${callback.url}")
     private String callbackUrl;
 
-    @GetMapping("/fenix/{code}")
+    @GetMapping("/auth/fenix/{code}")
     public AuthDto fenixAuth(@PathVariable String code) {
         FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         fenix.authenticate(code);
         return this.authService.fenixAuth(fenix);
     }
 
-    @GetMapping("/demo/student")
+    @GetMapping("/auth/demo/student")
     public AuthDto demoStudentAuth() {
         return this.authService.demoStudentAuth();
     }
 
-    @GetMapping("/demo/teacher")
+    @GetMapping("/auth/demo/teacher")
     public AuthDto demoTeacherAuth() {
         return this.authService.demoTeacherAuth();
     }

@@ -43,7 +43,7 @@ class CreateTopicServiceSpockTest extends Specification {
         topicDto.setName(NAME)
 
         when:
-        topicService.createCourseTopic(COURSE_NAME, topicDto)
+        topicService.createTopic(COURSE_NAME, topicDto)
 
         then: "the topic is inside the repository"
         topicRepository.count() == 1L
@@ -64,7 +64,7 @@ class CreateTopicServiceSpockTest extends Specification {
         topicDto.setName(NAME)
 
         when: 'createQuestion another with the same name'
-        topicService.createCourseTopic(COURSE_NAME, topicDto)
+        topicService.createTopic(COURSE_NAME, topicDto)
 
         then: "an error occurs"
         def exception = thrown(TutorException)

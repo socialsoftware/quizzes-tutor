@@ -77,7 +77,7 @@ public class JwtTokenProvider {
         } catch (SignatureException ex) {
             logger.error("Server security keys have changed");
         } catch (MalformedJwtException ex) {
-            logger.error("Invalid JWT token");
+            logger.error("Invalkey JWT token");
         } catch (ExpiredJwtException ex) {
             logger.error("Expired JWT token");
         } catch (UnsupportedJwtException ex) {

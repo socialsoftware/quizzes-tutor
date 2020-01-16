@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.validation.Valid;
-import java.awt.desktop.SystemEventListener;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,24 +37,24 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/courses/{name}/questions")
-    public List<QuestionDto> getCourseQuestions(@PathVariable String name){
-        return this.questionService.findCourseQuestions(name);
+    @GetMapping("/courses/{courseName}/questions")
+    public List<QuestionDto> getCourseQuestions(@PathVariable String courseName){
+        return this.questionService.findQuestions(courseName);
     }
 
-    @GetMapping("/courses/{name}/questions/available")
-    public List<QuestionDto> getCourseAvailableQuestions(@PathVariable String name){
-        return this.questionService.findCourseAvailableQuestions(name);
+    @GetMapping("/courses/{courseName}/questions/available")
+    public List<QuestionDto> getAvailableQuestions(@PathVariable String courseName){
+        return this.questionService.findAvailableQuestions(courseName);
     }
 
-    @PostMapping("/courses/{name}/questions")
-    public QuestionDto createCourseQuestion(@PathVariable String name, @Valid @RequestBody QuestionDto question) {
-        logger.debug("createCourseQuestion title: {}, content: {}, options: {}: ",
+    @PostMapping("/courses/{courseName}/questions")
+    public QuestionDto createQuestion(@PathVariable String courseName, @Valid @RequestBody QuestionDto question) {
+        logger.debug("createQuestion title: {}, content: {}, options: {}: ",
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
         question.setStatus(Question.Status.AVAILABLE.name());
-        return this.questionService.createCourseQuestion(name, question);
+        return this.questionService.createQuestion(courseName, question);
     }
 
     @GetMapping("/questions/{questionId}")

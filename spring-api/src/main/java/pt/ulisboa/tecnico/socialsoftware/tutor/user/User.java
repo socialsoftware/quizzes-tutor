@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Entity(name = "Users")
+@Entity
 @Table(name = "users")
 public class User implements UserDetails {
 
@@ -23,21 +23,31 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(unique=true, nullable = false)
+    private Integer number;
+
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    private Integer number;
+    
+    @Column(unique=true)
     private String username;
+
     private String name;
     private Integer year;
-    private String courseExecutionIds;
+    private String enrolledCoursesAcronyms;
 
-    private Integer numberOfTeacherQuizzes;
-    private Integer numberOfStudentQuizzes ;
-    private Integer numberOfAnswers;
-    private Integer numberOfTeacherAnswers;
-    private Integer numberOfCorrectAnswers;
-    private Integer numberOfCorrectTeacherAnswers;
+    @Column(name = "number_of_teacher_quizzes", columnDefinition = "integer default 0")
+    private Integer numberOfTeacherQuizzes = 0;
+    @Column(name = "number_of_student_quizzes", columnDefinition = "integer default 0")
+    private Integer numberOfStudentQuizzes = 0;
+    @Column(name = "number_of_answers", columnDefinition = "integer default 0")
+    private Integer numberOfAnswers = 0;
+    @Column(name = "number_of_teacher_answers", columnDefinition = "integer default 0")
+    private Integer numberOfTeacherAnswers = 0;
+    @Column(name = "number_of_correct_answers", columnDefinition = "integer default 0")
+    private Integer numberOfCorrectAnswers = 0;
+    @Column(name = "number_of_correct_teacher_answers", columnDefinition = "integer default 0")
+    private Integer numberOfCorrectTeacherAnswers = 0;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -45,7 +55,7 @@ public class User implements UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch=FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToMany
@@ -61,6 +71,13 @@ public class User implements UserDetails {
         this.year = year;
         this.role = role;
         this.creationDate = LocalDateTime.now();
+        this.lastAccess = LocalDateTime.now();
+        this.numberOfTeacherQuizzes = 0;
+        this.numberOfStudentQuizzes = 0;
+        this.numberOfAnswers = 0;
+        this.numberOfTeacherAnswers = 0;
+        this.numberOfCorrectAnswers = 0;
+        this.numberOfCorrectTeacherAnswers = 0;
     }
 
     public Integer getId() {
@@ -104,12 +121,12 @@ public class User implements UserDetails {
         this.year = year;
     }
 
-    public String getCourseExecutionIds() {
-        return courseExecutionIds;
+    public String getEnrolledCoursesAcronyms() {
+        return enrolledCoursesAcronyms;
     }
 
-    public void setCourseExecutionIds(String courseExecutionIds) {
-        this.courseExecutionIds = courseExecutionIds;
+    public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
+        this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
 
     public Role getRole() {
@@ -126,6 +143,14 @@ public class User implements UserDetails {
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public LocalDateTime getLastAccess() {
+        return lastAccess;
+    }
+
+    public void setLastAccess(LocalDateTime lastAccess) {
+        this.lastAccess = lastAccess;
     }
 
     public Set<QuizAnswer> getQuizAnswers() {
@@ -235,11 +260,11 @@ public class User implements UserDetails {
         return "User{" +
                 "id=" + id +
                 ", role=" + role +
-                ", number=" + number +
+                ", id=" + id +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", year=" + year +
-                ", courseExecutionIds='" + courseExecutionIds + '\'' +
+                ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +
@@ -307,7 +332,7 @@ public class User implements UserDetails {
         }
 
         // add notanswered questions if there is not enough answered questions
-        // it is ok because the total number of available questions > numberOfQuestions
+        // it is ok because the total id of available questions > numberOfQuestions
         while (studentAnsweredQuestions.size() + numberOfAddedQuestions < numberOfQuestions) {
             result.add(notAnsweredQuestions.get(numberOfAddedQuestions++));
         }

@@ -1,19 +1,19 @@
 <template>
-  <v-content>
+  <div>
     <assessment-form
       @switchMode="changeMode"
       @updateAssessment="updateAssessment"
       :edit-mode="editMode"
       :assessment="assessment"
-    ></assessment-form>
+    />
     <assessment-list
       v-if="!editMode"
       @editAssessment="editAssessment"
       @deleteAssessment="deleteAssessment"
       @newAssessment="newAssessment"
       :assessments="assessments"
-    ></assessment-list>
-  </v-content>
+    />
+  </div>
 </template>
 
 <script lang="ts">

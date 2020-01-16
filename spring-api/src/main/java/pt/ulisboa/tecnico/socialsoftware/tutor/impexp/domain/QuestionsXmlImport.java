@@ -107,7 +107,7 @@ public class QuestionsXmlImport {
 		}
 		questionDto.setOptions(optionDtos);
 
-		questionService.createCourseQuestion(courseName, questionDto);
+		questionService.createQuestion(courseName, questionDto);
 	}
 
 }

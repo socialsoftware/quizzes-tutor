@@ -67,7 +67,7 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        assessmentDto = assessmentService.createAssessment(ACRONYM, ACADEMIC_TERM, assessmentDto)
+        assessmentDto = assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
     }
 
     def "update an assessment title and single topic conjuntion"() {

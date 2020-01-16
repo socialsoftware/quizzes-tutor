@@ -1,43 +1,40 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/courses")
 public class CourseController {
 
     @Autowired
     private CourseService courseService;
 
-    @GetMapping
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/courses")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER')and hasPermission(#name, 'ACCESS'))")
     public List<CourseDto> getCourses() {
         return courseService.getCourses();
     }
 
-    @GetMapping("/{name}/executions")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @GetMapping("/courses/{name}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#name, 'ACCESS'))")
     public List<CourseDto> getCourseExecutions(@PathVariable String name) {
         return courseService.getCourseExecutions(name);
     }
 
-    @PostMapping("/{name}/executions")
+    @PostMapping("/courses")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'CREATE'))")
-    public CourseDto createCourseExecution(@PathVariable String name, @RequestBody CourseDto courseDto) {
+    public CourseDto createCourseExecution(@RequestBody CourseDto courseDto) {
         return courseService.createCourseExecution(courseDto);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#acronym, 'ACCESS'))")
-    @GetMapping("/{name}/executions/{acronym}/{academicTerm}/students")
-    public List<StudentDto> getCourseStudents(@PathVariable String name, @PathVariable String acronym, @PathVariable String academicTerm) {
-        return courseService.courseStudents(name, acronym, academicTerm.replace("_", "/"));
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'ACCESS'))")
+    @GetMapping("/executions/{executionId}/students")
+    public List<StudentDto> getCourseStudents(@PathVariable int executionId) {
+        return courseService.courseStudents(executionId);
     }
 
 

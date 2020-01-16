@@ -315,8 +315,10 @@ export default class QuestionsView extends Vue {
   async created() {
     await this.$store.dispatch("loading");
     try {
-      this.topics = await RemoteServices.getTopics();
-      this.questions = await RemoteServices.getQuestions();
+      [this.topics, this.questions] = await Promise.all([
+        RemoteServices.getTopics(),
+        RemoteServices.getQuestions()
+      ]);
     } catch (error) {
       await this.$store.dispatch("error", error);
     }

@@ -109,10 +109,10 @@ public class AnswersXmlImport {
 			completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
 		}
 
-		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("quizNumber"));
+		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("number"));
 		Quiz quiz = quizRepository.findByNumber(quizNumber)
 				.orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
-						"quiz number does not exist " + quizNumber));
+						"quiz id does not exist " + quizNumber));
 
 		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
 		User user = userRepository.findByNumber(number);

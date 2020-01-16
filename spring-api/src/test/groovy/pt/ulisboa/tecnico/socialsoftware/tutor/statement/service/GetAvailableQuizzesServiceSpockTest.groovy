@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
@@ -60,7 +59,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
     QuizAnswerRepository quizAnswerRepository
 
     def user
-    def courseDto
+    def courseExecution
     def question
     def quiz
     def quizQuestion
@@ -69,13 +68,8 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         def course = new Course(COURSE_NAME)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
-
-        courseDto = new CourseDto()
-        courseDto.setName(COURSE_NAME)
-        courseDto.setAcronym(ACRONYM)
-        courseDto.setAcademicTerm(ACADEMIC_TERM)
 
         user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
@@ -109,7 +103,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
 
     def 'get the quizzes for the student'() {
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseDto)
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer is created'
         quizAnswerRepository.count() == 1L
@@ -119,8 +113,8 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         result.getQuiz() == quiz
         quiz.getQuizAnswers().size() == 1
         and: 'the return statement contains one quiz'
-        statmentQuizDtos.size() == 1
-        def statementResult = statmentQuizDtos.get(0)
+        statementQuizDtos.size() == 1
+        def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
         statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
@@ -132,14 +126,14 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quiz.setAvailableDate(LocalDateTime.now().plusDays(1))
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseDto)
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer is not created'
         quizAnswerRepository.count() == 0L
         user.getQuizAnswers().size() == 0
         quiz.getQuizAnswers().size() == 0
         and: 'the return statement is empty'
-        statmentQuizDtos.size() == 0
+        statementQuizDtos.size() == 0
     }
 
     def 'the quiz is already created'() {
@@ -148,7 +142,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseDto)
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L
@@ -158,8 +152,8 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         result.getQuiz() == quiz
         quiz.getQuizAnswers().size() == 1
         and: 'the return statement contains one quiz'
-        statmentQuizDtos.size() == 1
-        def statementResult = statmentQuizDtos.get(0)
+        statementQuizDtos.size() == 1
+        def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
         statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
@@ -173,7 +167,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statmentQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseDto)
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L
@@ -183,7 +177,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         result.getQuiz() == quiz
         quiz.getQuizAnswers().size() == 1
         and: 'the return statement is empty'
-        statmentQuizDtos.size() == 0
+        statementQuizDtos.size() == 0
      }
 
     @TestConfiguration

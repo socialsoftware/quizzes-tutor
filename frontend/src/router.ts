@@ -4,7 +4,7 @@ import Store from "./store";
 
 import HomeView from "./views/HomeView.vue";
 import LoginView from "./views/LoginView.vue";
-import CourseView from "./views/CourseView.vue";
+import CourseSelectionView from "./views/CourseSelectionView.vue";
 
 import ManagementView from "@/views/teacher/ManagementView.vue";
 import QuestionsView from "./views/teacher/questions/QuestionsView.vue";
@@ -43,10 +43,13 @@ let router = new Router({
       meta: { title: "Software Architecture - Login", requiredAuth: "None" }
     },
     {
-      path: "/course",
-      name: "course",
-      component: CourseView,
-      meta: { title: "Software Architecture - Course", requiredAuth: "None" }
+      path: "/courses",
+      name: "courses",
+      component: CourseSelectionView,
+      meta: {
+        title: "Software Architecture - Course Selection",
+        requiredAuth: "None"
+      }
     },
     {
       path: "/management",

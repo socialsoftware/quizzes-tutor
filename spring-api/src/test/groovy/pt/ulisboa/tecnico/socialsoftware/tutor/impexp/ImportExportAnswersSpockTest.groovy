@@ -97,7 +97,7 @@ class ImportExportAnswersSpockTest extends Specification {
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         questionDto.setOptions(options)
-        def question = questionService.createCourseQuestion(COURSE_NAME, questionDto)
+        def question = questionService.createQuestion(COURSE_NAME, questionDto)
 
         def quizDto = new QuizDto()
         quizDto.setNumber(1)
@@ -112,7 +112,7 @@ class ImportExportAnswersSpockTest extends Specification {
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
-        quiz = quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quizDto)
+        quiz = quizService.createQuiz(courseExecution.getId(), quizDto)
 
         quizQuestion = quizService.addQuestionToQuiz(question.getId(), quiz.getId())
 

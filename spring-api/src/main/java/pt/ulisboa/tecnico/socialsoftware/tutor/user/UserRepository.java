@@ -5,17 +5,15 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query("select u from Users u where u.username = :username")
+    @Query(value = "select * from users u where u.username = :username", nativeQuery = true)
     User findByUsername(String username);
 
-    @Query("select u from Users u where u.number = :number")
-    User findByNumber(Integer number);
+    @Query(value = "select * from users u where u.id = :id", nativeQuery = true)
+    User findByNumber(Integer id);
 
-    @Query(value = "select MAX(number) from users", nativeQuery = true)
+    @Query(value = "select MAX(id) from users", nativeQuery = true)
     Integer getMaxUserNumber();
 }

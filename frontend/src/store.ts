@@ -1,9 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import RemoteServices from "@/services/RemoteServices";
-import AuthDto from "@/models/auth/AuthDto";
-import Course from "@/models/auth/Course";
-import User from "@/models/auth/User";
+import AuthDto from "@/models/user/AuthDto";
+import Course from "@/models/user/Course";
+import User from "@/models/user/User";
 
 interface State {
   token: string;
@@ -69,12 +69,42 @@ export default new Vuex.Store({
     clearLoading({ commit }) {
       commit("clearLoading");
     },
-    async login({ commit }, code) {
+    async fenixLogin({ commit }, code) {
       try {
-        const authResponse = await RemoteServices.authenticate(code);
+        const authResponse = await RemoteServices.fenixLogin(code);
         commit("login", authResponse);
-        localStorage.setItem("token", authResponse.token);
-        localStorage.setItem("userRole", authResponse.user.role);
+        // localStorage.setItem("token", authResponse.token);
+        // localStorage.setItem("userRole", authResponse.user.role);
+      } catch (error) {
+        commit("logout");
+        commit("error", error);
+      }
+    },
+    async demoStudentLogin({ commit }) {
+      try {
+        const authResponse = await RemoteServices.demoStudentLogin();
+        commit("login", authResponse);
+        commit(
+          "currentCourse",
+          (Object.values(authResponse.user.courses)[0] as Course[])[0]
+        );
+        // localStorage.setItem("token", authResponse.token);
+        // localStorage.setItem("userRole", authResponse.user.role);
+      } catch (error) {
+        commit("logout");
+        commit("error", error);
+      }
+    },
+    async demoTeacherLogin({ commit }) {
+      try {
+        const authResponse = await RemoteServices.demoTeacherLogin();
+        commit("login", authResponse);
+        commit(
+          "currentCourse",
+          (Object.values(authResponse.user.courses)[0] as Course[])[0]
+        );
+        // localStorage.setItem("token", authResponse.token);
+        // localStorage.setItem("userRole", authResponse.user.role);
       } catch (error) {
         commit("logout");
         commit("error", error);
@@ -83,8 +113,8 @@ export default new Vuex.Store({
     logout({ commit }) {
       return new Promise(resolve => {
         commit("logout");
-        localStorage.removeItem("token");
-        localStorage.removeItem("userRole");
+        // localStorage.removeItem("token");
+        // localStorage.removeItem("userRole");
         resolve();
       });
     },

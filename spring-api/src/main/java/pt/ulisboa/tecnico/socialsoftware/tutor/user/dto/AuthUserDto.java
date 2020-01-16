@@ -32,7 +32,7 @@ public class AuthUserDto implements Serializable {
         courses.stream()
                 .forEach(courseDto -> {
                     if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()))) {
-                        courseDto.setActive(false);
+                        courseDto.setStatus("INACTIVE");
                         courseExecutions.add(courseDto);
                     }
                 });

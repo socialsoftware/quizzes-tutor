@@ -7,7 +7,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -28,11 +28,13 @@ public class QuizzesXmlImport {
 	private QuizService quizService;
 	private QuestionRepository questionRepository;
 	private QuizQuestionRepository quizQuestionRepository;
+    private CourseExecutionRepository courseExecutionRepository;
 
-	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository) {
+	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository, CourseExecutionRepository courseExecutionRepository) {
 		this.quizService = quizService;
 		this.questionRepository = questionRepository;
 		this.quizQuestionRepository = quizQuestionRepository;
+		this.courseExecutionRepository = courseExecutionRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
@@ -56,13 +58,13 @@ public class QuizzesXmlImport {
 		importQuizzes(doc);
 	}
 
-	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository) {
+	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository, QuizQuestionRepository quizQuestionRepository, CourseExecutionRepository courseExecutionRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());
 
-		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository);
+		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository, courseExecutionRepository);
 	}
 
 	private void importQuizzes(Document doc) {
@@ -74,9 +76,8 @@ public class QuizzesXmlImport {
 	}
 
 	private void importQuiz(Element quizElement) {
-		String courseName = quizElement.getAttributeValue("courseName");
-		String acronym = quizElement.getAttributeValue("acronym");
-		String academicTerm = quizElement.getAttributeValue("academicTerm");
+        String acronym = quizElement.getAttributeValue("acronym");
+        String academicTerm = quizElement.getAttributeValue("academicTerm");
 
 		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
 		boolean scramble = false;
@@ -118,12 +119,12 @@ public class QuizzesXmlImport {
 		quizDto.setSeries(series);
 		quizDto.setVersion(version);
 
-		QuizDto quiz = quizService.createQuiz(acronym, academicTerm, quizDto);
-
-		importQuizQuestions(quizElement.getChild("quizQuestions"), quiz.getId());
+		int executionCourseId = this.courseExecutionRepository.findByAcronymAcademicTerm(acronym, academicTerm);
+		QuizDto quizDto2 = quizService.createQuiz(executionCourseId, quizDto);
+		importQuizQuestions(quizElement.getChild("quizQuestions"), quizDto2);
 	}
 
-	private void importQuizQuestions(Element quizQuestionsElement, Integer quizId ) {
+	private void importQuizQuestions(Element quizQuestionsElement, QuizDto quizDto ) {
 		for (Element quizQuestionElement: quizQuestionsElement.getChildren("quizQuestion")) {
 			Integer sequence = Integer.valueOf(quizQuestionElement.getAttributeValue("sequence"));
 			Integer questionNumber = Integer.valueOf(quizQuestionElement.getAttributeValue("questionNumber"));
@@ -131,7 +132,7 @@ public class QuizzesXmlImport {
 			Question question = questionRepository.findByNumber(questionNumber)
 					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionNumber));
 
-			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizId);
+			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizDto.getId());
 
 			QuizQuestion quizQuestion = quizQuestionRepository.findById(quizQuestionDto.getId()).get();
 

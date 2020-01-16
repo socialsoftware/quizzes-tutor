@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,12 +21,12 @@ public class QuizAnswer {
     private boolean completed;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
-
-    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @ManyToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.LAZY)
     private Set<QuestionAnswer> questionAnswers;

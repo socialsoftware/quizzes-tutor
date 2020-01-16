@@ -1,5 +1,5 @@
 <template>
-  <div class="master-container">
+  <div class="question-container">
     <div class="question-navigation">
       <div class="navigation-buttons">
         <span

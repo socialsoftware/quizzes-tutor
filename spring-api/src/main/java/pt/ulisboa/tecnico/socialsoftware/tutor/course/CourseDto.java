@@ -3,10 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 import java.io.Serializable;
 
 public class CourseDto implements Serializable {
+    private int id;
     private String name;
     private String acronym;
     private String academicTerm;
-    private boolean active = true;
+    private String status;
 
     public CourseDto() {
     }
@@ -16,6 +17,7 @@ public class CourseDto implements Serializable {
     }
 
     public CourseDto(CourseExecution courseExecution) {
+        this.id = courseExecution.getId();
         this.name = courseExecution.getCourse().getName();
         this.acronym = courseExecution.getAcronym();
         this.academicTerm = courseExecution.getAcademicTerm();
@@ -26,6 +28,14 @@ public class CourseDto implements Serializable {
         this.name = name;
         this.acronym = acronym;
         this.academicTerm = academicTerm;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -52,11 +62,11 @@ public class CourseDto implements Serializable {
         this.academicTerm = academicTerm;
     }
 
-    public boolean isActive() {
-        return active;
+    public String getStatus() {
+        return status;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

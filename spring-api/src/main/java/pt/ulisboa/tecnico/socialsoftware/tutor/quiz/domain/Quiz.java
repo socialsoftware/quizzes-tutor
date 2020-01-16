@@ -33,6 +33,9 @@ public class Quiz {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(unique=true, nullable = false)
+    private Integer number;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -51,7 +54,6 @@ public class Quiz {
     @Enumerated(EnumType.STRING)
     private QuizType type;
 
-    private Integer number;
     private Integer year;
     private Integer series;
     private String version;
@@ -92,11 +94,11 @@ public class Quiz {
     }
 
     public Integer getNumber() {
-    return number;
+        return number;
     }
 
     public void setNumber(Integer number) {
-    this.number = number;
+        this.number = number;
     }
 
     public boolean getScramble() {
@@ -221,7 +223,7 @@ public class Quiz {
                 ", scramble=" + scramble +
                 ", title='" + title + '\'' +
                 ", type=" + type +
-                ", number=" + number +
+                ", id=" + id +
                 ", year=" + year +
                 ", series=" + series +
                 ", version='" + version + '\'' +

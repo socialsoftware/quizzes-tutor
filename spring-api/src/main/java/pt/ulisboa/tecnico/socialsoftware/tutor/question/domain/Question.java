@@ -33,7 +33,7 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "number")
+    @Column(unique=true, nullable = false)
     private Integer number;
 
     @Column(columnDefinition = "TEXT")
@@ -74,7 +74,6 @@ public class Question {
 
     public Question(Course course, QuestionDto questionDto) {
         checkConsistentQuestion(questionDto);
-
         this.title = questionDto.getTitle();
         this.number = questionDto.getNumber();
         this.content = questionDto.getContent();
@@ -256,7 +255,7 @@ public class Question {
 
 
     public Integer getDifficulty() {
-        // required because the import is done directely in the database
+        // required because the import is done directly in the database
         if (numberOfAnswers == null || numberOfAnswers == 0) {
             numberOfAnswers = getQuizQuestions().stream()
                     .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).map(e -> 1).reduce(0, Integer::sum);

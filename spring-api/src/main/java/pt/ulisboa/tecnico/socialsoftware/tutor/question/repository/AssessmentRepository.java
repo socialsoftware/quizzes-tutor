@@ -7,12 +7,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
 @Transactional
 public interface AssessmentRepository extends JpaRepository<Assessment, Integer> {
-    @Query(value = "SELECT * FROM assessments a INNER JOIN course_executions ce ON ce.id = a.course_execution_id WHERE ce.acronym = :acronym AND ce.academic_term = :academicTerm", nativeQuery = true)
-    List<Assessment> findExecutionCourseAssessments(String acronym, String academicTerm);
+    @Query(value = "SELECT * FROM assessments a, course_executions c WHERE c.id = :courseExecutionId AND c.id = a.course_execution_id", nativeQuery = true)
+    List<Assessment>  findByExecutionCourseId(int courseExecutionId);
+
 }

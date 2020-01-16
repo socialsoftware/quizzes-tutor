@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.io.Serializable;
 
 public class StudentDto implements Serializable {
-    private Integer number;
     private String username;
     private String name;
     private Integer year;
@@ -17,7 +16,6 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectTeacherAnswers = 0;
 
     public StudentDto(User user) {
-        this.number = user.getNumber();
         this.username = user.getUsername();
         this.name = user.getName();
         this.year = user.getYear();
@@ -36,14 +34,6 @@ public class StudentDto implements Serializable {
         if (this.numberOfTeacherAnswers != 0) {
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
         }
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
     }
 
     public String getUsername() {
@@ -121,7 +111,6 @@ public class StudentDto implements Serializable {
     @Override
     public String toString() {
         return "StudentDto{" +
-                "number=" + number +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", year=" + year +

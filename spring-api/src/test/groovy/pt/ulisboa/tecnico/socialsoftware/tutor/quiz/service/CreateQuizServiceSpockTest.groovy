@@ -78,6 +78,8 @@ class CreateQuizServiceSpockTest extends Specification {
 
         def question = new Question()
         question.setNumber(1)
+        question.setCourse(course)
+        course.addQuestion(question)
         questionRepository.save(question)
 
         questionDto = new QuestionDto()
@@ -96,7 +98,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
-        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
+        quizService.createQuiz(courseExecution.getId(), quiz)
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
@@ -120,7 +122,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.STUDENT)
 
         when:
-        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
+        quizService.createQuiz(courseExecution.getId(), quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -135,7 +137,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
-        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
+        quizService.createQuiz(courseExecution.getId(), quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -150,7 +152,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setType(Quiz.QuizType.TEACHER)
 
         when:
-        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
+        quizService.createQuiz(courseExecution.getId(), quiz)
 
         then:
         def exception = thrown(TutorException)
@@ -165,7 +167,7 @@ class CreateQuizServiceSpockTest extends Specification {
         questionDto.setSequence(3)
 
         when:
-        quizService.createQuiz(ACRONYM, ACADEMIC_TERM, quiz)
+        quizService.createQuiz(courseExecution.getId(), quiz)
 
         then:
         def exception = thrown(TutorException)

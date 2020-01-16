@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
@@ -22,47 +21,46 @@ import java.util.List;
 
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_STUDENT" })
-@RequestMapping("/quizzes")
 public class StatementController {
     private static Logger logger = LoggerFactory.getLogger(StatementController.class);
 
     @Autowired
     private StatementService statementService;
 
-    @PostMapping("/available")
-    public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
+    @GetMapping("/executions/{executionId}/quizzes/available")
+    public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return Collections.emptyList();
         }
 
-        return statementService.getAvailableQuizzes(user.getUsername(), courseDto);
+        return statementService.getAvailableQuizzes(user.getUsername(), executionId);
     }
 
-    @PostMapping("/generate")
-    public StatementQuizDto getNewQuiz(Principal principal, @RequestBody StatementCreationDto quizDetails) {
+    @PostMapping("/executions/{executionId}/quizzes/generate")
+    public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return null;
         }
 
-        return statementService.generateStudentQuiz(user.getUsername(), quizDetails);
+        return statementService.generateStudentQuiz(user.getUsername(), executionId, quizDetails);
     }
 
-    @PostMapping("/solved")
-    public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @RequestBody CourseDto courseDto) {
+    @GetMapping("/executions/{executionId}/quizzes/solved")
+    public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return Collections.emptyList();
         }
 
-        return statementService.getSolvedQuizzes(user.getUsername(), courseDto);
+        return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
-    @PostMapping("/answer")
+    @PostMapping("/quizzes/answer")
     public CorrectAnswersDto correctAnswers(Principal principal, @Valid @RequestBody ResultAnswersDto answers) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

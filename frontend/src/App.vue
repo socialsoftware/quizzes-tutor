@@ -20,7 +20,6 @@ import Loading from "@/components/Loading.vue";
 import "@/assets/css/_global.scss";
 import "@/assets/css/_scrollbar.scss";
 import "@/assets/css/_question.scss";
-import "@/assets/css/bootstrap-social.css";
 require("typeface-roboto");
 
 @Component({

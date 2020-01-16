@@ -17,17 +17,14 @@ public class StatsController {
     @Autowired
     private StatsService statsService;
 
-    @GetMapping("/courses/{courseName}/stats")
-    public StatsDto getStats(Principal principal, @PathVariable String courseName) {
+    @GetMapping("/executions/{executionId}/stats")
+    public StatsDto getStats(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return null;
         }
 
-        return statsService.getStats(user.getUsername(), courseName);
-
-
+        return statsService.getStats(user.getUsername(), executionId);
     }
-
 }

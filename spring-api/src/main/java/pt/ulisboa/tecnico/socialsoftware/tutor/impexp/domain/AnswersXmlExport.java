@@ -46,7 +46,7 @@ public class AnswersXmlExport {
 		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.getCompleted()));
 
 		Element quizElement = new Element("quiz");
-		quizElement.setAttribute("quizNumber", String.valueOf(quizAnswer.getQuiz().getNumber()));
+		quizElement.setAttribute("number", String.valueOf(quizAnswer.getQuiz().getNumber()));
 		quizAnswerElement.addContent(quizElement);
 
 		Element userElement = new Element("user");
@@ -78,7 +78,7 @@ public class AnswersXmlExport {
         questionAnswerElement.setAttribute("sequence", String.valueOf(questionAnswer.getSequence()));
 
 		Element quizQuestionElement = new Element("quizQuestion");
-		quizQuestionElement.setAttribute("quizNumber", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getNumber()));
+		quizQuestionElement.setAttribute("number", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getNumber()));
 		quizQuestionElement.setAttribute("sequence", String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
 		questionAnswerElement.addContent(quizQuestionElement);
 

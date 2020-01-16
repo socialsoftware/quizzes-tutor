@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 
 public class AssessmentDto implements Serializable {
     private Integer id;
-    private Integer number;
     private String title;
     private String status;
     private List<TopicConjunctionDto> topicConjunctions = new ArrayList<>();
@@ -19,7 +18,7 @@ public class AssessmentDto implements Serializable {
 
     public AssessmentDto(Assessment assessment) {
         this.id = assessment.getId();
-        this.number = assessment.getNumber();
+        this.id = assessment.getNumber();
         this.title = assessment.getTitle();
         this.status = assessment.getStatus().name();
         this.topicConjunctions = assessment.getTopicConjunctions().stream().map(TopicConjunctionDto::new).collect(Collectors.toList());
@@ -34,11 +33,11 @@ public class AssessmentDto implements Serializable {
     }
 
     public Integer getNumber() {
-        return number;
+        return id;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setNumber(Integer id) {
+        this.id = id;
     }
 
     public String getStatus() {
@@ -74,7 +73,7 @@ public class AssessmentDto implements Serializable {
     public String toString() {
         return "AssessmentDto{" +
                 "id=" + id +
-                ", number=" + number +
+                ", id=" + id +
                 ", title='" + title + '\'' +
                 ", status='" + status + '\'' +
                 ", topicConjunctions=" + topicConjunctions +

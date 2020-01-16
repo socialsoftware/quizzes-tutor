@@ -66,6 +66,7 @@
         </v-tooltip>
       </template>
     </v-data-table>
+
     <v-dialog
       v-model="dialog"
       @keydown.esc="closeAssessment"

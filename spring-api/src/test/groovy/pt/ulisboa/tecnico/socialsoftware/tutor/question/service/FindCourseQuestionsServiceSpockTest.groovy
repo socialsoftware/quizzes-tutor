@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -22,6 +24,8 @@ import spock.lang.Specification
 @DataJpaTest
 class FindCourseQuestionsServiceSpockTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
@@ -31,6 +35,9 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
 
     @Autowired
     CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     QuestionRepository questionRepository
@@ -48,11 +55,14 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
     QuestionAnswerRepository questionAnswerRepository
 
     def course
+    def courseExecution
 
     def setup() {
         course = new Course(COURSE_NAME)
-
         courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
     }
 
     def "create a question with image and two options and a quiz questions with two answers"() {
@@ -100,7 +110,7 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
 
 
         when:
-        def result = questionService.findCourseQuestions(COURSE_NAME)
+        def result = questionService.findQuestions(COURSE_NAME)
 
         then: "the returned data are correct"
         result.size() == 1

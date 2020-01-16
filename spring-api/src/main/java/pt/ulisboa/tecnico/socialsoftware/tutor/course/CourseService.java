@@ -6,11 +6,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -19,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_NOT_FOUND;
 
 @Service
 public class CourseService {
@@ -31,7 +29,6 @@ public class CourseService {
 
     @Retryable(
             value = { SQLException.class },
-            maxAttempts = 3,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseDto> getCourses() {
@@ -43,14 +40,11 @@ public class CourseService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<CourseDto> getCourseExecutions(String name) {
-        Course course= courseRepository.findByName(name);
-        if (course == null) {
-            throw new TutorException(COURSE_NOT_FOUND, name);
-        }
+    public List<CourseDto> getCourseExecutions(String courseName) {
+        Course course= courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+
         return course.getCourseExecutions().stream()
                 .map(CourseDto::new)
                 .sorted(Comparator.comparing(CourseDto::getAcademicTerm).reversed())
@@ -59,16 +53,14 @@ public class CourseService {
 
     @Retryable(
             value = { SQLException.class },
-            maxAttempts = 3,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto createCourseExecution(CourseDto courseDto) {
-        Course course = courseRepository.findByName(courseDto.getName());
+        Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
         if (course == null) {
             course = new Course(courseDto.getName());
             courseRepository.save(course);
         }
-
         Course existingCourse = course;
         return existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm())
                 .or(() ->  {
@@ -82,11 +74,10 @@ public class CourseService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StudentDto> courseStudents(String name, String acronym, String academicTerm) {
-        CourseExecution courseExecution = courseRepository.findByName(name).getCourseExecution(acronym, academicTerm).orElse(null);
+    public List<StudentDto> courseStudents(int executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);
         if (courseExecution == null) {
             return new ArrayList<>();
         }

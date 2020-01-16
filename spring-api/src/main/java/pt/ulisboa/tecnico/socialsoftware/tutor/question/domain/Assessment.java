@@ -8,8 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessments")
@@ -24,9 +22,6 @@ public class Assessment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Column(name = "number")
-    private Integer number;
 
     private String title;
 
@@ -68,11 +63,11 @@ public class Assessment {
     }
 
     public Integer getNumber() {
-        return number;
+        return id;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setNumber(Integer id) {
+        this.id = id;
     }
 
     public Status getStatus() {
@@ -115,7 +110,7 @@ public class Assessment {
     public String toString() {
         return "Assessment{" +
                 "id=" + id +
-                ", number=" + number +
+                ", id=" + id +
                 ", title='" + title + '\'' +
                 ", status=" + status +
                 ", topicConjunctions=" + topicConjunctions +

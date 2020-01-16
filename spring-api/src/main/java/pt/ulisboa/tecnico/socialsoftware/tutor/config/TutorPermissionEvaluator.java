@@ -24,27 +24,34 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "CREATE":
-                    return userService.getCourseExecutionIds(username).contains(courseDto.getAcronym() + courseDto.getAcademicTerm());
+                    return userService.getEnrolledCoursesAcronyms(username).contains(courseDto.getAcronym() + courseDto.getAcademicTerm());
                 case "ACCESS":
                     return userService.getCourseExecutions(username).stream()
                                 .anyMatch(course -> course.getAcronym().equals(courseDto.getAcronym()) && course.getAcademicTerm().equals(courseDto.getAcademicTerm()));
                 default:
-                    assert false;
+                    return false;
             }
+        }
+
+        if (targetDomainObject instanceof Integer) {
+            int id = (int) targetDomainObject;
+            String permissionValue = (String) permission;
+            if ("ACCESS".equals(permissionValue)) {
+                return userService.getCourseExecutions(username).stream()
+                        .anyMatch(course -> course.getId() == id);
+            }
+            return false;
         }
 
         if (targetDomainObject instanceof String) {
-            String acronym = (String) targetDomainObject;
+            String name = (String) targetDomainObject;
             String permissionValue = (String) permission;
-            switch (permissionValue) {
-                case "ACCESS":
-                    return userService.getCourseExecutions(username).stream()
-                            .anyMatch(course -> course.getAcronym().equals(acronym));
-                default:
-                    assert false;
+            if ("ACCESS".equals(permissionValue)) {
+                return userService.getCourseExecutions(username).stream()
+                        .anyMatch(course -> course.getName().equals(name));
             }
+            return false;
         }
-
 
         return false;
     }

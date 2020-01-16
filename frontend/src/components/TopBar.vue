@@ -8,15 +8,25 @@
       />
 
       <v-toolbar-title>
-        <v-btn dark active-class="toolbar-title" text tile to="/">
-          Software Architecture Quizzes
-        </v-btn></v-toolbar-title
-      >
+        <v-btn
+          dark
+          active-class="no-active"
+          text
+          tile
+          to="/"
+          v-if="currentCourse"
+        >
+          {{ currentCourse.name }}
+        </v-btn>
+        <v-btn dark active-class="no-active" text tile to="/" v-else>
+          {{ appName }}
+        </v-btn>
+      </v-toolbar-title>
 
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down" hide-details>
-        <v-menu offset-y v-if="isTeacher" open-on-hover>
+        <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
               Management
@@ -80,7 +90,7 @@
           <v-icon>fas fa-user</v-icon>
         </v-btn-->
 
-        <v-menu offset-y v-if="isStudent" open-on-hover>
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
               Quizzes
@@ -115,14 +125,20 @@
           </v-list>
         </v-menu>
 
-        <v-btn to="/student/stats" v-if="isStudent" text dark>
+        <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
-        <v-btn v-if="isStudent" to="/achievements" text dark disabled>
-          Achievements
-          <v-icon>fas fa-user</v-icon>
+        <v-btn
+          v-if="isLoggedIn && moreThanOneCourse"
+          to="/courses"
+          active-class="no-active"
+          text
+          dark
+        >
+          Change course
+          <v-icon>fa fa-book</v-icon>
         </v-btn>
 
         <v-btn v-if="isLoggedIn" @click="logout" text dark>
@@ -130,7 +146,7 @@
           <v-icon>fas fa-sign-out-alt</v-icon>
         </v-btn>
 
-        <v-btn v-else :href="fenix_url" text dark>
+        <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-toolbar-items>
@@ -147,32 +163,43 @@
       </v-toolbar>
 
       <v-list class="pt-0" dense>
-        <v-list-item to="/student/available" v-if="isStudent" exact>
+        <v-list-item
+          to="/student/available"
+          v-if="isStudent && currentCourse"
+          exact
+        >
           <v-list-item-action>
             <v-icon>assignment</v-icon>
           </v-list-item-action>
           <v-list-item-content>Available Quizzes</v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/student/create" v-if="isStudent">
+        <v-list-item to="/student/create" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>create</v-icon>
           </v-list-item-action>
           <v-list-item-content>Create Quiz</v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/student/solved" v-if="isStudent">
+        <v-list-item to="/student/solved" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>done</v-icon>
           </v-list-item-action>
           <v-list-item-content>Solved Quizzes</v-list-item-content>
         </v-list-item>
 
-        <v-list-item to="/student/stats" v-if="isStudent">
+        <v-list-item to="/student/stats" v-if="isStudent && currentCourse">
           <v-list-item-action>
             <v-icon>fas fa-user</v-icon>
           </v-list-item-action>
           <v-list-item-content>Stats</v-list-item-content>
+        </v-list-item>
+
+        <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
+          <v-list-item-action>
+            <v-icon>fas fa-book</v-icon>
+          </v-list-item-action>
+          <v-list-item-content>Change course</v-list-item-content>
         </v-list-item>
 
         <v-list-item @click="logout" v-if="isLoggedIn">
@@ -181,7 +208,7 @@
           </v-list-item-action>
           <v-list-item-content>Logout</v-list-item-content>
         </v-list-item>
-        <v-list-item :href="fenix_url" v-else>
+        <v-list-item :href="fenixUrl" v-else>
           <v-list-item-action>
             <v-icon>fas fa-sign-in-alt</v-icon>
           </v-list-item-action>
@@ -195,15 +222,21 @@
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
+import Course from "@/models/user/Course";
 
 @Component
 export default class TopBar extends Vue {
-  fenix_url: string =
-    "https://fenix.tecnico.ulisboa.pt/oauth/userdialog?client_id=" +
-    process.env.VUE_APP_FENIX_CLIENT_ID +
-    "&redirect_uri=" +
-    process.env.VUE_APP_FENIX_REDIRECT_URI;
+  fenixUrl: string = process.env.VUE_APP_FENIX_URL;
+  appName: string = process.env.VUE_APP_NAME;
   drawer: boolean = false;
+
+  get currentCourse() {
+    return this.$store.getters.getCurrentCourse;
+  }
+
+  get moreThanOneCourse() {
+    return this.$store.getters.getUser.coursesNumber > 1;
+  }
 
   get isLoggedIn() {
     return this.$store.getters.isLoggedIn;
@@ -229,11 +262,7 @@ export default class TopBar extends Vue {
 </script>
 
 <style scoped lang="scss">
-.v-icon {
-  padding-left: 10px;
-}
-
-.toolbar-title::before {
+.no-active::before {
   opacity: 0 !important;
 }
 </style>

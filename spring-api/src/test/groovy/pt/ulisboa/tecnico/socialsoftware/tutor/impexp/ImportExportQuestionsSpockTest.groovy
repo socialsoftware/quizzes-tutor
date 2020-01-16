@@ -5,18 +5,22 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
 class ImportExportQuestionsSpockTest extends Specification {
     public static final String COURSE_NAME = "Arquitetura de Software"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -29,14 +33,20 @@ class ImportExportQuestionsSpockTest extends Specification {
     CourseRepository courseRepository
 
     @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    @Autowired
     QuestionRepository questionRepository
 
     def questionId
+    def courseExecution
 
     def setup() {
-        def course = new Course()
-        course.setName(COURSE_NAME)
+        def course = new Course(COURSE_NAME)
         courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_TITLE)
@@ -61,7 +71,7 @@ class ImportExportQuestionsSpockTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionId = questionService.createCourseQuestion(COURSE_NAME, questionDto).getId()
+        questionId = questionService.createQuestion(COURSE_NAME, questionDto).getId()
     }
 
     def 'export and import questions'() {
@@ -74,8 +84,8 @@ class ImportExportQuestionsSpockTest extends Specification {
         questionService.importQuestions(questionsXml)
 
         then:
-        questionService.findCourseQuestions(COURSE_NAME).size() == 1
-        def questionResult = questionService.findCourseQuestions(COURSE_NAME).get(0)
+        questionService.findQuestions(COURSE_NAME).size() == 1
+        def questionResult = questionService.findQuestions(COURSE_NAME).get(0)
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
         questionResult.getStatus() == Question.Status.AVAILABLE.name()

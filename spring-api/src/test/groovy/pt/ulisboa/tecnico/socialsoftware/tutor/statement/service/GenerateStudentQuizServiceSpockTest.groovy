@@ -6,7 +6,6 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
@@ -54,7 +53,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
     OptionRepository optionRepository
 
     def user
-    def courseDto
+    def courseExecution
     def questionOne
     def questionTwo
 
@@ -62,13 +61,8 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         def course = new Course(COURSE_NAME)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
-
-        courseDto = new CourseDto()
-        courseDto.setName(COURSE_NAME)
-        courseDto.setAcronym(ACRONYM)
-        courseDto.setAcademicTerm(ACADEMIC_TERM)
 
         user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
@@ -95,10 +89,9 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(1)
-        quizForm.setCourse(courseDto)
 
         when:
-        statementService.generateStudentQuiz(USERNAME, quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -120,10 +113,9 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(2)
-        quizForm.setCourse(courseDto)
 
         when:
-        statementService.generateStudentQuiz(USERNAME, quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -143,10 +135,9 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(3)
-        quizForm.setCourse(courseDto)
 
         when:
-        statementService.generateStudentQuiz(USERNAME, quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()

@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -39,8 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.ASSESSMENT_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.NOT_ENOUGH_QUESTIONS;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
 
 @Service
 public class StatementService {
@@ -71,16 +70,17 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateStudentQuiz(String username, StatementCreationDto quizDetails) {
+    public StatementQuizDto generateStudentQuiz(String username, int executionId, StatementCreationDto quizDetails) {
         User user = userRepository.findByUsername(username);
 
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
-        List<Question> availableQuestions = questionRepository.findCourseAvailableQuestions(quizDetails.getCourse().getName());
+        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(course.getName());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 //        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
@@ -105,10 +105,9 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StatementQuizDto> getAvailableQuizzes(String username, CourseDto courseDto) {
+    public List<StatementQuizDto> getAvailableQuizzes(String username, int executionId) {
         User user = userRepository.findByUsername(username);
 
         LocalDateTime now = LocalDateTime.now();
@@ -118,7 +117,7 @@ public class StatementService {
                 .map(Quiz::getId)
                 .collect(Collectors.toSet());
 
-        quizRepository.findCourseExecutionAvailableTeacherQuizzes(courseDto.getAcronym(), courseDto.getAcademicTerm()).stream()
+        quizRepository.findAvailableTeacherQuizzes(executionId).stream()
                 .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
@@ -138,13 +137,12 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<SolvedQuizDto> getSolvedQuizzes(String username, CourseDto courseDto) {
+    public List<SolvedQuizDto> getSolvedQuizzes(String username, int executionId) {
         User user = userRepository.findByUsername(username);
 
-        CourseExecution courseExecution = courseExecutionRepository.findByAcronymAndAcademicTerm(courseDto.getAcronym(), courseDto.getAcademicTerm());
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getCompleted() && quizAnswer.getQuiz().getCourseExecution() == courseExecution)
@@ -156,7 +154,6 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      maxAttempts = 3,
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public CorrectAnswersDto solveQuiz(String username, @Valid @RequestBody ResultAnswersDto answers) {

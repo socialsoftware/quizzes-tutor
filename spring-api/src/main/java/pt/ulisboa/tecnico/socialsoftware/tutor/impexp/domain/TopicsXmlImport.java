@@ -7,8 +7,6 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -68,13 +66,13 @@ public class TopicsXmlImport {
 	}
 
 	private void importTopic(Element topicElement) {
-		String courseName = topicElement.getAttributeValue("courseName");
+		String course = topicElement.getAttributeValue("course");
 		String name = topicElement.getAttributeValue("name");
 
         TopicDto topicDto = new TopicDto();
         topicDto.setName(name);
 
-		topicService.createCourseTopic(courseName, topicDto);
+		topicService.createTopic(course, topicDto);
 
 		for (Element questionElement: topicElement.getChild("questions").getChildren("question")) {
 			importQuestion(questionElement, name);

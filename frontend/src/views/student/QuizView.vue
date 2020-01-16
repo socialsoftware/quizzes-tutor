@@ -1,7 +1,7 @@
 <template>
   <div
     tabindex="0"
-    class="master-container"
+    class="question-container"
     @keydown.left="decreaseOrder"
     @keydown.right="increaseOrder"
   >

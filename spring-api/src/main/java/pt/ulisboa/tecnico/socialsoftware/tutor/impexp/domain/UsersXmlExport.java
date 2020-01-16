@@ -65,9 +65,7 @@ public class UsersXmlExport {
 		for (CourseExecution courseExecution : courseExecutions) {
 			Element courseExecutionElement = new Element("courseExecution");
 
-			courseExecutionElement.setAttribute("courseName", courseExecution.getCourse().getName());
-			courseExecutionElement.setAttribute("acronym", courseExecution.getAcronym());
-			courseExecutionElement.setAttribute("academicTerm", courseExecution.getAcademicTerm());
+			courseExecutionElement.setAttribute("executionId", courseExecution.getId().toString());
 
 			courseExecutionsElement.addContent(courseExecutionElement);
 		}

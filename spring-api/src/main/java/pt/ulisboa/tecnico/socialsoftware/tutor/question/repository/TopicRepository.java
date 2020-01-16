@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 @Transactional
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
-    @Query(value = "SELECT * FROM topics t INNER JOIN courses c ON c.id = t.course_id WHERE c.name = :courseName", nativeQuery = true)
-    List<Topic> findCourseTopics(String courseName);
+    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId", nativeQuery = true)
+    List<Topic> findTopics(int courseId);
 
-    @Query(value = "SELECT * FROM topics t INNER JOIN courses c ON c.id = t.course_id WHERE c.name = :courseName AND t.name = :name", nativeQuery = true)
-    Topic findCourseTopicByName(String courseName, String name);
+    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
+    Topic findTopicByName(int courseId, String name);
 }
