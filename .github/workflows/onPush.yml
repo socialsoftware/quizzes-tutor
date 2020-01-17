@@ -5,17 +5,17 @@ on: [push]
 jobs:
   test:
     env:
-      spring.datasource.url:jdbc:postgresql://localhost:5432/${{secrets.POSTGRES_DB}}
-      spring.datasource.username:${{secrets.POSTGRES_USER}}
-      spring.datasource.password:${{secrets.POSTGRES_PASSWORD}}
-      spring.jpa.database-platform:org.hibernate.dialect.H2Dialect
-      figures.dir:/
-      export.dir:/
-      load.dir:/
-      oauth.consumer.key:2
-      oauth.consumer.secret:r
-      callback.url:http://localhost:8081/login
-      base.url:https://fenix.tecnico.ulisboa.pt
+      spring.datasource.url:jdbc: postgresql://localhost:5432/${{secrets.POSTGRES_DB}}
+      spring.datasource.username: ${{secrets.POSTGRES_USER}}
+      spring.datasource.password: ${{secrets.POSTGRES_PASSWORD}}
+      spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+      figures.dir: /
+      export.dir: /
+      load.dir: /
+      oauth.consumer.key: 2
+      oauth.consumer.secret: r
+      callback.url: http://localhost:8081/login
+      base.url:https: //fenix.tecnico.ulisboa.pt
     runs-on: ubuntu-latest
 
     steps:
