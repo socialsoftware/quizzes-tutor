@@ -57,7 +57,6 @@
           :sort-desc="[false]"
           :custom-sort="customSort"
           must-sort
-          show-expand
         >
           <template v-slot:top>
             <v-text-field v-model="search" label="Search" class="mx-4" />
@@ -65,8 +64,8 @@
           <template v-slot:item.content="{ item }">
             <div
               class="text-left"
-              @click="props.expanded = !props.expanded"
               v-html="convertMarkDownNoFigure(item.content, item.image)"
+              @click="openShowQuestionDialog(item)"
             ></div>
           </template>
 
@@ -191,31 +190,6 @@
               </v-tooltip>
             </div>
           </template>
-
-          <template v-slot:expanded-item="{ item }">
-            <td :colspan="9">
-              <v-simple-table>
-                <thead>
-                  <tr>
-                    <th class="text-left">Option</th>
-                    <th class="text-left">Correct</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="option in item.options" :key="option.id">
-                    <td
-                      class="text-left"
-                      v-html="convertMarkDownNoFigure(option.content, null)"
-                    />
-                    <td>
-                      <span v-if="option.correct">TRUE</span
-                      ><span v-else>FALSE</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </v-simple-table>
-            </td>
-          </template>
         </v-data-table>
       </v-container>
     </v-card-text>
@@ -233,20 +207,7 @@
                   :key="question.sequence"
                   class="text-left"
                 >
-                  <span
-                    v-html="convertMarkDown(question.content, question.image)"
-                  />
-                  <ul>
-                    <li v-for="option in question.options" :key="option.number">
-                      <span
-                        v-html="convertMarkDown(option.content, null)"
-                        v-bind:class="[
-                          option.correct ? 'font-weight-bold' : ''
-                        ]"
-                      />
-                    </li>
-                  </ul>
-                  <br />
+                  <QuestionView :question="question" />
                 </li>
               </ol>
             </v-layout>
@@ -287,7 +248,7 @@
           <v-container grid-list-md fluid>
             <v-layout column wrap>
               <v-flex class="text-left" xs24 sm12 md8>
-                <p v-html="renderQuestion(questionToShow)" />
+                <QuestionView :question="questionToShow" />
               </v-flex>
             </v-layout>
           </v-container>
@@ -313,8 +274,11 @@ import {
 import { Quiz } from "@/models/management/Quiz";
 import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
+import QuestionView from "@/views/utils/QuestionView.vue";
 
-@Component
+@Component({
+  components: { QuestionView, QuestionVue: QuestionView }
+})
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
@@ -474,23 +438,6 @@ export default class QuizForm extends Vue {
 
   convertMarkDownNoFigure(text: string, image: Image | null = null): string {
     return convertMarkDownNoFigure(text, image);
-  }
-
-  renderQuestion(question: Question): string {
-    let text =
-      convertMarkDown(question.content, question.image) + " <br/> <br/> ";
-    text =
-      text +
-      question.options
-        .map(
-          (option, index) =>
-            index.toString() +
-            " - " +
-            option.content +
-            (option.correct ? " (correct)" : "")
-        )
-        .join(" <br/> ");
-    return text;
   }
 
   addToQuiz(question: Question) {

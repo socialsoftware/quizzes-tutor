@@ -80,20 +80,7 @@
                   :key="question.sequence"
                   class="text-left"
                 >
-                  <span
-                    v-html="convertMarkDown(question.content, question.image)"
-                  />
-                  <ul>
-                    <li v-for="option in question.options" :key="option.number">
-                      <span
-                        v-html="convertMarkDown(option.content, null)"
-                        v-bind:class="[
-                          option.correct ? 'font-weight-bold' : ''
-                        ]"
-                      />
-                    </li>
-                  </ul>
-                  <br />
+                  <QuestionView :question="question" />
                 </li>
               </ol>
             </v-layout>
@@ -115,8 +102,11 @@ import { Quiz } from "@/models/management/Quiz";
 import RemoteServices from "@/services/RemoteServices";
 import { convertMarkDown } from "@/services/ConvertMarkdownService";
 import Image from "@/models/management/Image";
+import QuestionView from "@/views/utils/QuestionView.vue";
 
-@Component
+@Component({
+  components: { QuestionView, QuestionVue: QuestionView }
+})
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;

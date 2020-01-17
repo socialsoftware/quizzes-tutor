@@ -8,7 +8,6 @@
       multi-sort
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      show-expand
     >
       <template v-slot:top>
         <v-card-title>
@@ -25,7 +24,10 @@
       </template>
 
       <template v-slot:item.content="{ item }">
-        <p v-html="convertMarkDownNoFigure(item.content, null)" />
+        <p
+          v-html="convertMarkDownNoFigure(item.content, null)"
+          @click="showQuestionDialog(item)"
+        />
       </template>
 
       <template v-slot:item.topics="{ item }">
@@ -144,31 +146,6 @@
           <span>Delete Question</span>
         </v-tooltip>
       </template>
-
-      <template v-slot:expanded-item="{ item }">
-        <td :colspan="9">
-          <v-simple-table>
-            <thead>
-              <tr>
-                <th class="text-left">Option</th>
-                <th class="text-left">Correct</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="option in item.options" :key="option.id">
-                <td
-                  class="text-left"
-                  v-html="convertMarkDownNoFigure(option.content, null)"
-                />
-                <td>
-                  <span v-if="option.correct">TRUE</span
-                  ><span v-else>FALSE</span>
-                </td>
-              </tr>
-            </tbody>
-          </v-simple-table>
-        </td>
-      </template>
     </v-data-table>
 
     <v-dialog v-model="editQuestionDialog" max-width="75%">
@@ -234,7 +211,7 @@
           <v-container grid-list-md fluid>
             <v-layout column wrap>
               <v-flex class="text-left" xs24 sm12 md8>
-                <p v-html="renderQuestion(currentQuestion)" />
+                <QuestionView :question="currentQuestion" />
               </v-flex>
             </v-layout>
           </v-container>
@@ -261,8 +238,11 @@ import {
 import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
+import QuestionView from "@/views/utils/QuestionView.vue";
 
-@Component
+@Component({
+  components: { QuestionView, QuestionVue: QuestionView }
+})
 export default class QuestionsView extends Vue {
   questions: Question[] = [];
   currentQuestion: Question | null = null;
@@ -353,23 +333,6 @@ export default class QuestionsView extends Vue {
   showQuestionDialog(question: Question) {
     this.currentQuestion = question;
     this.showQuestion = true;
-  }
-
-  renderQuestion(question: Question): string {
-    let text =
-      convertMarkDown(question.content, question.image) + " <br/> <br/> ";
-    text =
-      text +
-      question.options
-        .map(
-          (option, index) =>
-            index.toString() +
-            " - " +
-            option.content +
-            (option.correct ? " (correct)" : "")
-        )
-        .join(" <br/> ");
-    return text;
   }
 
   removeTopic(questionId: number, topic: Topic) {
