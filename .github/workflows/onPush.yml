@@ -4,10 +4,22 @@ on: [push]
 
 jobs:
   test:
+    env:
+      spring.datasource.url:jdbc:postgresql://localhost:5432/${{secrets.POSTGRES_DB}}
+      spring.datasource.username:${{secrets.POSTGRES_USER}}
+      spring.datasource.password:${{secrets.POSTGRES_PASSWORD}}
+      spring.jpa.database-platform:org.hibernate.dialect.H2Dialect
+      figures.dir:/
+      export.dir:/
+      load.dir:/
+      oauth.consumer.key:2
+      oauth.consumer.secret:r
+      callback.url:http://localhost:8081/login
+      base.url:https://fenix.tecnico.ulisboa.pt
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v1
+#     - uses: actions/checkout@v1
 #     - name: Setup PostgreSQL
 #       uses: Harmon758/postgresql-action@v1.0.0
 #       env:
@@ -24,16 +36,4 @@ jobs:
       with:
         java-version: 1.11
     - name: Build with Maven
-      env:
-        spring.datasource.url:jdbc:postgresql://localhost:5432/${{secrets.POSTGRES_DB}}
-        spring.datasource.username:${{secrets.POSTGRES_USER}}
-        spring.datasource.password:${{secrets.POSTGRES_PASSWORD}}
-        spring.jpa.database-platform:org.hibernate.dialect.H2Dialect
-        figures.dir:/
-        export.dir:/
-        load.dir:/
-        oauth.consumer.key:2
-        oauth.consumer.secret:r
-        callback.url:http://localhost:8081/login
-        base.url:https://fenix.tecnico.ulisboa.pt
-      run: mvn clean -Ptest --file spring-api/pom.xml test
+      run: mvn clean --file spring-api/pom.xml test
