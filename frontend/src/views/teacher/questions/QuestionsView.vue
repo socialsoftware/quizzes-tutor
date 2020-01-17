@@ -465,7 +465,7 @@ export default class QuestionsView extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .question-textarea {
   text-align: left;
 

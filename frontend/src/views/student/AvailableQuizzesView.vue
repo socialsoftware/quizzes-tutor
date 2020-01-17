@@ -70,7 +70,7 @@ export default class AvailableQuizzesView extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   max-width: 1000px;
   margin-left: auto;

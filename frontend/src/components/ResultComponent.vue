@@ -94,7 +94,7 @@ export default class ResultComponent extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .unanswered {
   .question {
     background-color: #761515 !important;

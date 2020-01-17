@@ -85,7 +85,7 @@ export default class StatsView extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .stats-container {
   display: flex;
   flex-direction: row;
