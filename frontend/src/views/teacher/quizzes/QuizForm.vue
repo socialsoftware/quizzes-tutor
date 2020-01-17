@@ -194,32 +194,12 @@
       </v-container>
     </v-card-text>
 
-    <v-dialog v-model="showQuiz" @keydown.esc="closeShowQuiz" max-width="75%">
-      <v-card v-if="quiz">
-        <v-card-title>{{ quiz.title }}</v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <ol>
-                <li
-                  v-for="question in quiz.questions"
-                  :key="question.sequence"
-                  class="text-left"
-                >
-                  <QuestionView :question="question" />
-                </li>
-              </ol>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn dark color="primary" @click="closeShowQuiz">close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-quiz-dialog
+      v-if="quiz"
+      :dialog="showQuiz"
+      :quiz="quiz"
+      v-on:close-quiz-dialog="onCloseQuizDialog"
+    />
     <v-dialog v-model="positionDialog" persistent max-width="200px">
       <v-card>
         <v-card-text>
@@ -239,45 +219,30 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showQuestion" max-width="75%">
-      <v-card v-if="questionToShow">
-        <v-card-title>
-          <span class="headline">{{ questionToShow.title }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <v-flex class="text-left" xs24 sm12 md8>
-                <QuestionView :question="questionToShow" />
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="blue darken-1" text @click="closeShowQuestionDialog"
-            >Close</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-question-dialog
+      v-if="questionToShow"
+      :dialog="showQuestion"
+      :question="questionToShow"
+      v-on:close-question-dialog="onCloseQuestionDialog"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import {
-  convertMarkDown,
-  convertMarkDownNoFigure
-} from "@/services/ConvertMarkdownService";
+import { convertMarkDownNoFigure } from "@/services/ConvertMarkdownService";
 import { Quiz } from "@/models/management/Quiz";
 import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
-import QuestionView from "@/views/utils/QuestionView.vue";
+import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
+import ShowQuizDialog from "@/views/teacher/quizzes/ShowQuizDialog.vue";
 
 @Component({
-  components: { QuestionView, QuestionVue: QuestionView }
+  components: {
+    "show-question-dialog": ShowQuestionDialog,
+    "show-quiz-dialog": ShowQuizDialog
+  }
 })
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
@@ -431,7 +396,7 @@ export default class QuizForm extends Vue {
     this.showQuestion = true;
   }
 
-  closeShowQuestionDialog() {
+  onCloseQuestionDialog() {
     this.questionToShow = null;
     this.showQuestion = false;
   }
@@ -509,12 +474,8 @@ export default class QuizForm extends Vue {
     this.quiz.questions = this.quizQuestions;
   }
 
-  closeShowQuiz() {
+  onCloseQuizDialog() {
     this.showQuiz = false;
-  }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
   }
 }
 </script>

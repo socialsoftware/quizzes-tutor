@@ -27,8 +27,7 @@
         <p
           v-html="convertMarkDownNoFigure(item.content, null)"
           @click="showQuestionDialog(item)"
-        />
-      </template>
+      /></template>
 
       <template v-slot:item.topics="{ item }">
         <v-form>
@@ -202,46 +201,28 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showQuestion" max-width="75%">
-      <v-card v-if="currentQuestion">
-        <v-card-title>
-          <span class="headline">{{ currentQuestion.title }}</span>
-        </v-card-title>
-        <v-card-text>
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <v-flex class="text-left" xs24 sm12 md8>
-                <QuestionView :question="currentQuestion" />
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="blue darken-1" @click="closeQuestionDialog"
-            >Close</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-question-dialog
+      v-if="currentQuestion"
+      :dialog="showQuestion"
+      :question="currentQuestion"
+      v-on:close-question-dialog="onCloseQuestionDialog"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import RemoteServices from "@/services/RemoteServices";
-import {
-  convertMarkDown,
-  convertMarkDownNoFigure
-} from "@/services/ConvertMarkdownService";
+import { convertMarkDownNoFigure } from "@/services/ConvertMarkdownService";
 import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
-import QuestionView from "@/views/utils/QuestionView.vue";
+import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
 
 @Component({
-  components: { QuestionView, QuestionVue: QuestionView }
+  components: {
+    "show-question-dialog": ShowQuestionDialog
+  }
 })
 export default class QuestionsView extends Vue {
   questions: Question[] = [];
@@ -347,7 +328,7 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  closeQuestionDialog() {
+  onCloseQuestionDialog() {
     this.showQuestion = false;
   }
 

@@ -67,32 +67,12 @@
         </v-tooltip>
       </template>
     </v-data-table>
-    <v-dialog v-model="previewQuiz" @keydown.esc="closeQuiz" max-width="75%">
-      <v-card v-if="quiz">
-        <v-card-title>{{ quiz.title }}</v-card-title>
-
-        <v-card-text>
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <ol>
-                <li
-                  v-for="question in quiz.questions"
-                  :key="question.sequence"
-                  class="text-left"
-                >
-                  <QuestionView :question="question" />
-                </li>
-              </ol>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn dark color="primary" @click="closeQuiz">close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-quiz-dialog
+      v-if="quiz"
+      :dialog="previewQuiz"
+      :quiz="quiz"
+      v-on:close-quiz-dialog="closeQuizDialog"
+    />
   </v-card>
 </template>
 
@@ -100,12 +80,10 @@
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { Quiz } from "@/models/management/Quiz";
 import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
-import Image from "@/models/management/Image";
-import QuestionView from "@/views/utils/QuestionView.vue";
+import ShowQuizDialog from "@/views/teacher/quizzes/ShowQuizDialog.vue";
 
 @Component({
-  components: { QuestionView, QuestionVue: QuestionView }
+  components: { "show-quiz-dialog": ShowQuizDialog }
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
@@ -162,7 +140,7 @@ export default class QuizList extends Vue {
     }
   }
 
-  closeQuiz() {
+  closeQuizDialog() {
     this.previewQuiz = false;
     this.quiz = null;
   }
@@ -184,10 +162,6 @@ export default class QuizList extends Vue {
         await this.$store.dispatch("error", error);
       }
     }
-  }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
   }
 }
 </script>
