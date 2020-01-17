@@ -20,7 +20,7 @@ import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 
 @Component
-export default class QuestionView extends Vue {
+export default class ShowQuestion extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;
 
   convertMarkDown(text: string, image: Image | null = null): string {

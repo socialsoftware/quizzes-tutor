@@ -7,7 +7,7 @@
           :key="question.sequence"
           class="text-left"
         >
-          <QuestionView :question="question" />
+          <show-question :question="question" />
         </li>
       </ol>
     </v-layout>
@@ -17,14 +17,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from "vue-property-decorator";
 import Question from "../../../models/management/Question";
-import QuestionView from "@/views/teacher/questions/QuestionView.vue";
+import ShowQuestion from "@/views/teacher/questions/ShowQuestion.vue";
 
 @Component({
-  components: { QuestionView }
+  components: { "show-question": ShowQuestion }
 })
-export default class QuestionsList extends Vue {
+export default class ShowQuestionList extends Vue {
   @Prop({ type: Array, required: true }) readonly questions!: Question[];
 }
 </script>
-
-<style scoped></style>

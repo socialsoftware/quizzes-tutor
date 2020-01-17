@@ -223,7 +223,7 @@
       v-if="questionToShow"
       :dialog="showQuestion"
       :question="questionToShow"
-      v-on:close-question-dialog="onCloseQuestionDialog"
+      v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />
   </v-card>
 </template>
@@ -396,7 +396,7 @@ export default class QuizForm extends Vue {
     this.showQuestion = true;
   }
 
-  onCloseQuestionDialog() {
+  onCloseShowQuestionDialog() {
     this.questionToShow = null;
     this.showQuestion = false;
   }

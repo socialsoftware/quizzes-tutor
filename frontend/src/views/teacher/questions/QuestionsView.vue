@@ -146,66 +146,74 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <edit-question-dialog
+      v-if="currentQuestion"
+      :dialog="editQuestionDialog"
+      :question="currentQuestion"
+      v-on:close-edit-question-dialog="onCloseEditQuestionDialogue"
+      v-on:save-question="onSaveQuestion"
+    />
+    <!--    <v-dialog v-model="editQuestionDialog" max-width="75%">-->
+    <!--      <v-card>-->
+    <!--        <v-card-title>-->
+    <!--          <span class="headline">-->
+    <!--            {{-->
+    <!--              currentQuestion && currentQuestion.id === null-->
+    <!--                ? "New Question"-->
+    <!--                : "Edit Question"-->
+    <!--            }}-->
+    <!--          </span>-->
+    <!--        </v-card-title>-->
 
-    <v-dialog v-model="editQuestionDialog" max-width="75%">
-      <v-card>
-        <v-card-title>
-          <span class="headline">
-            {{
-              currentQuestion && currentQuestion.id === null
-                ? "New Question"
-                : "Edit Question"
-            }}
-          </span>
-        </v-card-title>
+    <!--        <v-card-text v-if="currentQuestion">-->
+    <!--          <v-container grid-list-md fluid>-->
+    <!--            <v-layout column wrap>-->
+    <!--              <v-flex xs24 sm12 md8>-->
+    <!--                <v-text-field v-model="currentQuestion.title" label="Title" />-->
+    <!--              </v-flex>-->
+    <!--              <v-flex xs24 sm12 md12>-->
+    <!--                <vue-simplemde-->
+    <!--                  v-model="currentQuestion.content"-->
+    <!--                  class="question-textarea"-->
+    <!--                  :configs="markdownConfigs"-->
+    <!--                />-->
+    <!--              </v-flex>-->
+    <!--              <v-flex-->
+    <!--                xs24-->
+    <!--                sm12-->
+    <!--                md12-->
+    <!--                v-for="index in currentQuestion.options.length"-->
+    <!--                :key="index"-->
+    <!--              >-->
+    <!--                <v-switch-->
+    <!--                  v-model="currentQuestion.options[index - 1].correct"-->
+    <!--                  class="ma-4"-->
+    <!--                  label="Correct"-->
+    <!--                />-->
+    <!--                <vue-simplemde-->
+    <!--                  v-model="currentQuestion.options[index - 1].content"-->
+    <!--                  class="option-textarea"-->
+    <!--                  :configs="markdownConfigs"-->
+    <!--                />-->
+    <!--              </v-flex>-->
+    <!--            </v-layout>-->
+    <!--          </v-container>-->
+    <!--        </v-card-text>-->
 
-        <v-card-text v-if="currentQuestion">
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <v-flex xs24 sm12 md8>
-                <v-text-field v-model="currentQuestion.title" label="Title" />
-              </v-flex>
-              <v-flex xs24 sm12 md12>
-                <vue-simplemde
-                  v-model="currentQuestion.content"
-                  class="question-textarea"
-                  :configs="markdownConfigs"
-                />
-              </v-flex>
-              <v-flex
-                xs24
-                sm12
-                md12
-                v-for="index in currentQuestion.options.length"
-                :key="index"
-              >
-                <v-switch
-                  v-model="currentQuestion.options[index - 1].correct"
-                  class="ma-4"
-                  label="Correct"
-                />
-                <vue-simplemde
-                  v-model="currentQuestion.options[index - 1].content"
-                  class="option-textarea"
-                  :configs="markdownConfigs"
-                />
-              </v-flex>
-            </v-layout>
-          </v-container>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
-          <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <!--        <v-card-actions>-->
+    <!--          <v-spacer />-->
+    <!--          <v-btn color="blue darken-1" @click="onCloseEditQuestionDialogue"-->
+    <!--            >Cancel</v-btn-->
+    <!--          >-->
+    <!--          <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>-->
+    <!--        </v-card-actions>-->
+    <!--      </v-card>-->
+    <!--    </v-dialog>-->
     <show-question-dialog
       v-if="currentQuestion"
       :dialog="showQuestion"
       :question="currentQuestion"
-      v-on:close-question-dialog="onCloseQuestionDialog"
+      v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />
   </v-card>
 </template>
@@ -218,10 +226,12 @@ import Question from "@/models/management/Question";
 import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
 import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
+import EditQuestionDialog from "@/views/teacher/questions/EditQuestionDialog.vue";
 
 @Component({
   components: {
-    "show-question-dialog": ShowQuestionDialog
+    "show-question-dialog": ShowQuestionDialog,
+    "edit-question-dialog": EditQuestionDialog
   }
 })
 export default class QuestionsView extends Vue {
@@ -328,7 +338,7 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  onCloseQuestionDialog() {
+  onCloseShowQuestionDialog() {
     this.showQuestion = false;
   }
 
@@ -391,10 +401,6 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  closeDialogue() {
-    this.editQuestionDialog = false;
-  }
-
   getDifficultyColor(difficulty: number) {
     if (difficulty < 25) return "green";
     else if (difficulty < 50) return "lime";
@@ -408,40 +414,15 @@ export default class QuestionsView extends Vue {
     else return "green";
   }
 
-  async saveQuestion() {
-    if (
-      this.currentQuestion &&
-      (!this.currentQuestion.title || !this.currentQuestion.content)
-    ) {
-      await this.$store.dispatch(
-        "error",
-        "Question must have title and content"
-      );
-      return;
-    }
+  async onSaveQuestion(question: Question) {
+    this.questions = this.questions.filter(q => q.id !== question.id);
+    this.questions.unshift(question);
+    this.onCloseEditQuestionDialogue();
+  }
 
-    if (this.currentQuestion && this.currentQuestion.id != null) {
-      try {
-        this.currentQuestion = await RemoteServices.updateQuestion(
-          this.currentQuestion
-        );
-
-        this.closeDialogue();
-      } catch (error) {
-        await this.$store.dispatch("error", error);
-      }
-    } else if (this.currentQuestion) {
-      try {
-        const question = await RemoteServices.createQuestion(
-          this.currentQuestion
-        );
-
-        this.questions.unshift(question);
-        this.closeDialogue();
-      } catch (error) {
-        await this.$store.dispatch("error", error);
-      }
-    }
+  onCloseEditQuestionDialogue() {
+    this.editQuestionDialog = false;
+    this.currentQuestion = null;
   }
 }
 </script>
