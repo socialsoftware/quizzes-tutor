@@ -74,4 +74,4 @@ export default class QuestionComponent extends Vue {
 }
 </script>
 
-<style lang="scss" />
+<style lang="scss" scoped />

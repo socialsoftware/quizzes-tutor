@@ -480,7 +480,7 @@ export default class QuizForm extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .headline {
   flex: 1 1 auto;
   text-align: left;

@@ -87,7 +87,7 @@ export default class CreateQuizzesView extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .create-buttons {
   width: 80% !important;
   background-color: white;

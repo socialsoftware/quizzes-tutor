@@ -83,7 +83,7 @@ export default class HomeView extends Vue {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   height: 100%;
   display: flex;

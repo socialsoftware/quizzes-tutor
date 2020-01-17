@@ -97,7 +97,6 @@ public class AuthService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-
     }
 
     @Retryable(

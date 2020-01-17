@@ -80,4 +80,4 @@ export default class QuizzesView extends Vue {
 }
 </script>
 
-<style lang="scss" />
+<style lang="scss" scoped />
