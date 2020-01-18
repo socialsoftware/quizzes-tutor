@@ -30,34 +30,11 @@
       /></template>
 
       <template v-slot:item.topics="{ item }">
-        <v-form>
-          <v-autocomplete
-            v-model="item.topics"
-            :items="topics"
-            multiple
-            return-object
-            item-text="name"
-            item-value="name"
-            @change="saveTopics(item.id)"
-          >
-            <template v-slot:selection="data">
-              <v-chip
-                v-bind="data.attrs"
-                :input-value="data.selected"
-                close
-                @click="data.select"
-                @click:close="removeTopic(item.id, data.item)"
-              >
-                {{ data.item.name }}
-              </v-chip>
-            </template>
-            <template v-slot:item="data">
-              <v-list-item-content>
-                <v-list-item-title v-html="data.item.name" />
-              </v-list-item-content>
-            </template>
-          </v-autocomplete>
-        </v-form>
+        <edit-question-topics
+          :question="item"
+          :topics="topics"
+          v-on:question-changed-topics="onQuestionChangedTopics"
+        />
       </template>
 
       <template v-slot:item.difficulty="{ item }">
@@ -153,62 +130,6 @@
       v-on:close-edit-question-dialog="onCloseEditQuestionDialogue"
       v-on:save-question="onSaveQuestion"
     />
-    <!--    <v-dialog v-model="editQuestionDialog" max-width="75%">-->
-    <!--      <v-card>-->
-    <!--        <v-card-title>-->
-    <!--          <span class="headline">-->
-    <!--            {{-->
-    <!--              currentQuestion && currentQuestion.id === null-->
-    <!--                ? "New Question"-->
-    <!--                : "Edit Question"-->
-    <!--            }}-->
-    <!--          </span>-->
-    <!--        </v-card-title>-->
-
-    <!--        <v-card-text v-if="currentQuestion">-->
-    <!--          <v-container grid-list-md fluid>-->
-    <!--            <v-layout column wrap>-->
-    <!--              <v-flex xs24 sm12 md8>-->
-    <!--                <v-text-field v-model="currentQuestion.title" label="Title" />-->
-    <!--              </v-flex>-->
-    <!--              <v-flex xs24 sm12 md12>-->
-    <!--                <vue-simplemde-->
-    <!--                  v-model="currentQuestion.content"-->
-    <!--                  class="question-textarea"-->
-    <!--                  :configs="markdownConfigs"-->
-    <!--                />-->
-    <!--              </v-flex>-->
-    <!--              <v-flex-->
-    <!--                xs24-->
-    <!--                sm12-->
-    <!--                md12-->
-    <!--                v-for="index in currentQuestion.options.length"-->
-    <!--                :key="index"-->
-    <!--              >-->
-    <!--                <v-switch-->
-    <!--                  v-model="currentQuestion.options[index - 1].correct"-->
-    <!--                  class="ma-4"-->
-    <!--                  label="Correct"-->
-    <!--                />-->
-    <!--                <vue-simplemde-->
-    <!--                  v-model="currentQuestion.options[index - 1].content"-->
-    <!--                  class="option-textarea"-->
-    <!--                  :configs="markdownConfigs"-->
-    <!--                />-->
-    <!--              </v-flex>-->
-    <!--            </v-layout>-->
-    <!--          </v-container>-->
-    <!--        </v-card-text>-->
-
-    <!--        <v-card-actions>-->
-    <!--          <v-spacer />-->
-    <!--          <v-btn color="blue darken-1" @click="onCloseEditQuestionDialogue"-->
-    <!--            >Cancel</v-btn-->
-    <!--          >-->
-    <!--          <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>-->
-    <!--        </v-card-actions>-->
-    <!--      </v-card>-->
-    <!--    </v-dialog>-->
     <show-question-dialog
       v-if="currentQuestion"
       :dialog="showQuestion"
@@ -227,11 +148,13 @@ import Image from "@/models/management/Image";
 import Topic from "@/models/management/Topic";
 import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
 import EditQuestionDialog from "@/views/teacher/questions/EditQuestionDialog.vue";
+import EditQuestionTopics from "@/views/teacher/questions/EditQuestionTopics.vue";
 
 @Component({
   components: {
     "show-question-dialog": ShowQuestionDialog,
-    "edit-question-dialog": EditQuestionDialog
+    "edit-question-dialog": EditQuestionDialog,
+    "edit-question-topics": EditQuestionTopics
   }
 })
 export default class QuestionsView extends Vue {
@@ -310,43 +233,25 @@ export default class QuestionsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
-  async saveTopics(questionId: number) {
-    let question = this.questions.find(question => question.id === questionId);
-    if (question) {
-      try {
-        await RemoteServices.updateQuestionTopics(questionId, question.topics);
-      } catch (error) {
-        await this.$store.dispatch("error", error);
-      }
-    }
-  }
-
-  showQuestionDialog(question: Question) {
-    this.currentQuestion = question;
-    this.showQuestion = true;
-  }
-
-  removeTopic(questionId: number, topic: Topic) {
+  // topics
+  onQuestionChangedTopics(questionId: Number, changedTopics: Topic[]) {
     let question = this.questions.find(
       (question: Question) => question.id == questionId
     );
     if (question) {
-      question.topics = question.topics.filter(
-        element => element.id != topic.id
-      );
-      this.saveTopics(questionId);
+      question.topics = changedTopics;
     }
   }
 
-  onCloseShowQuestionDialog() {
-    this.showQuestion = false;
+  // difficulty
+  getDifficultyColor(difficulty: number) {
+    if (difficulty < 25) return "green";
+    else if (difficulty < 50) return "lime";
+    else if (difficulty < 75) return "orange";
+    else return "red";
   }
 
-  newQuestion() {
-    this.currentQuestion = new Question();
-    this.editQuestionDialog = true;
-  }
-
+  // status
   async setStatus(questionId: number, status: string) {
     try {
       await RemoteServices.setQuestionStatus(questionId, status);
@@ -361,6 +266,13 @@ export default class QuestionsView extends Vue {
     }
   }
 
+  getStatusColor(status: string) {
+    if (status === "REMOVED") return "red";
+    else if (status === "DISABLED") return "orange";
+    else return "green";
+  }
+
+  // file
   async handleFileUpload(event: File, question: Question) {
     if (question.id) {
       try {
@@ -374,9 +286,19 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  duplicateQuestion(question: Question) {
-    this.currentQuestion = new Question(question);
-    this.currentQuestion.id = null;
+  // show question
+  showQuestionDialog(question: Question) {
+    this.currentQuestion = question;
+    this.showQuestion = true;
+  }
+
+  onCloseShowQuestionDialog() {
+    this.showQuestion = false;
+  }
+
+  // manipulate question
+  newQuestion() {
+    this.currentQuestion = new Question();
     this.editQuestionDialog = true;
   }
 
@@ -385,6 +307,24 @@ export default class QuestionsView extends Vue {
     this.editQuestionDialog = true;
   }
 
+  duplicateQuestion(question: Question) {
+    this.currentQuestion = new Question(question);
+    this.currentQuestion.id = null;
+    this.editQuestionDialog = true;
+  }
+
+  async onSaveQuestion(question: Question) {
+    this.questions = this.questions.filter(q => q.id !== question.id);
+    this.questions.unshift(question);
+    this.onCloseEditQuestionDialogue();
+  }
+
+  onCloseEditQuestionDialogue() {
+    this.editQuestionDialog = false;
+    this.currentQuestion = null;
+  }
+
+  // delete question
   async deleteQuestion(toDeletequestion: Question) {
     if (
       toDeletequestion.id &&
@@ -399,30 +339,6 @@ export default class QuestionsView extends Vue {
         await this.$store.dispatch("error", error);
       }
     }
-  }
-
-  getDifficultyColor(difficulty: number) {
-    if (difficulty < 25) return "green";
-    else if (difficulty < 50) return "lime";
-    else if (difficulty < 75) return "orange";
-    else return "red";
-  }
-
-  getStatusColor(status: string) {
-    if (status === "REMOVED") return "red";
-    else if (status === "DISABLED") return "orange";
-    else return "green";
-  }
-
-  async onSaveQuestion(question: Question) {
-    this.questions = this.questions.filter(q => q.id !== question.id);
-    this.questions.unshift(question);
-    this.onCloseEditQuestionDialogue();
-  }
-
-  onCloseEditQuestionDialogue() {
-    this.editQuestionDialog = false;
-    this.currentQuestion = null;
   }
 }
 </script>
