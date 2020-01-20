@@ -22,3 +22,14 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./spring-api/target/site/jacoco/jacoco.xml
         yml: ./spring-api/codecov.yml
+    - uses: actions/setup-node@v1
+      with:
+        node-version: '10.16'
+    - run: |
+        npm install
+        npm test:unit
+    - name: Codecov Node
+      uses: iansu/codecov-action-node@v1.0.0
+      with:
+        token: ${{secrets.CODECOV_TOKEN}}
+        file: ./frontend/coverage/clover.xml
