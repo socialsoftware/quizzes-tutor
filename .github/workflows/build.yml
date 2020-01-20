@@ -20,5 +20,5 @@ jobs:
       uses: codecov/codecov-action@v1.0.5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: ./spring-api/target/jacoco.exec
+        file: ./spring-api/target/site/jacoco/jacoco.xml
         yml: ./spring-api/codecov.yml
