@@ -26,6 +26,7 @@ jobs:
       with:
         node-version: '10.16'
     - run: |
+        cd frontend
         npm install
         npm test:unit
     - name: Codecov Node
