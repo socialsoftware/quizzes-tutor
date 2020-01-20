@@ -1,4 +1,12 @@
 # Tutor System - Impress project
+
+![GitHub](https://img.shields.io/github/license/socialsoftware/as-tutor)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build)
+![Website](https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt)
+[![Backend Vulnerabilities](https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml)](https://snyk.io//test/github/socialsoftware/as-tutor?targetFile=spring-api/pom.xml)
+[![Frontend Vulnerabilities](https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json)](https://snyk.io//test/github/socialsoftware/as-tutor?targetFile=frontend/package.json)
+[![codecov](https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg)](https://codecov.io/gh/socialsoftware/as-tutor)
+
 <table>
   <tr>
     <td><img src="https://math.tecnico.ulisboa.pt/img/Tecnico_logo.svg" alt="IST Logo"/></td>
