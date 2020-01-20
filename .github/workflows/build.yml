@@ -21,3 +21,4 @@ jobs:
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./spring-api/target/jacoco.exec
+        yml: ./spring-api/codecov.yml
