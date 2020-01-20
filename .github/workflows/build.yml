@@ -22,5 +22,3 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./spring-api/target/site/jacoco/jacoco.xml
         yml: ./spring-api/codecov.yml
-    - name: Find
-      run: find
