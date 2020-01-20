@@ -15,12 +15,12 @@ jobs:
       with:
         java-version: 1.11
     - name: Build with Maven
-      run: |
-       mvn clean --file ./spring-api/pom.xml -Ptest test
-       find target
+      run: mvn clean --file ./spring-api/pom.xml -Ptest test
     - name: Codecov
       uses: codecov/codecov-action@v1.0.5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./spring-api/target/site/jacoco/jacoco.xml
         yml: ./spring-api/codecov.yml
+    - name: Find
+      run: find
