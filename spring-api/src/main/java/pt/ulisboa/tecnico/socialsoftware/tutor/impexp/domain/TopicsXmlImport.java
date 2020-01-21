@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.TOPICS_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPICS_IMPORT_ERROR;
 
 public class TopicsXmlImport {
 	private QuestionService questionService;

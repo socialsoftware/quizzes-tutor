@@ -3,6 +3,7 @@ export default class Course {
   name!: string;
   acronym!: string;
   academicTerm!: string;
+  status!: string;
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
@@ -10,6 +11,7 @@ export default class Course {
       this.name = jsonObj.name;
       this.acronym = jsonObj.acronym;
       this.academicTerm = jsonObj.academicTerm;
+      this.status = jsonObj.status;
     }
   }
 }

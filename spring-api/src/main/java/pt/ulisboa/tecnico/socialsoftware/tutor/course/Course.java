@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_NAME_IS_EMPTY;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NAME_IS_EMPTY;
 
 @Entity
 @Table(name = "courses")

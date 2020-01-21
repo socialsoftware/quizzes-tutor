@@ -14,7 +14,6 @@ export default class LoginView extends Vue {
       await this.$router.push({ name: "home" });
     } else {
       await this.$store.dispatch("fenixLogin", this.$route.query.code);
-      console.log(this.$store.getters.getUser.coursesNumber);
       if (this.$store.getters.getUser.coursesNumber === 1) {
         await this.$store.dispatch(
           "currentCourse",

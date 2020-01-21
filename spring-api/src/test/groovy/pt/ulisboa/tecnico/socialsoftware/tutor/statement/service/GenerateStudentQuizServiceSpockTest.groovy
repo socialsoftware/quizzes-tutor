@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
@@ -141,7 +141,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getError() == ExceptionError.NOT_ENOUGH_QUESTIONS
+        exception.getErrorMessage() == ErrorMessage.NOT_ENOUGH_QUESTIONS
         quizRepository.count() == 0L
     }
 

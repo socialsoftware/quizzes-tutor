@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import javax.validation.Valid;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USER_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_TEACHER" })

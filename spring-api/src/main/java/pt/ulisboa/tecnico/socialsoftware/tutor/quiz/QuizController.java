@@ -19,8 +19,8 @@ public class QuizController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'ACCESS'))")
     @GetMapping("/executions/{executionId}/quizzes/non-generated")
-    public List<QuizDto> findNonGeneratedQuizzes(@PathVariable int executionId) {
-        return quizService.findNonGeneratedQuizzes(executionId);
+    public List<QuizDto> findTeacherQuizzes(@PathVariable int executionId) {
+        return quizService.findTeacherQuizzes(executionId);
     }
 
     @PostMapping("/executions/{executionId}/quizzes")

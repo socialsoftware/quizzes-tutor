@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -123,7 +123,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUESTION_IS_USED_IN_QUIZ
+        exception.getErrorMessage() == ErrorMessage.QUESTION_IS_USED_IN_QUIZ
     }
 
     def "remove a question that has topics"() {

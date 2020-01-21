@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 
 @Service
 public class CourseService {
@@ -55,7 +55,7 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto createCourseExecution(CourseDto courseDto) {
+    public CourseDto activateCourseExecution(CourseDto courseDto) {
         Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
         if (course == null) {
             course = new Course(courseDto.getName());

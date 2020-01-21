@@ -18,7 +18,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUESTIONS_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTIONS_IMPORT_ERROR;
 
 public class QuestionsXmlImport {
 

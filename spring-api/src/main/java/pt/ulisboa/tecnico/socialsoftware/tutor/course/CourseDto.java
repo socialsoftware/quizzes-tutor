@@ -7,7 +7,7 @@ public class CourseDto implements Serializable {
     private String name;
     private String acronym;
     private String academicTerm;
-    private String status;
+    private CourseExecution.Status status;
 
     public CourseDto() {
     }
@@ -21,7 +21,7 @@ public class CourseDto implements Serializable {
         this.name = courseExecution.getCourse().getName();
         this.acronym = courseExecution.getAcronym();
         this.academicTerm = courseExecution.getAcademicTerm();
-
+        this.status = courseExecution.getStatus();
     }
 
     public CourseDto(String name, String acronym, String academicTerm) {
@@ -62,11 +62,11 @@ public class CourseDto implements Serializable {
         this.academicTerm = academicTerm;
     }
 
-    public String getStatus() {
+    public CourseExecution.Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(CourseExecution.Status status) {
         this.status = status;
     }
 }

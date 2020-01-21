@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
-public enum ExceptionError {
+public enum ErrorMessage {
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
@@ -44,11 +44,15 @@ public enum ExceptionError {
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
-    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix");
+    FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
+
+
+    ACCESS_DENIED("You do not have permission to view this resource"),
+    UNEXPECTED_ERROR("The admin probably did something wrong. Let him know");
 
     public final String label;
 
-    ExceptionError(String label) {
+    ErrorMessage(String label) {
         this.label = label;
     }
 }

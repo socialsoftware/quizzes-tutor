@@ -31,7 +31,7 @@ import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class AnswerService {

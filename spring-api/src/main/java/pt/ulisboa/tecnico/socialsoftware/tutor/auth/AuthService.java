@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USER_NOT_ENROLLED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED;
 
 @Service
 public class AuthService {
@@ -36,25 +36,29 @@ public class AuthService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthDto fenixAuth(FenixEduInterface fenix) {
         String username = fenix.getPersonUsername();
-        List<CourseDto> attendingCourses = fenix.getPersonAttendingCourses();
-        List<CourseDto> teachingCourses = fenix.getPersonTeachingCourses();
+        List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
+        List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
 
-        List<CourseExecution> activeAttendingCourses = getActiveCourses(attendingCourses);
-        List<CourseExecution> activeTeachingCourses = getActiveCourses(teachingCourses);
+        List<CourseExecution> activeAttendingCourses = getActiveCourses(fenixAttendingCourses);
+        List<CourseExecution> activeTeachingCourses = getActiveCourses(fenixTeachingCourses);
 
         User user = this.userService.findByUsername(username);
 
-        // If user is student not in db
+        // If user is student and is not in db
         if (user == null && !activeAttendingCourses.isEmpty()) {
             user = this.userService.createUser(fenix.getPersonName(), username, User.Role.STUDENT);
         }
 
-        // If user is teacher not in db
-        if (user == null && !teachingCourses.isEmpty()) {
+        // If user is teacher and is not in db
+        if (user == null && !fenixTeachingCourses.isEmpty()) {
             user = this.userService.createUser(fenix.getPersonName(), username, User.Role.TEACHER);
         }
 
-        if (user != null && user.getRole() == User.Role.ADMIN) {
+        if (user == null) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
+        }
+
+        if (user.getRole() == User.Role.ADMIN) {
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user, courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList())));
         }
 
@@ -66,19 +70,20 @@ public class AuthService {
         }
 
         // Update teacher courses
-        if (!teachingCourses.isEmpty() && (user.getRole() == User.Role.TEACHER || user.getRole() == User.Role.ADMIN)) {
+        if (!fenixTeachingCourses.isEmpty() && user.getRole() == User.Role.TEACHER) {
             User teacher = user;
             activeTeachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
-            String ids = teachingCourses.stream()
+            String ids = fenixTeachingCourses.stream()
                     .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
             user.setEnrolledCoursesAcronyms(ids);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  teachingCourses));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  fenixTeachingCourses));
         }
 
-        if (user != null && user.getRole() == User.Role.TEACHER) {
+        // Previous teacher without active courses
+        if (user.getRole() == User.Role.TEACHER) {
             return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
         }
 

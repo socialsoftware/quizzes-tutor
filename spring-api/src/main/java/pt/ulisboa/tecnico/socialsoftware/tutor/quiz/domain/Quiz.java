@@ -15,8 +15,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_HAS_ANSWERS;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_HAS_ANSWERS;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_CONSISTENT;
 
 @Entity
 @Table(

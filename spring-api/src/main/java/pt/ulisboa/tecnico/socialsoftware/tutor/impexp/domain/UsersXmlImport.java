@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USERS_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
 @Component
 public class UsersXmlImport {

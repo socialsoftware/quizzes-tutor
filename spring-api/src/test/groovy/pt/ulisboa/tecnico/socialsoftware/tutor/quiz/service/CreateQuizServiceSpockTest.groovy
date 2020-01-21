@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -126,7 +126,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -141,7 +141,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -156,7 +156,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 
@@ -171,7 +171,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUIZ_NOT_CONSISTENT
+        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
         quizRepository.count() == 0L
     }
 

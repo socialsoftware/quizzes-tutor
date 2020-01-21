@@ -423,6 +423,17 @@ export default class RemoteServices {
       });
   }
 
+  static async activateCourse(course: Course): Promise<Course> {
+    return httpClient
+      .post("/courses", course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportAll() {
     return httpClient
       .get("/admin/export", {

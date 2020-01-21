@@ -88,7 +88,7 @@ export default class ResultsView extends Vue {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .incorrect {
   color: #cf2323 !important;
 }

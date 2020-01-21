@@ -8,39 +8,39 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class TutorException extends RuntimeException {
     private static final Logger logger = LoggerFactory.getLogger(TutorException.class);
-    private final ExceptionError error;
+    private final ErrorMessage errorMessage;
 
-    public TutorException(ExceptionError error) {
-        super(error.label);
-        logger.error(error.label);
-        this.error = error;
+    public TutorException(ErrorMessage errorMessage) {
+        super(errorMessage.label);
+        logger.error(errorMessage.label);
+        this.errorMessage = errorMessage;
     }
 
-    public TutorException(ExceptionError error, String value) {
-        super(String.format(error.label, value));
-        logger.error(String.format(error.label, value));
-        this.error = error;
+    public TutorException(ErrorMessage errorMessage, String value) {
+        super(String.format(errorMessage.label, value));
+        logger.error(String.format(errorMessage.label, value));
+        this.errorMessage = errorMessage;
     }
 
-    public TutorException(ExceptionError error, String value1, String value2) {
-        super(String.format(error.label, value1, value2));
-        logger.error(String.format(error.label, value1, value2));
-        this.error = error;
+    public TutorException(ErrorMessage errorMessage, String value1, String value2) {
+        super(String.format(errorMessage.label, value1, value2));
+        logger.error(String.format(errorMessage.label, value1, value2));
+        this.errorMessage = errorMessage;
     }
 
-    public TutorException(ExceptionError error, int value) {
-        super(String.format(error.label, value));
-        logger.error(String.format(error.label, value));
-        this.error = error;
+    public TutorException(ErrorMessage errorMessage, int value) {
+        super(String.format(errorMessage.label, value));
+        logger.error(String.format(errorMessage.label, value));
+        this.errorMessage = errorMessage;
     }
 
-    public TutorException(ExceptionError error, int value1, int value2) {
-        super(String.format(error.label, value1, value2));
-        logger.error(String.format(error.label, value1, value2));
-        this.error = error;
+    public TutorException(ErrorMessage errorMessage, int value1, int value2) {
+        super(String.format(errorMessage.label, value1, value2));
+        logger.error(String.format(errorMessage.label, value1, value2));
+        this.errorMessage = errorMessage;
     }
 
-    public ExceptionError getError() {
-        return error;
+    public ErrorMessage getErrorMessage() {
+        return errorMessage;
     }
 }

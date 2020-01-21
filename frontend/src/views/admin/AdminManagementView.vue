@@ -11,4 +11,4 @@ import { Component, Vue } from "vue-property-decorator";
 export default class AdminManagementView extends Vue {}
 </script>
 
-<style></style>
+<style lang="scss" scoped></style>

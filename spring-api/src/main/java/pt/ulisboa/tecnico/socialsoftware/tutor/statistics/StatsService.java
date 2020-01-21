@@ -24,7 +24,7 @@ import java.util.*;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.COURSE_EXECUTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
 
 @Service
 public class StatsService {

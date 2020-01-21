@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -106,7 +106,7 @@ class RemoveQuizServiceSpockTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getError() == ExceptionError.QUIZ_HAS_ANSWERS
+        exception.getErrorMessage() == ErrorMessage.QUIZ_HAS_ANSWERS
         quizRepository.count() == 1L
         quizQuestionRepository.count() == 1L
         questionRepository.count() == 1L

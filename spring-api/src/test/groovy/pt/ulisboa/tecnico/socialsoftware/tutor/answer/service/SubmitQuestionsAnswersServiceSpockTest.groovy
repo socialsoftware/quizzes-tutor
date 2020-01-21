@@ -29,9 +29,9 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_MISMATCH
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_USER_MISMATCH
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.QUIZ_OPTION_MISMATCH
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_MISMATCH
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_USER_MISMATCH
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_OPTION_MISMATCH
 
 @DataJpaTest
 class SubmitQuestionsAnswersServiceSpockTest extends Specification {
@@ -175,7 +175,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getError() == QUIZ_USER_MISMATCH
+        exception.getErrorMessage() == QUIZ_USER_MISMATCH
         questionAnswerRepository.findAll().size() == 0
     }
 
@@ -203,7 +203,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getError() == QUIZ_MISMATCH
+        exception.getErrorMessage() == QUIZ_MISMATCH
         questionAnswerRepository.findAll().size() == 0
     }
 
@@ -230,7 +230,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
         then:
         TutorException exception = thrown()
-        exception.getError() == QUIZ_OPTION_MISMATCH
+        exception.getErrorMessage() == QUIZ_OPTION_MISMATCH
         questionAnswerRepository.findAll().size() == 0
     }
 

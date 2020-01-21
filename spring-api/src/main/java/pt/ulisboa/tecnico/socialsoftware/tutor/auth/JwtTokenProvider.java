@@ -17,7 +17,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.USERNAME_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {

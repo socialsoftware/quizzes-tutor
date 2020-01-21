@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class StatementService {
@@ -113,12 +113,15 @@ public class StatementService {
         LocalDateTime now = LocalDateTime.now();
 
         Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .map(QuizAnswer::getQuiz)
                 .map(Quiz::getId)
                 .collect(Collectors.toSet());
 
-        quizRepository.findAvailableTeacherQuizzes(executionId).stream()
-                .filter(quiz -> quiz.getAvailableDate().isBefore(now) && !studentQuizIds.contains(quiz.getId()))
+        quizRepository.findAvailableQuizzes(executionId).stream()
+                .filter(quiz -> quiz.getCourseExecution().getId() == executionId)
+                .filter(quiz -> quiz.getAvailableDate().isBefore(now))
+                .filter(quiz -> !studentQuizIds.contains(quiz.getId()))
                 .forEach(quiz ->  {
                     QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
                     if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isBefore(now)) {
@@ -128,7 +131,9 @@ public class StatementService {
                 });
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> !quizAnswer.getCompleted() && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
+                .filter(quizAnswer -> !quizAnswer.getCompleted())
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate))
                 .collect(Collectors.toList());

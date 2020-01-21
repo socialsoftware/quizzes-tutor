@@ -9,17 +9,22 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution {
+    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private String acronym;
     private String academicTerm;
+
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -64,14 +69,6 @@ public class CourseExecution {
         this.id = id;
     }
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     public String getAcronym() {
         return acronym;
     }
@@ -88,12 +85,12 @@ public class CourseExecution {
         this.academicTerm = academicTerm;
     }
 
-    public Set<Quiz> getQuizzes() {
-        return quizzes;
+    public Status getStatus() {
+        return status;
     }
 
-    public void setQuizzes(Set<Quiz> quizzes) {
-        this.quizzes = quizzes;
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public Course getCourse() {
@@ -104,8 +101,28 @@ public class CourseExecution {
         this.course = course;
     }
 
+    public Set<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(Set<User> users) {
+        this.users = users;
+    }
+
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
+    }
+
+    public void setQuizzes(Set<Quiz> quizzes) {
+        this.quizzes = quizzes;
+    }
+
     public Set<Assessment> getAssessments() {
         return assessments;
+    }
+
+    public void setAssessments(Set<Assessment> assessments) {
+        this.assessments = assessments;
     }
 
     public void addQuiz(Quiz quiz) {

@@ -13,8 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.FENIX_CONFIGURATION_ERROR;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.FENIX_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FENIX_CONFIGURATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FENIX_ERROR;
 
 
 public class FenixEduInterface {

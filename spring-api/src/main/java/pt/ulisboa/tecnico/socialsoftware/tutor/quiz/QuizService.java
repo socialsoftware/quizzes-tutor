@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ExceptionError.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
@@ -65,11 +65,11 @@ public class QuizService {
       backoff = @Backoff(delay = 5000))
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuizDto> findNonGeneratedQuizzes(int executionId) {
+    public List<QuizDto> findTeacherQuizzes(int executionId) {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
-        return quizRepository.findAvailableTeacherQuizzes(executionId).stream()
+        return quizRepository.findTeacherQuizzes(executionId).stream()
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());

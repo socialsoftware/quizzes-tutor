@@ -27,8 +27,8 @@ public class CourseController {
 
     @PostMapping("/courses")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'CREATE'))")
-    public CourseDto createCourseExecution(@RequestBody CourseDto courseDto) {
-        return courseService.createCourseExecution(courseDto);
+    public CourseDto activateCourseExecution(@RequestBody CourseDto courseDto) {
+        return courseService.activateCourseExecution(courseDto);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'ACCESS'))")
