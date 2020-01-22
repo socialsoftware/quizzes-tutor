@@ -7,9 +7,10 @@ export default class Question {
   title: string = "";
   status: string = "AVAILABLE";
   numberOfAnswers!: number;
+  numberOfCorrect!: number;
   difficulty!: number | null;
   content: string = "";
-  creationDate!: string | Date;
+  creationDate!: string | Date | null;
   image: Image | null = null;
   sequence: number | null = null;
 
@@ -22,6 +23,7 @@ export default class Question {
       this.title = jsonObj.title;
       this.status = jsonObj.status;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
+      this.numberOfCorrect = jsonObj.numberOfCorrect;
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;
       this.image = jsonObj.image;

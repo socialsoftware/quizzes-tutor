@@ -1,6 +1,6 @@
 <template>
   <v-dialog v-model="dialog" @keydown.esc="closeQuestionDialog" max-width="75%">
-    <v-card v-if="question">
+    <v-card>
       <v-card-title>
         <span class="headline">{{ question.title }}</span>
       </v-card-title>
@@ -30,7 +30,7 @@ import ShowQuestion from "@/views/teacher/questions/ShowQuestion.vue";
   }
 })
 export default class ShowQuestionDialog extends Vue {
-  @Prop({ type: Question, required: true }) readonly question!: Question | null;
+  @Prop({ type: Question, required: true }) readonly question!: Question;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
   closeQuestionDialog() {
