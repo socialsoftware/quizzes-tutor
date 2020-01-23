@@ -1,8 +1,8 @@
 <h1 align="center">
   <br>
-  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
-  <br>
   Quizzes Tutor
+  <br>
+  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
   <br>
 </h1>
 
