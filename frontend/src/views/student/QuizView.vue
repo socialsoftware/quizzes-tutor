@@ -49,19 +49,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import QuestionComponent from "@/components/QuestionComponent.vue";
-import StatementManager from "@/models/statement/StatementManager";
+import { Component, Vue } from 'vue-property-decorator';
+import QuestionComponent from '@/components/QuestionComponent.vue';
+import StatementManager from '@/models/statement/StatementManager';
 
 Component.registerHooks([
-  "beforeRouteEnter",
-  "beforeRouteUpdate",
-  "beforeRouteLeave"
+  'beforeRouteEnter',
+  'beforeRouteUpdate',
+  'beforeRouteLeave'
 ]);
 
 @Component({
   components: {
-    "question-component": QuestionComponent
+    'question-component': QuestionComponent
   }
 })
 export default class QuizView extends Vue {
@@ -71,7 +71,7 @@ export default class QuizView extends Vue {
 
   async created() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push({ name: "create-quiz" });
+      await this.$router.push({ name: 'create-quiz' });
     }
   }
 
@@ -114,9 +114,9 @@ export default class QuizView extends Vue {
       this.calculateTime();
       await this.statementManager.getCorrectAnswers();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$router.push({ name: "quiz-results" });
+    await this.$router.push({ name: 'quiz-results' });
   }
 
   calculateTime() {

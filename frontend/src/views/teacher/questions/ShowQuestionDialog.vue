@@ -20,13 +20,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import Question from "@/models/management/Question";
-import ShowQuestion from "@/views/teacher/questions/ShowQuestion.vue";
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import Question from '@/models/management/Question';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
   components: {
-    "show-question": ShowQuestion
+    'show-question': ShowQuestion
   }
 })
 export default class ShowQuestionDialog extends Vue {
@@ -34,7 +34,7 @@ export default class ShowQuestionDialog extends Vue {
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
   closeQuestionDialog() {
-    this.$emit("close-show-question-dialog");
+    this.$emit('close-show-question-dialog');
   }
 }
 </script>

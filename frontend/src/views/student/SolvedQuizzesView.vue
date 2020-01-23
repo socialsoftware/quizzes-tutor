@@ -32,23 +32,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import SolvedQuiz from "@/models/statement/SolvedQuiz";
-import StatementManager from "@/models/statement/StatementManager";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import StatementManager from '@/models/statement/StatementManager';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
   quizzes: SolvedQuiz[] = [];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   calculateScore(quiz: SolvedQuiz) {
@@ -69,7 +69,7 @@ export default class AvailableQuizzesView extends Vue {
     statementManager.answers = quiz.answers;
     statementManager.correctAnswers = quiz.correctAnswers;
     statementManager.statementQuiz = quiz.statementQuiz;
-    await this.$router.push({ name: "quiz-results" });
+    await this.$router.push({ name: 'quiz-results' });
   }
 }
 </script>

@@ -122,27 +122,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
-import Image from "@/models/management/Image";
-import Assessment from "@/models/management/Assessment";
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
+import Assessment from '@/models/management/Assessment';
 
 @Component
 export default class AssessmentList extends Vue {
   @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
   assessment: Assessment | null = null;
-  search: string = "";
-  statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
+  search: string = '';
+  statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
   dialog: boolean = false;
   headers: object = [
-    { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Status", value: "status", align: "center", width: "1%" },
+    { text: 'Title', value: 'title', align: 'left', width: '30%' },
+    { text: 'Status', value: 'status', align: 'center', width: '1%' },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "1%",
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      width: '1%',
       sortable: false
     }
   ];
@@ -162,33 +162,33 @@ export default class AssessmentList extends Vue {
         assessment.status = status;
       }
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
   newAssessment() {
-    this.$emit("newAssessment");
+    this.$emit('newAssessment');
   }
 
   editAssessment(assessmentId: number) {
-    this.$emit("editAssessment", assessmentId);
+    this.$emit('editAssessment', assessmentId);
   }
 
   async deleteAssessment(assessmentId: number) {
-    if (confirm("Are you sure you want to delete this assessment?")) {
+    if (confirm('Are you sure you want to delete this assessment?')) {
       try {
         await RemoteServices.deleteAssessment(assessmentId);
-        this.$emit("deleteAssessment", assessmentId);
+        this.$emit('deleteAssessment', assessmentId);
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }
 
   getStatusColor(status: string) {
-    if (status === "REMOVED") return "red";
-    else if (status === "DISABLED") return "orange";
-    else return "green";
+    if (status === 'REMOVED') return 'red';
+    else if (status === 'DISABLED') return 'orange';
+    else return 'green';
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

@@ -1,11 +1,11 @@
-import StatementQuestion from "@/models/statement/StatementQuestion";
+import StatementQuestion from '@/models/statement/StatementQuestion';
 
 export default class StatementQuiz {
   courseName!: string;
   quizAnswerId!: number;
   title!: string;
   availableDate!: string;
-  conclusionDate: string = "-";
+  conclusionDate: string = '-';
   questions: StatementQuestion[] = [];
 
   constructor(jsonObj?: StatementQuiz) {

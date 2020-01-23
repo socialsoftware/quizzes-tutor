@@ -7,7 +7,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class ErrorMessage extends Vue {
@@ -26,10 +26,10 @@ export default class ErrorMessage extends Vue {
     );
   }
 
-  @Watch("dialog")
+  @Watch('dialog')
   closeError() {
     if (!this.dialog) {
-      this.$store.dispatch("clearError");
+      this.$store.dispatch('clearError');
     }
   }
 }

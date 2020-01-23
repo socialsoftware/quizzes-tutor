@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import Assessment from "@/models/management/Assessment";
-import AssessmentForm from "@/views/teacher/assessments/AssessmentForm.vue";
-import AssessmentList from "@/views/teacher/assessments/AssessmentList.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import Assessment from '@/models/management/Assessment';
+import AssessmentForm from '@/views/teacher/assessments/AssessmentForm.vue';
+import AssessmentList from '@/views/teacher/assessments/AssessmentList.vue';
 
 @Component({
   components: {
@@ -35,13 +35,13 @@ export default class AssessmentsView extends Vue {
   editMode: boolean = false;
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.assessments = await RemoteServices.getAssessments();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   changeMode() {
@@ -60,7 +60,7 @@ export default class AssessmentsView extends Vue {
       )!;
       this.editMode = true;
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 

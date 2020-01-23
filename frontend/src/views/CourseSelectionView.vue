@@ -80,9 +80,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import Course from "@/models/user/Course";
-import RemoteServices from "@/services/RemoteServices";
+import { Component, Vue } from 'vue-property-decorator';
+import Course from '@/models/user/Course';
+import RemoteServices from '@/services/RemoteServices';
 
 interface CourseMap {
   [key: string]: Course[];
@@ -99,9 +99,9 @@ export default class CourseSelectionView extends Vue {
   }
 
   async selectCourse(course: Course) {
-    if (course.status !== "INACTIVE") {
-      await this.$store.dispatch("currentCourse", course);
-      await this.$router.push({ name: "home" });
+    if (course.status !== 'INACTIVE') {
+      await this.$store.dispatch('currentCourse', course);
+      await this.$router.push({ name: 'home' });
     } else {
       this.selectedCourse = course;
       this.confirmationDialog = true;
@@ -113,11 +113,11 @@ export default class CourseSelectionView extends Vue {
     try {
       if (this.selectedCourse) {
         await RemoteServices.activateCourse(this.selectedCourse);
-        await this.$store.dispatch("currentCourse", this.selectedCourse);
-        await this.$router.push({ name: "home" });
+        await this.$store.dispatch('currentCourse', this.selectedCourse);
+        await this.$router.push({ name: 'home' });
       }
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
@@ -131,7 +131,7 @@ export default class CourseSelectionView extends Vue {
 <style lang="scss">
 .title {
   text-align: center;
-  font-family: "Baloo Tamma", cursive;
+  font-family: 'Baloo Tamma', cursive;
 }
 
 .bold {

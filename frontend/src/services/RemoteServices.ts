@@ -1,21 +1,21 @@
-import axios from "axios";
-import Store from "@/store";
-import Question from "@/models/management/Question";
-import { Quiz } from "@/models/management/Quiz";
-import Course from "@/models/user/Course";
-import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
-import StudentStats from "@/models/statement/StudentStats";
-import StatementQuiz from "@/models/statement/StatementQuiz";
-import SolvedQuiz from "@/models/statement/SolvedQuiz";
-import Topic from "@/models/management/Topic";
-import { Student } from "@/models/management/Student";
-import Assessment from "@/models/management/Assessment";
-import AuthDto from "@/models/user/AuthDto";
+import axios from 'axios';
+import Store from '@/store';
+import Question from '@/models/management/Question';
+import { Quiz } from '@/models/management/Quiz';
+import Course from '@/models/user/Course';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
+import StudentStats from '@/models/statement/StudentStats';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import SolvedQuiz from '@/models/statement/SolvedQuiz';
+import Topic from '@/models/management/Topic';
+import { Student } from '@/models/management/Student';
+import Assessment from '@/models/management/Assessment';
+import AuthDto from '@/models/user/AuthDto';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
 httpClient.defaults.baseURL = process.env.VUE_APP_ROOT_API;
-httpClient.defaults.headers.post["Content-Type"] = "application/json";
+httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
   config => {
     if (!config.headers.Authorization) {
@@ -34,7 +34,7 @@ httpClient.interceptors.request.use(
 export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient
-      .get(`/auth/fenix/${code}`)
+      .get(`/auth/fenix?code=${code}`)
       .then(response => {
         return new AuthDto(response.data);
       })
@@ -45,7 +45,7 @@ export default class RemoteServices {
 
   static async demoStudentLogin(): Promise<AuthDto> {
     return httpClient
-      .get("/auth/demo/student")
+      .get('/auth/demo/student')
       .then(response => {
         return new AuthDto(response.data);
       })
@@ -56,7 +56,7 @@ export default class RemoteServices {
 
   static async demoTeacherLogin(): Promise<AuthDto> {
     return httpClient
-      .get("/auth/demo/teacher")
+      .get('/auth/demo/teacher')
       .then(response => {
         return new AuthDto(response.data);
       })
@@ -151,11 +151,11 @@ export default class RemoteServices {
 
   static uploadImage(file: File, questionId: number): Promise<string> {
     let formData = new FormData();
-    formData.append("file", file);
+    formData.append('file', file);
     return httpClient
       .put(`/questions/${questionId}/image`, formData, {
         headers: {
-          "Content-Type": "multipart/form-data"
+          'Content-Type': 'multipart/form-data'
         }
       })
       .then(response => {
@@ -225,7 +225,7 @@ export default class RemoteServices {
 
   static getCorrectAnswers(params: object): Promise<StatementCorrectAnswer[]> {
     return httpClient
-      .post("/quizzes/answer", params)
+      .post('/quizzes/answer', params)
       .then(response => {
         return response.data.answers.map((answer: any) => {
           return new StatementCorrectAnswer(answer);
@@ -412,7 +412,7 @@ export default class RemoteServices {
     return httpClient
       .post(`/assessments/${assessmentId}/set-status`, status, {
         headers: {
-          "Content-Type": "text/html"
+          'Content-Type': 'text/html'
         }
       })
       .then(response => {
@@ -425,7 +425,7 @@ export default class RemoteServices {
 
   static async activateCourse(course: Course): Promise<Course> {
     return httpClient
-      .post("/courses", course)
+      .post('/courses', course)
       .then(response => {
         return new Course(response.data);
       })
@@ -436,16 +436,16 @@ export default class RemoteServices {
 
   static async exportAll() {
     return httpClient
-      .get("/admin/export", {
-        responseType: "blob"
+      .get('/admin/export', {
+        responseType: 'blob'
       })
       .then(response => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement("a");
+        const link = document.createElement('a');
         link.href = url;
         let dateTime = new Date();
         link.setAttribute(
-          "download",
+          'download',
           `export-${dateTime.toLocaleString()}.zip`
         );
         document.body.appendChild(link);
@@ -457,17 +457,17 @@ export default class RemoteServices {
   }
 
   static async errorMessage(error: any): Promise<string> {
-    if (error.message === "Network Error") {
-      return "Unable to connect to server";
-    } else if (error.message.split(" ")[0] === "timeout") {
-      return "Request timeout - Server took too long to respond";
+    if (error.message === 'Network Error') {
+      return 'Unable to connect to server';
+    } else if (error.message.split(' ')[0] === 'timeout') {
+      return 'Request timeout - Server took too long to respond';
     } else if (error.response) {
       return error.response.data.message;
-    } else if (error.message === "Request failed with status code 403") {
-      await Store.dispatch("logout");
-      return "Unauthorized access or Expired token";
+    } else if (error.message === 'Request failed with status code 403') {
+      await Store.dispatch('logout');
+      return 'Unauthorized access or Expired token';
     } else {
-      return "Unknown Error - Contact admin";
+      return 'Unknown Error - Contact admin';
     }
   }
 }

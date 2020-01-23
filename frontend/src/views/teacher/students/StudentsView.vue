@@ -30,7 +30,7 @@
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectAnswers)"
           dark
-          >{{ item.percentageOfCorrectAnswers + "%" }}</v-chip
+          >{{ item.percentageOfCorrectAnswers + '%' }}</v-chip
         >
       </template>
 
@@ -38,7 +38,7 @@
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
           dark
-          >{{ item.percentageOfCorrectTeacherAnswers + "%" }}</v-chip
+          >{{ item.percentageOfCorrectTeacherAnswers + '%' }}</v-chip
         >
       </template>
     </v-data-table>
@@ -46,86 +46,86 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import Course from "@/models/user/Course";
-import { Student } from "@/models/management/Student";
+import { Component, Vue, Watch } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import Course from '@/models/user/Course';
+import { Student } from '@/models/management/Student';
 
 @Component
 export default class StudentsView extends Vue {
   course: Course | null = null;
   courseExecutions: Course[] = [];
   students: Student[] = [];
-  search: string = "";
+  search: string = '';
   headers: object = [
-    { text: "Name", value: "name", align: "left", width: "40%" },
+    { text: 'Name', value: 'name', align: 'left', width: '40%' },
     {
-      text: "Teacher Quizzes",
-      value: "numberOfTeacherQuizzes",
-      align: "center",
-      width: "10%"
+      text: 'Teacher Quizzes',
+      value: 'numberOfTeacherQuizzes',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Generated Quizzes",
-      value: "numberOfStudentQuizzes",
-      align: "center",
-      width: "10%"
+      text: 'Generated Quizzes',
+      value: 'numberOfStudentQuizzes',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Total Answers",
-      value: "numberOfAnswers",
-      align: "center",
-      width: "10%"
+      text: 'Total Answers',
+      value: 'numberOfAnswers',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Correct Answers",
-      value: "percentageOfCorrectAnswers",
-      align: "center",
-      width: "10%"
+      text: 'Correct Answers',
+      value: 'percentageOfCorrectAnswers',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Answers Teacher Quiz",
-      value: "numberOfTeacherAnswers",
-      align: "center",
-      width: "10%"
+      text: 'Answers Teacher Quiz',
+      value: 'numberOfTeacherAnswers',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Correct Answers Teacher Quiz",
-      value: "percentageOfCorrectTeacherAnswers",
-      align: "center",
-      width: "10%"
+      text: 'Correct Answers Teacher Quiz',
+      value: 'percentageOfCorrectTeacherAnswers',
+      align: 'center',
+      width: '10%'
     }
   ];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.courseExecutions = await RemoteServices.getCourseExecutions();
       this.course = this.$store.getters.getCurrentCourse;
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
-  @Watch("course")
+  @Watch('course')
   async onAcademicTermChange() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       if (this.course) {
         this.students = await RemoteServices.getCourseStudents(this.course);
       }
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   getPercentageColor(percentage: number) {
-    if (percentage < 25) return "red";
-    else if (percentage < 50) return "orange";
-    else if (percentage < 75) return "lime";
-    else return "green";
+    if (percentage < 25) return 'red';
+    else if (percentage < 50) return 'orange';
+    else if (percentage < 75) return 'lime';
+    else return 'green';
   }
 }
 </script>

@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from "vue-property-decorator";
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class AnimatedNumber extends Vue {
@@ -15,7 +15,7 @@ export default class AnimatedNumber extends Vue {
     this.updateNumber();
   }
 
-  @Watch("number")
+  @Watch('number')
   updateNumber() {
     clearInterval(0);
     if (this.number == this.displayNumber) {

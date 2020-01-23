@@ -3,7 +3,7 @@
     <v-card-title>
       <span class="headline">Create Assessment</span>
       <v-btn color="primary" dark @click="$emit('switchMode')">
-        {{ editMode ? "Close" : "Create" }}
+        {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
       <v-btn color="primary" dark @click="saveAssessment">Save</v-btn>
@@ -197,24 +197,24 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import Assessment from "@/models/management/Assessment";
-import Question from "@/models/management/Question";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
-import Image from "@/models/management/Image";
-import TopicConjunction from "@/models/management/TopicConjunction";
-import { _ } from "vue-underscore";
-import Topic from "@/models/management/Topic";
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import Assessment from '@/models/management/Assessment';
+import Question from '@/models/management/Question';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Image from '@/models/management/Image';
+import TopicConjunction from '@/models/management/TopicConjunction';
+import { _ } from 'vue-underscore';
+import Topic from '@/models/management/Topic';
 
 @Component
 export default class AssessmentForm extends Vue {
   @Prop(Assessment) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;
-  currentTopicsSearch: string = "";
-  currentTopicsSearchText: string = "";
-  allTopicsSearch: string = "";
-  allTopicsSearchText: string = "";
+  currentTopicsSearch: string = '';
+  currentTopicsSearchText: string = '';
+  allTopicsSearch: string = '';
+  allTopicsSearchText: string = '';
 
   showQuestions: boolean = false;
   allTopics: Topic[] = [];
@@ -225,23 +225,23 @@ export default class AssessmentForm extends Vue {
 
   topicHeaders: object = [
     {
-      text: "Topics",
-      value: "topics",
-      align: "left",
-      width: "99%",
+      text: 'Topics',
+      value: 'topics',
+      align: 'left',
+      width: '99%',
       sortable: false
     },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "1%",
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      width: '1%',
       sortable: false
     }
   ];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       [this.allQuestions, this.allTopics] = await Promise.all([
         RemoteServices.getQuestions(),
@@ -249,13 +249,13 @@ export default class AssessmentForm extends Vue {
       ]);
       this.calculateTopicCombinations();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   // Calculates the ((set of (topics of all the questions)) not present in the current assessment)
-  @Watch("assessment")
+  @Watch('assessment')
   calculateTopicCombinations() {
     if (this.editMode) {
       this.topicConjunctions = [];
@@ -291,7 +291,7 @@ export default class AssessmentForm extends Vue {
   ) {
     let searchTopics = JSON.parse(search);
 
-    if (searchTopics !== "") {
+    if (searchTopics !== '') {
       return searchTopics
         .map((searchTopic: Topic) => searchTopic.name)
         .every((t: string) =>
@@ -310,7 +310,7 @@ export default class AssessmentForm extends Vue {
 
   async saveAssessment() {
     if (this.assessment && !this.assessment.title) {
-      await this.$store.dispatch("error", "Assessment must have title");
+      await this.$store.dispatch('error', 'Assessment must have title');
       return;
     }
 
@@ -318,9 +318,9 @@ export default class AssessmentForm extends Vue {
       let updatedAssessment: Assessment = await RemoteServices.saveAssessment(
         this.assessment
       );
-      this.$emit("updateAssessment", updatedAssessment);
+      this.$emit('updateAssessment', updatedAssessment);
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
@@ -360,7 +360,7 @@ export default class AssessmentForm extends Vue {
     );
   }
 
-  @Watch("assessment.topicConjunctions", { deep: true })
+  @Watch('assessment.topicConjunctions', { deep: true })
   recalculateQuestionList() {
     if (this.assessment) {
       this.selectedQuestions = this.allQuestions.filter(question => {

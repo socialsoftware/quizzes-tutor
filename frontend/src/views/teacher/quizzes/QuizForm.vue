@@ -3,7 +3,7 @@
     <v-card-title>
       <span class="headline">Edit Quiz</span>
       <v-btn color="primary" dark @click="switchMode">
-        {{ editMode ? "Close" : "Create" }}
+        {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
       <v-btn color="primary" dark v-if="editMode" @click="save">Save</v-btn>
@@ -229,26 +229,26 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDownNoFigure } from "@/services/ConvertMarkdownService";
-import { Quiz } from "@/models/management/Quiz";
-import Question from "@/models/management/Question";
-import Image from "@/models/management/Image";
-import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
-import ShowQuizDialog from "@/views/teacher/quizzes/ShowQuizDialog.vue";
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { Quiz } from '@/models/management/Quiz';
+import Question from '@/models/management/Question';
+import Image from '@/models/management/Image';
+import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
+import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 
 @Component({
   components: {
-    "show-question-dialog": ShowQuestionDialog,
-    "show-quiz-dialog": ShowQuizDialog
+    'show-question-dialog': ShowQuestionDialog,
+    'show-quiz-dialog': ShowQuizDialog
   }
 })
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
   questions: Question[] = [];
-  search: string = "";
+  search: string = '';
   showQuestion: boolean = false;
   questionToShow: Question | null | undefined = null;
   quizQuestions: Question[] = [];
@@ -260,53 +260,53 @@ export default class QuizForm extends Vue {
 
   headers: object = [
     {
-      text: "Sequence",
-      value: "sequence",
-      align: "left",
-      width: "1%"
+      text: 'Sequence',
+      value: 'sequence',
+      align: 'left',
+      width: '1%'
     },
     {
-      text: "Question",
-      value: "content",
-      align: "left",
-      width: "70%",
+      text: 'Question',
+      value: 'content',
+      align: 'left',
+      width: '70%',
       sortable: false
     },
     {
-      text: "Topics",
-      value: "topics",
-      align: "left",
-      width: "20%"
+      text: 'Topics',
+      value: 'topics',
+      align: 'left',
+      width: '20%'
     },
-    { text: "Difficulty", value: "difficulty", align: "center", width: "1%" },
-    { text: "Answers", value: "numberOfAnswers", align: "center", width: "1%" },
+    { text: 'Difficulty', value: 'difficulty', align: 'center', width: '1%' },
+    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '1%' },
     {
-      text: "Title",
-      value: "title",
-      align: "left",
-      width: "5%",
+      text: 'Title',
+      value: 'title',
+      align: 'left',
+      width: '5%',
       sortable: false
     },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "1%",
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      width: '1%',
       sortable: false
     }
   ];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.questions = await RemoteServices.getAvailableQuestions();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
-  @Watch("quiz")
+  @Watch('quiz')
   onQuizChange() {
     let questionIds: number[] = [];
     if (this.quiz.questions) {
@@ -333,20 +333,20 @@ export default class QuizForm extends Vue {
 
   switchMode() {
     this.cleanQuizQuestions();
-    this.$emit("switchMode");
+    this.$emit('switchMode');
   }
 
   async save() {
     try {
-      this.quiz.type = "TEACHER";
+      this.quiz.type = 'TEACHER';
       this.quiz.year = new Date().getFullYear();
       this.quiz.questions = this.quizQuestions;
       let updatedQuiz: Quiz;
       updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
       this.cleanQuizQuestions();
-      this.$emit("updateQuiz", updatedQuiz);
+      this.$emit('updateQuiz', updatedQuiz);
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
@@ -362,14 +362,14 @@ export default class QuizForm extends Vue {
 
   customSort(items: Question[], index: string, isDesc: string) {
     items.sort((a: any, b: any) => {
-      if (index == "sequence") {
-        if (isDesc == "false") {
+      if (index == 'sequence') {
+        if (isDesc == 'false') {
           return this.compare(a.sequence, b.sequence);
         } else {
           return this.compare(b.sequence, a.sequence);
         }
       } else {
-        if (isDesc == "false") {
+        if (isDesc == 'false') {
           return a[index] < b[index] ? -1 : 1;
         } else {
           return b[index] < a[index] ? -1 : 1;

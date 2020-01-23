@@ -1,122 +1,122 @@
-import Question from "@/models/management/Question";
+import Question from '@/models/management/Question';
 
 export const questionWithFigure = new Question({
   id: 395,
-  title: "GraphiteDecompositionMemcached",
+  title: 'GraphiteDecompositionMemcached',
   content:
-    "Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.   \n![image][image]  \n",
+    'Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.   \n![image][image]  \n',
   difficulty: 54,
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,
-  status: "AVAILABLE",
+  status: 'AVAILABLE',
   options: [
     {
       id: 1578,
       number: 1,
       correct: false,
       content:
-        "Memcached can be considered a sub-module of the Present Graphs module."
+        'Memcached can be considered a sub-module of the Present Graphs module.'
     },
     {
       id: 1579,
       number: 2,
       correct: false,
       content:
-        "Memcached can be considered a direct sub-module of the top Graphite module."
+        'Memcached can be considered a direct sub-module of the top Graphite module.'
     },
     {
       id: 1580,
       number: 3,
       correct: false,
-      content: "Memcached is not a module."
+      content: 'Memcached is not a module.'
     },
     {
       id: 1577,
       number: 0,
       correct: true,
       content:
-        "Memcached can be considered a sub-module of the Store Graphs module."
+        'Memcached can be considered a sub-module of the Store Graphs module.'
     }
   ],
   image: {
-    url: "395.png",
+    url: '395.png',
     width: 100
   },
   topics: [
     {
       id: 48,
-      name: "Graphite",
-      parentTopic: "Case Studies",
+      name: 'Graphite',
+      parentTopic: 'Case Studies',
       numberOfQuestions: 27
     },
     {
       id: 4,
-      name: "Module viewtype",
+      name: 'Module viewtype',
       parentTopic: null,
       numberOfQuestions: 94
     }
   ],
   sequence: null,
-  stringCreationDate: "",
+  stringCreationDate: '',
   sortingCreationDate: 1
 });
 
 export const questionWithoutFigure = new Question({
   id: 395,
-  title: "GraphiteDecompositionMemcached",
+  title: 'GraphiteDecompositionMemcached',
   content:
-    "Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.",
+    'Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.',
   difficulty: 54,
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,
-  status: "AVAILABLE",
+  status: 'AVAILABLE',
   options: [
     {
       id: 1578,
       number: 1,
       correct: false,
       content:
-        "Memcached can be considered a sub-module of the Present Graphs module."
+        'Memcached can be considered a sub-module of the Present Graphs module.'
     },
     {
       id: 1579,
       number: 2,
       correct: false,
       content:
-        "Memcached can be considered a direct sub-module of the top Graphite module."
+        'Memcached can be considered a direct sub-module of the top Graphite module.'
     },
     {
       id: 1580,
       number: 3,
       correct: false,
-      content: "Memcached is not a module."
+      content: 'Memcached is not a module.'
     },
     {
       id: 1577,
       number: 0,
       correct: true,
       content:
-        "Memcached can be considered a sub-module of the Store Graphs module."
+        'Memcached can be considered a sub-module of the Store Graphs module.'
     }
   ],
   image: null,
   topics: [
     {
       id: 48,
-      name: "Graphite",
-      parentTopic: "Case Studies",
+      name: 'Graphite',
+      parentTopic: 'Case Studies',
       numberOfQuestions: 27
     },
     {
       id: 4,
-      name: "Module viewtype",
+      name: 'Module viewtype',
       parentTopic: null,
       numberOfQuestions: 94
     }
   ],
   sequence: null,
-  stringCreationDate: "",
+  stringCreationDate: '',
   sortingCreationDate: 1
 });

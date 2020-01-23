@@ -15,12 +15,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Question from "../../../models/management/Question";
-import ShowQuestion from "@/views/teacher/questions/ShowQuestion.vue";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Question from '../../../models/management/Question';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
-  components: { "show-question": ShowQuestion }
+  components: { 'show-question': ShowQuestion }
 })
 export default class ShowQuestionList extends Vue {
   @Prop({ type: Array, required: true }) readonly questions!: Question[];

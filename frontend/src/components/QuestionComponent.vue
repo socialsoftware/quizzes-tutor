@@ -39,19 +39,19 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import StatementQuestion from "@/models/statement/StatementQuestion";
-import Image from "@/models/management/Image";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
+import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import Image from '@/models/management/Image';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 
 @Component
 export default class QuestionComponent extends Vue {
-  @Model("order", Number) order: number | undefined;
+  @Model('order', Number) order: number | undefined;
   @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
   @Prop(Number) optionId: number | undefined;
   @Prop() readonly questionNumber!: number;
   hover: boolean = false;
-  optionLetters: string[] = ["A", "B", "C", "D"];
+  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {

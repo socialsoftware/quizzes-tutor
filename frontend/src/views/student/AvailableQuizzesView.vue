@@ -34,25 +34,25 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import StatementManager from "@/models/statement/StatementManager";
-import StatementQuiz from "@/models/statement/StatementQuiz";
-import StatementQuestion from "@/models/statement/StatementQuestion";
-import StatementAnswer from "@/models/statement/StatementAnswer";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import StatementManager from '@/models/statement/StatementManager';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementAnswer from '@/models/statement/StatementAnswer';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
   quizzes: StatementQuiz[] = [];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.quizzes = (await RemoteServices.getAvailableQuizzes()).reverse();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   async solveQuiz(quiz: StatementQuiz) {
@@ -65,7 +65,7 @@ export default class AvailableQuizzesView extends Vue {
         return answer;
       }
     );
-    await this.$router.push({ name: "solve-quiz" });
+    await this.$router.push({ name: 'solve-quiz' });
   }
 }
 </script>

@@ -77,56 +77,56 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { Quiz } from "@/models/management/Quiz";
-import RemoteServices from "@/services/RemoteServices";
-import ShowQuizDialog from "@/views/teacher/quizzes/ShowQuizDialog.vue";
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Quiz } from '@/models/management/Quiz';
+import RemoteServices from '@/services/RemoteServices';
+import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 
 @Component({
-  components: { "show-quiz-dialog": ShowQuizDialog }
+  components: { 'show-quiz-dialog': ShowQuizDialog }
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
-  search: string = "";
+  search: string = '';
   previewQuiz: boolean = false;
   headers: object = [
-    { text: "Title", value: "title", align: "left", width: "30%" },
-    { text: "Date", value: "sortingDate", align: "center", width: "10%" },
+    { text: 'Title', value: 'title', align: 'left', width: '30%' },
+    { text: 'Date', value: 'sortingDate', align: 'center', width: '10%' },
     {
-      text: "Available Date",
-      value: "sortingAvailableDate",
-      align: "center",
-      width: "10%"
+      text: 'Available Date',
+      value: 'sortingAvailableDate',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Conclusion Date",
-      value: "sortingConclusionDate",
-      align: "center",
-      width: "10%"
+      text: 'Conclusion Date',
+      value: 'sortingConclusionDate',
+      align: 'center',
+      width: '10%'
     },
-    { text: "Scramble", value: "scramble", align: "center", width: "10%" },
-    { text: "Type", value: "type", align: "center", width: "10%" },
-    { text: "Year", value: "year", align: "center", width: "10%" },
-    { text: "Series", value: "series", align: "center", width: "10%" },
-    { text: "Version", value: "version", align: "center", width: "10%" },
+    { text: 'Scramble', value: 'scramble', align: 'center', width: '10%' },
+    { text: 'Type', value: 'type', align: 'center', width: '10%' },
+    { text: 'Year', value: 'year', align: 'center', width: '10%' },
+    { text: 'Series', value: 'series', align: 'center', width: '10%' },
+    { text: 'Version', value: 'version', align: 'center', width: '10%' },
     {
-      text: "Questions",
-      value: "numberOfQuestions",
-      align: "center",
-      width: "10%"
-    },
-    {
-      text: "Answers",
-      value: "numberOfAnswers",
-      align: "center",
-      width: "10%"
+      text: 'Questions',
+      value: 'numberOfQuestions',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "1%",
+      text: 'Answers',
+      value: 'numberOfAnswers',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      width: '1%',
       sortable: false
     }
   ];
@@ -136,7 +136,7 @@ export default class QuizList extends Vue {
       this.quiz = await RemoteServices.getQuiz(quizId);
       this.previewQuiz = true;
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
@@ -146,20 +146,20 @@ export default class QuizList extends Vue {
   }
 
   newQuiz() {
-    this.$emit("newQuiz");
+    this.$emit('newQuiz');
   }
 
   editQuiz(quizId: number) {
-    this.$emit("editQuiz", quizId);
+    this.$emit('editQuiz', quizId);
   }
 
   async deleteQuiz(quizId: number) {
-    if (confirm("Are you sure you want to delete this quiz?")) {
+    if (confirm('Are you sure you want to delete this quiz?')) {
       try {
         await RemoteServices.deleteQuiz(quizId);
-        this.$emit("deleteQuiz", quizId);
+        this.$emit('deleteQuiz', quizId);
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }

@@ -1,4 +1,4 @@
-import Course from "@/models/user/Course";
+import Course from '@/models/user/Course';
 
 interface CourseMap {
   [key: string]: Course[];

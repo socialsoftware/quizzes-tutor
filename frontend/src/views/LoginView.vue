@@ -3,27 +3,27 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class LoginView extends Vue {
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     if (this.$route.query.error) {
-      await this.$store.dispatch("error", "Fenix authentication error");
-      await this.$router.push({ name: "home" });
+      await this.$store.dispatch('error', 'Fenix authentication error');
+      await this.$router.push({ name: 'home' });
     } else {
-      await this.$store.dispatch("fenixLogin", this.$route.query.code);
+      await this.$store.dispatch('fenixLogin', this.$route.query.code);
       if (this.$store.getters.getUser.coursesNumber === 1) {
         await this.$store.dispatch(
-          "currentCourse",
+          'currentCourse',
           Object.values(this.$store.getters.getUser.courses)[0]
         );
       } else {
-        await this.$router.push({ name: "courses" });
+        await this.$router.push({ name: 'courses' });
       }
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

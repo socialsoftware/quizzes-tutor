@@ -17,11 +17,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import { Quiz } from "@/models/management/Quiz";
-import QuizForm from "@/views/teacher/quizzes/QuizForm.vue";
-import QuizList from "@/views/teacher/quizzes/QuizList.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { Quiz } from '@/models/management/Quiz';
+import QuizForm from '@/views/teacher/quizzes/QuizForm.vue';
+import QuizList from '@/views/teacher/quizzes/QuizList.vue';
 
 @Component({
   components: {
@@ -35,13 +35,13 @@ export default class QuizzesView extends Vue {
   editMode: boolean = false;
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.quizzes = await RemoteServices.getNonGeneratedQuizzes();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   changeMode() {
@@ -58,7 +58,7 @@ export default class QuizzesView extends Vue {
       this.quiz = await RemoteServices.getQuiz(quizId);
       this.editMode = true;
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 

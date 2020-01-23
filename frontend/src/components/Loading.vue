@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from "vue-property-decorator";
+import { Component, Vue, Watch } from 'vue-property-decorator';
 
 @Component
 export default class Loading extends Vue {
@@ -21,10 +21,10 @@ export default class Loading extends Vue {
     );
   }
 
-  @Watch("loading")
+  @Watch('loading')
   closeError() {
     if (!this.loading) {
-      this.$store.dispatch("clearLoading");
+      this.$store.dispatch('clearLoading');
     }
   }
 }

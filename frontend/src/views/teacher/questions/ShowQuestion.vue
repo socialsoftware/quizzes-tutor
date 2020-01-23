@@ -14,10 +14,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
-import Question from "@/models/management/Question";
-import Image from "@/models/management/Image";
+import { Component, Vue, Prop } from 'vue-property-decorator';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import Question from '@/models/management/Question';
+import Image from '@/models/management/Image';
 
 @Component
 export default class ShowQuestion extends Vue {

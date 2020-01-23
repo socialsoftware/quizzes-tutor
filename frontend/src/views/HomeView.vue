@@ -54,9 +54,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import Store from "@/store";
-import RemoteServices from "@/services/RemoteServices";
+import { Component, Vue } from 'vue-property-decorator';
+import Store from '@/store';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class HomeView extends Vue {
@@ -70,15 +70,15 @@ export default class HomeView extends Vue {
   }
 
   async demoStudent() {
-    await this.$store.dispatch("loading");
-    await this.$store.dispatch("demoStudentLogin");
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('loading');
+    await this.$store.dispatch('demoStudentLogin');
+    await this.$store.dispatch('clearLoading');
   }
 
   async demoTeacher() {
-    await this.$store.dispatch("loading");
-    await this.$store.dispatch("demoTeacherLogin");
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('loading');
+    await this.$store.dispatch('demoTeacherLogin');
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

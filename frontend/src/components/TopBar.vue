@@ -221,8 +221,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import Course from "@/models/user/Course";
+import { Component, Vue } from 'vue-property-decorator';
+import Course from '@/models/user/Course';
 
 @Component
 export default class TopBar extends Vue {
@@ -255,8 +255,8 @@ export default class TopBar extends Vue {
   }
 
   async logout() {
-    await this.$store.dispatch("logout");
-    await this.$router.push({ name: "home" }).catch(() => {});
+    await this.$store.dispatch('logout');
+    await this.$router.push({ name: 'home' }).catch(() => {});
   }
 }
 </script>

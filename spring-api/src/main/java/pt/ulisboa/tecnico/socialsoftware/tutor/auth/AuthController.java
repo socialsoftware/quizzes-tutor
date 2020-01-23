@@ -1,13 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthController {
+    private static Logger logger = LoggerFactory.getLogger(AuthController.class);
     @Autowired
     private AuthService authService;
 
@@ -23,10 +26,13 @@ public class AuthController {
     @Value("${callback.url}")
     private String callbackUrl;
 
-    @GetMapping("/auth/fenix/{code}")
-    public AuthDto fenixAuth(@PathVariable String code) {
+    @GetMapping("/auth/fenix")
+    public AuthDto fenixAuth(@RequestParam String code) {
+        logger.info("HERE");
         FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
+        logger.info("HERE");
         fenix.authenticate(code);
+        logger.info("HERE");
         return this.authService.fenixAuth(fenix);
     }
 

@@ -1,9 +1,9 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import RemoteServices from "@/services/RemoteServices";
-import AuthDto from "@/models/user/AuthDto";
-import Course from "@/models/user/Course";
-import User from "@/models/user/User";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import RemoteServices from '@/services/RemoteServices';
+import AuthDto from '@/models/user/AuthDto';
+import Course from '@/models/user/Course';
+import User from '@/models/user/User';
 
 interface State {
   token: string;
@@ -15,11 +15,11 @@ interface State {
 }
 
 const state: State = {
-  token: "",
+  token: '',
   user: null,
   currentCourse: null,
   error: false,
-  errorMessage: "",
+  errorMessage: '',
   loading: false
 };
 
@@ -34,7 +34,7 @@ export default new Vuex.Store({
       state.user = authResponse.user;
     },
     logout(state) {
-      state.token = "";
+      state.token = '';
       state.user = null;
       state.currentCourse = null;
     },
@@ -44,7 +44,7 @@ export default new Vuex.Store({
     },
     clearError(state) {
       state.error = false;
-      state.errorMessage = "";
+      state.errorMessage = '';
     },
     loading(state) {
       state.loading = true;
@@ -58,68 +58,68 @@ export default new Vuex.Store({
   },
   actions: {
     error({ commit }, errorMessage) {
-      commit("error", errorMessage);
+      commit('error', errorMessage);
     },
     clearError({ commit }) {
-      commit("clearError");
+      commit('clearError');
     },
     loading({ commit }) {
-      commit("loading");
+      commit('loading');
     },
     clearLoading({ commit }) {
-      commit("clearLoading");
+      commit('clearLoading');
     },
     async fenixLogin({ commit }, code) {
       try {
         const authResponse = await RemoteServices.fenixLogin(code);
-        commit("login", authResponse);
+        commit('login', authResponse);
         // localStorage.setItem("token", authResponse.token);
         // localStorage.setItem("userRole", authResponse.user.role);
       } catch (error) {
-        commit("logout");
-        commit("error", error);
+        commit('logout');
+        commit('error', error);
       }
     },
     async demoStudentLogin({ commit }) {
       try {
         const authResponse = await RemoteServices.demoStudentLogin();
-        commit("login", authResponse);
+        commit('login', authResponse);
         commit(
-          "currentCourse",
+          'currentCourse',
           (Object.values(authResponse.user.courses)[0] as Course[])[0]
         );
         // localStorage.setItem("token", authResponse.token);
         // localStorage.setItem("userRole", authResponse.user.role);
       } catch (error) {
-        commit("logout");
-        commit("error", error);
+        commit('logout');
+        commit('error', error);
       }
     },
     async demoTeacherLogin({ commit }) {
       try {
         const authResponse = await RemoteServices.demoTeacherLogin();
-        commit("login", authResponse);
+        commit('login', authResponse);
         commit(
-          "currentCourse",
+          'currentCourse',
           (Object.values(authResponse.user.courses)[0] as Course[])[0]
         );
         // localStorage.setItem("token", authResponse.token);
         // localStorage.setItem("userRole", authResponse.user.role);
       } catch (error) {
-        commit("logout");
-        commit("error", error);
+        commit('logout');
+        commit('error', error);
       }
     },
     logout({ commit }) {
       return new Promise(resolve => {
-        commit("logout");
+        commit('logout');
         // localStorage.removeItem("token");
         // localStorage.removeItem("userRole");
         resolve();
       });
     },
     currentCourse({ commit }, currentCourse) {
-      commit("currentCourse", currentCourse);
+      commit('currentCourse', currentCourse);
     }
   },
   getters: {
@@ -127,20 +127,20 @@ export default new Vuex.Store({
       return !!state.token;
     },
     isAdmin(state): boolean {
-      return !!state.token && state.user !== null && state.user.role == "ADMIN";
+      return !!state.token && state.user !== null && state.user.role == 'ADMIN';
     },
     isTeacher(state): boolean {
       return (
         !!state.token &&
         state.user !== null &&
-        (state.user.role == "TEACHER" || state.user.role == "ADMIN")
+        (state.user.role == 'TEACHER' || state.user.role == 'ADMIN')
       );
     },
     isStudent(state): boolean {
       return (
         !!state.token &&
         state.user !== null &&
-        (state.user.role == "STUDENT" || state.user.role == "ADMIN")
+        (state.user.role == 'STUDENT' || state.user.role == 'ADMIN')
       );
     },
     getToken(state): string {

@@ -61,22 +61,22 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from "vue-property-decorator";
-import { convertMarkDown } from "@/services/ConvertMarkdownService";
-import StatementQuestion from "@/models/statement/StatementQuestion";
-import StatementAnswer from "@/models/statement/StatementAnswer";
-import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
-import Image from "@/models/management/Image";
+import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementAnswer from '@/models/statement/StatementAnswer';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
+import Image from '@/models/management/Image';
 
 @Component
 export default class ResultComponent extends Vue {
-  @Model("order", Number) order: number | undefined;
+  @Model('order', Number) order: number | undefined;
   @Prop(StatementQuestion) readonly question!: StatementQuestion;
   @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;
   @Prop() readonly questionNumber!: number;
   hover: boolean = false;
-  optionLetters: string[] = ["A", "B", "C", "D"];
+  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {

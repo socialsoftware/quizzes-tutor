@@ -30,10 +30,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Topic from "@/models/management/Topic";
-import Question from "@/models/management/Question";
-import RemoteServices from "@/services/RemoteServices";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Topic from '@/models/management/Topic';
+import Question from '@/models/management/Question';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class EditQuestionTopics extends Vue {
@@ -50,12 +50,12 @@ export default class EditQuestionTopics extends Vue {
           this.questionTopics
         );
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
 
     this.$emit(
-      "question-changed-topics",
+      'question-changed-topics',
       this.question.id,
       this.questionTopics
     );

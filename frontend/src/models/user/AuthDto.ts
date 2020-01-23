@@ -1,4 +1,4 @@
-import User from "@/models/user/User";
+import User from '@/models/user/User';
 
 export default class AuthDto {
   token!: string;

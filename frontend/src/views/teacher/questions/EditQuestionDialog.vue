@@ -5,8 +5,8 @@
         <span class="headline">
           {{
             editQuestion && editQuestion.id === null
-              ? "New Question"
-              : "Edit Question"
+              ? 'New Question'
+              : 'Edit Question'
           }}
         </span>
       </v-card-title>
@@ -56,9 +56,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from "vue-property-decorator";
-import Question from "@/models/management/Question";
-import RemoteServices from "@/services/RemoteServices";
+import { Component, Prop, Vue } from 'vue-property-decorator';
+import Question from '@/models/management/Question';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class EditQuestionDialog extends Vue {
@@ -76,12 +76,12 @@ export default class EditQuestionDialog extends Vue {
     status: false,
     spellChecker: false,
     insertTexts: {
-      image: ["![image][image]", ""]
+      image: ['![image][image]', '']
     }
   };
 
   closeDialogue() {
-    this.$emit("close-edit-question-dialog");
+    this.$emit('close-edit-question-dialog');
   }
 
   async saveQuestion() {
@@ -90,8 +90,8 @@ export default class EditQuestionDialog extends Vue {
       (!this.editQuestion.title || !this.editQuestion.content)
     ) {
       await this.$store.dispatch(
-        "error",
-        "Question must have title and content"
+        'error',
+        'Question must have title and content'
       );
       return;
     }
@@ -99,16 +99,16 @@ export default class EditQuestionDialog extends Vue {
     if (this.editQuestion && this.editQuestion.id != null) {
       try {
         const result = await RemoteServices.updateQuestion(this.editQuestion);
-        this.$emit("save-question", result);
+        this.$emit('save-question', result);
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     } else if (this.editQuestion) {
       try {
         const result = await RemoteServices.createQuestion(this.editQuestion);
-        this.$emit("save-question", result);
+        this.$emit('save-question', result);
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }

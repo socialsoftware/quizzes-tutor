@@ -55,7 +55,7 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto activateCourseExecution(CourseDto courseDto) {
+    public CourseDto createCourseExecution(CourseDto courseDto) {
         Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
         if (course == null) {
             course = new Course(courseDto.getName());

@@ -62,10 +62,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import StudentStats from "@/models/statement/StudentStats";
-import RemoteServices from "@/services/RemoteServices";
-import AnimatedNumber from "@/components/AnimatedNumber.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import StudentStats from '@/models/statement/StudentStats';
+import RemoteServices from '@/services/RemoteServices';
+import AnimatedNumber from '@/components/AnimatedNumber.vue';
 
 @Component({
   components: { AnimatedNumber }
@@ -74,13 +74,13 @@ export default class StatsView extends Vue {
   stats: StudentStats | null = null;
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.stats = await RemoteServices.getUserStats();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

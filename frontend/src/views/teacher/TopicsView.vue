@@ -72,54 +72,54 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import Topic from "@/models/management/Topic";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import Topic from '@/models/management/Topic';
 
 @Component
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
   editedTopic: Topic = new Topic();
   dialog: boolean = false;
-  search: string = "";
+  search: string = '';
   headers: object = [
-    { text: "Topic", value: "name", align: "left", width: "50%" },
+    { text: 'Topic', value: 'name', align: 'left', width: '50%' },
     {
-      text: "Questions",
-      value: "numberOfQuestions",
-      align: "center",
-      width: "10%"
+      text: 'Questions',
+      value: 'numberOfQuestions',
+      align: 'center',
+      width: '10%'
     },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
-      width: "10%",
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      width: '10%',
       sortable: false
     }
   ];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       this.topics = await RemoteServices.getTopics();
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   customFilter(value: string, search: string) {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
-      typeof value === "string" &&
+      typeof value === 'string' &&
       value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     );
   }
 
   formTitle() {
-    return this.editedTopic === null ? "New Topic" : "Edit Topic";
+    return this.editedTopic === null ? 'New Topic' : 'Edit Topic';
   }
 
   newTopic() {
@@ -137,14 +137,14 @@ export default class TopicsView extends Vue {
   }
 
   async deleteTopic(toDeleteTopic: Topic) {
-    if (confirm("Are you sure you want to delete this topic?")) {
+    if (confirm('Are you sure you want to delete this topic?')) {
       try {
         await RemoteServices.deleteTopic(toDeleteTopic);
         this.topics = this.topics.filter(
           topic => topic.id !== toDeleteTopic.id
         );
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }
@@ -162,7 +162,7 @@ export default class TopicsView extends Vue {
 
       this.topics.unshift(this.editedTopic);
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
     this.closeDialogue();
   }

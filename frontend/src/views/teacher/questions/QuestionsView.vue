@@ -42,7 +42,7 @@
           v-if="item.difficulty"
           :color="getDifficultyColor(item.difficulty)"
           dark
-          >{{ item.difficulty + "%" }}</v-chip
+          >{{ item.difficulty + '%' }}</v-chip
         >
       </template>
 
@@ -140,21 +140,21 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import RemoteServices from "@/services/RemoteServices";
-import { convertMarkDownNoFigure } from "@/services/ConvertMarkdownService";
-import Question from "@/models/management/Question";
-import Image from "@/models/management/Image";
-import Topic from "@/models/management/Topic";
-import ShowQuestionDialog from "@/views/teacher/questions/ShowQuestionDialog.vue";
-import EditQuestionDialog from "@/views/teacher/questions/EditQuestionDialog.vue";
-import EditQuestionTopics from "@/views/teacher/questions/EditQuestionTopics.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import RemoteServices from '@/services/RemoteServices';
+import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import Question from '@/models/management/Question';
+import Image from '@/models/management/Image';
+import Topic from '@/models/management/Topic';
+import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
+import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
+import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 
 @Component({
   components: {
-    "show-question-dialog": ShowQuestionDialog,
-    "edit-question-dialog": EditQuestionDialog,
-    "edit-question-topics": EditQuestionTopics
+    'show-question-dialog': ShowQuestionDialog,
+    'edit-question-dialog': EditQuestionDialog,
+    'edit-question-topics': EditQuestionTopics
   }
 })
 export default class QuestionsView extends Vue {
@@ -163,60 +163,60 @@ export default class QuestionsView extends Vue {
   topics: Topic[] = [];
   editQuestionDialog: boolean = false;
   showQuestion: boolean = false;
-  search: string = "";
-  statusList = ["DISABLED", "AVAILABLE", "REMOVED"];
+  search: string = '';
+  statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
 
   // https://github.com/F-loat/vue-simplemde/blob/master/doc/configuration_en.md
   markdownConfigs: object = {
     status: false,
     spellChecker: false,
     insertTexts: {
-      image: ["![image][image]", ""]
+      image: ['![image][image]', '']
     }
   };
 
   headers: object = [
-    { text: "Question", value: "content", align: "left" },
+    { text: 'Question', value: 'content', align: 'left' },
     {
-      text: "Topics",
-      value: "topics",
-      align: "center",
+      text: 'Topics',
+      value: 'topics',
+      align: 'center',
       sortable: false
     },
-    { text: "Difficulty", value: "difficulty", align: "center" },
-    { text: "Answers", value: "numberOfAnswers", align: "center" },
-    { text: "Title", value: "title", align: "center" },
-    { text: "Status", value: "status", align: "center" },
+    { text: 'Difficulty', value: 'difficulty', align: 'center' },
+    { text: 'Answers', value: 'numberOfAnswers', align: 'center' },
+    { text: 'Title', value: 'title', align: 'center' },
+    { text: 'Status', value: 'status', align: 'center' },
     {
-      text: "Creation Date",
-      value: "sortingCreationDate",
-      align: "center"
+      text: 'Creation Date',
+      value: 'sortingCreationDate',
+      align: 'center'
     },
     {
-      text: "Image",
-      value: "image",
-      align: "center",
+      text: 'Image',
+      value: 'image',
+      align: 'center',
       sortable: false
     },
     {
-      text: "Actions",
-      value: "action",
-      align: "center",
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
       sortable: false
     }
   ];
 
   async created() {
-    await this.$store.dispatch("loading");
+    await this.$store.dispatch('loading');
     try {
       [this.topics, this.questions] = await Promise.all([
         RemoteServices.getTopics(),
         RemoteServices.getQuestions()
       ]);
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
-    await this.$store.dispatch("clearLoading");
+    await this.$store.dispatch('clearLoading');
   }
 
   customFilter(value: string, search: string, question: Question) {
@@ -245,10 +245,10 @@ export default class QuestionsView extends Vue {
 
   // difficulty
   getDifficultyColor(difficulty: number) {
-    if (difficulty < 25) return "green";
-    else if (difficulty < 50) return "lime";
-    else if (difficulty < 75) return "orange";
-    else return "red";
+    if (difficulty < 25) return 'green';
+    else if (difficulty < 50) return 'lime';
+    else if (difficulty < 75) return 'orange';
+    else return 'red';
   }
 
   // status
@@ -262,14 +262,14 @@ export default class QuestionsView extends Vue {
         question.status = status;
       }
     } catch (error) {
-      await this.$store.dispatch("error", error);
+      await this.$store.dispatch('error', error);
     }
   }
 
   getStatusColor(status: string) {
-    if (status === "REMOVED") return "red";
-    else if (status === "DISABLED") return "orange";
-    else return "green";
+    if (status === 'REMOVED') return 'red';
+    else if (status === 'DISABLED') return 'orange';
+    else return 'green';
   }
 
   // file
@@ -279,9 +279,9 @@ export default class QuestionsView extends Vue {
         const imageURL = await RemoteServices.uploadImage(event, question.id);
         question.image = new Image();
         question.image.url = imageURL;
-        confirm("Image " + imageURL + " was uploaded!");
+        confirm('Image ' + imageURL + ' was uploaded!');
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }
@@ -328,7 +328,7 @@ export default class QuestionsView extends Vue {
   async deleteQuestion(toDeletequestion: Question) {
     if (
       toDeletequestion.id &&
-      confirm("Are you sure you want to delete this question?")
+      confirm('Are you sure you want to delete this question?')
     ) {
       try {
         await RemoteServices.deleteQuestion(toDeletequestion.id);
@@ -336,7 +336,7 @@ export default class QuestionsView extends Vue {
           question => question.id != toDeletequestion.id
         );
       } catch (error) {
-        await this.$store.dispatch("error", error);
+        await this.$store.dispatch('error', error);
       }
     }
   }

@@ -1,5 +1,5 @@
 <template>
-  <div class="question-container">
+  <div class="quiz-container">
     <div class="question-navigation">
       <div class="navigation-buttons">
         <span
@@ -46,13 +46,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import StatementManager from "@/models/statement/StatementManager";
-import ResultComponent from "@/components/ResultComponent.vue";
+import { Component, Vue } from 'vue-property-decorator';
+import StatementManager from '@/models/statement/StatementManager';
+import ResultComponent from '@/components/ResultComponent.vue';
 
 @Component({
   components: {
-    "result-component": ResultComponent
+    'result-component': ResultComponent
   }
 })
 export default class ResultsView extends Vue {
@@ -61,7 +61,7 @@ export default class ResultsView extends Vue {
 
   async created() {
     if (this.statementManager.isEmpty()) {
-      await this.$router.push({ name: "create-quiz" });
+      await this.$router.push({ name: 'create-quiz' });
     }
   }
 
