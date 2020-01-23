@@ -1,11 +1,21 @@
-# Tutor System - Impress project
+<h1 align="center">
+  <br>
+  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
+  <br>
+  Quizzes Tutor
+  <br>
+</h1>
 
-![GitHub](https://img.shields.io/github/license/socialsoftware/as-tutor)
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build)
-![Website](https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt)
-[![Backend Vulnerabilities](https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml)](https://snyk.io//test/github/socialsoftware/as-tutor?targetFile=spring-api/pom.xml)
-[![Frontend Vulnerabilities](https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json)](https://snyk.io//test/github/socialsoftware/as-tutor?targetFile=frontend/package.json)
-[![codecov](https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg)](https://codecov.io/gh/socialsoftware/as-tutor)
+<h4 align="center">A multiple choice Quiz system for students with quiz management tools for teachers</h4>
+
+<p align="center">
+  <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
+  <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
+  <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities">
+  <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+  <img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
+  <img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License">
+</p>
 
 <table>
   <tr>
