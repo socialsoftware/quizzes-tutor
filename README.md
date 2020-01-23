@@ -1,5 +1,4 @@
 <h1 align="center">
-  <br>
   Quizzes Tutor
   <br>
   <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
