@@ -67,7 +67,7 @@ cd spring-api
 mvn clean spring-boot:run
 ```
 * **See documentation on http://localhost:8080/swagger-ui.html**
-* **Create .env file in `frontend`**
+* **Rename `frontend/example.env` to `.env`**
 * **Run frontend**
 ```
 cd frontend
