@@ -5,7 +5,8 @@
   <br>
 </h1>
 
-<h4 align="center">A multiple choice Quiz system for students with quiz management tools for teachers</h4>
+<h4 align="center">A multiple choice quiz system for students</h4>
+<h4 align="center">with quiz management tools for teachers</h4>
 
 <p align="center">
   <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
@@ -28,6 +29,9 @@
 ![screenshot](https://impress-project.eu/wp-content/uploads/2019/11/0-1024x518.jpeg)
 
 # About
+
+**Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
+Students can then answer those questions in sugested quizzes or generated quizzes (pseudo-random) providing them with a usell **self-assessment tool** to improve their learning.
 
 # Technologies
 
@@ -60,14 +64,16 @@ psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 psql tutordb < dump.sql
 ```
-* **Rename `spring-api/src/main/resources/application-dev.properties.example` to `application-dev.properties`**
+* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://tolocalhost.com:8081/login and accessess curricular information 
+* **Add `127.0.1.1	tolocalhost.com` to your `/etc/hosts` file so Oauth with fenix works locally*
+* **Rename `spring-api/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
 * **Run server**
 ```
 cd spring-api
 mvn clean spring-boot:run
 ```
 * **See documentation on http://localhost:8080/swagger-ui.html**
-* **Rename `frontend/example.env` to `.env`**
+* **Rename `frontend/example.env` to `.env` and fill its fields**
 * **Run frontend**
 ```
 cd frontend
