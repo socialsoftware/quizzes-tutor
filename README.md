@@ -5,8 +5,9 @@
   <br>
 </h1>
 
-<h4 align="center">A multiple choice quiz system for students</h4>
-<h4 align="center">with quiz management tools for teachers</h4>
+<h4 align="center">Vue web application and Spring-boot API</h4>
+<h4 align="center">with multiple choice questions for students</h4>
+<h4 align="center">and quiz management for teachers</h4>
 
 <p align="center">
   <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
@@ -64,8 +65,8 @@ psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 psql tutordb < dump.sql
 ```
-* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://tolocalhost.com:8081/login and accessess curricular information 
-* **Add `127.0.1.1	tolocalhost.com` to your `/etc/hosts` file so Oauth with fenix works locally*
+* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://tolocalhost.com:8081/login and accessess curricular information**
+* **Add `127.0.1.1	tolocalhost.com` to your `/etc/hosts` file so Oauth with fenix works locally**
 * **Rename `spring-api/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
 * **Run server**
 ```
