@@ -20,7 +20,7 @@
   <a href="#about">About</a> •
   <a href="#technologies">Technologies</a> •
   <a href="#installation">Installation</a> •
-  <a href="#patrions">Patrions</a> •
+  <a href="#patreons">Patreons</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
 </p>
@@ -76,9 +76,9 @@ npm start
 ```
 * **Access http://localhost:8081**
 
-# Patrions
+# Patreons
 
-A special thanks to our patrions for supporting this project:
+A special thanks to our patreons for supporting this project:
 
 <table>
   <tr>
