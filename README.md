@@ -7,8 +7,17 @@
   <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
   </a>
+  <!-- a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
+    <img src="https://sslbadge.org/?domain=quizzes-tutor.tecnico.ulisboa.pt" alt="SSL configuration">
+  </a>
   <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=backend/pom.xml"target="_blank">
     <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities">
+  </a-->
+  <a href="https://david-dm.org/socialsoftware/as-tutor?path=frontend"target="_blank">
+    <img src="https://badgen.net/david/dep/socialsoftware/as-tutor/frontend" alt="Frontend vulnerabilities">
+  </a>
+  <a href="https://david-dm.org/socialsoftware/as-tutor?path=frontend&type=dev"target="_blank">
+    <img src="https://badgen.net/david/dev/socialsoftware/as-tutor/frontend" alt="Frontend vulnerabilities">
   </a>
   <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=frontend/package.json"target="_blank">
     <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
