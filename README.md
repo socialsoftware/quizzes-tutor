@@ -1,13 +1,12 @@
-
 <h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
-  <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
-  <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
-  <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities">
-  <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
-  <img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
-  <img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License">
+  <a href="https://github.com/socialsoftware/as-tutor/actions" target="_blank"><img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build"></a>
+  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website"></a>
+  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=backend/pom.xml"><img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities"></a>
+  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=frontend/package.json"><img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities"></a>
+  <a href="https://codecov.io/gh/socialsoftware/as-tutor/branch/master"><img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage"></a>
+  <a href="https://github.com/socialsoftware/as-tutor/blob/master/LICENSE"><img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License"></a>
 </p>
 
 <div align="center">
