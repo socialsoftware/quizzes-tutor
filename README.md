@@ -1,9 +1,9 @@
 
 # Quizzes Tutor
 
-<span align="center">
-  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
-</span>
+<div align="center">
+  <img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
+</div>
 
 <h4 align="left">Vue web application and Spring-boot API</h4>
 <h4 align="center">with multiple choice questions for students</h4>
