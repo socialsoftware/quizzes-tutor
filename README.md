@@ -1,14 +1,6 @@
 
 # Quizzes Tutor
 
-<div align="center">
-  <img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
-</div>
-
-<h4 align="left">Vue web application and Spring-boot API</h4>
-<h4 align="center">with multiple choice questions for students</h4>
-<h4 align="right">and quiz management for teachers</h4>
-
 <p align="center">
   <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
   <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
@@ -17,6 +9,14 @@
   <img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
   <img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License">
 </p>
+
+<div align="center">
+  <img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
+</div>
+
+<h4 align="left">Vue web application and Spring-boot API</h4>
+<h4 align="center">with multiple choice questions for students</h4>
+<h4 align="right">and quiz management for teachers</h4>
 
 <p align="center">
   <a href="#about">About</a> •
@@ -29,9 +29,10 @@
 
 # About
 
-<img align="right" src="./frontend/public/Screenshot.png" height="300">
+<img align="right" src="./frontend/public/Screenshot.png" height="250">
 
 **Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
+
 Students can then answer those questions in sugested quizzes or generated quizzes (pseudo-random) providing them with a usell **self-assessment tool** to improve their learning.
 
 # Technologies
@@ -89,9 +90,21 @@ A special thanks to our patreons for supporting this project:
 
 <table>
   <tr>
-    <td width="30%"><img width="100%" src="https://math.tecnico.ulisboa.pt/img/Tecnico_logo.svg" alt="IST Logo"/></td>
-    <td width="30%"><img width="100%" src="https://www.inesc-id.pt/wp-content/uploads/2018/01/impress_logo_703x316.png" alt="IMPRESS Logo"/></td>
-    <td width="30%"><img width="100%" src="http://gaips.inesc-id.pt/sapient/wp-content/uploads/2014/11/logo_inesc.png" alt="INESC Logo"/></td>
+    <td width="30%">
+      <a href="https://tecnico.ulisboa.pt/pt/">
+        <img width="100%" src="https://math.tecnico.ulisboa.pt/img/Tecnico_logo.svg" alt="Técnico Logo"/>
+      </a>
+    </td>
+    <td width="30%">
+      <a href="https://impress-project.eu/">
+        <img width="100%" src="https://www.inesc-id.pt/wp-content/uploads/2018/01/impress_logo_703x316.png" alt="IMPRESS Logo"/>
+      </a>
+    </td>
+    <td width="30%">
+      <a href="https://www.inesc-id.pt">
+      <img width="100%" src="https://www.inesc-id.pt/wp-content/uploads/2019/06/INESC-ID-logo_01.png" alt="INESC Logo"/>
+    </a>
+  </td>
   </tr>
 </table>
 
