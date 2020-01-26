@@ -1,10 +1,13 @@
+
 # Quizzes Tutor
 
-<img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
+<span align="center">
+  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
+</span>
 
-<h4 align="center">Vue web application and Spring-boot API</h4>
+<h4 align="left">Vue web application and Spring-boot API</h4>
 <h4 align="center">with multiple choice questions for students</h4>
-<h4 align="center">and quiz management for teachers</h4>
+<h4 align="right">and quiz management for teachers</h4>
 
 <p align="center">
   <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
