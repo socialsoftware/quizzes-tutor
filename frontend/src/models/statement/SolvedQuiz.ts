@@ -1,6 +1,6 @@
-import StatementQuiz from "@/models/statement/StatementQuiz";
-import StatementAnswer from "@/models/statement/StatementAnswer";
-import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementAnswer from '@/models/statement/StatementAnswer';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
 export default class SolvedQuiz {
   answerDate!: string;

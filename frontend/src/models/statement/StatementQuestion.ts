@@ -1,6 +1,6 @@
-import StatementOption from "@/models/statement/StatementOption";
-import Image from "@/models/management/Image";
-import { _ } from "vue-underscore";
+import StatementOption from '@/models/statement/StatementOption';
+import Image from '@/models/management/Image';
+import { _ } from 'vue-underscore';
 
 export default class StatementQuestion {
   quizQuestionId!: number;

@@ -1,7 +1,7 @@
 export default class Option {
   id: number | null = null;
   number!: number | null;
-  content: string = "";
+  content: string = '';
   correct: Boolean = false;
 
   constructor(jsonObj?: Option) {

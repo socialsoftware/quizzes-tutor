@@ -1,4 +1,4 @@
-import Question from "@/models/management/Question";
+import Question from '@/models/management/Question';
 
 export class Quiz {
   id!: number;
@@ -52,30 +52,30 @@ export class Quiz {
 
   get stringDate(): string {
     if (this.date) {
-      return this.date.toLocaleString("pt");
+      return this.date.toLocaleString('pt');
     }
-    return "-";
+    return '-';
   }
 
   get stringCreationDate(): string {
     if (this.creationDate) {
-      return this.creationDate.toLocaleString("pt");
+      return this.creationDate.toLocaleString('pt');
     }
-    return "-";
+    return '-';
   }
 
   get stringAvailableDate(): string {
     if (this.availableDate) {
-      return this.availableDate.toLocaleString("pt");
+      return this.availableDate.toLocaleString('pt');
     }
-    return "-";
+    return '-';
   }
 
   get stringConclusionDate(): string {
     if (this.conclusionDate) {
-      return this.conclusionDate.toLocaleString("pt");
+      return this.conclusionDate.toLocaleString('pt');
     }
-    return "-";
+    return '-';
   }
 
   get sortinggDate(): number {

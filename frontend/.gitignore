@@ -6,8 +6,7 @@ cypress/
 
 # local env files
 .env
-*env*
-*.env*
+.env*
 
 # Log files
 npm-debug.log*

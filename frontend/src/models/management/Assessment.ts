@@ -1,9 +1,9 @@
-import TopicConjunction from "@/models/management/TopicConjunction";
+import TopicConjunction from '@/models/management/TopicConjunction';
 
 export default class Assessment {
   id: number | null = null;
-  title: string = "";
-  status: string = "AVAILABLE";
+  title: string = '';
+  status: string = 'AVAILABLE';
   topicConjunctions: TopicConjunction[] = [];
 
   constructor(jsonObj?: Assessment) {
