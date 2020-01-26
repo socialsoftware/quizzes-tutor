@@ -1,12 +1,24 @@
 <h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
-  <a href="https://github.com/socialsoftware/as-tutor/actions" target="_blank"><img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build"></a>
-  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"><img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website"></a>
-  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=backend/pom.xml"><img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities"></a>
-  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=frontend/package.json"><img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities"></a>
-  <a href="https://codecov.io/gh/socialsoftware/as-tutor/branch/master"><img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage"></a>
-  <a href="https://github.com/socialsoftware/as-tutor/blob/master/LICENSE"><img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License"></a>
+  <a href="https://github.com/socialsoftware/as-tutor/actions" target="_blank">
+    <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
+  </a>
+  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
+    <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
+  </a>
+  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=backend/pom.xml"target="_blank">
+    <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities">
+  </a>
+  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=frontend/package.json"target="_blank">
+    <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+  </a>
+  <a href="https://codecov.io/gh/socialsoftware/as-tutor/branch/master"target="_blank">
+    <img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
+  </a>
+  <a href="https://github.com/socialsoftware/as-tutor/blob/master/LICENSE"target="_blank">
+    <img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License">
+  </a>
 </p>
 
 <div align="center">
@@ -96,17 +108,17 @@ A special thanks to our patreons for supporting this project:
 <table>
   <tr>
     <td width="30%">
-      <a href="https://tecnico.ulisboa.pt/pt/">
+      <a href="https://tecnico.ulisboa.pt/pt/" target="_blank">
         <img width="100%" src="https://math.tecnico.ulisboa.pt/img/Tecnico_logo.svg" alt="Técnico Logo"/>
       </a>
     </td>
     <td width="30%">
-      <a href="https://impress-project.eu/">
+      <a href="https://impress-project.eu/" target="_blank">
         <img width="100%" src="https://www.inesc-id.pt/wp-content/uploads/2018/01/impress_logo_703x316.png" alt="IMPRESS Logo"/>
       </a>
     </td>
     <td width="30%">
-      <a href="https://www.inesc-id.pt">
+      <a href="https://www.inesc-id.pt" target="_blank">
       <img width="100%" src="https://www.inesc-id.pt/wp-content/uploads/2019/06/INESC-ID-logo_01.png" alt="INESC Logo"/>
     </a>
   </td>
@@ -119,4 +131,4 @@ Your contributions are always welcome! Please have a look at the [contribution g
 
 # License
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/socialsoftware/as-tutor/blob/master/LICENSE) file for details.
