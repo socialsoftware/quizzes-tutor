@@ -1,9 +1,6 @@
-<h1 align="center">
-  Quizzes Tutor
-  <br>
-  <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
-  <br>
-</h1>
+# Quizzes Tutor
+
+<img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
 
 <h4 align="center">Vue web application and Spring-boot API</h4>
 <h4 align="center">with multiple choice questions for students</h4>
@@ -27,9 +24,9 @@
   <a href="#license">License</a>
 </p>
 
-![screenshot](https://impress-project.eu/wp-content/uploads/2019/11/0-1024x518.jpeg)
-
 # About
+
+<img align="right" src="./frontend/public/Screenshot.png" height="200">
 
 **Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
 Students can then answer those questions in sugested quizzes or generated quizzes (pseudo-random) providing them with a usell **self-assessment tool** to improve their learning.
