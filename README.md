@@ -1,5 +1,5 @@
 
-# Quizzes Tutor
+<h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
   <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
@@ -14,9 +14,9 @@
   <img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
 </div>
 
-<h4 align="left">Vue web application and Spring-boot API</h4>
-<h4 align="center">with multiple choice questions for students</h4>
-<h4 align="right">and quiz management for teachers</h4>
+<p align="left"><i><b>Vue.js</b> web application and <b>Spring-boot</b> API</i></p>
+<p align="center"><i>with <b>multiple choice questions</b> for students</i></p>
+<p align="right"><i>and <b>quiz management</b> for teachers</i></p>
 
 <p align="center">
   <a href="#about">About</a> •
@@ -31,9 +31,15 @@
 
 <img align="right" src="./frontend/public/Screenshot.png" height="250">
 
+<br/>
+
 **Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
 
+ <br/>
+
 Students can then answer those questions in sugested quizzes or generated quizzes (pseudo-random) providing them with a usell **self-assessment tool** to improve their learning.
+
+ <br/>
 
 # Technologies
 
