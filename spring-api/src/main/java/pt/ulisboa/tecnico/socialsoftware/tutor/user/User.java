@@ -373,12 +373,12 @@ public class User implements UserDetails {
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                 .sum();
-//
-//        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-//                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
-//                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-//                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-//                        questionAnswer.getOption().getCorrect())
-//                .count();
+
+        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                        questionAnswer.getOption().getCorrect())
+                .count();
     }
 }

@@ -4,10 +4,10 @@
       <top-bar />
       <div class="scrollbar">
         <router-view />
-        <loading />
       </div>
     </div>
     <error-message />
+    <loading />
   </v-app>
 </template>
 

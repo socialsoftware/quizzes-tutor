@@ -28,11 +28,8 @@ public class AuthController {
 
     @GetMapping("/auth/fenix")
     public AuthDto fenixAuth(@RequestParam String code) {
-        logger.info("HERE");
         FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
-        logger.info("HERE");
         fenix.authenticate(code);
-        logger.info("HERE");
         return this.authService.fenixAuth(fenix);
     }
 

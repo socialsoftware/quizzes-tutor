@@ -11,7 +11,7 @@
               <v-list-item-group color="primary">
                 <v-tooltip
                   v-for="course in courseExecutions[name]"
-                  :key="course.acronym"
+                  :key="course.acronym + course.academicTerm"
                   bottom
                 >
                   <template v-slot:activator="{ on }">
@@ -31,6 +31,11 @@
                             color="grey lighten-1"
                             >mdi-key</v-icon
                           >
+                          <v-icon
+                            v-else-if="course.status === 'HISTORIC'"
+                            color="grey lighten-1"
+                            >mdi-book-open-variant</v-icon
+                          >
                           <v-icon v-else color="grey lighten-1"
                             >mdi-location-enter</v-icon
                           >
@@ -38,7 +43,15 @@
                       </v-list-item-action>
                     </v-list-item>
                   </template>
-                  <span> bob </span>
+                  <span v-if="course.status === 'INACTIVE'"
+                    >Activate course for students</span
+                  >
+                  <span v-else-if="course.status === 'HISTORIC'"
+                    >View Historic Records</span
+                  >
+                  <span v-else
+                    >Enter {{ course.name }} {{ course.academicTerm }}
+                  </span>
                 </v-tooltip>
               </v-list-item-group>
             </v-list>

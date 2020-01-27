@@ -64,7 +64,7 @@ public class AuthUserDto implements Serializable {
         List<CourseDto> courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
         courses.stream()
                 .forEach(courseDto -> {
-                    if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()))) {
+                    if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {
                         if(courseDto.getStatus() == null) {
                             courseDto.setStatus(CourseExecution.Status.INACTIVE);
                         }

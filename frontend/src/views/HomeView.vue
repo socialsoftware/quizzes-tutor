@@ -62,8 +62,6 @@ import RemoteServices from '@/services/RemoteServices';
 export default class HomeView extends Vue {
   appName: string = process.env.VUE_APP_NAME;
   fenixUrl: string = process.env.VUE_APP_FENIX_URL;
-  window: number = 0;
-  length: number = 3;
 
   get isLoggedIn() {
     return Store.state.token;
@@ -71,13 +69,21 @@ export default class HomeView extends Vue {
 
   async demoStudent() {
     await this.$store.dispatch('loading');
-    await this.$store.dispatch('demoStudentLogin');
+    try {
+      await this.$store.dispatch('demoStudentLogin');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
     await this.$store.dispatch('clearLoading');
   }
 
   async demoTeacher() {
     await this.$store.dispatch('loading');
-    await this.$store.dispatch('demoTeacherLogin');
+    try {
+      await this.$store.dispatch('demoTeacherLogin');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
     await this.$store.dispatch('clearLoading');
   }
 }

@@ -58,6 +58,7 @@ public class CourseExecution {
         this.course = course;
         this.acronym = acronym;
         this.academicTerm = academicTerm;
+        this.status = Status.ACTIVE;
         course.addCourseExecution(this);
     }
 

@@ -70,45 +70,30 @@ export default new Vuex.Store({
       commit('clearLoading');
     },
     async fenixLogin({ commit }, code) {
-      try {
-        const authResponse = await RemoteServices.fenixLogin(code);
-        commit('login', authResponse);
-        // localStorage.setItem("token", authResponse.token);
-        // localStorage.setItem("userRole", authResponse.user.role);
-      } catch (error) {
-        commit('logout');
-        commit('error', error);
-      }
+      const authResponse = await RemoteServices.fenixLogin(code);
+      commit('login', authResponse);
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoStudentLogin({ commit }) {
-      try {
-        const authResponse = await RemoteServices.demoStudentLogin();
-        commit('login', authResponse);
-        commit(
-          'currentCourse',
-          (Object.values(authResponse.user.courses)[0] as Course[])[0]
-        );
-        // localStorage.setItem("token", authResponse.token);
-        // localStorage.setItem("userRole", authResponse.user.role);
-      } catch (error) {
-        commit('logout');
-        commit('error', error);
-      }
+      const authResponse = await RemoteServices.demoStudentLogin();
+      commit('login', authResponse);
+      commit(
+        'currentCourse',
+        (Object.values(authResponse.user.courses)[0] as Course[])[0]
+      );
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoTeacherLogin({ commit }) {
-      try {
-        const authResponse = await RemoteServices.demoTeacherLogin();
-        commit('login', authResponse);
-        commit(
-          'currentCourse',
-          (Object.values(authResponse.user.courses)[0] as Course[])[0]
-        );
-        // localStorage.setItem("token", authResponse.token);
-        // localStorage.setItem("userRole", authResponse.user.role);
-      } catch (error) {
-        commit('logout');
-        commit('error', error);
-      }
+      const authResponse = await RemoteServices.demoTeacherLogin();
+      commit('login', authResponse);
+      commit(
+        'currentCourse',
+        (Object.values(authResponse.user.courses)[0] as Course[])[0]
+      );
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
     },
     logout({ commit }) {
       return new Promise(resolve => {

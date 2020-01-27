@@ -261,8 +261,12 @@ export default class TopBar extends Vue {
 }
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 .no-active::before {
   opacity: 0 !important;
+}
+
+nav {
+  z-index: 300;
 }
 </style>

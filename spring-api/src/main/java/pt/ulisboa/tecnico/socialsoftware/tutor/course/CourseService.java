@@ -14,7 +14,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
@@ -62,14 +61,14 @@ public class CourseService {
             courseRepository.save(course);
         }
         Course existingCourse = course;
-        return existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm())
-                .or(() ->  {
-                    CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm());
-                    courseExecutionRepository.save(courseExecution);
-                    return Optional.of(courseExecution);
-                })
-        .map(CourseDto::new)
-        .orElse(null);
+        CourseExecution courseExecution = existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm())
+                .orElseGet(() ->  {
+                    CourseExecution ce = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm());
+                    courseExecutionRepository.save(ce);
+                    return ce;
+                });
+        courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+        return new CourseDto(courseExecution);
     }
 
     @Retryable(
