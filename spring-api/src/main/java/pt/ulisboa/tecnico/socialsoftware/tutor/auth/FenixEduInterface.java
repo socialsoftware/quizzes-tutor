@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FENIX_CONFIGURATION_ERROR;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FENIX_ERROR;
@@ -52,7 +54,11 @@ public class FenixEduInterface {
     }
 
     private JsonObject getPersonCourses() {
-        return client.getPersonCourses(userDetails.getAuthorization());
+        String academicTerm = client.getAbout().get("currentAcademicTerm").getAsString();
+        Matcher currentYearMatcher = Pattern.compile("([0-9]+/[0-9]+)").matcher(academicTerm);
+        currentYearMatcher.find();
+        String currentYear = currentYearMatcher.group(1);
+        return client.getPersonCourses(userDetails.getAuthorization(), currentYear);
     }
 
     public List<CourseDto> getPersonAttendingCourses() {
