@@ -7,20 +7,22 @@
   <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
   </a>
-  <a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
+  <!-- Uncomment when sslbadge updates its ssl certificates lol -->
+  <!--a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
     <img src="https://sslbadge.org/?domain=quizzes-tutor.tecnico.ulisboa.pt" alt="SSL configuration">
-  </a>
+  </a-->
   <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE"target="_blank">
     <img src="https://img.shields.io/github/license/socialsoftware/quizzes-tutor"alt="License">
   </a>
 </p>
 
 <p align="center">
-  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml"target="_blank">
+  <!-- Snyk badge takes too long to load -->
+  <!-- a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml"target="_blank">
     <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=backend/pom.xml" alt="Backend vulnerabilities">
   </a>
   <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json"target="_blank">
-    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities"-->
   </a>
   <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend"target="_blank">
     <img src="https://badgen.net/david/dep/socialsoftware/quizzes-tutor/frontend" alt="Dependencies">
