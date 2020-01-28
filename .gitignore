@@ -6,7 +6,7 @@
 scripts
 
 SQL/data.json
-spring-api/src/main/resources/static/images/questions/
+backend/src/main/resources/static/images/questions/
 *.xlsx
 *.xls
 pentaho/**.js

@@ -19,7 +19,7 @@
           depressed
           small
           color="secondary"
-          href="https://github.com/socialsoftware/as-tutor"
+          href="https://github.com/socialsoftware/quizzes-tutor"
           target="_blank"
         >
           <i class="fab fa-github" /> View code
@@ -30,7 +30,7 @@
           depressed
           small
           color="secondary"
-          href="https://github.com/socialsoftware/as-tutor/issues"
+          href="https://github.com/socialsoftware/quizzes-tutor/issues"
           target="_blank"
         >
           <i class="fab fa-github" /> Bug report

@@ -1,8 +1,8 @@
 <h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
-  <a href="https://github.com/socialsoftware/as-tutor/actions" target="_blank">
-    <img src="https://img.shields.io/github/workflow/status/socialsoftware/as-tutor/build" alt="Build">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/actions" target="_blank">
+    <img src="https://img.shields.io/github/workflow/status/socialsoftware/quizzes-tutor/build" alt="Build">
   </a>
   <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
@@ -10,23 +10,23 @@
   <!-- a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
     <img src="https://sslbadge.org/?domain=quizzes-tutor.tecnico.ulisboa.pt" alt="SSL configuration">
   </a>
-  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=backend/pom.xml"target="_blank">
-    <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=spring-api/pom.xml" alt="Backend vulnerabilities">
+  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml"target="_blank">
+    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=backend/pom.xml" alt="Backend vulnerabilities">
   </a-->
-  <a href="https://david-dm.org/socialsoftware/as-tutor?path=frontend"target="_blank">
-    <img src="https://badgen.net/david/dep/socialsoftware/as-tutor/frontend" alt="Frontend vulnerabilities">
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend"target="_blank">
+    <img src="https://badgen.net/david/dep/socialsoftware/quizzes-tutor/frontend" alt="Frontend vulnerabilities">
   </a>
-  <a href="https://david-dm.org/socialsoftware/as-tutor?path=frontend&type=dev"target="_blank">
-    <img src="https://badgen.net/david/dev/socialsoftware/as-tutor/frontend" alt="Frontend vulnerabilities">
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev"target="_blank">
+    <img src="https://badgen.net/david/dev/socialsoftware/quizzes-tutor/frontend" alt="Frontend vulnerabilities">
   </a>
-  <a href="https://snyk.io/test/github/socialsoftware/as-tutor?targetFile=frontend/package.json"target="_blank">
-    <img src="https://snyk.io/test/github/socialsoftware/as-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json"target="_blank">
+    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
   </a>
-  <a href="https://codecov.io/gh/socialsoftware/as-tutor/branch/master"target="_blank">
-    <img src="https://codecov.io/gh/socialsoftware/as-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
+  <a href="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master"target="_blank">
+    <img src="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
   </a>
-  <a href="https://github.com/socialsoftware/as-tutor/blob/master/LICENSE"target="_blank">
-    <img src="https://img.shields.io/github/license/socialsoftware/as-tutor"alt="License">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE"target="_blank">
+    <img src="https://img.shields.io/github/license/socialsoftware/quizzes-tutor"alt="License">
   </a>
 </p>
 
@@ -94,10 +94,10 @@ psql tutordb < dump.sql
 ```
 * **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://tolocalhost.com:8081/login and accessess curricular information**
 * **Add `127.0.1.1	tolocalhost.com` to your `/etc/hosts` file so Oauth with fenix works locally**
-* **Rename `spring-api/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
+* **Rename `backend/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
 * **Run server**
 ```
-cd spring-api
+cd backend
 mvn clean spring-boot:run
 ```
 * **See documentation on http://localhost:8080/swagger-ui.html**
@@ -136,8 +136,8 @@ A special thanks to our patreons for supporting this project:
 
 # Contributing
 
-Your contributions are always welcome! Please have a look at the [contribution guidelines](https://github.com/socialsoftware/as-tutor/wiki/Guidelines) first.
+Your contributions are always welcome! Please have a look at the [contribution guidelines](https://github.com/socialsoftware/quizzes-tutor/wiki/Guidelines) first.
 
 # License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/socialsoftware/as-tutor/blob/master/LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE) file for details.

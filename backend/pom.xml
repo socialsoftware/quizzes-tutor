@@ -275,7 +275,7 @@
                         <configuration>
                             <hooks>
                                 <pre-push>
-                                    cd spring-api
+                                    cd backend
                                     exec mvn clean -Ptest test -Dtest=CreateQuizAnswerServiceSpockTest
                                 </pre-push>
                             </hooks>
