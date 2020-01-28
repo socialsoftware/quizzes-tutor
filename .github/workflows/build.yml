@@ -22,7 +22,7 @@ jobs:
         yml: ./backend/codecov.yml
     - uses: actions/setup-node@v1
       with:
-        node-version: '10.16'
+        node-version: '12.14'
     - run: |
         cd frontend
         npm i -g npm
