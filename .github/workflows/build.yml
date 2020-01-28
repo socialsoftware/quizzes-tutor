@@ -15,13 +15,13 @@ jobs:
       with:
         java-version: 1.11
     - name: Build with Maven
-      run: mvn clean --file ./spring-api/pom.xml -Ptest test
+      run: mvn clean --file ./backend/pom.xml -Ptest test
     - name: Codecov
       uses: codecov/codecov-action@v1.0.5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: ./spring-api/target/site/jacoco/jacoco.xml
-        yml: ./spring-api/codecov.yml
+        file: ./backend/target/site/jacoco/jacoco.xml
+        yml: ./backend/codecov.yml
     - uses: actions/setup-node@v1
       with:
         node-version: '10.16'
