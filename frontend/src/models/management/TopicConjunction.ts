@@ -1,4 +1,4 @@
-import Topic from "@/models/management/Topic";
+import Topic from '@/models/management/Topic';
 
 export default class TopicConjunction {
   static maxSequence = 0;

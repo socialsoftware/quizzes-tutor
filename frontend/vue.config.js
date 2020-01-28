@@ -1,42 +1,42 @@
 /** @format */
 
-const path = require("path");
-const CompressionPlugin = require("compression-webpack-plugin");
-const TerserPlugin = require("terser-webpack-plugin");
-const PurgecssPlugin = require("purgecss-webpack-plugin");
-const glob = require("glob-all");
+const path = require('path');
+const CompressionPlugin = require('compression-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+const PurgecssPlugin = require('purgecss-webpack-plugin');
+const glob = require('glob-all');
 
-const isProductionEnvFlag = process.env.NODE_ENV === "production";
+const isProductionEnvFlag = process.env.NODE_ENV === 'production';
 
 module.exports = {
-  publicPath: "/",
-  outputDir: "dist",
+  publicPath: '/',
+  outputDir: 'dist',
   lintOnSave: true,
   runtimeCompiler: false,
 
   // generate sourceMap for production build?
-  productionSourceMap: process.env.NODE_ENV !== "production",
+  productionSourceMap: process.env.NODE_ENV !== 'production',
 
   chainWebpack: config => {
     config.resolve.alias
-      .set("vue$", "vue/dist/vue.esm.js")
-      .set("@assets", path.join(__dirname, "src/assets"))
-      .set("@models", path.join(__dirname, "src/models"))
-      .set("@plugins", path.join(__dirname, "src/plugins"))
-      .set("@services", path.join(__dirname, "src/services"))
-      .set("@view-components", path.join(__dirname, "src/view-components"))
-      .set("@styles", path.join(__dirname, "src/styles"))
-      .set("@views", path.join(__dirname, "src/views"));
+      .set('vue$', 'vue/dist/vue.esm.js')
+      .set('@assets', path.join(__dirname, 'src/assets'))
+      .set('@models', path.join(__dirname, 'src/models'))
+      .set('@plugins', path.join(__dirname, 'src/plugins'))
+      .set('@services', path.join(__dirname, 'src/services'))
+      .set('@components', path.join(__dirname, 'src/components'))
+      .set('@css', path.join(__dirname, 'src/css'))
+      .set('@views', path.join(__dirname, 'src/views'));
 
-    const splitOptions = config.optimization.get("splitChunks");
+    const splitOptions = config.optimization.get('splitChunks');
     config.optimization.splitChunks(
       Object.assign({}, splitOptions, {
         maxAsyncRequests: 16,
-        maxInitialRequests: 16,
+        maxInitialRequests: 5,
         minChunks: 1,
-        minSize: 30000,
-        maxSize: 200000,
-        automaticNameDelimiter: "~",
+        minSize: 50000,
+        maxSize: 245000,
+        automaticNameDelimiter: '~',
         name: true,
         cacheGroups: {
           default: false,
@@ -44,13 +44,13 @@ module.exports = {
             name: `chunk-common`,
             minChunks: 2,
             priority: -20,
-            chunks: "initial",
+            chunks: 'initial',
             reuseExistingChunk: true
           },
           element: {
-            name: "element",
+            name: 'element',
             test: /[\\/]node_modules[\\/]element-ui[\\/]/,
-            chunks: "initial",
+            chunks: 'initial',
             priority: -30
           }
         }
@@ -60,22 +60,22 @@ module.exports = {
     // https://github.com/webpack-contrib/webpack-bundle-analyzer
     if (process.env.npm_config_report) {
       config
-        .plugin("webpack-bundle-analyzer")
-        .use(require("webpack-bundle-analyzer").BundleAnalyzerPlugin);
+        .plugin('webpack-bundle-analyzer')
+        .use(require('webpack-bundle-analyzer').BundleAnalyzerPlugin);
     }
   },
 
-  transpileDependencies: ["vuetify"],
+  transpileDependencies: ['vuetify'],
   configureWebpack: {
     plugins: [
       // https://github.com/FullHuman/purgecss/issues/67
       isProductionEnvFlag
         ? new PurgecssPlugin({
             paths: glob.sync([
-              path.join(__dirname, "./public/index.html"),
-              path.join(__dirname, "./**/*.vue"),
-              path.join(__dirname, "./src/**/*.js"),
-              path.join(__dirname, "./node_modules/vuetify/src/**/*.ts")
+              path.join(__dirname, './public/index.html'),
+              path.join(__dirname, './**/*.vue'),
+              path.join(__dirname, './src/**/*.js'),
+              path.join(__dirname, './node_modules/vuetify/src/**/*.ts')
             ])
           })
         : () => {},
@@ -86,7 +86,7 @@ module.exports = {
 
   // use thread-loader for babel & TS in production build
   // enabled by default if the machine has more than 1 cores
-  parallel: require("os").cpus().length > 1,
+  parallel: require('os').cpus().length > 1,
 
   // options for the PWA plugin.
   // see => https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa
@@ -115,8 +115,8 @@ module.exports = {
 
   // configure webpack-dev-server behavior
   devServer: {
-    open: process.platform === "darwin",
-    host: "0.0.0.0",
+    open: process.platform === 'darwin',
+    host: '0.0.0.0',
     port: 8081,
     https: false,
     hotOnly: false,

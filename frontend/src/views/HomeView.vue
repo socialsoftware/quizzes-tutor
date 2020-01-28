@@ -1,69 +1,96 @@
 <template>
-  <div class="home-container">
+  <div class="container">
     <h1 id="home-title" class="display-2 font-weight-thin mb-3">
-      Software Architecture
+      {{ appName }}
     </h1>
-    <v-btn v-if="!isLoggedIn" :href="fenix_url" depressed color="primary"
-      >Log in</v-btn
-    >
 
-    <div class="bottom-row-container">
+    <v-btn v-if="!isLoggedIn" :href="fenixUrl" depressed color="primary">
+      Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
+    </v-btn>
+
+    <v-footer class="footer">
       <img
-        :src="require('../assets/ist_optimized.png')"
+        :src="require('../assets/img/ist_optimized.png')"
         class="logo"
         alt="Técnico Logo"
       />
       <div>
-        <a
-          v-if="isLoggedIn"
-          class="btn btn-block btn-social btn-github"
-          href="https://github.com/socialsoftware/as-tutor"
+        <v-btn
+          depressed
+          small
+          color="secondary"
+          href="https://github.com/socialsoftware/quizzes-tutor"
           target="_blank"
         >
-          <span class="fab fa-github" /> View code
-        </a>
+          <i class="fab fa-github" /> View code
+        </v-btn>
       </div>
       <div>
-        <a
-          v-if="isLoggedIn"
-          class="btn btn-block btn-social btn-github"
-          href="https://github.com/socialsoftware/as-tutor/issues"
+        <v-btn
+          depressed
+          small
+          color="secondary"
+          href="https://github.com/socialsoftware/quizzes-tutor/issues"
           target="_blank"
         >
-          <span class="fab fa-github" /> Bug report
-        </a>
+          <i class="fab fa-github" /> Bug report
+        </v-btn>
+      </div>
+      <div class="demo-buttons">
+        <v-btn depressed small color="secondary" @click="demoStudent">
+          <i class="fa fa-graduation-cap" />Demo as student
+        </v-btn>
+        <v-btn depressed small color="secondary" @click="demoTeacher">
+          <i class="fa fa-graduation-cap" />Demo as teacher
+        </v-btn>
       </div>
       <img
-        :src="require('../assets/impress_optimized.png')"
+        :src="require('../assets/img/impress_optimized.png')"
         class="logo"
         alt="IMPRESS Logo"
       />
-    </div>
+    </v-footer>
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import Store from "@/store";
+import { Component, Vue } from 'vue-property-decorator';
+import Store from '@/store';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class HomeView extends Vue {
-  window: number = 0;
-  length: number = 3;
-  fenix_url: string =
-    "https://fenix.tecnico.ulisboa.pt/oauth/userdialog?client_id=" +
-    process.env.VUE_APP_FENIX_CLIENT_ID +
-    "&redirect_uri=" +
-    process.env.VUE_APP_FENIX_REDIRECT_URI;
+  appName: string = process.env.VUE_APP_NAME;
+  fenixUrl: string = process.env.VUE_APP_FENIX_URL;
 
   get isLoggedIn() {
     return Store.state.token;
   }
+
+  async demoStudent() {
+    await this.$store.dispatch('loading');
+    try {
+      await this.$store.dispatch('demoStudentLogin');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async demoTeacher() {
+    await this.$store.dispatch('loading');
+    try {
+      await this.$store.dispatch('demoTeacherLogin');
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
 }
 </script>
 
-<style lang="scss">
-.home-container {
+<style lang="scss" scoped>
+.container {
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -93,7 +120,8 @@ export default class HomeView extends Vue {
     padding: 10px 20px;
   }
 
-  .bottom-row-container {
+  .footer {
+    background-color: rgba(0, 0, 0, 0) !important;
     display: flex; /* or inline-flex */
     flex-direction: row;
     flex-wrap: nowrap;
@@ -105,26 +133,16 @@ export default class HomeView extends Vue {
     bottom: 0;
     overflow: hidden;
 
+    .demo-buttons button {
+      margin: 0 10px;
+    }
+
     .logo {
       flex-shrink: 1;
       width: 20%;
       max-width: 200px;
       min-width: 100px;
       padding: 2%;
-    }
-
-    div {
-      flex-grow: 2;
-
-      .btn-github {
-        color: white !important;
-        width: 125px;
-        margin: 0 auto;
-        font: normal normal 400 normal 14px / 21px Roboto, sans-serif;
-        display: block;
-        border-radius: 4px 4px 4px 4px;
-        padding: 6px 12px 6px 44px;
-      }
     }
   }
 }

@@ -13,10 +13,10 @@ services:
     env_file:
       - ./scripts/env/database.dev.env
 
-  spring-api:
-    build: ./spring-api/
-    image: tutor-spring-api
-    container_name: spring-api
+  backend:
+    build: ./backend/
+    image: tutor-backend
+    container_name: backend
     depends_on:
       - postgres
     links:
@@ -29,7 +29,7 @@ services:
       - ./scripts/load:/load
       - ./scripts/export:/export
     env_file:
-      - ./scripts/env/spring-api.dev.env
+      - ./scripts/env/backend.dev.env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
  
@@ -42,9 +42,9 @@ services:
     image: tutor-frontend                                                     
     container_name: frontend
     depends_on:
-      - spring-api
+      - backend
     links:
-      - spring-api
+      - backend
     ports:
       - 8081:80
     restart: unless-stopped
@@ -52,5 +52,3 @@ services:
       - ./scripts/localhost-nginx.conf:/etc/nginx/nginx.conf
       - ./scripts/error.log:/var/log/nginx/error.log
       - ./scripts/access.log:/var/log/nginx/access.log
-    env_file:
-      - ./scripts/env/frontend.dev.env

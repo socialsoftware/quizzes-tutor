@@ -1,5 +1,5 @@
-import Image from "@/models/management/Image";
-import showdown from "showdown";
+import Image from '@/models/management/Image';
+import showdown from 'showdown';
 
 export function convertMarkDown(
   text: string,
@@ -9,9 +9,9 @@ export function convertMarkDown(
 
   if (image && image.url) {
     text +=
-      "  \n  \n  \n[image]: " +
+      '  \n  \n  \n[image]: ' +
       process.env.VUE_APP_ROOT_API +
-      "/images/questions/" +
+      '/images/questions/' +
       image.url +
       ' "Image"';
   }
@@ -31,7 +31,7 @@ export function convertMarkDownNoFigure(
   const converter = new showdown.Converter();
 
   if (image && image.url) {
-    text += " FIGURE HERE ";
+    text += ' FIGURE HERE ';
   }
 
   let str = converter.makeHtml(text);

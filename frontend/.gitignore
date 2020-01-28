@@ -1,11 +1,12 @@
 
-node_modules
-/dist
+node_modules/
+dist/
+coverage/
+cypress/
 
 # local env files
 .env
-*env*
-*.env*
+.env*
 
 # Log files
 npm-debug.log*

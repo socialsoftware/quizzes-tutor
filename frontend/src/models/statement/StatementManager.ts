@@ -1,14 +1,15 @@
-import StatementQuestion from "@/models/statement/StatementQuestion";
-import StatementCorrectAnswer from "@/models/statement/StatementCorrectAnswer";
-import StatementAnswer from "@/models/statement/StatementAnswer";
-import RemoteServices from "@/services/RemoteServices";
-import StatementQuiz from "@/models/statement/StatementQuiz";
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
+import StatementAnswer from '@/models/statement/StatementAnswer';
+import RemoteServices from '@/services/RemoteServices';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import Store from '@/store';
 
 export default class StatementManager {
-  questionType: string = "all";
-  assessment: string = "all";
+  questionType: string = 'all';
+  assessment: string = 'all';
   // topic: string[] = [];
-  numberOfQuestions: string = "5";
+  numberOfQuestions: string = '5';
   statementQuiz: StatementQuiz | null = null;
   answers: StatementAnswer[] = [];
   correctAnswers: StatementCorrectAnswer[] = [];
@@ -47,7 +48,7 @@ export default class StatementManager {
 
       this.correctAnswers = await RemoteServices.getCorrectAnswers(params);
     } else {
-      throw Error("No quiz");
+      throw Error('No quiz');
     }
   }
 
