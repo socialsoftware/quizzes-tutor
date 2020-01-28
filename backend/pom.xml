@@ -61,6 +61,13 @@
     </profiles>
 
     <dependencies>
+        <!-- Dependency of spring-boot-starter-web but with more recent version without vulnerabilities -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.10.2</version>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
@@ -84,6 +91,8 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- In memory database for tests -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -115,25 +124,15 @@
             <artifactId>jaxb-api</artifactId>
             <version>2.4.0-b180830.0359</version>
         </dependency>
-
-        <!-- https://mvnrepository.com/artifact/org.apache.lucene/lucene-core -->
-        <dependency>
-            <groupId>org.apache.lucene</groupId>
-            <artifactId>lucene-core</artifactId>
-            <version>8.4.1</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.fenixedu</groupId>
             <artifactId>feaf4j-api</artifactId>
@@ -203,13 +202,16 @@
             <version>${version.spock}</version>
             <scope>test</scope>
         </dependency>
-        <dependency> <!-- use a specific Groovy version rather than the one specified by spock-core -->
+
+        <!-- use a specific Groovy version rather than the one specified by spock-core -->
+        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy-all</artifactId>
             <version>${version.groovy}</version>
         </dependency>
-        <dependency> <!-- enables mocking of classes without default constructor (together with
-        CGLIB) -->
+
+        <!-- enables mocking of classes without default constructor (together with CGLIB) -->
+        <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
             <version>${org.objenesis.version}</version>
