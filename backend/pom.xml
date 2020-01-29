@@ -32,7 +32,7 @@
         <net.bytebuddy.version>1.8.21</net.bytebuddy.version>
         <org.objenesis.version>2.6</org.objenesis.version>
 
-        <version.commons-io.commons-io>2.4</version.commons-io.commons-io>
+        <version.commons-io.commons-io>2.6</version.commons-io.commons-io>
     </properties>
 
     <!-- Allows multiple properties files-->
