@@ -1,36 +1,40 @@
 <h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
-  <a href="https://github.com/socialsoftware/quizzes-tutor/actions" target="_blank">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/actions">
     <img src="https://img.shields.io/github/workflow/status/socialsoftware/quizzes-tutor/build" alt="Build">
   </a>
-  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
+  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
   </a>
   <!-- Uncomment when sslbadge updates its ssl certificates lol -->
-  <!--a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
+  <!--a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt">
     <img src="https://sslbadge.org/?domain=quizzes-tutor.tecnico.ulisboa.pt" alt="SSL configuration">
   </a-->
-  <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE"target="_blank">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/socialsoftware/quizzes-tutor"alt="License">
   </a>
 </p>
 
 <p align="center">
   <!-- Snyk badge takes too long to load -->
-  <!-- a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml"target="_blank">
+  <!-- a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml">
     <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=backend/pom.xml" alt="Backend vulnerabilities">
   </a>
-  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json"target="_blank">
-    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities"-->
-  </a>
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend"target="_blank">
+  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json">
+    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+  </a-->
+
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend">
     <img src="https://badgen.net/david/dep/socialsoftware/quizzes-tutor/frontend" alt="Dependencies">
   </a>
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev"target="_blank">
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev">
     <img src="https://badgen.net/david/dev/socialsoftware/quizzes-tutor/frontend" alt="Dev Dependencies">
   </a>
-  <a href="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master"target="_blank">
+  <a href="https://github.com/prettier/prettier">
+    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?" alt="code style: prettier">
+  </a>
+  <a href="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master">
     <img src="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
   </a>
 </p>
