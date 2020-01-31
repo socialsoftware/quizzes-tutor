@@ -86,7 +86,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
         courseExecution.getUsers().add(user)
 
         question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         question.setCourse(course)
         course.addQuestion(question)
 
@@ -96,7 +96,7 @@ class GetSolvedQuizzesServiceSpockTest extends Specification {
         question.addOption(option)
 
         quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quiz.setType(Quiz.QuizType.TEACHER)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
         quiz.setYear(2019)

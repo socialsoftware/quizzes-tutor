@@ -80,9 +80,9 @@ public class TopicsXmlImport {
 	}
 
 	private void importQuestion(Element questionElement, String name) {
-		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
+		Integer key = Integer.valueOf(questionElement.getAttributeValue("key"));
 
-		QuestionDto questionDto = questionService.findQuestionByNumber(number);
+		QuestionDto questionDto = questionService.findQuestionByKey(key);
         TopicDto topicDto = new TopicDto();
         topicDto.setName(name);
 

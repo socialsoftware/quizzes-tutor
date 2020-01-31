@@ -74,14 +74,14 @@ class ImportExportUsersSpockTest extends Specification {
         userRepository.findAll().size() == 2
         def userOne = userRepository.findByUsername(AR)
         userOne != null
-        userOne.getNumber() == 1
+        userOne.getKey() == 1
         userOne.getName() == RITO
         userOne.getRole().name() == TEACHER
         userOne.getCourseExecutions().size() == 1
 
         def userTwo = userRepository.findByUsername(PC)
         userTwo != null
-        userTwo.getNumber() == 2
+        userTwo.getKey() == 2
         userTwo.getName() == PEDRO
         userTwo.getRole().name() == STUDENT
         userOne.getCourseExecutions().size() == 1

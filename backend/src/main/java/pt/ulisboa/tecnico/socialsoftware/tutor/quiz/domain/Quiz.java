@@ -22,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @Table(
         name = "quizzes",
         indexes = {
-                @Index(name = "quizzes_indx_0", columnList = "number")
+                @Index(name = "quizzes_indx_0", columnList = "key")
         })
 public class Quiz {
     public enum QuizType {
@@ -34,7 +34,7 @@ public class Quiz {
     private Integer id;
 
     @Column(unique=true, nullable = false)
-    private Integer number;
+    private Integer key;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -73,7 +73,7 @@ public class Quiz {
     public Quiz(QuizDto quizDto) {
         checkQuestions(quizDto.getQuestions());
 
-        this.number = quizDto.getNumber();
+        this.key = quizDto.getKey();
         setTitle(quizDto.getTitle());
         this.type = quizDto.getType();
         this.scramble = quizDto.getScramble();
@@ -93,12 +93,12 @@ public class Quiz {
     this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getKey() {
+        return key;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public boolean getScramble() {

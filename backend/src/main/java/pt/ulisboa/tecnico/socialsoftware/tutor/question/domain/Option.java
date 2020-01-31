@@ -15,7 +15,7 @@ public class Option {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private Integer number;
+    private Integer sequence;
 
     @Column(columnDefinition = "boolean default false")
     private boolean correct;
@@ -33,7 +33,7 @@ public class Option {
     public Option(){}
 
     public Option(OptionDto option) {
-        this.number = option.getNumber();
+        this.sequence = option.getSequence();
         this.content = option.getContent();
         this.correct = option.getCorrect();
     }
@@ -46,15 +46,15 @@ public class Option {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        if (number == null) {
-            getQuestion().setOptionsNumber();
+    public Integer getSequence() {
+        if (sequence == null) {
+            getQuestion().setOptionsSequence();
         }
-        return number;
+        return sequence;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public boolean getCorrect() {
@@ -97,7 +97,7 @@ public class Option {
     public String toString() {
         return "Option{" +
                 "id=" + id +
-                ", number=" + number +
+                ", sequence=" + sequence +
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
                 '}';

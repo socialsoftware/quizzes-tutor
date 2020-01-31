@@ -75,9 +75,9 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    public Integer getMaxQuizNumber() {
-        Integer maxQuizNumber = quizRepository.getMaxQuizNumber();
-        return maxQuizNumber != null ? maxQuizNumber : 0;
+    public Integer getMaxQuizKey() {
+        Integer maxQuizKey = quizRepository.getMaxQuizKey();
+        return maxQuizKey != null ? maxQuizKey : 0;
     }
 
     @Retryable(
@@ -87,8 +87,8 @@ public class QuizService {
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        if (quizDto.getNumber() == null) {
-            quizDto.setNumber(getMaxQuizNumber() + 1);
+        if (quizDto.getKey() == null) {
+            quizDto.setKey(getMaxQuizKey() + 1);
         }
         Quiz quiz = new Quiz(quizDto);
         quiz.setCourseExecution(courseExecution);

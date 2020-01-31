@@ -117,7 +117,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "teacher has courses"() {
         given: 'a teacher'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -145,7 +145,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "teacher does not have courses"() {
         given: 'a teacher'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -173,7 +173,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "teacher has course and is in database, then add"() {
         given: 'a teacher'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -270,7 +270,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "student does not have courses, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -295,7 +295,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "student has courses but not in the database, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -320,7 +320,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "student has courses and in the database, add course"() {
         given: 'a student'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -352,7 +352,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "student has teaching courses, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -382,7 +382,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "teacher has attending courses, does not add course"() {
         given: 'a teacher'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -413,7 +413,7 @@ class FenixAuthServiceSpockTest extends Specification {
     def "student has attending and teaching courses, add attending course"() {
         given: 'a teacher'
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)

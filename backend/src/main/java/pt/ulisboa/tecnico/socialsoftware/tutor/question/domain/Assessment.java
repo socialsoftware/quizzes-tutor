@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
@@ -12,8 +10,6 @@ import java.util.List;
 @Entity
 @Table(name = "assessments")
 public class Assessment {
-    private static Logger logger = LoggerFactory.getLogger(Assessment.class);
-
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, AVAILABLE, REMOVED
@@ -24,6 +20,7 @@ public class Assessment {
     private Integer id;
 
     private String title;
+    private Integer sequence = 0;
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
@@ -49,33 +46,12 @@ public class Assessment {
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
     }
 
-    public void remove() {
-        getTopicConjunctions().forEach(TopicConjunction::remove);
-        getTopicConjunctions().clear();
-    }
-
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getNumber() {
-        return id;
-    }
-
-    public void setNumber(Integer id) {
-        this.id = id;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public String getTitle() {
@@ -86,16 +62,20 @@ public class Assessment {
         this.title = title;
     }
 
-    public List<TopicConjunction> getTopicConjunctions() {
-        return topicConjunctions;
+    public Integer getSequence() {
+        return sequence;
     }
 
-    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
-    public void addTopicConjunction(TopicConjunction topicConjunction) {
-        this.topicConjunctions.add(topicConjunction);
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public CourseExecution getCourseExecution() {
@@ -104,6 +84,14 @@ public class Assessment {
 
     public void setCourseExecution(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
+    }
+
+    public List<TopicConjunction> getTopicConjunctions() {
+        return topicConjunctions;
+    }
+
+    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
     }
 
     @Override
@@ -115,5 +103,14 @@ public class Assessment {
                 ", status=" + status +
                 ", topicConjunctions=" + topicConjunctions +
                 '}';
+    }
+
+    public void addTopicConjunction(TopicConjunction topicConjunction) {
+        this.topicConjunctions.add(topicConjunction);
+    }
+
+    public void remove() {
+        getTopicConjunctions().forEach(TopicConjunction::remove);
+        getTopicConjunctions().clear();
     }
 }

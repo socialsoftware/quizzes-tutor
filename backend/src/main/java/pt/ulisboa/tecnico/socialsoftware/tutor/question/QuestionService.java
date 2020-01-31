@@ -56,9 +56,9 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto findQuestionByNumber(Integer id) {
-        return questionRepository.findByNumber(id).map(QuestionDto::new)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, id));
+    public QuestionDto findQuestionByKey(Integer key) {
+        return questionRepository.findByKey(key).map(QuestionDto::new)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
 
     @Retryable(
@@ -84,10 +84,10 @@ public class QuestionService {
     public QuestionDto createQuestion(String courseName, QuestionDto questionDto) {
         Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 
-        if (questionDto.getNumber() == null) {
+        if (questionDto.getKey() == null) {
             int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
                     questionRepository.getMaxQuestionNumber() : 0;
-            questionDto.setNumber(maxQuestionNumber + 1);
+            questionDto.setKey(maxQuestionNumber + 1);
         }
 
         Question question = new Question(course, questionDto);
@@ -118,7 +118,6 @@ public class QuestionService {
         entityManager.remove(question);
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -146,7 +145,7 @@ public class QuestionService {
             entityManager.persist(image);
         }
 
-        question.getImage().setUrl(question.getNumber() + "." + type);
+        question.getImage().setUrl(question.getKey() + "." + type);
     }
 
     @Retryable(

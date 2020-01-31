@@ -39,7 +39,7 @@ public class UsersXmlExport {
 	private void exportUser(Element element, User user) {
 		Element userElement = new Element("user");
 
-		userElement.setAttribute("number", String.valueOf(user.getNumber()));
+		userElement.setAttribute("key", String.valueOf(user.getKey()));
 
 		if (user.getUsername() != null) {
 			userElement.setAttribute("username", user.getUsername());

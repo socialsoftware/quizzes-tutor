@@ -65,7 +65,7 @@ class CreateQuizServiceSpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         quiz = new QuizDto()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
         conclusionDate = LocalDateTime.now().plusDays(1)
@@ -77,14 +77,14 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setVersion(VERSION)
 
         def question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         question.setCourse(course)
         course.addQuestion(question)
         questionRepository.save(question)
 
         questionDto = new QuestionDto()
         questionDto.setId(question.getId())
-        questionDto.setNumber(1)
+        questionDto.setKey(1)
         questionDto.setSequence(1)
 
         def questions = new ArrayList()
@@ -104,7 +104,7 @@ class CreateQuizServiceSpockTest extends Specification {
         quizRepository.count() == 1L
         def result = quizRepository.findAll().get(0)
         result.getId() != null
-        result.getNumber() != null
+        result.getKey() != null
         result.getScramble()
         result.getTitle() == QUIZ_TITLE
         result.getCreationDate() != null

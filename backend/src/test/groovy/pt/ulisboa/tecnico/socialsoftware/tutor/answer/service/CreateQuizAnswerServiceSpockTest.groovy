@@ -29,10 +29,10 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
 
     def setup() {
         def user = new User()
-        user.setNumber(1)
+        user.setKey(1)
         userRepository.save(user)
         def quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quizRepository.save(quiz)
 
     }

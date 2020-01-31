@@ -59,9 +59,9 @@ public class UsersXmlImport {
 		XPathFactory xpfac = XPathFactory.instance();
 		XPathExpression<Element> xp = xpfac.compile("//users/user", Filters.element());
 		for (Element element : xp.evaluate(doc)) {
-			Integer number = Integer.valueOf(element.getAttributeValue("number"));
+			Integer key = Integer.valueOf(element.getAttributeValue("key"));
 
-			if (userService.findByNumber(number) == null) {
+			if (userService.findByKey(key) == null) {
 				String name = element.getAttributeValue("name");
 				String username = element.getAttributeValue("username");
 
@@ -71,7 +71,7 @@ public class UsersXmlImport {
 				}
 
 				User user = userService.createUser(name, username, role);
-				user.setNumber(number);
+				user.setKey(key);
 
 				if (element.getAttributeValue("year") != null) {
 					user.setYear(Integer.valueOf(element.getAttributeValue("year")));

@@ -52,7 +52,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     def "create a question with no image and one option"() {
         given: "a questionDto"
         def questionDto = new QuestionDto()
-        questionDto.setNumber(1)
+        questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
@@ -71,7 +71,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
-        result.getNumber() == 1
+        result.getKey() == 1
         result.getStatus() == Question.Status.AVAILABLE
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
@@ -88,7 +88,7 @@ class CreateQuestionServiceSpockTest extends Specification {
     def "create a question with image and two options"() {
         given: "a questionDto"
         def questionDto = new QuestionDto()
-        questionDto.setNumber(1)
+        questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
@@ -117,7 +117,7 @@ class CreateQuestionServiceSpockTest extends Specification {
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() != null
-        result.getNumber() == 1
+        result.getKey() == 1
         result.getStatus() == Question.Status.AVAILABLE
         result.getTitle() == QUESTION_TITLE
         result.getContent() == QUESTION_CONTENT
@@ -143,14 +143,14 @@ class CreateQuestionServiceSpockTest extends Specification {
 
         when: 'are created two questions'
         questionService.createQuestion(COURSE_NAME, questionDto)
-        questionDto.setNumber(null)
+        questionDto.setKey(null)
         questionService.createQuestion(COURSE_NAME, questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L
         def resultOne = questionRepository.findAll().get(0)
         def resultTwo = questionRepository.findAll().get(1)
-        resultOne.getNumber() + resultTwo.getNumber() == 3
+        resultOne.getKey() + resultTwo.getKey() == 3
     }
 
     @TestConfiguration

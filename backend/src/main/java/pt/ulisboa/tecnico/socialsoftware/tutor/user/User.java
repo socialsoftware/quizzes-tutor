@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private Integer id;
 
     @Column(unique=true, nullable = false)
-    private Integer number;
+    private Integer key;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -64,10 +64,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, Integer number, Integer year, User.Role role) {
+    public User(String name, String username, Integer key, Integer year, User.Role role) {
         this.name = name;
         setUsername(username);
-        this.number = number;
+        this.key = key;
         this.year = year;
         this.role = role;
         this.creationDate = LocalDateTime.now();
@@ -88,12 +88,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getKey() {
+        return key;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     @Override

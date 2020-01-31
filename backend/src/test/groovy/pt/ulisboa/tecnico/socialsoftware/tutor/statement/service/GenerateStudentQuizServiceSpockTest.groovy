@@ -69,13 +69,13 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         courseExecution.getUsers().add(user)
 
         questionOne = new Question()
-        questionOne.setNumber(1)
+        questionOne.setKey(1)
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         course.addQuestion(questionOne)
 
         questionTwo = new Question()
-        questionTwo.setNumber(2)
+        questionTwo.setKey(2)
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
         course.addQuestion(questionTwo)

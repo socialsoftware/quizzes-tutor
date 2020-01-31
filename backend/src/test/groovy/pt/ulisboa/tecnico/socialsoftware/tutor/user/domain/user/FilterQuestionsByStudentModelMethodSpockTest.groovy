@@ -36,7 +36,7 @@ class FilterQuestionsByStudentModelMethodSpockTest extends Specification {
         def questionSix = new Question()
         questionSix.setId(6)
         quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quizQuestionOne = new QuizQuestion(quiz, questionOne, 0)
         quizQuestionTwo = new QuizQuestion(quiz, questionTwo, 1)
         quizQuestionThree = new QuizQuestion(quiz, questionThree, 2)
@@ -45,7 +45,7 @@ class FilterQuestionsByStudentModelMethodSpockTest extends Specification {
         quizQuestionSix = new QuizQuestion(quiz, questionSix, 5)
 
         user = new User()
-        user.setNumber(1)
+        user.setKey(1)
 
         availableQuestions = [questionOne, questionTwo, questionThree, questionFour, questionFive, questionSix]
     }

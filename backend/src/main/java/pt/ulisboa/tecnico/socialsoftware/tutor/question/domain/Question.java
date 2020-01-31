@@ -21,7 +21,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(
         name = "questions",
         indexes = {
-                @Index(name = "question_indx_0", columnList = "number")
+                @Index(name = "question_indx_0", columnList = "key")
         })
 public class Question {
     @SuppressWarnings("unused")
@@ -34,7 +34,7 @@ public class Question {
     private Integer id;
 
     @Column(unique=true, nullable = false)
-    private Integer number;
+    private Integer key;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -75,7 +75,7 @@ public class Question {
     public Question(Course course, QuestionDto questionDto) {
         checkConsistentQuestion(questionDto);
         this.title = questionDto.getTitle();
-        this.number = questionDto.getNumber();
+        this.key = questionDto.getKey();
         this.content = questionDto.getContent();
         this.status = Status.valueOf(questionDto.getStatus());
 
@@ -90,7 +90,7 @@ public class Question {
 
         int index = 0;
         for (OptionDto optionDto : questionDto.getOptions()) {
-            optionDto.setNumber(index++);
+            optionDto.setSequence(index++);
             Option option = new Option(optionDto);
             this.options.add(option);
             option.setQuestion(this);
@@ -105,12 +105,12 @@ public class Question {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getKey() {
+        return key;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public String getContent() {
@@ -226,7 +226,7 @@ public class Question {
     public String toString() {
         return "Question{" +
                 "id=" + id +
-                ", number=" + number +
+                ", key=" + key +
                 ", content='" + content + '\'' +
                 ", title='" + title + '\'' +
                 ", numberOfAnswers=" + numberOfAnswers +
@@ -334,10 +334,10 @@ public class Question {
         }
     }
 
-    public void setOptionsNumber() {
+    public void setOptionsSequence() {
         int index = 0;
         for (Option option: getOptions()) {
-            option.setNumber(index++);
+            option.setSequence(index++);
         }
     }
 

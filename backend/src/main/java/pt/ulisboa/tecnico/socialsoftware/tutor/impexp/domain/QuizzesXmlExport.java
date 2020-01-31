@@ -43,7 +43,7 @@ public class QuizzesXmlExport {
 		Element quizElement = new Element("quiz");
         quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
         quizElement.setAttribute("academicTerm",quiz.getCourseExecution().getAcademicTerm());
-        quizElement.setAttribute("number", String.valueOf(quiz.getNumber()));
+        quizElement.setAttribute("key", String.valueOf(quiz.getKey()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
 
 		quizElement.setAttribute("title", quiz.getTitle());
@@ -84,7 +84,7 @@ public class QuizzesXmlExport {
 		Element optionElement = new Element("quizQuestion");
 
 		optionElement.setAttribute("sequence", String.valueOf(quizQuestion.getSequence()));
-		optionElement.setAttribute("questionNumber", String.valueOf(quizQuestion.getQuestion().getNumber()));
+		optionElement.setAttribute("questionKey", String.valueOf(quizQuestion.getQuestion().getKey()));
 
 		optionsElement.addContent(optionElement);
 	}

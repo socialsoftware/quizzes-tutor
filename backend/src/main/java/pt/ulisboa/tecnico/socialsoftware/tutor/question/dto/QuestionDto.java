@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class QuestionDto implements Serializable {
     private Integer id;
-    private Integer number;
+    private Integer key;
     private String title;
     private String content;
     private Integer difficulty;
@@ -35,7 +35,7 @@ public class QuestionDto implements Serializable {
 
     public QuestionDto(Question question) {
         this.id = question.getId();
-        this.number = question.getNumber();
+        this.key = question.getKey();
         this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
@@ -60,12 +60,12 @@ public class QuestionDto implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getKey() {
+        return key;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public String getContent() {

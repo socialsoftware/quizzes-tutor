@@ -79,7 +79,7 @@ public class QuizzesXmlImport {
         String acronym = quizElement.getAttributeValue("acronym");
         String academicTerm = quizElement.getAttributeValue("academicTerm");
 
-		Integer number = Integer.valueOf(quizElement.getAttributeValue("number"));
+		Integer key = Integer.valueOf(quizElement.getAttributeValue("key"));
 		boolean scramble = false;
 		if (quizElement.getAttributeValue("scramble") != null) {
 			scramble = Boolean.parseBoolean(quizElement.getAttributeValue("scramble"));
@@ -108,7 +108,7 @@ public class QuizzesXmlImport {
 		String version = quizElement.getAttributeValue("version");
 
 		QuizDto quizDto = new QuizDto();
-		quizDto.setNumber(number);
+		quizDto.setKey(key);
 		quizDto.setScramble(scramble);
 		quizDto.setTitle(title);
 		quizDto.setCreationDate(creationDate);
@@ -127,10 +127,10 @@ public class QuizzesXmlImport {
 	private void importQuizQuestions(Element quizQuestionsElement, QuizDto quizDto ) {
 		for (Element quizQuestionElement: quizQuestionsElement.getChildren("quizQuestion")) {
 			Integer sequence = Integer.valueOf(quizQuestionElement.getAttributeValue("sequence"));
-			Integer questionNumber = Integer.valueOf(quizQuestionElement.getAttributeValue("questionNumber"));
+			Integer questionKey = Integer.valueOf(quizQuestionElement.getAttributeValue("questionKey"));
 
-			Question question = questionRepository.findByNumber(questionNumber)
-					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionNumber));
+			Question question = questionRepository.findByKey(questionKey)
+					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
 
 			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizDto.getId());
 

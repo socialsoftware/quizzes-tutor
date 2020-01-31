@@ -38,8 +38,8 @@ public class UserService {
         return this.userRepository.findByUsername(username);
     }
 
-    public User findByNumber(Integer id) {
-        return this.userRepository.findByNumber(id);
+    public User findByKey(Integer key) {
+        return this.userRepository.findByKey(key);
     }
 
     public Integer getMaxUserNumber() {

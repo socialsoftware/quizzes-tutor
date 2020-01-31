@@ -19,9 +19,9 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
     @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId AND q.type <> 'STUDENT'", nativeQuery = true)
     List<Quiz> findTeacherQuizzes(int executionId);
 
-    @Query(value = "SELECT MAX(number) FROM quizzes", nativeQuery = true)
-    Integer getMaxQuizNumber();
+    @Query(value = "SELECT MAX(key) FROM quizzes", nativeQuery = true)
+    Integer getMaxQuizKey();
 
-    @Query(value = "SELECT * FROM quizzes q WHERE q.number = :number", nativeQuery = true)
-    Optional<Quiz> findByNumber(Integer number);
+    @Query(value = "SELECT * FROM quizzes q WHERE q.key = :key", nativeQuery = true)
+    Optional<Quiz> findByKey(Integer key);
 }
