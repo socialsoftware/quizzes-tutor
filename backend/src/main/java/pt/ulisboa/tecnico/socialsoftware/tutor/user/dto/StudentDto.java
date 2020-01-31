@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class StudentDto implements Serializable {
     private String username;
@@ -13,6 +14,8 @@ public class StudentDto implements Serializable {
     private Integer numberOfTeacherAnswers;
     private int percentageOfCorrectAnswers = 0;
     private int percentageOfCorrectTeacherAnswers = 0;
+    private LocalDateTime creationDate;
+    private LocalDateTime lastAccess;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
@@ -24,6 +27,8 @@ public class StudentDto implements Serializable {
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
         this.numberOfAnswers = user.getNumberOfAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
+        this.creationDate = user.getCreationDate();
+        this.lastAccess = user.getLastAccess();
 
         if (this.numberOfAnswers != 0) {
             this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;

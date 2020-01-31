@@ -69,7 +69,6 @@ public class User implements UserDetails {
         this.key = key;
         this.role = role;
         this.creationDate = LocalDateTime.now();
-        this.lastAccess = LocalDateTime.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfStudentQuizzes = 0;
         this.numberOfAnswers = 0;

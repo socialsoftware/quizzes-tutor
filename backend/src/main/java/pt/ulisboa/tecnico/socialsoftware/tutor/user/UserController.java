@@ -6,9 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
@@ -34,18 +32,18 @@ public class UserController {
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
     }
 
-    @PostMapping("/users")
-    public User createUser(@Valid @RequestBody UserDto user) {
-        return userService.createUser(user.getName(), user.getUsername(), user.getRole());
-    }
+//    @PostMapping("/users")
+//    public User createUser(@Valid @RequestBody UserDto user) {
+//        return userService.createUser(user.getName(), user.getUsername(), user.getRole());
+//    }
 
-    @PutMapping("/users/{userId}")
-    public User updateUser(@PathVariable Integer userId,
-                              @Valid @RequestBody UserDto user) {
-
-        return userRepository.findById(userId)
-                .map(usr -> userRepository.save(usr)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-    }
+//    @PutMapping("/users/{userId}")
+//    public User updateUser(@PathVariable Integer userId,
+//                              @Valid @RequestBody UserDto user) {
+//
+//        return userRepository.findById(userId)
+//                .map(usr -> userRepository.save(usr)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+//    }
 
 
     @DeleteMapping("/users/{userId}")
