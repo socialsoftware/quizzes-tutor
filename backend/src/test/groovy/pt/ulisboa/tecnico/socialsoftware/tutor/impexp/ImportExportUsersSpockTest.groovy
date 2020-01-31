@@ -47,12 +47,12 @@ class ImportExportUsersSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        def user = new User(RITO, AR, 1,2019, User.Role.TEACHER)
+        def user = new User(RITO, AR, 1, User.Role.TEACHER)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)
 
-        user = new User(PEDRO, PC, 2,2019, User.Role.STUDENT)
+        user = new User(PEDRO, PC, 2, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)

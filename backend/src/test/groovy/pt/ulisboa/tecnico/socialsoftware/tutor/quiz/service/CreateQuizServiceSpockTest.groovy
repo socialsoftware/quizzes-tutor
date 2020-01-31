@@ -72,7 +72,6 @@ class CreateQuizServiceSpockTest extends Specification {
         quiz.setScramble(true)
         quiz.setAvailableDate(availableDate.format(formatter))
         quiz.setConclusionDate(conclusionDate.format(formatter))
-        quiz.setYear(2019)
         quiz.setSeries(1)
         quiz.setVersion(VERSION)
 
@@ -110,7 +109,6 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getCreationDate() != null
         result.getAvailableDate().format(formatter) == availableDate.format(formatter)
         result.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
-        result.getYear() == 2019
         result.getType() == Quiz.QuizType.STUDENT
         result.getSeries() == 1
         result.getVersion() == VERSION

@@ -44,10 +44,7 @@ public class UserController {
                               @Valid @RequestBody UserDto user) {
 
         return userRepository.findById(userId)
-                .map(usr -> {
-                    usr.setYear(user.getYear());
-                    return userRepository.save(usr);
-                }).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+                .map(usr -> userRepository.save(usr)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
     }
 
 

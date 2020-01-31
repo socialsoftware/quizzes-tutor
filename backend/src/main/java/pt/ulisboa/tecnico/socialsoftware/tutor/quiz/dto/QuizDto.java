@@ -21,7 +21,6 @@ public class QuizDto implements Serializable {
     private String creationDate = null;
     private String availableDate = null;
     private String conclusionDate = null;
-    private Integer year;
     private Quiz.QuizType type;
     private Integer series;
     private String version;
@@ -40,7 +39,6 @@ public class QuizDto implements Serializable {
         this.key = quiz.getKey();
         this.scramble = quiz.getScramble();
         this.title = quiz.getTitle();
-        this.year = quiz.getYear();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
@@ -126,14 +124,6 @@ public class QuizDto implements Serializable {
         this.conclusionDate = conclusionDate;
     }
 
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
-    }
-
     public Quiz.QuizType getType() {
         return type;
     }
@@ -213,7 +203,6 @@ public class QuizDto implements Serializable {
                 ", creationDate='" + creationDate + '\'' +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
-                ", year=" + year +
                 ", type=" + type +
                 ", series=" + series +
                 ", version='" + version + '\'' +

@@ -73,10 +73,6 @@ public class UsersXmlImport {
 				User user = userService.createUser(name, username, role);
 				user.setKey(key);
 
-				if (element.getAttributeValue("year") != null) {
-					user.setYear(Integer.valueOf(element.getAttributeValue("year")));
-				}
-
 				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
 		}

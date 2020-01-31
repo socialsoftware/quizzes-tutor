@@ -87,7 +87,6 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizDto.setCreationDate(creationDate.format(formatter))
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
-        quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
@@ -115,7 +114,6 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizResult.getCreationDate().format(formatter) == creationDate.format(formatter)
         quizResult.getAvailableDate().format(formatter) == availableDate.format(formatter)
         quizResult.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
-        quizResult.getYear() == 2019
         quizResult.getType() == Quiz.QuizType.EXAM
         quizResult.getSeries() == 1
         quizResult.getVersion() == VERSION

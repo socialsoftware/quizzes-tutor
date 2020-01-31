@@ -99,7 +99,6 @@ public class QuizzesXmlImport {
         if (quizElement.getAttributeValue("conclusionDate") != null) {
             conclusionDate = quizElement.getAttributeValue("conclusionDate");
         }
-		Integer year = Integer.valueOf(quizElement.getAttributeValue("year"));
 		String type = quizElement.getAttributeValue("type");
 		Integer series = null;
 		if (quizElement.getAttributeValue("series") != null) {
@@ -114,7 +113,6 @@ public class QuizzesXmlImport {
 		quizDto.setCreationDate(creationDate);
         quizDto.setAvailableDate(availableDate);
         quizDto.setConclusionDate(conclusionDate);
-		quizDto.setYear(year);
 		quizDto.setType(Quiz.QuizType.valueOf(type));
 		quizDto.setSeries(series);
 		quizDto.setVersion(version);

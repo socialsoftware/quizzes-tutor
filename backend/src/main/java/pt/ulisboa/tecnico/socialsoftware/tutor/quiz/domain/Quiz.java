@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -54,7 +53,6 @@ public class Quiz {
     @Enumerated(EnumType.STRING)
     private QuizType type;
 
-    private Integer year;
     private Integer series;
     private String version;
 
@@ -80,7 +78,6 @@ public class Quiz {
         this.creationDate = quizDto.getCreationDateDate();
         setAvailableDate(quizDto.getAvailableDateDate());
         setConclusionDate(quizDto.getConclusionDateDate());
-        this.year = quizDto.getYear();
         this.series = quizDto.getSeries();
         this.version = quizDto.getVersion();
     }
@@ -142,14 +139,6 @@ public class Quiz {
     public void setConclusionDate(LocalDateTime conclusionDate) {
         checkConclusionDate(conclusionDate);
         this.conclusionDate = conclusionDate;
-    }
-
-    public Integer getYear() {
-    return year;
-    }
-
-    public void setYear(Integer year) {
-    this.year = year;
     }
 
     public QuizType getType() {
@@ -224,7 +213,6 @@ public class Quiz {
                 ", title='" + title + '\'' +
                 ", type=" + type +
                 ", id=" + id +
-                ", year=" + year +
                 ", series=" + series +
                 ", version='" + version + '\'' +
                 '}';
@@ -284,17 +272,6 @@ public class Quiz {
 
         this.setCreationDate(LocalDateTime.now());
         this.setType(QuizType.STUDENT);
-
-        // TODO change based on fenix info
-        Calendar calendar = Calendar.getInstance();
-
-        int year = calendar.get(Calendar.YEAR);
-
-        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
-            year -= 1;
-        }
-
-        this.setYear(year);
         this.title = "Generated Quiz";
     }
 }

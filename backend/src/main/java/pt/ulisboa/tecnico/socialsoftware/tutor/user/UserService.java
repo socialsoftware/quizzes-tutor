@@ -16,7 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,15 +51,8 @@ public class UserService {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
         }
-        Calendar calendar = Calendar.getInstance();
 
-        int year = calendar.get(Calendar.YEAR);
-
-        if (calendar.get(Calendar.MONTH) < Calendar.AUGUST) {
-            year -= 1;
-        }
-
-        User user = new User(name, username, getMaxUserNumber() + 1, year, role);
+        User user = new User(name, username, getMaxUserNumber() + 1, role);
         entityManager.persist(user);
         return user;
     }

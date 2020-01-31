@@ -108,7 +108,6 @@ class ImportExportAnswersSpockTest extends Specification {
         quizDto.setCreationDate(creationDate.format(formatter))
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
-        quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)

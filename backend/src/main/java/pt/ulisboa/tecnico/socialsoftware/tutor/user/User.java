@@ -33,7 +33,6 @@ public class User implements UserDetails {
     private String username;
 
     private String name;
-    private Integer year;
     private String enrolledCoursesAcronyms;
 
     @Column(name = "number_of_teacher_quizzes", columnDefinition = "integer default 0")
@@ -64,11 +63,10 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, Integer key, Integer year, User.Role role) {
+    public User(String name, String username, Integer key, User.Role role) {
         this.name = name;
         setUsername(username);
         this.key = key;
-        this.year = year;
         this.role = role;
         this.creationDate = LocalDateTime.now();
         this.lastAccess = LocalDateTime.now();
@@ -111,14 +109,6 @@ public class User implements UserDetails {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
     }
 
     public String getEnrolledCoursesAcronyms() {
@@ -263,7 +253,6 @@ public class User implements UserDetails {
                 ", id=" + id +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", year=" + year +
                 ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +

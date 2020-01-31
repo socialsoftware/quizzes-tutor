@@ -64,7 +64,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
+        user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 

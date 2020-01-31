@@ -71,7 +71,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', USERNAME, 1, 2019, User.Role.STUDENT)
+        user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -84,7 +84,6 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.TEACHER)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
-        quiz.setYear(2019)
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
 

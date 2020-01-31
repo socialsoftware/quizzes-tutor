@@ -51,10 +51,6 @@ public class UsersXmlExport {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
-		if (user.getYear() != null) {
-			userElement.setAttribute("year", String.valueOf(user.getYear()));
-		}
-
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);

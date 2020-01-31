@@ -7,7 +7,6 @@ import java.io.Serializable;
 public class StudentDto implements Serializable {
     private String username;
     private String name;
-    private Integer year;
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfAnswers;
@@ -18,7 +17,6 @@ public class StudentDto implements Serializable {
     public StudentDto(User user) {
         this.username = user.getUsername();
         this.name = user.getName();
-        this.year = user.getYear();
         if (user.getNumberOfTeacherQuizzes() == null) {
            user.calculateNumbers();
         }
@@ -50,14 +48,6 @@ public class StudentDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
     }
 
     public long getNumberOfTeacherQuizzes() {
@@ -113,7 +103,6 @@ public class StudentDto implements Serializable {
         return "StudentDto{" +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", year=" + year +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +

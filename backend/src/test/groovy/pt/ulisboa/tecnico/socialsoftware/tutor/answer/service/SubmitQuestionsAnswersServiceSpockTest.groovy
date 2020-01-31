@@ -84,7 +84,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', "username", 1, 2019, User.Role.STUDENT)
+        user = new User('name', "username", 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -164,7 +164,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
         resultAnswersDto.setAnswers(resultsDto)
         and: 'another user'
-        def otherUser = new User('name', "usernam2", 2, 2019, User.Role.STUDENT)
+        def otherUser = new User('name', "usernam2", 2, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(otherUser)
