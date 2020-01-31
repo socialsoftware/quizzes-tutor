@@ -79,9 +79,6 @@ public class StatementService {
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        quiz.setCourseExecution(courseExecution);
-        courseExecution.addQuiz(quiz);
-
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getName());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
@@ -97,6 +94,9 @@ public class StatementService {
         quiz.generate(availableQuestions);
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+
+        quiz.setCourseExecution(courseExecution);
+        courseExecution.addQuiz(quiz);
 
         entityManager.persist(quiz);
         entityManager.persist(quizAnswer);
