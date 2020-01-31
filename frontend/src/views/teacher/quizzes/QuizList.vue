@@ -38,7 +38,11 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="showQuiz(item.id)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="showQuizDialog(item.id)"
               >visibility</v-icon
             >
           </template>
@@ -65,14 +69,37 @@
           </template>
           <span>Delete Quiz</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon small class="mr-2" v-on="on" @click="showQrCode(item.id)"
+              >fas fa-qrcode</v-icon
+            >
+          </template>
+          <span>Show QR Code</span>
+        </v-tooltip>
       </template>
     </v-data-table>
     <show-quiz-dialog
       v-if="quiz"
-      :dialog="previewQuiz"
+      :dialog="quizDialog"
       :quiz="quiz"
       v-on:close-quiz-dialog="closeQuizDialog"
     />
+
+    <v-dialog
+      v-model="qrcodeDialog"
+      @keydown.esc="closeQrCodeDialog"
+      max-width="75%"
+    >
+      <v-card>
+        <qrcode-vue
+          class="qrcode"
+          :value="qrValue"
+          level="H"
+          size="1000"
+        ></qrcode-vue>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -81,15 +108,18 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
+import QrcodeVue from 'qrcode.vue';
 
 @Component({
-  components: { 'show-quiz-dialog': ShowQuizDialog }
+  components: { 'show-quiz-dialog': ShowQuizDialog, 'qrcode-vue': QrcodeVue }
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
   search: string = '';
-  previewQuiz: boolean = false;
+  quizDialog: boolean = false;
+  qrcodeDialog: boolean = false;
+  qrValue: number | null = null;
   headers: object = [
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
     { text: 'Date', value: 'sortingDate', align: 'center', width: '10%' },
@@ -131,18 +161,28 @@ export default class QuizList extends Vue {
     }
   ];
 
-  async showQuiz(quizId: number) {
+  async showQuizDialog(quizId: number) {
     try {
       this.quiz = await RemoteServices.getQuiz(quizId);
-      this.previewQuiz = true;
+      this.quizDialog = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
   }
 
   closeQuizDialog() {
-    this.previewQuiz = false;
+    this.quizDialog = false;
     this.quiz = null;
+  }
+
+  showQrCode(quizId: number) {
+    this.qrValue = quizId;
+    this.qrcodeDialog = true;
+  }
+
+  closeQrCodeDialog() {
+    this.qrcodeDialog = false;
+    this.qrValue = null;
   }
 
   newQuiz() {
@@ -166,4 +206,14 @@ export default class QuizList extends Vue {
 }
 </script>
 
-<style lang="scss" scoped />
+<style lang="scss">
+.qrcode {
+  canvas {
+    width: 80vw !important;
+    height: 80vw !important;
+    max-width: 80vh !important;
+    max-height: 80vh !important;
+    padding: 30px;
+  }
+}
+</style>

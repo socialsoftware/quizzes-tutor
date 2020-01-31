@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -78,9 +77,12 @@ public class StatementService {
         Quiz quiz = new Quiz();
         quiz.setNumber(quizService.getMaxQuizNumber() + 1);
 
-        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        List<Question> availableQuestions = questionRepository.findAvailableQuestions(course.getName());
+        quiz.setCourseExecution(courseExecution);
+        courseExecution.addQuiz(quiz);
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getName());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 //        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);

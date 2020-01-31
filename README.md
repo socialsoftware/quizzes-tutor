@@ -97,8 +97,7 @@ psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 psql tutordb < dump.sql
 ```
-* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://tolocalhost.com:8081/login and accessess curricular information**
-* **Add `127.0.1.1	tolocalhost.com` to your `/etc/hosts` file so Oauth with fenix works locally**
+* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://localhost:8081/login and accessess curricular information**
 * **Rename `backend/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
 * **Run server**
 ```

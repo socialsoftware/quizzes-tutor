@@ -2,14 +2,7 @@
 .mvn
 .DS_Store
 
-/scripts/
 scripts
 
-SQL/data.json
 backend/src/main/resources/static/images/questions/
-*.xlsx
-*.xls
-pentaho/**.js
-extract_data/**.json
-dump/*.bak
 data/

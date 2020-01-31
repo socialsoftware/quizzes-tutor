@@ -17,6 +17,7 @@ import SolvedQuizzesView from './views/student/SolvedQuizzesView.vue';
 import QuizView from './views/student/QuizView.vue';
 import ResultsView from './views/student/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
+import ScanView from './views/student/ScanView.vue';
 
 import AdminManagementView from './views/admin/AdminManagementView.vue';
 import NotFoundView from './views/NotFoundView.vue';
@@ -34,20 +35,23 @@ let router = new Router({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { title: 'Software Architecture', requiredAuth: 'None' }
+      meta: { title: process.env.VUE_APP_NAME, requiredAuth: 'None' }
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { title: 'Software Architecture - Login', requiredAuth: 'None' }
+      meta: {
+        title: process.env.VUE_APP_NAME + ' - Login',
+        requiredAuth: 'None'
+      }
     },
     {
       path: '/courses',
       name: 'courses',
       component: CourseSelectionView,
       meta: {
-        title: 'Software Architecture - Course Selection',
+        title: process.env.VUE_APP_NAME + ' - Course Selection',
         requiredAuth: 'None'
       }
     },
@@ -61,7 +65,7 @@ let router = new Router({
           name: 'questions-management',
           component: QuestionsView,
           meta: {
-            title: 'Software Architecture - Questions',
+            title: process.env.VUE_APP_NAME + ' - Questions',
             requiredAuth: 'Teacher'
           }
         },
@@ -70,7 +74,7 @@ let router = new Router({
           name: 'topics-management',
           component: TopicsView,
           meta: {
-            title: 'Software Architecture - Topics',
+            title: process.env.VUE_APP_NAME + ' - Topics',
             requiredAuth: 'Teacher'
           }
         },
@@ -79,7 +83,7 @@ let router = new Router({
           name: 'quizzes-management',
           component: QuizzesView,
           meta: {
-            title: 'Software Architecture - Quizzes',
+            title: process.env.VUE_APP_NAME + ' - Quizzes',
             requiredAuth: 'Teacher'
           }
         },
@@ -88,7 +92,7 @@ let router = new Router({
           name: 'assessments-management',
           component: AssessmentsView,
           meta: {
-            title: 'Software Architecture - Assessment Topics',
+            title: process.env.VUE_APP_NAME + ' - Assessment Topics',
             requiredAuth: 'Teacher'
           }
         },
@@ -97,7 +101,7 @@ let router = new Router({
           name: 'students-management',
           component: StudentsView,
           meta: {
-            title: 'Software Architecture - Students',
+            title: process.env.VUE_APP_NAME + ' - Students',
             requiredAuth: 'Teacher'
           }
         },
@@ -106,7 +110,7 @@ let router = new Router({
           name: 'impexp-management',
           component: ImpExpView,
           meta: {
-            title: 'Software Architecture - ImpExp',
+            title: process.env.VUE_APP_NAME + ' - ImpExp',
             requiredAuth: 'Teacher'
           }
         }
@@ -122,7 +126,7 @@ let router = new Router({
           name: 'available-quizzes',
           component: AvailableQuizzesView,
           meta: {
-            title: 'Software Architecture - Available Quizzes',
+            title: process.env.VUE_APP_NAME + ' - Available Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -131,7 +135,7 @@ let router = new Router({
           name: 'create-quizzes',
           component: CreateQuizzesView,
           meta: {
-            title: 'Software Architecture - Create Quizzes',
+            title: process.env.VUE_APP_NAME + ' - Create Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -140,7 +144,7 @@ let router = new Router({
           name: 'solved-quizzes',
           component: SolvedQuizzesView,
           meta: {
-            title: 'Software Architecture - Solved Quizzes',
+            title: process.env.VUE_APP_NAME + ' - Solved Quizzes',
             requiredAuth: 'Student'
           }
         },
@@ -149,7 +153,7 @@ let router = new Router({
           name: 'solve-quiz',
           component: QuizView,
           meta: {
-            title: 'Software Architecture - Quiz',
+            title: process.env.VUE_APP_NAME + ' - Quiz',
             requiredAuth: 'Student',
             requiresVerification: true
           }
@@ -159,7 +163,7 @@ let router = new Router({
           name: 'quiz-results',
           component: ResultsView,
           meta: {
-            title: 'Software Architecture - Results',
+            title: process.env.VUE_APP_NAME + ' - Results',
             requiredAuth: 'Student'
           }
         },
@@ -168,19 +172,19 @@ let router = new Router({
           name: 'stats',
           component: StatsView,
           meta: {
-            title: 'Software Architecture - Stats',
+            title: process.env.VUE_APP_NAME + ' - Stats',
             requiredAuth: 'Student'
           }
-        } /*,
+        },
         {
-          path: "achievements",
-          name: "achievements",
-          component: AchievementsView,
+          path: 'scan',
+          name: 'scan',
+          component: ScanView,
           meta: {
-            title: "Software Architecture - Achievements",
-            requiredAuth: "Student"
+            title: process.env.VUE_APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
           }
-        }*/
+        }
       ]
     },
     {
@@ -188,7 +192,7 @@ let router = new Router({
       name: 'admin-management',
       component: AdminManagementView,
       meta: {
-        title: 'Software Architecture - AdminManagement',
+        title: process.env.VUE_APP_NAME + ' - AdminManagement',
         requiredAuth: 'Admin'
       }
     },

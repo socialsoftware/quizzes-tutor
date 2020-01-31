@@ -1,19 +1,5 @@
-<template v-if="year">
+<template>
   <v-card class="table">
-    <v-card-title>
-      <v-row align="center">
-        <v-col class="d-flex" cols="12" sm="6">
-          <v-select
-            v-model="course"
-            :items="courseExecutions"
-            item-text="academicTerm"
-            item-value="academicTerm"
-            return-object
-            label="Semestre"
-          />
-        </v-col>
-      </v-row>
-    </v-card-title>
     <v-data-table
       :headers="headers"
       :items="students"
@@ -23,7 +9,16 @@
       class="elevation-1"
     >
       <template v-slot:top>
-        <v-text-field v-model="search" label="Search" class="mx-4" />
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            class="mx-2"
+          />
+
+          <v-spacer />
+        </v-card-title>
       </template>
 
       <template v-slot:item.percentageOfCorrectAnswers="{ item }">
@@ -54,7 +49,6 @@ import { Student } from '@/models/management/Student';
 @Component
 export default class StudentsView extends Vue {
   course: Course | null = null;
-  courseExecutions: Course[] = [];
   students: Student[] = [];
   search: string = '';
   headers: object = [
@@ -100,7 +94,6 @@ export default class StudentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.courseExecutions = await RemoteServices.getCourseExecutions();
       this.course = this.$store.getters.getCurrentCourse;
     } catch (error) {
       await this.$store.dispatch('error', error);

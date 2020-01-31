@@ -33,9 +33,8 @@ public class TutorApplication extends SpringBootServletInitializer implements In
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        if (!profile.equals("test")) {
+        if (profile.equals("prod")) {
             impExpService.importAll();
         }
     }
-
 }

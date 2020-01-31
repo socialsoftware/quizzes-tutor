@@ -8,6 +8,12 @@ const glob = require('glob-all');
 
 const isProductionEnvFlag = process.env.NODE_ENV === 'production';
 
+let custompaths = {
+  host: 'http://localhost:8081/',
+  port: 8081,
+  publicdomain: 'localhost:8081'
+};
+
 module.exports = {
   publicPath: '/',
   outputDir: 'dist',
@@ -41,7 +47,7 @@ module.exports = {
         cacheGroups: {
           default: false,
           common: {
-            name: `chunk-common`,
+            name: 'chunk-common',
             minChunks: 2,
             priority: -20,
             chunks: 'initial',
@@ -71,12 +77,15 @@ module.exports = {
       // https://github.com/FullHuman/purgecss/issues/67
       isProductionEnvFlag
         ? new PurgecssPlugin({
-            paths: glob.sync([
-              path.join(__dirname, './public/index.html'),
-              path.join(__dirname, './**/*.vue'),
-              path.join(__dirname, './src/**/*.js'),
-              path.join(__dirname, './node_modules/vuetify/src/**/*.ts')
-            ])
+            paths: glob.sync(
+              [
+                path.join(__dirname, './public/index.html'),
+                path.join(__dirname, './**/*.vue'),
+                path.join(__dirname, './src/**/*.js'),
+                path.join(__dirname, './node_modules/vuetify/src/**/*.ts')
+              ],
+              { nodir: true }
+            )
           })
         : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
@@ -113,11 +122,22 @@ module.exports = {
     }
   },*/
 
+
+
+
+
   // configure webpack-dev-server behavior
   devServer: {
+    allowedHosts: [
+      '.localhost',
+      'localhost',
+      '127.0.0.1',
+    ],
     open: process.platform === 'darwin',
     host: '0.0.0.0',
-    port: 8081,
+    port: custompaths.port,
+    public: custompaths.publicdomain,
+    publicPath: custompaths.host,
     https: false,
     hotOnly: false,
     disableHostCheck: true,
