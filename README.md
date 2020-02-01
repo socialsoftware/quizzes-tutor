@@ -73,10 +73,10 @@ Students can then answer those questions in sugested quizzes or generated quizze
 # Technologies
 
 * Require download
-  * [Postgres 10 or 12](https://www.postgresql.org/)
+  * [Postgres >= 10](https://www.postgresql.org/)
   * [Java 11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
   * [Maven](https://maven.apache.org/download.cgi)
-  * [Node 12.14](https://nodejs.org/en/)
+  * [Node 12.14](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)
 * No download required
   * [Spring-boot](https://spring.io/)
@@ -86,11 +86,12 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 * **Install**
 ```
-sudo apt update
-sudo apt install postgresql nodejs npm
+sudo apt update && sudo apt upgrade
+sudo apt install openjdk-11-jdk postgresql
 ```
-* **Change to postgres user and create DB**
+* **Start db, change to postgres user and create DB**
 ```
+sudo service postgresql start
 sudo su -l postgres
 dropdb tutordb
 createdb tutordb
@@ -99,6 +100,8 @@ createdb tutordb
 ```
 psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
+\q
+exit
 psql tutordb < dump.sql
 ```
 * **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://localhost:8081/login and accessess curricular information**
