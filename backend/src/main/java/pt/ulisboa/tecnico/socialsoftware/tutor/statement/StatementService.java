@@ -75,7 +75,7 @@ public class StatementService {
         User user = userRepository.findByUsername(username);
 
         Quiz quiz = new Quiz();
-        quiz.setNumber(quizService.getMaxQuizNumber() + 1);
+        quiz.setKey(quizService.getMaxQuizKey() + 1);
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 

@@ -48,7 +48,7 @@ class UpdateTopicsServiceSpockTest extends Specification {
         courseRepository.save(course)
 
         question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         question.setCourse(course)
         course.addQuestion(question)
 

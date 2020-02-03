@@ -63,13 +63,13 @@ class ImportExportQuizzesSpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
-        questionDto.setNumber(1)
+        questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
 
         def optionDto = new OptionDto()
-        optionDto.setNumber(1)
+        optionDto.setSequence(1)
         optionDto.setContent(OPTION_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
@@ -78,7 +78,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         questionDto = questionService.createQuestion(COURSE_NAME, questionDto)
 
         def quizDto = new QuizDto()
-        quizDto.setNumber(1)
+        quizDto.setKey(1)
         quizDto.setScramble(false)
         quizDto.setTitle(QUIZ_TITLE)
         creationDate = LocalDateTime.now()
@@ -87,7 +87,6 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizDto.setCreationDate(creationDate.format(formatter))
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
-        quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
@@ -109,13 +108,12 @@ class ImportExportQuizzesSpockTest extends Specification {
         quizzesXml != null
         quizRepository.findAll().size() == 1
         def quizResult = quizRepository.findAll().get(0)
-        quizResult.getNumber() == 1
+        quizResult.getKey() == 1
         !quizResult.getScramble()
         quizResult.getTitle() == QUIZ_TITLE
         quizResult.getCreationDate().format(formatter) == creationDate.format(formatter)
         quizResult.getAvailableDate().format(formatter) == availableDate.format(formatter)
         quizResult.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
-        quizResult.getYear() == 2019
         quizResult.getType() == Quiz.QuizType.EXAM
         quizResult.getSeries() == 1
         quizResult.getVersion() == VERSION
@@ -123,7 +121,7 @@ class ImportExportQuizzesSpockTest extends Specification {
         def quizQuestionResult =  quizResult.getQuizQuestions().stream().findAny().orElse(null)
         quizQuestionResult.getSequence() == 0
         quizQuestionResult.getQuiz() == quizResult
-        quizQuestionResult.getQuestion().getNumber() == 1
+        quizQuestionResult.getQuestion().getKey() == 1
     }
 
     @TestConfiguration

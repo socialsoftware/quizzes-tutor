@@ -75,9 +75,9 @@ public class AnswersXmlImport {
 
 	private void loadQuestionMap() {
 		questionMap = questionRepository.findAll().stream()
-				.collect(Collectors.toMap(Question::getNumber,
+				.collect(Collectors.toMap(Question::getKey,
 						question -> question.getOptions().stream()
-								.collect(Collectors.toMap(Option::getNumber,Option::getId))));
+								.collect(Collectors.toMap(Option::getSequence,Option::getId))));
 	}
 
 	public void importAnswers(String answersXml, AnswerService answerService, QuestionRepository questionRepository,
@@ -109,13 +109,13 @@ public class AnswersXmlImport {
 			completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
 		}
 
-		Integer quizNumber = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("number"));
-		Quiz quiz = quizRepository.findByNumber(quizNumber)
+		Integer quizKey = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("key"));
+		Quiz quiz = quizRepository.findByKey(quizKey)
 				.orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
-						"quiz id does not exist " + quizNumber));
+						"quiz id does not exist " + quizKey));
 
-		Integer number = Integer.valueOf(answerElement.getChild("user").getAttributeValue("number"));
-		User user = userRepository.findByNumber(number);
+		Integer key = Integer.valueOf(answerElement.getChild("user").getAttributeValue("key"));
+		User user = userRepository.findByKey(key);
 
 		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
 		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId()).get();
@@ -146,9 +146,9 @@ public class AnswersXmlImport {
 
 			Integer optionId = null;
 			if (questionAnswerElement.getChild("option") != null) {
-				Integer questionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionNumber"));
-				Integer optionNumber = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("number"));
-				optionId = questionMap.get(questionNumber).get(optionNumber);
+				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionKey"));
+				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("sequence"));
+				optionId = questionMap.get(questionKey).get(optionSequence);
 			}
 
 			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();

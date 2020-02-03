@@ -86,12 +86,12 @@ class ImportExportAnswersSpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
-        questionDto.setNumber(1)
+        questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
         def optionDto = new OptionDto()
-        optionDto.setNumber(0)
+        optionDto.setSequence(0)
         optionDto.setContent(OPTION_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
@@ -100,7 +100,7 @@ class ImportExportAnswersSpockTest extends Specification {
         def question = questionService.createQuestion(COURSE_NAME, questionDto)
 
         def quizDto = new QuizDto()
-        quizDto.setNumber(1)
+        quizDto.setKey(1)
         quizDto.setTitle(QUIZ_TITLE)
         creationDate = LocalDateTime.now()
         availableDate = LocalDateTime.now()
@@ -108,7 +108,6 @@ class ImportExportAnswersSpockTest extends Specification {
         quizDto.setCreationDate(creationDate.format(formatter))
         quizDto.setAvailableDate(availableDate.format(formatter))
         quizDto.setConclusionDate(conclusionDate.format(formatter))
-        quizDto.setYear(2019)
         quizDto.setType(Quiz.QuizType.EXAM)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
@@ -151,7 +150,7 @@ class ImportExportAnswersSpockTest extends Specification {
         quizAnswerResult.getAnswerDate() == answerDate
         quizAnswerResult.getCompleted()
         quizAnswerResult.getUser().getUsername() == 'pc'
-        quizAnswerResult.getQuiz().getNumber() == 1
+        quizAnswerResult.getQuiz().getKey() == 1
         questionAnswerRepository.findAll().size() == 1
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)
         questionAnswerResult.getTimeTaken() == timeTaken

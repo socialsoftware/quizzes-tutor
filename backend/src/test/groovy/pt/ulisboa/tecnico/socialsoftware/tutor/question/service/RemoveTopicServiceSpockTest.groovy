@@ -21,7 +21,7 @@ class RemoveTopicServiceSpockTest extends Specification {
     private static final String TOPIC_ONE = 'nameOne'
     private static final String TOPIC_TWO = 'nameTwo'
     private static final String TOPIC_THREE = 'nameThree'
-    private static final Integer NUMBER = 1
+    private static final Integer KEY = 1
 
     @Autowired
     TopicService topicService
@@ -50,7 +50,7 @@ class RemoveTopicServiceSpockTest extends Specification {
         courseRepository.save(course)
 
         question = new Question()
-        question.setNumber(NUMBER)
+        question.setKey(KEY)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_ONE)

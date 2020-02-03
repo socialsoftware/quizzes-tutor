@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private Integer id;
 
     @Column(unique=true, nullable = false)
-    private Integer number;
+    private Integer key;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -33,7 +33,6 @@ public class User implements UserDetails {
     private String username;
 
     private String name;
-    private Integer year;
     private String enrolledCoursesAcronyms;
 
     @Column(name = "number_of_teacher_quizzes", columnDefinition = "integer default 0")
@@ -64,14 +63,12 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String name, String username, Integer number, Integer year, User.Role role) {
+    public User(String name, String username, Integer key, User.Role role) {
         this.name = name;
         setUsername(username);
-        this.number = number;
-        this.year = year;
+        this.key = key;
         this.role = role;
         this.creationDate = LocalDateTime.now();
-        this.lastAccess = LocalDateTime.now();
         this.numberOfTeacherQuizzes = 0;
         this.numberOfStudentQuizzes = 0;
         this.numberOfAnswers = 0;
@@ -88,12 +85,12 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return number;
+    public Integer getKey() {
+        return key;
     }
 
-    public void setNumber(Integer number) {
-        this.number = number;
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     @Override
@@ -111,14 +108,6 @@ public class User implements UserDetails {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
     }
 
     public String getEnrolledCoursesAcronyms() {
@@ -263,7 +252,6 @@ public class User implements UserDetails {
                 ", id=" + id +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", year=" + year +
                 ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +

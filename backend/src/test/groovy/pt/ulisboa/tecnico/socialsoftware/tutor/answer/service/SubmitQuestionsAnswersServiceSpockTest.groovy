@@ -84,12 +84,12 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', "username", 1, 2019, User.Role.STUDENT)
+        user = new User('name', "username", 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
         def quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quiz.setType(Quiz.QuizType.STUDENT)
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
@@ -97,7 +97,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         quizAnswer = new QuizAnswer(user, quiz)
 
         def question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         question.setCourse(course)
         course.addQuestion(question)
 
@@ -164,7 +164,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setQuizAnswerId(quizAnswer.getId())
         resultAnswersDto.setAnswers(resultsDto)
         and: 'another user'
-        def otherUser = new User('name', "usernam2", 2, 2019, User.Role.STUDENT)
+        def otherUser = new User('name', "usernam2", 2, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(otherUser)
@@ -184,9 +184,9 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         def resultsDto = new ArrayList<ResultAnswerDto>()
         def resultDto = new ResultAnswerDto()
         def quiz = new Quiz()
-        quiz.setNumber(2)
+        quiz.setKey(2)
         def question = new Question()
-        question.setNumber(2)
+        question.setKey(2)
         def quizQuestion = new QuizQuestion(quiz, question, 0)
         quizRepository.save(quiz)
         questionRepository.save(question)
@@ -215,7 +215,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         def otherOptionOK = new Option()
         otherOptionOK.setCorrect(true)
         def otherQuestion = new Question()
-        otherQuestion.setNumber(2)
+        otherQuestion.setKey(2)
         otherQuestion.addOption(otherOptionOK)
         questionRepository.save(otherQuestion)
         optionRepository.save(otherOptionOK)

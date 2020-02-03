@@ -15,13 +15,12 @@ import java.util.stream.Collectors;
 
 public class QuizDto implements Serializable {
     private Integer id;
-    private Integer number;
+    private Integer key;
     private boolean scramble;
     private String title;
     private String creationDate = null;
     private String availableDate = null;
     private String conclusionDate = null;
-    private Integer year;
     private Quiz.QuizType type;
     private Integer series;
     private String version;
@@ -37,10 +36,9 @@ public class QuizDto implements Serializable {
 
     public QuizDto(Quiz quiz, boolean deepCopy) {
         this.id = quiz.getId();
-        this.number = quiz.getNumber();
+        this.key = quiz.getKey();
         this.scramble = quiz.getScramble();
         this.title = quiz.getTitle();
-        this.year = quiz.getYear();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
@@ -74,11 +72,11 @@ public class QuizDto implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumber() {
+    public Integer getKey() {
         return id;
     }
 
-    public void setNumber(Integer id) {
+    public void setKey(Integer id) {
         this.id = id;
     }
 
@@ -124,14 +122,6 @@ public class QuizDto implements Serializable {
 
     public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
     }
 
     public Quiz.QuizType getType() {
@@ -213,7 +203,6 @@ public class QuizDto implements Serializable {
                 ", creationDate='" + creationDate + '\'' +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
-                ", year=" + year +
                 ", type=" + type +
                 ", series=" + series +
                 ", version='" + version + '\'' +

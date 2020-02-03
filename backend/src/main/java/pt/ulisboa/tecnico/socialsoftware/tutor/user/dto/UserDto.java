@@ -9,7 +9,6 @@ public class UserDto implements Serializable {
     private int id;
     private String username;
     private String name;
-    private int year;
     private User.Role role;
     private LocalDateTime creationDate;
 
@@ -17,7 +16,6 @@ public class UserDto implements Serializable {
         this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
-        this.year = user.getYear();
         this.role = user.getRole();
         this.creationDate = user.getCreationDate();
     }
@@ -46,14 +44,6 @@ public class UserDto implements Serializable {
         this.name = name;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
     public User.Role getRole() {
         return role;
     }
@@ -76,7 +66,6 @@ public class UserDto implements Serializable {
                 "id=" + id +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", year=" + year +
                 ", role=" + role +
                 ", creationDate=" + creationDate +
                 '}';

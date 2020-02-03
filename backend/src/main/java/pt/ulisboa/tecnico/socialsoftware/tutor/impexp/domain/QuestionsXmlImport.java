@@ -68,13 +68,13 @@ public class QuestionsXmlImport {
 
 	private void importQuestion(Element questionElement) {
 		String courseName = questionElement.getAttributeValue("course");
-		Integer number = Integer.valueOf(questionElement.getAttributeValue("number"));
+		Integer key = Integer.valueOf(questionElement.getAttributeValue("key"));
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
 		String status = questionElement.getAttributeValue("status");
 
 		QuestionDto questionDto = new QuestionDto();
-		questionDto.setNumber(number);
+		questionDto.setKey(key);
 		questionDto.setContent(content);
 		questionDto.setTitle(title);
 		questionDto.setStatus(status);
@@ -94,12 +94,12 @@ public class QuestionsXmlImport {
 
 		List<OptionDto> optionDtos = new ArrayList<>();
 		for (Element optionElement : questionElement.getChild("options").getChildren("option")) {
-			Integer optionNumber = Integer.valueOf( optionElement.getAttributeValue("number"));
+			Integer optionSequence = Integer.valueOf( optionElement.getAttributeValue("sequence"));
 			String optionContent = optionElement.getAttributeValue("content");
 			boolean correct = Boolean.parseBoolean(optionElement.getAttributeValue("correct"));
 
 			OptionDto optionDto = new OptionDto();
-			optionDto.setNumber(optionNumber);
+			optionDto.setSequence(optionSequence);
 			optionDto.setContent(optionContent);
 			optionDto.setCorrect(correct);
 

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 public class AssessmentDto implements Serializable {
     private Integer id;
+    private Integer sequence;
     private String title;
     private String status;
     private List<TopicConjunctionDto> topicConjunctions = new ArrayList<>();
@@ -18,7 +19,7 @@ public class AssessmentDto implements Serializable {
 
     public AssessmentDto(Assessment assessment) {
         this.id = assessment.getId();
-        this.id = assessment.getNumber();
+        this.sequence = assessment.getSequence();
         this.title = assessment.getTitle();
         this.status = assessment.getStatus().name();
         this.topicConjunctions = assessment.getTopicConjunctions().stream().map(TopicConjunctionDto::new).collect(Collectors.toList());
@@ -32,20 +33,12 @@ public class AssessmentDto implements Serializable {
         this.id = id;
     }
 
-    public Integer getNumber() {
-        return id;
+    public Integer getSequence() {
+        return sequence;
     }
 
-    public void setNumber(Integer id) {
-        this.id = id;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public String getTitle() {
@@ -56,6 +49,14 @@ public class AssessmentDto implements Serializable {
         this.title = title;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     public List<TopicConjunctionDto> getTopicConjunctions() {
         return topicConjunctions;
     }
@@ -64,19 +65,18 @@ public class AssessmentDto implements Serializable {
         this.topicConjunctions = topicConjunctions;
     }
 
-    public void addTopicConjunction(TopicConjunctionDto topicConjunctionDto) {
-        this.topicConjunctions.add(topicConjunctionDto);
-    }
-
-
     @Override
     public String toString() {
         return "AssessmentDto{" +
                 "id=" + id +
-                ", id=" + id +
+                ", sequence=" + sequence +
                 ", title='" + title + '\'' +
                 ", status='" + status + '\'' +
                 ", topicConjunctions=" + topicConjunctions +
                 '}';
+    }
+
+    public void addTopicConjunction(TopicConjunctionDto topicConjunctionDto) {
+        this.topicConjunctions.add(topicConjunctionDto);
     }
 }

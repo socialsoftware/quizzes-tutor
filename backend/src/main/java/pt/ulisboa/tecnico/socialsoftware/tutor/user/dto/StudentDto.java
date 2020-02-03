@@ -3,22 +3,23 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 public class StudentDto implements Serializable {
     private String username;
     private String name;
-    private Integer year;
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfAnswers;
     private Integer numberOfTeacherAnswers;
     private int percentageOfCorrectAnswers = 0;
     private int percentageOfCorrectTeacherAnswers = 0;
+    private LocalDateTime creationDate;
+    private LocalDateTime lastAccess;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
         this.name = user.getName();
-        this.year = user.getYear();
         if (user.getNumberOfTeacherQuizzes() == null) {
            user.calculateNumbers();
         }
@@ -26,6 +27,8 @@ public class StudentDto implements Serializable {
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
         this.numberOfAnswers = user.getNumberOfAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
+        this.creationDate = user.getCreationDate();
+        this.lastAccess = user.getLastAccess();
 
         if (this.numberOfAnswers != 0) {
             this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;
@@ -50,14 +53,6 @@ public class StudentDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Integer getYear() {
-        return year;
-    }
-
-    public void setYear(Integer year) {
-        this.year = year;
     }
 
     public long getNumberOfTeacherQuizzes() {
@@ -113,7 +108,6 @@ public class StudentDto implements Serializable {
         return "StudentDto{" +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
-                ", year=" + year +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +

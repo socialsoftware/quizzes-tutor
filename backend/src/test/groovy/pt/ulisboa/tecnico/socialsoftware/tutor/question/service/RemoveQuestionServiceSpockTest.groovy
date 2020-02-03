@@ -67,7 +67,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
         courseRepository.save(course)
 
         question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         question.setContent(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
@@ -110,7 +110,7 @@ class RemoveQuestionServiceSpockTest extends Specification {
     def "remove a question used in a quiz"() {
         given: "a question with answers"
         def quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quizRepository.save(quiz)
         def quizQuestion = new QuizQuestion()
         quizQuestionRepository.save(quizQuestion)

@@ -28,10 +28,10 @@ class AddQuestionToQuizServiceSpockTest extends Specification {
 
     def setup() {
         def quiz = new Quiz()
-        quiz.setNumber(1)
+        quiz.setKey(1)
         quizRepository.save(quiz)
         def question = new Question()
-        question.setNumber(1)
+        question.setKey(1)
         questionRepository.save(question)
     }
 
