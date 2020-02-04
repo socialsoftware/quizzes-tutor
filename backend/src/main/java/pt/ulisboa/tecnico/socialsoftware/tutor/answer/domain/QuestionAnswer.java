@@ -47,6 +47,14 @@ public class QuestionAnswer {
         changeDifficulty();
     }
 
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int sequence){
+        this.quizAnswer = quizAnswer;
+        quizAnswer.addQuestionAnswer(this);
+        this.quizQuestion = quizQuestion;
+        quizQuestion.addQuestionAnswer(this);
+        this.sequence = sequence;
+    }
+
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
         quizAnswer = null;

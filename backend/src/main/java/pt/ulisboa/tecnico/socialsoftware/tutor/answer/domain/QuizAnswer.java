@@ -40,6 +40,8 @@ public class QuizAnswer {
         user.addQuizAnswer(this);
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
+
+        quiz.getQuizQuestions().forEach(quizQuestion -> questionAnswers.add(new QuestionAnswer(this, quizQuestion, quizQuestion.getSequence())));
     }
 
     public void remove() {

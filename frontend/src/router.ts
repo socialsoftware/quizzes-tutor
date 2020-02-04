@@ -154,8 +154,7 @@ let router = new Router({
           component: QuizView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Quiz',
-            requiredAuth: 'Student',
-            requiresVerification: true
+            requiredAuth: 'Student'
           }
         },
         {
@@ -206,14 +205,6 @@ let router = new Router({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (from.matched.some(record => record.meta.requiresVerification)) {
-    let a = confirm('Are you sure?');
-    if (!a) {
-      next(false);
-      return;
-    }
-  }
-
   if (to.meta.requiredAuth == 'None') {
     next();
   } else if (to.meta.requiredAuth == 'Admin' && Store.getters.isAdmin) {
@@ -225,8 +216,6 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next('/');
   }
-
-  // await Store.dispatch("clearError");
 });
 
 router.afterEach(async (to, from) => {

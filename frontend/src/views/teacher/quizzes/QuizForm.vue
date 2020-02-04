@@ -309,7 +309,7 @@ export default class QuizForm extends Vue {
   @Watch('quiz')
   onQuizChange() {
     let questionIds: number[] = [];
-    if (this.quiz.questions) {
+    if (this.quiz && this.quiz.questions) {
       this.quiz.questions.forEach(question => {
         if (!this.quizQuestions.includes(question) && question.id) {
           questionIds.push(question.id);

@@ -119,6 +119,10 @@ public class StatementService {
 
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
+        if (!quiz.getCourseExecution().equals(courseExecution)) {
+            throw new TutorException(COURSE_EXECUTION_MISMATCH, courseExecution.getId(), quiz.getId());
+        }
+
         if (quiz.getConclusionDate() != null && LocalDateTime.now().isBefore(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
