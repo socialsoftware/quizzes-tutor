@@ -28,7 +28,7 @@ export default class StatementManager {
       numberOfQuestions: +this.numberOfQuestions
     };
 
-    this.statementQuiz = await RemoteServices.getQuizStatement(params);
+    this.statementQuiz = await RemoteServices.generateStatementQuiz(params);
 
     this.answers = this.statementQuiz.questions.map(
       (question: StatementQuestion) => {

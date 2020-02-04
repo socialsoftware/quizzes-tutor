@@ -33,6 +33,7 @@ import javax.persistence.PersistenceContext;
 import javax.validation.Valid;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
@@ -102,6 +103,36 @@ public class StatementService {
         entityManager.persist(quizAnswer);
 
         return new StatementQuizDto(quizAnswer);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto getEvaluationQuiz(String username, int executionId, int quizId) {
+        User user = userRepository.findByUsername(username);
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if (!user.getCourseExecutions().contains(courseExecution)) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
+        }
+
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if (quiz.getConclusionDate() != null && LocalDateTime.now().isBefore(quiz.getConclusionDate())) {
+            throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
+        }
+
+        if (quiz.getAvailableDate().isBefore(LocalDateTime.now())) {
+            QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+            entityManager.persist(quizAnswer);
+            return new StatementQuizDto(quizAnswer);
+        }
+
+        // Quiz not yet available
+        StatementQuizDto quizDto = new StatementQuizDto();
+        quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(LocalDateTime.now(), quiz.getAvailableDate()));
+        return quizDto;
     }
 
 

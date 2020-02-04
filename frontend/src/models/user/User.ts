@@ -22,9 +22,6 @@ export default class User {
         this.courses[name] = courses.map(course => new Course(course));
         this.coursesNumber += this.courses[name].length;
       }
-
-      // TODO make sure this works
-      console.log(this.courses, this.coursesNumber);
     }
   }
 }

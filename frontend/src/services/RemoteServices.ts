@@ -183,12 +183,23 @@ export default class RemoteServices {
       });
   }
 
-  static getQuizStatement(params: object): Promise<StatementQuiz> {
+  static generateStatementQuiz(params: object): Promise<StatementQuiz> {
     return httpClient
       .post(
         `/executions/${Store.getters.getCurrentCourse.id}/quizzes/generate`,
         params
       )
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
+    return httpClient
+      .get(`/executions/${Store.getters.getCurrentCourse.id}/quizzes/${quizId}`)
       .then(response => {
         return new StatementQuiz(response.data);
       })

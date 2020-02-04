@@ -25,7 +25,7 @@ public class QuizQuestion {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;

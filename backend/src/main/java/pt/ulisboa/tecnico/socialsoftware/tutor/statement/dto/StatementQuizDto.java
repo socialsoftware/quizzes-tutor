@@ -14,6 +14,7 @@ public class StatementQuizDto implements Serializable {
     private String title;
     private String availableDate;
     private String conclusionDate;
+    private Long secondsToAvailability;
     private List<StatementQuestionDto> questions = new ArrayList<>();
 
     public StatementQuizDto(){
@@ -64,6 +65,14 @@ public class StatementQuizDto implements Serializable {
 
     public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
+    }
+
+    public Long getSecondsToAvailability() {
+        return secondsToAvailability;
+    }
+
+    public void setSecondsToAvailability(Long secondsToAvailability) {
+        this.secondsToAvailability = secondsToAvailability;
     }
 
     public List<StatementQuestionDto> getQuestions() {

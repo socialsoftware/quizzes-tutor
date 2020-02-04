@@ -36,6 +36,7 @@ public enum ErrorMessage {
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     QUIZ_NOT_CONSISTENT("Field %s of quiz is not consistent"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
+    QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
 
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me

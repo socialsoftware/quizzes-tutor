@@ -60,6 +60,17 @@ public class StatementController {
         return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
+    @GetMapping("/executions/{executionId}/quizzes/{quizId}")
+    public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int executionId, @PathVariable int quizId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            return null;
+        }
+
+        return statementService.getEvaluationQuiz(user.getUsername(), executionId, quizId);
+    }
+
     @PostMapping("/quizzes/answer")
     public CorrectAnswersDto correctAnswers(Principal principal, @Valid @RequestBody ResultAnswersDto answers) {
         User user = (User) ((Authentication) principal).getPrincipal();

@@ -29,7 +29,7 @@ public class Assessment {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER, orphanRemoval=true)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Assessment() {

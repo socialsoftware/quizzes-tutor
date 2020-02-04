@@ -114,6 +114,14 @@
                 <v-list-item-title>Create</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/student/scan">
+              <v-list-item-action>
+                <v-icon>fas fa-qrcode</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Scan</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/solved">
               <v-list-item-action>
                 <v-icon>done</v-icon>
@@ -222,7 +230,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Course from '@/models/user/Course';
 
 @Component
 export default class TopBar extends Vue {

@@ -91,13 +91,14 @@
       @keydown.esc="closeQrCodeDialog"
       max-width="75%"
     >
-      <v-card>
-        <qrcode-vue
+      <v-card v-if="qrValue">
+        <vue-qrcode
           class="qrcode"
-          :value="qrValue"
-          level="H"
-          size="1000"
-        ></qrcode-vue>
+          :value="qrValue.toString()"
+          errorCorrectionLevel="M"
+          :quality="1"
+          :scale="100"
+        />
       </v-card>
     </v-dialog>
   </v-card>
@@ -108,10 +109,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
-import QrcodeVue from 'qrcode.vue';
+import VueQrcode from 'vue-qrcode';
 
 @Component({
-  components: { 'show-quiz-dialog': ShowQuizDialog, 'qrcode-vue': QrcodeVue }
+  components: {
+    'show-quiz-dialog': ShowQuizDialog,
+    'vue-qrcode': VueQrcode
+  }
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
@@ -208,12 +212,9 @@ export default class QuizList extends Vue {
 
 <style lang="scss">
 .qrcode {
-  canvas {
-    width: 80vw !important;
-    height: 80vw !important;
-    max-width: 80vh !important;
-    max-height: 80vh !important;
-    padding: 30px;
-  }
+  width: 80vw !important;
+  height: 80vw !important;
+  max-width: 80vh !important;
+  max-height: 80vh !important;
 }
 </style>

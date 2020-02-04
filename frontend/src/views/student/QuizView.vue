@@ -38,6 +38,7 @@
     </div>
     <question-component
       v-model="order"
+      v-if="statementManager.answers[order]"
       :optionId="statementManager.answers[order].optionId"
       :question="statementManager.statementQuiz.questions[order]"
       :questionNumber="statementManager.statementQuiz.questions.length"

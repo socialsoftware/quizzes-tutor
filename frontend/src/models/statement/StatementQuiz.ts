@@ -6,6 +6,7 @@ export default class StatementQuiz {
   title!: string;
   availableDate!: string;
   conclusionDate: string = '-';
+  secondsToAvailability!: number;
   questions: StatementQuestion[] = [];
 
   constructor(jsonObj?: StatementQuiz) {
@@ -14,6 +15,7 @@ export default class StatementQuiz {
       this.quizAnswerId = jsonObj.quizAnswerId;
       this.title = jsonObj.title;
       this.availableDate = jsonObj.availableDate;
+      this.secondsToAvailability = jsonObj.secondsToAvailability;
       if (jsonObj.conclusionDate) {
         this.conclusionDate = jsonObj.conclusionDate;
       }
