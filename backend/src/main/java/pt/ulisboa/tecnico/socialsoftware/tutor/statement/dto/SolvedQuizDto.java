@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class SolvedQuizDto implements Serializable {
     private StatementQuizDto statementQuiz;
-    private List<ResultAnswerDto> answers = new ArrayList<>();
+    private List<QuestionAnswerDto> answers = new ArrayList<>();
     private List<CorrectAnswerDto> correctAnswers = new ArrayList<>();
     private String answerDate;
 
@@ -25,16 +25,15 @@ public class SolvedQuizDto implements Serializable {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
         this.answers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                .map(questionAnswer -> {
-                    Integer optionId = (questionAnswer.getOption() != null) ? questionAnswer.getOption().getId() : null;
-                    return new ResultAnswerDto(questionAnswer.getQuizQuestion().getId(), optionId, questionAnswer.getTimeTaken());
-                })
+                .map(QuestionAnswerDto::new)
                 .collect(Collectors.toList());
+
         this.correctAnswers = quizAnswer.getQuiz()
                 .getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
+
         this.answerDate = String.valueOf(quizAnswer.getAnswerDate());
     }
 
@@ -46,11 +45,11 @@ public class SolvedQuizDto implements Serializable {
         this.statementQuiz = statementQuiz;
     }
 
-    public List<ResultAnswerDto> getAnswers() {
+    public List<QuestionAnswerDto> getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<ResultAnswerDto> answers) {
+    public void setAnswers(List<QuestionAnswerDto> answers) {
         this.answers = answers;
     }
 

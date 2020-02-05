@@ -5,6 +5,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class QuizAnswerDto implements Serializable {
     private Integer id;
@@ -12,6 +15,8 @@ public class QuizAnswerDto implements Serializable {
     private boolean completed;
     private QuizDto quiz;
     private String username;
+    private Set<QuestionAnswerDto> questionAnswers = new HashSet<>();
+
 
     public QuizAnswerDto() {
     }
@@ -22,6 +27,7 @@ public class QuizAnswerDto implements Serializable {
         this.completed = quizAnswer.getCompleted();
         this.quiz = new QuizDto(quizAnswer.getQuiz(), false);
         this.username = quizAnswer.getUser().getUsername();
+        this.questionAnswers = quizAnswer.getQuestionAnswers().stream().map(QuestionAnswerDto::new).collect(Collectors.toSet());
     }
 
     public Integer getId() {
@@ -64,6 +70,14 @@ public class QuizAnswerDto implements Serializable {
         this.username = username;
     }
 
+    public Set<QuestionAnswerDto> getQuestionAnswers() {
+        return questionAnswers;
+    }
+
+    public void setQuestionAnswers(Set<QuestionAnswerDto> questionAnswers) {
+        this.questionAnswers = questionAnswers;
+    }
+
     @Override
     public String toString() {
         return "QuizAnswerDto{" +
@@ -72,6 +86,11 @@ public class QuizAnswerDto implements Serializable {
                 ", completed=" + completed +
                 ", quiz=" + quiz +
                 ", username='" + username + '\'' +
+                ", questionAnswers=" + questionAnswers +
                 '}';
+    }
+
+    public void addQuestionAnswer(QuestionAnswerDto questionAnswerDto) {
+        this.questionAnswers.add(questionAnswerDto);
     }
 }

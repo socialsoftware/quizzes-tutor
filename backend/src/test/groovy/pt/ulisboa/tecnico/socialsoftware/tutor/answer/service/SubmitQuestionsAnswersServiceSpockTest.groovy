@@ -6,7 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -122,8 +122,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'create for one question and two options'() {
         given:
-        def resultsDto = new ArrayList<ResultAnswerDto>()
-        def resultDto = new ResultAnswerDto()
+        def resultsDto = new ArrayList<StatementAnswerDto>()
+        def resultDto = new StatementAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
         resultsDto.add(resultDto)
@@ -133,7 +133,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setAnswers(resultsDto)
 
         when:
-        def correctAnswersDto = answerService.submitQuestionsAnswers(user, resultAnswersDto)
+        def correctAnswersDto = answerService.concludeQuiz(user, resultAnswersDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()
@@ -155,8 +155,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'user not consistent'() {
         given:
-        def resultsDto = new ArrayList<ResultAnswerDto>()
-        def resultDto = new ResultAnswerDto()
+        def resultsDto = new ArrayList<StatementAnswerDto>()
+        def resultDto = new StatementAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
         resultsDto.add(resultDto)
@@ -171,7 +171,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
 
         when:
-        answerService.submitQuestionsAnswers(otherUser, resultAnswersDto)
+        answerService.concludeQuiz(otherUser, resultAnswersDto)
 
         then:
         TutorException exception = thrown()
@@ -181,8 +181,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'quiz question not consistent'() {
         given:
-        def resultsDto = new ArrayList<ResultAnswerDto>()
-        def resultDto = new ResultAnswerDto()
+        def resultsDto = new ArrayList<StatementAnswerDto>()
+        def resultDto = new StatementAnswerDto()
         def quiz = new Quiz()
         quiz.setKey(2)
         def question = new Question()
@@ -199,7 +199,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setAnswers(resultsDto)
 
         when:
-        answerService.submitQuestionsAnswers(user, resultAnswersDto)
+        answerService.concludeQuiz(user, resultAnswersDto)
 
         then:
         TutorException exception = thrown()
@@ -209,8 +209,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'question option not consistent'() {
         given:
-        def resultsDto = new ArrayList<ResultAnswerDto>()
-        def resultDto = new ResultAnswerDto()
+        def resultsDto = new ArrayList<StatementAnswerDto>()
+        def resultDto = new StatementAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         def otherOptionOK = new Option()
         otherOptionOK.setCorrect(true)
@@ -226,7 +226,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setAnswers(resultsDto)
 
         when:
-        answerService.submitQuestionsAnswers(user, resultAnswersDto)
+        answerService.concludeQuiz(user, resultAnswersDto)
 
         then:
         TutorException exception = thrown()
@@ -237,8 +237,8 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
 
     def 'double submition of the same answers'() {
         given:
-        def resultsDto = new ArrayList<ResultAnswerDto>()
-        def resultDto = new ResultAnswerDto()
+        def resultsDto = new ArrayList<StatementAnswerDto>()
+        def resultDto = new StatementAnswerDto()
         resultDto.setQuizQuestionId(quizQuestion.getId())
         resultDto.setOptionId(optionOk.getId())
         resultsDto.add(resultDto)
@@ -247,11 +247,11 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         resultAnswersDto.setAnswerDate(date)
         resultAnswersDto.setAnswers(resultsDto)
         and: "Submit answer for the first time"
-        answerService.submitQuestionsAnswers(user, resultAnswersDto)
+        answerService.concludeQuiz(user, resultAnswersDto)
 
         and: "Second submission with different option"
-        def secondResultsDto = new ArrayList<ResultAnswerDto>()
-        def secondResultDto = new ResultAnswerDto()
+        def secondResultsDto = new ArrayList<StatementAnswerDto>()
+        def secondResultDto = new StatementAnswerDto()
         secondResultDto.setQuizQuestionId(quizQuestion.getId())
         secondResultDto.setOptionId(optionKO.getId())
         secondResultsDto.add(secondResultDto)
@@ -261,7 +261,7 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
         secondResultAnswersDto.setAnswers(secondResultsDto)
 
         when: "Second submission"
-        def correctAnswersDto = answerService.submitQuestionsAnswers(user, secondResultAnswersDto)
+        def correctAnswersDto = answerService.concludeQuiz(user, secondResultAnswersDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()

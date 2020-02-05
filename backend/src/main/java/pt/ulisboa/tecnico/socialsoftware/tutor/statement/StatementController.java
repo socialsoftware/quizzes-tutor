@@ -7,15 +7,14 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,28 +59,35 @@ public class StatementController {
         return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
-    @GetMapping("/executions/{executionId}/quizzes/{quizId}")
-    public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int executionId, @PathVariable int quizId) {
+    @GetMapping("/quizzes/{quizId}/evaluation")
+    public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return null;
         }
 
-        return statementService.getEvaluationQuiz(user.getUsername(), executionId, quizId);
+        return statementService.getEvaluationQuiz(user.getUsername(), quizId);
     }
 
-    @PostMapping("/quizzes/answer")
-    public CorrectAnswersDto correctAnswers(Principal principal, @Valid @RequestBody ResultAnswersDto answers) {
+    @PostMapping("/quizzes/{quizId}/submit")
+    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user != null) {
+            statementService.submitAnswer(user.getUsername(), quizId, answer);
+        }
+    }
+
+    @GetMapping("/quizzes/{quizId}/conclude")
+    public CorrectAnswersDto concludeQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             return null;
         }
 
-        answers.setAnswerDate(LocalDateTime.now());
-
-        return statementService.solveQuiz(user.getUsername(), answers);
+        return statementService.concludeQuiz(user.getUsername(), quizId);
     }
 
 

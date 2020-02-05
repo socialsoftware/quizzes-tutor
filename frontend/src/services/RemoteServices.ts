@@ -11,6 +11,7 @@ import Topic from '@/models/management/Topic';
 import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
+import StatementAnswer from '@/models/statement/StatementAnswer';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 10000;
@@ -183,6 +184,19 @@ export default class RemoteServices {
       });
   }
 
+  static getAvailableQuizzes(): Promise<StatementQuiz[]> {
+    return httpClient
+      .get(`/executions/${Store.getters.getCurrentCourse.id}/quizzes/available`)
+      .then(response => {
+        return response.data.map((statementQuiz: any) => {
+          return new StatementQuiz(statementQuiz);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static generateStatementQuiz(params: object): Promise<StatementQuiz> {
     return httpClient
       .post(
@@ -191,30 +205,6 @@ export default class RemoteServices {
       )
       .then(response => {
         return new StatementQuiz(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
-    return httpClient
-      .get(`/executions/${Store.getters.getCurrentCourse.id}/quizzes/${quizId}`)
-      .then(response => {
-        return new StatementQuiz(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getAvailableQuizzes(): Promise<StatementQuiz[]> {
-    return httpClient
-      .get(`/executions/${Store.getters.getCurrentCourse.id}/quizzes/available`)
-      .then(response => {
-        return response.data.map((statementQuiz: any) => {
-          return new StatementQuiz(statementQuiz);
-        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -234,9 +224,28 @@ export default class RemoteServices {
       });
   }
 
-  static getCorrectAnswers(params: object): Promise<StatementCorrectAnswer[]> {
+  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
     return httpClient
-      .post('/quizzes/answer', params)
+      .get(`/quizzes/${quizId}/evaluation`)
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static submitAnswer(quizId: number, answer: StatementAnswer) {
+    return httpClient
+      .post(`/quizzes/${quizId}/submit`, answer)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static concludeQuiz(quizId: number): Promise<StatementCorrectAnswer[]> {
+    return httpClient
+      .get(`/quizzes/${quizId}/conclude`)
       .then(response => {
         return response.data.answers.map((answer: any) => {
           return new StatementCorrectAnswer(answer);
@@ -478,6 +487,7 @@ export default class RemoteServices {
       await Store.dispatch('logout');
       return 'Unauthorized access or Expired token';
     } else {
+      console.log(error);
       return 'Unknown Error - Contact admin';
     }
   }

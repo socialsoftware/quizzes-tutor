@@ -38,6 +38,7 @@ public enum ErrorMessage {
     QUIZ_NOT_CONSISTENT("Field %s of quiz is not consistent"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
+    QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me
@@ -49,8 +50,7 @@ public enum ErrorMessage {
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
 
-    ACCESS_DENIED("You do not have permission to view this resource"),
-    UNEXPECTED_ERROR("The admin probably did something wrong. Let him know");
+    ACCESS_DENIED("You do not have permission to view this resource");
 
     public final String label;
 

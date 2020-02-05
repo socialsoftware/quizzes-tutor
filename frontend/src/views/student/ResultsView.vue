@@ -9,11 +9,11 @@
             index === order + 1 ? 'current-question-button' : '',
             index === order + 1 &&
             statementManager.correctAnswers[index - 1].correctOptionId !==
-              statementManager.answers[index - 1].optionId
+              statementManager.statementQuiz.answers[index - 1].optionId
               ? 'incorrect-current'
               : '',
             statementManager.correctAnswers[index - 1].correctOptionId !==
-            statementManager.answers[index - 1].optionId
+            statementManager.statementQuiz.answers[index - 1].optionId
               ? 'incorrect'
               : ''
           ]"
@@ -35,7 +35,7 @@
     </div>
     <result-component
       v-model="order"
-      :answer="statementManager.answers[order]"
+      :answer="statementManager.statementQuiz.answers[order]"
       :correctAnswer="statementManager.correctAnswers[order]"
       :question="statementManager.statementQuiz.questions[order]"
       :questionNumber="statementManager.statementQuiz.questions.length"

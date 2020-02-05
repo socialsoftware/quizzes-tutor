@@ -58,13 +58,6 @@ export default class AvailableQuizzesView extends Vue {
   async solveQuiz(quiz: StatementQuiz) {
     let statementManager: StatementManager = StatementManager.getInstance;
     statementManager.statementQuiz = quiz;
-    statementManager.answers = quiz.questions.map(
-      (question: StatementQuestion) => {
-        let answer = new StatementAnswer();
-        answer.quizQuestionId = question.quizQuestionId;
-        return answer;
-      }
-    );
     await this.$router.push({ name: 'solve-quiz' });
   }
 }

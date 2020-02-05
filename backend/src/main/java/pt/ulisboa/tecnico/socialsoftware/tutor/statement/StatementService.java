@@ -6,11 +6,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -23,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -30,7 +30,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.Valid;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -109,18 +108,12 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto getEvaluationQuiz(String username, int executionId, int quizId) {
+    public StatementQuizDto getEvaluationQuiz(String username, int quizId) {
         User user = userRepository.findByUsername(username);
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
-
-        if (!user.getCourseExecutions().contains(courseExecution)) {
-            throw new TutorException(USER_NOT_ENROLLED, username);
-        }
-
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if (!quiz.getCourseExecution().equals(courseExecution)) {
-            throw new TutorException(COURSE_EXECUTION_MISMATCH, courseExecution.getId(), quiz.getId());
+        if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
         }
 
         if (quiz.getConclusionDate() != null && LocalDateTime.now().isBefore(quiz.getConclusionDate())) {
@@ -155,6 +148,7 @@ public class StatementService {
                 .map(Quiz::getId)
                 .collect(Collectors.toSet());
 
+        // create QuizAnswer for quizzes
         quizRepository.findAvailableQuizzes(executionId).stream()
                 .filter(quiz -> quiz.getCourseExecution().getId() == executionId)
                 .filter(quiz -> quiz.getAvailableDate().isBefore(now))
@@ -166,6 +160,14 @@ public class StatementService {
                     }
                     entityManager.persist(quizAnswer);
                 });
+
+        // create QuestionAnswer for quizzes
+        user.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuestionAnswers().isEmpty())
+                .forEach(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().forEach(quizQuestion -> {
+                    QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, quizQuestion.getSequence());
+                    entityManager.persist(questionAnswer);
+                }));
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
@@ -198,10 +200,20 @@ public class StatementService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CorrectAnswersDto solveQuiz(String username, @Valid @RequestBody ResultAnswersDto answers) {
+    public CorrectAnswersDto concludeQuiz(String username, Integer quizId) {
         User user = userRepository.findByUsername(username);
 
-        return answerService.submitQuestionsAnswers(user, answers);
+        return answerService.concludeQuiz(user, quizId);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void submitAnswer(String username, Integer quizId, StatementAnswerDto answer) {
+        User user = userRepository.findByUsername(username);
+
+        answerService.submitAnswer(user, quizId, answer);
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {

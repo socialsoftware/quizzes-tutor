@@ -7,11 +7,10 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
@@ -26,7 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -129,10 +127,9 @@ public class AnswersXmlImport {
 	}
 
 	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer,Integer> mapQuizQuestionId, QuizAnswer quizAnswer) {
-		ResultAnswersDto resultAnswersDto = new ResultAnswersDto();
-		resultAnswersDto.setQuizAnswerId(quizAnswer.getId());
-		resultAnswersDto.setAnswerDate(quizAnswer.getAnswerDate());
-		resultAnswersDto.setAnswers(new ArrayList<>());
+		QuizAnswerDto quizAnswerDto = new QuizAnswerDto();
+        quizAnswerDto.setId(quizAnswer.getId());
+        quizAnswerDto.setAnswerDate(quizAnswer.getAnswerDate());
 
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
 			Integer timeTaken = null;
@@ -151,14 +148,15 @@ public class AnswersXmlImport {
 				optionId = questionMap.get(questionKey).get(optionSequence);
 			}
 
-			ResultAnswerDto resultAnswerDto = new ResultAnswerDto();
-			resultAnswerDto.setTimeTaken(timeTaken);
-            resultAnswerDto.setSequence(answerSequence);
-			resultAnswerDto.setQuizQuestionId(quizQuestionId);
-			resultAnswerDto.setOptionId(optionId);
-			resultAnswersDto.getAnswers().add(resultAnswerDto);
+			QuestionAnswerDto questionAnswerDto = new QuestionAnswerDto();
+            questionAnswerDto.setTimeTaken(timeTaken);
+            questionAnswerDto.setSequence(answerSequence);
+            questionAnswerDto.setQuizQuestionId(quizQuestionId);
+            questionAnswerDto.setOptionId(optionId);
+            quizAnswerDto.addQuestionAnswer(questionAnswerDto);
 		}
-		answerService.submitQuestionsAnswers(user, resultAnswersDto);
+		answerService.concludeQuiz(user, quizAnswer.getQuiz().getId());
+		//TODO this method is incorrect
 	}
 
 }

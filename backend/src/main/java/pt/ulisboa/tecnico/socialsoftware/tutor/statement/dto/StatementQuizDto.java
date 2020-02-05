@@ -10,17 +10,19 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StatementQuizDto implements Serializable {
+    private Integer id;
     private Integer quizAnswerId;
     private String title;
     private String availableDate;
     private String conclusionDate;
     private Long secondsToAvailability;
     private List<StatementQuestionDto> questions = new ArrayList<>();
+    private List<StatementAnswerDto> answers = new ArrayList<>();
 
-    public StatementQuizDto(){
-    }
+    public StatementQuizDto(){}
 
     public StatementQuizDto(QuizAnswer quizAnswer) {
+        this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
@@ -33,6 +35,16 @@ public class StatementQuizDto implements Serializable {
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .map(StatementQuestionDto::new)
                 .collect(Collectors.toList());
+
+        this.answers = quizAnswer.getQuestionAnswers().stream().map(StatementAnswerDto::new).sorted(Comparator.comparing(StatementAnswerDto::getSequence)).collect(Collectors.toList());
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public Integer getQuizAnswerId() {
@@ -81,6 +93,14 @@ public class StatementQuizDto implements Serializable {
 
     public void setQuestions(List<StatementQuestionDto> questions) {
         this.questions = questions;
+    }
+
+    public List<StatementAnswerDto> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(List<StatementAnswerDto> answers) {
+        this.answers = answers;
     }
 
     @Override

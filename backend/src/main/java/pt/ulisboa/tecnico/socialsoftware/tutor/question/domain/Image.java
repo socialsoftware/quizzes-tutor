@@ -1,12 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "images")
-public class Image {
+public class Image implements Importable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

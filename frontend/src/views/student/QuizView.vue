@@ -15,7 +15,7 @@
     <div class="question-navigation">
       <div class="navigation-buttons">
         <span
-          v-for="index in +statementManager.statementQuiz.questions.length"
+          v-for="index in +statementQuiz.questions.length"
           v-bind:class="[
             'question-button',
             index === order + 1 ? 'current-question-button' : ''
@@ -32,16 +32,16 @@
       <span
         class="right-button"
         @click="increaseOrder"
-        v-if="order !== statementManager.statementQuiz.questions.length - 1"
+        v-if="order !== statementQuiz.questions.length - 1"
         ><i class="fas fa-chevron-right"
       /></span>
     </div>
     <question-component
       v-model="order"
-      v-if="statementManager.answers[order]"
-      :optionId="statementManager.answers[order].optionId"
-      :question="statementManager.statementQuiz.questions[order]"
-      :questionNumber="statementManager.statementQuiz.questions.length"
+      v-if="statementQuiz.answers[order]"
+      :optionId="statementQuiz.answers[order].optionId"
+      :question="statementQuiz.questions[order]"
+      :questionNumber="statementQuiz.questions.length"
       @increase-order="increaseOrder"
       @select-option="changeAnswer"
       @decrease-order="decreaseOrder"
@@ -59,14 +59,14 @@
           <br />
           <span
             v-if="
-              statementManager.answers
+              statementQuiz.answers
                 .map(answer => answer.optionId)
                 .filter(optionId => optionId == null).length
             "
           >
             You still have
             {{
-              statementManager.answers
+              statementQuiz.answers
                 .map(answer => answer.optionId)
                 .filter(optionId => optionId == null).length
             }}
@@ -94,6 +94,8 @@
 import { Component, Vue } from 'vue-property-decorator';
 import QuestionComponent from '@/components/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
+import RemoteServices from '@/services/RemoteServices';
+import StatementQuiz from '@/models/statement/StatementQuiz';
 
 Component.registerHooks([
   'beforeRouteEnter',
@@ -108,6 +110,8 @@ Component.registerHooks([
 })
 export default class QuizView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
+  statementQuiz: StatementQuiz | null =
+    StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   startTime: Date = new Date();
@@ -117,13 +121,14 @@ export default class QuizView extends Vue {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: 'create-quiz' });
     }
+
+    if (this.statementQuiz) {
+      console.log(this.statementQuiz.questions[this.order]);
+    }
   }
 
   increaseOrder(): void {
-    if (
-      this.order + 1 <
-      +this.statementManager.statementQuiz!.questions.length
-    ) {
+    if (this.order + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.order += 1;
     }
@@ -137,18 +142,29 @@ export default class QuizView extends Vue {
   }
 
   changeOrder(n: number): void {
-    if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
+    if (n >= 0 && n < +this.statementQuiz!.questions.length) {
       this.calculateTime();
       this.order = n;
     }
   }
 
-  changeAnswer(optionId: number) {
-    if (this.statementManager.answers[this.order]) {
-      if (this.statementManager.answers[this.order].optionId === optionId) {
-        this.statementManager.answers[this.order].optionId = null;
+  async changeAnswer(optionId: number) {
+    if (this.statementQuiz && this.statementQuiz.answers[this.order]) {
+      if (this.statementQuiz.answers[this.order].optionId === optionId) {
+        this.statementQuiz.answers[this.order].optionId = null;
       } else {
-        this.statementManager.answers[this.order].optionId = optionId;
+        this.statementQuiz.answers[this.order].optionId = optionId;
+      }
+
+      this.calculateTime();
+
+      try {
+        await RemoteServices.submitAnswer(
+          this.statementQuiz.id,
+          this.statementQuiz.answers[this.order]
+        );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
       }
     }
   }
@@ -167,9 +183,11 @@ export default class QuizView extends Vue {
   }
 
   calculateTime() {
-    this.statementManager.answers[this.order].timeTaken +=
-      new Date().getTime() - this.startTime.getTime();
-    this.startTime = new Date();
+    if (this.statementQuiz) {
+      this.statementQuiz.answers[this.order].timeTaken +=
+        new Date().getTime() - this.startTime.getTime();
+      this.startTime = new Date();
+    }
   }
 }
 </script>

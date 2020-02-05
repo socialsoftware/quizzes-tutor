@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 
 import javax.persistence.*;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "topic_conjunctions")
-public class TopicConjunction {
+public class TopicConjunction implements Importable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

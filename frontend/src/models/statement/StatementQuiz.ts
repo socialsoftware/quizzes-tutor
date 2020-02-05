@@ -1,6 +1,8 @@
 import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementAnswer from '@/models/statement/StatementAnswer';
 
 export default class StatementQuiz {
+  id!: number;
   courseName!: string;
   quizAnswerId!: number;
   title!: string;
@@ -8,9 +10,11 @@ export default class StatementQuiz {
   conclusionDate: string = '-';
   secondsToAvailability!: number;
   questions: StatementQuestion[] = [];
+  answers: StatementAnswer[] = [];
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {
+      this.id = jsonObj.id;
       this.courseName = jsonObj.courseName;
       this.quizAnswerId = jsonObj.quizAnswerId;
       this.title = jsonObj.title;
@@ -23,6 +27,12 @@ export default class StatementQuiz {
       this.questions = jsonObj.questions.map(question => {
         return new StatementQuestion(question);
       });
+
+      if (jsonObj.answers) {
+        this.answers = jsonObj.answers.map(answer => {
+          return new StatementAnswer(answer);
+        });
+      }
     }
   }
 }

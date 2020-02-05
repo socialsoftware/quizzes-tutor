@@ -9,8 +9,7 @@ public class CourseDto implements Serializable {
     private String academicTerm;
     private CourseExecution.Status status;
 
-    public CourseDto() {
-    }
+    public CourseDto() {}
 
     public CourseDto(Course course) {
         this.name = course.getName();

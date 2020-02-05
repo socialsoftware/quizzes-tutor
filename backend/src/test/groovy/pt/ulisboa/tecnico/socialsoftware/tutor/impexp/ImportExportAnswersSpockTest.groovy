@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.ResultAnswersDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -119,8 +119,8 @@ class ImportExportAnswersSpockTest extends Specification {
 
         quizAnswer = answerService.createQuizAnswer(user.getId(), quiz.getId())
 
-        def answersDto = new ArrayList<ResultAnswerDto>()
-        def answerDto = new ResultAnswerDto()
+        def answersDto = new ArrayList<StatementAnswerDto>()
+        def answerDto = new StatementAnswerDto()
         answerDto.setQuizQuestionId(quizQuestion.getId())
         def optionId = question.getOptions().stream().findAny().orElse(null).id
         answerDto.setOptionId(optionId)
@@ -132,7 +132,7 @@ class ImportExportAnswersSpockTest extends Specification {
         resultAnswersDto.setAnswers(answersDto)
         answerDate = LocalDateTime.now().plusHours(1)
         resultAnswersDto.setAnswerDate(answerDate)
-        answerService.submitQuestionsAnswers(user, resultAnswersDto)
+        answerService.concludeQuiz(user, resultAnswersDto)
     }
 
     def 'export and import answers'() {
