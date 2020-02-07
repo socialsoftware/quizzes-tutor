@@ -341,11 +341,11 @@ public class User implements UserDetails, Importable {
 
     public void calculateNumbers() {
         this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
                 .count();
 
         this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.STUDENT))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
             .count();
 
         this.numberOfAnswers = getQuizAnswers().stream()
@@ -359,12 +359,12 @@ public class User implements UserDetails, Importable {
                 .count();
 
         this.numberOfTeacherAnswers = getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
                 .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                 .sum();
 
         this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TEACHER))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(questionAnswer -> questionAnswer.getOption() != null &&
                         questionAnswer.getOption().getCorrect())

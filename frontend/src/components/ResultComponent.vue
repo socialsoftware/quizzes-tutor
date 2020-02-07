@@ -17,15 +17,18 @@
         @mouseleave="hover = false"
         class="square"
       >
-        <i v-if="hover && order !== 0" class="fas fa-chevron-left" />
-        <span v-else>{{ order + 1 }}</span>
+        <i v-if="hover && questionOrder !== 0" class="fas fa-chevron-left" />
+        <span v-else>{{ questionOrder + 1 }}</span>
       </span>
       <div
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
       ></div>
       <div @click="increaseOrder" class="square">
-        <i v-if="order !== questionNumber - 1" class="fas fa-chevron-right" />
+        <i
+          v-if="questionOrder !== questionNumber - 1"
+          class="fas fa-chevron-right"
+        />
       </div>
     </div>
     <ul class="option-list">
@@ -70,7 +73,7 @@ import Image from '@/models/management/Image';
 
 @Component
 export default class ResultComponent extends Vue {
-  @Model('order', Number) order: number | undefined;
+  @Model('questionOrder', Number) questionOrder: number | undefined;
   @Prop(StatementQuestion) readonly question!: StatementQuestion;
   @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;

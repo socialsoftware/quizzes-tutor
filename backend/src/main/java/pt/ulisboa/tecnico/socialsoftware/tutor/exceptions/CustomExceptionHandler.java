@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -28,6 +29,12 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public TutorExceptionDto accessDeniedException(AccessDeniedException e) {
         logger.error(e.getMessage());
         return new TutorExceptionDto(ACCESS_DENIED);
+    }
+
+    @ExceptionHandler(ClientAbortException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public void clientAbortException(ClientAbortException e) {
+        // Ignore my broken pipe. It still works
     }
 
     @ExceptionHandler(Exception.class)

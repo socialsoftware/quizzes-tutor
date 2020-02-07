@@ -1,9 +1,6 @@
-import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
-import StatementAnswer from '@/models/statement/StatementAnswer';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-import Store from '@/store';
 
 export default class StatementManager {
   questionType: string = 'all';
@@ -30,11 +27,12 @@ export default class StatementManager {
     this.statementQuiz = await RemoteServices.generateStatementQuiz(params);
   }
 
-  async getCorrectAnswers() {
+  async concludeQuiz() {
     if (this.statementQuiz) {
-      this.correctAnswers = await RemoteServices.concludeQuiz(
-        this.statementQuiz.id
-      );
+      let answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
+      if (answers) {
+        this.correctAnswers = answers;
+      }
     } else {
       throw Error('No quiz');
     }

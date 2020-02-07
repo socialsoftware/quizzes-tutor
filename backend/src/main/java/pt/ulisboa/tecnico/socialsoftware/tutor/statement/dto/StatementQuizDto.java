@@ -4,6 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -16,6 +18,7 @@ public class StatementQuizDto implements Serializable {
     private String availableDate;
     private String conclusionDate;
     private Long secondsToAvailability;
+    private Long secondsToSubmission;
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
@@ -30,6 +33,7 @@ public class StatementQuizDto implements Serializable {
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
             this.conclusionDate = String.valueOf(quizAnswer.getQuiz().getConclusionDate());
+            this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());
         }
         this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
@@ -87,6 +91,14 @@ public class StatementQuizDto implements Serializable {
         this.secondsToAvailability = secondsToAvailability;
     }
 
+    public Long getSecondsToSubmission() {
+        return secondsToSubmission;
+    }
+
+    public void setSecondsToSubmission(Long secondsToSubmission) {
+        this.secondsToSubmission = secondsToSubmission;
+    }
+
     public List<StatementQuestionDto> getQuestions() {
         return questions;
     }
@@ -106,11 +118,15 @@ public class StatementQuizDto implements Serializable {
     @Override
     public String toString() {
         return "StatementQuizDto{" +
-                "quizAnswerId=" + quizAnswerId +
+                "id=" + id +
+                ", quizAnswerId=" + quizAnswerId +
                 ", title='" + title + '\'' +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
+                ", secondsToAvailability=" + secondsToAvailability +
+                ", secondsToSubmission=" + secondsToSubmission +
                 ", questions=" + questions +
+                ", answers=" + answers +
                 '}';
     }
 }

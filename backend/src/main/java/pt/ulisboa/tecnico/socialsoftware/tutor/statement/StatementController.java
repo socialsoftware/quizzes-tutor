@@ -7,6 +7,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
@@ -15,8 +16,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 @Secured({ "ROLE_ADMIN", "ROLE_STUDENT" })
@@ -31,7 +33,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return Collections.emptyList();
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         return statementService.getAvailableQuizzes(user.getUsername(), executionId);
@@ -42,7 +44,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return null;
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         return statementService.generateStudentQuiz(user.getUsername(), executionId, quizDetails);
@@ -53,7 +55,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return Collections.emptyList();
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         return statementService.getSolvedQuizzes(user.getUsername(), executionId);
@@ -64,7 +66,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return null;
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         return statementService.getEvaluationQuiz(user.getUsername(), quizId);
@@ -74,9 +76,11 @@ public class StatementController {
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if (user != null) {
-            statementService.submitAnswer(user.getUsername(), quizId, answer);
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
+
+        statementService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @GetMapping("/quizzes/{quizId}/conclude")
@@ -84,7 +88,7 @@ public class StatementController {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
-            return null;
+            throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         return statementService.concludeQuiz(user.getUsername(), quizId);

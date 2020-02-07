@@ -243,13 +243,17 @@ export default class RemoteServices {
       });
   }
 
-  static concludeQuiz(quizId: number): Promise<StatementCorrectAnswer[]> {
+  static concludeQuiz(
+    quizId: number
+  ): Promise<StatementCorrectAnswer[] | void> {
     return httpClient
       .get(`/quizzes/${quizId}/conclude`)
       .then(response => {
-        return response.data.answers.map((answer: any) => {
-          return new StatementCorrectAnswer(answer);
-        });
+        if (response.data.answers) {
+          return response.data.answers.map((answer: any) => {
+            return new StatementCorrectAnswer(answer);
+          });
+        }
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

@@ -141,7 +141,6 @@ export default class QuizList extends Vue {
     },
     { text: 'Scramble', value: 'scramble', align: 'center', width: '10%' },
     { text: 'Type', value: 'type', align: 'center', width: '10%' },
-    { text: 'Year', value: 'year', align: 'center', width: '10%' },
     { text: 'Series', value: 'series', align: 'center', width: '10%' },
     { text: 'Version', value: 'version', align: 'center', width: '10%' },
     {

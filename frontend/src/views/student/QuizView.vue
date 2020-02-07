@@ -1,92 +1,102 @@
 <template>
-  <div
-    tabindex="0"
-    class="quiz-container"
-    @keydown.left="decreaseOrder"
-    @keydown.right="increaseOrder"
-  >
-    <header>
-      <!--span class="timer"><i class="fas fa-clock"></i> 00:00</span-->
-      <span class="end-quiz" @click="confirmationDialog = true"
-        ><i class="fas fa-times" />End Quiz</span
-      >
-    </header>
-
-    <div class="question-navigation">
-      <div class="navigation-buttons">
-        <span
-          v-for="index in +statementQuiz.questions.length"
-          v-bind:class="[
-            'question-button',
-            index === order + 1 ? 'current-question-button' : ''
-          ]"
-          :key="index"
-          @click="changeOrder(index - 1)"
+  <div style="height: 100%">
+    <div
+      tabindex="0"
+      class="quiz-container"
+      @keydown.left="decreaseOrder"
+      @keydown.right="increaseOrder"
+      v-if="!confirmed"
+    >
+      <header>
+        <!--span class="timer"><i class="fas fa-clock"></i> 00:00</span-->
+        <span class="end-quiz" @click="confirmationDialog = true"
+          ><i class="fas fa-times" />End Quiz</span
         >
-          {{ index }}
-        </span>
-      </div>
-      <span class="left-button" @click="decreaseOrder" v-if="order !== 0"
-        ><i class="fas fa-chevron-left"
-      /></span>
-      <span
-        class="right-button"
-        @click="increaseOrder"
-        v-if="order !== statementQuiz.questions.length - 1"
-        ><i class="fas fa-chevron-right"
-      /></span>
-    </div>
-    <question-component
-      v-model="order"
-      v-if="statementQuiz.answers[order]"
-      :optionId="statementQuiz.answers[order].optionId"
-      :question="statementQuiz.questions[order]"
-      :questionNumber="statementQuiz.questions.length"
-      @increase-order="increaseOrder"
-      @select-option="changeAnswer"
-      @decrease-order="decreaseOrder"
-    />
+      </header>
 
-    <v-dialog v-model="confirmationDialog" width="50%">
-      <v-card>
-        <v-card-title primary-title class="secondary white--text headline">
-          Confirmation
-        </v-card-title>
-
-        <v-card-text class="text--black title">
-          <br />
-          Are you sure you want to finish?
-          <br />
+      <div class="question-navigation">
+        <div class="navigation-buttons">
           <span
-            v-if="
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
-            "
+            v-for="index in +statementQuiz.questions.length"
+            v-bind:class="[
+              'question-button',
+              index === questionOrder + 1 ? 'current-question-button' : ''
+            ]"
+            :key="index"
+            @click="changeOrder(index - 1)"
           >
-            You still have
-            {{
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
-            }}
-            unanswered questions!
+            {{ index }}
           </span>
-        </v-card-text>
+        </div>
+        <span
+          class="left-button"
+          @click="decreaseOrder"
+          v-if="questionOrder !== 0"
+          ><i class="fas fa-chevron-left"
+        /></span>
+        <span
+          class="right-button"
+          @click="increaseOrder"
+          v-if="questionOrder !== statementQuiz.questions.length - 1"
+          ><i class="fas fa-chevron-right"
+        /></span>
+      </div>
+      <question-component
+        v-model="questionOrder"
+        v-if="statementQuiz.answers[questionOrder]"
+        :optionId="statementQuiz.answers[questionOrder].optionId"
+        :question="statementQuiz.questions[questionOrder]"
+        :questionNumber="statementQuiz.questions.length"
+        @increase-order="increaseOrder"
+        @select-option="changeAnswer"
+        @decrease-order="decreaseOrder"
+      />
 
-        <v-divider />
+      <v-dialog v-model="confirmationDialog" width="50%">
+        <v-card>
+          <v-card-title primary-title class="secondary white--text headline">
+            Confirmation
+          </v-card-title>
 
-        <v-card-actions>
-          <v-spacer />
-          <v-btn color="secondary" text @click="confirmationDialog = false">
-            Cancel
-          </v-btn>
-          <v-btn color="primary" text @click="endQuiz">
-            I'm sure
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+          <v-card-text class="text--black title">
+            <br />
+            Are you sure you want to finish?
+            <br />
+            <span
+              v-if="
+                statementQuiz.answers
+                  .map(answer => answer.optionId)
+                  .filter(optionId => optionId == null).length
+              "
+            >
+              You still have
+              {{
+                statementQuiz.answers
+                  .map(answer => answer.optionId)
+                  .filter(optionId => optionId == null).length
+              }}
+              unanswered questions!
+            </span>
+          </v-card-text>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn color="secondary" text @click="confirmationDialog = false">
+              Cancel
+            </v-btn>
+            <v-btn color="primary" text @click="endQuiz">
+              I'm sure
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </div>
+
+    <div v-else>
+      Hold on and wait for {{ secondsToSubmit }} seconds to view the results
+    </div>
   </div>
 </template>
 
@@ -96,12 +106,6 @@ import QuestionComponent from '@/components/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-
-Component.registerHooks([
-  'beforeRouteEnter',
-  'beforeRouteUpdate',
-  'beforeRouteLeave'
-]);
 
 @Component({
   components: {
@@ -115,45 +119,45 @@ export default class QuizView extends Vue {
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   startTime: Date = new Date();
-  order: number = 0;
+  questionOrder: number = 0;
+  secondsToSubmit: number | null = StatementManager.getInstance.statementQuiz!
+    .secondsToSubmission;
 
   async created() {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: 'create-quiz' });
     }
-
-    if (this.statementQuiz) {
-      console.log(this.statementQuiz.questions[this.order]);
-    }
   }
 
   increaseOrder(): void {
-    if (this.order + 1 < +this.statementQuiz!.questions.length) {
+    if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
-      this.order += 1;
+      this.questionOrder += 1;
     }
   }
 
   decreaseOrder(): void {
-    if (this.order > 0) {
+    if (this.questionOrder > 0) {
       this.calculateTime();
-      this.order -= 1;
+      this.questionOrder -= 1;
     }
   }
 
   changeOrder(n: number): void {
     if (n >= 0 && n < +this.statementQuiz!.questions.length) {
       this.calculateTime();
-      this.order = n;
+      this.questionOrder = n;
     }
   }
 
   async changeAnswer(optionId: number) {
-    if (this.statementQuiz && this.statementQuiz.answers[this.order]) {
-      if (this.statementQuiz.answers[this.order].optionId === optionId) {
-        this.statementQuiz.answers[this.order].optionId = null;
+    if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
+      if (
+        this.statementQuiz.answers[this.questionOrder].optionId === optionId
+      ) {
+        this.statementQuiz.answers[this.questionOrder].optionId = null;
       } else {
-        this.statementQuiz.answers[this.order].optionId = optionId;
+        this.statementQuiz.answers[this.questionOrder].optionId = optionId;
       }
 
       this.calculateTime();
@@ -161,7 +165,7 @@ export default class QuizView extends Vue {
       try {
         await RemoteServices.submitAnswer(
           this.statementQuiz.id,
-          this.statementQuiz.answers[this.order]
+          this.statementQuiz.answers[this.questionOrder]
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -172,21 +176,37 @@ export default class QuizView extends Vue {
   async endQuiz() {
     await this.$store.dispatch('loading');
     try {
-      this.calculateTime();
-      await this.statementManager.getCorrectAnswers();
-      this.confirmed = true;
+      if (this.secondsToSubmit === null || this.secondsToSubmit > 0) {
+        this.calculateTime();
+        await this.statementManager.concludeQuiz();
+        this.countDownToResults();
+        this.confirmed = true;
+      } else {
+        await this.statementManager.concludeQuiz();
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-    await this.$router.push({ name: 'quiz-results' });
     await this.$store.dispatch('clearLoading');
   }
 
   calculateTime() {
     if (this.statementQuiz) {
-      this.statementQuiz.answers[this.order].timeTaken +=
+      this.statementQuiz.answers[this.questionOrder].timeTaken +=
         new Date().getTime() - this.startTime.getTime();
       this.startTime = new Date();
+    }
+  }
+
+  async countDownToResults() {
+    if (this.secondsToSubmit && this.secondsToSubmit > 0) {
+      setTimeout(() => {
+        this.secondsToSubmit! -= 1;
+        this.countDownToResults();
+      }, 1000);
+    } else {
+      await this.endQuiz();
+      await this.$router.push({ name: 'quiz-results' });
     }
   }
 }

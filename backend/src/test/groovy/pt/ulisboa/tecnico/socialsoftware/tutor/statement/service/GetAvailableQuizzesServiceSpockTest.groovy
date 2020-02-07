@@ -82,7 +82,7 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
 
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.TEACHER)
+        quiz.setType(Quiz.QuizType.PROPOSED)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)

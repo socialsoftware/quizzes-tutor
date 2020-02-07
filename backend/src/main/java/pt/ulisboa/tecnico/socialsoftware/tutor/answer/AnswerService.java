@@ -92,8 +92,20 @@ public class AnswerService {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        quizAnswer.setAnswerDate(LocalDateTime.now());
-        quizAnswer.setCompleted(true);
+        LocalDateTime now = LocalDateTime.now();
+
+        if (!quizAnswer.getCompleted()) {
+            quizAnswer.setAnswerDate(LocalDateTime.now());
+            quizAnswer.setCompleted(true);
+        }
+
+        // When student submits before conclusionDate
+        if (quizAnswer.getQuiz().getConclusionDate() != null &&
+            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
+            now.isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+
+            return null;
+        }
 
         return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))

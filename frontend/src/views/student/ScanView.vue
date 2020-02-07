@@ -2,7 +2,9 @@ import QrcodeVue from "*.vue";
 <template>
   <div class="container">
     <qrcode-stream v-if="!quizId" @decode="onDecode"></qrcode-stream>
-    <div v-else>Wait for {{ seconds }} seconds</div>
+    <div v-else>
+      Hold on and wait for {{ secondsToRequest }} seconds to view the quiz
+    </div>
   </div>
 </template>
 
@@ -12,8 +14,6 @@ import RemoteServices from '@/services/RemoteServices';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
-import StatementQuestion from '@/models/statement/StatementQuestion';
-import StatementAnswer from '@/models/statement/StatementAnswer';
 
 @Component({
   components: {
@@ -22,7 +22,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 })
 export default class ScanView extends Vue {
   quizId: number | null = null;
-  seconds: number = 0;
+  secondsToRequest: number = 0;
 
   async onDecode(decodedString: String) {
     this.quizId = Number(decodedString);
@@ -30,9 +30,9 @@ export default class ScanView extends Vue {
   }
 
   countDownTimer() {
-    if (this.seconds > -1) {
+    if (this.secondsToRequest > -1) {
       setTimeout(() => {
-        this.seconds -= 1;
+        this.secondsToRequest -= 1;
         this.countDownTimer();
       }, 1000);
     } else {
@@ -47,13 +47,14 @@ export default class ScanView extends Vue {
           this.quizId
         );
         if (quiz.secondsToAvailability) {
-          this.seconds = quiz.secondsToAvailability;
+          this.secondsToRequest = quiz.secondsToAvailability;
           this.countDownTimer();
         } else {
           this.goToSolveQuiz(quiz);
         }
       } catch (error) {
         await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'home' });
       }
     }
   }

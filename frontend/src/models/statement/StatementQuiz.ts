@@ -9,6 +9,7 @@ export default class StatementQuiz {
   availableDate!: string;
   conclusionDate: string = '-';
   secondsToAvailability!: number;
+  secondsToSubmission!: number;
   questions: StatementQuestion[] = [];
   answers: StatementAnswer[] = [];
 
@@ -22,6 +23,7 @@ export default class StatementQuiz {
       this.secondsToAvailability = jsonObj.secondsToAvailability;
       if (jsonObj.conclusionDate) {
         this.conclusionDate = jsonObj.conclusionDate;
+        this.secondsToSubmission = jsonObj.secondsToSubmission;
       }
 
       this.questions = jsonObj.questions.map(question => {

@@ -1,4 +1,4 @@
-<template v-if="year">
+<template>
   <v-container fluid>
     <v-card class="table">
       <v-row align="center">

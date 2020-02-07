@@ -151,7 +151,7 @@
     </v-card-text>
 
     <v-dialog
-      v-model="showQuestions"
+      v-model="questionsDialog"
       @keydown.esc="closeQuestionsDialog"
       max-width="75%"
     >
@@ -216,7 +216,7 @@ export default class AssessmentForm extends Vue {
   allTopicsSearch: string = '';
   allTopicsSearchText: string = '';
 
-  showQuestions: boolean = false;
+  questionsDialog: boolean = false;
   allTopics: Topic[] = [];
   topicConjunctions: TopicConjunction[] = [];
   questionsToShow: Question[] = [];
@@ -338,11 +338,11 @@ export default class AssessmentForm extends Vue {
         );
       });
     }
-    this.showQuestions = true;
+    this.questionsDialog = true;
   }
 
   closeQuestionsDialog() {
-    this.showQuestions = false;
+    this.questionsDialog = false;
     this.questionsToShow = [];
   }
 

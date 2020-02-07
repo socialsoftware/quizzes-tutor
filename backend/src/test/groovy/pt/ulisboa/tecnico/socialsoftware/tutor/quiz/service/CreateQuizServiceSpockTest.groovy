@@ -94,7 +94,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a quiz"() {
         given: 'student quiz with title'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.STUDENT)
+        quiz.setType(Quiz.QuizType.GENERATED)
 
         when:
         quizService.createQuiz(courseExecution.getId(), quiz)
@@ -109,7 +109,7 @@ class CreateQuizServiceSpockTest extends Specification {
         result.getCreationDate() != null
         result.getAvailableDate().format(formatter) == availableDate.format(formatter)
         result.getConclusionDate().format(formatter) == conclusionDate.format(formatter)
-        result.getType() == Quiz.QuizType.STUDENT
+        result.getType() == Quiz.QuizType.GENERATED
         result.getSeries() == 1
         result.getVersion() == VERSION
         result.getQuizQuestions().size() == 1
@@ -117,7 +117,7 @@ class CreateQuizServiceSpockTest extends Specification {
 
     def "create a quiz no title"() {
         given: 'student quiz'
-        quiz.setType(Quiz.QuizType.STUDENT)
+        quiz.setType(Quiz.QuizType.GENERATED)
 
         when:
         quizService.createQuiz(courseExecution.getId(), quiz)
@@ -132,7 +132,7 @@ class CreateQuizServiceSpockTest extends Specification {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
         quiz.setAvailableDate(null)
-        quiz.setType(Quiz.QuizType.TEACHER)
+        quiz.setType(Quiz.QuizType.PROPOSED)
 
         when:
         quizService.createQuiz(courseExecution.getId(), quiz)
@@ -147,7 +147,7 @@ class CreateQuizServiceSpockTest extends Specification {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
         quiz.setConclusionDate(getAvailableDate().minusDays(1).format(formatter))
-        quiz.setType(Quiz.QuizType.TEACHER)
+        quiz.setType(Quiz.QuizType.PROPOSED)
 
         when:
         quizService.createQuiz(courseExecution.getId(), quiz)
@@ -161,7 +161,7 @@ class CreateQuizServiceSpockTest extends Specification {
     def "create a TEACHER quiz wrong sequence"() {
         given: 'createQuiz a quiz'
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.STUDENT)
+        quiz.setType(Quiz.QuizType.GENERATED)
         questionDto.setSequence(3)
 
         when:

@@ -65,11 +65,13 @@ public class QuizService {
       backoff = @Backoff(delay = 5000))
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuizDto> findTeacherQuizzes(int executionId) {
+    public List<QuizDto> findNonGeneratedQuizzes(int executionId) {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
-        return quizRepository.findTeacherQuizzes(executionId).stream()
+
+        return quizRepository.findQuizzes(executionId).stream()
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());

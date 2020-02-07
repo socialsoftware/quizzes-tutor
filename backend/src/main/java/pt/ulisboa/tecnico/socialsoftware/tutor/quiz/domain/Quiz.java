@@ -26,7 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
         })
 public class Quiz implements Importable {
     public enum QuizType {
-        EXAM, TEST, STUDENT, TEACHER
+        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS
     }
 
     @Id
@@ -226,16 +226,16 @@ public class Quiz implements Importable {
     }
 
     private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.type.equals(QuizType.TEACHER) && availableDate == null) {
+        if (this.type.equals(QuizType.PROPOSED) && availableDate == null) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
-        if (this.type.equals(QuizType.TEACHER) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+        if (this.type.equals(QuizType.PROPOSED) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.TEACHER) &&
+        if (this.type.equals(QuizType.PROPOSED) &&
                 conclusionDate != null &&
                 availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
@@ -271,8 +271,9 @@ public class Quiz implements Importable {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
+        this.setAvailableDate(LocalDateTime.now());
         this.setCreationDate(LocalDateTime.now());
-        this.setType(QuizType.STUDENT);
+        this.setType(QuizType.GENERATED);
         this.title = "Generated Quiz";
     }
 }

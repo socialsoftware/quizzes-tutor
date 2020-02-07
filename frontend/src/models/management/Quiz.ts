@@ -6,11 +6,10 @@ export class Quiz {
   scramble!: boolean;
   title!: string;
   date!: string | Date;
-  creationDate!: string | Date;
-  availableDate!: string | Date;
-  conclusionDate!: string | Date;
+  creationDate!: string | Date | undefined;
+  availableDate!: string | Date | undefined;
+  conclusionDate!: string | Date | undefined;
   type!: string;
-  year!: number;
   series!: number;
   version!: string;
   numberOfQuestions!: number;
@@ -25,7 +24,6 @@ export class Quiz {
       this.scramble = jsonObj.scramble;
       this.title = jsonObj.title;
       this.type = jsonObj.type;
-      this.year = jsonObj.year;
       this.series = jsonObj.series;
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
