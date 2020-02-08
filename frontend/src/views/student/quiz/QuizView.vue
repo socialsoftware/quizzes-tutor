@@ -94,7 +94,7 @@
       </v-dialog>
     </div>
 
-    <div v-else>
+    <div v-else-if="secondsToSubmit">
       Hold on and wait for {{ secondsToSubmit }} seconds to view the results
     </div>
   </div>
@@ -120,8 +120,8 @@ export default class QuizView extends Vue {
   confirmed: boolean = false;
   startTime: Date = new Date();
   questionOrder: number = 0;
-  secondsToSubmit: number | null =
-    StatementManager.getInstance.statementQuiz!.secondsToSubmission ?? null;
+  secondsToSubmit: number | undefined =
+    StatementManager.getInstance.statementQuiz?.secondsToSubmission;
 
   async created() {
     if (this.statementManager.isEmpty()) {
@@ -179,7 +179,7 @@ export default class QuizView extends Vue {
       this.calculateTime();
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
-      if (!this.secondsToSubmit) {
+      if (this.secondsToSubmit == undefined || this.secondsToSubmit <= 0) {
         await this.$router.push({ name: 'quiz-results' });
       } else {
         console.log('endQuiz' + this.secondsToSubmit + this.confirmed);
@@ -207,9 +207,6 @@ export default class QuizView extends Vue {
         this.countDownToResults();
       }, 1000);
     } else {
-      console.log(
-        'elsecountDownToResults' + this.secondsToSubmit + this.confirmed
-      );
       await this.endQuiz();
     }
   }

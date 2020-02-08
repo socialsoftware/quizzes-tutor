@@ -28,7 +28,7 @@ public class QuestionDto implements Serializable {
     private Integer sequence;
 
     @Transient
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public QuestionDto() {
     }

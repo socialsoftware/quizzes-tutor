@@ -85,11 +85,6 @@
           </v-list>
         </v-menu>
 
-        <!--v-btn v-if="isTeacher" to="/student/stats" text dark disabled>
-          Students Stats
-          <v-icon>fas fa-user</v-icon>
-        </v-btn-->
-
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
@@ -171,37 +166,106 @@
       </v-toolbar>
 
       <v-list class="pt-0" dense>
-        <v-list-item
-          to="/student/available"
-          v-if="isStudent && currentCourse"
-          exact
+        <!-- Management Group-->
+        <v-list-group
+          prepend-icon="fas fa-file-alt"
+          :value="false"
+          v-if="isTeacher && currentCourse"
         >
-          <v-list-item-action>
-            <v-icon>assignment</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Available Quizzes</v-list-item-content>
-        </v-list-item>
+          <template v-slot:activator>
+            <v-list-item-title>Management</v-list-item-title>
+          </template>
+          <v-list-item to="/management/questions">
+            <v-list-item-action>
+              <v-icon>question_answer</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Questions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/topics">
+            <v-list-item-action>
+              <v-icon>category</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Topics</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/quizzes">
+            <v-list-item-action>
+              <v-icon>ballot</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Quizzes</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/assessments">
+            <v-list-item-action>
+              <v-icon>book</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Assessments</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/students">
+            <v-list-item-action>
+              <v-icon>school</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Students</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/impexp">
+            <v-list-item-action>
+              <v-icon>cloud</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>ImpExp</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
 
-        <v-list-item to="/student/create" v-if="isStudent && currentCourse">
-          <v-list-item-action>
-            <v-icon>create</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Create Quiz</v-list-item-content>
-        </v-list-item>
+        <!-- Student Group-->
+        <v-list-group
+          prepend-icon="account_circle"
+          :value="false"
+          v-if="isStudent && currentCourse"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Student</v-list-item-title>
+          </template>
 
-        <v-list-item to="/student/solved" v-if="isStudent && currentCourse">
-          <v-list-item-action>
-            <v-icon>done</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Solved Quizzes</v-list-item-content>
-        </v-list-item>
+          <v-list-item
+            to="/student/available"
+            v-if="isStudent && currentCourse"
+          >
+            <v-list-item-action>
+              <v-icon>assignment</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Available Quizzes</v-list-item-content>
+          </v-list-item>
 
-        <v-list-item to="/student/stats" v-if="isStudent && currentCourse">
-          <v-list-item-action>
-            <v-icon>fas fa-user</v-icon>
-          </v-list-item-action>
-          <v-list-item-content>Stats</v-list-item-content>
-        </v-list-item>
+          <v-list-item to="/student/create">
+            <v-list-item-action>
+              <v-icon>create</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Create Quiz</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/solved">
+            <v-list-item-action>
+              <v-icon>done</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/stats">
+            <v-list-item-action>
+              <v-icon>fas fa-user</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+        </v-list-group>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
           <v-list-item-action>
@@ -209,7 +273,6 @@
           </v-list-item-action>
           <v-list-item-content>Change course</v-list-item-content>
         </v-list-item>
-
         <v-list-item @click="logout" v-if="isLoggedIn">
           <v-list-item-action>
             <v-icon>fas fa-sign-out-alt</v-icon>
@@ -242,7 +305,10 @@ export default class TopBar extends Vue {
   }
 
   get moreThanOneCourse() {
-    return this.$store.getters.getUser.coursesNumber > 1;
+    return (
+      this.$store.getters.getUser.coursesNumber > 1 &&
+      this.$store.getters.getCurrentCourse
+    );
   }
 
   get isLoggedIn() {

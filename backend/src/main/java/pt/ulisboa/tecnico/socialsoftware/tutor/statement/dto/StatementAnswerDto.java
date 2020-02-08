@@ -3,14 +3,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 public class StatementAnswerDto implements Serializable {
     private Integer id;
     private Integer quizAnswerId;
     private Integer quizQuestionId;
-    private LocalDateTime answerDate;
+    private String answerDate;
     private Integer timeTaken;
     private Integer sequence;
     private Integer optionId;
@@ -21,7 +21,7 @@ public class StatementAnswerDto implements Serializable {
         this.id = questionAnswer.getId();
         this.quizAnswerId = questionAnswer.getQuizAnswer().getId();
         this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
-        this.answerDate = questionAnswer.getQuizAnswer().getAnswerDate();
+        this.answerDate = questionAnswer.getQuizAnswer().getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
 
@@ -54,11 +54,11 @@ public class StatementAnswerDto implements Serializable {
         this.quizQuestionId = quizQuestionId;
     }
 
-    public LocalDateTime getAnswerDate() {
+    public String getAnswerDate() {
         return answerDate;
     }
 
-    public void setAnswerDate(LocalDateTime answerDate) {
+    public void setAnswerDate(String answerDate) {
         this.answerDate = answerDate;
     }
 

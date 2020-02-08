@@ -122,17 +122,9 @@ module.exports = {
     }
   },*/
 
-
-
-
-
   // configure webpack-dev-server behavior
   devServer: {
-    allowedHosts: [
-      '.localhost',
-      'localhost',
-      '127.0.0.1',
-    ],
+    allowedHosts: ['.localhost', 'localhost', '127.0.0.1'],
     open: process.platform === 'darwin',
     host: '0.0.0.0',
     port: custompaths.port,

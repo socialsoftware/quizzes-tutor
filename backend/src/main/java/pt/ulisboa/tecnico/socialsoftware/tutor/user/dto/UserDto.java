@@ -3,21 +3,21 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class UserDto implements Serializable {
     private int id;
     private String username;
     private String name;
     private User.Role role;
-    private LocalDateTime creationDate;
+    private String creationDate;
 
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
         this.name = user.getName();
         this.role = user.getRole();
-        this.creationDate = user.getCreationDate();
+        this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
     }
 
     public int getId() {
@@ -52,11 +52,11 @@ public class UserDto implements Serializable {
         this.role = role;
     }
 
-    public LocalDateTime getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 

@@ -24,15 +24,15 @@
       </template>
 
       <template v-slot:item.sortingDate="{ item }">
-        {{ item.stringDate }}
+        {{ item.date }}
       </template>
 
       <template v-slot:item.sortingAvailableDate="{ item }">
-        {{ item.stringAvailableDate }}
+        {{ item.availableDate }}
       </template>
 
       <template v-slot:item.sortingConclusionDate="{ item }">
-        {{ item.stringConclusionDate }}
+        {{ item.conclusionDate }}
       </template>
 
       <template v-slot:item.action="{ item }">

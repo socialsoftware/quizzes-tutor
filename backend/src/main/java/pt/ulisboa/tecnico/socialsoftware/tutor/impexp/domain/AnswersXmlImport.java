@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -129,7 +130,7 @@ public class AnswersXmlImport {
 	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer,Integer> mapQuizQuestionId, QuizAnswer quizAnswer) {
 		QuizAnswerDto quizAnswerDto = new QuizAnswerDto();
         quizAnswerDto.setId(quizAnswer.getId());
-        quizAnswerDto.setAnswerDate(quizAnswer.getAnswerDate());
+        quizAnswerDto.setAnswerDate(quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
 			Integer timeTaken = null;

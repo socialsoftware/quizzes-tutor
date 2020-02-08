@@ -142,7 +142,7 @@ public class AnswerService {
             questionsAnswer.setOption(option);
             questionsAnswer.setTimeTaken(answer.getTimeTaken());
             questionsAnswer.setSequence(answer.getSequence());
-            questionsAnswer.getQuizAnswer().setAnswerDate(answer.getAnswerDate());
+            questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
 
 
 //            // Increase stats to be shown in user list

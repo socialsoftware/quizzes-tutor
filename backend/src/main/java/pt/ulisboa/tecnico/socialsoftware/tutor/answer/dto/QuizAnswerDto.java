@@ -4,14 +4,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class QuizAnswerDto implements Serializable {
     private Integer id;
-    private LocalDateTime answerDate;
+    private String answerDate;
     private boolean completed;
     private QuizDto quiz;
     private String username;
@@ -23,7 +23,7 @@ public class QuizAnswerDto implements Serializable {
 
     public QuizAnswerDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getId();
-        this.answerDate = quizAnswer.getAnswerDate();
+        this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         this.completed = quizAnswer.getCompleted();
         this.quiz = new QuizDto(quizAnswer.getQuiz(), false);
         this.username = quizAnswer.getUser().getUsername();
@@ -38,11 +38,11 @@ public class QuizAnswerDto implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getAnswerDate() {
+    public String getAnswerDate() {
         return answerDate;
     }
 
-    public void setAnswerDate(LocalDateTime answerDate) {
+    public void setAnswerDate(String answerDate) {
         this.answerDate = answerDate;
     }
 

@@ -63,7 +63,7 @@
       </template>
 
       <template v-slot:item.sortingCreationDate="{ item }">
-        {{ item.stringCreationDate }}
+        {{ item.creationDate }}
       </template>
 
       <template v-slot:item.image="{ item }">

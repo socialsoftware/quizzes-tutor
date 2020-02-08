@@ -54,7 +54,7 @@ class ImportExportQuizzesSpockTest extends Specification {
     QuizRepository quizRepository
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
         def course = new Course(COURSE_NAME)
         courseRepository.save(course)

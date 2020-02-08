@@ -58,7 +58,6 @@ export const questionWithFigure = new Question({
     }
   ],
   sequence: null,
-  stringCreationDate: '',
   sortingCreationDate: 1
 });
 
@@ -117,6 +116,5 @@ export const questionWithoutFigure = new Question({
     }
   ],
   sequence: null,
-  stringCreationDate: '',
   sortingCreationDate: 1
 });

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
@@ -34,7 +35,10 @@ public class StatementQuizDto implements Serializable {
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
             this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());
+
+            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+                this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());
+            }
         }
         this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
