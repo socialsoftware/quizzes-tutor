@@ -102,7 +102,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import QuestionComponent from '@/components/QuestionComponent.vue';
+import QuestionComponent from '@/views/student/quiz/QuizComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
@@ -120,8 +120,8 @@ export default class QuizView extends Vue {
   confirmed: boolean = false;
   startTime: Date = new Date();
   questionOrder: number = 0;
-  secondsToSubmit: number | null = StatementManager.getInstance.statementQuiz!
-    .secondsToSubmission;
+  secondsToSubmit: number | null =
+    StatementManager.getInstance.statementQuiz!.secondsToSubmission ?? null;
 
   async created() {
     if (this.statementManager.isEmpty()) {
@@ -176,13 +176,14 @@ export default class QuizView extends Vue {
   async endQuiz() {
     await this.$store.dispatch('loading');
     try {
-      if (this.secondsToSubmit === null || this.secondsToSubmit > 0) {
-        this.calculateTime();
-        await this.statementManager.concludeQuiz();
-        this.countDownToResults();
-        this.confirmed = true;
+      this.calculateTime();
+      this.confirmed = true;
+      await this.statementManager.concludeQuiz();
+      if (!this.secondsToSubmit) {
+        await this.$router.push({ name: 'quiz-results' });
       } else {
-        await this.statementManager.concludeQuiz();
+        console.log('endQuiz' + this.secondsToSubmit + this.confirmed);
+        this.countDownToResults();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -200,13 +201,16 @@ export default class QuizView extends Vue {
 
   async countDownToResults() {
     if (this.secondsToSubmit && this.secondsToSubmit > 0) {
+      console.log('countDownToResults' + this.secondsToSubmit + this.confirmed);
       setTimeout(() => {
         this.secondsToSubmit! -= 1;
         this.countDownToResults();
       }, 1000);
     } else {
+      console.log(
+        'elsecountDownToResults' + this.secondsToSubmit + this.confirmed
+      );
       await this.endQuiz();
-      await this.$router.push({ name: 'quiz-results' });
     }
   }
 }

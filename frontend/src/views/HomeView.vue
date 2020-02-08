@@ -8,6 +8,15 @@
       Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
     </v-btn>
 
+    <div class="demo-buttons" v-if="!isLoggedIn">
+      <v-btn depressed small color="primary" @click="demoStudent">
+        <i class="fa fa-graduation-cap" />Demo as student
+      </v-btn>
+      <v-btn depressed small color="primary" @click="demoTeacher">
+        <i class="fa fa-graduation-cap" />Demo as teacher
+      </v-btn>
+    </div>
+
     <v-footer class="footer">
       <img
         :src="require('../assets/img/ist_optimized.png')"
@@ -34,14 +43,6 @@
           target="_blank"
         >
           <i class="fab fa-github" /> Bug report
-        </v-btn>
-      </div>
-      <div class="demo-buttons">
-        <v-btn depressed small color="secondary" @click="demoStudent">
-          <i class="fa fa-graduation-cap" />Demo as student
-        </v-btn>
-        <v-btn depressed small color="secondary" @click="demoTeacher">
-          <i class="fa fa-graduation-cap" />Demo as teacher
         </v-btn>
       </div>
       <img
@@ -115,16 +116,25 @@ export default class HomeView extends Vue {
       border-box;
     border: 0 none rgb(255, 255, 255);
     font: normal normal 100 normal 45px / 48px Roboto, sans-serif !important;
-    margin-bottom: 100px !important;
+    margin-bottom: 70px !important;
     outline: rgb(255, 255, 255) none 0;
     padding: 10px 20px;
+  }
+
+  .demo-buttons {
+    margin-top: 40px;
+    padding-bottom: 30px;
+
+    button {
+      margin: 10px;
+    }
   }
 
   .footer {
     background-color: rgba(0, 0, 0, 0) !important;
     display: flex; /* or inline-flex */
     flex-direction: row;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
     width: 100%;
@@ -132,10 +142,6 @@ export default class HomeView extends Vue {
     position: absolute;
     bottom: 0;
     overflow: hidden;
-
-    .demo-buttons button {
-      margin: 0 10px;
-    }
 
     .logo {
       flex-shrink: 1;

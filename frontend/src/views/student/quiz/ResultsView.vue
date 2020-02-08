@@ -53,7 +53,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import StatementManager from '@/models/statement/StatementManager';
-import ResultComponent from '@/components/ResultComponent.vue';
+import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
 
 @Component({
   components: {

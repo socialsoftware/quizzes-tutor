@@ -1,7 +1,10 @@
 <template>
   <v-card v-if="editMode && quiz" class="table">
     <v-card-title>
-      <span class="headline">Edit Quiz</span>
+      <span>Edit Quiz</span>
+
+      <v-spacer />
+
       <v-btn color="primary" dark @click="switchMode">
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
@@ -46,15 +49,16 @@
 
       <v-data-table
         :headers="headers"
+        :custom-filter="customFilter"
+        :custom-sort="customSort"
         :items="questions"
         :search="search"
-        :custom-filter="customFilter"
-        :items-per-page="15"
-        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
         :sort-by="['sequence']"
         :sort-desc="[false]"
-        :custom-sort="customSort"
+        :mobile-breakpoint="0"
         must-sort
+        :items-per-page="15"
+        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       >
         <template v-slot:top>
           <v-row>
@@ -495,13 +499,4 @@ export default class QuizForm extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
-.headline {
-  flex: 1 1 auto;
-  text-align: left;
-}
-
-.headline + button {
-  margin: 0 20px;
-}
-</style>
+<style lang="scss" scoped></style>

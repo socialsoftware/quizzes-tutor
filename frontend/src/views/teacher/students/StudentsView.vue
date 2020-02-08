@@ -4,9 +4,9 @@
       :headers="headers"
       :items="students"
       :search="search"
-      multi-sort
       disable-pagination
-      class="elevation-1"
+      :mobile-breakpoint="0"
+      multi-sort
     >
       <template v-slot:top>
         <v-card-title>

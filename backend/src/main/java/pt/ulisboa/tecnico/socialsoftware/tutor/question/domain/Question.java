@@ -134,10 +134,6 @@ public class Question implements Importable {
         return options;
     }
 
-    public void setOptions(List<Option> options) {
-        this.options = options;
-    }
-
     public Image getImage() {
         return image;
     }
@@ -175,16 +171,8 @@ public class Question implements Importable {
         this.numberOfCorrect = numberOfCorrect;
     }
 
-    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
-        this.quizQuestions = quizQuestions;
-    }
-
     public Set<Topic> getTopics() {
         return topics;
-    }
-
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
     }
 
     public LocalDateTime getCreationDate() {

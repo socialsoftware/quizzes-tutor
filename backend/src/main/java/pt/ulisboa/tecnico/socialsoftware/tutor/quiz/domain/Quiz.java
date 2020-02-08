@@ -170,16 +170,8 @@ public class Quiz implements Importable {
     return quizQuestions;
     }
 
-    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
-    this.quizQuestions = quizQuestions;
-    }
-
     public Set<QuizAnswer> getQuizAnswers() {
         return quizAnswers;
-    }
-
-    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
-    this.quizAnswers = quizAnswers;
     }
 
     public boolean isScramble() {

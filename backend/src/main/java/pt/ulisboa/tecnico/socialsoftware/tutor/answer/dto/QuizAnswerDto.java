@@ -74,10 +74,6 @@ public class QuizAnswerDto implements Serializable {
         return questionAnswers;
     }
 
-    public void setQuestionAnswers(Set<QuestionAnswerDto> questionAnswers) {
-        this.questionAnswers = questionAnswers;
-    }
-
     @Override
     public String toString() {
         return "QuizAnswerDto{" +

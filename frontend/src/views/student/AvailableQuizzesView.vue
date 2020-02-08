@@ -1,17 +1,15 @@
 <template>
   <div class="container">
     <h2>Available Quizzes</h2>
-    <ul class="responsive-table">
-      <li class="table-header">
+    <ul>
+      <li class="list-header">
         <div class="col">Title</div>
         <div class="col">Available since</div>
         <div class="col">Available until</div>
         <div class="col last-col"></div>
       </li>
-    </ul>
-    <ul class="responsive-table">
       <li
-        class="table-row"
+        class="list-row"
         v-for="quiz in quizzes"
         :key="quiz.quizAnswerId"
         @click="solveQuiz(quiz)"
@@ -80,7 +78,8 @@ export default class AvailableQuizzesView extends Vue {
     }
   }
 
-  .responsive-table {
+  ul {
+    overflow: hidden;
     padding: 0 5px;
 
     li {
@@ -91,7 +90,7 @@ export default class AvailableQuizzesView extends Vue {
       margin-bottom: 10px;
     }
 
-    .table-header {
+    .list-header {
       background-color: #1976d2;
       color: white;
       font-size: 14px;
@@ -106,33 +105,10 @@ export default class AvailableQuizzesView extends Vue {
       text-align: center;
     }
 
-    .table-row {
+    .list-row {
       background-color: #ffffff;
       box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.1);
       display: flex;
-    }
-
-    @media all and (max-width: 767px) {
-      .table-header {
-        display: none;
-      }
-      li {
-        display: block;
-      }
-      .col {
-        flex-basis: 100%;
-      }
-      .col {
-        display: flex;
-        padding: 10px 0;
-        &:before {
-          color: #6c7a89;
-          padding-right: 10px;
-          content: attr(data-label);
-          flex-basis: 50%;
-          text-align: right;
-        }
-      }
     }
   }
 }

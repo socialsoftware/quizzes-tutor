@@ -6,6 +6,7 @@
       :items="questions"
       :search="search"
       multi-sort
+      :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
@@ -132,7 +133,7 @@
     />
     <show-question-dialog
       v-if="currentQuestion"
-      :dialog="showQuestion"
+      :dialog="questionDialog"
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />

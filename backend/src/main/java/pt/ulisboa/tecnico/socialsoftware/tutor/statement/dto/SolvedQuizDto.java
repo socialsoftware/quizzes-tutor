@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -34,7 +35,7 @@ public class SolvedQuizDto implements Serializable {
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
 
-        this.answerDate = String.valueOf(quizAnswer.getAnswerDate());
+        this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
     public StatementQuizDto getStatementQuiz() {

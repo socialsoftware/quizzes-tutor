@@ -106,10 +106,6 @@ public class QuizAnswer implements Importable {
         return questionAnswers;
     }
 
-    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
-    }
-
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
         if (questionAnswers == null) {
             questionAnswers = new HashSet<>();

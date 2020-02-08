@@ -41,10 +41,6 @@ public class TopicConjunction implements Importable {
         return topics;
     }
 
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
-    }
-
     public Assessment getAssessment() {
         return assessment;
     }

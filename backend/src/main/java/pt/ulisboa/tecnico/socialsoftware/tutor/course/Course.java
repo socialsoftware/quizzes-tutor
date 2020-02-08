@@ -67,24 +67,12 @@ public class Course implements Importable {
         return courseExecutions;
     }
 
-    public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
-        this.courseExecutions = courseExecutions;
-    }
-
     public Set<Question> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
-
     public Set<Topic> getTopics() {
         return topics;
-    }
-
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
     }
 
     public void addCourseExecution(CourseExecution courseExecution) {

@@ -107,24 +107,12 @@ public class CourseExecution implements Importable {
         return users;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     public Set<Quiz> getQuizzes() {
         return quizzes;
     }
 
-    public void setQuizzes(Set<Quiz> quizzes) {
-        this.quizzes = quizzes;
-    }
-
     public Set<Assessment> getAssessments() {
         return assessments;
-    }
-
-    public void setAssessments(Set<Assessment> assessments) {
-        this.assessments = assessments;
     }
 
     public void addQuiz(Quiz quiz) {

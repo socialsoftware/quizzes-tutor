@@ -66,10 +66,6 @@ public class Topic implements Importable {
         return questions;
     }
 
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
-
     public Topic getParentTopic() {
         return parentTopic;
     }
@@ -82,16 +78,8 @@ public class Topic implements Importable {
         return childrenTopics;
     }
 
-    public void setChildrenTopics(Set<Topic> childrenTopics) {
-        this.childrenTopics = childrenTopics;
-    }
-
     public List<TopicConjunction> getTopicConjunctions() {
         return topicConjunctions;
-    }
-
-    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
     }
 
     public Course getCourse() {

@@ -43,7 +43,7 @@ public class Assessment implements Importable {
 
         courseExecution.addAssessment(this);
 
-        setTopicConjunctions(topicConjunctions);
+        this.topicConjunctions = topicConjunctions;
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
     }
 
@@ -89,10 +89,6 @@ public class Assessment implements Importable {
 
     public List<TopicConjunction> getTopicConjunctions() {
         return topicConjunctions;
-    }
-
-    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
     }
 
     @Override

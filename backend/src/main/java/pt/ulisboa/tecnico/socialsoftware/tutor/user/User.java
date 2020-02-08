@@ -147,10 +147,6 @@ public class User implements UserDetails, Importable {
         return quizAnswers;
     }
 
-    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
-        this.quizAnswers = quizAnswers;
-    }
-
     public Set<CourseExecution> getCourseExecutions() {
         return courseExecutions;
     }

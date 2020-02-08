@@ -5,9 +5,9 @@
       :items="quizzes"
       :search="search"
       multi-sort
+      :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      class="elevation-1"
     >
       <template v-slot:top>
         <v-card-title>

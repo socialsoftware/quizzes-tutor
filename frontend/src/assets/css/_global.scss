@@ -14,7 +14,13 @@ body {
   margin: 2%;
   width: 96%;
   padding: 0 20px;
+
+  .v-card__title .v-btn {
+    margin: 0 5px;
+  }
 }
+
+
 
 .table td,
 .table th {

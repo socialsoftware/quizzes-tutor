@@ -86,10 +86,6 @@ public class Option implements Importable {
         return questionAnswers;
     }
 
-    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
-    }
-
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
         questionAnswers.add(questionAnswer);
     }

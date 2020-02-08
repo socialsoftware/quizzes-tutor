@@ -1,7 +1,8 @@
 <template>
   <v-card v-if="editMode && assessment" class="table">
     <v-card-title>
-      <span class="headline">Create Assessment</span>
+      <span>Create Assessment</span>
+      <v-spacer />
       <v-btn color="primary" dark @click="$emit('switchMode')">
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
@@ -9,16 +10,29 @@
       <v-btn color="primary" dark @click="saveAssessment">Save</v-btn>
     </v-card-title>
     <v-card-text>
-      <v-text-field v-model="assessment.title" label="Title"></v-text-field>
+      <v-row>
+        <v-col cols="12" sm="10">
+          <v-text-field v-model="assessment.title" label="Title"></v-text-field>
+        </v-col>
+
+        <v-col cols="12" sm="2">
+          <v-text-field
+            v-model="assessment.sequence"
+            label="Order"
+            type="number"
+          ></v-text-field>
+        </v-col>
+      </v-row>
       <v-layout row wrap>
         <v-flex class="text-left">
           <v-data-table
             :headers="topicHeaders"
+            :custom-filter="topicFilter"
             :items="assessment.topicConjunctions"
+            :search="JSON.stringify(currentTopicsSearch)"
+            :mobile-breakpoint="0"
             :items-per-page="15"
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-            :search="JSON.stringify(currentTopicsSearch)"
-            :custom-filter="topicFilter"
           >
             <template v-slot:top>
               <v-autocomplete
@@ -79,11 +93,12 @@
         <v-flex class="text-left">
           <v-data-table
             :headers="topicHeaders"
+            :custom-filter="topicFilter"
             :items="topicConjunctions"
+            :search="JSON.stringify(allTopicsSearch)"
+            :mobile-breakpoint="0"
             :items-per-page="15"
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-            :search="JSON.stringify(allTopicsSearch)"
-            :custom-filter="topicFilter"
           >
             <template v-slot:top>
               <v-autocomplete
@@ -228,14 +243,13 @@ export default class AssessmentForm extends Vue {
       text: 'Topics',
       value: 'topics',
       align: 'left',
-      width: '99%',
       sortable: false
     },
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
-      width: '1%',
+      width: '150px',
       sortable: false
     }
   ];

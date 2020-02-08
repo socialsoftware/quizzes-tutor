@@ -75,10 +75,6 @@ public class QuizQuestion implements Importable {
         return questionAnswers;
     }
 
-    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
-    }
-
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
