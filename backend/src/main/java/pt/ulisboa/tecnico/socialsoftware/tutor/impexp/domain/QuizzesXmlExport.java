@@ -41,7 +41,8 @@ public class QuizzesXmlExport {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
 		Element quizElement = new Element("quiz");
-        quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
+		quizElement.setAttribute("courseExecutionType",quiz.getCourseExecution().getType().name());
+		quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
         quizElement.setAttribute("academicTerm",quiz.getCourseExecution().getAcademicTerm());
         quizElement.setAttribute("key", String.valueOf(quiz.getKey()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));

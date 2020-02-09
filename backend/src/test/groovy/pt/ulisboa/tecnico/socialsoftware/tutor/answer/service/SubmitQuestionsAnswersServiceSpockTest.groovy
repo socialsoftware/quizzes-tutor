@@ -78,10 +78,10 @@ class SubmitQuestionsAnswersServiceSpockTest extends Specification {
     def date
 
     def setup() {
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         user = new User('name', "username", 1, User.Role.STUDENT)

@@ -13,14 +13,14 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
-    @Query(value = "SELECT * FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id", nativeQuery = true)
-    List<Question> findQuestions(String courseName);
+    @Query(value = "SELECT * FROM questions q WHERE q.course_id = :courseId", nativeQuery = true)
+    List<Question> findQuestions(int courseId);
 
-    @Query(value = "SELECT * FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id AND q.status = 'AVAILABLE'", nativeQuery = true)
-    List<Question> findAvailableQuestions(String courseName);
+    @Query(value = "SELECT * FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
+    List<Question> findAvailableQuestions(int courseId);
 
-    @Query(value = "SELECT count(*) FROM questions q, courses c WHERE c.name = :courseName AND q.course_id = c.id AND q.status = 'AVAILABLE'", nativeQuery = true)
-    Integer getAvailableQuestionsSize(String courseName);
+    @Query(value = "SELECT count(*) FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
+    Integer getAvailableQuestionsSize(String courseId);
 
     @Query(value = "SELECT MAX(key) FROM questions", nativeQuery = true)
     Integer getMaxQuestionNumber();

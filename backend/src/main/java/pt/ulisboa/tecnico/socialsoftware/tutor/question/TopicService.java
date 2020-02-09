@@ -46,8 +46,8 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TopicDto> findTopics(String courseName) {
-        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+    public List<TopicDto> findTopics(int courseId) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
@@ -56,9 +56,9 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TopicDto createTopic(String courseName, TopicDto topicDto) {
+    public TopicDto createTopic(int courseId, TopicDto topicDto) {
 
-        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         if (topicRepository.findTopicByName(course.getId(), topicDto.getName()) != null) {
             throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());
@@ -113,7 +113,7 @@ public class TopicService {
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();
 
-        xmlImporter.importTopics(topicsXML, this, questionService);
+        xmlImporter.importTopics(topicsXML, this, questionService, courseRepository);
     }
 }
 

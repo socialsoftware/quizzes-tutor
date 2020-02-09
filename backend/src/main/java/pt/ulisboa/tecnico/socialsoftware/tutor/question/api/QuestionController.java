@@ -37,24 +37,24 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/courses/{courseName}/questions")
-    public List<QuestionDto> getCourseQuestions(@PathVariable String courseName){
-        return this.questionService.findQuestions(courseName);
+    @GetMapping("/courses/{courseId}/questions")
+    public List<QuestionDto> getCourseQuestions(@PathVariable int courseId){
+        return this.questionService.findQuestions(courseId);
     }
 
-    @GetMapping("/courses/{courseName}/questions/available")
-    public List<QuestionDto> getAvailableQuestions(@PathVariable String courseName){
-        return this.questionService.findAvailableQuestions(courseName);
+    @GetMapping("/courses/{courseId}/questions/available")
+    public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId){
+        return this.questionService.findAvailableQuestions(courseId);
     }
 
-    @PostMapping("/courses/{courseName}/questions")
-    public QuestionDto createQuestion(@PathVariable String courseName, @Valid @RequestBody QuestionDto question) {
+    @PostMapping("/courses/{courseId}/questions")
+    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         logger.debug("createQuestion title: {}, content: {}, options: {}: ",
                 question.getTitle(), question.getContent(),
                 question.getOptions().stream().map(optionDto -> optionDto.getId() + " : " + optionDto.getContent() + " : " + optionDto.getCorrect())
                         .collect(Collectors.joining("\n")));
         question.setStatus(Question.Status.AVAILABLE.name());
-        return this.questionService.createQuestion(courseName, question);
+        return this.questionService.createQuestion(courseId, question);
     }
 
     @GetMapping("/questions/{questionId}")

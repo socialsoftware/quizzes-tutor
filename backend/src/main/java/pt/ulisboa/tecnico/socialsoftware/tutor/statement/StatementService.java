@@ -80,7 +80,7 @@ public class StatementService {
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getName());
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
 //        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);

@@ -7,6 +7,7 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -76,6 +77,7 @@ public class QuizzesXmlImport {
 	}
 
 	private void importQuiz(Element quizElement) {
+		String courseExecutionType = quizElement.getAttributeValue("courseExecutionType");
         String acronym = quizElement.getAttributeValue("acronym");
         String academicTerm = quizElement.getAttributeValue("academicTerm");
 
@@ -117,8 +119,9 @@ public class QuizzesXmlImport {
 		quizDto.setSeries(series);
 		quizDto.setVersion(version);
 
-		int executionCourseId = this.courseExecutionRepository.findByAcronymAcademicTerm(acronym, academicTerm);
-		QuizDto quizDto2 = quizService.createQuiz(executionCourseId, quizDto);
+		CourseExecution courseExecution =
+				this.courseExecutionRepository.findByAcronymAcademicTermType(acronym, academicTerm, courseExecutionType).get();
+		QuizDto quizDto2 = quizService.createQuiz(courseExecution.getId(), quizDto);
 		importQuizQuestions(quizElement.getChild("quizQuestions"), quizDto2);
 	}
 

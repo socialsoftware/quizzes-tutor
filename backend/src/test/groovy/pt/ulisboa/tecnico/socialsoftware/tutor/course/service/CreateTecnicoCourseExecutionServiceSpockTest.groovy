@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateCourseExecutionServiceSpockTest extends Specification {
+class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
     public static final String COURSE_ONE = "CourseOne"
     public static final String ACRONYM_ONE = "C12"
     public static final String ACADEMIC_TERM_ONE = "1º Semestre"
@@ -30,7 +30,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
 
     def "the course exists and create execution course"() {
         given: "a course"
-        def course = new Course(COURSE_ONE)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: 'a courseDto'
         def courseDto = new CourseDto(course)
@@ -39,7 +39,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
 
         when:
-        def result = courseService.createCourseExecution(courseDto)
+        def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
         result.name == COURSE_ONE
@@ -63,7 +63,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
 
         when:
-        def result = courseService.createCourseExecution(courseDto)
+        def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
         result.name == COURSE_ONE
@@ -71,7 +71,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         result.academicTerm == ACADEMIC_TERM_ONE
         and: 'course is in the database'
         courseRepository.findAll().size() == 1
-        def course = courseRepository.findByName(COURSE_ONE).get()
+        def course = courseRepository.findByNameType(COURSE_ONE, Course.Type.TECNICO.name()).get()
         course != null
         course.getCourseExecutions().size() == 1
         and: 'course execution is in the database'
@@ -86,16 +86,16 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
 
     def "the course and course execution exist"() {
         given: "a course"
-        def course = new Course(COURSE_ONE)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: 'a course execution'
-        def courseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE)
+        def courseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
         and: 'a courseDto'
         def courseDto = new CourseDto(courseExecution)
 
         when:
-        def result = courseService.createCourseExecution(courseDto)
+        def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
         result.name == COURSE_ONE
@@ -114,7 +114,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
 
         when:
-        courseService.createCourseExecution(courseDto)
+        courseService.createTecnicoCourseExecution(courseDto)
 
         then:
         thrown(TutorException)
@@ -128,7 +128,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
 
         when:
-        courseService.createCourseExecution(courseDto)
+        courseService.createTecnicoCourseExecution(courseDto)
 
         then:
         thrown(TutorException)
@@ -142,7 +142,7 @@ class CreateCourseExecutionServiceSpockTest extends Specification {
         courseDto.setAcademicTerm("   ")
 
         when:
-        courseService.createCourseExecution(courseDto)
+        courseService.createTecnicoCourseExecution(courseDto)
 
         then:
         thrown(TutorException)

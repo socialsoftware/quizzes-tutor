@@ -71,8 +71,8 @@ class FenixAuthServiceSpockTest extends Specification {
 
     def "no teacher has course and is in database, then create and add"() {
         given: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -179,8 +179,8 @@ class FenixAuthServiceSpockTest extends Specification {
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
         and: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -243,8 +243,8 @@ class FenixAuthServiceSpockTest extends Specification {
 
     def "no student has courses and in database, create student with attending course"() {
         given: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -326,8 +326,8 @@ class FenixAuthServiceSpockTest extends Specification {
         user.setRole(User.Role.STUDENT)
         userRepository.save(user)
         and: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -358,8 +358,8 @@ class FenixAuthServiceSpockTest extends Specification {
         user.setRole(User.Role.STUDENT)
         userRepository.save(user)
         and: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -388,8 +388,8 @@ class FenixAuthServiceSpockTest extends Specification {
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
         and: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
@@ -419,8 +419,8 @@ class FenixAuthServiceSpockTest extends Specification {
         user.setRole(User.Role.TEACHER)
         userRepository.save(user)
         and: 'a course execution'
-        def course = new Course(COURSE_NAME)
-        new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseRepository.save(course)
         and:
         client.getPersonName() >> PERSON_NAME
