@@ -1,36 +1,40 @@
 <h1 align="center">Quizzes Tutor</h1>
 
 <p align="center">
-  <a href="https://github.com/socialsoftware/quizzes-tutor/actions" target="_blank">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/actions">
     <img src="https://img.shields.io/github/workflow/status/socialsoftware/quizzes-tutor/build" alt="Build">
   </a>
-  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/"target="_blank">
+  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
   </a>
   <!-- Uncomment when sslbadge updates its ssl certificates lol -->
-  <!--a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt"target="_blank">
+  <!--a href="https://www.ssllabs.com/ssltest/analyze.html?d=quizzes-tutor.tecnico.ulisboa.pt">
     <img src="https://sslbadge.org/?domain=quizzes-tutor.tecnico.ulisboa.pt" alt="SSL configuration">
   </a-->
-  <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE"target="_blank">
+  <a href="https://github.com/socialsoftware/quizzes-tutor/blob/master/LICENSE">
     <img src="https://img.shields.io/github/license/socialsoftware/quizzes-tutor"alt="License">
   </a>
 </p>
 
 <p align="center">
   <!-- Snyk badge takes too long to load -->
-  <!-- a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml"target="_blank">
+  <!-- a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=backend/pom.xml">
     <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=backend/pom.xml" alt="Backend vulnerabilities">
   </a>
-  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json"target="_blank">
-    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities"-->
-  </a>
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend"target="_blank">
+  <a href="https://snyk.io/test/github/socialsoftware/quizzes-tutor?targetFile=frontend/package.json">
+    <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
+  </a-->
+
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend">
     <img src="https://badgen.net/david/dep/socialsoftware/quizzes-tutor/frontend" alt="Dependencies">
   </a>
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev"target="_blank">
+  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev">
     <img src="https://badgen.net/david/dev/socialsoftware/quizzes-tutor/frontend" alt="Dev Dependencies">
   </a>
-  <a href="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master"target="_blank">
+  <a href="https://github.com/prettier/prettier">
+    <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?" alt="code style: prettier">
+  </a>
+  <a href="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master">
     <img src="https://codecov.io/gh/socialsoftware/quizzes-tutor/branch/master/graph/badge.svg" alt="Code Coverage">
   </a>
 </p>
@@ -69,10 +73,10 @@ Students can then answer those questions in sugested quizzes or generated quizze
 # Technologies
 
 * Require download
-  * [Postgres 10 or 12](https://www.postgresql.org/)
+  * [Postgres >= 10](https://www.postgresql.org/)
   * [Java 11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
   * [Maven](https://maven.apache.org/download.cgi)
-  * [Node 12.14](https://nodejs.org/en/)
+  * [Node 12.14](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)
 * No download required
   * [Spring-boot](https://spring.io/)
@@ -82,11 +86,12 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 * **Install**
 ```
-sudo apt update
-sudo apt install postgresql nodejs npm
+sudo apt update && sudo apt upgrade
+sudo apt install openjdk-11-jdk postgresql
 ```
-* **Change to postgres user and create DB**
+* **Start db, change to postgres user and create DB**
 ```
+sudo service postgresql start
 sudo su -l postgres
 dropdb tutordb
 createdb tutordb
@@ -95,6 +100,8 @@ createdb tutordb
 ```
 psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
+\q
+exit
 psql tutordb < dump.sql
 ```
 * **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://localhost:8081/login and accessess curricular information**
