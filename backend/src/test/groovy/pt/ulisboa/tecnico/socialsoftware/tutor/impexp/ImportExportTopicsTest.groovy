@@ -47,11 +47,10 @@ class ImportExportTopicsTest extends Specification {
     def topicDtoTwo
 
     def setup() {
-        def course = new Course()
-        course.setName(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
@@ -66,15 +65,15 @@ class ImportExportTopicsTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionDto = questionService.createQuestion(COURSE_NAME, questionDto)
+        questionDto = questionService.createQuestion(course.id, questionDto)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_ONE)
         topicDtoTwo = new TopicDto()
         topicDtoTwo.setName(TOPIC_TWO)
 
-        topicDtoOne = topicService.createTopic(COURSE_NAME, topicDtoOne)
-        topicDtoTwo = topicService.createTopic(COURSE_NAME, topicDtoTwo)
+        topicDtoOne = topicService.createTopic(course.id, topicDtoOne)
+        topicDtoTwo = topicService.createTopic(course.id, topicDtoTwo)
 
         TopicDto[] topics = [topicDtoOne, topicDtoTwo]
         questionService.updateQuestionTopics(questionDto.getId(), topics)

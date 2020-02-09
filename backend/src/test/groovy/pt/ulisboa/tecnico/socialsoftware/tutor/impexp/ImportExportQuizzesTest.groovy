@@ -56,10 +56,10 @@ class ImportExportQuizzesTest extends Specification {
     def setup() {
         formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
 
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
@@ -75,7 +75,7 @@ class ImportExportQuizzesTest extends Specification {
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         questionDto.setOptions(options)
-        questionDto = questionService.createQuestion(COURSE_NAME, questionDto)
+        questionDto = questionService.createQuestion(course.getId(), questionDto)
 
         def quizDto = new QuizDto()
         quizDto.setKey(1)

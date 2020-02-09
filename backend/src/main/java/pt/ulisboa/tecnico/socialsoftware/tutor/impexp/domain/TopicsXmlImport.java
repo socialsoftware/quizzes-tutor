@@ -7,6 +7,8 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -21,10 +23,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TO
 public class TopicsXmlImport {
 	private QuestionService questionService;
     private TopicService topicService;
+    private CourseRepository courseRepository;
 
-	public void importTopics(InputStream inputStream, TopicService topicService, QuestionService questionService) {
+	public void importTopics(InputStream inputStream, TopicService topicService, QuestionService questionService, CourseRepository courseRepository) {
 		this.topicService = topicService;
         this.questionService = questionService;
+		this.courseRepository = courseRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
@@ -48,13 +52,13 @@ public class TopicsXmlImport {
 		importTopics(doc);
 	}
 
-	public void importTopics(String topicsXml, TopicService topicService, QuestionService questionService) {
+	public void importTopics(String topicsXml, TopicService topicService, QuestionService questionService, CourseRepository courseRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(topicsXml.getBytes());
 
-		importTopics(stream, topicService, questionService);
+		importTopics(stream, topicService, questionService, courseRepository);
 	}
 
 	private void importTopics(Document doc) {
@@ -66,13 +70,15 @@ public class TopicsXmlImport {
 	}
 
 	private void importTopic(Element topicElement) {
-		String course = topicElement.getAttributeValue("course");
+		String courseType = topicElement.getAttributeValue("courseType");
+		String courseName = topicElement.getAttributeValue("courseName");
 		String name = topicElement.getAttributeValue("name");
 
         TopicDto topicDto = new TopicDto();
         topicDto.setName(name);
 
-		topicService.createTopic(course, topicDto);
+        Course course = courseRepository.findByNameType(courseName, courseType).get();
+		topicService.createTopic(course.getId(), topicDto);
 
 		for (Element questionElement: topicElement.getChild("questions").getChildren("question")) {
 			importQuestion(questionElement, name);

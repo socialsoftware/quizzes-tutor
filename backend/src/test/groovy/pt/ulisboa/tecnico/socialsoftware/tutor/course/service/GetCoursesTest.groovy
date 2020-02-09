@@ -22,9 +22,9 @@ class GetCoursesTest extends Specification {
 
     def "two courses"() {
         given: "two courses"
-        def course = new Course(COURSE_ONE)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
-        course = new Course(COURSE_TWO)
+        course = new Course(COURSE_TWO, Course.Type.TECNICO)
         courseRepository.save(course)
 
         when:

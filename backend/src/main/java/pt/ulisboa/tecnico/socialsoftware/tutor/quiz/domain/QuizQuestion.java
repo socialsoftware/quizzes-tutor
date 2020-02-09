@@ -13,7 +13,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 
 @Entity
 @Table(name="quiz_questions")
-public class QuizQuestion implements Importable {
+public class QuizQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

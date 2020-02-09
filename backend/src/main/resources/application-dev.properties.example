@@ -14,7 +14,7 @@ load.dir=${maven.basedir}/../data/load/
 ## Fenix oauth
 oauth.consumer.key=<FENIX CLIENT KEY>
 oauth.consumer.secret=<FENIX SECRET>
-callback.url=<URL FENIX REDIRECTS TO>
+callback.url=http://localhost:8081/login
 base.url=https://fenix.tecnico.ulisboa.pt
 
 # Restart server

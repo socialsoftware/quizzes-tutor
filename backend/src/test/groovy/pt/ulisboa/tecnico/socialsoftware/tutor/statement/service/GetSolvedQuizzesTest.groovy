@@ -70,10 +70,10 @@ class GetSolvedQuizzesTest extends Specification {
     def quizQuestion
 
     def setup() {
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         courseDto = new CourseDto(courseExecution)
@@ -132,7 +132,7 @@ class GetSolvedQuizzesTest extends Specification {
 
     def 'get solved quizzes for the student'() {
         when:
-        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto.getId())
+        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto.getCourseExecutionId())
 
         then: 'returns correct data'
         solvedQuizDtos.size() == 1
@@ -148,7 +148,6 @@ class GetSolvedQuizzesTest extends Specification {
         correct.getQuizQuestionId() == quizQuestion.getId()
         correct.getCorrectOptionId() == option.getId()
     }
-
 
     @TestConfiguration
     static class QuizServiceImplTestContextConfiguration {

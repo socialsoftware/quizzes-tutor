@@ -20,14 +20,14 @@ public class TopicController {
     @Autowired
     private TopicService topicService;
 
-    @GetMapping("/courses/{courseName}/topics")
-    public List<TopicDto> getCourseTopics(@PathVariable String courseName) {
-        return this.topicService.findTopics(courseName);
+    @GetMapping("/courses/{courseId}/topics")
+    public List<TopicDto> getCourseTopics(@PathVariable int courseId) {
+        return this.topicService.findTopics(courseId);
     }
 
-    @PostMapping(value = "/courses/{courseName}/topics")
-    public TopicDto createTopic(@PathVariable String courseName, @Valid @RequestBody TopicDto topicDto) {
-        return this.topicService.createTopic(courseName, topicDto);
+    @PostMapping(value = "/courses/{courseId}/topics")
+    public TopicDto createTopic(@PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
+        return this.topicService.createTopic(courseId, topicDto);
     }
 
     @PutMapping(value = "/topics/{topicId}")

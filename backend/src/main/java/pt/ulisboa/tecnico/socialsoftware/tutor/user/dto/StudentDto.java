@@ -27,16 +27,15 @@ public class StudentDto implements Serializable {
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
         this.numberOfAnswers = user.getNumberOfAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
-        this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
-        this.lastAccess = user.getLastAccess().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
 
-        if (this.numberOfAnswers != 0) {
+        if (user.getLastAccess() != null)
+            this.lastAccess = user.getLastAccess().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (user.getCreationDate() != null)
+            this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        if (this.numberOfAnswers != 0)
             this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;
-        }
-
-        if (this.numberOfTeacherAnswers != 0) {
+        if (this.numberOfTeacherAnswers != 0)
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
-        }
     }
 
     public String getUsername() {
@@ -55,65 +54,83 @@ public class StudentDto implements Serializable {
         this.name = name;
     }
 
-    public long getNumberOfTeacherQuizzes() {
+    public Integer getNumberOfTeacherQuizzes() {
         return numberOfTeacherQuizzes;
     }
 
-    public void setNumberOfTeacherQuizzes(int numberOfTeacherQuizzes) {
+    public void setNumberOfTeacherQuizzes(Integer numberOfTeacherQuizzes) {
         this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
     }
 
-    public long getNumberOfStudentQuizzes() {
+    public Integer getNumberOfStudentQuizzes() {
         return numberOfStudentQuizzes;
     }
 
-    public void setNumberOfStudentQuizzes(int numberOfStudentQuizzes) {
+    public void setNumberOfStudentQuizzes(Integer numberOfStudentQuizzes) {
         this.numberOfStudentQuizzes = numberOfStudentQuizzes;
     }
 
-    public int getNumberOfAnswers() {
+    public Integer getNumberOfAnswers() {
         return numberOfAnswers;
     }
 
-    public void setNumberOfAnswers(int numberOfAnswers) {
+    public void setNumberOfAnswers(Integer numberOfAnswers) {
         this.numberOfAnswers = numberOfAnswers;
     }
 
-    public Integer getPercentageOfCorrectAnswers() {
-        return percentageOfCorrectAnswers;
-    }
-
-    public void setPercentageOfCorrectAnswers(Integer percentageOfCorrectAnswers) {
-        this.percentageOfCorrectAnswers = percentageOfCorrectAnswers;
-    }
-
-    public int getNumberOfTeacherAnswers() {
+    public Integer getNumberOfTeacherAnswers() {
         return numberOfTeacherAnswers;
     }
 
-    public void setNumberOfTeacherAnswers(int numberOfTeacherAnswers) {
+    public void setNumberOfTeacherAnswers(Integer numberOfTeacherAnswers) {
         this.numberOfTeacherAnswers = numberOfTeacherAnswers;
     }
 
-    public Integer getPercentageOfCorrectTeacherAnswers() {
+    public int getPercentageOfCorrectAnswers() {
+        return percentageOfCorrectAnswers;
+    }
+
+    public void setPercentageOfCorrectAnswers(int percentageOfCorrectAnswers) {
+        this.percentageOfCorrectAnswers = percentageOfCorrectAnswers;
+    }
+
+    public int getPercentageOfCorrectTeacherAnswers() {
         return percentageOfCorrectTeacherAnswers;
     }
 
-    public void setPercentageOfCorrectTeacherAnswers(Integer percentageOfCorrectTeacherAnswers) {
+    public void setPercentageOfCorrectTeacherAnswers(int percentageOfCorrectTeacherAnswers) {
         this.percentageOfCorrectTeacherAnswers = percentageOfCorrectTeacherAnswers;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getLastAccess() {
+        return lastAccess;
+    }
+
+    public void setLastAccess(String lastAccess) {
+        this.lastAccess = lastAccess;
     }
 
     @Override
     public String toString() {
         return "StudentDto{" +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +
-                ", percentageOfCorrectAnswers=" + percentageOfCorrectAnswers +
                 ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
+                ", percentageOfCorrectAnswers=" + percentageOfCorrectAnswers +
                 ", percentageOfCorrectTeacherAnswers=" + percentageOfCorrectTeacherAnswers +
+                ", creationDate='" + creationDate + '\'' +
+                ", lastAccess='" + lastAccess + '\'' +
                 '}';
     }
 }

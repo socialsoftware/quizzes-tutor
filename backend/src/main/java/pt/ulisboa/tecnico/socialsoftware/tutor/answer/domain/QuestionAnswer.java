@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "question_answers")
-public class QuestionAnswer implements Importable {
+public class QuestionAnswer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

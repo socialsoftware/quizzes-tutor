@@ -24,7 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         indexes = {
                 @Index(name = "question_indx_0", columnList = "key")
         })
-public class Question implements Importable {
+public class Question {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE

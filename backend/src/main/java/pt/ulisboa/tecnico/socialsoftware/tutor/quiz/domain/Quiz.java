@@ -24,7 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
         indexes = {
                 @Index(name = "quizzes_indx_0", columnList = "key")
         })
-public class Quiz implements Importable {
+public class Quiz {
     public enum QuizType {
         EXAM, TEST, GENERATED, PROPOSED, IN_CLASS
     }

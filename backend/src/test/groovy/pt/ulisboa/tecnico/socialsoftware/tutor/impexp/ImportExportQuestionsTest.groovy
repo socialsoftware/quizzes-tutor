@@ -38,14 +38,15 @@ class ImportExportQuestionsTest extends Specification {
     @Autowired
     QuestionRepository questionRepository
 
+    def course
     def questionId
     def courseExecution
 
     def setup() {
-        def course = new Course(COURSE_NAME)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         def questionDto = new QuestionDto()
@@ -71,7 +72,7 @@ class ImportExportQuestionsTest extends Specification {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionId = questionService.createQuestion(COURSE_NAME, questionDto).getId()
+        questionId = questionService.createQuestion(course.getId(), questionDto).getId()
     }
 
     def 'export and import questions'() {
@@ -84,8 +85,8 @@ class ImportExportQuestionsTest extends Specification {
         questionService.importQuestions(questionsXml)
 
         then:
-        questionService.findQuestions(COURSE_NAME).size() == 1
-        def questionResult = questionService.findQuestions(COURSE_NAME).get(0)
+        questionService.findQuestions(course.getId()).size() == 1
+        def questionResult = questionService.findQuestions(course.getId()).get(0)
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
         questionResult.getStatus() == Question.Status.AVAILABLE.name()

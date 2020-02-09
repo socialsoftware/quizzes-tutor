@@ -9,7 +9,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "topics")
-public class Topic implements Importable {
+public class Topic {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE

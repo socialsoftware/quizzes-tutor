@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "topic_conjunctions")
-public class TopicConjunction implements Importable {
+public class TopicConjunction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

@@ -88,7 +88,7 @@ public class StatsService {
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
-        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getName());
+        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);

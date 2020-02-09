@@ -80,10 +80,10 @@ class ImportExportAnswersTest extends Specification {
 
     def setup() {
 
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         def question = new Question()

@@ -42,10 +42,10 @@ class CreateQuestionTest extends Specification {
     def courseExecution
 
     def setup() {
-        course = new Course(COURSE_NAME)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
     }
 
@@ -65,7 +65,7 @@ class CreateQuestionTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(course.getId(), questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -111,7 +111,7 @@ class CreateQuestionTest extends Specification {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(course.getId(), questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -142,9 +142,9 @@ class CreateQuestionTest extends Specification {
         questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(course.getId(), questionDto)
         questionDto.setKey(null)
-        questionService.createQuestion(COURSE_NAME, questionDto)
+        questionService.createQuestion(course.getId(), questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L

@@ -10,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "assessments")
-public class Assessment implements Importable {
+public class Assessment {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, AVAILABLE, REMOVED

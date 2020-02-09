@@ -68,10 +68,10 @@ class UpdateAssessmentTest extends Specification {
         assessmentRepository.save(assessment)
         assessmentDto = new AssessmentDto(assessment);
 
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
     }
@@ -145,7 +145,6 @@ class UpdateAssessmentTest extends Specification {
         resTopicConjunction2.topics.size() == 1
         resTopicConjunction3.topics.size() == 0
     }
-
 
     @TestConfiguration
     static class AssessmentServiceImplTestContextConfiguration {

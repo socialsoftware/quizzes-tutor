@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails, Importable {
-
     public enum Role {STUDENT, TEACHER, ADMIN}
 
     @Id

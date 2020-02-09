@@ -32,8 +32,7 @@ class CreateTopicTest extends Specification {
     def course
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
     }
 
@@ -43,7 +42,7 @@ class CreateTopicTest extends Specification {
         topicDto.setName(NAME)
 
         when:
-        topicService.createTopic(COURSE_NAME, topicDto)
+        topicService.createTopic(course.getId(), topicDto)
 
         then: "the topic is inside the repository"
         topicRepository.count() == 1L
@@ -64,7 +63,7 @@ class CreateTopicTest extends Specification {
         topicDto.setName(NAME)
 
         when: 'createQuestion another with the same name'
-        topicService.createTopic(COURSE_NAME, topicDto)
+        topicService.createTopic(course.getId(), topicDto)
 
         then: "an error occurs"
         def exception = thrown(TutorException)

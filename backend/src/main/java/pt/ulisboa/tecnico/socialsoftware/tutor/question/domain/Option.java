@@ -10,7 +10,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "options")
-public class Option implements Importable {
+public class Option {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -37,7 +37,8 @@ public class TopicsXmlExport {
 
 	private void exportTopic(Element element, Topic topic) {
 		Element topicElement = new Element("topic");
-		topicElement.setAttribute("course", topic.getCourse().getName());
+		topicElement.setAttribute("courseType", topic.getCourse().getType().name());
+		topicElement.setAttribute("courseName", topic.getCourse().getName());
         topicElement.setAttribute("name", topic.getName());
 
 		exportQuestions(topicElement, topic);

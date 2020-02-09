@@ -68,7 +68,9 @@ export default class RemoteServices {
 
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
-      .get(`/executions/${Store.getters.getCurrentCourse.id}/stats`)
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats`
+      )
       .then(response => {
         return new StudentStats(response.data);
       })
@@ -79,7 +81,7 @@ export default class RemoteServices {
 
   static async getQuestions(): Promise<Question[]> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.name}/questions`)
+      .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
       .then(response => {
         return response.data.map((question: any) => {
           return new Question(question);
@@ -93,7 +95,7 @@ export default class RemoteServices {
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
       .get(
-        `/courses/${Store.getters.getCurrentCourse.name}/questions/available`
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questions/available`
       )
       .then(response => {
         return response.data.map((question: any) => {
@@ -108,7 +110,7 @@ export default class RemoteServices {
   static createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
-        `/courses/${Store.getters.getCurrentCourse.name}/questions/`,
+        `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,
         question
       )
       .then(response => {
@@ -173,7 +175,7 @@ export default class RemoteServices {
 
   static getTopics(): Promise<Topic[]> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.name}/topics`)
+      .get(`/courses/${Store.getters.getCurrentCourse.courseId}/topics`)
       .then(response => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -200,7 +202,7 @@ export default class RemoteServices {
   static generateStatementQuiz(params: object): Promise<StatementQuiz> {
     return httpClient
       .post(
-        `/executions/${Store.getters.getCurrentCourse.id}/quizzes/generate`,
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/generate`,
         params
       )
       .then(response => {
@@ -262,7 +264,10 @@ export default class RemoteServices {
 
   static createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post(`/courses/${Store.getters.getCurrentCourse.name}/topics/`, topic)
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/topics/`,
+        topic
+      )
       .then(response => {
         return new Topic(response.data);
       })
@@ -291,7 +296,7 @@ export default class RemoteServices {
   static getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.id}/quizzes/non-generated`
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/non-generated`
       )
       .then(response => {
         return response.data.map((quiz: any) => {
@@ -332,7 +337,10 @@ export default class RemoteServices {
         });
     } else {
       return httpClient
-        .post(`/executions/${Store.getters.getCurrentCourse.id}/quizzes`, quiz)
+        .post(
+          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes`,
+          quiz
+        )
         .then(response => {
           return new Quiz(response.data);
         })
@@ -344,7 +352,7 @@ export default class RemoteServices {
 
   static async getCourseExecutions(): Promise<Course[]> {
     return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.name}`)
+      .get(`/courses/${Store.getters.getCurrentCourse.courseId}`)
       .then(response => {
         return response.data.map((course: any) => {
           return new Course(course);
@@ -357,7 +365,7 @@ export default class RemoteServices {
 
   static async getCourseStudents(course: Course) {
     return httpClient
-      .get(`/executions/${course.id}/students`)
+      .get(`/executions/${course.courseExecutionId}/students`)
       .then(response => {
         return response.data.map((student: any) => {
           return new Student(student);
@@ -370,7 +378,9 @@ export default class RemoteServices {
 
   static getAssessments(): Promise<Assessment[]> {
     return httpClient
-      .get(`/executions/${Store.getters.getCurrentCourse.id}/assessments`)
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`
+      )
       .then(response => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
@@ -384,7 +394,7 @@ export default class RemoteServices {
   static async getAvailableAssessments() {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.id}/assessments/available`
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments/available`
       )
       .then(response => {
         return response.data.map((assessment: any) => {
@@ -409,7 +419,7 @@ export default class RemoteServices {
     } else {
       return httpClient
         .post(
-          `/executions/${Store.getters.getCurrentCourse.id}/assessments`,
+          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`,
           assessment
         )
         .then(response => {

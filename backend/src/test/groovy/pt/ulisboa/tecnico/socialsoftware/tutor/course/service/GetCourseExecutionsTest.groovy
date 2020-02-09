@@ -27,16 +27,16 @@ class GetCourseExecutionsTest extends Specification {
 
     def "two execution courses"() {
         given: "a course"
-        def course = new Course(COURSE_ONE)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "with two execution courses"
-        def CourseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE)
+        def CourseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO)
         courseExecutionRepository.save(CourseExecution)
-        CourseExecution = new CourseExecution(course, ACRONYM_TWO, ACADEMIC_TERM_TWO)
+        CourseExecution = new CourseExecution(course, ACRONYM_TWO, ACADEMIC_TERM_TWO, Course.Type.TECNICO)
         courseExecutionRepository.save(CourseExecution)
 
         when:
-        def result = courseService.getCourseExecutions(course.getName())
+        def result = courseService.getCourseExecutions(course.getId())
 
         then: "the returned data are correct"
         result.size() == 2
@@ -51,7 +51,7 @@ class GetCourseExecutionsTest extends Specification {
 
     def "does not exist course with the name"() {
         when:
-        courseService.getCourseExecutions("NO_COURSE")
+        courseService.getCourseExecutions(0)
 
         then: "the returned data are correct"
         TutorException ex = thrown()
@@ -59,11 +59,11 @@ class GetCourseExecutionsTest extends Specification {
 
     def "no execution courses"() {
         given: "a course"
-        def course = new Course(COURSE_ONE)
+        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
 
         when:
-        def result = courseService.getCourseExecutions(course.getName())
+        def result = courseService.getCourseExecutions(course.getId())
 
         then: "the returned data are correct"
         result.size() == 0

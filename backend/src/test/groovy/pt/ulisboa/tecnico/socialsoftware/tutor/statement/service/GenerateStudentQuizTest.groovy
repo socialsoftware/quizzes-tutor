@@ -59,10 +59,10 @@ class GenerateStudentQuizTest extends Specification {
     def questionTwo
 
     def setup() {
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         user = new User('name', USERNAME, 1, User.Role.STUDENT)

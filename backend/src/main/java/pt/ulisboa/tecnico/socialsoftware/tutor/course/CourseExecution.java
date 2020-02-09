@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -14,12 +13,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "course_executions")
-public class CourseExecution implements Importable {
+public class CourseExecution {
     public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private Course.Type type;
 
     private String acronym;
     private String academicTerm;
@@ -43,19 +45,21 @@ public class CourseExecution implements Importable {
     public CourseExecution() {
     }
 
-    public CourseExecution(Course course, String acronym, String academicTerm) {
-        if (acronym.trim().isEmpty()) {
+    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type) {
+        if (acronym == null || acronym.trim().isEmpty()) {
             throw new TutorException(COURSE_EXECUTION_ACRONYM_IS_EMPTY);
         }
-        if (academicTerm.trim().isEmpty()) {
+        if (academicTerm == null || academicTerm.trim().isEmpty()) {
             throw new TutorException(COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY);
         }
         if (course.getCourseExecutions().stream()
-                .anyMatch(courseExecution -> courseExecution.getAcronym().equals(acronym)
+                .anyMatch(courseExecution -> courseExecution.getType().equals(type)
+                        && courseExecution.getAcronym().equals(acronym)
                         && courseExecution.getAcademicTerm().equals(academicTerm))) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION,acronym + academicTerm);
         }
 
+        this.type = type;
         this.course = course;
         this.acronym = acronym;
         this.academicTerm = academicTerm;
@@ -125,5 +129,13 @@ public class CourseExecution implements Importable {
 
     public void addUser(User user) {
         users.add(user);
+    }
+
+    public Course.Type getType() {
+        return type;
+    }
+
+    public void setType(Course.Type type) {
+        this.type = type;
     }
 }
