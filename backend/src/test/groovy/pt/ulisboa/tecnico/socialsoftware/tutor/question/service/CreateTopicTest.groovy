@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateTopicServiceSpockTest extends Specification {
+class CreateTopicTest extends Specification {
     public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String NAME = 'name'
 

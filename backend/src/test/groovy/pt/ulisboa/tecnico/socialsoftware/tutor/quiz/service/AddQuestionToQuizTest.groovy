@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class AddQuestionToQuizServiceSpockTest extends Specification {
+class AddQuestionToQuizTest extends Specification {
     @Autowired
     QuizService quizService
 

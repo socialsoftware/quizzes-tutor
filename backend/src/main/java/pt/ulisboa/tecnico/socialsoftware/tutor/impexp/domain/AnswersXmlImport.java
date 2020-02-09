@@ -7,17 +7,22 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -25,18 +30,28 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ANSWERS_IMPORT_ERROR;
 
+@Component
 public class AnswersXmlImport {
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
 	private QuizRepository quizRepository;
 	private QuizAnswerRepository quizAnswerRepository;
 	private UserRepository userRepository;
+
+	@Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private OptionRepository optionRepository;
+
+    @Autowired
+    private QuestionAnswerRepository questionAnswerRepository;
 
 	private Map<Integer, Map<Integer,Integer>> questionMap;
 
@@ -121,17 +136,13 @@ public class AnswersXmlImport {
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 
-		Map<Integer,Integer> mapQuizQuestionId = quiz.getQuizQuestions().stream()
-				.collect(Collectors.toMap(QuizQuestion::getSequence, QuizQuestion::getId));
+		Map<Integer,QuizQuestion> mapQuizQuestion = quiz.getQuizQuestions().stream()
+				.collect(Collectors.toMap(QuizQuestion::getSequence, Function.identity()));
 
-		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, mapQuizQuestionId, quizAnswer);
+		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, mapQuizQuestion, quizAnswer);
 	}
 
-	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer,Integer> mapQuizQuestionId, QuizAnswer quizAnswer) {
-		QuizAnswerDto quizAnswerDto = new QuizAnswerDto();
-        quizAnswerDto.setId(quizAnswer.getId());
-        quizAnswerDto.setAnswerDate(quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-
+	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer, QuizQuestion> mapQuizQuestion, QuizAnswer quizAnswer) {
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
 			Integer timeTaken = null;
 			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
@@ -140,7 +151,7 @@ public class AnswersXmlImport {
 
 			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue("sequence"));
 			Integer questionSequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
-			Integer quizQuestionId = mapQuizQuestionId.get(questionSequence);
+			QuizQuestion quizQuestion = mapQuizQuestion.get(questionSequence);
 
 			Integer optionId = null;
 			if (questionAnswerElement.getChild("option") != null) {
@@ -149,15 +160,12 @@ public class AnswersXmlImport {
 				optionId = questionMap.get(questionKey).get(optionSequence);
 			}
 
-			QuestionAnswerDto questionAnswerDto = new QuestionAnswerDto();
-            questionAnswerDto.setTimeTaken(timeTaken);
-            questionAnswerDto.setSequence(answerSequence);
-            questionAnswerDto.setQuizQuestionId(quizQuestionId);
-            questionAnswerDto.setOptionId(optionId);
-            quizAnswerDto.addQuestionAnswer(questionAnswerDto);
-		}
-		answerService.concludeQuiz(user, quizAnswer.getQuiz().getId());
-		//TODO this method is incorrect
-	}
+            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence() == answerSequence).findFirst().get();
 
+			questionAnswer.setTimeTaken(timeTaken);
+			questionAnswer.setOption(optionRepository.findById(optionId).get());
+
+            questionAnswerRepository.save(questionAnswer);
+		}
+	}
 }

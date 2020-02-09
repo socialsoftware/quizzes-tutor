@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -13,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateQuizAnswerServiceSpockTest extends Specification {
+class CreateQuizTest extends Specification {
     @Autowired
     AnswerService answerService
 
@@ -62,6 +63,10 @@ class CreateQuizAnswerServiceSpockTest extends Specification {
         @Bean
         AnswerService answerService() {
             return new AnswerService()
+        }
+        @Bean
+        AnswersXmlImport aswersXmlImport() {
+            return new AnswersXmlImport()
         }
     }
 }

@@ -67,6 +67,9 @@ public class ImpExpService {
     @Autowired
     private AnswerService answerService;
 
+    @Autowired
+    private AnswersXmlImport answersXmlImport;
+
     @Value("${load.dir}")
     private String loadDir;
 
@@ -189,7 +192,7 @@ public class ImpExpService {
                 quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository, courseExecutionRepository);
 
                 File answersFile = new File(directory.getPath() + "/" + "answers.xml");
-                AnswersXmlImport answersXmlImport = new AnswersXmlImport();
+
                 answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
             } catch (FileNotFoundException e) {
 

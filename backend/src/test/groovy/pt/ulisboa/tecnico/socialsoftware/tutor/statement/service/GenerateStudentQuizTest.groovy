@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -25,7 +26,7 @@ import spock.lang.Specification
 import java.util.stream.Collectors
 
 @DataJpaTest
-class GenerateStudentQuizServiceSpockTest extends Specification {
+class GenerateStudentQuizTest extends Specification {
     static final USERNAME = 'username'
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
@@ -100,7 +101,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         def resQuizAnswer = result.getQuizAnswers().stream().collect(Collectors.toList()).get(0)
         resQuizAnswer.getQuiz() == result
         resQuizAnswer.getUser() == user
-        resQuizAnswer.getQuestionAnswers().size() == 0
+        resQuizAnswer.getQuestionAnswers().size() == 1
         result.getQuizQuestions().size() == 1
         def resQuizQuestion = result.getQuizQuestions().stream().collect(Collectors.toList()).get(0)
         resQuizQuestion.getQuiz() == result
@@ -124,7 +125,7 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         def resQuizAnswer = result.getQuizAnswers().stream().collect(Collectors.toList()).get(0)
         resQuizAnswer.getQuiz() == result
         resQuizAnswer.getUser() == user
-        resQuizAnswer.getQuestionAnswers().size() == 0
+        resQuizAnswer.getQuestionAnswers().size() == 2
         result.getQuizQuestions().size() == 2
         result.getQuizQuestions().stream().map{quizQuestion -> quizQuestion.getQuestion()}.allMatch{question -> question == questionOne || question == questionTwo}
         questionOne.getQuizQuestions().size() == 1
@@ -161,6 +162,10 @@ class GenerateStudentQuizServiceSpockTest extends Specification {
         @Bean
         AnswerService answerService() {
             return new AnswerService()
+        }
+        @Bean
+        AnswersXmlImport aswersXmlImport() {
+            return new AnswersXmlImport()
         }
     }
 

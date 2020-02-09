@@ -5,12 +5,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -25,7 +26,7 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 @DataJpaTest
-class GetAvailableQuizzesServiceSpockTest extends Specification {
+class GetSolvedQuizzesTest extends Specification {
     static final USERNAME = 'username'
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
@@ -58,9 +59,13 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
     @Autowired
     QuizAnswerRepository quizAnswerRepository
 
+    @Autowired
+    QuestionAnswerRepository questionAnswerRepository
+
     def user
-    def courseExecution
+    def courseDto
     def question
+    def option
     def quiz
     def quizQuestion
 
@@ -68,8 +73,10 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         def course = new Course(COURSE_NAME)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
+
+        courseDto = new CourseDto(courseExecution)
 
         user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
@@ -79,6 +86,11 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         question.setKey(1)
         question.setCourse(course)
         course.addQuestion(question)
+
+        option = new Option()
+        option.setCorrect(true)
+        option.setQuestion(question)
+        question.addOption(option)
 
         quiz = new Quiz()
         quiz.setKey(1)
@@ -95,89 +107,48 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         question.addQuizQuestion(quizQuestion)
         quizQuestion.setQuestion(question)
 
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setAnswerDate(LocalDateTime.now())
+        quizAnswer.setCompleted(true)
+        quizAnswer.setUser(user)
+        user.addQuizAnswer(quizAnswer)
+        quizAnswer.setQuiz(quiz)
+        quiz.addQuizAnswer(quizAnswer)
+
+        def questionAnswer = new QuestionAnswer()
+        questionAnswer.setQuizAnswer(quizAnswer)
+        quizAnswer.addQuestionAnswer(questionAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        quizQuestion.addQuestionAnswer(questionAnswer)
+        questionAnswer.setOption(option)
+        option.addQuestionAnswer(questionAnswer)
+
         userRepository.save(user)
         quizRepository.save(quiz)
         questionRepository.save(question)
-    }
-
-    def 'get the quizzes for the student'() {
-        when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
-
-        then: 'the quiz answer is created'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement contains one quiz'
-        statementQuizDtos.size() == 1
-        def statementResult = statementQuizDtos.get(0)
-        statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
-        statementResult.getQuizAnswerId() == result.getId()
-        statementResult.getQuestions().size() == 1
-    }
-
-    def 'the quiz is not available'() {
-        given:
-        quiz.setAvailableDate(LocalDateTime.now().plusDays(1))
-
-        when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
-
-        then: 'the quiz answer is not created'
-        quizAnswerRepository.count() == 0L
-        user.getQuizAnswers().size() == 0
-        quiz.getQuizAnswers().size() == 0
-        and: 'the return statement is empty'
-        statementQuizDtos.size() == 0
-    }
-
-    def 'the quiz is already created'() {
-        given:
-        def quizAnswer = new QuizAnswer(user, quiz)
         quizAnswerRepository.save(quizAnswer)
-
-        when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
-
-        then: 'the quiz answer exists'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement contains one quiz'
-        statementQuizDtos.size() == 1
-        def statementResult = statementQuizDtos.get(0)
-        statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == String.valueOf(quiz.getAvailableDate())
-        statementResult.getQuizAnswerId() == result.getId()
-        statementResult.getQuestions().size() == 1
+        questionAnswerRepository.save(questionAnswer)
     }
 
-    def 'the quiz is completed'() {
-        given:
-        def quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswer.setCompleted(true)
-        quizAnswerRepository.save(quizAnswer)
-
+    def 'get solved quizzes for the student'() {
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
+        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto.getId())
 
-        then: 'the quiz answer exists'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement is empty'
-        statementQuizDtos.size() == 0
-     }
+        then: 'returns correct data'
+        solvedQuizDtos.size() == 1
+        def solvedQuizDto = solvedQuizDtos.get(0)
+        def statementQuizDto = solvedQuizDto.getStatementQuiz()
+        statementQuizDto.getQuestions().size() == 1
+        solvedQuizDto.getAnswers().size() == 1
+        def answer = solvedQuizDto.getAnswers().get(0)
+        answer.getQuizQuestionId() == quizQuestion.getId()
+        answer.getOptionId() == option.getId()
+        solvedQuizDto.getCorrectAnswers().size() == 1
+        def correct = solvedQuizDto.getCorrectAnswers().get(0)
+        correct.getQuizQuestionId() == quizQuestion.getId()
+        correct.getCorrectOptionId() == option.getId()
+    }
+
 
     @TestConfiguration
     static class QuizServiceImplTestContextConfiguration {
@@ -188,6 +159,10 @@ class GetAvailableQuizzesServiceSpockTest extends Specification {
         @Bean
         AnswerService answerService() {
             return new AnswerService()
+        }
+        @Bean
+        AnswersXmlImport aswersXmlImport() {
+            return new AnswersXmlImport()
         }
         @Bean
         QuizService quizService() {

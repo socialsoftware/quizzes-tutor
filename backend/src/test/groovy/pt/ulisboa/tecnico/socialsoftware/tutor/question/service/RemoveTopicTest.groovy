@@ -6,23 +6,25 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import spock.lang.Specification
 
 @DataJpaTest
-class UpdateTopicsServiceSpockTest extends Specification {
+class RemoveTopicTest extends Specification {
     public static final String COURSE_NAME = "Arquitetura de Software"
-    public static final String TOPIC_ONE = 'nameOne'
-    public static final String TOPIC_TWO = 'nameTwo'
-    public static final String TOPIC_THREE = 'nameThree'
+    private static final String TOPIC_ONE = 'nameOne'
+    private static final String TOPIC_TWO = 'nameTwo'
+    private static final String TOPIC_THREE = 'nameThree'
+    private static final Integer KEY = 1
 
     @Autowired
-    QuestionService questionService
+    TopicService topicService
 
     @Autowired
     CourseRepository courseRepository
@@ -48,9 +50,7 @@ class UpdateTopicsServiceSpockTest extends Specification {
         courseRepository.save(course)
 
         question = new Question()
-        question.setKey(1)
-        question.setCourse(course)
-        course.addQuestion(question)
+        question.setKey(KEY)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_ONE)
@@ -73,76 +73,39 @@ class UpdateTopicsServiceSpockTest extends Specification {
         topicRepository.save(topicThree)
     }
 
-    def "add one topic"() {
-        given:
-        TopicDto[] topics = [topicDtoOne, topicDtoTwo, topicDtoThree]
-
+    def "remove topic"() {
         when:
-        questionService.updateQuestionTopics(question.getId(), topics)
+        topicService.removeTopic(topicOne.getId())
 
         then:
-        question.getTopics().size() == 3
-        question.getTopics().contains(topicOne)
-        question.getTopics().contains(topicTwo)
-        question.getTopics().contains(topicThree)
-        topicOne.getQuestions().size() == 1
+        topicOne.getQuestions().size() == 0
         topicTwo.getQuestions().size() == 1
-        topicThree.getQuestions().size() == 1
-    }
-
-    def "remove one topic"() {
-        given:
-        TopicDto[] topics = [topicDtoOne]
-
-        when:
-        questionService.updateQuestionTopics(question.getId(), topics)
-
-        then:
         question.getTopics().size() == 1
-        question.getTopics().contains(topicOne)
-        topicOne.getQuestions().size() == 1
-        topicTwo.getQuestions().size() == 0
-        topicThree.getQuestions().size() == 0
+        question.getTopics().contains(topicTwo)
     }
 
-    def "doesn not change"() {
-        given:
-        TopicDto[] topics = [topicDtoOne, topicDtoTwo]
-
+    def "remove topic has not question"() {
         when:
-        questionService.updateQuestionTopics(question.getId(), topics)
+        topicService.removeTopic(topicThree.getId())
 
         then:
+        topicRepository.findAll().size() == 2
+        topicOne.getQuestions().size() == 1
+        topicTwo.getQuestions().size() == 1
         question.getTopics().size() == 2
         question.getTopics().contains(topicOne)
         question.getTopics().contains(topicTwo)
-        topicOne.getQuestions().size() == 1
-        topicTwo.getQuestions().size() == 1
-        topicThree.getQuestions().size() == 0
-    }
-
-    def "add one topic, maintain one topic, remove one topic"() {
-        given:
-        TopicDto[] topics = [topicDtoOne, topicDtoThree]
-
-        when:
-        questionService.updateQuestionTopics(question.getId(), topics)
-
-        then:
-        question.getTopics().size() == 2
-        question.getTopics().contains(topicOne)
-        question.getTopics().contains(topicThree)
-        topicOne.getQuestions().size() == 1
-        topicTwo.getQuestions().size() == 0
-        topicThree.getQuestions().size() == 1
     }
 
     @TestConfiguration
     static class QuestionServiceImplTestContextConfiguration {
-
         @Bean
         QuestionService questionService() {
             return new QuestionService()
+        }
+        @Bean
+        TopicService topicService() {
+            return new TopicService()
         }
     }
 

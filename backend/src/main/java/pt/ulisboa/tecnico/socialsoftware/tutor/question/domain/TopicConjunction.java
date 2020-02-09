@@ -56,6 +56,7 @@ public class TopicConjunction implements Importable {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
+        this.assessment.getTopicConjunctions().remove(this);
         this.assessment = null;
     }
 

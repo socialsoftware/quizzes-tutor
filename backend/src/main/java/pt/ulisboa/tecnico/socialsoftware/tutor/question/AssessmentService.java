@@ -107,8 +107,13 @@ public class AssessmentService {
         assessment.setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
         assessment.setSequence(assessmentDto.getSequence());
 
-        assessmentDto.getTopicConjunctions().stream()
-            .peek(topicConjunctionDto -> {
+        // remove TopicConjunction that are not in the Dto
+        assessment.getTopicConjunctions().stream().filter(topicConjunction ->
+                assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunctionDto.getId() == topicConjunction.getId())
+        ).sorted().forEach(TopicConjunction::remove);
+
+        assessmentDto.getTopicConjunctions()
+            .forEach(topicConjunctionDto -> {
                 // topicConjunction already existed
                 if(topicConjunctionDto.getId() != null) {
                     TopicConjunction topicConjunction = topicConjunctionRepository.findById(topicConjunctionDto.getId()).orElseThrow(() -> new TutorException(TOPIC_CONJUNCTION_NOT_FOUND, topicConjunctionDto.getId()));
@@ -122,6 +127,7 @@ public class AssessmentService {
                     topicConjunction.updateTopics(newTopics);
                     assessment.addTopicConjunction(topicConjunction);
                     topicConjunction.setAssessment(assessment);
+                    topicConjunctionRepository.save(topicConjunction);
                 }
             });
 

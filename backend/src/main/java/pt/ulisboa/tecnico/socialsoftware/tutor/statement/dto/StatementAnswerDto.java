@@ -21,9 +21,11 @@ public class StatementAnswerDto implements Serializable {
         this.id = questionAnswer.getId();
         this.quizAnswerId = questionAnswer.getQuizAnswer().getId();
         this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
-        this.answerDate = questionAnswer.getQuizAnswer().getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
+        if (questionAnswer.getQuizAnswer().getAnswerDate() != null) {
+            this.answerDate = questionAnswer.getQuizAnswer().getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
+        }
 
         if(questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();

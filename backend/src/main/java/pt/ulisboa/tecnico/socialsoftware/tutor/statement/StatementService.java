@@ -80,6 +80,8 @@ public class StatementService {
 
         Quiz quiz = new Quiz();
         quiz.setKey(quizService.getMaxQuizKey() + 1);
+        quiz.setType(Quiz.QuizType.GENERATED);
+        quiz.setCreationDate(LocalDateTime.now());
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 

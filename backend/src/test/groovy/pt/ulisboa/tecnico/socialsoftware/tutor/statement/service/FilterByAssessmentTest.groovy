@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -17,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDt
 import spock.lang.Specification
 
 @DataJpaTest
-class FilterByAssessmentSpockTest extends Specification {
+class FilterByAssessmentTest extends Specification {
     public static final String QUESTION_TITLE_1 = 'question title 1'
     public static final String QUESTION_TITLE_2 = 'question title 2'
     public static final String QUESTION_TITLE_3 = 'question title 3'
@@ -185,6 +186,10 @@ class FilterByAssessmentSpockTest extends Specification {
         @Bean
         AnswerService answerService() {
             return new AnswerService()
+        }
+        @Bean
+        AnswersXmlImport aswersXmlImport() {
+            return new AnswersXmlImport()
         }
     }
 

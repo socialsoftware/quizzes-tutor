@@ -24,7 +24,7 @@ import spock.lang.Specification
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_MISSING_DATA
 
 @DataJpaTest
-class UpdateQuestionServiceSpockTest extends Specification {
+class UpdateQuestionTest extends Specification {
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -76,15 +76,13 @@ class UpdateQuestionServiceSpockTest extends Specification {
         optionOK.setCorrect(true)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
-        def options = new ArrayList<Option>()
-        options.add(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        options.add(optionKO)
-        question.setOptions(options)
+        question.addOption(optionKO)
+        question.addOption(optionOK)
         questionRepository.save(question)
     }
 

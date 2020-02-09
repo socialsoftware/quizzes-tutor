@@ -299,6 +299,7 @@ public class User implements UserDetails, Importable {
         List<Question> studentAnsweredQuestions = getQuizAnswers().stream()
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(questionAnswer -> availableQuestions.contains(questionAnswer.getQuizQuestion().getQuestion()))
+                .filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getTimeTaken() != 0)
                 .map(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion())
                 .collect(Collectors.toList());
 

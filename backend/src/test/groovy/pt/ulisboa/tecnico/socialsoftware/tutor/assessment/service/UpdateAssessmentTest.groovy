@@ -11,15 +11,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class UpdateAssessmentServiceSpockTest extends Specification {
+class UpdateAssessmentTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -43,23 +45,28 @@ class UpdateAssessmentServiceSpockTest extends Specification {
     @Autowired
     TopicRepository topicRepository
 
+    @Autowired
+    TopicConjunctionRepository topicConjunctionRepository
+
     def assessmentDto
-    def topicList
 
     def setup() {
-        assessmentDto = new AssessmentDto()
-        assessmentDto.setTitle(ASSESSMENT_TITLE_1)
-        assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
-        def topicConjunction = new TopicConjunctionDto()
+        def assessment = new Assessment()
+        assessment.setTitle(ASSESSMENT_TITLE_1)
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+
         def topic = new Topic()
         topic.setName(TOPIC_NAME_1)
         topicRepository.save(topic)
-        topicList = new ArrayList()
-        topicList.add(new TopicDto(topic))
-        topicConjunction.setTopics(topicList)
-        def topicConjunctionList = new ArrayList()
-        topicConjunctionList.add(topicConjunction)
-        assessmentDto.setTopicConjunctions(topicConjunctionList)
+
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.setAssessment(assessment)
+        topicConjunction.addTopic(topic)
+        topicConjunctionRepository.save(topicConjunction)
+
+        assessment.addTopicConjunction(topicConjunction)
+        assessmentRepository.save(assessment)
+        assessmentDto = new AssessmentDto(assessment);
 
         def course = new Course(COURSE_NAME)
         courseRepository.save(course)
@@ -67,22 +74,23 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
         courseExecutionRepository.save(courseExecution)
 
-        assessmentDto = assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
     }
 
-    def "update an assessment title and single topic conjuntion"() {
-        given: "a created assessment"
+    def "update an assessment title, remove its topicConjunction and adding a new one"() {
+        given: "an existing created assessment"
         assessmentDto.setTitle(ASSESSMENT_TITLE_2)
         assessmentDto.setStatus(Assessment.Status.DISABLED.name())
-        def topicConjunction = new TopicConjunctionDto()
+
+        and: "a new TopicConjunction"
+        def topicConjunctionDto = new TopicConjunctionDto()
         def topic = new Topic()
         topic.setName(TOPIC_NAME_2)
         topicRepository.save(topic)
-        topicList = new ArrayList()
-        topicList.add(new TopicDto(topic))
-        topicConjunction.setTopics(topicList)
+        topicConjunctionDto.addTopic(new TopicDto(topic))
+
+        and: "a TopicConjunction Array without the old TopicConjunction"
         def topicConjunctionList = new ArrayList()
-        topicConjunctionList.add(topicConjunction)
+        topicConjunctionList.add(topicConjunctionDto)
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
@@ -109,7 +117,9 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         topic.setName(TOPIC_NAME_2)
         topicRepository.save(topic)
 
+        def topicList = assessmentDto.getTopicConjunctions()[0].getTopics()
         topicList.add(new TopicDto(topic))
+
         assessmentDto.getTopicConjunctions()[0].setTopics(topicList)
 
         def newTopicConjunction = new TopicConjunctionDto()

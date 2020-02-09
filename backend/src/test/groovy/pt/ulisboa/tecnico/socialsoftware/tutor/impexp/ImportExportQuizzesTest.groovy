@@ -22,7 +22,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 @DataJpaTest
-class ImportExportQuizzesSpockTest extends Specification {
+class ImportExportQuizzesTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"

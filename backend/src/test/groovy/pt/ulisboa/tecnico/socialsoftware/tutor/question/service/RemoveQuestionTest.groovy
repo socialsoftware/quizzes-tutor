@@ -25,7 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 @DataJpaTest
-class RemoveQuestionServiceSpockTest extends Specification {
+class RemoveQuestionTest extends Specification {
     public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
@@ -86,14 +86,12 @@ class RemoveQuestionServiceSpockTest extends Specification {
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
         optionRepository.save(optionOK)
-        def options = new ArrayList<Option>()
-        options.add(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionRepository.save(optionKO)
-        options.add(optionKO)
-        question.setOptions(options)
+        question.addOption(optionOK)
+        question.addOption(optionKO)
         questionRepository.save(question)
     }
 

@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateAssessmentServiceSpockTest extends Specification {
+class CreateAssessmentTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"

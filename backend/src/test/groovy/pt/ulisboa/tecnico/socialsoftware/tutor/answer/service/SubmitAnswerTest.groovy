@@ -31,7 +31,7 @@
 //import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 //
 //@DataJpaTest
-//class SubmitQuestionsAnswersServiceSpockTest extends Specification {
+//class SubmitAnswer extends Specification {
 //    public static final String COURSE_NAME = "Software Architecture"
 //    public static final String ACRONYM = "AS1"
 //    public static final String ACADEMIC_TERM = "1 SEM"
@@ -130,7 +130,7 @@
 //        resultAnswersDto.setAnswers(resultsDto)
 //
 //        when:
-//        def correctAnswersDto = answerService.concludeQuiz(user, resultAnswersDto)
+//        def correctAnswersDto = answerService.concludeQuiz(user, quizId)
 //
 //        then: 'the value is createQuestion and persistent'
 //        quizAnswer.getCompleted()

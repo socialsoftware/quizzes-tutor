@@ -55,6 +55,9 @@ public class AnswerService {
     @Autowired
     private OptionRepository optionRepository;
 
+    @Autowired
+    private AnswersXmlImport xmlImporter;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -74,25 +77,13 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
-
-    @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeQuizAnswer(Integer quizAnswerId) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId));
-
-        quizAnswer.remove();
-
-        entityManager.remove(quizAnswer);
-    }
-
     public CorrectAnswersDto concludeQuiz(User user, Integer quizId) {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        LocalDateTime now = LocalDateTime.now();
+        if(quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+            throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
+        }
 
         if (!quizAnswer.getCompleted()) {
             quizAnswer.setAnswerDate(LocalDateTime.now());
@@ -102,7 +93,7 @@ public class AnswerService {
         // When student submits before conclusionDate
         if (quizAnswer.getQuiz().getConclusionDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            now.isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+            LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
 
             return null;
         }
@@ -138,12 +129,17 @@ public class AnswerService {
                 if (isNotQuestionOption(questionsAnswer.getQuizQuestion(), option)) {
                     throw new TutorException(QUIZ_OPTION_MISMATCH, questionsAnswer.getQuizQuestion().getId(), option.getId());
                 }
-            }
-            questionsAnswer.setOption(option);
-            questionsAnswer.setTimeTaken(answer.getTimeTaken());
-            questionsAnswer.setSequence(answer.getSequence());
-            questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
 
+                if(questionsAnswer.getOption() != null) {
+                    questionsAnswer.getOption().getQuestionAnswers().remove(questionsAnswer);
+                }
+
+                questionsAnswer.setOption(option);
+                option.addQuestionAnswer(questionsAnswer);
+                questionsAnswer.setTimeTaken(answer.getTimeTaken());
+                questionsAnswer.setSequence(answer.getSequence());
+                questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
+            }
 
 //            // Increase stats to be shown in user list
 //            if (quizAnswer.getQuiz().getType() == Quiz.QuizType.TEACHER) {
@@ -190,9 +186,6 @@ public class AnswerService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAnswers(String answersXml) {
-        AnswersXmlImport xmlImporter = new AnswersXmlImport();
-
         xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, quizAnswerRepository, userRepository);
     }
-
 }

@@ -16,7 +16,7 @@ import spock.lang.Specification
 import java.util.stream.Collectors
 
 @DataJpaTest
-class FenixAuthServiceSpockTest extends Specification {
+class FenixAuthTest extends Specification {
     public static final String USERNAME = "ist12628"
     public static final String PERSON_NAME = "NAME"
     public static final String COURSE_NAME = "Arquitecturas de Software"

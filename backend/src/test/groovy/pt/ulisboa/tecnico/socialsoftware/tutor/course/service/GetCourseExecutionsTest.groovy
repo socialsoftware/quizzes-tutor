@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
 @DataJpaTest
-class GetCourseExecutionsServiceSpockTest extends Specification {
+class GetCourseExecutionsTest extends Specification {
     public static final String COURSE_ONE = "CourseOne"
     public static final String ACRONYM_ONE = "C12"
     public static final String ACRONYM_TWO = "C11"

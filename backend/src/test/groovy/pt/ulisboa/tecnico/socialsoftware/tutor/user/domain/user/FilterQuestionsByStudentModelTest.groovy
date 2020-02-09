@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
-class FilterQuestionsByStudentModelMethodSpockTest extends Specification {
+class FilterQuestionsByStudentModelTest extends Specification {
     def availableQuestions
     def user
     def quiz
@@ -90,7 +90,8 @@ class FilterQuestionsByStudentModelMethodSpockTest extends Specification {
         then:
         result.size() == 5
         and: 'it contains both not answered questions'
-        result.contains(questionOne) && result.contains(questionTwo)
+        result.contains(questionOne)
+        result.contains(questionTwo)
     }
 
     def 'the user answered 5 questions' () {

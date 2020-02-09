@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import spock.lang.Specification
 
 @DataJpaTest
-class FindCourseQuestionsServiceSpockTest extends Specification {
+class FindQuestionsTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -86,15 +86,13 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
         optionOK.setCorrect(true)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
-        def options = new ArrayList<>()
-        options.add(optionOK)
+        question.addOption(optionOK)
         def optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        options.add(optionKO)
-        question.setOptions(options)
+        question.addOption(optionKO)
         questionRepository.save(question)
         def quizQuestion = new QuizQuestion()
         quizQuestionRepository.save(quizQuestion)
