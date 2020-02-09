@@ -38,7 +38,8 @@ public class QuestionsXmlExport {
 
 	private void exportQuestion(Element element, Question question) {
 		Element questionElement = new Element("question");
-		questionElement.setAttribute("course", question.getCourse().getName());
+		questionElement.setAttribute("courseType", question.getCourse().getType().name());
+		questionElement.setAttribute("courseName", question.getCourse().getName());
 		questionElement.setAttribute("key", String.valueOf(question.getKey()));
 		questionElement.setAttribute("content", question.getContent());
 		questionElement.setAttribute("title", question.getTitle());

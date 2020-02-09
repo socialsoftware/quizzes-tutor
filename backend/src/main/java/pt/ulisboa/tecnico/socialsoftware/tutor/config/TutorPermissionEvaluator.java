@@ -38,7 +38,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             String permissionValue = (String) permission;
             if ("ACCESS".equals(permissionValue)) {
                 return userService.getCourseExecutions(username).stream()
-                        .anyMatch(course -> course.getId() == id);
+                        .anyMatch(course -> course.getCourseExecutionId() == id);
             }
             return false;
         }

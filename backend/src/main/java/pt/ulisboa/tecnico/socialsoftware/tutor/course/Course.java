@@ -14,9 +14,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CO
 @Entity
 @Table(name = "courses")
 public class Course {
+    public enum Type {TECNICO, EXTERNAL}
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private Type type;
 
     private String name;
 
@@ -31,17 +36,19 @@ public class Course {
 
     public Course() {}
 
-    public Course(String name) {
-        if (name.trim().isEmpty()) {
+    public Course(String name, Course.Type type) {
+        if (name == null || name.trim().isEmpty()) {
             throw new TutorException(COURSE_NAME_IS_EMPTY);
         }
 
+        this.type = type;
         this.name = name;
     }
 
-    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm) {
+    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, Course.Type type) {
         return getCourseExecutions().stream()
-                .filter(courseExecution -> courseExecution.getAcronym().equals(acronym)
+                .filter(courseExecution -> courseExecution.getType().equals(type)
+                                            && courseExecution.getAcronym().equals(acronym)
                                             && courseExecution.getAcademicTerm().equals(academicTerm))
                 .findAny();
     }
@@ -96,5 +103,13 @@ public class Course {
 
     public void addTopic(Topic topic) {
         topics.add(topic);
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

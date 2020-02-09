@@ -61,10 +61,10 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         topicConjunctionList.add(topicConjunction)
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
-        def course = new Course(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
         assessmentDto = assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
@@ -135,7 +135,6 @@ class UpdateAssessmentServiceSpockTest extends Specification {
         resTopicConjunction2.topics.size() == 1
         resTopicConjunction3.topics.size() == 0
     }
-
 
     @TestConfiguration
     static class AssessmentServiceImplTestContextConfiguration {

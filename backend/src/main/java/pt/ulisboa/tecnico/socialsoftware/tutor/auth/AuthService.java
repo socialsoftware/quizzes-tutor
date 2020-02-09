@@ -40,8 +40,8 @@ public class AuthService {
         List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
         List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
 
-        List<CourseExecution> activeAttendingCourses = getActiveCourses(fenixAttendingCourses);
-        List<CourseExecution> activeTeachingCourses = getActiveCourses(fenixTeachingCourses);
+        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
+        List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
 
         User user = this.userService.findByUsername(username);
 
@@ -106,14 +106,14 @@ public class AuthService {
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
-    private List<CourseExecution> getActiveCourses(List<CourseDto> courses) {
+    private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {
         return courses.stream()
                 .map(courseDto ->  {
-                    Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
+                    Course course = courseRepository.findByNameType(courseDto.getName(), Course.Type.TECNICO.name()).orElse(null);
                     if (course == null) {
                         return null;
                     }
-                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm())
+                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO)
                                 .orElse(null);
                 })
                 .filter(Objects::nonNull)

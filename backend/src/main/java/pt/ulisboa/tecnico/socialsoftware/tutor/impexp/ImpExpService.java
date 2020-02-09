@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -48,6 +49,9 @@ public class ImpExpService {
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -178,11 +182,11 @@ public class ImpExpService {
 
                 File questionsFile = new File(directory.getPath() + "/" + "questions.xml");
                 QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
-                questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService);
+                questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService, courseRepository);
 
                 File topicsFile = new File(directory.getPath() + "/" + "topics.xml");
                 TopicsXmlImport topicsXmlImport = new TopicsXmlImport();
-                topicsXmlImport.importTopics(new FileInputStream(topicsFile), topicService, questionService);
+                topicsXmlImport.importTopics(new FileInputStream(topicsFile), topicService, questionService, courseRepository);
 
                 File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();

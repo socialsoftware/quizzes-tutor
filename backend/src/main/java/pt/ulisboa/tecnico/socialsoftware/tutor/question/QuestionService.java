@@ -65,24 +65,24 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findQuestions(String courseName) {
-        return questionRepository.findQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findQuestions(int courseId) {
+        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuestionDto> findAvailableQuestions(String courseName) {
-        return questionRepository.findAvailableQuestions(courseName).stream().map(QuestionDto::new).collect(Collectors.toList());
+    public List<QuestionDto> findAvailableQuestions(int courseId) {
+        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto createQuestion(String courseName, QuestionDto questionDto) {
-        Course course = courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+    public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         if (questionDto.getKey() == null) {
             int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
@@ -172,7 +172,7 @@ public class QuestionService {
     public void importQuestions(String questionsXML) {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 
-        xmlImporter.importQuestions(questionsXML, this);
+        xmlImporter.importQuestions(questionsXML, this, courseRepository);
     }
 }
 

@@ -58,10 +58,10 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
     def courseExecution
 
     def setup() {
-        course = new Course(COURSE_NAME)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM)
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
     }
 
@@ -110,7 +110,7 @@ class FindCourseQuestionsServiceSpockTest extends Specification {
 
 
         when:
-        def result = questionService.findQuestions(COURSE_NAME)
+        def result = questionService.findQuestions(course.getId())
 
         then: "the returned data are correct"
         result.size() == 1
