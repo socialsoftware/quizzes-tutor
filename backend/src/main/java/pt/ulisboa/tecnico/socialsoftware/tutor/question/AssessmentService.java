@@ -109,7 +109,7 @@ public class AssessmentService {
 
         // remove TopicConjunction that are not in the Dto
         assessment.getTopicConjunctions().stream().filter(topicConjunction ->
-                assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunctionDto.getId() == topicConjunction.getId())
+                assessmentDto.getTopicConjunctions().stream().anyMatch(topicConjunctionDto -> topicConjunctionDto.getId().equals(topicConjunction.getId()))
         ).collect(Collectors.toList()).forEach(TopicConjunction::remove);
 
         assessmentDto.getTopicConjunctions()
@@ -124,10 +124,7 @@ public class AssessmentService {
                 } else {
                     TopicConjunction topicConjunction = new TopicConjunction();
                     Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
-                            .map(topicDto -> {
-                                System.out.println(topicDto.getId());
-                                return topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId()));
-                            })
+                            .map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId())))
                             .collect(Collectors.toSet());
                     topicConjunction.updateTopics(newTopics);
                     assessment.addTopicConjunction(topicConjunction);
