@@ -109,7 +109,7 @@ public class AssessmentService {
 
         // remove TopicConjunction that are not in the Dto
         assessment.getTopicConjunctions().stream().filter(topicConjunction ->
-                assessmentDto.getTopicConjunctions().stream().anyMatch(topicConjunctionDto -> topicConjunctionDto.getId().equals(topicConjunction.getId()))
+                assessmentDto.getTopicConjunctions().stream().anyMatch(topicConjunctionDto -> topicConjunction.getId().equals(topicConjunctionDto.getId()))
         ).collect(Collectors.toList()).forEach(TopicConjunction::remove);
 
         assessmentDto.getTopicConjunctions()
