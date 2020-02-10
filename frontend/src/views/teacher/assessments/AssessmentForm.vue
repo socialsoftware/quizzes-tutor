@@ -17,9 +17,12 @@
 
         <v-col cols="12" sm="2">
           <v-text-field
-            v-model="assessment.sequence"
-            label="Order"
+            min="0"
+            step="1"
             type="number"
+            label="Order"
+            :value="assessment.sequence"
+            @change="assessment.sequence = Number($event)"
           ></v-text-field>
         </v-col>
       </v-row>

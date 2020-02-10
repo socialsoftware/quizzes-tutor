@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "assessments")
@@ -39,6 +39,7 @@ public class Assessment {
     public Assessment(CourseExecution courseExecution, List<TopicConjunction> topicConjunctions, AssessmentDto assessmentDto) {
         setTitle(assessmentDto.getTitle());
         setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
+        setSequence(assessmentDto.getSequence());
         setCourseExecution(courseExecution);
 
         courseExecution.addAssessment(this);
@@ -107,7 +108,7 @@ public class Assessment {
     }
 
     public void remove() {
-        getTopicConjunctions().forEach(TopicConjunction::remove);
+        getTopicConjunctions().stream().collect(Collectors.toList()).forEach(TopicConjunction::remove);
         getTopicConjunctions().clear();
     }
 }

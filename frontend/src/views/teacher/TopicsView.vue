@@ -133,7 +133,7 @@ export default class TopicsView extends Vue {
   }
 
   editTopic(topic: Topic) {
-    this.editedTopic = topic;
+    this.editedTopic = { ...topic };
     this.topicDialog = true;
   }
 

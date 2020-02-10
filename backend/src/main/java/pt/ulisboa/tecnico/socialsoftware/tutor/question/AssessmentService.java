@@ -67,7 +67,7 @@ public class AssessmentService {
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
                 .map(AssessmentDto::new)
-                .sorted(Comparator.comparing(AssessmentDto::getSequence))
+                .sorted(Comparator.comparing(AssessmentDto::getSequence, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
     }
 
@@ -110,7 +110,7 @@ public class AssessmentService {
         // remove TopicConjunction that are not in the Dto
         assessment.getTopicConjunctions().stream().filter(topicConjunction ->
                 assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunctionDto.getId() == topicConjunction.getId())
-        ).sorted().forEach(TopicConjunction::remove);
+        ).collect(Collectors.toList()).forEach(TopicConjunction::remove);
 
         assessmentDto.getTopicConjunctions()
             .forEach(topicConjunctionDto -> {
@@ -123,7 +123,12 @@ public class AssessmentService {
                 // new topicConjunction
                 } else {
                     TopicConjunction topicConjunction = new TopicConjunction();
-                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
+                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
+                            .map(topicDto -> {
+                                System.out.println(topicDto.getId());
+                                return topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId()));
+                            })
+                            .collect(Collectors.toSet());
                     topicConjunction.updateTopics(newTopics);
                     assessment.addTopicConjunction(topicConjunction);
                     topicConjunction.setAssessment(assessment);
