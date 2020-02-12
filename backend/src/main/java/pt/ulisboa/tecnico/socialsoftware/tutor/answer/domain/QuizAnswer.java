@@ -2,12 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Table(name = "quiz_answers")
@@ -42,7 +42,12 @@ public class QuizAnswer {
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
 
-        quiz.getQuizQuestions().forEach(quizQuestion -> questionAnswers.add(new QuestionAnswer(this, quizQuestion, quizQuestion.getSequence())));
+        List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
+        if (quiz.getScramble()) {
+            Collections.shuffle(quizQuestions);
+        }
+
+        quizQuestions.forEach(quizQuestion -> questionAnswers.add(new QuestionAnswer(this, quizQuestion, quizQuestion.getSequence())));
     }
 
     public void remove() {

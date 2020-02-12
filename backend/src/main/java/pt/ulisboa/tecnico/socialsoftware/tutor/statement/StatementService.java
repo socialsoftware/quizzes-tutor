@@ -88,8 +88,6 @@ public class StatementService {
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
         availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
-//        availableQuestions = filterCorrectlyAnsweredQuestions(availableQuestions, quizDetails, user);
-//        availableQuestions = filterAnsweredQuestions(availableQuestions, quizDetails, user);
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
@@ -168,20 +166,11 @@ public class StatementService {
                 .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.IN_CLASS))
                 .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .forEach(quiz ->  {
-                    QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-                    if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isBefore(now)) {
-                        quizAnswer.setCompleted(true);
+                    if (quiz.getConclusionDate() == null || quiz.getConclusionDate().isAfter(now)) {
+                        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+                        entityManager.persist(quizAnswer);
                     }
-                    entityManager.persist(quizAnswer);
                 });
-
-        // create QuestionAnswer for quizzes
-        user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuestionAnswers().isEmpty())
-                .forEach(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().forEach(quizQuestion -> {
-                    QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, quizQuestion.getSequence());
-                    entityManager.persist(questionAnswer);
-                }));
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
@@ -204,10 +193,6 @@ public class StatementService {
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getCompleted() && quizAnswer.getQuiz().getCourseExecution() == courseExecution)
-                .filter(quizAnswer -> !(quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-                        quizAnswer.getQuiz().getConclusionDate() != null &&
-                        quizAnswer.getQuiz().getConclusionDate().isAfter(LocalDateTime.now())))
-                .filter(QuizAnswer::getCompleted)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());
@@ -233,6 +218,19 @@ public class StatementService {
         answerService.submitAnswer(user, quizId, answer);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void completeOpenQuizAnswers() {
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(LocalDateTime.now());
+
+        quizAnswersToClose.forEach(quizAnswer ->  {
+            quizAnswer.setAnswerDate(quizAnswer.getQuiz().getConclusionDate());
+            quizAnswer.setCompleted(true);
+        });
+    }
+
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
         if (!quizDetails.getAssessment().equals("all")) {
             Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
@@ -243,29 +241,4 @@ public class StatementService {
         return availableQuestions;
     }
 
-    public List<Question> filterCorrectlyAnsweredQuestions(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
-        if (quizDetails.getQuestionType().equals("failed")) {
-            List<Question> failedQuestions = user.getQuizAnswers().stream()
-                    .map(QuizAnswer::getQuiz)
-                    .flatMap(q -> q.getQuizQuestions().stream())
-                    .map(QuizQuestion::getQuestion)
-                    .collect(Collectors.toList());
-
-            return availableQuestions.stream().filter(failedQuestions::contains).collect(Collectors.toList());
-        }
-        return availableQuestions;
-    }
-
-    public List<Question> filterAnsweredQuestions(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
-        if (quizDetails.getQuestionType().equals("new")) {
-            List<Question> failedQuestions = user.getQuizAnswers().stream()
-                    .map(QuizAnswer::getQuiz)
-                    .flatMap(q -> q.getQuizQuestions().stream())
-                    .map(QuizQuestion::getQuestion)
-                    .collect(Collectors.toList());
-
-            return availableQuestions.stream().filter(failedQuestions::contains).collect(Collectors.toList());
-        }
-        return availableQuestions;
-    }
 }
