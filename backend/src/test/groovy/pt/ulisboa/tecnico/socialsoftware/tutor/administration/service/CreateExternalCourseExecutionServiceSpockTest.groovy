@@ -101,30 +101,30 @@ class CreateExternalCourseExecutionServiceSpockTest extends Specification {
         courseExecution.getCourse() == course
     }
 
-    @Unroll("invalid arguments: #isCourse | #isCourseExecution | #type | #courseName | #acronym | #academicTerm || errorMessage ")
-    def "invalid data in database"() {
+    @Unroll
+    def "invalid data in database where course is #isCourse, courseExecution is #isCourseExecution, type is #type, and errorMessage id #errorMessage"() {
         given: "a course"
-        def course = createCourse(isCourse, courseName, type)
+        def course = createCourse(isCourse, COURSE_ONE, type)
         and: "a course execution"
-        createCourseExecution(isCourseExecution, course, acronym, academicTerm, type)
+        createCourseExecution(isCourseExecution, course, ACRONYM_ONE, ACADEMIC_TERM_ONE, type)
         and: "a courseDto"
         def courseDto = new CourseDto()
         courseDto.setCourseType(type)
-        courseDto.setName(courseName)
-        courseDto.setAcronym(acronym)
-        courseDto.setAcademicTerm(academicTerm)
+        courseDto.setName(COURSE_ONE)
+        courseDto.setAcronym(ACRONYM_ONE)
+        courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
 
         when:
         administrationService.createExternalCourseExecution(courseDto)
 
-        then: 'a HotelException is thrown'
+        then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
         where:
-        isCourse | isCourseExecution | type                 | courseName | acronym     | academicTerm      || errorMessage
-        false    | false             | Course.Type.TECNICO  | COURSE_ONE | ACRONYM_ONE | ACADEMIC_TERM_ONE || COURSE_NOT_FOUND
-        true     | true              | Course.Type.EXTERNAL | COURSE_ONE | ACRONYM_ONE | ACADEMIC_TERM_ONE || DUPLICATE_COURSE_EXECUTION
+        isCourse | isCourseExecution | type                 || errorMessage
+        false    | false             | Course.Type.TECNICO  || COURSE_NOT_FOUND
+        true     | true              | Course.Type.EXTERNAL || DUPLICATE_COURSE_EXECUTION
     }
 
     def createCourse(isCourse, courseName, type) {
@@ -141,8 +141,8 @@ class CreateExternalCourseExecutionServiceSpockTest extends Specification {
         }
     }
 
-    @Unroll("invalid arguments: #type | #courseName | #acronym | #academicTerm || errorMessage ")
-    def "invalid input values"() {
+    @Unroll
+    def "invalid arguments: type=#type | courseName=#courseName | acronym=#acronym | academicTerm=#academicTerm || errorMessage=#errorMessage "() {
         given: "a courseDto"
         def courseDto = new CourseDto()
         courseDto.setCourseType(type)
@@ -153,7 +153,7 @@ class CreateExternalCourseExecutionServiceSpockTest extends Specification {
         when:
         administrationService.createExternalCourseExecution(courseDto)
 
-        then: 'a HotelException is thrown'
+        then:
         def error = thrown(TutorException)
         error.errorMessage == errorMessage
 
