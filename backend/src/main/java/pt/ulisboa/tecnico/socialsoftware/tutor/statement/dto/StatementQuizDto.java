@@ -2,16 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class StatementQuizDto implements Serializable {
     private Integer id;
@@ -41,8 +38,6 @@ public class StatementQuizDto implements Serializable {
             }
         }
 
-        this.questions = new ArrayList<>();
-        this.answers = new ArrayList<>();
         quizAnswer.getQuestionAnswers().forEach(questionAnswer ->  {
             this.questions.add(new StatementQuestionDto(questionAnswer.getQuizQuestion()));
             this.answers.add(new StatementAnswerDto(questionAnswer));

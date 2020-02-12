@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
@@ -246,13 +245,13 @@ public class Quiz {
     }
 
     public void remove() {
-        checkCanRemove();
+        checkCanChange();
 
         courseExecution.getQuizzes().remove(this);
         courseExecution = null;
     }
 
-    public void checkCanRemove() {
+    public void checkCanChange() {
         if (!quizAnswers.isEmpty()) {
             throw new TutorException(QUIZ_HAS_ANSWERS);
         }

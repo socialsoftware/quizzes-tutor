@@ -121,6 +121,8 @@ public class QuizService {
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
+        quiz.checkCanChange();
+
         quiz.setTitle(quizDto.getTitle());
         quiz.setAvailableDate(quizDto.getAvailableDateDate());
         quiz.setConclusionDate(quizDto.getConclusionDateDate());
