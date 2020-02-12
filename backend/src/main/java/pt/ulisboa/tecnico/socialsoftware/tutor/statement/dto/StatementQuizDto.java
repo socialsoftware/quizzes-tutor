@@ -40,12 +40,13 @@ public class StatementQuizDto implements Serializable {
                 this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());
             }
         }
-        this.questions = quizAnswer.getQuiz().getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                .map(StatementQuestionDto::new)
-                .collect(Collectors.toList());
 
-        this.answers = quizAnswer.getQuestionAnswers().stream().map(StatementAnswerDto::new).sorted(Comparator.comparing(StatementAnswerDto::getSequence)).collect(Collectors.toList());
+        this.questions = new ArrayList<>();
+        this.answers = new ArrayList<>();
+        quizAnswer.getQuestionAnswers().forEach(questionAnswer ->  {
+            this.questions.add(new StatementQuestionDto(questionAnswer.getQuizQuestion()));
+            this.answers.add(new StatementAnswerDto(questionAnswer));
+        });
     }
 
     public Integer getId() {

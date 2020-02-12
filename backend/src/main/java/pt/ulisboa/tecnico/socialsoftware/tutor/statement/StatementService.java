@@ -193,6 +193,7 @@ public class StatementService {
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getCompleted() && quizAnswer.getQuiz().getCourseExecution() == courseExecution)
+                .filter(quizAnswer -> !(quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && quizAnswer.getQuiz().getConclusionDate().isAfter(LocalDateTime.now())))
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());

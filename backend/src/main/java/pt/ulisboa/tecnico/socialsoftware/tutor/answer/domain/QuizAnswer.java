@@ -30,7 +30,7 @@ public class QuizAnswer {
     private Quiz quiz;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<QuestionAnswer> questionAnswers = new HashSet<>();
+    private List<QuestionAnswer> questionAnswers = new ArrayList<>();
 
     public QuizAnswer() {
     }
@@ -47,7 +47,7 @@ public class QuizAnswer {
             Collections.shuffle(quizQuestions);
         }
 
-        quizQuestions.forEach(quizQuestion -> questionAnswers.add(new QuestionAnswer(this, quizQuestion, quizQuestion.getSequence())));
+        quizQuestions.forEach(quizQuestion -> new QuestionAnswer(this, quizQuestion, quizQuestion.getSequence()));
     }
 
     public void remove() {
@@ -104,16 +104,16 @@ public class QuizAnswer {
         this.user = user;
     }
 
-    public Set<QuestionAnswer> getQuestionAnswers() {
+    public List<QuestionAnswer> getQuestionAnswers() {
         if (questionAnswers == null) {
-            questionAnswers = new HashSet<>();
+            questionAnswers = new ArrayList<>();
         }
         return questionAnswers;
     }
 
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {
         if (questionAnswers == null) {
-            questionAnswers = new HashSet<>();
+            questionAnswers = new ArrayList<>();
         }
         questionAnswers.add(questionAnswer);
     }

@@ -25,13 +25,11 @@ public class SolvedQuizDto implements Serializable {
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
         this.answers = quizAnswer.getQuestionAnswers().stream()
-                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                 .map(QuestionAnswerDto::new)
                 .collect(Collectors.toList());
 
-        this.correctAnswers = quizAnswer.getQuiz()
-                .getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+        this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
+                .map(QuestionAnswer::getQuizQuestion)
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
 
