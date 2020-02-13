@@ -27,7 +27,7 @@ public class ScheduledTasks {
 
 	@Scheduled(cron = "0 0/15 * * * *")
 	public void completeOpenQuizAnswers() {
-		//statementService.completeOpenQuizAnswers();
+		statementService.completeOpenQuizAnswers();
 	}
 
 

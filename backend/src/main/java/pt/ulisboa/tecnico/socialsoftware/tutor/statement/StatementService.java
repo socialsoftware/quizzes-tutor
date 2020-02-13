@@ -226,10 +226,17 @@ public class StatementService {
     public void completeOpenQuizAnswers() {
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(LocalDateTime.now());
 
-        quizAnswersToClose.forEach(quizAnswer ->  {
-            quizAnswer.setAnswerDate(quizAnswer.getQuiz().getConclusionDate());
-            quizAnswer.setCompleted(true);
+        quizAnswersToClose.forEach(quizAnswer -> {
+            if (!quizAnswer.isCompleted()) {
+                quizAnswer.setAnswerDate(quizAnswer.getQuiz().getConclusionDate());
+                quizAnswer.setCompleted(true);
+            }
+
+            if (!quizAnswer.isUsedInStatistics()) {
+                quizAnswer.calculateStatistics();
+            }
         });
+
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {

@@ -9,33 +9,45 @@ public class StudentDto implements Serializable {
     private String username;
     private String name;
     private Integer numberOfTeacherQuizzes;
+    private Integer numberOfInClassQuizzes;
     private Integer numberOfStudentQuizzes;
     private Integer numberOfAnswers;
     private Integer numberOfTeacherAnswers;
+    private Integer numberOfInClassAnswers;
+    private Integer numberOfStudentAnswers;
     private int percentageOfCorrectAnswers = 0;
     private int percentageOfCorrectTeacherAnswers = 0;
+    private int percentageOfCorrectInClassAnswers = 0;
+    private int percentageOfCorrectStudentAnswers = 0;
     private String creationDate;
     private String lastAccess;
 
     public StudentDto(User user) {
         this.username = user.getUsername();
         this.name = user.getName();
-        if (user.getNumberOfTeacherQuizzes() == null) {
-           user.calculateNumbers();
-        }
+
         this.numberOfTeacherQuizzes = user.getNumberOfTeacherQuizzes();
+        this.numberOfInClassQuizzes = user.getNumberOfInClassQuizzes();
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
-        this.numberOfAnswers = user.getNumberOfAnswers();
+
+        this.numberOfAnswers = user.getNumberOfTeacherAnswers() + user.getNumberOfInClassAnswers() + user.getNumberOfStudentAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
+        this.numberOfInClassAnswers = user.getNumberOfInClassAnswers();
+        this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
+
+        if (this.numberOfTeacherAnswers != 0)
+            this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
+        if (this.numberOfInClassAnswers != 0)
+            this.percentageOfCorrectInClassAnswers = user.getNumberOfCorrectInClassAnswers() * 100 / this.numberOfInClassAnswers;
+        if (this.numberOfStudentAnswers != 0)
+            this.percentageOfCorrectStudentAnswers = user.getNumberOfCorrectStudentAnswers() * 100 / this.numberOfStudentAnswers;
+        if (this.numberOfAnswers != 0)
+            this.percentageOfCorrectAnswers = (user.getNumberOfCorrectTeacherAnswers() + user.getNumberOfCorrectInClassAnswers() + user.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
 
         if (user.getLastAccess() != null)
             this.lastAccess = user.getLastAccess().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         if (user.getCreationDate() != null)
             this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        if (this.numberOfAnswers != 0)
-            this.percentageOfCorrectAnswers = user.getNumberOfCorrectAnswers() * 100 / this.numberOfAnswers;
-        if (this.numberOfTeacherAnswers != 0)
-            this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
     }
 
     public String getUsername() {
@@ -116,6 +128,46 @@ public class StudentDto implements Serializable {
 
     public void setLastAccess(String lastAccess) {
         this.lastAccess = lastAccess;
+    }
+
+    public Integer getNumberOfInClassQuizzes() {
+        return numberOfInClassQuizzes;
+    }
+
+    public void setNumberOfInClassQuizzes(Integer numberOfInClassQuizzes) {
+        this.numberOfInClassQuizzes = numberOfInClassQuizzes;
+    }
+
+    public Integer getNumberOfInClassAnswers() {
+        return numberOfInClassAnswers;
+    }
+
+    public void setNumberOfInClassAnswers(Integer numberOfInClassAnswers) {
+        this.numberOfInClassAnswers = numberOfInClassAnswers;
+    }
+
+    public Integer getNumberOfStudentAnswers() {
+        return numberOfStudentAnswers;
+    }
+
+    public void setNumberOfStudentAnswers(Integer numberOfStudentAnswers) {
+        this.numberOfStudentAnswers = numberOfStudentAnswers;
+    }
+
+    public int getPercentageOfCorrectInClassAnswers() {
+        return percentageOfCorrectInClassAnswers;
+    }
+
+    public void setPercentageOfCorrectInClassAnswers(int percentageOfCorrectInClassAnswers) {
+        this.percentageOfCorrectInClassAnswers = percentageOfCorrectInClassAnswers;
+    }
+
+    public int getPercentageOfCorrectStudentAnswers() {
+        return percentageOfCorrectStudentAnswers;
+    }
+
+    public void setPercentageOfCorrectStudentAnswers(int percentageOfCorrectStudentAnswers) {
+        this.percentageOfCorrectStudentAnswers = percentageOfCorrectStudentAnswers;
     }
 
     @Override

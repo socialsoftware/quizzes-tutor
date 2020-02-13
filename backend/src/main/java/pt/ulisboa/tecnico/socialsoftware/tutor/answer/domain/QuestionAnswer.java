@@ -85,6 +85,8 @@ public class QuestionAnswer {
         this.timeTaken = timeTaken;
     }
 
+
+
     public QuizQuestion getQuizQuestion() {
         return quizQuestion;
     }

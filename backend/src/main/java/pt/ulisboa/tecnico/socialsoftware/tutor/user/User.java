@@ -35,18 +35,15 @@ public class User implements UserDetails, Importable {
     private String name;
     private String enrolledCoursesAcronyms;
 
-    @Column(name = "number_of_teacher_quizzes", columnDefinition = "integer default 0")
-    private Integer numberOfTeacherQuizzes = 0;
-    @Column(name = "number_of_student_quizzes", columnDefinition = "integer default 0")
-    private Integer numberOfStudentQuizzes = 0;
-    @Column(name = "number_of_answers", columnDefinition = "integer default 0")
-    private Integer numberOfAnswers = 0;
-    @Column(name = "number_of_teacher_answers", columnDefinition = "integer default 0")
-    private Integer numberOfTeacherAnswers = 0;
-    @Column(name = "number_of_correct_answers", columnDefinition = "integer default 0")
-    private Integer numberOfCorrectAnswers = 0;
-    @Column(name = "number_of_correct_teacher_answers", columnDefinition = "integer default 0")
-    private Integer numberOfCorrectTeacherAnswers = 0;
+    private Integer numberOfTeacherQuizzes;
+    private Integer numberOfStudentQuizzes;
+    private Integer numberOfInClassQuizzes;
+    private Integer numberOfTeacherAnswers;
+    private Integer numberOfInClassAnswers;
+    private Integer numberOfStudentAnswers;
+    private Integer numberOfCorrectTeacherAnswers;
+    private Integer numberOfCorrectInClassAnswers;
+    private Integer numberOfCorrectStudentAnswers;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -70,11 +67,14 @@ public class User implements UserDetails, Importable {
         this.role = role;
         this.creationDate = LocalDateTime.now();
         this.numberOfTeacherQuizzes = 0;
+        this.numberOfInClassQuizzes = 0;
         this.numberOfStudentQuizzes = 0;
-        this.numberOfAnswers = 0;
         this.numberOfTeacherAnswers = 0;
-        this.numberOfCorrectAnswers = 0;
+        this.numberOfInClassAnswers = 0;
+        this.numberOfStudentAnswers = 0;
         this.numberOfCorrectTeacherAnswers = 0;
+        this.numberOfCorrectInClassAnswers = 0;
+        this.numberOfCorrectStudentAnswers = 0;
     }
 
     public Integer getId() {
@@ -155,6 +155,11 @@ public class User implements UserDetails, Importable {
     }
 
     public Integer getNumberOfTeacherQuizzes() {
+        if (this.numberOfTeacherQuizzes == null)
+            this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .count();
+
         return numberOfTeacherQuizzes;
     }
 
@@ -163,6 +168,11 @@ public class User implements UserDetails, Importable {
     }
 
     public Integer getNumberOfStudentQuizzes() {
+        if(this.numberOfStudentQuizzes == null)
+            this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                    .count();
+
         return numberOfStudentQuizzes;
     }
 
@@ -170,15 +180,26 @@ public class User implements UserDetails, Importable {
         this.numberOfStudentQuizzes = numberOfStudentQuizzes;
     }
 
-    public Integer getNumberOfAnswers() {
-        return numberOfAnswers;
+    public Integer getNumberOfInClassQuizzes() {
+        if (this.numberOfInClassQuizzes == null)
+            this.numberOfInClassQuizzes = (int) getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                    .count();
+
+        return numberOfInClassQuizzes;
     }
 
-    public void setNumberOfAnswers(Integer numberOfAnswers) {
-        this.numberOfAnswers = numberOfAnswers;
+    public void setNumberOfInClassQuizzes(Integer numberOfInClassQuizzes) {
+        this.numberOfInClassQuizzes = numberOfInClassQuizzes;
     }
 
     public Integer getNumberOfTeacherAnswers() {
+        if (this.numberOfTeacherAnswers == null)
+            this.numberOfTeacherAnswers = getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .sum();
+
         return numberOfTeacherAnswers;
     }
 
@@ -186,50 +207,122 @@ public class User implements UserDetails, Importable {
         this.numberOfTeacherAnswers = numberOfTeacherAnswers;
     }
 
-    public Integer getNumberOfCorrectAnswers() {
-        return numberOfCorrectAnswers;
+    public Integer getNumberOfInClassAnswers() {
+        if (this.numberOfInClassAnswers == null)
+            this.numberOfInClassAnswers = getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .sum();
+            return numberOfInClassAnswers;
     }
 
-    public void setNumberOfCorrectAnswers(Integer numberOfCorrectAnswers) {
-        this.numberOfCorrectAnswers = numberOfCorrectAnswers;
+    public void setNumberOfInClassAnswers(Integer numberOfInClassAnswers) {
+        this.numberOfInClassAnswers = numberOfInClassAnswers;
+    }
+
+    public Integer getNumberOfStudentAnswers() {
+        if (this.numberOfStudentAnswers == null) {
+            this.numberOfStudentAnswers = getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .sum();
+        }
+
+        return numberOfStudentAnswers;
+    }
+
+    public void setNumberOfStudentAnswers(Integer numberOfStudentAnswers) {
+        this.numberOfStudentAnswers = numberOfStudentAnswers;
     }
 
     public Integer getNumberOfCorrectTeacherAnswers() {
-        return numberOfCorrectTeacherAnswers;
+        if (this.numberOfCorrectTeacherAnswers == null)
+            this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                    .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                            questionAnswer.getOption().getCorrect())
+                    .count();
+
+            return numberOfCorrectTeacherAnswers;
     }
 
     public void setNumberOfCorrectTeacherAnswers(Integer numberOfCorrectTeacherAnswers) {
         this.numberOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers;
     }
 
-    public void increaseNumberOfTeacherQuizzes() {
-        if (numberOfTeacherQuizzes == null) this.calculateNumbers();
-        this.numberOfTeacherQuizzes += 1;
+    public Integer getNumberOfCorrectInClassAnswers() {
+        if (this.numberOfCorrectInClassAnswers == null)
+            this.numberOfCorrectInClassAnswers = (int) this.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                        questionAnswer.getOption().getCorrect())
+                .count();
+
+        return numberOfCorrectInClassAnswers;
     }
 
-    public void increaseNumberOfTeacherAnswers(int size) {
-        if (numberOfTeacherAnswers == null) this.calculateNumbers();
-        this.numberOfTeacherAnswers += size;
+    public void setNumberOfCorrectInClassAnswers(Integer numberOfCorrectInClassAnswers) {
+        this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
     }
 
-    public void increaseNumberOfStudentQuizzes() {
-        if (numberOfStudentQuizzes == null) this.calculateNumbers();
-        this.numberOfStudentQuizzes += 1;
+    public Integer getNumberOfCorrectStudentAnswers() {
+        if (this.numberOfCorrectStudentAnswers == null)
+            this.numberOfCorrectStudentAnswers = (int) this.getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getOption() != null &&
+                        questionAnswer.getOption().getCorrect())
+                .count();
+
+        return numberOfCorrectStudentAnswers;
     }
 
-    public void increaseNumberOfAnswers(int size) {
-        if (numberOfAnswers == null) this.calculateNumbers();
-        this.numberOfAnswers += size;
+    public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
+        this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
-    public void increaseNumberOfCorrectTeacherAnswers(int size) {
-        if (numberOfCorrectTeacherAnswers == null) this.calculateNumbers();
-        this.numberOfCorrectTeacherAnswers += size;
+    public void increaseNumberOfQuizzes(Quiz.QuizType type) {
+        switch (type) {
+            case PROPOSED:
+                this.numberOfTeacherQuizzes = getNumberOfTeacherQuizzes() + 1;
+                break;
+            case IN_CLASS:
+                this.numberOfInClassQuizzes = getNumberOfInClassQuizzes() + 1;
+                break;
+            case GENERATED:
+                this.numberOfStudentQuizzes = getNumberOfStudentQuizzes() + 1;
+                break;
+        }
     }
 
-    public void increaseNumberOfCorrectAnswers(int size) {
-        if (numberOfCorrectAnswers == null) this.calculateNumbers();
-        this.numberOfCorrectAnswers += size;
+    public void increaseNumberOfAnswers(Quiz.QuizType type) {
+        switch (type) {
+            case PROPOSED:
+                this.numberOfTeacherAnswers = getNumberOfTeacherAnswers() + 1;
+                break;
+            case IN_CLASS:
+                this.numberOfInClassAnswers = getNumberOfInClassAnswers() + 1;
+                break;
+            case GENERATED:
+                this.numberOfStudentAnswers = getNumberOfStudentAnswers() + 1;
+                break;
+        }
+    }
+
+    public void increaseNumberOfCorrectAnswers(Quiz.QuizType type) {
+        switch (type) {
+            case PROPOSED:
+                this.numberOfCorrectTeacherAnswers = getNumberOfCorrectTeacherAnswers() + 1;
+                break;
+            case IN_CLASS:
+                this.numberOfCorrectInClassAnswers = getNumberOfCorrectInClassAnswers() + 1;
+                break;
+            case GENERATED:
+                this.numberOfCorrectStudentAnswers = getNumberOfCorrectStudentAnswers() + 1;
+                break;
+        }
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
@@ -250,11 +343,14 @@ public class User implements UserDetails, Importable {
                 ", name='" + name + '\'' +
                 ", courseAcronyms='" + enrolledCoursesAcronyms + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
+                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
-                ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
-                ", numberOfCorrectAnswers=" + numberOfCorrectAnswers +
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
+                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
+                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
+                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
+                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
                 ", creationDate=" + creationDate +
                 ", courseExecutions=" + courseExecutions +
                 '}';
@@ -333,37 +429,5 @@ public class User implements UserDetails, Importable {
         }
 
         return result;
-    }
-
-    public void calculateNumbers() {
-        this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                .count();
-
-        this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
-            .count();
-
-        this.numberOfAnswers = getQuizAnswers().stream()
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-            .sum();
-
-        this.numberOfCorrectAnswers = (int) getQuizAnswers().stream()
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
-
-        this.numberOfTeacherAnswers = getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
-                .sum();
-
-        this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
-                .count();
     }
 }

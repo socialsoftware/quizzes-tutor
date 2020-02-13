@@ -148,19 +148,6 @@ public class AnswerService {
                 questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
             }
 
-//            // Increase stats to be shown in user list
-//            if (quizAnswer.getQuiz().getType() == Quiz.QuizType.TEACHER) {
-//                user.increaseNumberOfTeacherQuizzes();
-//                user.increaseNumberOfTeacherAnswers(1);
-//                if (option.getCorrect()) {
-//                user.increaseNumberOfCorrectTeacherAnswers(correctAnswers);
-//                }
-//
-//            } else {
-//                user.increaseNumberOfStudentQuizzes();
-//            }
-//            user.increaseNumberOfAnswers(answers.getAnswers().size());
-//            user.increaseNumberOfCorrectAnswers(correctAnswers);
         }
     }
 

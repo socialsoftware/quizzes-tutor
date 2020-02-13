@@ -21,6 +21,9 @@ public class QuizAnswer {
 
     private boolean completed;
 
+    @Column(name = "used_in_statistics")
+    private Boolean usedInStatistics;
+
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -37,6 +40,7 @@ public class QuizAnswer {
 
     public QuizAnswer(User user, Quiz quiz) {
         this.completed = false;
+        this.usedInStatistics = false;
         this.user = user;
         user.addQuizAnswer(this);
         this.quiz = quiz;
@@ -64,6 +68,19 @@ public class QuizAnswer {
         questionAnswers.clear();
     }
 
+    public void calculateStatistics() {
+        user.increaseNumberOfQuizzes(getQuiz().getType());
+
+        getQuestionAnswers().forEach(questionAnswer -> {
+            user.increaseNumberOfAnswers(getQuiz().getType());
+            if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
+                user.increaseNumberOfCorrectAnswers(getQuiz().getType());
+            }
+
+            this.usedInStatistics = true;
+        });
+    }
+
     public Integer getId() {
         return id;
     }
@@ -86,6 +103,21 @@ public class QuizAnswer {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public boolean isUsedInStatistics() {
+        if (usedInStatistics == null)
+            usedInStatistics = false;
+
+        return usedInStatistics;
+    }
+
+    public void setUsedInStatistics(boolean usedInStatistics) {
+        this.usedInStatistics = usedInStatistics;
     }
 
     public Quiz getQuiz() {
@@ -117,5 +149,6 @@ public class QuizAnswer {
         }
         questionAnswers.add(questionAnswer);
     }
+
 
 }
