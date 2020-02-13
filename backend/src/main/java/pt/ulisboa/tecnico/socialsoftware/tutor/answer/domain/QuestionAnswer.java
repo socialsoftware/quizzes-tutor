@@ -44,8 +44,6 @@ public class QuestionAnswer {
             option.addQuestionAnswer(this);
         }
         this.sequence = sequence;
-
-        changeDifficulty();
     }
 
     public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int sequence){
@@ -109,10 +107,6 @@ public class QuestionAnswer {
 
     public void setOption(Option option) {
         this.option = option;
-    }
-
-    private void changeDifficulty() {
-        quizQuestion.getQuestion().addAnswer(this);
     }
 
     public Integer getSequence() {

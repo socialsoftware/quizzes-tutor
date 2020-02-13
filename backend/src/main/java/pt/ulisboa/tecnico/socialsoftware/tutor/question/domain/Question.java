@@ -235,7 +235,7 @@ public class Question {
                 .orElse(null);
     }
 
-    public void addAnswer(QuestionAnswer questionAnswer) {
+    public void addAnswerStatistics(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
         if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
             numberOfCorrect++;

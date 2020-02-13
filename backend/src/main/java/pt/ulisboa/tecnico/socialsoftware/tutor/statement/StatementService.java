@@ -230,11 +230,8 @@ public class StatementService {
                 quizAnswer.setCompleted(true);
             }
 
-            if (!quizAnswer.isUsedInStatistics()) {
-                quizAnswer.calculateStatistics();
-            }
+            quizAnswer.calculateStatistics();
         });
-
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {

@@ -102,8 +102,8 @@ public class AnswerService {
             return null;
         }
 
-        return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+        return new CorrectAnswersDto(quizAnswer.getQuestionAnswers().stream()
+                .map(QuestionAnswer::getQuizQuestion)
                 .map(CorrectAnswerDto::new).collect(Collectors.toList()));
     }
 
@@ -162,7 +162,6 @@ public class AnswerService {
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
         return !user.getId().equals(quizAnswer.getUser().getId());
     }
-
 
     @Retryable(
       value = { SQLException.class },

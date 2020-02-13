@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -76,16 +75,22 @@ public class QuizAnswer {
     }
 
     public void calculateStatistics() {
-        user.increaseNumberOfQuizzes(getQuiz().getType());
+        if (!this.usedInStatistics) {
+            user.increaseNumberOfQuizzes(getQuiz().getType());
 
-        getQuestionAnswers().forEach(questionAnswer -> {
-            user.increaseNumberOfAnswers(getQuiz().getType());
-            if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
-                user.increaseNumberOfCorrectAnswers(getQuiz().getType());
-            }
+            getQuestionAnswers().forEach(questionAnswer -> {
+                user.increaseNumberOfAnswers(getQuiz().getType());
+                if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
+                    user.increaseNumberOfCorrectAnswers(getQuiz().getType());
+                }
+
+            });
+
+            getQuestionAnswers().forEach(questionAnswer ->
+                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer));
 
             this.usedInStatistics = true;
-        });
+        }
     }
 
     public Integer getId() {
