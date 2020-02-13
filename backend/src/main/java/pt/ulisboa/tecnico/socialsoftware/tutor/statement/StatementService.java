@@ -188,12 +188,10 @@ public class StatementService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SolvedQuizDto> getSolvedQuizzes(String username, int executionId) {
         User user = userRepository.findByUsername(username);
-
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getCompleted() && quizAnswer.getQuiz().getCourseExecution() == courseExecution)
-                .filter(quizAnswer -> !(quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && quizAnswer.getQuiz().getConclusionDate().isAfter(LocalDateTime.now())))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());

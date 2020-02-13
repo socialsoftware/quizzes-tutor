@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -66,6 +67,12 @@ public class QuizAnswer {
         }
 
         questionAnswers.clear();
+    }
+
+    public boolean canResultsBePublic(CourseExecution courseExecution) {
+        return getCompleted() &&
+                getQuiz().getCourseExecution() == courseExecution &&
+                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now()));
     }
 
     public void calculateStatistics() {
