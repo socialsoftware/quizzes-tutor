@@ -235,13 +235,15 @@ public class StatementService {
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
-        if (!quizDetails.getAssessment().equals("all")) {
+        // remove all by default
+        // TODO: support a ALL assessment
+        //if (!quizDetails.getAssessment().equals("all")) {
             Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
                     .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.valueOf(quizDetails.getAssessment())));
 
             return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
-        }
-        return availableQuestions;
+       // }
+       // return availableQuestions;
     }
 
 }
