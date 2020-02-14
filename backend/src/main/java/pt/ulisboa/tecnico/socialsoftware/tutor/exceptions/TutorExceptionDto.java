@@ -10,7 +10,7 @@ abstract class TutorExceptionSubError {
 }
 
 public class TutorExceptionDto extends TutorExceptionSubError implements Serializable {
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm")
     private LocalDateTime timestamp;
     private String message;
     private String debugMessage;

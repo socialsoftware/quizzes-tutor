@@ -12,9 +12,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
@@ -45,6 +47,15 @@ class GenerateStudentQuizTest extends Specification {
     CourseRepository courseRepository
 
     @Autowired
+    AssessmentRepository assessmentRepository
+
+    @Autowired
+    TopicRepository topicRepository
+
+    @Autowired
+    TopicConjunctionRepository topicConjunctionRepository
+
+    @Autowired
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
@@ -57,39 +68,65 @@ class GenerateStudentQuizTest extends Specification {
     def courseExecution
     def questionOne
     def questionTwo
+    def assessment
 
     def setup() {
         def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        course.addCourseExecution(courseExecution)
+        courseExecution.setCourse(course)
+
         courseExecutionRepository.save(courseExecution)
+        courseRepository.save(course)
 
         user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
+
+        def topic = new Topic();
+        topic.setName("TOPIC")
+        topic.setCourse(course)
+        topicRepository.save(topic)
 
         questionOne = new Question()
         questionOne.setKey(1)
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         course.addQuestion(questionOne)
+        questionOne.addTopic(topic)
+        topic.addQuestion(questionOne)
 
         questionTwo = new Question()
         questionTwo.setKey(2)
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
         course.addQuestion(questionTwo)
+        questionTwo.addTopic(topic)
+        topic.addQuestion(questionTwo)
 
         userRepository.save(user)
         questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
+
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
+        topic.addTopicConjunction(topicConjunction)
+        topicConjunctionRepository.save(topicConjunction)
+
+        assessment = new Assessment()
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+        assessment.setCourseExecution(courseExecution)
+        assessment.addTopicConjunction(topicConjunction)
+        topicConjunction.setAssessment(assessment)
+        assessmentRepository.save(assessment)
+
     }
 
     def 'generate quiz for one question and there are two questions available'() {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(1)
+        quizForm.setAssessment(assessment.getId().toString())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
@@ -114,6 +151,7 @@ class GenerateStudentQuizTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(2)
+        quizForm.setAssessment(assessment.getId().toString())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
@@ -136,6 +174,7 @@ class GenerateStudentQuizTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(3)
+        quizForm.setAssessment(assessment.getId().toString())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)

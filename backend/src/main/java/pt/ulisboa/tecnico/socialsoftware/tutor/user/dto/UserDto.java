@@ -19,7 +19,7 @@ public class UserDto implements Serializable {
         this.role = user.getRole();
 
         if (user.getCreationDate() != null)
-            this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));;
+            this.creationDate = user.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));;
     }
 
     public int getId() {

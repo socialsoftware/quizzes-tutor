@@ -117,7 +117,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -156,7 +156,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))
+        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }

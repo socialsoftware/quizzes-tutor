@@ -56,7 +56,7 @@ class CreateQuizTest extends Specification {
     def formatter
 
     def setup() {
-        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
+        formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
 
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)

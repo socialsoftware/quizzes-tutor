@@ -38,7 +38,7 @@ public class QuizzesXmlExport {
 	}
 
 	private void exportQuiz(Element element, Quiz quiz) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("courseExecutionType",quiz.getCourseExecution().getType().name());

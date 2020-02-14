@@ -28,10 +28,10 @@ public class StatementQuizDto implements Serializable {
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
-            this.availableDate = quizAnswer.getQuiz().getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            this.availableDate = quizAnswer.getQuiz().getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
-            this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());

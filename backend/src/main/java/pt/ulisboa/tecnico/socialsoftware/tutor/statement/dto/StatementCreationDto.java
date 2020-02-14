@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 public class StatementCreationDto implements Serializable {
     private Integer numberOfQuestions = 5;
-    private String questionType = "all";
-    private String assessment = "all";
+    private String questionType;
+    private String assessment;
 //    private String[] topics;
 
     public Integer getNumberOfQuestions() {

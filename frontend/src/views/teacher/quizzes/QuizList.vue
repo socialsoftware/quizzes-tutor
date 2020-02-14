@@ -23,18 +23,6 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.sortingDate="{ item }">
-        {{ item.date }}
-      </template>
-
-      <template v-slot:item.sortingAvailableDate="{ item }">
-        {{ item.availableDate }}
-      </template>
-
-      <template v-slot:item.sortingConclusionDate="{ item }">
-        {{ item.conclusionDate }}
-      </template>
-
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -126,16 +114,21 @@ export default class QuizList extends Vue {
   qrValue: number | null = null;
   headers: object = [
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
-    { text: 'Date', value: 'sortingDate', align: 'center', width: '10%' },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center',
+      width: '10%'
+    },
     {
       text: 'Available Date',
-      value: 'sortingAvailableDate',
+      value: 'availableDate',
       align: 'center',
       width: '10%'
     },
     {
       text: 'Conclusion Date',
-      value: 'sortingConclusionDate',
+      value: 'conclusionDate',
       align: 'center',
       width: '10%'
     },

@@ -27,7 +27,7 @@ public class QuizAnswerDto implements Serializable {
         this.quiz = new QuizDto(quizAnswer.getQuiz(), false);
         this.username = quizAnswer.getUser().getUsername();
         if (quizAnswer.getAnswerDate() != null) {
-            this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream().map(QuestionAnswerDto::new).collect(Collectors.toSet());
     }

@@ -5,7 +5,6 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   title!: string;
-  date!: string | Date;
   creationDate!: string | undefined;
   availableDate!: string | undefined;
   conclusionDate!: string | undefined;
@@ -28,7 +27,6 @@ export class Quiz {
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.date = jsonObj.date;
       this.creationDate = jsonObj.creationDate;
       this.availableDate = jsonObj.availableDate;
       this.conclusionDate = jsonObj.conclusionDate;
@@ -39,33 +37,5 @@ export class Quiz {
         );
       }
     }
-  }
-
-  get sortingDate(): number {
-    if (this.date) {
-      return new Date(this.date).getTime();
-    }
-    return 0;
-  }
-
-  get sortingCreationDate(): number {
-    if (this.creationDate) {
-      return new Date(this.creationDate).getTime();
-    }
-    return 0;
-  }
-
-  get sortingAvailableDate(): number {
-    if (this.availableDate) {
-      return new Date(this.availableDate).getTime();
-    }
-    return 0;
-  }
-
-  get sortingConclusionDate(): number {
-    if (this.conclusionDate) {
-      return new Date(this.conclusionDate).getTime();
-    }
-    return 0;
   }
 }

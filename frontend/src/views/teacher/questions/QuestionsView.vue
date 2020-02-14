@@ -62,7 +62,7 @@
         </v-select>
       </template>
 
-      <template v-slot:item.sortingCreationDate="{ item }">
+      <template v-slot:item.creationDate="{ item }">
         {{ item.creationDate }}
       </template>
 
@@ -181,7 +181,7 @@ export default class QuestionsView extends Vue {
     { text: 'Status', value: 'status', align: 'center' },
     {
       text: 'Creation Date',
-      value: 'sortingCreationDate',
+      value: 'creationDate',
       align: 'center'
     },
     {

@@ -33,7 +33,7 @@ public class SolvedQuizDto implements Serializable {
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
 
-        this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
     }
 
     public StatementQuizDto getStatementQuiz() {

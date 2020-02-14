@@ -105,7 +105,7 @@ public class QuizService {
         if (quizDto.getCreationDate() == null) {
             quiz.setCreationDate(LocalDateTime.now());
         } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             quiz.setCreationDate(LocalDateTime.parse(quizDto.getCreationDate(), formatter));
         }
         entityManager.persist(quiz);

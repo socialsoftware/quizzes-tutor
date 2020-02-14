@@ -36,11 +36,4 @@ export default class Question {
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }
-
-  get sortingCreationDate(): number {
-    if (this.creationDate) {
-      return new Date(this.creationDate).getTime();
-    }
-    return 0;
-  }
 }

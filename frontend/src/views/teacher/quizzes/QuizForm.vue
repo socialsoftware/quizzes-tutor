@@ -19,7 +19,10 @@
         <v-col cols="12" sm="6">
           <v-datetime-picker
             label="Available Date"
+            format="yyyy-MM-dd HH:mm"
             v-model="quiz.availableDate"
+            date-format="yyyy-MM-dd"
+            time-format="HH:mm"
           >
           </v-datetime-picker>
         </v-col>
@@ -30,6 +33,8 @@
               quiz.type === 'IN_CLASS' ? '*Conclusion Date' : 'Conclusion Date'
             "
             v-model="quiz.conclusionDate"
+            date-format="yyyy-MM-dd"
+            time-format="HH:mm"
           >
           </v-datetime-picker>
         </v-col>

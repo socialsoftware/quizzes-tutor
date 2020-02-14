@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
@@ -92,6 +91,10 @@ public class Topic {
 
     public void addTopicConjunction(TopicConjunction topicConjunction) {
         this.topicConjunctions.add(topicConjunction);
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
     }
 
     @Override

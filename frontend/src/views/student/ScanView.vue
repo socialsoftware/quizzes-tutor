@@ -2,9 +2,12 @@ import QrcodeVue from "*.vue";
 <template>
   <div class="container">
     <qrcode-stream v-if="!quizId" @decode="onDecode"></qrcode-stream>
-    <div v-else>
-      Hold on and wait for {{ secondsToRequest }} seconds to view the quiz
-    </div>
+    <v-card v-else>
+      <v-card-title>
+        Hold on and wait for {{ secondsToRequest + 1 }} seconds to view the
+        results
+      </v-card-title>
+    </v-card>
   </div>
 </template>
 
@@ -30,9 +33,9 @@ export default class ScanView extends Vue {
   }
 
   countDownTimer() {
-    if (this.secondsToRequest > -1) {
+    if (this.secondsToRequest >= 0) {
+      this.secondsToRequest -= 1;
       setTimeout(() => {
-        this.secondsToRequest -= 1;
         this.countDownTimer();
       }, 1000);
     } else {
