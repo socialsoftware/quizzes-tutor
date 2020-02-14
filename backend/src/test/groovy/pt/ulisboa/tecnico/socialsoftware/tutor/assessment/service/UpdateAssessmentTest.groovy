@@ -48,59 +48,65 @@ class UpdateAssessmentTest extends Specification {
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository
 
-    def assessmentDto
+    def assessment
+    def topicConjunction
 
     def setup() {
-        def assessment = new Assessment()
-        assessment.setTitle(ASSESSMENT_TITLE_1)
-        assessment.setStatus(Assessment.Status.AVAILABLE)
-
-        def topic = new Topic()
+       def topic = new Topic()
         topic.setName(TOPIC_NAME_1)
         topicRepository.save(topic)
 
-        def topicConjunction = new TopicConjunction()
+        assessment = new Assessment()
+        assessment.setTitle(ASSESSMENT_TITLE_1)
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+        assessment.setSequence(1)
+        assessmentRepository.save(assessment)
+
+        topicConjunction = new TopicConjunction()
         topicConjunction.setAssessment(assessment)
         topicConjunction.addTopic(topic)
         topicConjunctionRepository.save(topicConjunction)
 
         assessment.addTopicConjunction(topicConjunction)
-        assessmentRepository.save(assessment)
-        assessmentDto = new AssessmentDto(assessment);
-
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
     }
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
-        given: "an existing created assessment"
+        given: "an assessment dto"
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setId(assessment.getId())
         assessmentDto.setTitle(ASSESSMENT_TITLE_2)
         assessmentDto.setStatus(Assessment.Status.DISABLED.name())
-
-        and: "a new TopicConjunction"
-        def topicConjunctionDto = new TopicConjunctionDto()
+        assessmentDto.setSequence(assessment.getSequence())
+        and: "a new topic"
         def topic = new Topic()
         topic.setName(TOPIC_NAME_2)
         topicRepository.save(topic)
+        and: "a new TopicConjunction"
+        def topicConjunctionDto = new TopicConjunctionDto()
         topicConjunctionDto.addTopic(new TopicDto(topic))
-
-        and: "a TopicConjunction Array without the old TopicConjunction"
+        and: "a topicConjunction list without the old topicConjunction"
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunctionDto)
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
-        assessmentDto = assessmentService.updateAssessment(assessmentDto.getId(), assessmentDto)
+        def result = assessmentService.updateAssessment(assessment.getId(), assessmentDto)
 
         then: "the updated assessment is inside the repository"
         assessmentRepository.count() == 1L
-        def result = assessmentRepository.findAll().get(0)
+        and: "has the correct values"
+        assessmentRepository.findAll().get(0) == assessment
+        assessment.getId() != null
+        assessment.getStatus() == Assessment.Status.DISABLED
+        assessment.getTitle() == ASSESSMENT_TITLE_2
+        assessment.getTopicConjunctions().size() == 1
+        def topicConjunction = assessment.getTopicConjunctions().first()
+        topicConjunction.getId() != null
+        topicConjunction.getTopics().size() == 1
+        topicConjunction.getTopics().first().getName() == TOPIC_NAME_2
+        and: "the returned dto has the correct values"
         result.getId() != null
-        result.getStatus() == Assessment.Status.DISABLED
+        result.getStatus() == Assessment.Status.DISABLED.name()
         result.getTitle() == ASSESSMENT_TITLE_2
         result.getTopicConjunctions().size() == 1
         def resTopicConjunction = result.getTopicConjunctions().first()
@@ -111,25 +117,29 @@ class UpdateAssessmentTest extends Specification {
         resTopic.getName() == TOPIC_NAME_2
     }
 
-    def "update an assessment adding a topic, a conjuntion with topic and an empty conjunction"() {
-        given: "a created assessment"
+    def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
+        given: "an assessment dto"
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setId(assessment.getId())
+        assessmentDto.setTitle(ASSESSMENT_TITLE_1)
+        assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
+        assessmentDto.setSequence(assessment.getSequence())
+        assessmentDto.setTopicConjunctions(new ArrayList())
+        and: "a topic"
         def topic = new Topic()
         topic.setName(TOPIC_NAME_2)
         topicRepository.save(topic)
-
-        def topicList = assessmentDto.getTopicConjunctions()[0].getTopics()
-        topicList.add(new TopicDto(topic))
-
-        assessmentDto.getTopicConjunctions()[0].setTopics(topicList)
-
+        and: "a conjunction"
         def newTopicConjunction = new TopicConjunctionDto()
         newTopicConjunction.topics.add(new TopicDto(topic))
         assessmentDto.addTopicConjunction(newTopicConjunction)
-
+        and: "a empty conjunction"
         assessmentDto.addTopicConjunction(new TopicConjunctionDto())
+        and: "the previous topic conjunction"
+        assessmentDto.addTopicConjunction(new TopicConjunctionDto(topicConjunction))
 
         when:
-        assessmentDto = assessmentService.updateAssessment(assessmentDto.getId(), assessmentDto)
+        assessmentService.updateAssessment(assessment.getId(), assessmentDto)
 
         then: "the updated assessment is inside the repository"
         assessmentRepository.count() == 1L
@@ -141,7 +151,7 @@ class UpdateAssessmentTest extends Specification {
         def resTopicConjunction1 = result.getTopicConjunctions().get(0)
         def resTopicConjunction2 = result.getTopicConjunctions().get(1)
         def resTopicConjunction3 = result.getTopicConjunctions().get(2)
-        resTopicConjunction1.topics.size() == 2
+        resTopicConjunction1.topics.size() == 1
         resTopicConjunction2.topics.size() == 1
         resTopicConjunction3.topics.size() == 0
     }
