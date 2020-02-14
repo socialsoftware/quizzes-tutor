@@ -21,8 +21,8 @@ public class QuizAnswer {
 
     private boolean completed;
 
-    @Column(name = "used_in_statistics")
-    private Boolean usedInStatistics;
+    @Column(columnDefinition = "boolean default false")
+    private boolean usedInStatistics = false;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -122,9 +122,6 @@ public class QuizAnswer {
     }
 
     public boolean isUsedInStatistics() {
-        if (usedInStatistics == null)
-            usedInStatistics = false;
-
         return usedInStatistics;
     }
 
