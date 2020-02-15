@@ -252,6 +252,15 @@
             <v-list-item-content>Create Quiz</v-list-item-content>
           </v-list-item>
 
+          <v-list-item to="/student/scan">
+            <v-list-item-action>
+              <v-icon>fas fa-qrcode</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Scan</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item to="/student/solved">
             <v-list-item-action>
               <v-icon>done</v-icon>
