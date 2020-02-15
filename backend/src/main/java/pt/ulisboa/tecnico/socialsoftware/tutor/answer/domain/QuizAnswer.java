@@ -22,7 +22,7 @@ public class QuizAnswer {
     private boolean completed;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean usedInStatistics = false;
+    private boolean usedInStatistics;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "user_id")
