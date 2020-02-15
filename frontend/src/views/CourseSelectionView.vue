@@ -126,7 +126,9 @@ export default class CourseSelectionView extends Vue {
     this.confirmationDialog = false;
     try {
       if (this.selectedCourse) {
-        await RemoteServices.activateCourse(this.selectedCourse);
+        this.selectedCourse = await RemoteServices.activateCourse(
+          this.selectedCourse
+        );
         await this.$store.dispatch('currentCourse', this.selectedCourse);
         await this.$router.push({ name: 'home' });
       }
