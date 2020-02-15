@@ -104,7 +104,7 @@ CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
 exit
 psql tutordb < dump.sql
 ```
-* **Go to https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications and create an application that redirects to http://localhost:8081/login and accessess curricular information**
+* **Go to [API Service Agreement](https://fenix.tecnico.ulisboa.pt/personal/external-applications/api-service-agreement) and then to [Applications](https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications)  and create an application that redirects to http://localhost:8081/login and accessess curricular information**
 * **Rename `backend/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
 * **Run server**
 ```
