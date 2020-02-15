@@ -4,10 +4,11 @@
       :headers="headers"
       :items="assessments"
       :search="search"
+      :sort-by="['sequence']"
+      :mobile-breakpoint="0"
       multi-sort
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      class="elevation-1"
     >
       <template v-slot:top>
         <v-card-title>
@@ -136,14 +137,15 @@ export default class AssessmentList extends Vue {
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
   dialog: boolean = false;
   headers: object = [
-    { text: 'Title', value: 'title', align: 'left', width: '30%' },
-    { text: 'Status', value: 'status', align: 'center', width: '1%' },
+    { text: 'Order', value: 'sequence', align: 'center', width: '95px' },
+    { text: 'Title', value: 'title', align: 'left' },
+    { text: 'Status', value: 'status', align: 'center', width: '7%' },
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
-      width: '1%',
-      sortable: false
+      sortable: false,
+      width: '7%'
     }
   ];
 

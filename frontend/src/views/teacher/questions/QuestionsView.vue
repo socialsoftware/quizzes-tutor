@@ -6,6 +6,7 @@
       :items="questions"
       :search="search"
       multi-sort
+      :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
@@ -61,8 +62,8 @@
         </v-select>
       </template>
 
-      <template v-slot:item.sortingCreationDate="{ item }">
-        {{ item.stringCreationDate }}
+      <template v-slot:item.creationDate="{ item }">
+        {{ item.creationDate }}
       </template>
 
       <template v-slot:item.image="{ item }">
@@ -132,7 +133,7 @@
     />
     <show-question-dialog
       v-if="currentQuestion"
-      :dialog="showQuestion"
+      :dialog="questionDialog"
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />
@@ -159,21 +160,12 @@ import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue
 })
 export default class QuestionsView extends Vue {
   questions: Question[] = [];
-  currentQuestion: Question | null = null;
   topics: Topic[] = [];
+  currentQuestion: Question | null = null;
   editQuestionDialog: boolean = false;
-  showQuestion: boolean = false;
+  questionDialog: boolean = false;
   search: string = '';
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
-
-  // https://github.com/F-loat/vue-simplemde/blob/master/doc/configuration_en.md
-  markdownConfigs: object = {
-    status: false,
-    spellChecker: false,
-    insertTexts: {
-      image: ['![image][image]', '']
-    }
-  };
 
   headers: object = [
     { text: 'Question', value: 'content', align: 'left' },
@@ -189,7 +181,7 @@ export default class QuestionsView extends Vue {
     { text: 'Status', value: 'status', align: 'center' },
     {
       text: 'Creation Date',
-      value: 'sortingCreationDate',
+      value: 'creationDate',
       align: 'center'
     },
     {
@@ -233,7 +225,6 @@ export default class QuestionsView extends Vue {
     return convertMarkDownNoFigure(text, image);
   }
 
-  // topics
   onQuestionChangedTopics(questionId: Number, changedTopics: Topic[]) {
     let question = this.questions.find(
       (question: Question) => question.id == questionId
@@ -243,7 +234,6 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  // difficulty
   getDifficultyColor(difficulty: number) {
     if (difficulty < 25) return 'green';
     else if (difficulty < 50) return 'lime';
@@ -251,7 +241,6 @@ export default class QuestionsView extends Vue {
     else return 'red';
   }
 
-  // status
   async setStatus(questionId: number, status: string) {
     try {
       await RemoteServices.setQuestionStatus(questionId, status);
@@ -272,7 +261,6 @@ export default class QuestionsView extends Vue {
     else return 'green';
   }
 
-  // file
   async handleFileUpload(event: File, question: Question) {
     if (question.id) {
       try {
@@ -286,17 +274,15 @@ export default class QuestionsView extends Vue {
     }
   }
 
-  // show question
   showQuestionDialog(question: Question) {
     this.currentQuestion = question;
-    this.showQuestion = true;
+    this.questionDialog = true;
   }
 
   onCloseShowQuestionDialog() {
-    this.showQuestion = false;
+    this.questionDialog = false;
   }
 
-  // manipulate question
   newQuestion() {
     this.currentQuestion = new Question();
     this.editQuestionDialog = true;
@@ -324,7 +310,6 @@ export default class QuestionsView extends Vue {
     this.currentQuestion = null;
   }
 
-  // delete question
   async deleteQuestion(toDeletequestion: Question) {
     if (
       toDeletequestion.id &&

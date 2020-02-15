@@ -25,7 +25,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
         })
 public class Quiz {
     public enum QuizType {
-        EXAM, TEST, STUDENT, TEACHER
+        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS
     }
 
     @Id
@@ -56,10 +56,10 @@ public class Quiz {
     private Integer series;
     private String version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToOne
@@ -169,16 +169,8 @@ public class Quiz {
     return quizQuestions;
     }
 
-    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
-    this.quizQuestions = quizQuestions;
-    }
-
     public Set<QuizAnswer> getQuizAnswers() {
         return quizAnswers;
-    }
-
-    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
-    this.quizAnswers = quizAnswers;
     }
 
     public boolean isScramble() {
@@ -225,16 +217,16 @@ public class Quiz {
     }
 
     private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.type.equals(QuizType.TEACHER) && availableDate == null) {
+        if (this.type.equals(QuizType.PROPOSED) && availableDate == null) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
-        if (this.type.equals(QuizType.TEACHER) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+        if (this.type.equals(QuizType.PROPOSED) && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
         }
     }
 
     private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.TEACHER) &&
+        if (this.type.equals(QuizType.PROPOSED) &&
                 conclusionDate != null &&
                 availableDate != null &&
                 conclusionDate.isBefore(availableDate)) {
@@ -253,13 +245,13 @@ public class Quiz {
     }
 
     public void remove() {
-        checkCanRemove();
+        checkCanChange();
 
         courseExecution.getQuizzes().remove(this);
         courseExecution = null;
     }
 
-    public void checkCanRemove() {
+    public void checkCanChange() {
         if (!quizAnswers.isEmpty()) {
             throw new TutorException(QUIZ_HAS_ANSWERS);
         }
@@ -270,8 +262,9 @@ public class Quiz {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
+        this.setAvailableDate(LocalDateTime.now());
         this.setCreationDate(LocalDateTime.now());
-        this.setType(QuizType.STUDENT);
+        this.setType(QuizType.GENERATED);
         this.title = "Generated Quiz";
     }
 }

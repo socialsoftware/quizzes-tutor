@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -43,8 +44,14 @@ public class QuestionAnswer {
             option.addQuestionAnswer(this);
         }
         this.sequence = sequence;
+    }
 
-        changeDifficulty();
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int sequence){
+        this.quizAnswer = quizAnswer;
+        quizAnswer.addQuestionAnswer(this);
+        this.quizQuestion = quizQuestion;
+        quizQuestion.addQuestionAnswer(this);
+        this.sequence = sequence;
     }
 
     public void remove() {
@@ -76,6 +83,8 @@ public class QuestionAnswer {
         this.timeTaken = timeTaken;
     }
 
+
+
     public QuizQuestion getQuizQuestion() {
         return quizQuestion;
     }
@@ -98,10 +107,6 @@ public class QuestionAnswer {
 
     public void setOption(Option option) {
         this.option = option;
-    }
-
-    private void changeDifficulty() {
-        quizQuestion.getQuestion().addAnswer(this);
     }
 
     public Integer getSequence() {

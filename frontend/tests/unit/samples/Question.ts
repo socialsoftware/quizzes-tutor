@@ -57,9 +57,7 @@ export const questionWithFigure = new Question({
       numberOfQuestions: 94
     }
   ],
-  sequence: null,
-  stringCreationDate: '',
-  sortingCreationDate: 1
+  sequence: null
 });
 
 export const questionWithoutFigure = new Question({
@@ -116,7 +114,5 @@ export const questionWithoutFigure = new Question({
       numberOfQuestions: 94
     }
   ],
-  sequence: null,
-  stringCreationDate: '',
-  sortingCreationDate: 1
+  sequence: null
 });

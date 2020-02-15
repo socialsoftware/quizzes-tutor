@@ -6,10 +6,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
@@ -19,15 +21,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.validation.Valid;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
@@ -42,16 +44,19 @@ public class AnswerService {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private QuestionAnswerRepository questionAnswerRepository;
+
+    @Autowired
     private QuizRepository quizRepository;
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
-    private QuizQuestionRepository quizQuestionRepository;
+    private OptionRepository optionRepository;
 
     @Autowired
-    private OptionRepository optionRepository;
+    private AnswersXmlImport xmlImporter;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -72,75 +77,78 @@ public class AnswerService {
         return new QuizAnswerDto(quizAnswer);
     }
 
-
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeQuizAnswer(Integer quizAnswerId) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId));
+    public CorrectAnswersDto concludeQuiz(User user, Integer quizId) {
+        QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
+                new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        quizAnswer.remove();
+        if(quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+            throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
+        }
 
-        entityManager.remove(quizAnswer);
+        if (!quizAnswer.getCompleted()) {
+            quizAnswer.setAnswerDate(LocalDateTime.now());
+            quizAnswer.setCompleted(true);
+        }
+
+        // When student submits before conclusionDate
+        if (quizAnswer.getQuiz().getConclusionDate() != null &&
+            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
+            LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+
+            return null;
+        }
+
+        return new CorrectAnswersDto(quizAnswer.getQuestionAnswers().stream()
+                .map(QuestionAnswer::getQuizQuestion)
+                .map(CorrectAnswerDto::new).collect(Collectors.toList()));
     }
 
-    public CorrectAnswersDto submitQuestionsAnswers(User user, @Valid @RequestBody ResultAnswersDto answers) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findById(answers.getQuizAnswerId())
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, answers.getQuizAnswerId()));
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
+        QuestionAnswer questionsAnswer = questionAnswerRepository.findById(answer.getId()).orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getId()));
 
-        if (isNotAssignedStudent(user, quizAnswer)) {
-            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getId()), user.getUsername());
-        }
-        if (!quizAnswer.getCompleted()){
-            int correctAnswers = 0;
-
-            for(int sequence = 0; sequence < answers.getAnswers().size(); sequence++) {
-                ResultAnswerDto resultAnswerDto = answers.getAnswers().get(sequence);
-                QuizQuestion quizQuestion = quizQuestionRepository.findById(resultAnswerDto.getQuizQuestionId())
-                        .orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, resultAnswerDto.getQuizQuestionId()));
-
-                if (isNotAssignedQuestion(quizAnswer, quizQuestion)) {
-                    throw new TutorException(QUIZ_MISMATCH, quizAnswer.getId(), quizQuestion.getQuiz().getId());
-                }
-
-                Option option = null;
-                if (resultAnswerDto.getOptionId() != null) {
-                    option = optionRepository.findById(resultAnswerDto.getOptionId())
-                            .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, resultAnswerDto.getOptionId()));
-
-                    if (option.getCorrect()) {
-                        correctAnswers += 1;
-                    }
-
-
-                    if (isNotQuestionOption(quizQuestion, option)) {
-                        throw new TutorException(QUIZ_OPTION_MISMATCH, quizQuestion.getId(), option.getId());
-                    }
-                }
-                entityManager.persist(new QuestionAnswer(quizAnswer, quizQuestion, resultAnswerDto.getTimeTaken(), option, sequence));
-
-            }
-            quizAnswer.setAnswerDate(answers.getAnswerDate());
-            quizAnswer.setCompleted(true);
-
-            // Increase stats to be shown in user list
-            if (quizAnswer.getQuiz().getType() == Quiz.QuizType.TEACHER) {
-                user.increaseNumberOfTeacherQuizzes();
-                user.increaseNumberOfTeacherAnswers(answers.getAnswers().size());
-                user.increaseNumberOfCorrectTeacherAnswers(correctAnswers);
-
-            } else {
-               user.increaseNumberOfStudentQuizzes();
-            }
-            user.increaseNumberOfAnswers(answers.getAnswers().size());
-            user.increaseNumberOfCorrectAnswers(correctAnswers);
+        if (isNotAssignedStudent(user, questionsAnswer.getQuizAnswer())) {
+            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(questionsAnswer.getQuizAnswer().getId()), user.getUsername());
         }
 
-        return new CorrectAnswersDto(quizAnswer.getQuiz().getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                .map(CorrectAnswerDto::new).collect(Collectors.toList()));
+        if (questionsAnswer.getQuizQuestion().getQuiz().getConclusionDate() != null && questionsAnswer.getQuizQuestion().getQuiz().getConclusionDate().isBefore(LocalDateTime.now())) {
+            throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
+        }
+
+        if (questionsAnswer.getQuizQuestion().getQuiz().getAvailableDate() != null && questionsAnswer.getQuizQuestion().getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+            throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
+        }
+
+        if (!questionsAnswer.getQuizAnswer().getCompleted()) {
+
+            Option option = null;
+            if (answer.getOptionId() != null) {
+                option = optionRepository.findById(answer.getOptionId())
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
+
+                if (isNotQuestionOption(questionsAnswer.getQuizQuestion(), option)) {
+                    throw new TutorException(QUIZ_OPTION_MISMATCH, questionsAnswer.getQuizQuestion().getId(), option.getId());
+                }
+
+                if (questionsAnswer.getOption() != null) {
+                    questionsAnswer.getOption().getQuestionAnswers().remove(questionsAnswer);
+                }
+
+                questionsAnswer.setOption(option);
+                option.addQuestionAnswer(questionsAnswer);
+                questionsAnswer.setTimeTaken(answer.getTimeTaken());
+                questionsAnswer.setSequence(answer.getSequence());
+                questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
+            }
+
+        }
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
@@ -154,7 +162,6 @@ public class AnswerService {
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
         return !user.getId().equals(quizAnswer.getUser().getId());
     }
-
 
     @Retryable(
       value = { SQLException.class },
@@ -172,9 +179,6 @@ public class AnswerService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAnswers(String answersXml) {
-        AnswersXmlImport xmlImporter = new AnswersXmlImport();
-
         xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, quizAnswerRepository, userRepository);
     }
-
 }

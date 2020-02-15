@@ -65,10 +65,6 @@ public class Topic {
         return questions;
     }
 
-    public void setQuestions(Set<Question> questions) {
-        this.questions = questions;
-    }
-
     public Topic getParentTopic() {
         return parentTopic;
     }
@@ -81,16 +77,8 @@ public class Topic {
         return childrenTopics;
     }
 
-    public void setChildrenTopics(Set<Topic> childrenTopics) {
-        this.childrenTopics = childrenTopics;
-    }
-
     public List<TopicConjunction> getTopicConjunctions() {
         return topicConjunctions;
-    }
-
-    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
     }
 
     public Course getCourse() {
@@ -103,6 +91,10 @@ public class Topic {
 
     public void addTopicConjunction(TopicConjunction topicConjunction) {
         this.topicConjunctions.add(topicConjunction);
+    }
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
     }
 
     @Override

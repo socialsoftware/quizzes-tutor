@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
@@ -27,7 +28,7 @@ public class Option {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option(){}
@@ -83,10 +84,6 @@ public class Option {
 
     public Set<QuestionAnswer> getQuestionAnswers() {
         return questionAnswers;
-    }
-
-    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
     }
 
     public void addQuestionAnswer(QuestionAnswer questionAnswer) {

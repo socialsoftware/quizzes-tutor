@@ -16,7 +16,7 @@
             :key="assessment.id"
             >{{ assessment.title }}</v-btn
           >
-          <v-btn text value="all">All</v-btn>
+          <!--          <v-btn text value="all">All</v-btn>-->
         </v-btn-toggle>
       </v-container>
 

@@ -5,12 +5,10 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   title!: string;
-  date!: string | Date;
-  creationDate!: string | Date;
-  availableDate!: string | Date;
-  conclusionDate!: string | Date;
+  creationDate!: string | undefined;
+  availableDate!: string | undefined;
+  conclusionDate!: string | undefined;
   type!: string;
-  year!: number;
   series!: number;
   version!: string;
   numberOfQuestions!: number;
@@ -25,22 +23,13 @@ export class Quiz {
       this.scramble = jsonObj.scramble;
       this.title = jsonObj.title;
       this.type = jsonObj.type;
-      this.year = jsonObj.year;
       this.series = jsonObj.series;
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-
-      if (jsonObj.date) this.date = new Date(jsonObj.date);
-
-      if (jsonObj.creationDate)
-        this.creationDate = new Date(jsonObj.creationDate);
-
-      if (jsonObj.availableDate)
-        this.availableDate = new Date(jsonObj.availableDate);
-
-      if (jsonObj.conclusionDate)
-        this.conclusionDate = new Date(jsonObj.conclusionDate);
+      this.creationDate = jsonObj.creationDate;
+      this.availableDate = jsonObj.availableDate;
+      this.conclusionDate = jsonObj.conclusionDate;
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(
@@ -48,61 +37,5 @@ export class Quiz {
         );
       }
     }
-  }
-
-  get stringDate(): string {
-    if (this.date) {
-      return this.date.toLocaleString('pt');
-    }
-    return '-';
-  }
-
-  get stringCreationDate(): string {
-    if (this.creationDate) {
-      return this.creationDate.toLocaleString('pt');
-    }
-    return '-';
-  }
-
-  get stringAvailableDate(): string {
-    if (this.availableDate) {
-      return this.availableDate.toLocaleString('pt');
-    }
-    return '-';
-  }
-
-  get stringConclusionDate(): string {
-    if (this.conclusionDate) {
-      return this.conclusionDate.toLocaleString('pt');
-    }
-    return '-';
-  }
-
-  get sortinggDate(): number {
-    if (this.date) {
-      return (this.date as Date).getTime();
-    }
-    return 0;
-  }
-
-  get sortingCreationDate(): number {
-    if (this.creationDate) {
-      return (this.creationDate as Date).getTime();
-    }
-    return 0;
-  }
-
-  get sortingAvailableDate(): number {
-    if (this.availableDate) {
-      return (this.availableDate as Date).getTime();
-    }
-    return 0;
-  }
-
-  get sortingConclusionDate(): number {
-    if (this.conclusionDate) {
-      return (this.conclusionDate as Date).getTime();
-    }
-    return 0;
   }
 }

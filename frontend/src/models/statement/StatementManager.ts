@@ -1,9 +1,6 @@
-import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
-import StatementAnswer from '@/models/statement/StatementAnswer';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-import Store from '@/store';
 
 export default class StatementManager {
   questionType: string = 'all';
@@ -11,7 +8,6 @@ export default class StatementManager {
   // topic: string[] = [];
   numberOfQuestions: string = '5';
   statementQuiz: StatementQuiz | null = null;
-  answers: StatementAnswer[] = [];
   correctAnswers: StatementCorrectAnswer[] = [];
 
   private static _quiz: StatementManager = new StatementManager();
@@ -28,25 +24,15 @@ export default class StatementManager {
       numberOfQuestions: +this.numberOfQuestions
     };
 
-    this.statementQuiz = await RemoteServices.getQuizStatement(params);
-
-    this.answers = this.statementQuiz.questions.map(
-      (question: StatementQuestion) => {
-        let answer = new StatementAnswer();
-        answer.quizQuestionId = question.quizQuestionId;
-        return answer;
-      }
-    );
+    this.statementQuiz = await RemoteServices.generateStatementQuiz(params);
   }
 
-  async getCorrectAnswers() {
+  async concludeQuiz() {
     if (this.statementQuiz) {
-      let params = {
-        quizAnswerId: this.statementQuiz.quizAnswerId,
-        answers: this.answers
-      };
-
-      this.correctAnswers = await RemoteServices.getCorrectAnswers(params);
+      let answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
+      if (answers) {
+        this.correctAnswers = answers;
+      }
     } else {
       throw Error('No quiz');
     }
@@ -54,7 +40,6 @@ export default class StatementManager {
 
   reset() {
     this.statementQuiz = null;
-    this.answers = [];
     this.correctAnswers = [];
   }
 

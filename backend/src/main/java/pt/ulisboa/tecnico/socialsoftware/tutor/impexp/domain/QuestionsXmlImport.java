@@ -7,6 +7,9 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
@@ -21,11 +24,12 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTIONS_IMPORT_ERROR;
 
 public class QuestionsXmlImport {
-
 	private QuestionService questionService;
+	private CourseRepository courseRepository;
 
-	public void importQuestions(InputStream inputStream, QuestionService questionService) {
+	public void importQuestions(InputStream inputStream, QuestionService questionService, CourseRepository courseRepository) {
 		this.questionService = questionService;
+		this.courseRepository = courseRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
@@ -49,13 +53,13 @@ public class QuestionsXmlImport {
 		importQuestions(doc);
 	}
 
-	public void importQuestions(String questionsXml, QuestionService questionService) {
+	public void importQuestions(String questionsXml, QuestionService questionService, CourseRepository courseRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(questionsXml.getBytes());
 
-		importQuestions(stream, questionService);
+		importQuestions(stream, questionService, courseRepository);
 	}
 
 	private void importQuestions(Document doc) {
@@ -67,7 +71,8 @@ public class QuestionsXmlImport {
 	}
 
 	private void importQuestion(Element questionElement) {
-		String courseName = questionElement.getAttributeValue("course");
+		String courseType = questionElement.getAttributeValue("courseType");
+		String courseName = questionElement.getAttributeValue("courseName");
 		Integer key = Integer.valueOf(questionElement.getAttributeValue("key"));
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
@@ -107,7 +112,8 @@ public class QuestionsXmlImport {
 		}
 		questionDto.setOptions(optionDtos);
 
-		questionService.createQuestion(courseName, questionDto);
+		Course course = courseRepository.findByNameType(courseName, courseType).get();
+		questionService.createQuestion(course.getId(), questionDto);
 	}
 
 }

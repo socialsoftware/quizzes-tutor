@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
@@ -25,7 +26,7 @@ public class QuizQuestion {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.LAZY)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.LAZY, orphanRemoval=true)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;
@@ -72,10 +73,6 @@ public class QuizQuestion {
 
     public Set<QuestionAnswer> getQuestionAnswers() {
         return questionAnswers;
-    }
-
-    public void setQuestionAnswers(Set<QuestionAnswer> questionAnswers) {
-        this.questionAnswers = questionAnswers;
     }
 
     public void setSequence(Integer sequence) {

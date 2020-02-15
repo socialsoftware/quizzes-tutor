@@ -9,11 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -45,20 +47,22 @@ public class StatsService {
     public StatsDto getStats(String username, int executionId) {
         User user = userRepository.findByUsername(username);
 
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
         StatsDto statsDto = new StatsDto();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
-                .filter(QuizAnswer::getCompleted)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .count();
 
         int totalAnswers = (int) user.getQuizAnswers().stream()
-                .filter(QuizAnswer::getCompleted)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
                 .sum();
 
         int uniqueQuestions = (int) user.getQuizAnswers().stream()
-                .filter(QuizAnswer::getCompleted)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getQuizQuestion)
@@ -67,7 +71,7 @@ public class StatsService {
                 .distinct().count();
 
         int correctAnswers = (int) user.getQuizAnswers().stream()
-                .filter(QuizAnswer::getCompleted)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
@@ -75,7 +79,7 @@ public class StatsService {
                 .filter(Option::getCorrect).count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
-                .filter(QuizAnswer::getCompleted)
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
@@ -88,7 +92,7 @@ public class StatsService {
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();
 
-        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getName());
+        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());
 
         statsDto.setTotalQuizzes(totalQuizzes);
         statsDto.setTotalAnswers(totalAnswers);

@@ -5,9 +5,9 @@
       :items="quizzes"
       :search="search"
       multi-sort
+      :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      class="elevation-1"
     >
       <template v-slot:top>
         <v-card-title>
@@ -21,18 +21,6 @@
           <v-spacer />
           <v-btn color="primary" dark @click="newQuiz">New Quiz</v-btn>
         </v-card-title>
-      </template>
-
-      <template v-slot:item.sortingDate="{ item }">
-        {{ item.stringDate }}
-      </template>
-
-      <template v-slot:item.sortingAvailableDate="{ item }">
-        {{ item.stringAvailableDate }}
-      </template>
-
-      <template v-slot:item.sortingConclusionDate="{ item }">
-        {{ item.stringConclusionDate }}
       </template>
 
       <template v-slot:item.action="{ item }">
@@ -91,13 +79,14 @@
       @keydown.esc="closeQrCodeDialog"
       max-width="75%"
     >
-      <v-card>
-        <qrcode-vue
+      <v-card v-if="qrValue">
+        <vue-qrcode
           class="qrcode"
-          :value="qrValue"
-          level="H"
-          size="1000"
-        ></qrcode-vue>
+          :value="qrValue.toString()"
+          errorCorrectionLevel="M"
+          :quality="1"
+          :scale="100"
+        />
       </v-card>
     </v-dialog>
   </v-card>
@@ -108,10 +97,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
-import QrcodeVue from 'qrcode.vue';
+import VueQrcode from 'vue-qrcode';
 
 @Component({
-  components: { 'show-quiz-dialog': ShowQuizDialog, 'qrcode-vue': QrcodeVue }
+  components: {
+    'show-quiz-dialog': ShowQuizDialog,
+    'vue-qrcode': VueQrcode
+  }
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
@@ -122,22 +114,26 @@ export default class QuizList extends Vue {
   qrValue: number | null = null;
   headers: object = [
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
-    { text: 'Date', value: 'sortingDate', align: 'center', width: '10%' },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center',
+      width: '10%'
+    },
     {
       text: 'Available Date',
-      value: 'sortingAvailableDate',
+      value: 'availableDate',
       align: 'center',
       width: '10%'
     },
     {
       text: 'Conclusion Date',
-      value: 'sortingConclusionDate',
+      value: 'conclusionDate',
       align: 'center',
       width: '10%'
     },
     { text: 'Scramble', value: 'scramble', align: 'center', width: '10%' },
     { text: 'Type', value: 'type', align: 'center', width: '10%' },
-    { text: 'Year', value: 'year', align: 'center', width: '10%' },
     { text: 'Series', value: 'series', align: 'center', width: '10%' },
     { text: 'Version', value: 'version', align: 'center', width: '10%' },
     {
@@ -208,12 +204,9 @@ export default class QuizList extends Vue {
 
 <style lang="scss">
 .qrcode {
-  canvas {
-    width: 80vw !important;
-    height: 80vw !important;
-    max-width: 80vh !important;
-    max-height: 80vh !important;
-    padding: 30px;
-  }
+  width: 80vw !important;
+  height: 80vw !important;
+  max-width: 80vh !important;
+  max-height: 80vh !important;
 }
 </style>

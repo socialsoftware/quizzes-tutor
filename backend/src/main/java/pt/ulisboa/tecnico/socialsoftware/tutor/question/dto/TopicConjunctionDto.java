@@ -41,4 +41,8 @@ public class TopicConjunctionDto implements Serializable {
                 ", topics=" + topics +
                 '}';
     }
+
+    public void addTopic(TopicDto topic) {
+        this.topics.add(topic);
+    }
 }

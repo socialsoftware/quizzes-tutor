@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -56,10 +57,10 @@ public class Question {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
     private List<Option> options = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
     private Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
@@ -133,10 +134,6 @@ public class Question {
         return options;
     }
 
-    public void setOptions(List<Option> options) {
-        this.options = options;
-    }
-
     public Image getImage() {
         return image;
     }
@@ -174,16 +171,8 @@ public class Question {
         this.numberOfCorrect = numberOfCorrect;
     }
 
-    public void setQuizQuestions(Set<QuizQuestion> quizQuestions) {
-        this.quizQuestions = quizQuestions;
-    }
-
     public Set<Topic> getTopics() {
         return topics;
-    }
-
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
     }
 
     public LocalDateTime getCreationDate() {
@@ -246,7 +235,7 @@ public class Question {
                 .orElse(null);
     }
 
-    public void addAnswer(QuestionAnswer questionAnswer) {
+    public void addAnswerStatistics(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
         if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
             numberOfCorrect++;

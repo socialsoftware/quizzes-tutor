@@ -4,7 +4,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class LoginView extends Vue {
@@ -16,14 +15,7 @@ export default class LoginView extends Vue {
     } else {
       try {
         await this.$store.dispatch('fenixLogin', this.$route.query.code);
-        if (this.$store.getters.getUser.coursesNumber === 1) {
-          await this.$store.dispatch(
-            'currentCourse',
-            Object.values(this.$store.getters.getUser.courses)[0]
-          );
-        } else {
-          await this.$router.push({ name: 'courses' });
-        }
+        await this.$router.push({ name: 'courses' });
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'home' });

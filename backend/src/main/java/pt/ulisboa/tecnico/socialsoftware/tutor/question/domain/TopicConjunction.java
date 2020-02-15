@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 
 import javax.persistence.*;
@@ -40,10 +41,6 @@ public class TopicConjunction {
         return topics;
     }
 
-    public void setTopics(Set<Topic> topics) {
-        this.topics = topics;
-    }
-
     public Assessment getAssessment() {
         return assessment;
     }
@@ -59,6 +56,7 @@ public class TopicConjunction {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
+        this.assessment.getTopicConjunctions().remove(this);
         this.assessment = null;
     }
 

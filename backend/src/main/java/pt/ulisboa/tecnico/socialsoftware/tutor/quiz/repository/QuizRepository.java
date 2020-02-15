@@ -13,11 +13,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
-    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId AND q.type = 'TEACHER'", nativeQuery = true)
-    List<Quiz> findAvailableQuizzes(int executionId);
-
-    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId AND q.type <> 'STUDENT'", nativeQuery = true)
-    List<Quiz> findTeacherQuizzes(int executionId);
+    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId", nativeQuery = true)
+    List<Quiz> findQuizzes(int executionId);
 
     @Query(value = "SELECT MAX(key) FROM quizzes", nativeQuery = true)
     Integer getMaxQuizKey();

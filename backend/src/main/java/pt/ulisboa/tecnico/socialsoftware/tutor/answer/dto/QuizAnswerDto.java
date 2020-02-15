@@ -4,24 +4,32 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class QuizAnswerDto implements Serializable {
     private Integer id;
-    private LocalDateTime answerDate;
+    private String answerDate;
     private boolean completed;
     private QuizDto quiz;
     private String username;
+    private Set<QuestionAnswerDto> questionAnswers = new HashSet<>();
+
 
     public QuizAnswerDto() {
     }
 
     public QuizAnswerDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getId();
-        this.answerDate = quizAnswer.getAnswerDate();
         this.completed = quizAnswer.getCompleted();
         this.quiz = new QuizDto(quizAnswer.getQuiz(), false);
         this.username = quizAnswer.getUser().getUsername();
+        if (quizAnswer.getAnswerDate() != null) {
+            this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        }
+        this.questionAnswers = quizAnswer.getQuestionAnswers().stream().map(QuestionAnswerDto::new).collect(Collectors.toSet());
     }
 
     public Integer getId() {
@@ -32,11 +40,11 @@ public class QuizAnswerDto implements Serializable {
         this.id = id;
     }
 
-    public LocalDateTime getAnswerDate() {
+    public String getAnswerDate() {
         return answerDate;
     }
 
-    public void setAnswerDate(LocalDateTime answerDate) {
+    public void setAnswerDate(String answerDate) {
         this.answerDate = answerDate;
     }
 
@@ -64,6 +72,10 @@ public class QuizAnswerDto implements Serializable {
         this.username = username;
     }
 
+    public Set<QuestionAnswerDto> getQuestionAnswers() {
+        return questionAnswers;
+    }
+
     @Override
     public String toString() {
         return "QuizAnswerDto{" +
@@ -72,6 +84,11 @@ public class QuizAnswerDto implements Serializable {
                 ", completed=" + completed +
                 ", quiz=" + quiz +
                 ", username='" + username + '\'' +
+                ", questionAnswers=" + questionAnswers +
                 '}';
+    }
+
+    public void addQuestionAnswer(QuestionAnswerDto questionAnswerDto) {
+        this.questionAnswers.add(questionAnswerDto);
     }
 }

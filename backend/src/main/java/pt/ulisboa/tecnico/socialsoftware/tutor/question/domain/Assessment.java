@@ -1,11 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPIC_CONJUNCTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPIC_NOT_FOUND;
 
 @Entity
 @Table(name = "assessments")
@@ -29,7 +35,7 @@ public class Assessment {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER, orphanRemoval=true)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Assessment() {
@@ -38,11 +44,12 @@ public class Assessment {
     public Assessment(CourseExecution courseExecution, List<TopicConjunction> topicConjunctions, AssessmentDto assessmentDto) {
         setTitle(assessmentDto.getTitle());
         setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
+        setSequence(assessmentDto.getSequence());
         setCourseExecution(courseExecution);
 
         courseExecution.addAssessment(this);
 
-        setTopicConjunctions(topicConjunctions);
+        this.topicConjunctions = topicConjunctions;
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
     }
 
@@ -90,10 +97,6 @@ public class Assessment {
         return topicConjunctions;
     }
 
-    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
-    }
-
     @Override
     public String toString() {
         return "Assessment{" +
@@ -110,7 +113,8 @@ public class Assessment {
     }
 
     public void remove() {
-        getTopicConjunctions().forEach(TopicConjunction::remove);
+        getTopicConjunctions().stream().collect(Collectors.toList()).forEach(TopicConjunction::remove);
         getTopicConjunctions().clear();
     }
+
 }

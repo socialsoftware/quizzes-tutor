@@ -38,31 +38,27 @@ public class QuizzesXmlExport {
 	}
 
 	private void exportQuiz(Element element, Quiz quiz) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 		Element quizElement = new Element("quiz");
-        quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
+		quizElement.setAttribute("courseExecutionType",quiz.getCourseExecution().getType().name());
+		quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
         quizElement.setAttribute("academicTerm",quiz.getCourseExecution().getAcademicTerm());
         quizElement.setAttribute("key", String.valueOf(quiz.getKey()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
-
-		quizElement.setAttribute("title", quiz.getTitle());
-		if (quiz.getCreationDate() != null) {
-			quizElement.setAttribute("creationDate", quiz.getCreationDate().format(formatter));
-		}
-		if (quiz.getAvailableDate() != null) {
-			quizElement.setAttribute("availableDate", quiz.getAvailableDate().format(formatter));
-		}
-        if (quiz.getConclusionDate() != null) {
-            quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().format(formatter));
-        }
 		quizElement.setAttribute("type", quiz.getType().name());
-		if (quiz.getSeries() != null) {
+		quizElement.setAttribute("title", quiz.getTitle());
+
+		if (quiz.getCreationDate() != null)
+			quizElement.setAttribute("creationDate", quiz.getCreationDate().format(formatter));
+		if (quiz.getAvailableDate() != null)
+			quizElement.setAttribute("availableDate", quiz.getAvailableDate().format(formatter));
+        if (quiz.getConclusionDate() != null)
+            quizElement.setAttribute("conclusionDate", quiz.getConclusionDate().format(formatter));
+		if (quiz.getSeries() != null)
 			quizElement.setAttribute("series", String.valueOf(quiz.getSeries()));
-		}
-		if (quiz.getVersion() != null) {
+		if (quiz.getVersion() != null)
 			quizElement.setAttribute("version", quiz.getVersion());
-		}
 
 		exportQuizQuestions(quizElement, quiz.getQuizQuestions());
 

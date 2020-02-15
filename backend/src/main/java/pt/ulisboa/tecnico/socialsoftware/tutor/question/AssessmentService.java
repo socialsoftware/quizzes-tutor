@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
@@ -22,7 +23,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -66,6 +69,7 @@ public class AssessmentService {
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
                 .map(AssessmentDto::new)
+                .sorted(Comparator.comparing(AssessmentDto::getSequence, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
     }
 
@@ -85,9 +89,7 @@ public class AssessmentService {
                     return topicConjunction;
                 }).collect(Collectors.toList());
 
-
         Assessment assessment = new Assessment(courseExecution, topicConjunctions, assessmentDto);
-
 
         this.entityManager.persist(assessment);
         return new AssessmentDto(assessment);
@@ -103,25 +105,36 @@ public class AssessmentService {
 
         assessment.setTitle(assessmentDto.getTitle());
         assessment.setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
-        assessment.remove();
-        assessment.setTopicConjunctions(assessmentDto.getTopicConjunctions().stream()
-                .map(topicConjunctionDto -> {
-                    TopicConjunction topicConjunction;
-                    if(topicConjunctionDto.getId() != null) {
-                        topicConjunction = topicConjunctionRepository.findById(topicConjunctionDto.getId()).orElseThrow(() -> new TutorException(TOPIC_CONJUNCTION_NOT_FOUND, topicConjunctionDto.getId()));
-                    } else {
-                        topicConjunction = new TopicConjunction();
-                    }
+        assessment.setSequence(assessmentDto.getSequence());
 
-                    Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
-                    topicConjunction.updateTopics(newTopics);
-                    return topicConjunction;
-                }).collect(Collectors.toList()));
-        assessment.getTopicConjunctions().forEach(topicConjunction -> topicConjunction.setAssessment(assessment));
+        // remove TopicConjunction that are not in the Dto
+        assessment.getTopicConjunctions().stream()
+                .filter(topicConjunction -> assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunction.getId().equals(topicConjunctionDto.getId())))
+                .collect(Collectors.toList())
+                .forEach(TopicConjunction::remove);
+
+        for (TopicConjunctionDto topicConjunctionDto: assessmentDto.getTopicConjunctions()) {
+            // topicConjunction already existed
+            if (topicConjunctionDto.getId() != null) {
+                TopicConjunction topicConjunction = topicConjunctionRepository.findById(topicConjunctionDto.getId()).orElseThrow(() -> new TutorException(TOPIC_CONJUNCTION_NOT_FOUND, topicConjunctionDto.getId()));
+                Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
+                        .map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
+                topicConjunction.updateTopics(newTopics);
+            } else {
+                // new topicConjunction
+                TopicConjunction topicConjunction = new TopicConjunction();
+                Set<Topic> newTopics = topicConjunctionDto.getTopics().stream()
+                        .map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId())))
+                        .collect(Collectors.toSet());
+                topicConjunction.updateTopics(newTopics);
+                assessment.addTopicConjunction(topicConjunction);
+                topicConjunction.setAssessment(assessment);
+                topicConjunctionRepository.save(topicConjunction);
+            }
+        }
 
         return new AssessmentDto(assessment);
     }
-
 
     @Retryable(
       value = { SQLException.class },
@@ -133,7 +146,6 @@ public class AssessmentService {
         entityManager.remove(assessment);
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -143,11 +155,5 @@ public class AssessmentService {
         assessment.setStatus(status);
     }
 
-/*    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void importAssessment(String assessmentXML) {
-        AssessmentXmlImport xmlImporter = new AssessmentXmlImport();
-
-        xmlImporter.importAssessment(assessmentXML, this);
-    }*/
 }
 

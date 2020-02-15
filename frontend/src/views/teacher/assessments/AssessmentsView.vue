@@ -55,9 +55,9 @@ export default class AssessmentsView extends Vue {
 
   async editAssessment(assessmentId: number) {
     try {
-      this.assessment = this.assessments.find(
-        assessment => assessment.id === assessmentId
-      )!;
+      this.assessment = {
+        ...this.assessments.find(assessment => assessment.id === assessmentId)!
+      };
       this.editMode = true;
     } catch (error) {
       await this.$store.dispatch('error', error);

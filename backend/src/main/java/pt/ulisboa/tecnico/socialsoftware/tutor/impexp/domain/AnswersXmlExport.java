@@ -58,7 +58,7 @@ public class AnswersXmlExport {
 		element.addContent(quizAnswerElement);
 	}
 
-	private void exportQuestionAnswers(Element quizAnswerElement, Set<QuestionAnswer> questionAnswers) {
+	private void exportQuestionAnswers(Element quizAnswerElement, List<QuestionAnswer> questionAnswers) {
 		Element questionAnswersElement = new Element("questionAnswers");
 
 		for (QuestionAnswer questionAnswer: questionAnswers) {

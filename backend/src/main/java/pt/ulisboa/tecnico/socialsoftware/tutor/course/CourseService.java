@@ -41,8 +41,8 @@ public class CourseService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<CourseDto> getCourseExecutions(String courseName) {
-        Course course= courseRepository.findByName(courseName).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+    public List<CourseDto> getCourseExecutions(int courseId) {
+        Course course= courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
         return course.getCourseExecutions().stream()
                 .map(CourseDto::new)
@@ -54,16 +54,16 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto createCourseExecution(CourseDto courseDto) {
-        Course course = courseRepository.findByName(courseDto.getName()).orElse(null);
+    public CourseDto createTecnicoCourseExecution(CourseDto courseDto) {
+        Course course = courseRepository.findByNameType(courseDto.getName(), Course.Type.TECNICO.name()).orElse(null);
         if (course == null) {
-            course = new Course(courseDto.getName());
+            course = new Course(courseDto.getName(), Course.Type.TECNICO);
             courseRepository.save(course);
         }
         Course existingCourse = course;
-        CourseExecution courseExecution = existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm())
+        CourseExecution courseExecution = existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), Course.Type.TECNICO)
                 .orElseGet(() ->  {
-                    CourseExecution ce = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm());
+                    CourseExecution ce = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), Course.Type.TECNICO);
                     courseExecutionRepository.save(ce);
                     return ce;
                 });

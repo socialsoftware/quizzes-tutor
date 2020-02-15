@@ -1,49 +1,27 @@
 <template v-if="topics">
   <v-card class="table">
-    <v-card-title>
-      <v-text-field
-        v-model="search"
-        append-icon="search"
-        label="Search"
-        single-line
-        hide-details
-      />
-      <v-spacer />
-      <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
-      <v-dialog v-model="dialog" max-width="75%">
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle() }}</span>
-          </v-card-title>
-
-          <v-card-text v-if="editedTopic">
-            <v-container grid-list-md fluid>
-              <v-layout column wrap>
-                <v-flex xs24 sm12 md8>
-                  <v-text-field v-model="editedTopic.name" label="Topic" />
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-
-          <v-card-actions>
-            <v-spacer />
-            <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
-            <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-    </v-card-title>
     <v-data-table
       :headers="headers"
       :custom-filter="customFilter"
       :items="topics"
       :search="search"
-      disable-pagination
-      class="elevation-1"
+      :mobile-breakpoint="0"
       :items-per-page="50"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
+      <template v-slot:top>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          />
+          <v-spacer />
+          <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
+        </v-card-title>
+      </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -68,6 +46,29 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <v-dialog v-model="topicDialog" max-width="75%">
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ formTitle() }}</span>
+        </v-card-title>
+
+        <v-card-text v-if="editedTopic">
+          <v-container grid-list-md fluid>
+            <v-layout column wrap>
+              <v-flex xs24 sm12 md8>
+                <v-text-field v-model="editedTopic.name" label="Topic" />
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-card>
 </template>
 
@@ -80,21 +81,21 @@ import Topic from '@/models/management/Topic';
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
   editedTopic: Topic = new Topic();
-  dialog: boolean = false;
+  topicDialog: boolean = false;
   search: string = '';
   headers: object = [
-    { text: 'Topic', value: 'name', align: 'left', width: '50%' },
+    { text: 'Topic', value: 'name', align: 'left' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '10%'
+      width: '115px'
     },
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
-      width: '10%',
+      width: '7%',
       sortable: false
     }
   ];
@@ -124,16 +125,16 @@ export default class TopicsView extends Vue {
 
   newTopic() {
     this.editedTopic = new Topic();
-    this.dialog = true;
+    this.topicDialog = true;
   }
 
   closeDialogue() {
-    this.dialog = false;
+    this.topicDialog = false;
   }
 
   editTopic(topic: Topic) {
-    this.editedTopic = topic;
-    this.dialog = true;
+    this.editedTopic = { ...topic };
+    this.topicDialog = true;
   }
 
   async deleteTopic(toDeleteTopic: Topic) {

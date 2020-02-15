@@ -65,11 +65,13 @@ public class QuizService {
       backoff = @Backoff(delay = 5000))
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuizDto> findTeacherQuizzes(int executionId) {
+    public List<QuizDto> findNonGeneratedQuizzes(int executionId) {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
-        return quizRepository.findTeacherQuizzes(executionId).stream()
+
+        return quizRepository.findQuizzes(executionId).stream()
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
                 .collect(Collectors.toList());
@@ -103,7 +105,7 @@ public class QuizService {
         if (quizDto.getCreationDate() == null) {
             quiz.setCreationDate(LocalDateTime.now());
         } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             quiz.setCreationDate(LocalDateTime.parse(quizDto.getCreationDate(), formatter));
         }
         entityManager.persist(quiz);
@@ -118,6 +120,8 @@ public class QuizService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        quiz.checkCanChange();
 
         quiz.setTitle(quizDto.getTitle());
         quiz.setAvailableDate(quizDto.getAvailableDateDate());

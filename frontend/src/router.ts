@@ -14,8 +14,8 @@ import StudentsView from './views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
 import AvailableQuizzesView from './views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from './views/student/SolvedQuizzesView.vue';
-import QuizView from './views/student/QuizView.vue';
-import ResultsView from './views/student/ResultsView.vue';
+import QuizView from './views/student/quiz/QuizView.vue';
+import ResultsView from './views/student/quiz/ResultsView.vue';
 import StatsView from './views/student/StatsView.vue';
 import ScanView from './views/student/ScanView.vue';
 
@@ -154,8 +154,7 @@ let router = new Router({
           component: QuizView,
           meta: {
             title: process.env.VUE_APP_NAME + ' - Quiz',
-            requiredAuth: 'Student',
-            requiresVerification: true
+            requiredAuth: 'Student'
           }
         },
         {
@@ -206,14 +205,6 @@ let router = new Router({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (from.matched.some(record => record.meta.requiresVerification)) {
-    let a = confirm('Are you sure?');
-    if (!a) {
-      next(false);
-      return;
-    }
-  }
-
   if (to.meta.requiredAuth == 'None') {
     next();
   } else if (to.meta.requiredAuth == 'Admin' && Store.getters.isAdmin) {
@@ -225,8 +216,6 @@ router.beforeEach(async (to, from, next) => {
   } else {
     next('/');
   }
-
-  // await Store.dispatch("clearError");
 });
 
 router.afterEach(async (to, from) => {
