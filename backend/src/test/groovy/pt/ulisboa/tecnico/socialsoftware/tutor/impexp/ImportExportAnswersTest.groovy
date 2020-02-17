@@ -41,7 +41,7 @@ class ImportExportAnswersTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer TIME_TAKEN = 1234
-    public static final Integer SEQUENCE = 1
+    public static final Integer SEQUENCE = 0
     public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
 
 
