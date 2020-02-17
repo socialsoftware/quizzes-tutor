@@ -103,6 +103,7 @@ public class AnswerService {
         }
 
         return new CorrectAnswersDto(quizAnswer.getQuestionAnswers().stream()
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                 .map(QuestionAnswer::getQuizQuestion)
                 .map(CorrectAnswerDto::new).collect(Collectors.toList()));
     }

@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -25,10 +24,12 @@ public class SolvedQuizDto implements Serializable {
     public SolvedQuizDto(QuizAnswer quizAnswer) {
         this.statementQuiz = new StatementQuizDto(quizAnswer);
         this.answers = quizAnswer.getQuestionAnswers().stream()
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                 .map(QuestionAnswerDto::new)
                 .collect(Collectors.toList());
 
         this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                 .map(QuestionAnswer::getQuizQuestion)
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
