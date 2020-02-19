@@ -5,7 +5,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -50,6 +52,9 @@ class FindQuestionsTest extends Specification {
 
     @Autowired
     QuizQuestionRepository quizQuestionRepository
+
+    @Autowired
+    QuizAnswerRepository quizAnswerRepository
 
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
@@ -97,15 +102,22 @@ class FindQuestionsTest extends Specification {
         def quizQuestion = new QuizQuestion()
         quizQuestionRepository.save(quizQuestion)
         question.addQuizQuestion(quizQuestion)
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.addQuestionAnswer()
+        quizAnswerRepository.save(quizAnswer)
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionOK)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionKO)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
-
+        questionAnswer.setQuizAnswer(quizAnswer)
+        quizAnswer.addQuestionAnswer(questionAnswer)
 
         when:
         def result = questionService.findQuestions(course.getId())
