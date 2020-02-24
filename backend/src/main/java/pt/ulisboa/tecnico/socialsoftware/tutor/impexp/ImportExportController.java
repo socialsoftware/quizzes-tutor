@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Controller
-@Secured({ "ROLE_ADMIN", "ROLE_TEACHER" })
+@Secured({"ROLE_ADMIN"})
 public class ImportExportController {
     private static Logger logger = LoggerFactory.getLogger(ImportExportController.class);
 

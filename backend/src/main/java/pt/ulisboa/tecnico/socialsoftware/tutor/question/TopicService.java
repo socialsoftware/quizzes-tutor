@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
@@ -41,6 +42,14 @@ public class TopicService {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findTopicCourse(int topicId) {
+        return topicRepository.findById(topicId)
+                .map(Topic::getCourse)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+    }
 
     @Retryable(
       value = { SQLException.class },
@@ -115,5 +124,6 @@ public class TopicService {
 
         xmlImporter.importTopics(topicsXML, this, questionService, courseRepository);
     }
+
 }
 

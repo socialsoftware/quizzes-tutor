@@ -8,6 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -50,6 +51,14 @@ public class AssessmentService {
 
     @PersistenceContext
     EntityManager entityManager;
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto findAssessmentCourseExecution(int assessmentId) {
+        return assessmentRepository.findById(assessmentId)
+                .map(Assessment::getCourseExecution)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
+    }
 
     @Retryable(
       value = { SQLException.class },

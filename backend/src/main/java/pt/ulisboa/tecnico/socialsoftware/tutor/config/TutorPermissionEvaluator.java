@@ -5,6 +5,10 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
@@ -15,6 +19,18 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
+    private AssessmentService assessmentService;
+
+    @Autowired
+    private QuizService quizService;
+
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         String username = ((User) authentication.getPrincipal()).getUsername();
@@ -23,11 +39,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             CourseDto courseDto = (CourseDto) targetDomainObject;
             String permissionValue = (String) permission;
             switch (permissionValue) {
-                case "CREATE":
+                case "EXECUTION.CREATE":
                     return userService.getEnrolledCoursesAcronyms(username).contains(courseDto.getAcronym() + courseDto.getAcademicTerm());
-                case "ACCESS":
-                    return userService.getCourseExecutions(username).stream()
-                                .anyMatch(course -> course.getAcronym().equals(courseDto.getAcronym()) && course.getAcademicTerm().equals(courseDto.getAcademicTerm()));
                 default:
                     return false;
             }
@@ -36,27 +49,37 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
         if (targetDomainObject instanceof Integer) {
             int id = (int) targetDomainObject;
             String permissionValue = (String) permission;
-            if ("ACCESS".equals(permissionValue)) {
-                return userService.getCourseExecutions(username).stream()
-                        .anyMatch(course -> course.getCourseExecutionId() == id);
+            switch (permissionValue) {
+                case "COURSE.ACCESS":
+                    return userHasAnExecutionOfTheCourse(username, id);
+                case "EXECUTION.ACCESS":
+                    return userHasThisExecution(username, id);
+                case "QUESTION.ACCESS":
+                    return userHasAnExecutionOfTheCourse(username, questionService.findQuestionCourse(id).getCourseId());
+                case "TOPIC.ACCESS":
+                    return userHasAnExecutionOfTheCourse(username, topicService.findTopicCourse(id).getCourseId());
+                case "ASSESSMENT.ACCESS":
+                    return userHasThisExecution(username, assessmentService.findAssessmentCourseExecution(id).getCourseExecutionId());
+                case "QUIZ.ACCESS":
+                    return userHasThisExecution(username, quizService.findQuizCourseExecution(id).getCourseExecutionId());
+                default: return false;
             }
-            return false;
-        }
-
-        if (targetDomainObject instanceof String) {
-            String name = (String) targetDomainObject;
-            String permissionValue = (String) permission;
-            if ("ACCESS".equals(permissionValue)) {
-                return userService.getCourseExecutions(username).stream()
-                        .anyMatch(course -> course.getName().equals(name));
-            }
-            return false;
         }
 
         return false;
     }
 
-    @Override
+    private boolean userHasAnExecutionOfTheCourse(String username, int id) {
+        return userService.getCourseExecutions(username).stream()
+                .anyMatch(course -> course.getCourseId() == id);
+    }
+
+    private boolean userHasThisExecution(String username, int id) {
+        return userService.getCourseExecutions(username).stream()
+                .anyMatch(course -> course.getCourseExecutionId() == id);
+    }
+
+     @Override
     public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) {
         return false;
     }
