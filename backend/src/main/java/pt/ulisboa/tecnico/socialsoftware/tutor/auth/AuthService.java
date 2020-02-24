@@ -141,4 +141,15 @@ public class AuthService {
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
+
+    @Retryable(
+            value = { SQLException.class },
+            maxAttempts = 2,
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public AuthDto demoAdminAuth() {
+        User user = this.userService.getDemoAdmin();
+
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
 }

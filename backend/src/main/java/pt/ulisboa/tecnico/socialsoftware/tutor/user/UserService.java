@@ -106,4 +106,8 @@ public class UserService {
     public User getDemoStudent() {
         return this.userRepository.findByUsername("Demo-Student");
     }
+
+    public User getDemoAdmin() {
+        return this.userRepository.findByUsername("Demo-Admin");
+    }
 }

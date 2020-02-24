@@ -42,4 +42,9 @@ public class AuthController {
     public AuthDto demoTeacherAuth() {
         return this.authService.demoTeacherAuth();
     }
+
+    @GetMapping("/auth/demo/admin")
+    public AuthDto demoAdminAuth() {
+        return this.authService.demoAdminAuth();
+    }
 }
