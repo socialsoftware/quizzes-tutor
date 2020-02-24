@@ -7,6 +7,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
@@ -30,6 +34,17 @@ public class AdministrationService {
         CourseExecution courseExecution = createCourseExecution(courseDto, course);
 
         return new CourseDto(courseExecution);
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<CourseDto> getCourseExecutions() {
+        return courseExecutionRepository.findAll().stream()
+                .map(CourseDto::new)
+                .sorted(Comparator
+                        .comparing(CourseDto::getName)
+                        .thenComparing(CourseDto::getAcademicTerm))
+                .collect(Collectors.toList());
+
     }
 
     private CourseExecution createCourseExecution(CourseDto courseDto, Course course) {
