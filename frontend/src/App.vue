@@ -1,13 +1,11 @@
 <template>
   <v-app id="app">
-    <div class="img-container">
-      <top-bar />
-      <div class="scrollbar">
-        <router-view />
-      </div>
+    <top-bar />
+    <div class="scrollbar">
+      <error-message />
+      <loading />
+      <router-view />
     </div>
-    <error-message />
-    <loading />
   </v-app>
 </template>
 
@@ -41,37 +39,24 @@ export default class App extends Vue {
 
 <style scoped>
 #app {
-  text-align: center;
-  color: #2c3e50;
-  display: flex;
-  flex-direction: column;
-}
-
-.img-container {
-  display: flex;
-  flex-direction: column;
-  position: absolute;
-  overflow: hidden;
-  top: 0;
-  margin: 0 !important;
+  background-image: url('assets/img/background_optimized.webp');
+  background-position: 0 0;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  height: 100%;
   min-height: 100vh;
   width: 100vw;
-  height: 100%;
-  z-index: 1;
-}
-.img-container:after {
+  color: #2c3e50;
   content: ' ';
-  display: block;
-  position: absolute;
+  display: flex;
+  flex-direction: column;
   left: 0;
+  margin: 0 !important;
+  overflow: hidden;
+  position: absolute;
+  text-align: center;
   top: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -1;
-  background-image: url('assets/img/background_optimized.webp');
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-  background-position: 0 0;
+  z-index: 1;
 }
 
 /*noinspection CssUnusedSymbol*/
