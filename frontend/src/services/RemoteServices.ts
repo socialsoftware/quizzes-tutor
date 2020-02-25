@@ -255,8 +255,8 @@ export default class RemoteServices {
     return httpClient
       .get(`/quizzes/${quizId}/conclude`)
       .then(response => {
-        if (response.data.answers) {
-          return response.data.answers.map((answer: any) => {
+        if (response.data) {
+          return response.data.map((answer: any) => {
             return new StatementCorrectAnswer(answer);
           });
         }

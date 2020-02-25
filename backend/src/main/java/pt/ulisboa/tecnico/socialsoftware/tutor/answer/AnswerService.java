@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
@@ -30,7 +29,9 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -81,7 +82,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CorrectAnswersDto concludeQuiz(User user, Integer quizId) {
+    public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -99,13 +100,13 @@ public class AnswerService {
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
             LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
 
-            return null;
+            return new ArrayList<>();
         }
 
-        return new CorrectAnswersDto(quizAnswer.getQuestionAnswers().stream()
+        return quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                .map(QuestionAnswer::getQuizQuestion)
-                .map(CorrectAnswerDto::new).collect(Collectors.toList()));
+                .map(CorrectAnswerDto::new)
+                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -113,40 +114,47 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
-        QuestionAnswer questionsAnswer = questionAnswerRepository.findById(answer.getId()).orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getId()));
+        QuizAnswer quizAnswer = user.getQuizAnswers().stream()
+                .filter(qa -> qa.getQuiz().getId().equals(quizId))
+                .findFirst()
+                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if (isNotAssignedStudent(user, questionsAnswer.getQuizAnswer())) {
-            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(questionsAnswer.getQuizAnswer().getId()), user.getUsername());
+        QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
+                .filter(qa -> qa.getSequence().equals(answer.getSequence()))
+                .findFirst()
+                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getSequence()));
+
+        if (isNotAssignedStudent(user, quizAnswer)) {
+            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
         }
 
-        if (questionsAnswer.getQuizQuestion().getQuiz().getConclusionDate() != null && questionsAnswer.getQuizQuestion().getQuiz().getConclusionDate().isBefore(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(LocalDateTime.now())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        if (questionsAnswer.getQuizQuestion().getQuiz().getAvailableDate() != null && questionsAnswer.getQuizQuestion().getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!questionsAnswer.getQuizAnswer().getCompleted()) {
+        if (!quizAnswer.getCompleted()) {
 
-            Option option = null;
+            Option option;
             if (answer.getOptionId() != null) {
                 option = optionRepository.findById(answer.getOptionId())
                         .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
 
-                if (isNotQuestionOption(questionsAnswer.getQuizQuestion(), option)) {
-                    throw new TutorException(QUIZ_OPTION_MISMATCH, questionsAnswer.getQuizQuestion().getId(), option.getId());
+                if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
+                    throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
                 }
 
-                if (questionsAnswer.getOption() != null) {
-                    questionsAnswer.getOption().getQuestionAnswers().remove(questionsAnswer);
+                if (questionAnswer.getOption() != null) {
+                    questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
                 }
 
-                questionsAnswer.setOption(option);
-                option.addQuestionAnswer(questionsAnswer);
-                questionsAnswer.setTimeTaken(answer.getTimeTaken());
-                questionsAnswer.setSequence(answer.getSequence());
-                questionsAnswer.getQuizAnswer().setAnswerDate(LocalDateTime.now());
+                questionAnswer.setOption(option);
+                option.addQuestionAnswer(questionAnswer);
+                questionAnswer.setTimeTaken(answer.getTimeTaken());
+                quizAnswer.setAnswerDate(LocalDateTime.now());
             }
 
         }

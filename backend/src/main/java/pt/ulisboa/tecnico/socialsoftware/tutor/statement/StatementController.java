@@ -3,11 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
@@ -90,7 +89,7 @@ public class StatementController {
 
     @GetMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS'))")
-    public CorrectAnswersDto concludeQuiz(Principal principal, @PathVariable int quizId) {
+    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){

@@ -1,27 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
 
 public class CorrectAnswerDto implements Serializable {
-
-    private Integer quizQuestionId;
     private Integer correctOptionId;
     private Integer sequence;
 
-    public CorrectAnswerDto(QuizQuestion quizQuestion) {
-        this.quizQuestionId = quizQuestion.getId();
-        this.correctOptionId = quizQuestion.getQuestion().getCorrectOptionId();
-        this.sequence = quizQuestion.getSequence();
-    }
-
-    public Integer getQuizQuestionId() {
-        return quizQuestionId;
-    }
-
-    public void setQuizQuestionId(Integer quizQuestionId) {
-        this.quizQuestionId = quizQuestionId;
+    public CorrectAnswerDto(QuestionAnswer questionAnswer) {
+        this.correctOptionId = questionAnswer.getQuizQuestion().getQuestion().getCorrectOptionId();
+        this.sequence = questionAnswer.getSequence();
     }
 
     public Integer getCorrectOptionId() {
@@ -43,8 +32,7 @@ public class CorrectAnswerDto implements Serializable {
     @Override
     public String toString() {
         return "CorrectAnswerDto{" +
-                "quizQuestionId=" + quizQuestionId +
-                ", correctOptionId=" + correctOptionId +
+                "correctOptionId=" + correctOptionId +
                 ", sequence=" + sequence +
                 '}';
     }

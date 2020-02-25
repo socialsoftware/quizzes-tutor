@@ -122,7 +122,7 @@ class ConcludeQuizTest extends Specification {
 
     def 'conclude quiz without conclusionDate, without answering'() {
         when:
-        def correctAnswersDto = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()
@@ -135,9 +135,9 @@ class ConcludeQuizTest extends Specification {
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getOption() == null
         and: 'the return value is OK'
-        correctAnswersDto.getAnswers().size() == 1
-        def correctAnswerDto = correctAnswersDto.getAnswers().get(0)
-        correctAnswerDto.getQuizQuestionId() == quizQuestion.getId()
+        correctAnswers.size() == 1
+        def correctAnswerDto = correctAnswers.get(0)
+        correctAnswerDto.getSequence() == 0
         correctAnswerDto.getCorrectOptionId() == optionOk.getId()
     }
 
@@ -147,7 +147,7 @@ class ConcludeQuizTest extends Specification {
         quiz.setType(Quiz.QuizType.IN_CLASS);
 
         when:
-        def correctAnswersDto = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()
@@ -160,7 +160,7 @@ class ConcludeQuizTest extends Specification {
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getOption() == null
         and: 'does not return answers'
-        correctAnswersDto == null
+        correctAnswers == []
     }
 
     def 'conclude quiz with answer, before conclusionDate'() {
@@ -169,15 +169,12 @@ class ConcludeQuizTest extends Specification {
         and: 'an answer'
         def statementAnswerDto = new StatementAnswerDto();
         statementAnswerDto.setOptionId(optionOk.getId())
-        statementAnswerDto.setQuizAnswerId(quizAnswer.getId())
-        statementAnswerDto.setSequence(1)
-        statementAnswerDto.setQuizQuestionId(quizQuestion.getId())
+        statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setId(quizAnswer.getQuestionAnswers()[0].getId())
-        answerService.submitAnswer(user, 1, statementAnswerDto);
+        answerService.submitAnswer(user, quiz.getId(), statementAnswerDto);
 
         when:
-        def correctAnswersDto = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.getCompleted()
@@ -190,9 +187,9 @@ class ConcludeQuizTest extends Specification {
         questionAnswer.getOption() == optionOk
         optionOk.getQuestionAnswers().contains(questionAnswer)
         and: 'the return value is OK'
-        correctAnswersDto.getAnswers().size() == 1
-        def correctAnswerDto = correctAnswersDto.getAnswers().get(0)
-        correctAnswerDto.getQuizQuestionId() == quizQuestion.getId()
+        correctAnswers.size() == 1
+        def correctAnswerDto = correctAnswers.get(0)
+        correctAnswerDto.getSequence() == 0
         correctAnswerDto.getCorrectOptionId() == optionOk.getId()
     }
 
