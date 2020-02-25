@@ -38,19 +38,19 @@ public class QuestionController {
     }
 
     @GetMapping("/courses/{courseId}/questions")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getCourseQuestions(@PathVariable int courseId){
         return this.questionService.findQuestions(courseId);
     }
 
     @GetMapping("/courses/{courseId}/questions/available")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId){
         return this.questionService.findAvailableQuestions(courseId);
     }
 
     @PostMapping("/courses/{courseId}/questions")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         logger.debug("createQuestion title: {}, content: {}, options: {}: ",
                 question.getTitle(), question.getContent(),
@@ -61,19 +61,19 @@ public class QuestionController {
     }
 
     @GetMapping("/questions/{questionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
         return this.questionService.findQuestionById(questionId);
     }
 
     @PutMapping("/questions/{questionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
         return this.questionService.updateQuestion(questionId, question);
     }
 
     @DeleteMapping("/questions/{questionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public ResponseEntity removeQuestion(@PathVariable Integer questionId) throws IOException {
         logger.debug("removeQuestion questionId: {}: ", questionId);
         QuestionDto questionDto = questionService.findQuestionById(questionId);
@@ -89,7 +89,7 @@ public class QuestionController {
     }
 
     @PostMapping("/questions/{questionId}/set-status")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public ResponseEntity questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
         logger.debug("questionSetStatus questionId: {}: ", questionId);
         questionService.questionSetStatus(questionId, Question.Status.valueOf(status));
@@ -97,7 +97,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}/image")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public String uploadImage(@PathVariable Integer questionId, @RequestParam("file") MultipartFile file) throws IOException {
         logger.debug("uploadImage  questionId: {}: , filename: {}", questionId, file.getContentType());
 
@@ -119,7 +119,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}/topics")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         logger.debug("updateQuestionTopics  questionId: {}: , topics: {}", questionId, Arrays.toString(topics));
 

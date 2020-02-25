@@ -29,7 +29,7 @@ public class StatementController {
     private StatementService statementService;
 
     @GetMapping("/executions/{executionId}/quizzes/available")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -41,7 +41,7 @@ public class StatementController {
     }
 
     @PostMapping("/executions/{executionId}/quizzes/generate")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -53,7 +53,7 @@ public class StatementController {
     }
 
     @GetMapping("/executions/{executionId}/quizzes/solved")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -65,7 +65,7 @@ public class StatementController {
     }
 
     @GetMapping("/quizzes/{quizId}/evaluation")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -77,7 +77,7 @@ public class StatementController {
     }
 
     @PostMapping("/quizzes/{quizId}/submit")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -89,7 +89,7 @@ public class StatementController {
     }
 
     @GetMapping("/quizzes/{quizId}/conclude")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public CorrectAnswersDto concludeQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
