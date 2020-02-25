@@ -16,13 +16,13 @@ public class AdministrationController {
     private AdministrationService administrationService;
 
     @GetMapping("/admin/courses/executions")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public List<CourseDto> getCourseExecutions() {
         return administrationService.getCourseExecutions();
     }
 
     @PostMapping("/admin/courses/executions")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseDto, 'DEMO.ACCESS'))")
     public CourseDto createCourseExecution(@RequestBody CourseDto courseDto) {
         return administrationService.createExternalCourseExecution(courseDto);
     }

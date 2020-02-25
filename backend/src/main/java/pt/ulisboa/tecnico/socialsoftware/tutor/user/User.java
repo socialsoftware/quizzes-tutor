@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Entity
 @Table(name = "users")
 public class User implements UserDetails, Importable {
-    public enum Role {STUDENT, TEACHER, ADMIN}
+    public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
