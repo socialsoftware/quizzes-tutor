@@ -90,7 +90,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(LocalDateTime.now());
             quizAnswer.setCompleted(true);
         }
@@ -136,7 +136,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
 
             Option option;
             if (answer.getOptionId() != null) {
@@ -162,10 +162,6 @@ public class AnswerService {
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
         return quizQuestion.getQuestion().getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
-    }
-
-    private boolean isNotAssignedQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion) {
-        return !quizQuestion.getQuiz().getId().equals(quizAnswer.getQuiz().getId());
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {

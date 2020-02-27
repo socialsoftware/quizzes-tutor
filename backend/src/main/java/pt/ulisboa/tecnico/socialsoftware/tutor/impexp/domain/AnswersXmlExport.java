@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
 import java.util.List;
-import java.util.Set;
 
 public class AnswersXmlExport {
 	public String export(List<QuizAnswer> quizAnswers) {
@@ -43,7 +42,7 @@ public class AnswersXmlExport {
 			quizAnswerElement.setAttribute("answerDate", String.valueOf(quizAnswer.getAnswerDate()));
 		}
 
-		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.getCompleted()));
+		quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.isCompleted()));
 
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("key", String.valueOf(quizAnswer.getQuiz().getKey()));

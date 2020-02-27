@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -136,6 +137,7 @@ public class QuizService {
         quiz.setAvailableDate(quizDto.getAvailableDateDate());
         quiz.setConclusionDate(quizDto.getConclusionDateDate());
         quiz.setScramble(quizDto.getScramble());
+        quiz.setType(quizDto.getType());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -176,7 +178,7 @@ public class QuizService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeQuiz(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         quiz.remove();
 
@@ -186,6 +188,16 @@ public class QuizService {
         quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
 
         entityManager.remove(quiz);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuizAnswerDto> getQuizAnswers(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        return quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList());
     }
 
 
@@ -209,5 +221,4 @@ public class QuizService {
 
         xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository);
     }
-
 }

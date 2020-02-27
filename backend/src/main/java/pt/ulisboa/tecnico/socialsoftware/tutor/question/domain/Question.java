@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -244,19 +243,6 @@ public class Question {
 
 
     public Integer getDifficulty() {
-        // required because the import is done directly in the database
-        if (numberOfAnswers == null || numberOfAnswers == 0) {
-            numberOfAnswers = getQuizQuestions().stream()
-                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getQuizAnswer().getCompleted())
-                    .map(e -> 1).reduce(0, Integer::sum);
-            numberOfCorrect = getQuizQuestions().stream()
-                    .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getQuizAnswer().getCompleted())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect())
-                    .map(e -> 1).reduce(0, Integer::sum);
-        }
-
         if (numberOfAnswers == 0) {
             return null;
         }
