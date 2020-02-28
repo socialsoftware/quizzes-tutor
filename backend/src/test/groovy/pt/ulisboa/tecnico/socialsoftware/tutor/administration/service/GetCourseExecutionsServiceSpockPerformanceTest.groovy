@@ -1,0 +1,54 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.administration.service
+
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import spock.lang.Specification
+
+@DataJpaTest
+class GetCourseExecutionsServiceSpockPerformanceTest extends Specification {
+    static final String COURSE = "CourseOne"
+    static final String ACRONYM = "C12"
+    static final String ACADEMIC_TERM = "1º Semestre"
+
+    @Autowired
+    AdministrationService administrationService
+
+    @Autowired
+    CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionRepository courseExecutionRepository
+
+    def "performance testing to get 1000 course executions"() {
+        given: "a course"
+        def course = new Course(COURSE, Course.Type.TECNICO)
+        courseRepository.save(course)
+        and: "a 1000 course executions"
+        1.upto(1000, {
+            courseExecutionRepository.save(new CourseExecution(course, ACRONYM + it, ACADEMIC_TERM, Course.Type.TECNICO))
+        })
+
+        when:
+        1.upto(10000, { administrationService.getCourseExecutions()})
+
+        then:
+        true
+    }
+
+    @TestConfiguration
+    static class ServiceImplTestContextConfiguration {
+
+        @Bean
+        AdministrationService administrationService() {
+            return new AdministrationService()
+        }
+
+    }
+}
