@@ -38,6 +38,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AN
 
 @Component
 public class AnswersXmlImport {
+	public static final String SEQUENCE = "sequence";
+	public static final String OPTION = "option";
 	private AnswerService answerService;
 	private QuestionRepository questionRepository;
 	private QuizRepository quizRepository;
@@ -139,28 +141,26 @@ public class AnswersXmlImport {
 		Map<Integer,QuizQuestion> mapQuizQuestion = quiz.getQuizQuestions().stream()
 				.collect(Collectors.toMap(QuizQuestion::getSequence, Function.identity()));
 
-		importQuestionAnswers(answerElement.getChild("questionAnswers"), user, mapQuizQuestion, quizAnswer);
+		importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
 	}
 
-	private void importQuestionAnswers(Element questionAnswersElement, User user, Map<Integer, QuizQuestion> mapQuizQuestion, QuizAnswer quizAnswer) {
+	private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
 		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
 			Integer timeTaken = null;
 			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
 				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
 			}
 
-			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue("sequence"));
-			Integer questionSequence = Integer.valueOf(questionAnswerElement.getChild("quizQuestion").getAttributeValue("sequence"));
-			QuizQuestion quizQuestion = mapQuizQuestion.get(questionSequence);
+			Integer answerSequence = Integer.valueOf(questionAnswerElement.getAttributeValue(SEQUENCE));
 
 			Integer optionId = null;
-			if (questionAnswerElement.getChild("option") != null) {
-				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("questionKey"));
-				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild("option").getAttributeValue("sequence"));
+			if (questionAnswerElement.getChild(OPTION) != null) {
+				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
+				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
 				optionId = questionMap.get(questionKey).get(optionSequence);
 			}
 
-            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence() == answerSequence).findFirst().get();
+            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence().equals(answerSequence)).findFirst().get();
 
 			questionAnswer.setTimeTaken(timeTaken);
 			questionAnswer.setOption(optionRepository.findById(optionId).get());

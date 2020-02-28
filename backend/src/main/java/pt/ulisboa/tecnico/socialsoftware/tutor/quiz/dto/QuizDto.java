@@ -29,7 +29,7 @@ public class QuizDto implements Serializable {
     private List<QuestionDto> questions = new ArrayList<>();
 
     @Transient
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public QuizDto(){
     }

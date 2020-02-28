@@ -117,7 +117,7 @@ class FilterByAssessmentTest extends Specification {
         statementCreationDto.assessment = assessmentTopic1.id.toString()
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto, null)
+        def result = statementService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 1 and 5"
         result.size() == 2
@@ -138,7 +138,7 @@ class FilterByAssessmentTest extends Specification {
         statementCreationDto.assessment = assessmentTopic1_and_2.id.toString()
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto, null)
+        def result = statementService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 3"
         result.size() == 1
@@ -160,7 +160,7 @@ class FilterByAssessmentTest extends Specification {
         statementCreationDto.assessment = assessmentTopic1_or_2.id.toString()
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto, null)
+        def result = statementService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 1, 2 and 5"
         result.size() == 3

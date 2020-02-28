@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 public class QuestionDto implements Serializable {
     private Integer id;
     private Integer key;
@@ -28,7 +27,7 @@ public class QuestionDto implements Serializable {
     private Integer sequence;
 
     @Transient
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public QuestionDto() {
     }

@@ -173,10 +173,6 @@ public class Quiz {
         return quizAnswers;
     }
 
-    public boolean isScramble() {
-        return scramble;
-    }
-
     public CourseExecution getCourseExecution() {
         return courseExecution;
     }

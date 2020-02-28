@@ -85,7 +85,7 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        availableQuestions = filterByAssessment(availableQuestions, quizDetails, user);
+        availableQuestions = filterByAssessment(availableQuestions, quizDetails);
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
@@ -232,7 +232,7 @@ public class StatementService {
         });
     }
 
-    public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails, User user) {
+    public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
         // remove all by default
         // TODO: support a ALL assessment
         //if (!quizDetails.getAssessment().equals("all")) {

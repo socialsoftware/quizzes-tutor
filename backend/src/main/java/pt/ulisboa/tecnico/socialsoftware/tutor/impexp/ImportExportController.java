@@ -43,7 +43,7 @@ public class ImportExportController {
     }
 
     @GetMapping(value = "/admin/import")
-    public String importAll() throws IOException {
+    public String importAll() {
         logger.debug("importAll");
 
         impExpService.importAll();

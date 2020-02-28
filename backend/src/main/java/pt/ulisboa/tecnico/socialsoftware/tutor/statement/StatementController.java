@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -22,8 +20,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 
 @RestController
 public class StatementController {
-    private static Logger logger = LoggerFactory.getLogger(StatementController.class);
-
     @Autowired
     private StatementService statementService;
 

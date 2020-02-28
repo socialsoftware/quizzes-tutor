@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -24,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -85,7 +88,7 @@ public class ImpExpService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public String exportAll() throws IOException {
+    public String exportAll() {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         File directory = new File(exportDir);
         FileOutputStream fos = null;
@@ -144,29 +147,29 @@ public class ImpExpService {
         in.close();
     }
 
-    private InputStream generateUsersInputStream() throws IOException {
+    private InputStream generateUsersInputStream() {
         UsersXmlExport usersExporter = new UsersXmlExport();
-        return IOUtils.toInputStream(usersExporter.export(userRepository.findAll()), "UTF-8");
+        return IOUtils.toInputStream(usersExporter.export(userRepository.findAll()), StandardCharsets.UTF_8);
     }
 
-    private InputStream generateQuestionsInputStream() throws IOException {
+    private InputStream generateQuestionsInputStream() {
         QuestionsXmlExport generator = new QuestionsXmlExport();
-        return IOUtils.toInputStream(generator.export(questionRepository.findAll()), "UTF-8");
+        return IOUtils.toInputStream(generator.export(questionRepository.findAll()), StandardCharsets.UTF_8);
     }
 
-    private InputStream generateTopicsInputStream() throws IOException {
+    private InputStream generateTopicsInputStream() {
         TopicsXmlExport generator = new TopicsXmlExport();
-        return IOUtils.toInputStream(generator.export(topicRepository.findAll()), "UTF-8");
+        return IOUtils.toInputStream(generator.export(topicRepository.findAll()), StandardCharsets.UTF_8);
     }
 
-    private InputStream generateQuizzesInputStream() throws IOException {
+    private InputStream generateQuizzesInputStream() {
         QuizzesXmlExport generator = new QuizzesXmlExport();
-        return IOUtils.toInputStream(generator.export(quizRepository.findAll()), "UTF-8");
+        return IOUtils.toInputStream(generator.export(quizRepository.findAll()), StandardCharsets.UTF_8);
     }
 
-    private InputStream generateAnswersInputStream() throws IOException {
+    private InputStream generateAnswersInputStream() {
         AnswersXmlExport generator = new AnswersXmlExport();
-        return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), "UTF-8");
+        return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), StandardCharsets.UTF_8);
     }
 
 
@@ -174,7 +177,7 @@ public class ImpExpService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void importAll() throws IOException {
+    public void importAll() {
         if (userRepository.findAll().isEmpty()) {
             try {
                 File directory = new File(loadDir);
@@ -199,7 +202,7 @@ public class ImpExpService {
 
                 answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
             } catch (FileNotFoundException e) {
-
+                throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
             }
         }
     }

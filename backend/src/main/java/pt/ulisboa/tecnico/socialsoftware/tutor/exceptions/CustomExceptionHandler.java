@@ -16,7 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AC
 
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
-    private static Logger logger = LoggerFactory.getLogger(CustomExceptionHandler.class);
+    private static Logger myLogger = LoggerFactory.getLogger(CustomExceptionHandler.class);
 
     @ExceptionHandler(TutorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -27,7 +27,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public TutorExceptionDto accessDeniedException(AccessDeniedException e) {
-        logger.error(e.getMessage());
+        myLogger.error(e.getMessage());
         return new TutorExceptionDto(ACCESS_DENIED);
     }
 
@@ -40,7 +40,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public TutorExceptionDto randomException(Exception e) {
-        logger.error(e.getMessage(), e);
+        myLogger.error(e.getMessage(), e);
         return new TutorExceptionDto(e);
     }
 }

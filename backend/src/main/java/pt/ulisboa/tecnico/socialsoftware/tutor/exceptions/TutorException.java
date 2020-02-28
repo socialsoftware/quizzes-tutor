@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class TutorException extends RuntimeException {
     private static final Logger logger = LoggerFactory.getLogger(TutorException.class);
-    private ErrorMessage errorMessage;
+    private final ErrorMessage errorMessage;
 
     public TutorException(ErrorMessage errorMessage) {
         super(errorMessage.label);

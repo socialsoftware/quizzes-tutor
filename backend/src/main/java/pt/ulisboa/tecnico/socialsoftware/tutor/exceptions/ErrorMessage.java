@@ -42,7 +42,7 @@ public enum ErrorMessage {
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
-    QUESTION_MISSING_DATA("Missing information for quiz"), // TODO check me
+    QUESTION_MISSING_DATA("Missing information for quiz"),
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),
     QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS("Can not change correct option of answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
@@ -53,7 +53,8 @@ public enum ErrorMessage {
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
 
-    ACCESS_DENIED("You do not have permission to view this resource");
+    ACCESS_DENIED("You do not have permission to view this resource"),
+    CANNOT_OPEN_FILE("Cannot open file");
 
     public final String label;
 
