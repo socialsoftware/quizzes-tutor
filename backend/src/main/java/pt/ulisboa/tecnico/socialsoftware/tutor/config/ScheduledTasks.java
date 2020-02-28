@@ -17,7 +17,7 @@ public class ScheduledTasks {
 	private StatementService statementService;
 
 	@Scheduled(cron = "0 0 1,13 * * *")
-	public void exportAll() throws IOException {
+	public void exportAll() {
 		impExpService.exportAll();
 	}
 

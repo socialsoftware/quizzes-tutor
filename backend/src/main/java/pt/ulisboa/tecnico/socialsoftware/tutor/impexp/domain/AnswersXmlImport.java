@@ -138,9 +138,6 @@ public class AnswersXmlImport {
 		quizAnswer.setAnswerDate(answerDate);
 		quizAnswer.setCompleted(completed);
 
-		Map<Integer,QuizQuestion> mapQuizQuestion = quiz.getQuizQuestions().stream()
-				.collect(Collectors.toMap(QuizQuestion::getSequence, Function.identity()));
-
 		importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
 	}
 

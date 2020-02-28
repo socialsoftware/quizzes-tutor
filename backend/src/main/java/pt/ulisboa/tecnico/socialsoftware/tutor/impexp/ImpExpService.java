@@ -35,6 +35,8 @@ import java.util.zip.ZipOutputStream;
 
 @Service
 public class ImpExpService {
+    public static final String PATH_DELIMITER = "/";
+
     @Autowired
     private UserRepository userRepository;
 
@@ -95,7 +97,7 @@ public class ImpExpService {
 
         String filename = "tutor-" + timeStamp + ".zip";
         try {
-            fos = new FileOutputStream(directory.getPath() + "/" + filename);
+            fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
             ZipOutputStream zos = new ZipOutputStream(fos);
 
             zos.putNextEntry(new ZipEntry("users.xml"));
@@ -182,23 +184,23 @@ public class ImpExpService {
             try {
                 File directory = new File(loadDir);
 
-                File usersFile = new File(directory.getPath() + "/" + "users.xml");
+                File usersFile = new File(directory.getPath() + PATH_DELIMITER + "users.xml");
                 UsersXmlImport usersXmlImport = new UsersXmlImport();
                 usersXmlImport.importUsers(new FileInputStream(usersFile), userService);
 
-                File questionsFile = new File(directory.getPath() + "/" + "questions.xml");
+                File questionsFile = new File(directory.getPath() + PATH_DELIMITER + "questions.xml");
                 QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
                 questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService, courseRepository);
 
-                File topicsFile = new File(directory.getPath() + "/" + "topics.xml");
+                File topicsFile = new File(directory.getPath() + PATH_DELIMITER + "topics.xml");
                 TopicsXmlImport topicsXmlImport = new TopicsXmlImport();
                 topicsXmlImport.importTopics(new FileInputStream(topicsFile), topicService, questionService, courseRepository);
 
-                File quizzesFile = new File(directory.getPath() + "/" + "quizzes.xml");
+                File quizzesFile = new File(directory.getPath() + PATH_DELIMITER + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();
                 quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository, courseExecutionRepository);
 
-                File answersFile = new File(directory.getPath() + "/" + "answers.xml");
+                File answersFile = new File(directory.getPath() + PATH_DELIMITER + "answers.xml");
 
                 answersXmlImport.importAnswers(new FileInputStream(answersFile), answerService, questionRepository, quizRepository, quizAnswerRepository, userRepository);
             } catch (FileNotFoundException e) {

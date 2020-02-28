@@ -214,7 +214,7 @@ public class User implements UserDetails, Importable {
     public Integer getNumberOfInClassAnswers() {
         if (this.numberOfInClassAnswers == null)
             this.numberOfInClassAnswers = getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getCompleted())
+                    .filter(QuizAnswer::getCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
                     .sum();
@@ -244,7 +244,7 @@ public class User implements UserDetails, Importable {
     public Integer getNumberOfCorrectTeacherAnswers() {
         if (this.numberOfCorrectTeacherAnswers == null)
             this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getCompleted())
+                    .filter(QuizAnswer::getCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(questionAnswer -> questionAnswer.getOption() != null &&
