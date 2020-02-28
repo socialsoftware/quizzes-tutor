@@ -49,6 +49,7 @@
             :items="['PROPOSED', 'IN_CLASS']"
             label="*Type"
           ></v-select>
+          {{ quiz.type }}
         </v-col>
       </v-row>
 
@@ -367,8 +368,7 @@ export default class QuizForm extends Vue {
   async save() {
     try {
       this.quiz.questions = this.quizQuestions;
-      let updatedQuiz: Quiz;
-      updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
+      let updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
       this.cleanQuizQuestions();
       this.$emit('updateQuiz', updatedQuiz);
     } catch (error) {

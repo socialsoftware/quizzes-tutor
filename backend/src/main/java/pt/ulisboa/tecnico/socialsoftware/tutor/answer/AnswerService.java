@@ -90,7 +90,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(LocalDateTime.now());
             quizAnswer.setCompleted(true);
         }
@@ -136,7 +136,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (!quizAnswer.getCompleted()) {
+        if (!quizAnswer.isCompleted()) {
 
             Option option;
             if (answer.getOptionId() != null) {

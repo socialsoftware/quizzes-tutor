@@ -159,7 +159,7 @@ class ImportExportAnswersTest extends Specification {
         quizAnswerRepository.findAll().size() == 1
         def quizAnswerResult = quizAnswerRepository.findAll().get(0)
         quizAnswerResult.getAnswerDate() == ANSWER_DATE
-        quizAnswerResult.getCompleted()
+        quizAnswerResult.isCompleted()
         quizAnswerResult.getUser().getUsername() == 'pc'
         quizAnswerResult.getQuiz().getKey() == 1
         questionAnswerRepository.findAll().size() == 1

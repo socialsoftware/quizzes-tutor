@@ -1,88 +1,38 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import java.io.Serializable;
 
 public class QuestionAnswerDto implements Serializable {
-    private Integer id;
-    private Integer timeTaken;
-    private Integer sequence;
-    private Integer quizAnswerId;
-    private Integer quizQuestionId;
-    private Integer optionId;
+    private QuestionDto question;
+    private OptionDto option;
 
 
     public QuestionAnswerDto() {}
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
-        this.id = questionAnswer.getId();
-        this.timeTaken = questionAnswer.getTimeTaken();
-        this.sequence = questionAnswer.getSequence();
-        this.quizAnswerId = questionAnswer.getQuizAnswer().getId();
-        this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
-        if (questionAnswer.getOption() != null) {
-            this.optionId = questionAnswer.getOption().getId();
-        }
+        this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
+
+        if(questionAnswer.getOption() != null)
+            this.option = new OptionDto(questionAnswer.getOption());
     }
 
-    public Integer getId() {
-        return id;
+    public QuestionDto getQuestion() {
+        return question;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setQuestion(QuestionDto question) {
+        this.question = question;
     }
 
-    public Integer getTimeTaken() {
-        return timeTaken;
+    public OptionDto getOption() {
+        return option;
     }
 
-    public void setTimeTaken(Integer timeTaken) {
-        this.timeTaken = timeTaken;
-    }
-
-    public Integer getSequence() {
-        return sequence;
-    }
-
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
-    }
-
-    public Integer getQuizAnswerId() {
-        return quizAnswerId;
-    }
-
-    public void setQuizAnswerId(Integer quizAnswerId) {
-        this.quizAnswerId = quizAnswerId;
-    }
-
-    public Integer getQuizQuestionId() {
-        return quizQuestionId;
-    }
-
-    public void setQuizQuestionId(Integer quizQuestionId) {
-        this.quizQuestionId = quizQuestionId;
-    }
-
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
-    }
-
-    @Override
-    public String toString() {
-        return "QuestionAnswerDto{" +
-                "id=" + id +
-                ", timeTaken=" + timeTaken +
-                ", sequence=" + sequence +
-                ", quizAnswerId=" + quizAnswerId +
-                ", quizQuestionId=" + quizQuestionId +
-                ", optionId=" + optionId +
-                '}';
+    public void setOption(OptionDto option) {
+        this.option = option;
     }
 }

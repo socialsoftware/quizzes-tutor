@@ -19,7 +19,7 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newQuiz">New Quiz</v-btn>
+          <v-btn color="primary" dark @click="$emit('newQuiz')">New Quiz</v-btn>
         </v-card-title>
       </template>
 
@@ -38,7 +38,23 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editQuiz(item.id)"
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="showQuizAnswers(item.id)"
+              >mdi-table</v-icon
+            >
+          </template>
+          <span>View Results</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="mr-2"
+              v-on="on"
+              @click="$emit('editQuiz', item.id)"
               >edit</v-icon
             >
           </template>
@@ -74,6 +90,13 @@
       v-on:close-quiz-dialog="closeQuizDialog"
     />
 
+    <show-quiz-answers-dialog
+      v-if="quizAnswers"
+      :dialog="quizAnswersDialog"
+      :quiz-answers="quizAnswers"
+      v-on:close-student-answers-dialog="closeQuizAnswersDialog"
+    />
+
     <v-dialog
       v-model="qrcodeDialog"
       @keydown.esc="closeQrCodeDialog"
@@ -97,10 +120,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
+import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
+import { QuizAnswer } from '@/models/management/QuizAnswer';
 
 @Component({
   components: {
+    'show-quiz-answers-dialog': ShowQuizAnswersDialog,
     'show-quiz-dialog': ShowQuizDialog,
     'vue-qrcode': VueQrcode
   }
@@ -108,8 +134,10 @@ import VueQrcode from 'vue-qrcode';
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
+  quizAnswers: QuizAnswer[] | null = null;
   search: string = '';
   quizDialog: boolean = false;
+  quizAnswersDialog: boolean = false;
   qrcodeDialog: boolean = false;
   qrValue: number | null = null;
   headers: object = [
@@ -171,6 +199,20 @@ export default class QuizList extends Vue {
     this.quiz = null;
   }
 
+  async showQuizAnswers(quizId: number) {
+    try {
+      this.quizAnswers = await RemoteServices.getQuizAnswers(quizId);
+      this.quizAnswersDialog = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  closeQuizAnswersDialog() {
+    this.quizAnswersDialog = false;
+    this.quiz = null;
+  }
+
   showQrCode(quizId: number) {
     this.qrValue = quizId;
     this.qrcodeDialog = true;
@@ -179,14 +221,6 @@ export default class QuizList extends Vue {
   closeQrCodeDialog() {
     this.qrcodeDialog = false;
     this.qrValue = null;
-  }
-
-  newQuiz() {
-    this.$emit('newQuiz');
-  }
-
-  editQuiz(quizId: number) {
-    this.$emit('editQuiz', quizId);
   }
 
   async deleteQuiz(quizId: number) {

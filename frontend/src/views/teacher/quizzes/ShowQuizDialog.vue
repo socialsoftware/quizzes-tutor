@@ -1,5 +1,9 @@
 <template>
-  <v-dialog v-model="dialog" @keydown.esc="closeQuizDialog" max-width="75%">
+  <v-dialog
+    v-model="dialog"
+    @keydown.esc="$emit('close-quiz-dialog')"
+    max-width="75%"
+  >
     <v-card v-if="quiz">
       <v-card-title>{{ quiz.title }}</v-card-title>
 
@@ -9,7 +13,9 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuizDialog">close</v-btn>
+        <v-btn dark color="blue darken-1" @click="$emit('close-quiz-dialog')"
+          >close</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -28,9 +34,5 @@ import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
 export default class ShowQuizDialog extends Vue {
   @Prop({ type: Quiz, required: true }) readonly quiz!: Quiz | null;
   @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-
-  closeQuizDialog() {
-    this.$emit('close-quiz-dialog');
-  }
 }
 </script>

@@ -125,7 +125,7 @@ class ConcludeQuizTest extends Specification {
         def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
-        quizAnswer.getCompleted()
+        quizAnswer.isCompleted()
         quizAnswer.getAnswerDate() != null
         questionAnswerRepository.findAll().size() == 1
         def questionAnswer = questionAnswerRepository.findAll().get(0)
@@ -150,7 +150,7 @@ class ConcludeQuizTest extends Specification {
         def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
-        quizAnswer.getCompleted()
+        quizAnswer.isCompleted()
         quizAnswer.getAnswerDate() != null
         questionAnswerRepository.findAll().size() == 1
         def questionAnswer = questionAnswerRepository.findAll().get(0)
@@ -177,7 +177,7 @@ class ConcludeQuizTest extends Specification {
         def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
 
         then: 'the value is createQuestion and persistent'
-        quizAnswer.getCompleted()
+        quizAnswer.isCompleted()
         questionAnswerRepository.findAll().size() == 1
         def questionAnswer = questionAnswerRepository.findAll().get(0)
         questionAnswer.getQuizAnswer() == quizAnswer
@@ -228,7 +228,7 @@ class ConcludeQuizTest extends Specification {
             return new AnswerService()
         }
         @Bean
-        AnswersXmlImport aswersXmlImport() {
+        AnswersXmlImport answersXmlImport() {
             return new AnswersXmlImport()
         }
     }
