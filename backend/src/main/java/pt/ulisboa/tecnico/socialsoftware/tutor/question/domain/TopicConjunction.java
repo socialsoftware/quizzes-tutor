@@ -20,8 +20,6 @@ public class TopicConjunction {
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
-    public TopicConjunction(){}
-
     public Integer getId() {
         return id;
     }

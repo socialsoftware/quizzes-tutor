@@ -6,8 +6,6 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 
-import java.io.IOException;
-
 @Component
 public class ScheduledTasks {
 	@Autowired

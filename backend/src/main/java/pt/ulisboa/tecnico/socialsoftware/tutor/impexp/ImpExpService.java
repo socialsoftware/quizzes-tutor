@@ -93,12 +93,10 @@ public class ImpExpService {
     public String exportAll() {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
         File directory = new File(exportDir);
-        FileOutputStream fos = null;
 
         String filename = "tutor-" + timeStamp + ".zip";
-        try {
-            fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
-            ZipOutputStream zos = new ZipOutputStream(fos);
+        try (FileOutputStream fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
+        ZipOutputStream zos = new ZipOutputStream(fos);){
 
             zos.putNextEntry(new ZipEntry("users.xml"));
             InputStream in = generateUsersInputStream();
@@ -124,18 +122,9 @@ public class ImpExpService {
             in = generateAnswersInputStream();
             copyToZipStream(zos, in);
             zos.closeEntry();
-            zos.close();
+        } catch (IOException ex) {
+           throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
-        catch (IOException ex)
-        {
-            // log/report exception, then delete the invalid file
-            IOUtils.closeQuietly(fos);
-        }
-        finally
-        {
-            IOUtils.closeQuietly(fos);
-        }
-
 
         return filename;
     }
