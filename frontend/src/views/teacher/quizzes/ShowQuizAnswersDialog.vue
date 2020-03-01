@@ -31,13 +31,15 @@
         <td
           v-for="questionAnswer in item.questionAnswers"
           :key="questionAnswer.question.id"
-          v-bind:class="[
-            questionAnswer.option.correct ? 'font-weight-bold' : 'true'
-          ]"
           style="border: 0"
         >
           {{ convertToLetter(questionAnswer.option.sequence) }}
         </td>
+        <template v-if="item.questionAnswers.length === 0">
+          <td v-for="i in correctSequence.length" :key="i" style="border: 0">
+            X
+          </td>
+        </template>
       </template>
 
       <template v-slot:body.append>
@@ -102,7 +104,11 @@ export default class ShowStudentAnswersDialog extends Vue {
   ];
 
   convertToLetter(number: number) {
-    return String.fromCharCode(65 + number);
+    if (number === undefined) {
+      return 'X';
+    } else {
+      return String.fromCharCode(65 + number);
+    }
   }
 }
 </script>
