@@ -18,7 +18,7 @@
       <v-row>
         <v-col cols="12" sm="6">
           <v-datetime-picker
-            label="Available Date"
+            label="*Available Date"
             format="yyyy-MM-dd HH:mm"
             v-model="quiz.availableDate"
             date-format="yyyy-MM-dd"
@@ -353,6 +353,7 @@ export default class QuizForm extends Vue {
   get canSave(): boolean {
     return (
       !!this.quiz.title &&
+      !!this.quiz.availableDate &&
       !!this.quiz.type &&
       ((this.quiz.type == 'IN_CLASS' &&
         this.quiz.conclusionDate !== undefined) ||

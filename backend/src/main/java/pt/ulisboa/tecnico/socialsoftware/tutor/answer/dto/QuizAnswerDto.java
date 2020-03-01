@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class QuizAnswerDto implements Serializable {
-    private Integer id; //TODO remove me
+    private Integer id;
     private String name;
     private String username;
     private String creationDate;

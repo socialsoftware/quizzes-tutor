@@ -22,8 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZZES_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 public class QuizzesXmlImport {
 	private QuizService quizService;
@@ -120,7 +119,7 @@ public class QuizzesXmlImport {
 		quizDto.setVersion(version);
 
 		CourseExecution courseExecution =
-				this.courseExecutionRepository.findByAcronymAcademicTermType(acronym, academicTerm, courseExecutionType).get();
+				this.courseExecutionRepository.findByAcronymAcademicTermType(acronym, academicTerm, courseExecutionType).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));
 		QuizDto quizDto2 = quizService.createQuiz(courseExecution.getId(), quizDto);
 		importQuizQuestions(quizElement.getChild("quizQuestions"), quizDto2);
 	}
@@ -128,14 +127,14 @@ public class QuizzesXmlImport {
 	private void importQuizQuestions(Element quizQuestionsElement, QuizDto quizDto ) {
 		for (Element quizQuestionElement: quizQuestionsElement.getChildren("quizQuestion")) {
 			Integer sequence = Integer.valueOf(quizQuestionElement.getAttributeValue("sequence"));
-			Integer questionKey = Integer.valueOf(quizQuestionElement.getAttributeValue("questionKey"));
+			int questionKey = Integer.parseInt(quizQuestionElement.getAttributeValue("questionKey"));
 
 			Question question = questionRepository.findByKey(questionKey)
 					.orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionKey));
 
 			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizDto.getId());
 
-			QuizQuestion quizQuestion = quizQuestionRepository.findById(quizQuestionDto.getId()).get();
+			QuizQuestion quizQuestion = quizQuestionRepository.findById(quizQuestionDto.getId()).orElseThrow(() -> new TutorException(QUIZ_QUESTION_NOT_FOUND, quizQuestionDto.getId()));
 
 			quizQuestion.setSequence(sequence);
 		}

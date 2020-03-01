@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import java.io.*;
 import java.nio.charset.Charset;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOPICS_IMPORT_ERROR;
 
 public class TopicsXmlImport {
@@ -77,7 +78,7 @@ public class TopicsXmlImport {
         TopicDto topicDto = new TopicDto();
         topicDto.setName(name);
 
-        Course course = courseRepository.findByNameType(courseName, courseType).get();
+        Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 		topicService.createTopic(course.getId(), topicDto);
 
 		for (Element questionElement: topicElement.getChild("questions").getChildren("question")) {

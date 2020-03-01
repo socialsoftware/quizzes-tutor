@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.Importable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
-public class User implements UserDetails, Importable {
+public class User implements UserDetails {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id

@@ -5,6 +5,7 @@
       :items="students"
       :search="search"
       disable-pagination
+      :hide-default-footer="true"
       :mobile-breakpoint="0"
       multi-sort
     >

@@ -13,7 +13,7 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with name %d"),
 
-    COURSE_NOT_FOUND("Course not found with id %s"),
+    COURSE_NOT_FOUND("Course not found with name %s"),
     COURSE_NAME_IS_EMPTY("The course name is empty"),
     COURSE_TYPE_NOT_DEFINED("The course type is not defined"),
     COURSE_EXECUTION_ACRONYM_IS_EMPTY("The course execution acronym is empty"),
@@ -41,6 +41,7 @@ public enum ErrorMessage {
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
 
+    NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     QUESTION_MISSING_DATA("Missing information for quiz"),
     QUESTION_MULTIPLE_CORRECT_OPTIONS("Questions can only have 1 correct option"),

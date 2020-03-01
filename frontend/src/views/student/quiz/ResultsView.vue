@@ -1,5 +1,5 @@
 <template>
-  <div class="quiz-container">
+  <div class="quiz-container" v-if="statementManager.correctAnswers.length > 0">
     <div class="question-navigation">
       <div class="navigation-buttons">
         <span
@@ -67,6 +67,13 @@ export default class ResultsView extends Vue {
   async created() {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: 'create-quiz' });
+    } else if (this.statementManager.correctAnswers.length === 0) {
+      await this.$store.dispatch('loading');
+      setTimeout(() => {
+        this.statementManager.concludeQuiz();
+      }, 2000);
+
+      await this.$store.dispatch('clearLoading');
     }
   }
 

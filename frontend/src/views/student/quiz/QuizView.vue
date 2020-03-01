@@ -14,7 +14,7 @@
           v-if="secondsToSubmission > 0"
         >
           <i class="fas fa-clock"></i>
-          <span v-if="!hideTime">{{ HHMMSS }}</span>
+          <span v-if="!hideTime">{{ getTimeAsHHMMSS }}</span>
         </span>
         <span class="end-quiz" @click="confirmationDialog = true"
           ><i class="fas fa-times" />End Quiz</span
@@ -138,7 +138,9 @@ export default class QuizView extends Vue {
     if (this.statementManager.isEmpty()) {
       await this.$router.push({ name: 'create-quiz' });
     }
-    this.countDownToResults();
+    if (this.secondsToSubmission > 0) {
+      this.countDownToResults();
+    }
   }
 
   increaseOrder(): void {
@@ -164,13 +166,10 @@ export default class QuizView extends Vue {
 
   async changeAnswer(optionId: number) {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
+      let previousAnswer = this.statementQuiz.answers[this.questionOrder]
+        .optionId;
       try {
         this.calculateTime();
-
-        await RemoteServices.submitAnswer(
-          this.statementQuiz.id,
-          this.statementQuiz.answers[this.questionOrder]
-        );
 
         if (
           this.statementQuiz.answers[this.questionOrder].optionId === optionId
@@ -179,7 +178,16 @@ export default class QuizView extends Vue {
         } else {
           this.statementQuiz.answers[this.questionOrder].optionId = optionId;
         }
+
+        await RemoteServices.submitAnswer(
+          this.statementQuiz.id,
+          this.statementQuiz.answers[this.questionOrder]
+        );
       } catch (error) {
+        this.statementQuiz.answers[
+          this.questionOrder
+        ].optionId = previousAnswer;
+
         await this.$store.dispatch('error', error);
       }
     }
@@ -196,8 +204,6 @@ export default class QuizView extends Vue {
         this.secondsToSubmission <= 0
       ) {
         await this.$router.push({ name: 'quiz-results' });
-      } else {
-        this.countDownToResults();
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -214,7 +220,7 @@ export default class QuizView extends Vue {
   }
 
   async countDownToResults() {
-    if (this.secondsToSubmission && this.secondsToSubmission > 0) {
+    if (this.secondsToSubmission && this.secondsToSubmission > -1) {
       this.secondsToSubmission! -= 1;
       setTimeout(() => {
         this.countDownToResults();
@@ -224,9 +230,8 @@ export default class QuizView extends Vue {
     }
   }
 
-  get HHMMSS() {
+  get getTimeAsHHMMSS() {
     let hours = Math.floor(this.secondsToSubmission / 3600);
-    console.log(hours);
     let minutes = Math.floor((this.secondsToSubmission - hours * 3600) / 60);
     let seconds = this.secondsToSubmission - hours * 3600 - minutes * 60;
 

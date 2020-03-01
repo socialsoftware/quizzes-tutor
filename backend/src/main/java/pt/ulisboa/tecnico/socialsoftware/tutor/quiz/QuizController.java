@@ -58,6 +58,12 @@ public class QuizController {
         return this.quizService.getQuizAnswers(quizId);
     }
 
+    @GetMapping("/quizzes/{quizId}/correct-sequence")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public List<Integer> getCorrectSequence(@PathVariable Integer quizId) {
+        return this.quizService.getCorrectSequence(quizId);
+    }
+
 
     private void formatDates(QuizDto quiz) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");

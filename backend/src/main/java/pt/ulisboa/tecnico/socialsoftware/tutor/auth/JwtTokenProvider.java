@@ -58,7 +58,7 @@ public class JwtTokenProvider {
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(expiryDate)
-                .signWith(SignatureAlgorithm.RS512, privateKey)
+                .signWith(privateKey)
                 .compact();
     }
 
@@ -79,8 +79,6 @@ public class JwtTokenProvider {
         try {
             Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
             return true;
-        } catch (SignatureException ex) {
-            logger.error("Server security keys have changed");
         } catch (MalformedJwtException ex) {
             logger.error("Invalkey JWT token");
         } catch (ExpiredJwtException ex) {

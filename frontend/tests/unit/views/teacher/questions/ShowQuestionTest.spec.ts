@@ -6,6 +6,7 @@ import {
 } from '../../../samples/Question';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
+import Option from '@/models/management/Option';
 
 describe('ShowQuestion.vue with question', () => {
   let wrapper: Wrapper<ShowQuestion>;
@@ -23,7 +24,7 @@ describe('ShowQuestion.vue with question', () => {
     expect(wrapper.find('div span').text()).toMatch(
       questionWithoutFigure.content
     );
-    questionWithoutFigure.options.forEach(option => {
+    questionWithoutFigure.options.forEach((option: Option) => {
       expect(wrapper.html()).toContain(option.content);
     });
   });

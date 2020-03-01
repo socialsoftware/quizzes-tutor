@@ -83,23 +83,18 @@
         </v-tooltip>
       </template>
     </v-data-table>
-    <show-quiz-dialog
-      v-if="quiz"
-      :dialog="quizDialog"
-      :quiz="quiz"
-      v-on:close-quiz-dialog="closeQuizDialog"
-    />
+    <show-quiz-dialog v-if="quiz" v-model="quizDialog" :quiz="quiz" />
 
     <show-quiz-answers-dialog
       v-if="quizAnswers"
-      :dialog="quizAnswersDialog"
+      v-model="quizAnswersDialog"
       :quiz-answers="quizAnswers"
-      v-on:close-student-answers-dialog="closeQuizAnswersDialog"
+      :correct-sequence="correctSequence"
     />
 
     <v-dialog
       v-model="qrcodeDialog"
-      @keydown.esc="closeQrCodeDialog"
+      @keydown.esc="qrcodeDialog = false"
       max-width="75%"
     >
       <v-card v-if="qrValue">
@@ -134,7 +129,8 @@ import { QuizAnswer } from '@/models/management/QuizAnswer';
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
-  quizAnswers: QuizAnswer[] | null = null;
+  quizAnswers: QuizAnswer[] = [];
+  correctSequence: number[] = [];
   search: string = '';
   quizDialog: boolean = false;
   quizAnswersDialog: boolean = false;
@@ -194,33 +190,21 @@ export default class QuizList extends Vue {
     }
   }
 
-  closeQuizDialog() {
-    this.quizDialog = false;
-    this.quiz = null;
-  }
-
   async showQuizAnswers(quizId: number) {
     try {
-      this.quizAnswers = await RemoteServices.getQuizAnswers(quizId);
+      [this.quizAnswers, this.correctSequence] = await Promise.all([
+        RemoteServices.getQuizAnswers(quizId),
+        RemoteServices.getCorrectSequence(quizId)
+      ]);
       this.quizAnswersDialog = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
   }
 
-  closeQuizAnswersDialog() {
-    this.quizAnswersDialog = false;
-    this.quiz = null;
-  }
-
   showQrCode(quizId: number) {
     this.qrValue = quizId;
     this.qrcodeDialog = true;
-  }
-
-  closeQrCodeDialog() {
-    this.qrcodeDialog = false;
-    this.qrValue = null;
   }
 
   async deleteQuiz(quizId: number) {

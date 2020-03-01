@@ -233,15 +233,9 @@ public class StatementService {
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
-        // remove all by default
-        // TODO: support a ALL assessment
-        //if (!quizDetails.getAssessment().equals("all")) {
-            Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
-                    .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.valueOf(quizDetails.getAssessment())));
+        Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
+                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, Integer.parseInt(quizDetails.getAssessment())));
 
-            return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
-       // }
-       // return availableQuestions;
+        return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
-
 }

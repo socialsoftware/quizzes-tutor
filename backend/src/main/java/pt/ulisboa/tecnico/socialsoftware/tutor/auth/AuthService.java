@@ -68,8 +68,9 @@ public class AuthService {
                 User finalUser = user;
                 activeTeachingCourses.stream().filter(courseExecution -> !finalUser.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
+                allCoursesInDb.addAll(fenixTeachingCourses);
+
                 String ids = fenixTeachingCourses.stream()
-                        .peek(allCoursesInDb::add)
                         .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                         .collect(Collectors.joining(","));
 

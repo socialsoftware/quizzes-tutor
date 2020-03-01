@@ -343,6 +343,17 @@ export default class RemoteServices {
       });
   }
 
+  static async getCorrectSequence(quizId: number): Promise<number[]> {
+    return httpClient
+      .get(`/quizzes/${quizId}/correct-sequence`)
+      .then(response => {
+        return response.data;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async saveQuiz(quiz: Quiz): Promise<Quiz> {
     if (quiz.id) {
       return httpClient
@@ -366,19 +377,6 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
     }
-  }
-
-  static async getCourseExecutions(): Promise<Course[]> {
-    return httpClient
-      .get(`/courses/${Store.getters.getCurrentCourse.courseId}`)
-      .then(response => {
-        return response.data.map((course: any) => {
-          return new Course(course);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
   }
 
   static async getCourseStudents(course: Course) {

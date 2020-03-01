@@ -13,27 +13,27 @@ export const questionWithFigure = new Question({
   options: [
     {
       id: 1578,
-      number: 1,
+      sequence: 1,
       correct: false,
       content:
         'Memcached can be considered a sub-module of the Present Graphs module.'
     },
     {
       id: 1579,
-      number: 2,
+      sequence: 2,
       correct: false,
       content:
         'Memcached can be considered a direct sub-module of the top Graphite module.'
     },
     {
       id: 1580,
-      number: 3,
+      sequence: 3,
       correct: false,
       content: 'Memcached is not a module.'
     },
     {
       id: 1577,
-      number: 0,
+      sequence: 0,
       correct: true,
       content:
         'Memcached can be considered a sub-module of the Store Graphs module.'
@@ -73,27 +73,27 @@ export const questionWithoutFigure = new Question({
   options: [
     {
       id: 1578,
-      number: 1,
+      sequence: 1,
       correct: false,
       content:
         'Memcached can be considered a sub-module of the Present Graphs module.'
     },
     {
       id: 1579,
-      number: 2,
+      sequence: 2,
       correct: false,
       content:
         'Memcached can be considered a direct sub-module of the top Graphite module.'
     },
     {
       id: 1580,
-      number: 3,
+      sequence: 3,
       correct: false,
       content: 'Memcached is not a module.'
     },
     {
       id: 1577,
-      number: 0,
+      sequence: 0,
       correct: true,
       content:
         'Memcached can be considered a sub-module of the Store Graphs module.'

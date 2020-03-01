@@ -1,17 +1,18 @@
 <template>
   <v-dialog
-    v-model="dialog"
-    @keydown.esc="$emit('close-student-answers-dialog')"
+    :value="dialog"
+    @input="$emit('dialog', $event.target)"
+    @keydown.esc="$emit('dialog', false)"
     max-width="75%"
   >
     <v-data-table
       :headers="headers"
       :items="quizAnswers"
       :search="search"
-      multi-sort
+      disable-pagination
+      :hide-default-footer="true"
       :mobile-breakpoint="0"
-      :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      multi-sort
     >
       <template v-slot:top>
         <v-card-title>
@@ -27,25 +28,49 @@
       </template>
 
       <template v-slot:item.answers="{ item }">
-        <span
+        <td
           v-for="questionAnswer in item.questionAnswers"
-          :key="questionAnswer"
+          :key="questionAnswer.question.id"
+          v-bind:class="[
+            questionAnswer.option.correct ? 'font-weight-bold' : 'true'
+          ]"
+          style="border: 0"
         >
           {{ convertToLetter(questionAnswer.option.sequence) }}
-        </span>
+        </td>
+      </template>
+
+      <template v-slot:body.append>
+        <tr>
+          <td colspan="4">
+            Correct key:
+          </td>
+          <div>
+            <td></td>
+            <td
+              v-for="(sequence, index) in correctSequence"
+              :key="index"
+              style="border: 0"
+            >
+              {{ convertToLetter(sequence) }}
+            </td>
+          </div>
+        </tr>
       </template>
     </v-data-table>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 
 @Component
 export default class ShowStudentAnswersDialog extends Vue {
-  @Prop({ required: true }) readonly quizAnswers!: QuizAnswer[] | null;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
+  @Model('dialog', Boolean) dialog!: boolean;
+  @Prop({ required: true }) readonly quizAnswers!: QuizAnswer[];
+  @Prop({ required: true }) readonly correctSequence!: number[];
+
   search: string = '';
 
   headers: object = [

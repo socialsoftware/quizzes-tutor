@@ -1,9 +1,5 @@
 <template>
-  <v-dialog
-    v-model="dialog"
-    @keydown.esc="$emit('close-quiz-dialog')"
-    max-width="75%"
-  >
+  <v-dialog v-model="dialog" @keydown.esc="dialog = false" max-width="75%">
     <v-card v-if="quiz">
       <v-card-title>{{ quiz.title }}</v-card-title>
 
@@ -22,7 +18,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
 
@@ -32,7 +28,7 @@ import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
   }
 })
 export default class ShowQuizDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Quiz, required: true }) readonly quiz!: Quiz | null;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 }
 </script>
