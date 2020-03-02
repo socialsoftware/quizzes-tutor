@@ -48,9 +48,13 @@ public class Course {
     public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, Course.Type type) {
         return getCourseExecutions().stream()
                 .filter(courseExecution -> courseExecution.getType().equals(type)
-                                            && courseExecution.getAcronym().equals(acronym)
-                                            && courseExecution.getAcademicTerm().equals(academicTerm))
+                        && courseExecution.getAcronym().equals(acronym)
+                        && courseExecution.getAcademicTerm().equals(academicTerm))
                 .findAny();
+    }
+
+    public boolean existsCourseExecution(String acronym, String academicTerm, Course.Type type) {
+        return getCourseExecution(acronym, academicTerm, type).isPresent();
     }
 
     public Integer getId() {
