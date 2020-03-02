@@ -52,11 +52,8 @@ public class CourseExecution {
         if (academicTerm == null || academicTerm.trim().isEmpty()) {
             throw new TutorException(COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY);
         }
-        if (course.getCourseExecutions().stream()
-                .anyMatch(courseExecution -> courseExecution.getType().equals(type)
-                        && courseExecution.getAcronym().equals(acronym)
-                        && courseExecution.getAcademicTerm().equals(academicTerm))) {
-            throw new TutorException(DUPLICATE_COURSE_EXECUTION,acronym + academicTerm);
+        if (course.existsCourseExecution(acronym, academicTerm, type)) {
+            throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
 
         this.type = type;

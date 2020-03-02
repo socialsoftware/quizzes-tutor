@@ -34,6 +34,7 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
         courseRepository.save(course)
         and: 'a courseDto'
         def courseDto = new CourseDto(course)
+        courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName(COURSE_ONE)
         courseDto.setAcronym(ACRONYM_ONE)
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
@@ -58,6 +59,7 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
     def "the course does not exist and create both, course and execution course"() {
         given: 'a courseDto'
         def courseDto = new CourseDto()
+        courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName(COURSE_ONE)
         courseDto.setAcronym(ACRONYM_ONE)
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
@@ -109,6 +111,7 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
     def "course name is empty"() {
         given: 'a courseDto'
         def courseDto = new CourseDto()
+        courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName("  ")
         courseDto.setAcronym(ACRONYM_ONE)
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
@@ -123,6 +126,7 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
     def "execution course acronym is empty"() {
         given: 'a courseDto'
         def courseDto = new CourseDto()
+        courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName(COURSE_ONE)
         courseDto.setAcronym("   ")
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
@@ -137,6 +141,7 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
     def "execution course academic term is empty"() {
         given: 'a courseDto'
         def courseDto = new CourseDto()
+        courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName(COURSE_ONE)
         courseDto.setAcronym(ACRONYM_ONE)
         courseDto.setAcademicTerm("   ")

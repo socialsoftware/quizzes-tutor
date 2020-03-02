@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import spock.lang.Specification
 
 @DataJpaTest
-class GetCoursesTest extends Specification {
+class GetCoursesServiceTest extends Specification {
     public static final String COURSE_ONE = "CourseOne"
     public static final String COURSE_TWO = "CourseTwo"
 
