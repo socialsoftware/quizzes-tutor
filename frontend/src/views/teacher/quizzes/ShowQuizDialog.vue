@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" @keydown.esc="dialog = false" max-width="75%">
+  <v-dialog
+    :value="dialog"
+    @input="$emit('dialog', false)"
+    @keydown.esc="$emit('dialog', false)"
+    max-width="75%"
+  >
     <v-card v-if="quiz">
       <v-card-title>{{ quiz.title }}</v-card-title>
 

@@ -26,10 +26,10 @@ public class QuizAnswerDto implements Serializable {
         this.username = quizAnswer.getUser().getUsername();
         this.name = quizAnswer.getUser().getName();
         if (quizAnswer.getAnswerDate() != null)
-            this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            this.answerDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         if (quizAnswer.getAnswerDate() != null)
-            this.creationDate = quizAnswer.getAnswerDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            this.creationDate = quizAnswer.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(qa -> qa.getQuizQuestion().getSequence()))

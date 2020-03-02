@@ -35,61 +35,25 @@
       sans-serif;
     outline: rgb(255, 255, 255) none 0;
 
-    .timer {
-      bottom: 0;
-      cursor: pointer;
-      box-sizing: border-box;
-      color: rgb(255, 255, 255);
-      left: 0;
-      position: relative;
-      right: 0;
-      text-align: center;
-      text-decoration: none solid rgb(255, 255, 255);
-      text-size-adjust: 100%;
-      text-transform: uppercase;
-      top: 0;
-      column-rule-color: rgb(255, 255, 255);
-      perspective-origin: 0 0;
-      transform-origin: 0 0;
-      user-select: none;
-      caret-color: rgb(255, 255, 255);
-      border: 0 none rgb(255, 255, 255);
-      font: normal normal 700 normal 18px / 51px 'Varela Round', Helvetica,
-        Arial, sans-serif;
-      outline: rgb(255, 255, 255) none 0;
-    }
-
-    .end-quiz {
-      bottom: 0;
-      box-sizing: border-box;
-      color: rgb(255, 255, 255);
-      cursor: pointer;
-      display: block;
-      height: 50px;
-      min-width: 170px;
-      position: absolute;
-      right: 0;
-      text-align: center;
-      text-decoration: none solid rgb(255, 255, 255);
-      text-size-adjust: 100%;
-      text-transform: uppercase;
-      top: 0;
+    >span {
       width: 170px;
-      column-rule-color: rgb(255, 255, 255);
-      perspective-origin: 85px 25px;
-      transform-origin: 85px 25px;
-      user-select: none;
-      caret-color: rgb(255, 255, 255);
+      bottom: 0;
+      cursor: pointer;
+      position: absolute;
+      text-align: center;
+      text-decoration: none solid rgb(255, 255, 255);
+      text-size-adjust: 100%;
+      text-transform: uppercase;
       background: rgb(90, 103, 115) none repeat scroll 0 0 / auto padding-box
-        border-box;
-      border-top: 0 none rgb(255, 255, 255);
-      border-right: 0 none rgb(255, 255, 255);
-      border-bottom: 0 none rgb(255, 255, 255);
-      border-left: 1px solid rgb(84, 97, 110);
-      font: normal normal 700 normal 18px / 51px 'Varela Round', Helvetica,
-        Arial, sans-serif;
-      outline: rgb(255, 255, 255) none 0;
-      padding: 0 8px;
+      border-box;
+
+      &.timer {
+        left: 0;
+      }
+
+      &.end-quiz {
+        right: 0;
+      }
     }
   }
 

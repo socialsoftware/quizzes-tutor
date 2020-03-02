@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     :value="dialog"
-    @input="$emit('dialog', $event.target)"
+    @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
   >
@@ -31,6 +31,9 @@
         <td
           v-for="questionAnswer in item.questionAnswers"
           :key="questionAnswer.question.id"
+          v-bind:class="[
+            questionAnswer.option.correct ? 'green' : 'red darken-4'
+          ]"
           style="border: 0"
         >
           {{ convertToLetter(questionAnswer.option.sequence) }}
@@ -85,12 +88,12 @@ export default class ShowStudentAnswersDialog extends Vue {
     },
     {
       text: 'Start Date',
-      value: 'startDate',
+      value: 'creationDate',
       align: 'center',
       width: '5%'
     },
     {
-      text: 'Submission Date',
+      text: 'Answer Date',
       value: 'answerDate',
       align: 'center',
       width: '5%'

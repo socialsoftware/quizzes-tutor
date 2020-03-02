@@ -25,7 +25,6 @@
     "vue-qrcode": "^0.3.3",
     "vue-qrcode-reader": "^2.1.1",
     "vue-router": "^3.1.3",
-    "vue-simplemde": "^1.0.3",
     "vue-underscore": "^0.1.4",
     "vuetify": "^2.2.5",
     "vuetify-datetime-picker": "^2.1.1",

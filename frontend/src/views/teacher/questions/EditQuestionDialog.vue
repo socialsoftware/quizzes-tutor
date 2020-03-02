@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" max-width="75%">
+  <v-dialog
+    :value="dialog"
+    @input="$emit('dialog', false)"
+    @keydown.esc="$emit('dialog', false)"
+    max-width="75%"
+  >
     <v-card>
       <v-card-title>
         <span class="headline">
@@ -18,11 +23,12 @@
               <v-text-field v-model="editQuestion.title" label="Title" />
             </v-flex>
             <v-flex xs24 sm12 md12>
-              <vue-simplemde
+              <v-textarea
+                outline
+                rows="10"
                 v-model="editQuestion.content"
-                class="question-textarea"
-                :configs="markdownConfigs"
-              />
+                label="Content"
+              ></v-textarea>
             </v-flex>
             <v-flex
               xs24
@@ -36,11 +42,12 @@
                 class="ma-4"
                 label="Correct"
               />
-              <vue-simplemde
+              <v-textarea
+                outline
+                rows="10"
                 v-model="editQuestion.options[index - 1].content"
-                class="option-textarea"
-                :configs="markdownConfigs"
-              />
+                label="Content"
+              ></v-textarea>
             </v-flex>
           </v-layout>
         </v-container>
@@ -48,7 +55,9 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
+        <v-btn color="blue darken-1" @click="$emit('dialog', false)"
+          >Cancel</v-btn
+        >
         <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
       </v-card-actions>
     </v-card>
@@ -56,14 +65,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class EditQuestionDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
 
   editQuestion!: Question;
 
@@ -71,18 +80,14 @@ export default class EditQuestionDialog extends Vue {
     this.editQuestion = new Question(this.question);
   }
 
-  // https://github.com/F-loat/vue-simplemde/blob/master/doc/configuration_en.md
-  markdownConfigs: object = {
-    status: false,
-    spellChecker: false,
-    insertTexts: {
-      image: ['![image][image]', '']
-    }
-  };
-
-  closeDialogue() {
-    this.$emit('close-edit-question-dialog');
-  }
+  // TODO use EasyMDE with these configs
+  // markdownConfigs: object = {
+  //   status: false,
+  //   spellChecker: false,
+  //   insertTexts: {
+  //     image: ['![image][image]', '']
+  //   }
+  // };
 
   async saveQuestion() {
     if (

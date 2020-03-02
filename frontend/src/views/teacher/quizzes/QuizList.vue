@@ -111,7 +111,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
@@ -132,9 +132,11 @@ export default class QuizList extends Vue {
   quizAnswers: QuizAnswer[] = [];
   correctSequence: number[] = [];
   search: string = '';
+
   quizDialog: boolean = false;
   quizAnswersDialog: boolean = false;
   qrcodeDialog: boolean = false;
+
   qrValue: number | null = null;
   headers: object = [
     { text: 'Title', value: 'title', align: 'left', width: '30%' },

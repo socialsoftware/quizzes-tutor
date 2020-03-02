@@ -126,9 +126,8 @@
     </v-data-table>
     <edit-question-dialog
       v-if="currentQuestion"
-      :dialog="editQuestionDialog"
+      v-model="editQuestionDialog"
       :question="currentQuestion"
-      v-on:close-edit-question-dialog="onCloseEditQuestionDialogue"
       v-on:save-question="onSaveQuestion"
     />
     <show-question-dialog
@@ -141,7 +140,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
@@ -197,6 +196,13 @@ export default class QuestionsView extends Vue {
       sortable: false
     }
   ];
+
+  @Watch('editQuestionDialog')
+  closeError() {
+    if (!this.editQuestionDialog) {
+      this.currentQuestion = null;
+    }
+  }
 
   async created() {
     await this.$store.dispatch('loading');
@@ -302,10 +308,6 @@ export default class QuestionsView extends Vue {
   async onSaveQuestion(question: Question) {
     this.questions = this.questions.filter(q => q.id !== question.id);
     this.questions.unshift(question);
-    this.onCloseEditQuestionDialogue();
-  }
-
-  onCloseEditQuestionDialogue() {
     this.editQuestionDialog = false;
     this.currentQuestion = null;
   }
