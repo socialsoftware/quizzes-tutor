@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.validation.Valid;
@@ -54,14 +54,8 @@ public class QuizController {
 
     @GetMapping("/quizzes/{quizId}/answers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public List<QuizAnswerDto> getQuizAnswers(@PathVariable Integer quizId) {
+    public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
         return this.quizService.getQuizAnswers(quizId);
-    }
-
-    @GetMapping("/quizzes/{quizId}/correct-sequence")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public List<Integer> getCorrectSequence(@PathVariable Integer quizId) {
-        return this.quizService.getCorrectSequence(quizId);
     }
 
 

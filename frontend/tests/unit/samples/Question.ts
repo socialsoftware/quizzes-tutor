@@ -6,6 +6,8 @@ export const questionWithFigure = new Question({
   content:
     'Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.   \n![image][image]  \n',
   difficulty: 54,
+  numberOfGeneratedQuizzes: 2,
+  numberOfNonGeneratedQuizzes: 2,
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,
@@ -66,6 +68,8 @@ export const questionWithoutFigure = new Question({
   content:
     'Consider the following decomposition view of the Graphite system where module Store Graphs is responsible for managing the storage of datapoints and graphs and module Present Graphs for graphs generation and presentation. Memcache is a library that maintains datapoints in memory to reduce the overhead of obtaining them from the file system.',
   difficulty: 54,
+  numberOfGeneratedQuizzes: 2,
+  numberOfNonGeneratedQuizzes: 2,
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,

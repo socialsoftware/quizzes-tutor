@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.time.format.DateTimeFormatter;
@@ -16,7 +18,9 @@ public class QuestionDto implements Serializable {
     private String title;
     private String content;
     private Integer difficulty;
-    private int numberOfAnswers;
+    private int numberOfAnswers = 0;
+    private int numberOfGeneratedQuizzes = 0;
+    private int numberOfNonGeneratedQuizzes = 0;
     private int numberOfCorrect;
     private String creationDate = null;
     private String status;
@@ -35,6 +39,13 @@ public class QuestionDto implements Serializable {
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.numberOfAnswers = question.getNumberOfAnswers();
+        if (!question.getQuizQuestions().isEmpty()) {
+            this.numberOfGeneratedQuizzes = (int) question.getQuizQuestions().stream()
+                    .map(QuizQuestion::getQuiz)
+                    .filter(quiz -> quiz.getType().equals(Quiz.QuizType.GENERATED))
+                    .count();
+        }
+        this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
         this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
@@ -63,6 +74,14 @@ public class QuestionDto implements Serializable {
         this.key = key;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getContent() {
         return content;
     }
@@ -87,12 +106,36 @@ public class QuestionDto implements Serializable {
         this.numberOfAnswers = numberOfAnswers;
     }
 
+    public int getNumberOfGeneratedQuizzes() {
+        return numberOfGeneratedQuizzes;
+    }
+
+    public void setNumberOfGeneratedQuizzes(int numberOfGeneratedQuizzes) {
+        this.numberOfGeneratedQuizzes = numberOfGeneratedQuizzes;
+    }
+
+    public int getNumberOfNonGeneratedQuizzes() {
+        return numberOfNonGeneratedQuizzes;
+    }
+
+    public void setNumberOfNonGeneratedQuizzes(int numberOfNonGeneratedQuizzes) {
+        this.numberOfNonGeneratedQuizzes = numberOfNonGeneratedQuizzes;
+    }
+
     public int getNumberOfCorrect() {
         return numberOfCorrect;
     }
 
     public void setNumberOfCorrect(int numberOfCorrect) {
         this.numberOfCorrect = numberOfCorrect;
+    }
+
+    public String getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(String creationDate) {
+        this.creationDate = creationDate;
     }
 
     public String getStatus() {
@@ -119,14 +162,6 @@ public class QuestionDto implements Serializable {
         this.image = image;
     }
 
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public List<TopicDto> getTopics() {
         return topics;
     }
@@ -143,24 +178,19 @@ public class QuestionDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
     @Override
     public String toString() {
         return "QuestionDto{" +
                 "id=" + id +
-                ", id=" + id +
+                ", key=" + key +
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", difficulty=" + difficulty +
                 ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfGeneratedQuizzes=" + numberOfGeneratedQuizzes +
+                ", numberOfNonGeneratedQuizzes=" + numberOfNonGeneratedQuizzes +
                 ", numberOfCorrect=" + numberOfCorrect +
+                ", creationDate='" + creationDate + '\'' +
                 ", status='" + status + '\'' +
                 ", options=" + options +
                 ", image=" + image +

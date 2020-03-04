@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -29,6 +30,7 @@ import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -195,27 +197,26 @@ public class QuizService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<QuizAnswerDto> getQuizAnswers(Integer quizId) {
+    public QuizAnswersDto getQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
 
-        return quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList());
-    }
+        quizAnswersDto.setCorrectSequence(
+                quiz.getQuizQuestions().stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).map(quizQuestion ->
+                quizQuestion.getQuestion()
+                        .getOptions()
+                        .stream()
+                        .filter(Option::getCorrect)
+                        .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
+                        .getSequence()
+        ).collect(Collectors.toList()));
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<Integer> getCorrectSequence(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
+        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(LocalDateTime.now())) {
+            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(LocalDateTime.now(), quiz.getConclusionDate()));
+        }
 
-        return quiz.getQuizQuestions().stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).map(quizQuestion ->
-            quizQuestion.getQuestion()
-                    .getOptions()
-                    .stream()
-                    .filter(Option::getCorrect)
-                    .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
-                    .getSequence()
-        ).collect(Collectors.toList());
+        return quizAnswersDto;
     }
 
 

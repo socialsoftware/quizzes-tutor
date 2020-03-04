@@ -216,7 +216,7 @@
 
     <show-quiz-dialog
       v-if="quiz"
-      :dialog="quizDialog"
+      v-model="quizDialog"
       :quiz="quiz"
       v-on:close-quiz-dialog="onCloseQuizDialog"
     />

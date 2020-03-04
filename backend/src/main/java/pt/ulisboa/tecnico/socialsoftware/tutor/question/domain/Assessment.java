@@ -108,8 +108,14 @@ public class Assessment {
     }
 
     public void remove() {
-        getTopicConjunctions().stream().collect(Collectors.toList()).forEach(TopicConjunction::remove);
+        new ArrayList<>(getTopicConjunctions()).forEach(TopicConjunction::remove);
         getTopicConjunctions().clear();
+    }
+
+    public List<Question> getQuestions() {
+        return this.topicConjunctions.stream()
+                .flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
+                .collect(Collectors.toList());
     }
 
 }

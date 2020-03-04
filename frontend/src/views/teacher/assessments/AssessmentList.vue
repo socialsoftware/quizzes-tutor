@@ -139,6 +139,12 @@ export default class AssessmentList extends Vue {
   headers: object = [
     { text: 'Order', value: 'sequence', align: 'center', width: '95px' },
     { text: 'Title', value: 'title', align: 'left' },
+    {
+      text: 'Number of questions',
+      value: 'numberOfQuestions',
+      align: 'center',
+      width: '7%'
+    },
     { text: 'Status', value: 'status', align: 'center', width: '7%' },
     {
       text: 'Actions',

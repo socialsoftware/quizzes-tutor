@@ -8,6 +8,7 @@ export class Quiz {
   creationDate!: string | undefined;
   availableDate!: string | undefined;
   conclusionDate!: string | undefined;
+  secondsToConclusion!: number;
   type!: string;
   series!: number;
   version!: string;
@@ -30,6 +31,7 @@ export class Quiz {
       this.creationDate = jsonObj.creationDate;
       this.availableDate = jsonObj.availableDate;
       this.conclusionDate = jsonObj.conclusionDate;
+      this.secondsToConclusion = jsonObj.secondsToConclusion;
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(

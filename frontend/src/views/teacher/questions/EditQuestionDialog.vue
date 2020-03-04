@@ -4,6 +4,7 @@
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
+    max-height="80%"
   >
     <v-card>
       <v-card-title>

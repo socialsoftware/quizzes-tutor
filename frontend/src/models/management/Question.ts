@@ -7,6 +7,8 @@ export default class Question {
   title: string = '';
   status: string = 'AVAILABLE';
   numberOfAnswers!: number;
+  numberOfGeneratedQuizzes!: number;
+  numberOfNonGeneratedQuizzes!: number;
   numberOfCorrect!: number;
   difficulty!: number | null;
   content: string = '';
@@ -23,6 +25,8 @@ export default class Question {
       this.title = jsonObj.title;
       this.status = jsonObj.status;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
+      this.numberOfGeneratedQuizzes = jsonObj.numberOfGeneratedQuizzes;
+      this.numberOfNonGeneratedQuizzes = jsonObj.numberOfNonGeneratedQuizzes;
       this.numberOfCorrect = jsonObj.numberOfCorrect;
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;

@@ -26,8 +26,8 @@
           ></v-text-field>
         </v-col>
       </v-row>
-      <v-layout row wrap>
-        <v-flex class="text-left">
+      <v-row>
+        <v-col cols="12" sm="6" class="light-green lighten-4">
           <v-data-table
             :headers="topicHeaders"
             :custom-filter="topicFilter"
@@ -38,6 +38,7 @@
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
           >
             <template v-slot:top>
+              <h2>Currently selected</h2>
               <v-autocomplete
                 v-model="currentTopicsSearch"
                 label="Search"
@@ -92,8 +93,8 @@
               </v-tooltip>
             </template>
           </v-data-table>
-        </v-flex>
-        <v-flex class="text-left">
+        </v-col>
+        <v-col cols="12" sm="6" class="red lighten-4">
           <v-data-table
             :headers="topicHeaders"
             :custom-filter="topicFilter"
@@ -104,6 +105,7 @@
             :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
           >
             <template v-slot:top>
+              <h2>Available topics</h2>
               <v-autocomplete
                 v-model="allTopicsSearch"
                 label="Search"
@@ -157,8 +159,8 @@
               </v-tooltip>
             </template>
           </v-data-table>
-        </v-flex>
-      </v-layout>
+        </v-col>
+      </v-row>
       <v-btn
         color="primary"
         dark

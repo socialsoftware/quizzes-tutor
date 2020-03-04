@@ -90,6 +90,7 @@
       v-model="quizAnswersDialog"
       :quiz-answers="quizAnswers"
       :correct-sequence="correctSequence"
+      :secondsToSubmission="secondsToSubmission"
     />
 
     <v-dialog
@@ -111,13 +112,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
+import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 @Component({
   components: {
@@ -131,6 +133,7 @@ export default class QuizList extends Vue {
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswer[] = [];
   correctSequence: number[] = [];
+  secondsToSubmission: number = 0;
   search: string = '';
 
   quizDialog: boolean = false;
@@ -169,6 +172,12 @@ export default class QuizList extends Vue {
       width: '10%'
     },
     {
+      text: 'Timer to submission',
+      value: 'timerToSubmission',
+      align: 'center',
+      width: '10%'
+    },
+    {
       text: 'Answers',
       value: 'numberOfAnswers',
       align: 'center',
@@ -194,10 +203,13 @@ export default class QuizList extends Vue {
 
   async showQuizAnswers(quizId: number) {
     try {
-      [this.quizAnswers, this.correctSequence] = await Promise.all([
-        RemoteServices.getQuizAnswers(quizId),
-        RemoteServices.getCorrectSequence(quizId)
-      ]);
+      let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
+        quizId
+      );
+
+      this.quizAnswers = quizAnswers.quizAnswers;
+      this.correctSequence = quizAnswers.correctSequence;
+      this.secondsToSubmission = quizAnswers.secondsToSubmission;
       this.quizAnswersDialog = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
