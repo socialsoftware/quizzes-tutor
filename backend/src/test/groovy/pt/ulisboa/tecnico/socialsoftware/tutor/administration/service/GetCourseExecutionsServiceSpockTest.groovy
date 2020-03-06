@@ -6,11 +6,8 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.*
 import spock.lang.Specification
-import spock.lang.Unroll
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class GetCourseExecutionsServiceSpockTest extends Specification {
@@ -40,7 +37,7 @@ class GetCourseExecutionsServiceSpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         when:
-        def result = administrationService.getCourseExecutions()
+        def result = administrationService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
         result.size() == 2

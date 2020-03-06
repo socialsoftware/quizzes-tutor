@@ -14,6 +14,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CO
 @Entity
 @Table(name = "courses")
 public class Course {
+    public static String DEMO_COURSE = "Demo Course";
+
     public enum Type {TECNICO, EXTERNAL}
 
     @Id
