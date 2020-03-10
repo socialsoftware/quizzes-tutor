@@ -3,10 +3,10 @@
     <div
       tabindex="0"
       class="quiz-container"
-      @keydown.left="decreaseOrder"
-      @keydown.right="increaseOrder"
+      @keydown.right="nextConfirmationDialog = true"
       v-if="!confirmed"
     >
+      <!--      @keydown.left="decreaseOrder"-->
       <header>
         <span
           class="timer"
@@ -38,12 +38,12 @@
         <span
           class="left-button"
           @click="decreaseOrder"
-          v-if="questionOrder !== 0"
+          v-if="questionOrder !== 0 && secondsToSubmission === 0"
           ><i class="fas fa-chevron-left"
         /></span>
         <span
           class="right-button"
-          @click="increaseOrder"
+          @click="nextConfirmationDialog = true"
           v-if="questionOrder !== statementQuiz.questions.length - 1"
           ><i class="fas fa-chevron-right"
         /></span>
@@ -54,7 +54,8 @@
         :optionId="statementQuiz.answers[questionOrder].optionId"
         :question="statementQuiz.questions[questionOrder]"
         :questionNumber="statementQuiz.questions.length"
-        @increase-order="increaseOrder"
+        :backsies="secondsToSubmission === 0"
+        @increase-order="nextConfirmationDialog = true"
         @select-option="changeAnswer"
         @decrease-order="decreaseOrder"
       />
@@ -99,6 +100,36 @@
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog v-model="nextConfirmationDialog" width="50%">
+        <v-card>
+          <v-card-title primary-title class="secondary white--text headline">
+            Confirmation
+          </v-card-title>
+
+          <v-card-text class="text--black title">
+            <br />
+            Are you sure you want to go to the next question?
+            <br />
+          </v-card-text>
+
+          <v-divider />
+
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              color="secondary"
+              text
+              @click="nextConfirmationDialog = false"
+            >
+              Cancel
+            </v-btn>
+            <v-btn color="primary" text @click="increaseOrder">
+              I'm sure
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
     </div>
 
     <v-card v-else-if="secondsToSubmission">
@@ -128,6 +159,7 @@ export default class QuizView extends Vue {
     StatementManager.getInstance.statementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
+  nextConfirmationDialog: boolean = false;
   startTime: Date = new Date();
   questionOrder: number = 0;
   secondsToSubmission: number =
@@ -135,9 +167,17 @@ export default class QuizView extends Vue {
   hideTime: boolean = false;
 
   async created() {
-    if (this.statementManager.isEmpty()) {
+    if (!this.statementQuiz?.id) {
       await this.$router.push({ name: 'create-quiz' });
+    } else {
+      try {
+        await RemoteServices.startQuiz(this.statementQuiz?.id);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'available-quizzes' });
+      }
     }
+
     if (this.secondsToSubmission > 0) {
       this.countDownToResults();
     }
@@ -148,6 +188,7 @@ export default class QuizView extends Vue {
       this.calculateTime();
       this.questionOrder += 1;
     }
+    this.nextConfirmationDialog = false;
   }
 
   decreaseOrder(): void {
@@ -157,10 +198,12 @@ export default class QuizView extends Vue {
     }
   }
 
-  changeOrder(n: number): void {
-    if (n >= 0 && n < +this.statementQuiz!.questions.length) {
-      this.calculateTime();
-      this.questionOrder = n;
+  changeOrder(newOrder: number): void {
+    if (this.secondsToSubmission === 0) {
+      if (newOrder >= 0 && newOrder < +this.statementQuiz!.questions.length) {
+        this.calculateTime();
+        this.questionOrder = newOrder;
+      }
     }
   }
 

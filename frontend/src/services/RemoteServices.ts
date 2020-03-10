@@ -243,6 +243,12 @@ export default class RemoteServices {
       });
   }
 
+  static async startQuiz(quizId: number) {
+    return httpClient.get(`/quizzes/${quizId}/start`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
   static submitAnswer(quizId: number, answer: StatementAnswer) {
     return httpClient
       .post(`/quizzes/${quizId}/submit`, answer)

@@ -161,7 +161,7 @@ public class StatementService {
         quizRepository.findQuizzes(executionId).stream()
                 .filter(quiz -> quiz.getAvailableDate() == null || quiz.getAvailableDate().isBefore(now))
                 .filter(quiz -> !studentQuizIds.contains(quiz.getId()))
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.IN_CLASS))
+//                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.IN_CLASS))
                 .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .forEach(quiz ->  {
                     if (quiz.getConclusionDate() == null || quiz.getConclusionDate().isAfter(now)) {
@@ -172,8 +172,9 @@ public class StatementService {
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
-                .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate() == null || !(quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && quizAnswer.getQuiz().getAvailableDate().isAfter(now)))
+                .filter(quizAnswer -> !quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || quizAnswer.getCreationDate() == null)
                 .filter(quizAnswer -> !quizAnswer.isCompleted())
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
@@ -230,6 +231,34 @@ public class StatementService {
 
             quizAnswer.calculateStatistics();
         });
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void startQuiz(String username, int quizId) {
+        User user = userRepository.findByUsername(username);
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
+        }
+
+        if (quiz.getConclusionDate() != null && LocalDateTime.now().isAfter(quiz.getConclusionDate())) {
+            throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
+        }
+
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+
+        if (quizAnswer.isCompleted()) {
+            throw new TutorException(QUIZ_ALREADY_COMPLETED);
+        } else if (quizAnswer.getCreationDate() == null) {
+            quizAnswer.setCreationDate(LocalDateTime.now());
+        } else if (quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+            throw new TutorException(QUIZ_ALREADY_STARTED);
+
+        }
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {

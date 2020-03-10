@@ -2,6 +2,7 @@
   <div class="question-container" v-if="question && question.options">
     <div class="question">
       <span
+        v-if="backsies"
         class="square"
         @click="decreaseOrder"
         @mouseover="hover = true"
@@ -53,6 +54,7 @@ export default class QuestionComponent extends Vue {
   @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
   @Prop(Number) optionId: number | undefined;
   @Prop() readonly questionNumber!: number;
+  @Prop() readonly backsies!: boolean;
   hover: boolean = false;
   optionLetters: string[] = ['A', 'B', 'C', 'D'];
 

@@ -49,8 +49,6 @@ public class QuizAnswer {
         this.quiz = quiz;
         quiz.addQuizAnswer(this);
 
-        this.creationDate = LocalDateTime.now();
-
         List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
         if (quiz.getScramble()) {
             Collections.shuffle(quizQuestions);

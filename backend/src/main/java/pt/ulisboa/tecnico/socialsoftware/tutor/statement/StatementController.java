@@ -83,6 +83,18 @@ public class StatementController {
         statementService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
+    @GetMapping("/quizzes/{quizId}/start")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void startQuiz(Principal principal, @PathVariable int quizId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        statementService.startQuiz(user.getUsername(), quizId);
+    }
+
     @GetMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId) {
