@@ -26,6 +26,25 @@
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down" hide-details>
+        <v-menu offset-y v-if="isAdmin" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Administration
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/admin/courses">
+              <v-list-item-action>
+                <v-icon>fas fa-school</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Courses</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
@@ -166,6 +185,25 @@
       </v-toolbar>
 
       <v-list class="pt-0" dense>
+        <!-- Administration Group-->
+        <v-list-group
+          prepend-icon="fas fa-file-alt"
+          :value="false"
+          v-if="isAdmin"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Administration</v-list-item-title>
+          </template>
+          <v-list-item to="/admin/courses">
+            <v-list-item-action>
+              <v-icon>fas fa-school</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Manage Courses</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list-group>
+
         <!-- Management Group-->
         <v-list-group
           prepend-icon="fas fa-file-alt"

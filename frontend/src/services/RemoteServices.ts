@@ -68,6 +68,17 @@ export default class RemoteServices {
       });
   }
 
+  static async demoAdminLogin(): Promise<AuthDto> {
+    return httpClient
+      .get('/auth/demo/admin')
+      .then(response => {
+        return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
       .get(
@@ -472,6 +483,19 @@ export default class RemoteServices {
       .post('/courses', course)
       .then(response => {
         return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getCourses(): Promise<Course[]> {
+    return httpClient
+      .get('/admin/courses/executions')
+      .then(response => {
+        return response.data.map((course: any) => {
+          return new Course(course);
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

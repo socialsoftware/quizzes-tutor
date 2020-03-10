@@ -95,6 +95,12 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
+    async demoAdminLogin({ commit }) {
+      const authResponse = await RemoteServices.demoAdminLogin();
+      commit('login', authResponse);
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
     logout({ commit }) {
       return new Promise(resolve => {
         commit('logout');
@@ -112,20 +118,20 @@ export default new Vuex.Store({
       return !!state.token;
     },
     isAdmin(state): boolean {
-      return !!state.token && state.user !== null && state.user.role == 'ADMIN';
-    },
-    isTeacher(state): boolean {
       return (
         !!state.token &&
         state.user !== null &&
-        (state.user.role == 'TEACHER' || state.user.role == 'ADMIN')
+        (state.user.role == 'ADMIN' || state.user.role == 'DEMO_ADMIN')
+      );
+    },
+    isTeacher(state): boolean {
+      return (
+        !!state.token && state.user !== null && state.user.role == 'TEACHER'
       );
     },
     isStudent(state): boolean {
       return (
-        !!state.token &&
-        state.user !== null &&
-        (state.user.role == 'STUDENT' || state.user.role == 'ADMIN')
+        !!state.token && state.user !== null && state.user.role == 'STUDENT'
       );
     },
     getToken(state): string {

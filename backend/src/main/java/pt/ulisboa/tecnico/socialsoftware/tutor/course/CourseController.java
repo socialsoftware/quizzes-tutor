@@ -13,12 +13,6 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @GetMapping("/courses")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public List<CourseDto> getCourses() {
-        return courseService.getCourses();
-    }
-
     @GetMapping("/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<CourseDto> getCourseExecutions(@PathVariable int courseId) {
