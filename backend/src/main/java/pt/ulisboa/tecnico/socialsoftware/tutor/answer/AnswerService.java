@@ -25,8 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -59,10 +57,6 @@ public class AnswerService {
     @Autowired
     private AnswersXmlImport xmlImporter;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -73,7 +67,7 @@ public class AnswerService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-        entityManager.persist(quizAnswer);
+        quizAnswerRepository.save(quizAnswer);
 
         return new QuizAnswerDto(quizAnswer);
     }
