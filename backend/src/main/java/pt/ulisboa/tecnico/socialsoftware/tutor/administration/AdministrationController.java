@@ -40,7 +40,7 @@ public class AdministrationController {
         return administrationService.createExternalCourseExecution(courseDto);
     }
 
-    @DeleteMapping("/admin/courses/executions/{executionCourseId}")
+    @DeleteMapping("/admin/courses/executions/{courseExecutionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
     public ResponseEntity removeCourseExecution(@PathVariable Integer courseExecutionId) {
         administrationService.removeCourseExecution(courseExecutionId);
