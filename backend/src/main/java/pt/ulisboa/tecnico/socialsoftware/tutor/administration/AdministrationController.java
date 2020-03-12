@@ -41,9 +41,9 @@ public class AdministrationController {
     }
 
     @DeleteMapping("/admin/courses/executions/{executionCourseId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionCourseId, 'DEMO.ACCESS'))")
-    public ResponseEntity removeCourseExecution(@PathVariable Integer executionCourseId) {
-        administrationService.removeCourseExecution(executionCourseId);
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
+    public ResponseEntity removeCourseExecution(@PathVariable Integer courseExecutionId) {
+        administrationService.removeCourseExecution(courseExecutionId);
 
         return ResponseEntity.ok().build();
     }

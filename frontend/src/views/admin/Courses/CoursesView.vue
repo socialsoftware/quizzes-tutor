@@ -132,6 +132,7 @@ export default class CoursesView extends Vue {
   createFromCourse(course: Course) {
     this.currentCourse = new Course(course);
     this.currentCourse.courseExecutionId = undefined;
+    this.currentCourse.courseExecutionType = 'EXTERNAL';
     this.currentCourse.acronym = undefined;
     this.currentCourse.academicTerm = undefined;
     this.editCourseDialog = true;
