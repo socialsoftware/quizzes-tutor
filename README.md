@@ -62,7 +62,7 @@
 
 <br/>
 
-**Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
+**Quizzes Tutor** allows professors of Software Engineering to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
 
  <br/>
 
