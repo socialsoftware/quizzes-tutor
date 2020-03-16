@@ -25,8 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -52,9 +50,6 @@ public class QuizService {
 
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findQuizCourseExecution(int quizId) {
@@ -121,7 +116,7 @@ public class QuizService {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
             quiz.setCreationDate(LocalDateTime.parse(quizDto.getCreationDate(), formatter));
         }
-        entityManager.persist(quiz);
+        quizRepository.save(quiz);
 
         return new QuizDto(quiz, true);
     }
@@ -145,14 +140,14 @@ public class QuizService {
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
         quizQuestions.forEach(QuizQuestion::remove);
-        quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
+        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
 
         if (quizDto.getQuestions() != null) {
             for (QuestionDto questionDto : quizDto.getQuestions()) {
                 Question question = questionRepository.findById(questionDto.getId())
                         .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
                 QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
-                entityManager.persist(quizQuestion);
+                quizQuestionRepository.save(quizQuestion);
             }
         }
 
@@ -170,7 +165,7 @@ public class QuizService {
 
         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
 
-        entityManager.persist(quizQuestion);
+        quizQuestionRepository.save(quizQuestion);
 
         return new QuizQuestionDto(quizQuestion);
     }
@@ -188,9 +183,9 @@ public class QuizService {
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
         quizQuestions.forEach(QuizQuestion::remove);
-        quizQuestions.forEach(quizQuestion -> entityManager.remove(quizQuestion));
+        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
 
-        entityManager.remove(quiz);
+        quizRepository.delete(quiz);
     }
 
     @Retryable(

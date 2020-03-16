@@ -16,8 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
@@ -35,9 +33,6 @@ public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findTopicCourse(int topicId) {
@@ -70,7 +65,7 @@ public class TopicService {
         }
 
         Topic topic = new Topic(course, topicDto);
-        this.entityManager.persist(topic);
+        topicRepository.save(topic);
         return new TopicDto(topic);
     }
 
@@ -96,7 +91,7 @@ public class TopicService {
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.remove();
-        entityManager.remove(topic);
+        topicRepository.delete(topic);
     }
 
 

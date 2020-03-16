@@ -13,8 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,9 +27,6 @@ public class UserService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
-
-    @PersistenceContext
-    EntityManager entityManager;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username);
@@ -53,7 +48,7 @@ public class UserService {
         }
 
         User user = new User(name, username, getMaxUserNumber() + 1, role);
-        entityManager.persist(user);
+        userRepository.save(user);
         return user;
     }
 
