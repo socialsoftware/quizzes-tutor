@@ -15,7 +15,13 @@
       <v-btn depressed small color="primary" @click="demoTeacher">
         <i class="fa fa-graduation-cap" />Demo as teacher
       </v-btn>
-      <v-btn depressed small color="primary" @click="demoAdmin">
+      <v-btn
+        depressed
+        small
+        color="primary"
+        @click="demoAdmin"
+        data-cy="adminButton"
+      >
         <i class="fa fa-user-cog" />Demo as administrator
       </v-btn>
     </div>

@@ -25,6 +25,7 @@
                 v-if="!isCreateCourse"
                 v-model="editCourse.name"
                 label="Name"
+                data-cy="Name"
               />
             </v-flex>
             <v-flex xs24 sm12 md8>
@@ -34,12 +35,17 @@
               </p>
             </v-flex>
             <v-flex xs24 sm12 md8>
-              <v-text-field v-model="editCourse.acronym" label="Acronym" />
+              <v-text-field
+                v-model="editCourse.acronym"
+                label="Acronym"
+                data-cy="Acronym"
+              />
             </v-flex>
             <v-flex xs24 sm12 md8>
               <v-text-field
                 v-model="editCourse.academicTerm"
                 label="Academic Term"
+                data-cy="AcademicTerm"
               />
             </v-flex>
           </v-layout>
@@ -48,10 +54,15 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('close-dialog')"
+        <v-btn
+          color="blue darken-1"
+          @click="$emit('close-dialog')"
+          data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveCourse">Save</v-btn>
+        <v-btn color="blue darken-1" @click="saveCourse" data-cy="saveButton"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
