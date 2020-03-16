@@ -62,9 +62,13 @@
 
 <br/>
 
-**Quizzes Tutor** allows professors from [IST](https://tecnico.ulisboa.pt/pt/) to create multiple choice questions with images and topics which can be inserted in assessments and quizzes.
+**Quizzes Tutor** allows teachers to create, and reuse, multiple-choice questions with images and topics which can be inserted in assessments and quizzes. Its development started as an effort of project IMPRESS to share and reuse questions and quizzes of software engineering. 
 
- <br/>
+<br/>
+ 
+It is currently integrated with IST authentication such that it can be used for any course.
+
+<br/>
 
 Students can then answer those questions in sugested quizzes or generated quizzes (pseudo-random) providing them with a usell **self-assessment tool** to improve their learning.
 

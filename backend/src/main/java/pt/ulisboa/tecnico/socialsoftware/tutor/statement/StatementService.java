@@ -27,8 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -66,9 +64,6 @@ public class StatementService {
     @Autowired
     private AnswerService answerService;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -100,8 +95,8 @@ public class StatementService {
         quiz.setCourseExecution(courseExecution);
         courseExecution.addQuiz(quiz);
 
-        entityManager.persist(quiz);
-        entityManager.persist(quizAnswer);
+        quizRepository.save(quiz);
+        quizAnswerRepository.save(quizAnswer);
 
         return new StatementQuizDto(quizAnswer);
     }
@@ -124,7 +119,7 @@ public class StatementService {
 
         QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quiz.getId(), user.getId()).orElseGet(() -> {
             QuizAnswer qa = new QuizAnswer(user, quiz);
-            entityManager.persist(qa);
+            quizAnswerRepository.save(qa);
             return qa;
         });
 
@@ -166,7 +161,7 @@ public class StatementService {
                 .forEach(quiz ->  {
                     if (quiz.getConclusionDate() == null || quiz.getConclusionDate().isAfter(now)) {
                         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-                        entityManager.persist(quizAnswer);
+                        quizAnswerRepository.save(quizAnswer);
                     }
                 });
 

@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
@@ -16,6 +18,9 @@ import java.io.Serializable;
 
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
+    @Autowired
+    private AdministrationService administrationService;
+
     @Autowired
     private UserService userService;
 
@@ -52,6 +57,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             int id = (int) targetDomainObject;
             String permissionValue = (String) permission;
             switch (permissionValue) {
+                case "DEMO.ACCESS":
+                    CourseDto courseDto = administrationService.getCourseExecutionById(id);
+                    return courseDto.getName().equals("Demo Course");
                 case "COURSE.ACCESS":
                     return userHasAnExecutionOfTheCourse(username, id);
                 case "EXECUTION.ACCESS":

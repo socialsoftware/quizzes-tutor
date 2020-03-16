@@ -502,6 +502,25 @@ export default class RemoteServices {
       });
   }
 
+  static async createCourse(course: Course): Promise<Course> {
+    return httpClient
+      .post('/admin/courses/executions', course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .delete('/admin/courses/executions/' + courseExecutionId)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportAll() {
     return httpClient
       .get('/admin/export', {

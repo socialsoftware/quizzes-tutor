@@ -14,7 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution {
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+     public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -62,6 +62,15 @@ public class CourseExecution {
         this.academicTerm = academicTerm;
         this.status = Status.ACTIVE;
         course.addCourseExecution(this);
+    }
+
+    public void delete() {
+        if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
+            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
+        }
+
+        course.getCourseExecutions().remove(this);
+        users.forEach(user -> user.getCourseExecutions().remove(this));
     }
 
     public Integer getId() {

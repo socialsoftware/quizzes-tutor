@@ -192,7 +192,9 @@
           v-if="isAdmin"
         >
           <template v-slot:activator>
-            <v-list-item-title>Administration</v-list-item-title>
+            <v-list-item-title data-cy="Administration"
+              >Administration</v-list-item-title
+            >
           </template>
           <v-list-item to="/admin/courses">
             <v-list-item-action>
