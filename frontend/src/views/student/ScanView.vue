@@ -34,10 +34,13 @@ export default class ScanView extends Vue {
 
   countDownTimer() {
     if (this.secondsToRequest >= 0) {
-      this.secondsToRequest -= 1;
-      setTimeout(() => {
-        this.countDownTimer();
-      }, 1000);
+      console.log(this.$router.currentRoute.name);
+      if (this.$router.currentRoute.name === 'scan') {
+        this.secondsToRequest -= 1;
+        setTimeout(() => {
+          this.countDownTimer();
+        }, 1000);
+      }
     } else {
       this.getQuizByQRCode();
     }
