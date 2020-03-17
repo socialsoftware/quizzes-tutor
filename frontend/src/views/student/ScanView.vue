@@ -29,7 +29,7 @@ export default class ScanView extends Vue {
 
   async onDecode(decodedString: String) {
     this.quizId = Number(decodedString);
-    this.getEvaluationQuiz();
+    this.getQuizByQRCode();
   }
 
   countDownTimer() {
@@ -39,14 +39,14 @@ export default class ScanView extends Vue {
         this.countDownTimer();
       }, 1000);
     } else {
-      this.getEvaluationQuiz();
+      this.getQuizByQRCode();
     }
   }
 
-  async getEvaluationQuiz() {
+  async getQuizByQRCode() {
     if (this.quizId) {
       try {
-        let quiz: StatementQuiz = await RemoteServices.getEvaluationQuiz(
+        let quiz: StatementQuiz = await RemoteServices.getQuizByQRCode(
           this.quizId
         );
         if (quiz.secondsToAvailability) {

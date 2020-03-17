@@ -16,6 +16,8 @@ public class StatementQuizDto implements Serializable {
     private Integer id;
     private Integer quizAnswerId;
     private String title;
+    private boolean qrCodeOnly;
+    private boolean oneWay;
     private String availableDate;
     private String conclusionDate;
     private Long secondsToAvailability;
@@ -29,6 +31,8 @@ public class StatementQuizDto implements Serializable {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
+        this.qrCodeOnly = quizAnswer.getQuiz().isQrCodeOnly();
+        this.oneWay = quizAnswer.getQuiz().isOneWay();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
             this.availableDate = quizAnswer.getQuiz().getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
         }
@@ -73,6 +77,22 @@ public class StatementQuizDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public boolean isQrCodeOnly() {
+        return qrCodeOnly;
+    }
+
+    public void setQrCodeOnly(boolean qrCodeOnly) {
+        this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public boolean isOneWay() {
+        return oneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.oneWay = oneWay;
     }
 
     public String getAvailableDate() {

@@ -59,16 +59,16 @@ public class StatementController {
         return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
-    @GetMapping("/quizzes/{quizId}/evaluation")
+    @GetMapping("/quizzes/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public StatementQuizDto getEvaluationQuiz(Principal principal, @PathVariable int quizId) {
+    public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getEvaluationQuiz(user.getUsername(), quizId);
+        return statementService.getQuizByQRCode(user.getUsername(), quizId);
     }
 
     @PostMapping("/quizzes/{quizId}/submit")

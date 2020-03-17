@@ -47,6 +47,12 @@ public class Quiz {
     @Column(columnDefinition = "boolean default false")
     private boolean scramble = false;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean qrCodeOnly = false;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean oneWay = false;
+
     @Column(nullable = false)
     private String title = "Title";
 
@@ -75,6 +81,8 @@ public class Quiz {
         setTitle(quizDto.getTitle());
         this.type = quizDto.getType();
         this.scramble = quizDto.isScramble();
+        this.qrCodeOnly = quizDto.isQrCodeOnly();
+        this.oneWay = quizDto.isOneWay();
         this.creationDate = quizDto.getCreationDateDate();
         setAvailableDate(quizDto.getAvailableDateDate());
         setConclusionDate(quizDto.getConclusionDateDate());
@@ -104,6 +112,22 @@ public class Quiz {
 
     public void setScramble(boolean scramble) {
     this.scramble = scramble;
+    }
+
+    public boolean isQrCodeOnly() {
+        return qrCodeOnly;
+    }
+
+    public void setQrCodeOnly(boolean qrCodeOnly) {
+        this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public boolean isOneWay() {
+        return oneWay;
+    }
+
+    public void setOneWay(boolean noBack) {
+        this.oneWay = noBack;
     }
 
     public String getTitle() {

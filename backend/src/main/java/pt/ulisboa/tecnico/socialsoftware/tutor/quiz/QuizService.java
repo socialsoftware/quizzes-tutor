@@ -135,6 +135,8 @@ public class QuizService {
         quiz.setAvailableDate(quizDto.getAvailableDateDate());
         quiz.setConclusionDate(quizDto.getConclusionDateDate());
         quiz.setScramble(quizDto.isScramble());
+        quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
+        quiz.setOneWay(quizDto.isOneWay());
         quiz.setType(quizDto.getType());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());

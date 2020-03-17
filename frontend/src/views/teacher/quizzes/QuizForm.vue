@@ -43,6 +43,12 @@
         <v-col style="display: flex; justify-content: center">
           <v-switch v-model="quiz.scramble" label="Scramble" />
         </v-col>
+        <v-col style="display: flex; justify-content: center">
+          <v-switch v-model="quiz.qrCodeOnly" label="QRCode Only" />
+        </v-col>
+        <v-col style="display: flex; justify-content: center">
+          <v-switch v-model="quiz.oneWay" label="One Way Quiz" />
+        </v-col>
         <v-col cols="12" sm="6">
           <v-select
             v-model="quiz.type"

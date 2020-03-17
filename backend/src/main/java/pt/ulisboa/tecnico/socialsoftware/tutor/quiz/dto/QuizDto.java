@@ -17,6 +17,8 @@ public class QuizDto implements Serializable {
     private Integer id;
     private Integer key;
     private boolean scramble;
+    private boolean qrCodeOnly;
+    private boolean oneWay;
     private String title;
     private String creationDate = null;
     private String availableDate = null;
@@ -38,6 +40,8 @@ public class QuizDto implements Serializable {
         this.id = quiz.getId();
         this.key = quiz.getKey();
         this.scramble = quiz.getScramble();
+        this.qrCodeOnly = quiz.isQrCodeOnly();
+        this.oneWay = quiz.isOneWay();
         this.title = quiz.getTitle();
         this.type = quiz.getType();
         this.series = quiz.getSeries();
@@ -86,6 +90,22 @@ public class QuizDto implements Serializable {
 
     public void setScramble(boolean scramble) {
         this.scramble = scramble;
+    }
+
+    public boolean isQrCodeOnly() {
+        return qrCodeOnly;
+    }
+
+    public void setQrCodeOnly(boolean qrCodeOnly) {
+        this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public boolean isOneWay() {
+        return oneWay;
+    }
+
+    public void setOneWay(boolean oneWay) {
+        this.oneWay = oneWay;
     }
 
     public String getTitle() {

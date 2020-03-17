@@ -162,9 +162,16 @@ export default class QuizList extends Vue {
       width: '10%'
     },
     { text: 'Scramble', value: 'scramble', align: 'center', width: '10%' },
+    { text: 'QRCode Only', value: 'qrCodeOnly', align: 'center', width: '10%' },
+    {
+      text: 'One Way Quiz',
+      value: 'oneWay',
+      align: 'center',
+      width: '10%'
+    },
     { text: 'Type', value: 'type', align: 'center', width: '10%' },
-    { text: 'Series', value: 'series', align: 'center', width: '10%' },
-    { text: 'Version', value: 'version', align: 'center', width: '10%' },
+    { text: 'Series', value: 'series', align: 'center', width: '5%' },
+    { text: 'Version', value: 'version', align: 'center', width: '5%' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',

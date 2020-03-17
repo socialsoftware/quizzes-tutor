@@ -243,9 +243,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getEvaluationQuiz(quizId: number): Promise<StatementQuiz> {
+  static async getQuizByQRCode(quizId: number): Promise<StatementQuiz> {
     return httpClient
-      .get(`/quizzes/${quizId}/evaluation`)
+      .get(`/quizzes/${quizId}/byqrcode`)
       .then(response => {
         return new StatementQuiz(response.data);
       })

@@ -105,7 +105,7 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto getEvaluationQuiz(String username, int quizId) {
+    public StatementQuizDto getQuizByQRCode(String username, int quizId) {
         User user = userRepository.findByUsername(username);
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -125,8 +125,13 @@ public class StatementService {
 
         if (quizAnswer.isCompleted()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
+        }
 
-        } else if (quiz.getAvailableDate() == null || LocalDateTime.now().isAfter(quiz.getAvailableDate())) {
+        if (quizAnswer.getQuiz().isOneWay() && quizAnswer.getAnswerDate() != null) {
+            throw new TutorException(QUIZ_ALREADY_COMPLETED);
+        }
+
+        if (quiz.getAvailableDate() == null || LocalDateTime.now().isAfter(quiz.getAvailableDate())) {
             return new StatementQuizDto(quizAnswer);
 
         // Send timer
@@ -154,10 +159,10 @@ public class StatementService {
 
         // create QuizAnswer for quizzes
         quizRepository.findQuizzes(executionId).stream()
+                .filter(quiz -> !quiz.isQrCodeOnly())
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .filter(quiz -> quiz.getAvailableDate() == null || quiz.getAvailableDate().isBefore(now))
                 .filter(quiz -> !studentQuizIds.contains(quiz.getId()))
-//                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.IN_CLASS))
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .forEach(quiz ->  {
                     if (quiz.getConclusionDate() == null || quiz.getConclusionDate().isAfter(now)) {
                         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
@@ -166,11 +171,12 @@ public class StatementService {
                 });
 
         return user.getQuizAnswers().stream()
+                .filter(quizAnswer -> !quizAnswer.isCompleted())
+                .filter(quizAnswer -> !quizAnswer.getQuiz().isQrCodeOnly())
+                .filter(quizAnswer -> !quizAnswer.getQuiz().isOneWay() || quizAnswer.getCreationDate() == null)
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
-                .filter(quizAnswer -> !quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || quizAnswer.getCreationDate() == null)
-                .filter(quizAnswer -> !quizAnswer.isCompleted())
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
@@ -250,9 +256,8 @@ public class StatementService {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         } else if (quizAnswer.getCreationDate() == null) {
             quizAnswer.setCreationDate(LocalDateTime.now());
-        } else if (quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+        } else if (quiz.isOneWay()) {
             throw new TutorException(QUIZ_ALREADY_STARTED);
-
         }
     }
 

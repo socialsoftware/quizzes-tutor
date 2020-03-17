@@ -6,6 +6,8 @@ export default class StatementQuiz {
   courseName!: string;
   quizAnswerId!: number;
   title!: string;
+  qrCodeOnly!: boolean;
+  oneWay!: boolean;
   availableDate!: string;
   conclusionDate: string = '-';
   secondsToAvailability!: number;
@@ -19,6 +21,8 @@ export default class StatementQuiz {
       this.courseName = jsonObj.courseName;
       this.quizAnswerId = jsonObj.quizAnswerId;
       this.title = jsonObj.title;
+      this.qrCodeOnly = jsonObj.qrCodeOnly;
+      this.oneWay = jsonObj.oneWay;
       this.availableDate = jsonObj.availableDate;
       this.secondsToAvailability = jsonObj.secondsToAvailability;
       if (jsonObj.conclusionDate) {

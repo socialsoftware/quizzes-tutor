@@ -3,10 +3,10 @@
     <div
       tabindex="0"
       class="quiz-container"
-      @keydown.right="nextConfirmationDialog = true"
+      @keydown.right="confirmAnswer"
+      @keydown.left="decreaseOrder"
       v-if="!confirmed"
     >
-      <!--      @keydown.left="decreaseOrder"-->
       <header>
         <span
           class="timer"
@@ -38,12 +38,12 @@
         <span
           class="left-button"
           @click="decreaseOrder"
-          v-if="questionOrder !== 0 && secondsToSubmission === 0"
+          v-if="questionOrder !== 0 && !statementQuiz.oneWay"
           ><i class="fas fa-chevron-left"
         /></span>
         <span
           class="right-button"
-          @click="nextConfirmationDialog = true"
+          @click="confirmAnswer"
           v-if="questionOrder !== statementQuiz.questions.length - 1"
           ><i class="fas fa-chevron-right"
         /></span>
@@ -54,8 +54,8 @@
         :optionId="statementQuiz.answers[questionOrder].optionId"
         :question="statementQuiz.questions[questionOrder]"
         :questionNumber="statementQuiz.questions.length"
-        :backsies="secondsToSubmission === 0"
-        @increase-order="nextConfirmationDialog = true"
+        :backsies="!statementQuiz.oneWay"
+        @increase-order="confirmAnswer"
         @select-option="changeAnswer"
         @decrease-order="decreaseOrder"
       />
@@ -143,7 +143,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import QuestionComponent from '@/views/student/quiz/QuizComponent.vue';
+import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
@@ -199,11 +199,19 @@ export default class QuizView extends Vue {
   }
 
   changeOrder(newOrder: number): void {
-    if (this.secondsToSubmission === 0) {
+    if (!this.statementQuiz?.oneWay) {
       if (newOrder >= 0 && newOrder < +this.statementQuiz!.questions.length) {
         this.calculateTime();
         this.questionOrder = newOrder;
       }
+    }
+  }
+
+  confirmAnswer() {
+    if (this.statementQuiz?.oneWay) {
+      this.nextConfirmationDialog = true;
+    } else {
+      this.increaseOrder();
     }
   }
 
