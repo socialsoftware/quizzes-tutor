@@ -192,7 +192,7 @@ class GetAvailableQuizzesTest extends Specification {
             return new AnswerService()
         }
         @Bean
-        AnswersXmlImport aswersXmlImport() {
+        AnswersXmlImport answersXmlImport() {
             return new AnswersXmlImport()
         }
         @Bean
