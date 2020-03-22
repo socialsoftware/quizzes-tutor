@@ -144,7 +144,7 @@ public class ImpExpService {
     }
 
     private InputStream generateQuestionsInputStream() {
-        QuestionsXmlExport generator = new QuestionsXmlExport();
+        XMLQuestionExportVisitor generator = new XMLQuestionExportVisitor();
         return IOUtils.toInputStream(generator.export(questionRepository.findAll()), StandardCharsets.UTF_8);
     }
 

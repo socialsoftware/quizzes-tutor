@@ -1,12 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.DomainEntitiy;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
 import javax.persistence.*;
 
 @Entity
 @Table(name = "images")
-public class Image {
+public class Image implements DomainEntitiy {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -24,6 +26,10 @@ public class Image {
         this.width = imageDto.getWidth();
     }
 
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitImage(this);
+    }
 
     public Integer getId() {
         return id;
