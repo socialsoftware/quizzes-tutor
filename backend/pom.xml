@@ -19,7 +19,7 @@
     <repositories>
         <repository>
             <id>fenix-ashes-maven-repository</id>
-            <url>https://fenix-ashes.ist.utl.pt/nexus/content/groups/fenix-ashes-maven-repository</url>
+            <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
         </repository>
     </repositories>
     <properties>
@@ -36,41 +36,6 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
-<!--Git Hook-->
-<!--            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
-                    </plugin>
-
-                    <plugin>
-                        <groupId>io.github.phillipuniverse</groupId>
-                        <artifactId>githook-maven-plugin</artifactId>
-                        <version>1.0.4</version>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>install</goal>
-                                </goals>
-                                <configuration>
-                                    <hooks>
-                                        <pre-push>
-                                            BRANCH=$(git rev-parse &#45;&#45;abbrev-ref HEAD)
-                                            if [[ "$BRANCH" == "master" ]]; then
-                                                cd backend
-                                                exec mvn clean -Ptest test
-                                            fi
-                                        </pre-push>
-                                    </hooks>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>-->
-
         </profile>
         <profile>
             <id>prod</id>
