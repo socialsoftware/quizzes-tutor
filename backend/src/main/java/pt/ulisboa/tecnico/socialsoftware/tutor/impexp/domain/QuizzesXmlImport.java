@@ -85,6 +85,15 @@ public class QuizzesXmlImport {
 		if (quizElement.getAttributeValue("scramble") != null) {
 			scramble = Boolean.parseBoolean(quizElement.getAttributeValue("scramble"));
 		}
+		boolean qrCodeOnly = false;
+		if (quizElement.getAttributeValue("qrCodeOnly") != null) {
+			qrCodeOnly = Boolean.parseBoolean(quizElement.getAttributeValue("qrCodeOnly"));
+		}
+		boolean oneWay = false;
+		if (quizElement.getAttributeValue("oneWay") != null) {
+			oneWay = Boolean.parseBoolean(quizElement.getAttributeValue("oneWay"));
+		}
+
 		String title = quizElement.getAttributeValue("title");
 		String creationDate = null;
 		if (quizElement.getAttributeValue("creationDate") != null) {
@@ -110,6 +119,8 @@ public class QuizzesXmlImport {
 		QuizDto quizDto = new QuizDto();
 		quizDto.setKey(key);
 		quizDto.setScramble(scramble);
+		quizDto.setQrCodeOnly(qrCodeOnly);
+		quizDto.setOneWay(oneWay);
 		quizDto.setTitle(title);
 		quizDto.setCreationDate(creationDate);
         quizDto.setAvailableDate(availableDate);

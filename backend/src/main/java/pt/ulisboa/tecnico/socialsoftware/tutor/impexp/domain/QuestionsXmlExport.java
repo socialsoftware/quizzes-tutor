@@ -4,10 +4,12 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class QuestionsXmlExport {
@@ -37,6 +39,8 @@ public class QuestionsXmlExport {
 	}
 
 	private void exportQuestion(Element element, Question question) {
+		DateTimeFormatter formatter = Course.formatter;
+
 		Element questionElement = new Element("question");
 		questionElement.setAttribute("courseType", question.getCourse().getType().name());
 		questionElement.setAttribute("courseName", question.getCourse().getName());
@@ -44,6 +48,7 @@ public class QuestionsXmlExport {
 		questionElement.setAttribute("content", question.getContent());
 		questionElement.setAttribute("title", question.getTitle());
 		questionElement.setAttribute("status", question.getStatus().name());
+		questionElement.setAttribute("creationDate", question.getCreationDate().format(formatter));
 
 		if (question.getImage() != null) {
 			exportImage(questionElement, question.getImage());

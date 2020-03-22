@@ -119,7 +119,6 @@ public class QuestionController {
         return ResponseEntity.ok().build();
     }
 
-
     private Path getTargetLocation(String url) {
         String fileLocation = figuresDir + url;
         return Paths.get(fileLocation);

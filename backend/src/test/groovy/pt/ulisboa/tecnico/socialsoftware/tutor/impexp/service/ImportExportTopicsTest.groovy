@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.impexp
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -82,6 +82,7 @@ class ImportExportTopicsTest extends Specification {
     def 'export and import topics'() {
         given: 'a xml with questions'
         def topicsXml = topicService.exportTopics()
+        System.out.println(topicsXml)
         and: 'delete topics'
         topicService.removeTopic(topicDtoOne.getId())
         topicService.removeTopic(topicDtoTwo.getId())

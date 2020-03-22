@@ -22,9 +22,6 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT count(*) FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     Integer getAvailableQuestionsSize(Integer courseId);
 
-    @Query(value = "SELECT MAX(key) FROM questions", nativeQuery = true)
-    Integer getMaxQuestionNumber();
-
     @Query(value = "SELECT * FROM questions q WHERE q.key = :key", nativeQuery = true)
     Optional<Question> findByKey(Integer key);
 }

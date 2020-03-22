@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
@@ -28,7 +29,7 @@ public class ImportExportController {
     private String exportDir;
 
     @GetMapping(value = "/admin/export")
-    public void exportAll(HttpServletResponse response) throws IOException {
+    public ResponseEntity exportAll(HttpServletResponse response) throws IOException {
         logger.debug("exportAll");
 
         String filename = impExpService.exportAll();
@@ -40,15 +41,17 @@ public class ImportExportController {
         InputStream is = new FileInputStream(file);
         FileCopyUtils.copy(IOUtils.toByteArray(is), response.getOutputStream());
         response.flushBuffer();
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/admin/import")
-    public String importAll() {
+    public ResponseEntity importAll() {
         logger.debug("importAll");
 
         impExpService.importAll();
 
-        return "END";
+        return ResponseEntity.ok().build();
     }
 
 }

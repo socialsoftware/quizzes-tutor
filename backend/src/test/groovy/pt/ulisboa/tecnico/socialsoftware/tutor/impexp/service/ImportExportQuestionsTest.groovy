@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.impexp
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -15,6 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import spock.lang.Specification
+
+import java.time.LocalDateTime
 
 @DataJpaTest
 class ImportExportQuestionsTest extends Specification {
@@ -78,6 +80,7 @@ class ImportExportQuestionsTest extends Specification {
     def 'export and import questions'() {
         given: 'a xml with questions'
         def questionsXml = questionService.exportQuestions()
+        System.out.println(questionsXml)
         and: 'a clean database'
         questionService.removeQuestion(questionId)
 
@@ -85,11 +88,13 @@ class ImportExportQuestionsTest extends Specification {
         questionService.importQuestions(questionsXml)
 
         then:
-        questionService.findQuestions(course.getId()).size() == 1
+        questionRepository.findQuestions(course.getId()).size() == 1
         def questionResult = questionService.findQuestions(course.getId()).get(0)
+        questionResult.getKey() == null
         questionResult.getTitle() == QUESTION_TITLE
         questionResult.getContent() == QUESTION_CONTENT
         questionResult.getStatus() == Question.Status.AVAILABLE.name()
+        questionResult.getCreationDate() == LocalDateTime.now().format(Course.formatter)
         def imageResult = questionResult.getImage()
         imageResult.getWidth() == 20
         imageResult.getUrl() == URL

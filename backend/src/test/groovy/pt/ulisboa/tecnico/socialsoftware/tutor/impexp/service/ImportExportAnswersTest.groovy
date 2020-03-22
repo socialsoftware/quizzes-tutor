@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.impexp
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -147,6 +147,7 @@ class ImportExportAnswersTest extends Specification {
     def 'export and import answers'() {
         given: 'a xml with a quiz'
         def answersXml = answerService.exportAnswers()
+        System.out.println(answersXml)
         and: 'delete answers'
         quizAnswerRepository.deleteAll()
         questionAnswerRepository.deleteAll()
@@ -155,7 +156,6 @@ class ImportExportAnswersTest extends Specification {
         answerService.importAnswers(answersXml)
 
         then:
-
         quizAnswerRepository.findAll().size() == 1
         def quizAnswerResult = quizAnswerRepository.findAll().get(0)
         quizAnswerResult.getAnswerDate() == ANSWER_DATE

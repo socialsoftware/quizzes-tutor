@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -92,14 +93,11 @@ public class QuestionService {
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
-        if (questionDto.getKey() == null) {
-            int maxQuestionNumber = questionRepository.getMaxQuestionNumber() != null ?
-                    questionRepository.getMaxQuestionNumber() : 0;
-            questionDto.setKey(maxQuestionNumber + 1);
+        if (questionDto.getCreationDate() == null) {
+            questionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
         }
 
         Question question = new Question(course, questionDto);
-        question.setCreationDate(LocalDateTime.now());
         questionRepository.save(question);
         return new QuestionDto(question);
     }

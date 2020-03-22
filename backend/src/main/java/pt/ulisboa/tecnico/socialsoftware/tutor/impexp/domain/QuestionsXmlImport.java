@@ -77,12 +77,14 @@ public class QuestionsXmlImport {
 		String content = questionElement.getAttributeValue("content");
 		String title = questionElement.getAttributeValue("title");
 		String status = questionElement.getAttributeValue("status");
+		String creationDate = questionElement.getAttributeValue("creationDate");
 
 		QuestionDto questionDto = new QuestionDto();
 		questionDto.setKey(key);
 		questionDto.setContent(content);
 		questionDto.setTitle(title);
 		questionDto.setStatus(status);
+		questionDto.setCreationDate(creationDate);
 
 		Element imageElement = questionElement.getChild("image");
 		if (imageElement != null) {
