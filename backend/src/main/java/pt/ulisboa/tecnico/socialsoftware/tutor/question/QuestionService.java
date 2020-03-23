@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
@@ -163,21 +164,27 @@ public class QuestionService {
         question.updateTopics(Arrays.stream(topics).map(topicDto -> topicRepository.findTopicByName(question.getCourse().getId(), topicDto.getName())).collect(Collectors.toSet()));
     }
 
-    public String exportQuestions() {
+    public String exportQuestionsToXml() {
         XMLQuestionExportVisitor xmlExporter = new XMLQuestionExportVisitor();
 
         return xmlExporter.export(questionRepository.findAll());
     }
 
-
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void importQuestions(String questionsXML) {
+    public void importQuestionsFromXml(String questionsXML) {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 
         xmlImporter.importQuestions(questionsXML, this, courseRepository);
     }
+
+    public String exportQuestionsToLatex() {
+        LatexQuestionExportVisitor latexExporter = new LatexQuestionExportVisitor();
+
+        return latexExporter.export(questionRepository.findAll());
+    }
+
 }
 

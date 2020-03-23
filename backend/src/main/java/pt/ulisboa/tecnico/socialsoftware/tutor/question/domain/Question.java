@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.DomainEntitiy;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -22,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         indexes = {
                 @Index(name = "question_indx_0", columnList = "key")
         })
-public class Question implements DomainEntitiy {
+public class Question implements DomainEntity {
     @SuppressWarnings("unused")
     public enum Status {
         DISABLED, REMOVED, AVAILABLE

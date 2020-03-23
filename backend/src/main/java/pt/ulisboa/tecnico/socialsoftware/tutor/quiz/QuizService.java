@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuizExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
@@ -221,20 +222,30 @@ public class QuizService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public String exportQuizzes() {
+    public String exportQuizzesToXml() {
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
 
         return xmlExport.export(quizRepository.findAll());
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void importQuizzes(String quizzesXml) {
+    public void importQuizzesFromXml(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
         xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository);
     }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public String exportQuizzesToLatex(int quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
+
+        return latexExport.export(quiz);
+    }
+
+
 }

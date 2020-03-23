@@ -19,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class ImportExportQuizzesTest extends Specification {
@@ -97,13 +96,13 @@ class ImportExportQuizzesTest extends Specification {
 
     def 'export and import quizzes'() {
         given: 'a xml with a quiz'
-        def quizzesXml = quizService.exportQuizzes()
+        def quizzesXml = quizService.exportQuizzesToXml()
         System.out.println(quizzesXml)
         and: 'delete quiz and quizQuestion'
         quizService.removeQuiz(quiz.getId())
 
         when:
-        quizService.importQuizzes(quizzesXml)
+        quizService.importQuizzesFromXml(quizzesXml)
 
         then:
         quizzesXml != null
@@ -125,6 +124,15 @@ class ImportExportQuizzesTest extends Specification {
         quizQuestionResult.getSequence() == 0
         quizQuestionResult.getQuiz() == quizResult
         quizQuestionResult.getQuestion().getKey() == 1
+    }
+
+    def 'export quiz to latex'() {
+        when:
+        def quizzesLatex = quizService.exportQuizzesToLatex(quiz.getId())
+
+        then:
+        quizzesLatex != null
+        System.out.println(quizzesLatex)
     }
 
     @TestConfiguration

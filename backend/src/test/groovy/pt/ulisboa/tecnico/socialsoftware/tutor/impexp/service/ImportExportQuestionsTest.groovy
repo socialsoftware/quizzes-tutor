@@ -24,7 +24,7 @@ class ImportExportQuestionsTest extends Specification {
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
+    public static final String QUESTION_CONTENT = 'question content\n ![image][image]\n question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
 
@@ -77,15 +77,15 @@ class ImportExportQuestionsTest extends Specification {
         questionId = questionService.createQuestion(course.getId(), questionDto).getId()
     }
 
-    def 'export and import questions'() {
+    def 'export and import questions to xml'() {
         given: 'a xml with questions'
-        def questionsXml = questionService.exportQuestions()
+        def questionsXml = questionService.exportQuestionsToXml()
         System.out.println(questionsXml)
         and: 'a clean database'
         questionService.removeQuestion(questionId)
 
         when:
-        questionService.importQuestions(questionsXml)
+        questionService.importQuestionsFromXml(questionsXml)
 
         then:
         questionRepository.findQuestions(course.getId()).size() == 1
@@ -106,6 +106,15 @@ class ImportExportQuestionsTest extends Specification {
         optionTwoResult.getContent() == OPTION_CONTENT
         !(optionOneResult.getCorrect() && optionTwoResult.getCorrect())
         optionOneResult.getCorrect() || optionTwoResult.getCorrect()
+    }
+
+    def 'export to latex'() {
+        when:
+        def questionsLatex = questionService.exportQuestionsToLatex()
+
+        then:
+        questionsLatex != null
+        System.out.println(questionsLatex)
     }
 
     @TestConfiguration

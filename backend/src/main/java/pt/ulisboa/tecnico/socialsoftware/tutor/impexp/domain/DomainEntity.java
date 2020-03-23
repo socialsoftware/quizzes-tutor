@@ -1,7 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor;
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
-public interface DomainEntitiy {
+public interface DomainEntity {
     public void accept(Visitor visitor);
 }
