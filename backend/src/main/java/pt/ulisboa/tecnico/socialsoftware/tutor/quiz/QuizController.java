@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -8,6 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -52,12 +56,24 @@ public class QuizController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping(value = "/quizzes/{quizId}/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public @ResponseBody byte[] exportQuiz(@PathVariable Integer quizId, @RequestParam String type) throws IOException {
+        String result = "";
+        if (type.equals("latex")) {
+             result = this.quizService.exportQuizzesToLatex(quizId);
+        }
+
+        InputStream in = IOUtils.toInputStream(result, "UTF-8");
+
+        return IOUtils.toByteArray(in);
+    }
+
     @GetMapping("/quizzes/{quizId}/answers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
         return this.quizService.getQuizAnswers(quizId);
     }
-
 
     private void formatDates(QuizDto quiz) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
