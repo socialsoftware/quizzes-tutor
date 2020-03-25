@@ -16,8 +16,6 @@ import java.util.stream.Collectors;
 
 public class LatexQuizExportVisitor extends LatexVisitor {
     public String export(Quiz quiz) {
-        quiz.getQuizQuestions();
-
         quiz.accept(this);
 
         quiz.getQuizQuestions().stream()

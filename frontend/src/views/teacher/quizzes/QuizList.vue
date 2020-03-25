@@ -150,7 +150,7 @@ export default class QuizList extends Vue {
 
   qrValue: number | null = null;
   headers: object = [
-    { text: 'Title', value: 'title', align: 'left', width: '30%' },
+    { text: 'Title', value: 'title', align: 'left', width: '20%' },
     {
       text: 'Creation Date',
       value: 'creationDate',
@@ -169,40 +169,40 @@ export default class QuizList extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Scramble', value: 'scramble', align: 'center', width: '10%' },
-    { text: 'QRCode Only', value: 'qrCodeOnly', align: 'center', width: '10%' },
+    { text: 'Scramble', value: 'scramble', align: 'center', width: '5%' },
+    { text: 'QRCode Only', value: 'qrCodeOnly', align: 'center', width: '5%' },
     {
       text: 'One Way Quiz',
       value: 'oneWay',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
-    { text: 'Type', value: 'type', align: 'center', width: '10%' },
+    { text: 'Type', value: 'type', align: 'center', width: '5%' },
     { text: 'Series', value: 'series', align: 'center', width: '5%' },
     { text: 'Version', value: 'version', align: 'center', width: '5%' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Timer to submission',
       value: 'timerToSubmission',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Answers',
       value: 'numberOfAnswers',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
-      width: '1%',
+      width: '10%',
       sortable: false
     }
   ];
@@ -238,9 +238,9 @@ export default class QuizList extends Vue {
 
   async exportQuiz(quizId: number) {
     let fileName =
-      this.quizzes.filter(quiz => quiz.id == quizId)[0].title + '.tex';
+      this.quizzes.filter(quiz => quiz.id == quizId)[0].title + '.zip';
     try {
-      let result = await RemoteServices.exportQuiz(quizId, 'latex');
+      let result = await RemoteServices.exportQuiz(quizId);
       const url = window.URL.createObjectURL(result);
       const link = document.createElement('a');
       link.href = url;

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -11,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuizExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
@@ -26,15 +28,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -247,5 +251,47 @@ public class QuizService {
         return latexExport.export(quiz);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ByteArrayOutputStream exportQuiz(int quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        String name = quiz.getTitle();
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(baos)) {
+
+            List<Quiz> quizzes = new ArrayList<>();
+            quizzes.add(quiz);
+
+            QuizzesXmlExport xmlExport = new QuizzesXmlExport();
+            InputStream in = IOUtils.toInputStream(xmlExport.export(quizzes), StandardCharsets.UTF_8);
+            zos.putNextEntry(new ZipEntry(name + ".xml"));
+            copyToZipStream(zos, in);
+            zos.closeEntry();
+
+            LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
+            zos.putNextEntry(new ZipEntry(name + ".tex"));
+            in = IOUtils.toInputStream(latexExport.export(quiz), StandardCharsets.UTF_8);
+            copyToZipStream(zos, in);
+            zos.closeEntry();
+
+            zos.close();
+
+            baos.flush();
+
+            return baos;
+        } catch (IOException ex) {
+            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
+        }
+
+    }
+
+    private void copyToZipStream(ZipOutputStream zos, InputStream in) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len;
+        while ((len = in.read(buffer)) > 0) {
+            zos.write(buffer, 0, len);
+        }
+        in.close();
+    }
 
 }

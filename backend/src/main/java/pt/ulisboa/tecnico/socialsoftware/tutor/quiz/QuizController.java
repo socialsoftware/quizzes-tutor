@@ -5,13 +5,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -56,17 +58,14 @@ public class QuizController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping(value = "/quizzes/{quizId}/export", produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
+    @GetMapping(value = "/quizzes/{quizId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public @ResponseBody byte[] exportQuiz(@PathVariable Integer quizId, @RequestParam String type) throws IOException {
-        String result = "";
-        if (type.equals("latex")) {
-             result = this.quizService.exportQuizzesToLatex(quizId);
-        }
+    public void exportQuiz(HttpServletResponse response, @PathVariable Integer quizId) throws IOException {
+        response.setHeader("Content-Disposition", "attachment; filename=file.zip");
+        response.setContentType("application/zip");
+        response.getOutputStream().write(this.quizService.exportQuiz(quizId).toByteArray());
 
-        InputStream in = IOUtils.toInputStream(result, "UTF-8");
-
-        return IOUtils.toByteArray(in);
+        response.flushBuffer();
     }
 
     @GetMapping("/quizzes/{quizId}/answers")

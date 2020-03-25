@@ -254,11 +254,15 @@ export default class RemoteServices {
       });
   }
 
-  static async exportQuiz(quizId: number, type: string): Promise<Blob> {
+  static async exportQuiz(quizId: number): Promise<Blob> {
     return httpClient
-      .get(`/quizzes/${quizId}/export?type=` + type)
+      .get(`/quizzes/${quizId}/export`, {
+        responseType: 'blob'
+      })
       .then(response => {
-        return new Blob([response.data]);
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
