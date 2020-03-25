@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -65,7 +64,7 @@ public class QuizController {
              result = this.quizService.exportQuizzesToLatex(quizId);
         }
 
-        InputStream in = IOUtils.toInputStream(result, StandardCharsets.UTF_8);
+        InputStream in = IOUtils.toInputStream(result, "UTF-8");
 
         return IOUtils.toByteArray(in);
     }

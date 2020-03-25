@@ -83,7 +83,8 @@ class CreateQuizTest extends Specification {
         course.addQuestion(question)
         questionRepository.save(question)
 
-        questionDto = new QuestionDto(question)
+        questionDto = new QuestionDto()
+        questionDto.setId(question.getId())
         questionDto.setKey(1)
         questionDto.setSequence(1)
 

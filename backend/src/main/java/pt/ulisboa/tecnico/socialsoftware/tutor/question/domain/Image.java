@@ -35,6 +35,10 @@ public class Image implements DomainEntity {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Question getQuestion() {
         return question;
     }

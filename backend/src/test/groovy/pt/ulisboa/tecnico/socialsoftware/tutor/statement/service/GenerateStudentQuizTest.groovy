@@ -129,7 +129,7 @@ class GenerateStudentQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId().toString())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -154,7 +154,7 @@ class GenerateStudentQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId().toString())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -177,7 +177,7 @@ class GenerateStudentQuizTest extends Specification {
         quizForm.setAssessment(assessment.getId().toString())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()

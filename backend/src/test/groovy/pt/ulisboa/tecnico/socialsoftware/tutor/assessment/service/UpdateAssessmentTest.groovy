@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
@@ -70,7 +72,8 @@ class UpdateAssessmentTest extends Specification {
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
         given: "an assessment dto"
-        def assessmentDto = new AssessmentDto(assessment)
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setId(assessment.getId())
         assessmentDto.setTitle(ASSESSMENT_TITLE_2)
         assessmentDto.setStatus(Assessment.Status.DISABLED.name())
         assessmentDto.setSequence(assessment.getSequence())
@@ -116,7 +119,8 @@ class UpdateAssessmentTest extends Specification {
 
     def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
         given: "an assessment dto"
-        def assessmentDto = new AssessmentDto(assessment)
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setId(assessment.getId())
         assessmentDto.setTitle(ASSESSMENT_TITLE_1)
         assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         assessmentDto.setSequence(assessment.getSequence())

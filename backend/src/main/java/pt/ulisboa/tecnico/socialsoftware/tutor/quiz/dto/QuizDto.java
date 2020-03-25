@@ -72,6 +72,10 @@ public class QuizDto implements Serializable {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getKey() {
         return key;
     }

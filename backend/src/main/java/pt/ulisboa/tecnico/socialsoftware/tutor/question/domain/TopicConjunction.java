@@ -25,6 +25,10 @@ public class TopicConjunction {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Set<Topic> getTopics() {
         return topics;
     }

@@ -72,6 +72,10 @@ public class QuizQuestion implements DomainEntity {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Set<QuestionAnswer> getQuestionAnswers() {
         return questionAnswers;
     }

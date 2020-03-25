@@ -17,7 +17,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERNAME_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {
@@ -48,7 +48,7 @@ public class JwtTokenProvider {
             generateKeys();
         }
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("role", user.getRole());
 
         Date now = new Date();
@@ -74,9 +74,11 @@ public class JwtTokenProvider {
         }
         return "";
     }
-    static int getUserId(String token) {
+
+    static boolean validateToken(String token) {
         try {
-            return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
+            Jwts.parser().setSigningKey(publicKey).parseClaimsJws(token);
+            return true;
         } catch (MalformedJwtException ex) {
             logger.error("Invalkey JWT token");
         } catch (ExpiredJwtException ex) {
@@ -86,11 +88,23 @@ public class JwtTokenProvider {
         } catch (IllegalArgumentException ex) {
             logger.error("JWT claims string is empty.");
         }
-        throw new TutorException(AUTHENTICATION_ERROR);
+        return false;
+    }
+
+    static String getUsername(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(publicKey)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
     }
 
     Authentication getAuthentication(String token) {
-        User user = this.userRepository.findById(getUserId(token)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, getUserId(token)));
+        User user = this.userRepository.findByUsername(getUsername(token));
+        if (user == null) {
+            throw new TutorException(USERNAME_NOT_FOUND, getUsername(token));
+        }
         return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 }

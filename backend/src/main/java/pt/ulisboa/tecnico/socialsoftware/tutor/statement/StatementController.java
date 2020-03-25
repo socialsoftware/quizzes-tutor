@@ -32,7 +32,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getAvailableQuizzes(user.getId(), executionId);
+        return statementService.getAvailableQuizzes(user.getUsername(), executionId);
     }
 
     @PostMapping("/executions/{executionId}/quizzes/generate")
@@ -44,7 +44,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.generateStudentQuiz(user.getId(), executionId, quizDetails);
+        return statementService.generateStudentQuiz(user.getUsername(), executionId, quizDetails);
     }
 
     @GetMapping("/executions/{executionId}/quizzes/solved")
@@ -56,7 +56,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getSolvedQuizzes(user.getId(), executionId);
+        return statementService.getSolvedQuizzes(user.getUsername(), executionId);
     }
 
     @GetMapping("/quizzes/{quizId}/byqrcode")
@@ -68,7 +68,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.getQuizByQRCode(user.getId(), quizId);
+        return statementService.getQuizByQRCode(user.getUsername(), quizId);
     }
 
     @PostMapping("/quizzes/{quizId}/submit")
@@ -80,7 +80,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        statementService.submitAnswer(user.getId(), quizId, answer);
+        statementService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @GetMapping("/quizzes/{quizId}/start")
@@ -92,7 +92,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        statementService.startQuiz(user.getId(), quizId);
+        statementService.startQuiz(user.getUsername(), quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/conclude")
@@ -105,6 +105,6 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.concludeQuiz(user.getId(), quizId);
+        return statementService.concludeQuiz(user.getUsername(), quizId);
     }
 }

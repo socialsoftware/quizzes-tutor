@@ -7,13 +7,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 public interface Visitor {
-    default void visitQuestion(Question question) {}
+    default void visitQuestion(Question question) {};
 
-    default void visitImage(Image image) {}
+    default void visitImage(Image image) {};
 
-    default void visitOption(Option option) {}
+    default void visitOption(Option option) {};
 
-    default void visitQuiz(Quiz quiz) {}
+    default void visitQuiz(Quiz quiz) {};
 
-    default void visitQuizQuestion(QuizQuestion quizQuestion) {}
+    default void visitQuizQuestion(QuizQuestion quizQuestion) {};
 }

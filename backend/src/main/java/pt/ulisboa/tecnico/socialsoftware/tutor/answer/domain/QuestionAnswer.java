@@ -70,6 +70,10 @@ public class QuestionAnswer {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getTimeTaken() {
         return timeTaken;
     }

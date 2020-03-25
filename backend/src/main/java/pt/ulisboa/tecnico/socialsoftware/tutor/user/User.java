@@ -81,6 +81,10 @@ public class User implements UserDetails {
         return id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     public Integer getKey() {
         return key;
     }

@@ -82,7 +82,7 @@ public class UsersXmlImport {
 		for (Element courseExecutionElement: courseExecutions.getChildren("courseExecution")) {
 			Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue("executionId"));
 
-			userService.addCourseExecution(user.getId(), executionId);
+			userService.addCourseExecution(user.getUsername(), executionId);
 		}
 	}
 

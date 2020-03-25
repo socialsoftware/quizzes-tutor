@@ -104,7 +104,7 @@ class GetAvailableQuizzesTest extends Specification {
 
     def 'get the quizzes for the student'() {
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer is created'
         quizAnswerRepository.count() == 1L
@@ -127,7 +127,7 @@ class GetAvailableQuizzesTest extends Specification {
         quiz.setAvailableDate(LocalDateTime.now().plusDays(1))
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer is not created'
         quizAnswerRepository.count() == 0
@@ -143,7 +143,7 @@ class GetAvailableQuizzesTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L
@@ -168,7 +168,7 @@ class GetAvailableQuizzesTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def statementQuizDtos = statementService.getAvailableQuizzes(USERNAME, courseExecution.getId())
 
         then: 'the quiz answer exists'
         quizAnswerRepository.count() == 1L
