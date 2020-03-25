@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 
 @Service
 public class AuthService {
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Autowired
     private UserService userService;
 
@@ -127,7 +131,12 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthDto demoStudentAuth() {
-        User user = this.userService.getDemoStudent();
+        User user;
+        if (activeProfile.equals("dev")) {
+            user = this.userService.createDemoStudent();
+        } else {
+            user = this.userService.getDemoStudent();
+        }
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
