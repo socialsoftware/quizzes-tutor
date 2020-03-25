@@ -63,10 +63,6 @@ public class QuizAnswer {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }

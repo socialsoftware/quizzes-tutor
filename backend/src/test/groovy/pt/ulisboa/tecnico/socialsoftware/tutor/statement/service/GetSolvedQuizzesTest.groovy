@@ -133,7 +133,7 @@ class GetSolvedQuizzesTest extends Specification {
 
     def 'get solved quizzes for the student'() {
         when:
-        def solvedQuizDtos = statementService.getSolvedQuizzes(USERNAME, courseDto.getCourseExecutionId())
+        def solvedQuizDtos = statementService.getSolvedQuizzes(user.getId(), courseDto.getCourseExecutionId())
 
         then: 'returns correct data'
         solvedQuizDtos.size() == 1

@@ -77,10 +77,6 @@ public class CourseExecution {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getAcronym() {
         return acronym;
     }

@@ -49,10 +49,6 @@ public class Option implements DomainEntity {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getSequence() {
         if (sequence == null) {
             getQuestion().setOptionsSequence();

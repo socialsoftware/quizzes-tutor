@@ -23,10 +23,6 @@ public class ImageDto implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public String getUrl() {
         return url;
     }

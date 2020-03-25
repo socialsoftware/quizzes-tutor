@@ -22,10 +22,6 @@ public class TopicConjunctionDto implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public List<TopicDto> getTopics() {
         return topics;
     }
