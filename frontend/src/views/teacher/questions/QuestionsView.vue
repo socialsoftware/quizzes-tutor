@@ -21,6 +21,9 @@
 
           <v-spacer />
           <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
+          <v-btn color="primary" dark @click="exportCourseQuestions"
+            >Export Questions</v-btn
+          >
         </v-card-title>
       </template>
 
@@ -316,6 +319,21 @@ export default class QuestionsView extends Vue {
     this.questions.unshift(question);
     this.editQuestionDialog = false;
     this.currentQuestion = null;
+  }
+
+  async exportCourseQuestions() {
+    let fileName = this.$store.getters.getCurrentCourse.name + '-Questions.zip';
+    try {
+      let result = await RemoteServices.exportCourseQuestions();
+      const url = window.URL.createObjectURL(result);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+      document.body.appendChild(link);
+      link.click();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 
   async deleteQuestion(toDeletequestion: Question) {

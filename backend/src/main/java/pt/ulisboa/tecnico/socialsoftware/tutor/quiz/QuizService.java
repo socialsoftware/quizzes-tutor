@@ -289,7 +289,6 @@ public class QuizService {
         } catch (IOException ex) {
             throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
-
     }
 
     private void copyToZipStream(ZipOutputStream zos, InputStream in) throws IOException {

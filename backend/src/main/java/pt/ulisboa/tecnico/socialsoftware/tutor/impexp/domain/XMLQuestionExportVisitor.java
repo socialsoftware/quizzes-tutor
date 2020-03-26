@@ -52,7 +52,8 @@ public class XMLQuestionExportVisitor implements Visitor {
         questionElement.setAttribute("content", question.getContent());
         questionElement.setAttribute("title", question.getTitle());
         questionElement.setAttribute("status", question.getStatus().name());
-        questionElement.setAttribute("creationDate", question.getCreationDate().format(formatter));
+        if (question.getCreationDate() != null)
+            questionElement.setAttribute("creationDate", question.getCreationDate().format(formatter));
         this.currentElement.addContent(questionElement);
 
         this.currentElement = questionElement;
@@ -67,6 +68,8 @@ public class XMLQuestionExportVisitor implements Visitor {
         for (Option option: question.getOptions()) {
             option.accept(this);
         }
+
+        this.currentElement = this.rootElement;
     }
 
     @Override
