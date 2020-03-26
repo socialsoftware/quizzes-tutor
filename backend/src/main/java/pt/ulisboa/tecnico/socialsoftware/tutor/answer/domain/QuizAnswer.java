@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -11,7 +13,7 @@ import java.util.*;
 
 @Entity
 @Table(name = "quiz_answers")
-public class QuizAnswer {
+public class QuizAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,15 +29,15 @@ public class QuizAnswer {
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<QuestionAnswer> questionAnswers = new ArrayList<>();
 
     public QuizAnswer() {
@@ -57,6 +59,11 @@ public class QuizAnswer {
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
         }
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuizAnswer(this);
     }
 
     public Integer getId() {
@@ -134,7 +141,6 @@ public class QuizAnswer {
     }
 
 
-
     public void remove() {
         user.getQuizAnswers().remove(this);
         user = null;
@@ -142,7 +148,7 @@ public class QuizAnswer {
         quiz.getQuizAnswers().remove(this);
         quiz = null;
 
-        for (QuestionAnswer questionAnswer: getQuestionAnswers()) {
+        for (QuestionAnswer questionAnswer : getQuestionAnswers()) {
             questionAnswer.remove();
         }
 
@@ -173,4 +179,5 @@ public class QuizAnswer {
             this.usedInStatistics = true;
         }
     }
+
 }

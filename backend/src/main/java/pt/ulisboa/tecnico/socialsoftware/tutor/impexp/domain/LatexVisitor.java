@@ -47,7 +47,7 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
-            convert(question.getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
+            convertSequenceToLetter(question.getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
@@ -63,21 +63,7 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitOption(Option option) {
-        this.result = this.result + "\t\\option" + convert(option.getSequence()) + "{" + option.getContent() + "}\n";
+        this.result = this.result + "\t\\option" + convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
     }
 
-    private String convert(Integer value) {
-        switch (value) {
-            case 0:
-                return "A";
-            case 1:
-                return "B";
-            case 2:
-                return "C";
-            case 3:
-                return "D";
-            default:
-                return "null";
-        }
-    }
 }
