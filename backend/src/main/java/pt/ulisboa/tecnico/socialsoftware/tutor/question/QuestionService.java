@@ -158,7 +158,10 @@ public class QuestionService {
             imageRepository.save(image);
         }
 
-        question.getImage().setUrl(question.getKey() + "." + type);
+        question.getImage().setUrl(question.getCourse().getName().replaceAll("\\s", "") +
+                question.getCourse().getType() +
+                question.getKey() +
+                "." + type);
     }
 
     @Retryable(
