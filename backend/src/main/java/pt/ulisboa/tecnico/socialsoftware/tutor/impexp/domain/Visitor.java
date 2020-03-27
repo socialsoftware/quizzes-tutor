@@ -10,21 +10,21 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 public interface Visitor {
-    default void visitQuestion(Question question) {};
+    default void visitQuestion(Question question) {}
 
-    default void visitImage(Image image) {};
+    default void visitImage(Image image) {}
 
-    default void visitOption(Option option) {};
+    default void visitOption(Option option) {}
 
-    default void visitQuiz(Quiz quiz) {};
+    default void visitQuiz(Quiz quiz) {}
 
-    default void visitQuizQuestion(QuizQuestion quizQuestion) {};
+    default void visitQuizQuestion(QuizQuestion quizQuestion) {}
 
-    default void visitUser(User user) {};
+    default void visitUser(User user) {}
 
-    default void visitQuizAnswer(QuizAnswer quizAnswer) {};
+    default void visitQuizAnswer(QuizAnswer quizAnswer) {}
 
-    default void visitQuestionAnswer(QuestionAnswer questionAnswer) {};
+    default void visitQuestionAnswer(QuestionAnswer questionAnswer) {}
 
     default String convertSequenceToLetter(Integer value) {
         switch (value) {

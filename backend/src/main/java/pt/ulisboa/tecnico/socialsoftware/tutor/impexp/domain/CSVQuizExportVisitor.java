@@ -6,7 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +15,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CSVQuizExportVisitor implements Visitor {
-    private int numberOfQuestions;
     private String[] line;
     private int column;
     private List<String[]> table = new ArrayList<>();
 
-    public String export(Quiz quiz) throws IOException {
-        numberOfQuestions = quiz.getQuizQuestions().size();
+    public String export(Quiz quiz) {
+        int numberOfQuestions = quiz.getQuizQuestions().size();
 
         line = new String[numberOfQuestions + 4];
         Arrays.fill(line, "");
@@ -43,9 +41,7 @@ public class CSVQuizExportVisitor implements Visitor {
             quizAnswer.getQuestionAnswers().stream()
                     .sorted(Comparator.comparing(questionAnswer -> questionAnswer.getQuizQuestion().getSequence()))
                     .collect(Collectors.toList())
-                    .forEach(questionAnswer -> {
-                        questionAnswer.accept(this);
-                    });
+                    .forEach(questionAnswer -> questionAnswer.accept(this));
 
             table.add(line);
         }
@@ -56,15 +52,10 @@ public class CSVQuizExportVisitor implements Visitor {
         column = 4;
         quiz.getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                .forEach(quizQuestion -> {
-                    quizQuestion.accept(this);
-                });
+                .forEach(quizQuestion -> quizQuestion.accept(this));
         table.add(line);
 
-        String result = table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
-
-        System.out.println(result);
-        return result;
+        return table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
     }
 
     @Override

@@ -32,7 +32,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -280,8 +279,6 @@ public class QuizService {
             in = IOUtils.toInputStream( csvExport.export(quiz), StandardCharsets.UTF_8);
             copyToZipStream(zos, in);
             zos.closeEntry();
-
-            zos.close();
 
             baos.flush();
 
