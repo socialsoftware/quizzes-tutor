@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -49,7 +50,7 @@ public class AdministrationService {
     public List<CourseDto> getCourseExecutions(User.Role role) {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
-                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(Course.DEMO_COURSE)))
+                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(Demo.COURSE_NAME)))
                 .map(CourseDto::new)
                 .sorted(Comparator
                         .comparing(CourseDto::getName)

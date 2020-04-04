@@ -144,14 +144,8 @@ public class QuizAnswer implements DomainEntity {
     public void remove() {
         user.getQuizAnswers().remove(this);
         user = null;
-
         quiz.getQuizAnswers().remove(this);
         quiz = null;
-
-        for (QuestionAnswer questionAnswer : getQuestionAnswers()) {
-            questionAnswer.remove();
-        }
-
         questionAnswers.clear();
     }
 
