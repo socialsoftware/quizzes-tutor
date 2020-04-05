@@ -247,7 +247,7 @@
     </v-dialog>
     <show-question-dialog
       v-if="currentQuestion"
-      :dialog="questionDialog"
+      v-model="questionDialog"
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />

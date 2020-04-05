@@ -1,5 +1,6 @@
 import Image from '@/models/management/Image';
 import showdown from 'showdown';
+var sanitizeHtml = require('sanitize-html');
 
 export function convertMarkDown(
   text: string,
@@ -21,7 +22,7 @@ export function convertMarkDown(
   str = str.substring(3);
   str = str.substring(0, str.length - 4);
 
-  return str;
+  return sanitizeHtml(str);
 }
 
 export function convertMarkDownNoFigure(
@@ -39,5 +40,5 @@ export function convertMarkDownNoFigure(
   str = str.substring(3);
   str = str.substring(0, str.length - 4);
 
-  return str;
+  return sanitizeHtml(str);
 }

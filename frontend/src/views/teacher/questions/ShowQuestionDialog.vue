@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="dialog" @keydown.esc="closeQuestionDialog" max-width="75%">
+  <v-dialog
+    :value="dialog"
+    @input="$emit('dialog', false)"
+    @keydown.esc="$emit('dialog', false)"
+    max-width="75%"
+  >
     <v-card>
       <v-card-title>
         <span class="headline">{{ question.title }}</span>
@@ -11,16 +16,14 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="closeQuestionDialog"
-          >close</v-btn
-        >
+        <v-btn dark color="blue darken-1" @click="$emit('dialog')">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
@@ -30,11 +33,7 @@ import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
   }
 })
 export default class ShowQuestionDialog extends Vue {
+  @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
-  @Prop({ type: Boolean, required: true }) readonly dialog!: boolean;
-
-  closeQuestionDialog() {
-    this.$emit('close-show-question-dialog');
-  }
 }
 </script>
