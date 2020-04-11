@@ -84,7 +84,7 @@ class GenerateStudentQuizTest extends Specification {
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
-        def topic = new Topic();
+        def topic = new Topic()
         topic.setName("TOPIC")
         topic.setCourse(course)
         topicRepository.save(topic)
@@ -127,7 +127,7 @@ class GenerateStudentQuizTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(1)
-        quizForm.setAssessment(assessment.getId().toString())
+        quizForm.setAssessment(assessment.getId())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
@@ -152,7 +152,7 @@ class GenerateStudentQuizTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(2)
-        quizForm.setAssessment(assessment.getId().toString())
+        quizForm.setAssessment(assessment.getId())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)
@@ -175,7 +175,7 @@ class GenerateStudentQuizTest extends Specification {
         given:
         def quizForm = new StatementCreationDto()
         quizForm.setNumberOfQuestions(3)
-        quizForm.setAssessment(assessment.getId().toString())
+        quizForm.setAssessment(assessment.getId())
 
         when:
         statementService.generateStudentQuiz(USERNAME, courseExecution.getId(), quizForm)

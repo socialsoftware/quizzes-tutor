@@ -34,7 +34,6 @@ export default class ScanView extends Vue {
 
   countDownTimer() {
     if (this.secondsToRequest >= 0) {
-      console.log(this.$router.currentRoute.name);
       if (this.$router.currentRoute.name === 'scan') {
         this.secondsToRequest -= 1;
         setTimeout(() => {

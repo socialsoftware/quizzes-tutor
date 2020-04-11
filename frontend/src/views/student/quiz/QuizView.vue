@@ -165,6 +165,7 @@ export default class QuizView extends Vue {
   secondsToSubmission: number =
     StatementManager.getInstance.statementQuiz?.secondsToSubmission ?? 0;
   hideTime: boolean = false;
+  timeout: number | null = null;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -179,6 +180,9 @@ export default class QuizView extends Vue {
     }
 
     if (this.secondsToSubmission > 0) {
+      if (this.timeout) {
+        clearTimeout(this.timeout);
+      }
       this.countDownToResults();
     }
   }
@@ -272,10 +276,12 @@ export default class QuizView extends Vue {
 
   async countDownToResults() {
     if (this.secondsToSubmission && this.secondsToSubmission > -1) {
-      this.secondsToSubmission! -= 1;
-      setTimeout(() => {
-        this.countDownToResults();
-      }, 1000);
+      if (this.$router.currentRoute.name === 'solve-quiz') {
+        this.secondsToSubmission! -= 1;
+        this.timeout = setTimeout(() => {
+          this.countDownToResults();
+        }, 1000);
+      }
     } else {
       await this.endQuiz();
     }

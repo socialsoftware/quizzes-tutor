@@ -3,9 +3,7 @@ import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
 export default class StatementManager {
-  questionType: string = 'all';
-  assessment: string = 'all';
-  // topic: string[] = [];
+  assessment!: number;
   numberOfQuestions: string = '5';
   statementQuiz: StatementQuiz | null = null;
   correctAnswers: StatementCorrectAnswer[] = [];
@@ -18,8 +16,6 @@ export default class StatementManager {
 
   async getQuizStatement() {
     let params = {
-      // topic: this.topic,
-      questionType: this.questionType,
       assessment: this.assessment,
       numberOfQuestions: +this.numberOfQuestions
     };
