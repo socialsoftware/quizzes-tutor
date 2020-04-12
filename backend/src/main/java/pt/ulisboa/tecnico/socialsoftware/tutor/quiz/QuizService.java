@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
@@ -39,7 +40,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -130,8 +130,7 @@ public class QuizService {
         if (quizDto.getCreationDate() == null) {
             quiz.setCreationDate(LocalDateTime.now());
         } else {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-            quiz.setCreationDate(LocalDateTime.parse(quizDto.getCreationDate(), formatter));
+            quiz.setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         }
         quizRepository.save(quiz);
 
@@ -149,8 +148,8 @@ public class QuizService {
         quiz.checkCanChange();
 
         quiz.setTitle(quizDto.getTitle());
-        quiz.setAvailableDate(quizDto.getAvailableDateDate());
-        quiz.setConclusionDate(quizDto.getConclusionDateDate());
+        quiz.setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
+        quiz.setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
         quiz.setOneWay(quizDto.isOneWay());

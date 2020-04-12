@@ -112,12 +112,12 @@ public class QuestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        Question question = new Question(course, questionDto);
 
         if (questionDto.getCreationDate() == null) {
-            questionDto.setCreationDate(LocalDateTime.now().format(Course.formatter));
+            question.setCreationDate(LocalDateTime.now());
         }
 
-        Question question = new Question(course, questionDto);
         questionRepository.save(question);
         return new QuestionDto(question);
     }

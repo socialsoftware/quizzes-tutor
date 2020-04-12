@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -53,7 +53,7 @@ public class QuestionDto implements Serializable {
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
         if (question.getCreationDate() != null)
-            this.creationDate = question.getCreationDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            this.creationDate = DateHandler.toString(question.getCreationDate());
     }
 
     public Integer getId() {

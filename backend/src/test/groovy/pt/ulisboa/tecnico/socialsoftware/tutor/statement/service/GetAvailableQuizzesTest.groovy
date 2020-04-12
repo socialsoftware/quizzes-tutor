@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -25,7 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class GetAvailableQuizzesTest extends Specification {
@@ -118,7 +118,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+        statementResult.getAvailableDate() == DateHandler.toString(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -157,7 +157,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+        statementResult.getAvailableDate() == DateHandler.toString(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
