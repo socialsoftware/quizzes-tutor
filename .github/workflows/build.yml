@@ -16,28 +16,19 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    
     - name: Set up JDK 11
       uses: actions/setup-java@v1
       with:
         java-version: 1.11
     - name: Build with Maven
-      run: mvn clean --file ./backend/pom.xml -Ptest test
+      run: |
+        cd backend
+        mvn clean -Ptest test
+        
     - name: Codecov
       uses: codecov/codecov-action@v1.0.5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
-    - uses: actions/setup-node@v1
-      with:
-        node-version: '12.14'
-    - run: |
-        cd frontend
-        npm i -g npm
-        npm install
-        npm run test:unit
-    - name: Codecov Node
-      uses: iansu/codecov-action-node@v1.0.0
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
-        file: ./frontend/coverage/clover.xml

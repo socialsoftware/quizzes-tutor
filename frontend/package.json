@@ -3,14 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "vue-cli-service serve --fix",
     "build": "NODE_ENV=production vue-cli-service build --mode production",
-    "test:unit": "vue-cli-service test:unit",
-    "test:e2e": "npx cypress open",
-    "lint": "vue-cli-service lint",
     "build:dev": "NODE_ENV=development vue-cli-service build --mode development",
-    "codecov": "codecov",
+    "lint": "vue-cli-service lint",
     "prettier": "prettier --single-quote --write \"**/**/*.{ts,js,css,scss,vue}\"",
-    "start": "vue-cli-service serve --fix"
+    "codecov": "codecov",
+    "cypress": "npx cypress open",
+    "test:e2e": "npx cypress run",
+    "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
