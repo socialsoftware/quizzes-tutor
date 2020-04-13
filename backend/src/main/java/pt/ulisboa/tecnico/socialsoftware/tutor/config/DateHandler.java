@@ -10,7 +10,7 @@ public class DateHandler {
     }
 
     public static LocalDateTime toLocalDateTime(String date) {
-        if (date == null || date.isBlank()) {
+        if (date == null || date.isBlank() || date.equals("-")) {
             return null;
         } else if (date.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}")) {
             return LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));

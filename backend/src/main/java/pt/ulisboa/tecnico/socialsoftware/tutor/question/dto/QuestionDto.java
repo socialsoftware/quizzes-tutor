@@ -22,7 +22,7 @@ public class QuestionDto implements Serializable {
     private int numberOfGeneratedQuizzes = 0;
     private int numberOfNonGeneratedQuizzes = 0;
     private int numberOfCorrect;
-    private String creationDate = null;
+    private String creationDate;
     private String status;
     private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
