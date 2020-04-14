@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 
 import java.io.Serializable;
 
-
 public class OptionDto implements Serializable {
     private Integer id;
     private Integer sequence;

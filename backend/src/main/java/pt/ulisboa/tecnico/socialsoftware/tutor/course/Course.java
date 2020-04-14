@@ -9,7 +9,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NAME_IS_EMPTY;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
 
 @Entity
 @Table(name = "courses")
@@ -23,6 +24,7 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    @Column(nullable = false)
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -37,24 +39,8 @@ public class Course {
     public Course() {}
 
     public Course(String name, Course.Type type) {
-        if (name == null || name.trim().isEmpty()) {
-            throw new TutorException(COURSE_NAME_IS_EMPTY);
-        }
-
-        this.type = type;
-        this.name = name;
-    }
-
-    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, Course.Type type) {
-        return getCourseExecutions().stream()
-                .filter(courseExecution -> courseExecution.getType().equals(type)
-                        && courseExecution.getAcronym().equals(acronym)
-                        && courseExecution.getAcademicTerm().equals(academicTerm))
-                .findAny();
-    }
-
-    public boolean existsCourseExecution(String acronym, String academicTerm, Course.Type type) {
-        return getCourseExecution(acronym, academicTerm, type).isPresent();
+        setType(type);
+        setName(name);
     }
 
     public Integer getId() {
@@ -70,6 +56,9 @@ public class Course {
     }
 
     public void setName(String name) {
+        if (name == null || name.isBlank())
+            throw new TutorException(INVALID_NAME_FOR_COURSE);
+
         this.name = name;
     }
 
@@ -102,6 +91,33 @@ public class Course {
     }
 
     public void setType(Type type) {
+        if (type == null)
+            throw new TutorException(INVALID_TYPE_FOR_COURSE);
+
         this.type = type;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+                "id=" + id +
+                ", type=" + type +
+                ", name='" + name + '\'' +
+                ", courseExecutions=" + courseExecutions +
+                ", questions=" + questions +
+                ", topics=" + topics +
+                '}';
+    }
+
+    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, Course.Type type) {
+        return getCourseExecutions().stream()
+                .filter(courseExecution -> courseExecution.getType().equals(type)
+                        && courseExecution.getAcronym().equals(acronym)
+                        && courseExecution.getAcademicTerm().equals(academicTerm))
+                .findAny();
+    }
+
+    public boolean existsCourseExecution(String acronym, String academicTerm, Course.Type type) {
+        return getCourseExecution(acronym, academicTerm, type).isPresent();
     }
 }

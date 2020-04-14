@@ -32,6 +32,7 @@ class CreateQuizTest extends Specification {
     public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_CONTENT = 'question content'
     public static final String QUIZ_TITLE = 'quiz title'
+    public static final String QUESTION_TITLE = 'question title'
     public static final String VERSION = 'B'
 
     @Autowired
@@ -72,7 +73,6 @@ class CreateQuizTest extends Specification {
         quizDto.setOneWay(true)
         quizDto.setQrCodeOnly(true)
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
-        println(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
@@ -80,7 +80,7 @@ class CreateQuizTest extends Specification {
         def question = new Question()
         question.setKey(1)
         question.setCourse(course)
-        course.addQuestion(question)
+        question.setTitle(QUESTION_TITLE)
         questionRepository.save(question)
 
         questionDto = new QuestionDto()
@@ -177,7 +177,6 @@ class CreateQuizTest extends Specification {
         quizRepository.count() == 0L
     }
 
-
     @TestConfiguration
     static class QuizServiceImplTestContextConfiguration {
 
@@ -201,5 +200,4 @@ class CreateQuizTest extends Specification {
             return new AnswersXmlImport()
         }
     }
-
 }

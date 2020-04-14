@@ -164,5 +164,4 @@ class UpdateAssessmentTest extends Specification {
             return new AssessmentService()
         }
     }
-
 }

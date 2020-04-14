@@ -16,5 +16,4 @@ public class LatexQuestionExportVisitor extends LatexVisitor {
             question.accept(this);
         }
     }
-
 }

@@ -5,7 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
-class CreateCourseExecutionsMethodSpockTest extends Specification {
+class CreateCourseExecutionsTest extends Specification {
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
 
@@ -39,5 +39,4 @@ class CreateCourseExecutionsMethodSpockTest extends Specification {
         and: "it is not added to course"
         0 * course.addCourseExecution(_)
     }
-
 }

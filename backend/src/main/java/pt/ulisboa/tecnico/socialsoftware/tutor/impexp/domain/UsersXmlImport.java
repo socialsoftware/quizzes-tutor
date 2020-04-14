@@ -85,5 +85,4 @@ public class UsersXmlImport {
 			userService.addCourseExecution(user.getUsername(), executionId);
 		}
 	}
-
 }

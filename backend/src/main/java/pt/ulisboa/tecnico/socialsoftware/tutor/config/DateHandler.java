@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 
 public class DateHandler {
 
+    private DateHandler() {}
+
     /**
      *  Converts LocalDateTime to ISO8601 string format
      */

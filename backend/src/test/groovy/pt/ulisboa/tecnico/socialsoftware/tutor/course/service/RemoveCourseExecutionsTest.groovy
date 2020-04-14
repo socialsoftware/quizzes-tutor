@@ -1,10 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.administration.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -14,11 +14,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
 @DataJpaTest
-class RemoveCourseExecutionsServiceSpockTest extends Specification {
+class RemoveCourseExecutionsTest extends Specification {
     static final String COURSE_ONE = "CourseOne"
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
@@ -26,7 +25,7 @@ class RemoveCourseExecutionsServiceSpockTest extends Specification {
     static final String ACADEMIC_TERM_TWO = "2º Semestre"
 
     @Autowired
-    AdministrationService administrationService
+    CourseService courseService
 
     @Autowired
     CourseRepository courseRepository
@@ -55,7 +54,7 @@ class RemoveCourseExecutionsServiceSpockTest extends Specification {
 
     def "delete a execution course"() {
         when:
-        administrationService.removeCourseExecution(courseExecutionExternal.id)
+        courseService.removeCourseExecution(courseExecutionExternal.id)
 
         then: "the returned data are correct"
         courseExecutionRepository.findAll().size() == 1
@@ -74,7 +73,7 @@ class RemoveCourseExecutionsServiceSpockTest extends Specification {
         quizRepository.save(quiz)
 
         when:
-        administrationService.removeCourseExecution(courseExecutionTecnico.id)
+        courseService.removeCourseExecution(courseExecutionTecnico.id)
 
         then: "the returned data are correct"
         thrown(TutorException)
@@ -84,12 +83,13 @@ class RemoveCourseExecutionsServiceSpockTest extends Specification {
     def "cannot delete a execution course with assessments"() {
         given: "external course has assessments"
         def assessment = new Assessment()
+        assessment.setTitle("Assessment Title")
         assessment.setCourseExecution(courseExecutionExternal)
         courseExecutionExternal.addAssessment(assessment)
         assessmentRepository.save(courseExecutionExternal)
 
         when:
-        administrationService.removeCourseExecution(courseExecutionExternal.id)
+        courseService.removeCourseExecution(courseExecutionExternal.id)
 
         then: "the returned data are correct"
         thrown(TutorException)
@@ -100,9 +100,8 @@ class RemoveCourseExecutionsServiceSpockTest extends Specification {
     static class ServiceImplTestContextConfiguration {
 
         @Bean
-        AdministrationService administrationService() {
-            return new AdministrationService()
+        CourseService courseService() {
+            return new CourseService()
         }
-
     }
 }

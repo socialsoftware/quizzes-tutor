@@ -158,5 +158,4 @@ class ImportExportQuizzesTest extends Specification {
             return new AnswersXmlImport()
         }
     }
-
 }

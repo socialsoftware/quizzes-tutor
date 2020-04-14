@@ -46,35 +46,29 @@ public class CourseExecution {
     }
 
     public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type) {
-        if (acronym == null || acronym.trim().isEmpty()) {
-            throw new TutorException(COURSE_EXECUTION_ACRONYM_IS_EMPTY);
-        }
-        if (academicTerm == null || academicTerm.trim().isEmpty()) {
-            throw new TutorException(COURSE_EXECUTION_ACADEMIC_TERM_IS_EMPTY);
-        }
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
 
-        this.type = type;
-        this.course = course;
-        this.acronym = acronym;
-        this.academicTerm = academicTerm;
-        this.status = Status.ACTIVE;
-        course.addCourseExecution(this);
-    }
-
-    public void delete() {
-        if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
-            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
-        }
-
-        course.getCourseExecutions().remove(this);
-        users.forEach(user -> user.getCourseExecutions().remove(this));
+        setType(type);
+        setCourse(course);
+        setAcronym(acronym);
+        setAcademicTerm(academicTerm);
+        setStatus(Status.ACTIVE);
     }
 
     public Integer getId() {
         return id;
+    }
+
+    public Course.Type getType() {
+        return type;
+    }
+
+    public void setType(Course.Type type) {
+        if (type == null)
+            throw new TutorException(INVALID_TYPE_FOR_COURSE_EXECUTION);
+        this.type = type;
     }
 
     public void setId(Integer id) {
@@ -86,6 +80,9 @@ public class CourseExecution {
     }
 
     public void setAcronym(String acronym) {
+        if (acronym == null || acronym.trim().isEmpty()) {
+        throw new TutorException(INVALID_ACRONYM_FOR_COURSE_EXECUTION);
+    }
         this.acronym = acronym;
     }
 
@@ -94,6 +91,9 @@ public class CourseExecution {
     }
 
     public void setAcademicTerm(String academicTerm) {
+        if (academicTerm == null || academicTerm.isBlank())
+            throw new TutorException(INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION);
+
         this.academicTerm = academicTerm;
     }
 
@@ -111,37 +111,54 @@ public class CourseExecution {
 
     public void setCourse(Course course) {
         this.course = course;
+        course.addCourseExecution(this);
     }
 
     public Set<User> getUsers() {
         return users;
     }
 
-    public Set<Quiz> getQuizzes() {
-        return quizzes;
+    public void addUser(User user) {
+        users.add(user);
     }
 
-    public Set<Assessment> getAssessments() {
-        return assessments;
+    public Set<Quiz> getQuizzes() {
+        return quizzes;
     }
 
     public void addQuiz(Quiz quiz) {
         quizzes.add(quiz);
     }
 
+    public Set<Assessment> getAssessments() {
+        return assessments;
+    }
+
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
     }
 
-    public void addUser(User user) {
-        users.add(user);
+    @Override
+    public String toString() {
+        return "CourseExecution{" +
+                "id=" + id +
+                ", type=" + type +
+                ", acronym='" + acronym + '\'' +
+                ", academicTerm='" + academicTerm + '\'' +
+                ", status=" + status +
+                ", course=" + course +
+                ", users=" + users +
+                ", quizzes=" + quizzes +
+                ", assessments=" + assessments +
+                '}';
     }
 
-    public Course.Type getType() {
-        return type;
-    }
+    public void delete() {
+        if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
+            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
+        }
 
-    public void setType(Course.Type type) {
-        this.type = type;
+        course.getCourseExecutions().remove(this);
+        users.forEach(user -> user.getCourseExecutions().remove(this));
     }
 }

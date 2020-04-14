@@ -65,6 +65,4 @@ public class QuizController {
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
         return this.quizService.getQuizAnswers(quizId);
     }
-
-
 }

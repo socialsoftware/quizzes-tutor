@@ -16,7 +16,7 @@ public class SolvedQuizDto implements Serializable {
     private List<CorrectAnswerDto> correctAnswers = new ArrayList<>();
     private String answerDate;
 
-    public SolvedQuizDto(){
+    public SolvedQuizDto() {
     }
 
     public SolvedQuizDto(QuizAnswer quizAnswer) {

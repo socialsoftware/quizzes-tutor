@@ -331,7 +331,7 @@ public class QuizService {
             this.quizRepository.delete(quiz);
         });
 
-        // remove questions that werent in any quiz
+        // remove questions that weren't in any quiz
         for (Question question: questionRepository.findQuestions(Demo.COURSE_ID).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
             questionService.deleteQuestion(question);
         }

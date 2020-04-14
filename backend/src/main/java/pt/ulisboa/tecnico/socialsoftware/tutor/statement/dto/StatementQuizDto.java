@@ -25,7 +25,7 @@ public class StatementQuizDto implements Serializable {
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
-    public StatementQuizDto(){}
+    public StatementQuizDto() {}
 
     public StatementQuizDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getQuiz().getId();

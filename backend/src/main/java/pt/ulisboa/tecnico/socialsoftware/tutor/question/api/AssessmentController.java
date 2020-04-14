@@ -20,14 +20,14 @@ public class AssessmentController {
 
     @GetMapping("/executions/{executionId}/assessments")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<AssessmentDto> getExecutionCourseAssessments(@PathVariable int executionId){
+    public List<AssessmentDto> getExecutionCourseAssessments(@PathVariable int executionId) {
         return this.assessmentService.findAssessments(executionId);
     }
 
     @GetMapping("/executions/{executionId}/assessments/available")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')) " +
             "or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
-    public List<AssessmentDto> getAvailableAssessments(@PathVariable int executionId){
+    public List<AssessmentDto> getAvailableAssessments(@PathVariable int executionId) {
         return this.assessmentService.findAvailableAssessments(executionId);
     }
 

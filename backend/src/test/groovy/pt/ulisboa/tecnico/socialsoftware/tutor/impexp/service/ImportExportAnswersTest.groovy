@@ -44,7 +44,6 @@ class ImportExportAnswersTest extends Specification {
     public static final Integer SEQUENCE = 0
     public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
 
-
     @Autowired
     AnswerService answerService
 
@@ -88,7 +87,6 @@ class ImportExportAnswersTest extends Specification {
 
         def question = new Question()
         question.setCourse(course)
-        course.addQuestion(question)
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
@@ -96,11 +94,10 @@ class ImportExportAnswersTest extends Specification {
         questionRepository.save(question)
 
         def option = new Option()
-        option.setSequence(0)
         option.setContent(OPTION_CONTENT)
         option.setCorrect(true)
+        option.setSequence(0)
         option.setQuestion(question)
-        question.addOption(option)
         optionRepository.save(option)
 
         def quiz = new Quiz()
@@ -122,7 +119,6 @@ class ImportExportAnswersTest extends Specification {
         quizQuestion.setSequence(SEQUENCE)
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestionRepository.save(quizQuestion)
 
         def user = userService.createUser('Pedro', 'pc', User.Role.STUDENT)
@@ -135,7 +131,6 @@ class ImportExportAnswersTest extends Specification {
         quizAnswerRepository.save(quizAnswer)
 
         questionAnswer = new QuestionAnswer()
-        quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setTimeTaken(TIME_TAKEN)
         questionAnswer.setOption(option)
@@ -151,6 +146,8 @@ class ImportExportAnswersTest extends Specification {
         and: 'delete answers'
         quizAnswerRepository.deleteAll()
         questionAnswerRepository.deleteAll()
+        // TODO why is this at 1?
+        println quizAnswerRepository.findAll().size()
 
         when:
         answerService.importAnswers(answersXml)

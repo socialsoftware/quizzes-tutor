@@ -44,12 +44,10 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public QuizAnswer(User user, Quiz quiz) {
-        this.completed = false;
-        this.usedInStatistics = false;
-        this.user = user;
-        user.addQuizAnswer(this);
-        this.quiz = quiz;
-        quiz.addQuizAnswer(this);
+        setCompleted(false);
+        setUsedInStatistics(false);
+        setUser(user);
+        setQuiz(quiz);
 
         List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
         if (quiz.getScramble()) {
@@ -112,6 +110,7 @@ public class QuizAnswer implements DomainEntity {
 
     public void setUser(User user) {
         this.user = user;
+        user.addQuizAnswer(this);
     }
 
     public Quiz getQuiz() {
@@ -120,6 +119,7 @@ public class QuizAnswer implements DomainEntity {
 
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
+        quiz.addQuizAnswer(this);
     }
 
     public void setQuestionAnswers(List<QuestionAnswer> questionAnswers) {
@@ -140,6 +140,16 @@ public class QuizAnswer implements DomainEntity {
         questionAnswers.add(questionAnswer);
     }
 
+    @Override
+    public String toString() {
+        return "QuizAnswer{" +
+                "id=" + id +
+                ", creationDate=" + creationDate +
+                ", answerDate=" + answerDate +
+                ", completed=" + completed +
+                ", usedInStatistics=" + usedInStatistics +
+                '}';
+    }
 
     public void remove() {
         user.getQuizAnswers().remove(this);
@@ -164,7 +174,6 @@ public class QuizAnswer implements DomainEntity {
                 if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
                     user.increaseNumberOfCorrectAnswers(getQuiz().getType());
                 }
-
             });
 
             getQuestionAnswers().forEach(questionAnswer ->

@@ -83,5 +83,4 @@ public class QuizzesXmlExport {
 
 		optionsElement.addContent(optionElement);
 	}
-
 }

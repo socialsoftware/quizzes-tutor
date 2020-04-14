@@ -62,7 +62,9 @@ class FilterQuestionsByStudentModelTest extends Specification {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
         def option = new Option()
+        option.setContent("Option Content")
         option.setCorrect(true)
+        option.setSequence(0)
         new QuestionAnswer(quizAnswer, quizQuestionOne,  10, option,  0)
 
         when:
@@ -78,7 +80,9 @@ class FilterQuestionsByStudentModelTest extends Specification {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
         def option = new Option()
+        option.setContent("Option Content")
         option.setCorrect(true)
+        option.setSequence(0)
         new QuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
         new QuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
         new QuestionAnswer(quizAnswer, quizQuestionFive,  10, option,  0)
@@ -98,7 +102,9 @@ class FilterQuestionsByStudentModelTest extends Specification {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
         def option = new Option()
+        option.setContent("Option Content")
         option.setCorrect(true)
+        option.setSequence(0)
         new QuestionAnswer(quizAnswer, quizQuestionTwo,  10, option,  0)
         new QuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
         new QuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
@@ -113,5 +119,4 @@ class FilterQuestionsByStudentModelTest extends Specification {
         and: 'it contains the not answered question'
         result.contains(questionOne)
     }
-
 }
