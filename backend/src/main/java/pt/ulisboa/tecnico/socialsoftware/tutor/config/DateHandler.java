@@ -32,6 +32,6 @@ public class DateHandler {
      *  Do not convert this to LocalDateTime because it does not have timezone information
      */
     public static boolean isInvalidDateFormat(String string) {
-        return string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
+        return string != null && string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
     }
 }
