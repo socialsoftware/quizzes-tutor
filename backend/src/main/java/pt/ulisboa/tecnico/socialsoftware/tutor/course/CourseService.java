@@ -52,7 +52,7 @@ public class CourseService {
 
         Course course = getCourse(courseDto);
 
-        CourseExecution courseExecution = getCourseExecution(course, courseDto);
+        CourseExecution courseExecution = createCourseExecution(course, courseDto);
 
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);
@@ -76,7 +76,7 @@ public class CourseService {
 
         Course course = getCourse(courseDto);
 
-        CourseExecution courseExecution = getCourseExecution(course, courseDto);
+        CourseExecution courseExecution = createCourseExecution(course, courseDto);
 
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);
@@ -134,12 +134,9 @@ public class CourseService {
                 });
     }
 
-    private CourseExecution getCourseExecution(Course existingCourse, CourseDto courseDto) {
-        return existingCourse.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType())
-                .orElseGet(() ->  {
-                    CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
-                    courseExecutionRepository.save(courseExecution);
-                    return courseExecution;
-                });
+    private CourseExecution createCourseExecution(Course existingCourse, CourseDto courseDto) {
+        CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
+        courseExecutionRepository.save(courseExecution);
+        return courseExecution;
     }
 }
