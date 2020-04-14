@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -184,10 +185,12 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
-        for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+        List<QuestionAnswer> questionAnswers = quizAnswer.getQuestionAnswers().stream().collect(Collectors.toList());
+        questionAnswers.forEach(questionAnswer ->
+        {
             questionAnswer.remove();
             questionAnswerRepository.delete(questionAnswer);
-        }
+        });
         quizAnswer.remove();
         quizAnswerRepository.delete(quizAnswer);
     }

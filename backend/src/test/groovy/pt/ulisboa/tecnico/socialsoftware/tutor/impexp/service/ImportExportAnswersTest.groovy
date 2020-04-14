@@ -142,12 +142,9 @@ class ImportExportAnswersTest extends Specification {
     def 'export and import answers'() {
         given: 'a xml with a quiz'
         def answersXml = answerService.exportAnswers()
-        System.out.println(answersXml)
+        println answersXml
         and: 'delete answers'
-        quizAnswerRepository.deleteAll()
-        questionAnswerRepository.deleteAll()
-        // TODO why is this at 1?
-        println quizAnswerRepository.findAll().size()
+        answerService.deleteQuizAnswer(quizAnswer)
 
         when:
         answerService.importAnswers(answersXml)
