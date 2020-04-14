@@ -148,9 +148,9 @@ public class QuizService {
         quiz.checkCanChange();
 
         quiz.setTitle(quizDto.getTitle());
-        if (DateHandler.checkRequiresChange(quizDto.getAvailableDate()))
+        if (!DateHandler.isInvalidDateFormat(quizDto.getAvailableDate()))
             quiz.setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
-        if (DateHandler.checkRequiresChange(quizDto.getConclusionDate()))
+        if (!DateHandler.isInvalidDateFormat(quizDto.getConclusionDate()))
             quiz.setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());

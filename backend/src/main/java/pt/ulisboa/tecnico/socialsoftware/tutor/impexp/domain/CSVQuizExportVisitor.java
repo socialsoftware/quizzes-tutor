@@ -66,8 +66,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
-        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toString(quizAnswer.getCreationDate()) : "";
-        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toString(quizAnswer.getAnswerDate()) : "";
+        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
+        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
     }
 
     @Override

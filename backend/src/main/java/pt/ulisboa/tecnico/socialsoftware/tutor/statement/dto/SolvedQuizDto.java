@@ -27,7 +27,7 @@ public class SolvedQuizDto implements Serializable {
                 .map(CorrectAnswerDto::new)
                 .collect(Collectors.toList());
 
-        this.answerDate = DateHandler.toString(quizAnswer.getAnswerDate());
+        this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());
     }
 
     public StatementQuizDto getStatementQuiz() {

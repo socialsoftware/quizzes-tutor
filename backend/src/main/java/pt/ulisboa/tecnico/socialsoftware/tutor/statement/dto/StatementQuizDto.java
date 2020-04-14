@@ -34,10 +34,10 @@ public class StatementQuizDto implements Serializable {
         this.qrCodeOnly = quizAnswer.getQuiz().isQrCodeOnly();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
-            this.availableDate = DateHandler.toString(quizAnswer.getQuiz().getAvailableDate());
+            this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
-            this.conclusionDate = DateHandler.toString(quizAnswer.getQuiz().getConclusionDate());
+            this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
 
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());

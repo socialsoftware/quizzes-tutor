@@ -44,11 +44,11 @@ public class QuizDto implements Serializable {
         this.numberOfQuestions = quiz.getQuizQuestions().size();
         this.numberOfAnswers = quiz.getQuizAnswers().size();
         if (quiz.getCreationDate() != null)
-            this.creationDate = DateHandler.toString(quiz.getCreationDate());
+            this.creationDate = DateHandler.toISOString(quiz.getCreationDate());
         if (quiz.getAvailableDate() != null)
-            this.availableDate = DateHandler.toString(quiz.getAvailableDate());
+            this.availableDate = DateHandler.toISOString(quiz.getAvailableDate());
         if (quiz.getConclusionDate() != null)
-            this.conclusionDate = DateHandler.toString(quiz.getConclusionDate());
+            this.conclusionDate = DateHandler.toISOString(quiz.getConclusionDate());
 
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()

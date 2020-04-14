@@ -50,11 +50,11 @@ public class QuizzesXmlExport {
 		quizElement.setAttribute("title", quiz.getTitle());
 
 		if (quiz.getCreationDate() != null)
-			quizElement.setAttribute("creationDate", DateHandler.toString(quiz.getCreationDate()));
+			quizElement.setAttribute("creationDate", DateHandler.toISOString(quiz.getCreationDate()));
 		if (quiz.getAvailableDate() != null)
-			quizElement.setAttribute("availableDate", DateHandler.toString(quiz.getAvailableDate()));
+			quizElement.setAttribute("availableDate", DateHandler.toISOString(quiz.getAvailableDate()));
         if (quiz.getConclusionDate() != null)
-            quizElement.setAttribute("conclusionDate", DateHandler.toString(quiz.getConclusionDate()));
+            quizElement.setAttribute("conclusionDate", DateHandler.toISOString(quiz.getConclusionDate()));
 		if (quiz.getSeries() != null)
 			quizElement.setAttribute("series", String.valueOf(quiz.getSeries()));
 		if (quiz.getVersion() != null)

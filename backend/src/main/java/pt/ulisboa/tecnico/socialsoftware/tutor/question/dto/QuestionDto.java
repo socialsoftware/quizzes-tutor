@@ -53,7 +53,7 @@ public class QuestionDto implements Serializable {
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
         if (question.getCreationDate() != null)
-            this.creationDate = DateHandler.toString(question.getCreationDate());
+            this.creationDate = DateHandler.toISOString(question.getCreationDate());
     }
 
     public Integer getId() {

@@ -8,8 +8,19 @@ public class DateHandler {
     /**
      *  Converts LocalDateTime to ISO8601 string format
      */
-    public static String toString(LocalDateTime time) {
+    public static String toISOString(LocalDateTime time) {
         return ZonedDateTime.of(time, ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
+    }
+
+    /**
+     *  Converts ISO8601 string format to LocalDateTime
+     */
+    public static LocalDateTime toLocalDateTime(String date) {
+        try {
+            return LocalDateTime.ofInstant(Instant.parse(date), ZoneId.of(ZoneOffset.UTC.getId()));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
@@ -20,21 +31,7 @@ public class DateHandler {
      *
      *  Do not convert this to LocalDateTime because it does not have timezone information
      */
-    public static boolean checkRequiresChange(String string) {
-        return !string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
+    public static boolean isInvalidDateFormat(String string) {
+        return string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
     }
-
-    /**
-     *  Converts ISO8601 format to LocalDateTime to be stored in the database.
-     *  Frontend uses "-" as null
-     */
-    public static LocalDateTime toLocalDateTime(String date) {
-        if (date == null || date.isBlank() || date.equals("-")) {
-            return null;
-        } else {
-            return LocalDateTime.ofInstant(Instant.parse(date), ZoneId.of(ZoneOffset.UTC.getId()));
-        }
-    }
-
-
 }

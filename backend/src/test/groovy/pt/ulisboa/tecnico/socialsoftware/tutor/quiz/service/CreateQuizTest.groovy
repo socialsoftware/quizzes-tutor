@@ -71,9 +71,9 @@ class CreateQuizTest extends Specification {
         quizDto.setScramble(true)
         quizDto.setOneWay(true)
         quizDto.setQrCodeOnly(true)
-        quizDto.setAvailableDate(DateHandler.toString(availableDate))
-        println(DateHandler.toString(availableDate))
-        quizDto.setConclusionDate(DateHandler.toString(conclusionDate))
+        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
+        println(DateHandler.toISOString(availableDate))
+        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
 
@@ -150,7 +150,7 @@ class CreateQuizTest extends Specification {
     def "create a TEACHER quiz with available date after conclusion"() {
         given: 'createQuiz a quiz'
         quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setConclusionDate(DateHandler.toString(getAvailableDate().minusDays(1)))
+        quizDto.setConclusionDate(DateHandler.toISOString(getAvailableDate().minusDays(1)))
         quizDto.setType(Quiz.QuizType.PROPOSED)
 
         when:

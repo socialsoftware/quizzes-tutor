@@ -32,7 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -113,11 +112,6 @@ public class QuestionService {
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         Question question = new Question(course, questionDto);
-
-        if (questionDto.getCreationDate() == null || questionDto.getCreationDate().equals("-")) {
-            question.setCreationDate(LocalDateTime.now());
-        }
-
         questionRepository.save(question);
         return new QuestionDto(question);
     }

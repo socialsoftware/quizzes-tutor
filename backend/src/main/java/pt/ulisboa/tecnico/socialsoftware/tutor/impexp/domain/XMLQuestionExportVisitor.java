@@ -50,7 +50,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         questionElement.setAttribute("title", question.getTitle());
         questionElement.setAttribute("status", question.getStatus().name());
         if (question.getCreationDate() != null)
-            questionElement.setAttribute("creationDate", DateHandler.toString(question.getCreationDate()));
+            questionElement.setAttribute("creationDate", DateHandler.toISOString(question.getCreationDate()));
         this.currentElement.addContent(questionElement);
 
         this.currentElement = questionElement;

@@ -77,7 +77,12 @@ public class Question implements DomainEntity {
         this.key = questionDto.getKey();
         this.content = questionDto.getContent();
         this.status = Status.valueOf(questionDto.getStatus());
-        this.creationDate = DateHandler.toLocalDateTime(questionDto.getCreationDate());
+
+        if (!DateHandler.isInvalidDateFormat(questionDto.getCreationDate()))
+            this.creationDate = DateHandler.toLocalDateTime(questionDto.getCreationDate());
+        if (this.creationDate == null) {
+            this.creationDate = LocalDateTime.now();
+        }
 
         this.course = course;
         course.addQuestion(this);
