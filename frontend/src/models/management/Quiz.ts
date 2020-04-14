@@ -8,9 +8,9 @@ export class Quiz {
   qrCodeOnly!: boolean;
   oneWay!: boolean;
   title!: string;
-  creationDate!: string | undefined;
-  availableDate!: string | undefined;
-  conclusionDate!: string | undefined;
+  creationDate!: string;
+  availableDate!: string;
+  conclusionDate!: string;
   secondsToConclusion!: number;
   type!: string;
   series!: number;

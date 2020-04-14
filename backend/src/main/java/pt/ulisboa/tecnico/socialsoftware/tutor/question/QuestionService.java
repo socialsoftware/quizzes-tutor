@@ -114,7 +114,7 @@ public class QuestionService {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         Question question = new Question(course, questionDto);
 
-        if (questionDto.getCreationDate() == null) {
+        if (questionDto.getCreationDate() == null || questionDto.getCreationDate().equals("-")) {
             question.setCreationDate(LocalDateTime.now());
         }
 

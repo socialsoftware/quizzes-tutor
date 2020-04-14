@@ -1,4 +1,4 @@
-export function ISOtoString(dateString: string | undefined | null): string {
+export function ISOtoString(dateString: string | null): string {
   if (dateString) {
     let date = new Date(dateString);
     let year = date.getFullYear();

@@ -4,8 +4,8 @@ import { ISOtoString } from '@/services/ConvertDateService';
 export class QuizAnswer {
   name!: number;
   username!: number;
-  creationDate!: string | undefined;
-  answerDate!: string | undefined;
+  creationDate!: string;
+  answerDate!: string;
   questionAnswers: QuestionAnswer[] = [];
 
   constructor(jsonObj?: QuizAnswer) {
