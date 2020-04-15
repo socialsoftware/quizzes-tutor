@@ -105,10 +105,6 @@ public class Question implements DomainEntity {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getKey() {
         if (this.key == null)
             generateKeys();
@@ -290,7 +286,7 @@ public class Question implements DomainEntity {
     }
 
     private void checkConsistentQuestion(QuestionDto questionDto) {
-        if (questionDto.getTitle().trim().length() == 0 ||
+        if (questionDto.getTitle() == null || questionDto.getTitle().trim().length() == 0 ||
                 questionDto.getContent().trim().length() == 0 ||
                 questionDto.getOptions().stream().anyMatch(optionDto -> optionDto.getContent().trim().length() == 0)) {
             throw new TutorException(QUESTION_MISSING_DATA);

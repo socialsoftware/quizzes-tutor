@@ -24,17 +24,11 @@ class FilterQuestionsByStudentModelTest extends Specification {
 
     def setup() {
         questionOne = new Question()
-        questionOne.setId(1)
         questionTwo = new Question()
-        questionTwo.setId(2)
         def questionThree = new Question()
-        questionThree.setId(3)
         def questionFour = new Question()
-        questionFour.setId(4)
         def questionFive = new Question()
-        questionFive.setId(5)
         def questionSix = new Question()
-        questionSix.setId(6)
         quiz = new Quiz()
         quiz.setKey(1)
         quizQuestionOne = new QuizQuestion(quiz, questionOne, 0)

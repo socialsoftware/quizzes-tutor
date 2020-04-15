@@ -88,10 +88,6 @@ public class User implements UserDetails, DomainEntity {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getKey() {
         return key;
     }

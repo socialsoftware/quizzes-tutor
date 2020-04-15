@@ -59,10 +59,6 @@ public class StatementQuizDto implements Serializable {
         return id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
     public Integer getQuizAnswerId() {
         return quizAnswerId;
     }

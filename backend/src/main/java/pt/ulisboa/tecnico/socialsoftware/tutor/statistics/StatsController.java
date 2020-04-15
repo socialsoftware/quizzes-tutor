@@ -28,6 +28,6 @@ public class StatsController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statsService.getStats(user.getUsername(), executionId);
+        return statsService.getStats(user.getId(), executionId);
     }
 }
