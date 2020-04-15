@@ -1,16 +1,15 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.administration.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.administration.AdministrationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Specification
 
 @DataJpaTest
-class GetCourseExecutionsServiceSpockTest extends Specification {
+class GetCourseExecutionsTest extends Specification {
     static final String COURSE_ONE = "CourseOne"
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
@@ -18,7 +17,7 @@ class GetCourseExecutionsServiceSpockTest extends Specification {
     static final String ACADEMIC_TERM_TWO = "2º Semestre"
 
     @Autowired
-    AdministrationService administrationService
+    CourseService courseService
 
     @Autowired
     CourseRepository courseRepository
@@ -37,7 +36,7 @@ class GetCourseExecutionsServiceSpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
 
         when:
-        def result = administrationService.getCourseExecutions(User.Role.ADMIN)
+        def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
         result.size() == 2
@@ -59,9 +58,8 @@ class GetCourseExecutionsServiceSpockTest extends Specification {
     static class ServiceImplTestContextConfiguration {
 
         @Bean
-        AdministrationService administrationService() {
-            return new AdministrationService()
+        CourseService courseService() {
+            return new CourseService()
         }
-
     }
 }

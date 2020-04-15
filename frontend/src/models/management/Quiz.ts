@@ -1,4 +1,5 @@
 import Question from '@/models/management/Question';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export class Quiz {
   id!: number;
@@ -7,9 +8,9 @@ export class Quiz {
   qrCodeOnly!: boolean;
   oneWay!: boolean;
   title!: string;
-  creationDate!: string | undefined;
-  availableDate!: string | undefined;
-  conclusionDate!: string | undefined;
+  creationDate!: string;
+  availableDate!: string;
+  conclusionDate!: string;
   secondsToConclusion!: number;
   type!: string;
   series!: number;
@@ -32,9 +33,9 @@ export class Quiz {
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.creationDate = jsonObj.creationDate;
-      this.availableDate = jsonObj.availableDate;
-      this.conclusionDate = jsonObj.conclusionDate;
+      this.creationDate = ISOtoString(jsonObj.creationDate);
+      this.availableDate = ISOtoString(jsonObj.availableDate);
+      this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
       this.secondsToConclusion = jsonObj.secondsToConclusion;
 
       if (jsonObj.questions) {

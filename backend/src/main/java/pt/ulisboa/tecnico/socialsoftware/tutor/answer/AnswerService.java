@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -80,7 +81,7 @@ public class AnswerService {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if(quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
@@ -146,11 +147,9 @@ public class AnswerService {
                 }
 
                 questionAnswer.setOption(option);
-                option.addQuestionAnswer(questionAnswer);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
                 quizAnswer.setAnswerDate(LocalDateTime.now());
             }
-
         }
     }
 
@@ -186,10 +185,12 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
-        for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+        List<QuestionAnswer> questionAnswers = quizAnswer.getQuestionAnswers().stream().collect(Collectors.toList());
+        questionAnswers.forEach(questionAnswer ->
+        {
             questionAnswer.remove();
             questionAnswerRepository.delete(questionAnswer);
-        }
+        });
         quizAnswer.remove();
         quizAnswerRepository.delete(quizAnswer);
     }

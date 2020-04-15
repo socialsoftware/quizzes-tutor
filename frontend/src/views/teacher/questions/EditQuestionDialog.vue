@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 
@@ -78,6 +78,11 @@ export default class EditQuestionDialog extends Vue {
   editQuestion!: Question;
 
   created() {
+    this.updateQuestion();
+  }
+
+  @Watch('question', { immediate: true, deep: true })
+  updateQuestion() {
     this.editQuestion = new Question(this.question);
   }
 
@@ -102,20 +107,15 @@ export default class EditQuestionDialog extends Vue {
       return;
     }
 
-    if (this.editQuestion && this.editQuestion.id != null) {
-      try {
-        const result = await RemoteServices.updateQuestion(this.editQuestion);
-        this.$emit('save-question', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    } else if (this.editQuestion) {
-      try {
-        const result = await RemoteServices.createQuestion(this.editQuestion);
-        this.$emit('save-question', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+    try {
+      const result =
+        this.editQuestion.id != null
+          ? await RemoteServices.updateQuestion(this.editQuestion)
+          : await RemoteServices.createQuestion(this.editQuestion);
+
+      this.$emit('save-question', result);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }

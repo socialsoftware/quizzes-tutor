@@ -82,5 +82,4 @@ class CreateTopicTest extends Specification {
             return new TopicService()
         }
     }
-
 }

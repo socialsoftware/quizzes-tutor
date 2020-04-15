@@ -23,7 +23,7 @@ export function convertMarkDown(
   str = str.substring(0, str.length - 4);
 
   return sanitizeHtml(str, {
-    allowedTags: ['code', 'img'],
+    allowedTags: ['code', 'img', 'br', 'p'],
     allowedAttributes: {
       img: ['src']
     }
@@ -46,7 +46,7 @@ export function convertMarkDownNoFigure(
   str = str.substring(0, str.length - 4);
 
   return sanitizeHtml(str, {
-    allowedTags: ['code', 'img'],
+    allowedTags: ['code', 'img', 'br', 'p'],
     allowedAttributes: {
       img: ['src']
     }

@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -25,7 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @DataJpaTest
 class GetAvailableQuizzesTest extends Specification {
@@ -80,8 +80,9 @@ class GetAvailableQuizzesTest extends Specification {
 
         question = new Question()
         question.setKey(1)
+        question.setTitle("Question Title")
+        question.setContent("Question Content")
         question.setCourse(course)
-        course.addQuestion(question)
 
         quiz = new Quiz()
         quiz.setKey(1)
@@ -92,10 +93,7 @@ class GetAvailableQuizzesTest extends Specification {
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
-
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
-        question.addQuizQuestion(quizQuestion)
         quizQuestion.setQuestion(question)
 
         userRepository.save(user)
@@ -118,7 +116,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+        statementResult.getAvailableDate() == DateHandler.toISOString(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -157,7 +155,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 1
         def statementResult = statementQuizDtos.get(0)
         statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == quiz.getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+        statementResult.getAvailableDate() == DateHandler.toISOString(quiz.getAvailableDate())
         statementResult.getQuizAnswerId() == result.getId()
         statementResult.getQuestions().size() == 1
     }
@@ -200,7 +198,6 @@ class GetAvailableQuizzesTest extends Specification {
         QuizService quizService() {
             return new QuizService()
         }
-
         @Bean
         QuestionService questionService() {
             return new QuestionService()

@@ -97,16 +97,20 @@ class ConcludeQuizTest extends Specification {
 
         def question = new Question()
         question.setKey(1)
+        question.setTitle("Question Title")
         question.setCourse(course)
-        course.addQuestion(question)
 
         quizQuestion = new QuizQuestion(quiz, question, 0)
         optionKO = new Option()
+        optionKO.setContent("Option Content")
         optionKO.setCorrect(false)
-        question.addOption(optionKO)
+        optionKO.setSequence(0)
+        optionKO.setQuestion(question)
         optionOk = new Option()
+        optionOk.setContent("Option Content")
         optionOk.setCorrect(true)
-        question.addOption(optionOk)
+        optionOk.setSequence(1)
+        optionOk.setQuestion(question)
 
         date = LocalDateTime.now()
 

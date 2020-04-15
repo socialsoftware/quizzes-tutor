@@ -37,7 +37,7 @@ public class QuestionController {
 
     @GetMapping("/courses/{courseId}/questions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public List<QuestionDto> getCourseQuestions(@PathVariable int courseId){
+    public List<QuestionDto> getCourseQuestions(@PathVariable int courseId) {
         return this.questionService.findQuestions(courseId);
     }
 
@@ -53,7 +53,7 @@ public class QuestionController {
 
     @GetMapping("/courses/{courseId}/questions/available")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId){
+    public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId) {
         return this.questionService.findAvailableQuestions(courseId);
     }
 
@@ -134,5 +134,4 @@ public class QuestionController {
         String fileLocation = figuresDir + url;
         return Paths.get(fileLocation);
     }
-
 }

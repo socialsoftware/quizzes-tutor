@@ -102,7 +102,9 @@ export default class EditCourseDialog extends Vue {
 
     if (this.editCourse && this.editCourse.courseExecutionId == null) {
       try {
-        const result = await RemoteServices.createCourse(this.editCourse);
+        const result = await RemoteServices.createExternalCourse(
+          this.editCourse
+        );
         this.$emit('new-course', result);
       } catch (error) {
         await this.$store.dispatch('error', error);

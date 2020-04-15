@@ -117,5 +117,4 @@ public class QuestionsXmlImport {
 		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 		questionService.createQuestion(course.getId(), questionDto);
 	}
-
 }

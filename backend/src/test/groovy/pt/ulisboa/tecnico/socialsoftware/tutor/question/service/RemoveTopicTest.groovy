@@ -50,6 +50,8 @@ class RemoveTopicTest extends Specification {
         courseRepository.save(course)
 
         question = new Question()
+        question.setTitle("Question Title")
+        question.setContent("Question Content")
         question.setKey(KEY)
 
         topicDtoOne = new TopicDto()
@@ -108,5 +110,4 @@ class RemoveTopicTest extends Specification {
             return new TopicService()
         }
     }
-
 }

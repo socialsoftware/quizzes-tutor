@@ -79,6 +79,7 @@ class FindQuestionsTest extends Specification {
         given: "createQuestion a question"
         def question = new Question()
         question.setKey(1)
+        question.setTitle("Question Title")
         question.setContent(QUESTION_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
@@ -94,15 +95,15 @@ class FindQuestionsTest extends Specification {
         def optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
+        optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
-        question.addOption(optionOK)
         def optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
+        optionKO.setSequence(0)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        question.addOption(optionKO)
         questionRepository.save(question)
 
         def quiz = new Quiz()
@@ -111,28 +112,23 @@ class FindQuestionsTest extends Specification {
 
         def quizQuestion = new QuizQuestion()
         quizQuestion.setQuestion(question)
-        question.addQuizQuestion(quizQuestion)
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
         quizRepository.save(quiz);
         quizQuestionRepository.save(quizQuestion)
 
         def quizAnswer = new QuizAnswer()
         quizAnswer.setCompleted(true)
-        quizAnswer.addQuestionAnswer()
         quizAnswerRepository.save(quizAnswer)
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionOK)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
-        quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionKO)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
-        quizAnswer.addQuestionAnswer(questionAnswer)
 
         when:
         def result = questionService.findQuestions(course.getId())
@@ -160,5 +156,4 @@ class FindQuestionsTest extends Specification {
             return new QuestionService()
         }
     }
-
 }

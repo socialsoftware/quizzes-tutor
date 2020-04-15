@@ -10,8 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.List;
 
 @RestController
@@ -29,7 +28,6 @@ public class QuizController {
     @PostMapping("/executions/{executionId}/quizzes")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuizDto createQuiz(@PathVariable int executionId, @Valid @RequestBody QuizDto quiz) {
-        formatDates(quiz);
         return this.quizService.createQuiz(executionId, quiz);
     }
 
@@ -42,7 +40,6 @@ public class QuizController {
     @PutMapping("/quizzes/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizDto updateQuiz(@PathVariable Integer quizId, @Valid @RequestBody QuizDto quiz) {
-        formatDates(quiz);
         return this.quizService.updateQuiz(quizId, quiz);
     }
 
@@ -69,15 +66,5 @@ public class QuizController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
         return this.quizService.getQuizAnswers(quizId);
-    }
-
-    private void formatDates(QuizDto quiz) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        if (quiz.getAvailableDate() != null && !quiz.getAvailableDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})")){
-            quiz.setAvailableDate(LocalDateTime.parse(quiz.getAvailableDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
-        }
-        if (quiz.getConclusionDate() !=null && !quiz.getConclusionDate().matches("(\\d{4})-(\\d{2})-(\\d{2}) (\\d{2}):(\\d{2})"))
-            quiz.setConclusionDate(LocalDateTime.parse(quiz.getConclusionDate().replaceAll(".$", ""), DateTimeFormatter.ISO_DATE_TIME).format(formatter));
     }
 }

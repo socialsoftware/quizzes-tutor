@@ -32,7 +32,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Service
 public class AssessmentService {
     @SuppressWarnings("unused")
-    private static Logger logger = LoggerFactory.getLogger(AssessmentService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AssessmentService.class);
 
     @Autowired
     private AssessmentRepository assessmentRepository;
@@ -165,5 +165,6 @@ public class AssessmentService {
     public void resetDemoAssessments() {
         this.assessmentRepository.findByExecutionCourseId(Demo.COURSE_EXECUTION_ID).stream().filter(assessment -> assessment.getId() > 10).forEach(assessment -> assessmentRepository.delete(assessment));
     }
+
 }
 

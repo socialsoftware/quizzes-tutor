@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 
 import java.io.Serializable;
 
-
 public class ImageDto implements Serializable {
     private Integer id;
     private String url;

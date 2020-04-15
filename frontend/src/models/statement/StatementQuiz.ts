@@ -1,5 +1,6 @@
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
+import { ISOtoString } from '@/services/ConvertDateService';
 
 export default class StatementQuiz {
   id!: number;
@@ -9,7 +10,7 @@ export default class StatementQuiz {
   qrCodeOnly!: boolean;
   oneWay!: boolean;
   availableDate!: string;
-  conclusionDate: string = '-';
+  conclusionDate!: string;
   secondsToAvailability!: number;
   secondsToSubmission!: number;
   questions: StatementQuestion[] = [];
@@ -23,10 +24,10 @@ export default class StatementQuiz {
       this.title = jsonObj.title;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;
-      this.availableDate = jsonObj.availableDate;
+      this.availableDate = ISOtoString(jsonObj.availableDate);
       this.secondsToAvailability = jsonObj.secondsToAvailability;
       if (jsonObj.conclusionDate) {
-        this.conclusionDate = jsonObj.conclusionDate;
+        this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
         this.secondsToSubmission = jsonObj.secondsToSubmission;
       }
 

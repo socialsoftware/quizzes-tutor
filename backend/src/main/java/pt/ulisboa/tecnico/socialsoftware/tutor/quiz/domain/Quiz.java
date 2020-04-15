@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
@@ -85,9 +86,9 @@ public class Quiz implements DomainEntity {
         this.scramble = quizDto.isScramble();
         this.qrCodeOnly = quizDto.isQrCodeOnly();
         this.oneWay = quizDto.isOneWay();
-        this.creationDate = quizDto.getCreationDateDate();
-        setAvailableDate(quizDto.getAvailableDateDate());
-        setConclusionDate(quizDto.getConclusionDateDate());
+        this.creationDate = DateHandler.toLocalDateTime(quizDto.getCreationDate());
+        setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
+        setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
         this.series = quizDto.getSeries();
         this.version = quizDto.getVersion();
     }

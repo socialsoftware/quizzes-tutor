@@ -35,6 +35,7 @@ class AddQuestionToQuizTest extends Specification {
         quizRepository.save(quiz)
         def question = new Question()
         question.setKey(1)
+        question.setTitle("Question title")
         questionRepository.save(question)
     }
 

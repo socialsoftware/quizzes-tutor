@@ -86,44 +86,37 @@ class GetSolvedQuizzesTest extends Specification {
         question = new Question()
         question.setKey(1)
         question.setCourse(course)
-        course.addQuestion(question)
+        question.setContent("Question Content")
+        question.setTitle("Question Title")
 
         option = new Option()
+        option.setContent("Option Content")
         option.setCorrect(true)
+        option.setSequence(0)
         option.setQuestion(question)
-        question.addOption(option)
 
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.PROPOSED)
         quiz.setAvailableDate(LocalDateTime.now().minusDays(1))
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
-
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
-        question.addQuizQuestion(quizQuestion)
         quizQuestion.setQuestion(question)
 
         def quizAnswer = new QuizAnswer()
         quizAnswer.setAnswerDate(LocalDateTime.now())
         quizAnswer.setCompleted(true)
         quizAnswer.setUser(user)
-        user.addQuizAnswer(quizAnswer)
         quizAnswer.setQuiz(quiz)
-        quiz.addQuizAnswer(quizAnswer)
 
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
-        quizAnswer.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setOption(option)
-        option.addQuestionAnswer(questionAnswer)
 
         userRepository.save(user)
         quizRepository.save(quiz)
@@ -169,7 +162,6 @@ class GetSolvedQuizzesTest extends Specification {
         QuizService quizService() {
             return new QuizService()
         }
-
         @Bean
         QuestionService questionService() {
             return new QuestionService()

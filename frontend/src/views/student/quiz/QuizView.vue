@@ -196,7 +196,7 @@ export default class QuizView extends Vue {
   }
 
   decreaseOrder(): void {
-    if (this.questionOrder > 0) {
+    if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
       this.questionOrder -= 1;
     }

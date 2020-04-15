@@ -68,13 +68,12 @@ class RemoveQuestionTest extends Specification {
 
         question = new Question()
         question.setKey(1)
-        question.setContent(QUESTION_TITLE)
+        question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
-        course.addQuestion(question)
 
         def image = new Image()
         image.setUrl(URL)
@@ -85,13 +84,15 @@ class RemoveQuestionTest extends Specification {
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
+        optionOK.setSequence(0)
+        optionOK.setQuestion(question)
         optionRepository.save(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
+        optionKO.setSequence(1)
+        optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        question.addOption(optionOK)
-        question.addOption(optionKO)
         questionRepository.save(question)
     }
 
@@ -110,11 +111,11 @@ class RemoveQuestionTest extends Specification {
         def quiz = new Quiz()
         quiz.setKey(1)
         quizRepository.save(quiz)
+
         def quizQuestion = new QuizQuestion()
-        quizQuestionRepository.save(quizQuestion)
-        question.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
-        quiz.addQuizQuestion(quizQuestion)
+        quizQuestion.setQuestion(question)
+        quizQuestionRepository.save(quizQuestion)
 
         when:
         questionService.removeQuestion(question.getId())
@@ -158,5 +159,4 @@ class RemoveQuestionTest extends Specification {
             return new QuestionService()
         }
     }
-
 }

@@ -23,8 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_MISSING_DATA
-
 @DataJpaTest
 class UpdateQuestionTest extends Specification {
     public static final String QUESTION_TITLE = 'question title'
@@ -79,15 +77,15 @@ class UpdateQuestionTest extends Specification {
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
         optionOK.setCorrect(true)
+        optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
+        optionKO.setSequence(1)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        question.addOption(optionKO)
-        question.addOption(optionOK)
         questionRepository.save(question)
     }
 
@@ -142,7 +140,7 @@ class UpdateQuestionTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == QUESTION_MISSING_DATA
+        exception.getErrorMessage() == ErrorMessage.INVALID_TITLE_FOR_QUESTION
     }
 
     def "update question with two options true"() {
@@ -165,7 +163,7 @@ class UpdateQuestionTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUESTION_MULTIPLE_CORRECT_OPTIONS
+        exception.getErrorMessage() == ErrorMessage.ONE_CORRECT_OPTION_NEEDED
     }
 
     def "update correct option in a question with answers"() {
@@ -211,7 +209,8 @@ class UpdateQuestionTest extends Specification {
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUESTION_CHANGE_CORRECT_OPTION_HAS_ANSWERS
+        exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
+
     }
 
     @TestConfiguration
@@ -222,5 +221,4 @@ class UpdateQuestionTest extends Specification {
             return new QuestionService()
         }
     }
-
 }

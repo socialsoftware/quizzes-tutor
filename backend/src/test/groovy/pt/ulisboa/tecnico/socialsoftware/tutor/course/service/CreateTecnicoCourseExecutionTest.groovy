@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
 @DataJpaTest
-class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
+class CreateTecnicoCourseExecutionTest extends Specification {
     public static final String COURSE_ONE = "CourseOne"
     public static final String ACRONYM_ONE = "C12"
     public static final String ACADEMIC_TERM_ONE = "1º Semestre"
@@ -153,7 +153,6 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
         thrown(TutorException)
     }
 
-
     @TestConfiguration
     static class CourseServiceImplTestContextConfiguration {
 
@@ -162,5 +161,4 @@ class CreateTecnicoCourseExecutionServiceSpockTest extends Specification {
             return new CourseService()
         }
     }
-
 }

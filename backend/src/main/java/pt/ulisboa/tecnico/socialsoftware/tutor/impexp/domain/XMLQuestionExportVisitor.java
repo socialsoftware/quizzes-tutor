@@ -4,12 +4,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class XMLQuestionExportVisitor implements Visitor {
@@ -43,8 +42,6 @@ public class XMLQuestionExportVisitor implements Visitor {
 
     @Override
     public void visitQuestion(Question question) {
-        DateTimeFormatter formatter = Course.formatter;
-
         Element questionElement = new Element("question");
         questionElement.setAttribute("courseType", question.getCourse().getType().name());
         questionElement.setAttribute("courseName", question.getCourse().getName());
@@ -53,7 +50,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         questionElement.setAttribute("title", question.getTitle());
         questionElement.setAttribute("status", question.getStatus().name());
         if (question.getCreationDate() != null)
-            questionElement.setAttribute("creationDate", question.getCreationDate().format(formatter));
+            questionElement.setAttribute("creationDate", DateHandler.toISOString(question.getCreationDate()));
         this.currentElement.addContent(questionElement);
 
         this.currentElement = questionElement;

@@ -96,7 +96,8 @@ public class ImpExpService {
 
         String filename = "tutor-" + timeStamp + ".zip";
         try (FileOutputStream fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
-             ZipOutputStream zos = new ZipOutputStream(fos);) {
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+
 
             zos.putNextEntry(new ZipEntry("users.xml"));
             InputStream in = generateUsersInputStream();
@@ -197,5 +198,4 @@ public class ImpExpService {
             }
         }
     }
-
 }

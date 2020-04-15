@@ -93,5 +93,4 @@ public class AnswersXmlExport {
 
 		questionAnswersElement.addContent(questionAnswerElement);
 	}
-
 }

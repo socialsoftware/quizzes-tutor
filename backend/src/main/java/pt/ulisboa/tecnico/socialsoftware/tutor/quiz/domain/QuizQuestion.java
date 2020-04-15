@@ -36,11 +36,9 @@ public class QuizQuestion implements DomainEntity {
     }
 
     public QuizQuestion(Quiz quiz, Question question, Integer sequence) {
-        this.quiz = quiz;
-        this.quiz.addQuizQuestion(this);
-        this.question = question;
-        question.addQuizQuestion(this);
-        this.sequence = sequence;
+        setQuiz(quiz);
+        setQuestion(question);
+        setSequence(sequence);
     }
 
     @Override
@@ -54,6 +52,7 @@ public class QuizQuestion implements DomainEntity {
 
     public void setQuiz(Quiz quiz) {
         this.quiz = quiz;
+        quiz.addQuizQuestion(this);
     }
 
     public Question getQuestion() {
@@ -62,6 +61,7 @@ public class QuizQuestion implements DomainEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
+        question.addQuizQuestion(this);
     }
 
     public Integer getSequence() {

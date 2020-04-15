@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -25,7 +25,7 @@ public class StatementQuizDto implements Serializable {
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
-    public StatementQuizDto(){}
+    public StatementQuizDto() {}
 
     public StatementQuizDto(QuizAnswer quizAnswer) {
         this.id = quizAnswer.getQuiz().getId();
@@ -34,10 +34,10 @@ public class StatementQuizDto implements Serializable {
         this.qrCodeOnly = quizAnswer.getQuiz().isQrCodeOnly();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
-            this.availableDate = quizAnswer.getQuiz().getAvailableDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
         }
         if (quizAnswer.getQuiz().getConclusionDate() != null) {
-            this.conclusionDate = quizAnswer.getQuiz().getConclusionDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
 
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());

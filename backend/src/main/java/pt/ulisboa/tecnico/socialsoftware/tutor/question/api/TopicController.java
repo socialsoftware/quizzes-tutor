@@ -44,5 +44,4 @@ public class TopicController {
         topicService.removeTopic(topicId);
         return ResponseEntity.ok().build();
     }
-
 }

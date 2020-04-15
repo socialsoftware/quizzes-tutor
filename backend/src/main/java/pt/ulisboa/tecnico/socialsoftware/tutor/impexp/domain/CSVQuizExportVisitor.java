@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import java.time.format.DateTimeFormatter;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -66,10 +66,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
-        DateTimeFormatter formatter = Course.formatter;
-
-        line[column++] = quizAnswer.getCreationDate() != null ? quizAnswer.getCreationDate().format(formatter) : "";
-        line[column++] = quizAnswer.getAnswerDate() != null ? quizAnswer.getAnswerDate().format(formatter) : "";
+        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
+        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
     }
 
     @Override

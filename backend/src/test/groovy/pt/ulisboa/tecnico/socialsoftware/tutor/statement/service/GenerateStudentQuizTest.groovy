@@ -91,19 +91,19 @@ class GenerateStudentQuizTest extends Specification {
 
         questionOne = new Question()
         questionOne.setKey(1)
+        questionOne.setContent("Question Content")
+        questionOne.setTitle("Question Title")
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
-        course.addQuestion(questionOne)
         questionOne.addTopic(topic)
-        topic.addQuestion(questionOne)
 
         questionTwo = new Question()
         questionTwo.setKey(2)
+        questionTwo.setContent("Question Content")
+        questionTwo.setTitle("Question Title")
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
-        course.addQuestion(questionTwo)
         questionTwo.addTopic(topic)
-        topic.addQuestion(questionTwo)
 
         userRepository.save(user)
         questionRepository.save(questionOne)
@@ -115,6 +115,7 @@ class GenerateStudentQuizTest extends Specification {
         topicConjunctionRepository.save(topicConjunction)
 
         assessment = new Assessment()
+        assessment.setTitle("Assessment title")
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setCourseExecution(courseExecution)
         assessment.addTopicConjunction(topicConjunction)
@@ -213,5 +214,4 @@ class GenerateStudentQuizTest extends Specification {
             return new QuestionService()
         }
     }
-
 }

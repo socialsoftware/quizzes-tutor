@@ -4,19 +4,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
 
-
 public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
     private Integer optionId;
 
-    public StatementAnswerDto(){}
+    public StatementAnswerDto() {}
 
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
 
-        if(questionAnswer.getOption() != null) {
+        if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
         }
     }

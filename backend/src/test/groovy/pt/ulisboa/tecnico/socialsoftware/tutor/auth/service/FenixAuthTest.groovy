@@ -455,5 +455,4 @@ class FenixAuthTest extends Specification {
             return new UserService()
         }
     }
-
 }
