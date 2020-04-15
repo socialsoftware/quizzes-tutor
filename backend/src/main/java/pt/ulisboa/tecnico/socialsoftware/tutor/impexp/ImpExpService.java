@@ -188,7 +188,7 @@ public class ImpExpService {
 
                 File quizzesFile = new File(directory.getPath() + PATH_DELIMITER + "quizzes.xml");
                 QuizzesXmlImport quizzesXmlImport = new QuizzesXmlImport();
-                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository, courseExecutionRepository);
+                quizzesXmlImport.importQuizzes(new FileInputStream(quizzesFile), quizService, questionRepository, quizQuestionRepository, courseExecutionRepository, courseRepository);
 
                 File answersFile = new File(directory.getPath() + PATH_DELIMITER + "answers.xml");
 

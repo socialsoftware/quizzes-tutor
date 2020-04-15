@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.CSVQuizExportVisitor;
@@ -50,6 +51,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
+    @Autowired
+    private CourseRepository courseRepository;
+
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
@@ -252,7 +256,7 @@ public class QuizService {
     public void importQuizzesFromXml(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
-        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository);
+        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository, courseRepository);
     }
 
     @Retryable(
