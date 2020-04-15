@@ -11,6 +11,9 @@ public class DateHandler {
      *  Converts LocalDateTime to ISO8601 string format
      */
     public static String toISOString(LocalDateTime time) {
+        if (time == null) {
+            return null;
+        }
         return ZonedDateTime.of(time, ZoneId.of("UTC")).format(DateTimeFormatter.ISO_INSTANT);
     }
 
