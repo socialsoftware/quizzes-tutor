@@ -14,42 +14,28 @@
       </v-card-title>
 
       <v-card-text class="text-left" v-if="editCourse">
-        <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <v-flex xs24 sm12 md8>
-              <p><b>Course Type:</b> {{ editCourse.courseType }}</p>
-            </v-flex>
-            <v-flex xs24 sm12 md8>
-              <p v-if="isCreateCourse"><b>Name:</b> {{ editCourse.name }}</p>
-              <v-text-field
-                v-if="!isCreateCourse"
-                v-model="editCourse.name"
-                label="Name"
-                data-cy="Name"
-              />
-            </v-flex>
-            <v-flex xs24 sm12 md8>
-              <p>
-                <b>Course Execution Type:</b>
-                {{ editCourse.courseExecutionType }}
-              </p>
-            </v-flex>
-            <v-flex xs24 sm12 md8>
-              <v-text-field
-                v-model="editCourse.acronym"
-                label="Acronym"
-                data-cy="Acronym"
-              />
-            </v-flex>
-            <v-flex xs24 sm12 md8>
-              <v-text-field
-                v-model="editCourse.academicTerm"
-                label="Academic Term"
-                data-cy="AcademicTerm"
-              />
-            </v-flex>
-          </v-layout>
-        </v-container>
+        <p><b>Course Type:</b> {{ editCourse.courseType }}</p>
+        <p v-if="isCreateCourse"><b>Name:</b> {{ editCourse.name }}</p>
+        <v-text-field
+          v-if="!isCreateCourse"
+          v-model="editCourse.name"
+          label="Name"
+          data-cy="Name"
+        />
+        <p>
+          <b>Course Execution Type:</b>
+          {{ editCourse.courseExecutionType }}
+        </p>
+        <v-text-field
+          v-model="editCourse.acronym"
+          label="Acronym"
+          data-cy="Acronym"
+        />
+        <v-text-field
+          v-model="editCourse.academicTerm"
+          label="Academic Term"
+          data-cy="AcademicTerm"
+        />
       </v-card-text>
 
       <v-card-actions>

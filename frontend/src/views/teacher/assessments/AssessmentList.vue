@@ -85,32 +85,26 @@
         </v-toolbar>
 
         <v-card-text>
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <ol>
-                <li
-                  v-for="question in assessment.questions"
-                  :key="question.sequence"
-                  class="text-left"
-                >
+          <ol>
+            <li
+              v-for="question in assessment.questions"
+              :key="question.sequence"
+              class="text-left"
+            >
+              <span
+                v-html="convertMarkDown(question.content, question.image)"
+              />
+              <ul>
+                <li v-for="option in question.options" :key="option.number">
                   <span
-                    v-html="convertMarkDown(question.content, question.image)"
+                    v-html="convertMarkDown(option.content, null)"
+                    v-bind:class="[option.correct ? 'font-weight-bold' : '']"
                   />
-                  <ul>
-                    <li v-for="option in question.options" :key="option.number">
-                      <span
-                        v-html="convertMarkDown(option.content, null)"
-                        v-bind:class="[
-                          option.correct ? 'font-weight-bold' : ''
-                        ]"
-                      />
-                    </li>
-                  </ul>
-                  <br />
                 </li>
-              </ol>
-            </v-layout>
-          </v-container>
+              </ul>
+              <br />
+            </li>
+          </ol>
         </v-card-text>
 
         <v-card-actions>

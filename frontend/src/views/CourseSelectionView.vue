@@ -2,63 +2,61 @@
   <div class="container">
     <h2>Select Course</h2>
 
-    <v-container fluid grid-list-xl>
-      <v-layout wrap v-if="courseExecutions">
-        <v-flex v-for="name in Object.keys(courseExecutions)" :key="name">
-          <v-card class="mx-auto" elevation="10">
-            <v-list rounded>
-              <v-subheader class="title">{{ name }}</v-subheader>
-              <v-list-item-group color="primary">
-                <v-tooltip
-                  v-for="course in courseExecutions[name]"
-                  :key="course.acronym + course.academicTerm"
-                  bottom
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-list-item
-                      v-on="on"
-                      @click="selectCourse(course)"
-                      :class="course.status.toLowerCase()"
-                    >
-                      <v-list-item-content>
-                        <v-list-item-title v-text="course.academicTerm" />
-                      </v-list-item-content>
+    <div v-if="courseExecutions">
+      <div v-for="name in Object.keys(courseExecutions)" :key="name">
+        <v-card class="mx-auto" elevation="10">
+          <v-list rounded>
+            <v-subheader class="title">{{ name }}</v-subheader>
+            <v-list-item-group color="primary">
+              <v-tooltip
+                v-for="course in courseExecutions[name]"
+                :key="course.acronym + course.academicTerm"
+                bottom
+              >
+                <template v-slot:activator="{ on }">
+                  <v-list-item
+                    v-on="on"
+                    @click="selectCourse(course)"
+                    :class="course.status.toLowerCase()"
+                  >
+                    <v-list-item-content>
+                      <v-list-item-title v-text="course.academicTerm" />
+                    </v-list-item-content>
 
-                      <v-list-item-action>
-                        <v-btn icon>
-                          <v-icon
-                            v-if="course.status === 'INACTIVE'"
-                            color="grey lighten-1"
-                            >mdi-key</v-icon
-                          >
-                          <v-icon
-                            v-else-if="course.status === 'HISTORIC'"
-                            color="grey lighten-1"
-                            >mdi-book-open-variant</v-icon
-                          >
-                          <v-icon v-else color="grey lighten-1"
-                            >mdi-location-enter</v-icon
-                          >
-                        </v-btn>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </template>
-                  <span v-if="course.status === 'INACTIVE'"
-                    >Activate course for students</span
-                  >
-                  <span v-else-if="course.status === 'HISTORIC'"
-                    >View Historic Records</span
-                  >
-                  <span v-else
-                    >Enter {{ course.name }} {{ course.academicTerm }}
-                  </span>
-                </v-tooltip>
-              </v-list-item-group>
-            </v-list>
-          </v-card>
-        </v-flex>
-      </v-layout>
-    </v-container>
+                    <v-list-item-action>
+                      <v-btn icon>
+                        <v-icon
+                          v-if="course.status === 'INACTIVE'"
+                          color="grey lighten-1"
+                          >mdi-key</v-icon
+                        >
+                        <v-icon
+                          v-else-if="course.status === 'HISTORIC'"
+                          color="grey lighten-1"
+                          >mdi-book-open-variant</v-icon
+                        >
+                        <v-icon v-else color="grey lighten-1"
+                          >mdi-location-enter</v-icon
+                        >
+                      </v-btn>
+                    </v-list-item-action>
+                  </v-list-item>
+                </template>
+                <span v-if="course.status === 'INACTIVE'"
+                  >Activate course for students</span
+                >
+                <span v-else-if="course.status === 'HISTORIC'"
+                  >View Historic Records</span
+                >
+                <span v-else
+                  >Enter {{ course.name }} {{ course.academicTerm }}
+                </span>
+              </v-tooltip>
+            </v-list-item-group>
+          </v-list>
+        </v-card>
+      </div>
+    </div>
 
     <v-dialog v-model="confirmationDialog" v-if="selectedCourse" width="50%">
       <v-card>

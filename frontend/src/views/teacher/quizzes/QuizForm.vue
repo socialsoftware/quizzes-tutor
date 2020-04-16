@@ -15,49 +15,74 @@
     </v-card-title>
     <v-card-text>
       <v-text-field v-model="quiz.title" label="*Title" />
-      <v-row>
-        <v-col cols="12" sm="6">
-          <v-datetime-picker
-            label="*Available Date"
-            format="yyyy-MM-dd HH:mm"
-            v-model="quiz.availableDate"
-            date-format="yyyy-MM-dd"
-            time-format="HH:mm"
-          >
-          </v-datetime-picker>
-        </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="12" sm="6">
-          <v-datetime-picker
-            :label="
-              quiz.type === 'IN_CLASS' ? '*Conclusion Date' : 'Conclusion Date'
-            "
-            v-model="quiz.conclusionDate"
-            date-format="yyyy-MM-dd"
-            time-format="HH:mm"
-          >
-          </v-datetime-picker>
-        </v-col>
-      </v-row>
-      <v-row wrap justify="center">
-        <v-col style="display: flex; justify-content: center">
-          <v-switch v-model="quiz.scramble" label="Scramble" />
-        </v-col>
-        <v-col style="display: flex; justify-content: center">
-          <v-switch v-model="quiz.qrCodeOnly" label="QRCode Only" />
-        </v-col>
-        <v-col style="display: flex; justify-content: center">
-          <v-switch v-model="quiz.oneWay" label="One Way Quiz" />
-        </v-col>
-        <v-col cols="12" sm="6">
-          <v-select
-            v-model="quiz.type"
-            :items="['PROPOSED', 'IN_CLASS']"
-            label="*Type"
-          ></v-select>
-          {{ quiz.type }}
-        </v-col>
-      </v-row>
+      <v-container fluid>
+        <v-row>
+          <v-col>
+            <v-datetime-picker
+              label="*Available Date"
+              format="yyyy-MM-dd HH:mm"
+              v-model="quiz.availableDate"
+              date-format="yyyy-MM-dd"
+              time-format="HH:mm"
+            >
+            </v-datetime-picker>
+          </v-col>
+          <v-col>
+            <v-datetime-picker
+              :label="
+                quiz.type === 'IN_CLASS'
+                  ? '*Conclusion Date'
+                  : 'Conclusion Date'
+              "
+              v-model="quiz.conclusionDate"
+              date-format="yyyy-MM-dd"
+              time-format="HH:mm"
+            >
+            </v-datetime-picker>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-switch v-on="on" v-model="quiz.scramble" label="Scramble" />
+              </template>
+              <span>Question order is scrambled</span>
+            </v-tooltip>
+          </v-col>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-switch
+                  v-on="on"
+                  v-model="quiz.qrCodeOnly"
+                  label="QRCode Only"
+                />
+              </template>
+              <span>Students can only start quiz with the qrcode</span>
+            </v-tooltip>
+          </v-col>
+          <v-col>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-switch
+                  v-on="on"
+                  v-model="quiz.oneWay"
+                  label="One Way Quiz"
+                />
+              </template>
+              <span>Students cannot go to previous question</span>
+            </v-tooltip>
+          </v-col>
+          <v-col>
+            <v-select
+              v-model="quiz.type"
+              :items="['PROPOSED', 'IN_CLASS']"
+              label="*Type"
+            ></v-select>
+          </v-col>
+        </v-row>
+      </v-container>
 
       <v-data-table
         :headers="headers"
@@ -73,20 +98,22 @@
         :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       >
         <template v-slot:top>
-          <v-row>
-            <v-col cols="12" sm="6">
-              <v-text-field v-model="search" label="Search" class="mx-4" />
-            </v-col>
-            <v-col cols="12" sm="6">
-              <v-btn
-                v-if="quizQuestions.length !== 0"
-                color="primary"
-                dark
-                @click="openShowQuiz"
-                >Show Quiz</v-btn
-              >
-            </v-col>
-          </v-row>
+          <v-container fluid>
+            <v-row>
+              <v-col>
+                <v-text-field v-model="search" label="Search" class="mx-4" />
+              </v-col>
+              <v-col>
+                <v-btn
+                  v-if="quizQuestions.length !== 0"
+                  color="primary"
+                  dark
+                  @click="openShowQuiz"
+                  >Show Quiz</v-btn
+                >
+              </v-col>
+            </v-row>
+          </v-container>
         </template>
         <template v-slot:item.content="{ item }">
           <div
@@ -229,14 +256,8 @@
     <v-dialog v-model="positionDialog" persistent max-width="200px">
       <v-card>
         <v-card-text>
-          <v-container>
-            <v-row>
-              <v-col cols="12" sm="6" md="4">
-                <v-text-field v-model="position" label="position" required>
-                </v-text-field>
-              </v-col>
-            </v-row>
-          </v-container>
+          <v-text-field v-model="position" label="position" required>
+          </v-text-field>
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>

@@ -53,13 +53,7 @@
         </v-card-title>
 
         <v-card-text v-if="editedTopic">
-          <v-container grid-list-md fluid>
-            <v-layout column wrap>
-              <v-flex xs24 sm12 md8>
-                <v-text-field v-model="editedTopic.name" label="Topic" />
-              </v-flex>
-            </v-layout>
-          </v-container>
+          <v-text-field v-model="editedTopic.name" label="Topic" />
         </v-card-text>
 
         <v-card-actions>

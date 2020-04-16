@@ -1,15 +1,7 @@
 <template>
-  <v-container fluid>
-    <v-card class="table">
-      <v-row align="center">
-        <v-col class="text-center" cols="12" sm="4">
-          <div class="my-2">
-            <v-btn color="primary" @click="exportAll">Export ZIP</v-btn>
-          </div>
-        </v-col>
-      </v-row>
-    </v-card>
-  </v-container>
+  <v-card class="table">
+    <v-btn color="primary" @click="exportAll">Export ZIP</v-btn>
+  </v-card>
 </template>
 
 <script lang="ts">
