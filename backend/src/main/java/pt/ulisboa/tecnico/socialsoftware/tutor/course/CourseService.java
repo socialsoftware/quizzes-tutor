@@ -52,7 +52,11 @@ public class CourseService {
 
         Course course = getCourse(courseDto);
 
-        CourseExecution courseExecution = createCourseExecution(course, courseDto);
+        CourseExecution courseExecution = course.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType()).orElse(null);
+
+        if (courseExecution == null) {
+            courseExecution = createCourseExecution(course, courseDto);
+        }
 
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);

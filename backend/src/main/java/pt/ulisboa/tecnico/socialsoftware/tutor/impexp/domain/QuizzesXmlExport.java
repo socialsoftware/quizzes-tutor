@@ -39,6 +39,8 @@ public class QuizzesXmlExport {
 
 	private void exportQuiz(Element element, Quiz quiz) {
 		Element quizElement = new Element("quiz");
+		quizElement.setAttribute("courseName",quiz.getCourseExecution().getCourse().getName());
+		quizElement.setAttribute("courseType",quiz.getCourseExecution().getCourse().getType().name());
 		quizElement.setAttribute("courseExecutionType",quiz.getCourseExecution().getType().name());
 		quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
         quizElement.setAttribute("academicTerm",quiz.getCourseExecution().getAcademicTerm());
