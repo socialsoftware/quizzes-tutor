@@ -14,7 +14,7 @@
           v-if="secondsToSubmission > 0"
         >
           <i class="fas fa-clock"></i>
-          <span v-if="!hideTime">{{ getTimeAsHHMMSS }}</span>
+          <span v-if="!hideTime">{{ timer }}</span>
         </span>
         <span class="end-quiz" @click="confirmationDialog = true"
           ><i class="fas fa-times" />End Quiz</span
@@ -134,8 +134,7 @@
 
     <v-card v-else-if="secondsToSubmission">
       <v-card-title>
-        Hold on and wait for {{ secondsToSubmission + 1 }} seconds to view the
-        results
+        Hold on and wait for {{ timer }} seconds to view the results
       </v-card-title>
     </v-card>
   </div>
@@ -165,7 +164,10 @@ export default class QuizView extends Vue {
   secondsToSubmission: number =
     StatementManager.getInstance.statementQuiz?.secondsToSubmission ?? 0;
   hideTime: boolean = false;
-  timeout: number | null = null;
+
+  intervalId!: number;
+  startDate!: number;
+  timer: string = '';
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -180,10 +182,28 @@ export default class QuizView extends Vue {
     }
 
     if (this.secondsToSubmission > 0) {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
+      if (this.intervalId) {
+        clearTimeout(this.intervalId);
       }
-      this.countDownToResults();
+      this.startDate = Date.now();
+      this.intervalId = setInterval(this.updateTimer, 1000);
+    }
+  }
+
+  updateTimer() {
+    if (
+      this.secondsToSubmission -
+        Math.floor((Date.now() - this.startDate) / 1000) >=
+      0
+    ) {
+      this.timer = this.getTimeAsHHMMSS();
+
+      if (this.$router.currentRoute.name !== 'solve-quiz') {
+        clearInterval(this.intervalId);
+      }
+    } else {
+      clearInterval(this.intervalId);
+      this.endQuiz();
     }
   }
 
@@ -274,23 +294,14 @@ export default class QuizView extends Vue {
     }
   }
 
-  async countDownToResults() {
-    if (this.secondsToSubmission && this.secondsToSubmission > -1) {
-      if (this.$router.currentRoute.name === 'solve-quiz') {
-        this.secondsToSubmission! -= 1;
-        this.timeout = setTimeout(() => {
-          this.countDownToResults();
-        }, 1000);
-      }
-    } else {
-      await this.endQuiz();
-    }
-  }
+  getTimeAsHHMMSS() {
+    let localSecondsToSubmission =
+      this.secondsToSubmission -
+      Math.floor((Date.now() - this.startDate) / 1000);
 
-  get getTimeAsHHMMSS() {
-    let hours = Math.floor(this.secondsToSubmission / 3600);
-    let minutes = Math.floor((this.secondsToSubmission - hours * 3600) / 60);
-    let seconds = this.secondsToSubmission - hours * 3600 - minutes * 60;
+    let hours = Math.floor(localSecondsToSubmission / 3600);
+    let minutes = Math.floor((localSecondsToSubmission - hours * 3600) / 60);
+    let seconds = localSecondsToSubmission - hours * 3600 - minutes * 60;
 
     let hoursString = hours < 10 ? '0' + hours : hours;
     let minutesString = minutes < 10 ? '0' + minutes : minutes;

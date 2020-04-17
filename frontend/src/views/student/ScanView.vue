@@ -26,23 +26,12 @@ import StatementManager from '@/models/statement/StatementManager';
 export default class ScanView extends Vue {
   quizId: number | null = null;
   secondsToRequest: number = 0;
+  intervalId!: number;
+  startDate!: number;
 
   async onDecode(decodedString: String) {
     this.quizId = Number(decodedString);
     this.getQuizByQRCode();
-  }
-
-  countDownTimer() {
-    if (this.secondsToRequest >= 0) {
-      if (this.$router.currentRoute.name === 'scan') {
-        this.secondsToRequest -= 1;
-        setTimeout(() => {
-          this.countDownTimer();
-        }, 1000);
-      }
-    } else {
-      this.getQuizByQRCode();
-    }
   }
 
   async getQuizByQRCode() {
@@ -53,7 +42,8 @@ export default class ScanView extends Vue {
         );
         if (quiz.secondsToAvailability) {
           this.secondsToRequest = quiz.secondsToAvailability;
-          this.countDownTimer();
+          this.startDate = Date.now();
+          this.intervalId = setInterval(this.updateTimer, 1000);
         } else {
           this.goToSolveQuiz(quiz);
         }
@@ -61,6 +51,21 @@ export default class ScanView extends Vue {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'home' });
       }
+    }
+  }
+
+  updateTimer() {
+    if (
+      this.secondsToRequest -
+        Math.floor((Date.now() - this.startDate) / 1000) >=
+      0
+    ) {
+      if (this.$router.currentRoute.name !== 'scan') {
+        clearInterval(this.intervalId);
+      }
+    } else {
+      clearInterval(this.intervalId);
+      this.getQuizByQRCode();
     }
   }
 
