@@ -49,6 +49,7 @@ public class CourseService {
     @Transactional(isolation = Isolation.SERIALIZABLE)
     public CourseDto createTecnicoCourseExecution(CourseDto courseDto) {
         courseDto.setCourseExecutionType(Course.Type.TECNICO);
+        courseDto.setCourseType(Course.Type.TECNICO);
 
         Course course = getCourse(courseDto);
 

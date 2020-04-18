@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <v-container fluid>
     <h2>Create Random Quiz</h2>
-    <div class="create-buttons">
+    <v-container class="create-buttons">
       <p>Assessment</p>
       <v-btn-toggle
         v-model="statementManager.assessment"
@@ -35,8 +35,8 @@
           Create quiz
         </v-btn>
       </div>
-    </div>
-  </div>
+    </v-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -82,6 +82,7 @@ export default class CreateQuizzesView extends Vue {
 }
 
 .button-group {
+  padding: 20px;
   flex-wrap: wrap;
   justify-content: center;
 }
