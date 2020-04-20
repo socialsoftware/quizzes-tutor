@@ -194,7 +194,7 @@
               <ul>
                 <li v-for="option in question.options" :key="option.number">
                   <span
-                    v-html="convertMarkDown(option.content, null)"
+                    v-html="convertMarkDown(option.content)"
                     v-bind:class="[option.correct ? 'font-weight-bold' : '']"
                   ></span>
                 </li>

@@ -39,7 +39,5 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 1 * * *")
     public void resetDemoInfo() {
 	    quizService.resetDemoQuizzes();
-        topicService.resetDemoTopics();
-        assessmentService.resetDemoAssessments();
     }
 }

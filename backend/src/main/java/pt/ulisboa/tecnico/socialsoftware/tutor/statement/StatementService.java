@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -74,7 +75,7 @@ public class StatementService {
         Quiz quiz = new Quiz();
         quiz.setKey(quizService.getMaxQuizKey() + 1);
         quiz.setType(Quiz.QuizType.GENERATED);
-        quiz.setCreationDate(LocalDateTime.now());
+        quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -116,7 +117,7 @@ public class StatementService {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
 
-        if (quiz.getConclusionDate() != null && LocalDateTime.now().isAfter(quiz.getConclusionDate())) {
+        if (quiz.getConclusionDate() != null && LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
@@ -134,13 +135,13 @@ public class StatementService {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
 
-        if (quiz.getAvailableDate() == null || LocalDateTime.now().isAfter(quiz.getAvailableDate())) {
+        if (quiz.getAvailableDate() == null || LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getAvailableDate())) {
             return new StatementQuizDto(quizAnswer);
 
         // Send timer
         } else {
             StatementQuizDto quizDto = new StatementQuizDto();
-            quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(LocalDateTime.now(), quiz.getAvailableDate()));
+            quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), quiz.getAvailableDate()));
             return quizDto;
         }
     }
@@ -152,7 +153,7 @@ public class StatementService {
     public List<StatementQuizDto> getAvailableQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
         Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
@@ -177,7 +178,7 @@ public class StatementService {
                 .filter(quizAnswer -> !quizAnswer.isCompleted())
                 .filter(quizAnswer -> !quizAnswer.getQuiz().isOneWay() || quizAnswer.getCreationDate() == null)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
-                .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now(ZoneOffset.UTC).isBefore(quizAnswer.getQuiz().getConclusionDate()))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
@@ -224,7 +225,7 @@ public class StatementService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void completeOpenQuizAnswers() {
-        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(LocalDateTime.now());
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(LocalDateTime.now(ZoneOffset.UTC));
 
         quizAnswersToClose.forEach(quizAnswer -> {
             if (!quizAnswer.isCompleted()) {
@@ -248,7 +249,7 @@ public class StatementService {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
 
-        if (quiz.getConclusionDate() != null && LocalDateTime.now().isAfter(quiz.getConclusionDate())) {
+        if (quiz.getConclusionDate() != null && LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
@@ -257,14 +258,14 @@ public class StatementService {
         if (quizAnswer.isCompleted()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         } else if (quizAnswer.getCreationDate() == null) {
-            quizAnswer.setCreationDate(LocalDateTime.now());
+            quizAnswer.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
         } else if (quiz.isOneWay()) {
             throw new TutorException(QUIZ_ALREADY_STARTED);
         }
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
-        Assessment assessment = assessmentRepository.findById(Integer.valueOf(quizDetails.getAssessment()))
+        Assessment assessment = assessmentRepository.findById(quizDetails.getAssessment())
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());

@@ -118,7 +118,7 @@
         <template v-slot:item.content="{ item }">
           <div
             class="text-left"
-            v-html="convertMarkDownNoFigure(item.content, item.image)"
+            v-html="convertMarkDown(item.content, item.image)"
             @click="openShowQuestionDialog(item)"
           ></div>
         </template>
@@ -278,7 +278,7 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import { Quiz } from '@/models/management/Quiz';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
@@ -455,8 +455,8 @@ export default class QuizForm extends Vue {
     this.questionDialog = false;
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   addToQuiz(question: Question) {

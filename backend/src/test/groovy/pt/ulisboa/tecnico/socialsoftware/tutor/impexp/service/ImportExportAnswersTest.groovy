@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 @DataJpaTest
 class ImportExportAnswersTest extends Specification {
@@ -42,7 +43,7 @@ class ImportExportAnswersTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer TIME_TAKEN = 1234
     public static final Integer SEQUENCE = 0
-    public static final LocalDateTime ANSWER_DATE = LocalDateTime.now()
+    public static final LocalDateTime ANSWER_DATE = LocalDateTime.now(ZoneOffset.UTC)
 
     @Autowired
     AnswerService answerService
@@ -107,9 +108,9 @@ class ImportExportAnswersTest extends Specification {
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
 
-        quiz.setCreationDate(LocalDateTime.now())
-        quiz.setAvailableDate(LocalDateTime.now())
-        quiz.setConclusionDate(LocalDateTime.now())
+        quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC))
+        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC))
+        quiz.setConclusionDate(LocalDateTime.now(ZoneOffset.UTC))
         quiz.setType(Quiz.QuizType.EXAM)
         quiz.setSeries(1)
         quiz.setVersion(VERSION)

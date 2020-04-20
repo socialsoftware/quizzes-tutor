@@ -9,7 +9,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(name = "quiz_answers")
@@ -158,7 +161,7 @@ public class QuizAnswer implements DomainEntity {
     public boolean canResultsBePublic(CourseExecution courseExecution) {
         return isCompleted() &&
                 getQuiz().getCourseExecution() == courseExecution &&
-                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now()));
+                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now(ZoneOffset.UTC)));
     }
 
     public void calculateStatistics() {

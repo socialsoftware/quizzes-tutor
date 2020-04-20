@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
@@ -15,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -95,34 +97,34 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoTeacher() {
-        User user = this.userRepository.findByUsername("Demo-Teacher");
+        User user = this.userRepository.findByUsername(Demo.TEACHER_USERNAME);
         if (user == null)
-            return createUser("Demo Teacher", "Demo-Teacher", User.Role.TEACHER);
+            return createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
         return user;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoStudent() {
-        User user = this.userRepository.findByUsername("Demo-Student");
+        User user = this.userRepository.findByUsername(Demo.STUDENT_USERNAME);
         if (user == null)
-            return createUser("Demo Student", "Demo-Student", User.Role.STUDENT);
+            return createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
         return user;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User getDemoAdmin() {
-        User user =  this.userRepository.findByUsername("Demo-Admin");
+        User user =  this.userRepository.findByUsername(Demo.ADMIN_USERNAME);
         if (user == null)
-            return createUser("Demo Admin", "Demo-Admin", User.Role.DEMO_ADMIN);
+            return createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
         return user;
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User createDemoStudent() {
-        String birthDate = LocalDateTime.now().toString();
+        String birthDate = LocalDateTime.now(ZoneOffset.UTC).toString();
         User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, User.Role.STUDENT);
 
-        User demoUser = this.userRepository.findByUsername("Demo-Student");
+        User demoUser = this.userRepository.findByUsername(Demo.STUDENT_USERNAME);
 
         CourseExecution courseExecution = demoUser.getCourseExecutions().stream().findAny().orElse(null);
 

@@ -31,8 +31,8 @@ export default class Question {
       this.numberOfCorrect = jsonObj.numberOfCorrect;
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;
-      this.image = jsonObj.image;
       this.creationDate = ISOtoString(jsonObj.creationDate);
+      this.image = new Image(jsonObj.image);
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)

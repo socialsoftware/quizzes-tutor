@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 
 interface TutorExceptionSubError extends Serializable{
@@ -18,19 +19,19 @@ public class TutorExceptionDto  implements TutorExceptionSubError {
 
 
     TutorExceptionDto(Throwable ex) {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.message = "Unexpected error";
         this.debugMessage = ex.getLocalizedMessage();
     }
 
 
     public TutorExceptionDto(TutorException e) {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.message = e.getMessage();
     }
 
     public TutorExceptionDto(ErrorMessage errorMessage) {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now(ZoneOffset.UTC);
         this.message = errorMessage.label;
     }
 

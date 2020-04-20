@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class AuthService {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
 
-        user.setLastAccess(LocalDateTime.now());
+        user.setLastAccess(LocalDateTime.now(ZoneOffset.UTC));
 
         if (user.getRole() == User.Role.ADMIN) {
             List<CourseDto> allCoursesInDb = courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList());

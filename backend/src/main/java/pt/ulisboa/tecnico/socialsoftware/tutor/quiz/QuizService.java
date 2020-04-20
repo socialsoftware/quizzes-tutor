@@ -41,6 +41,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -132,7 +133,7 @@ public class QuizService {
             }
         }
         if (quizDto.getCreationDate() == null) {
-            quiz.setCreationDate(LocalDateTime.now());
+            quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
         } else {
             quiz.setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         }
@@ -231,8 +232,8 @@ public class QuizService {
         ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
-        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(LocalDateTime.now())) {
-            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(LocalDateTime.now(), quiz.getConclusionDate()));
+        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
+            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), quiz.getConclusionDate()));
         }
 
         return quizAnswersDto;

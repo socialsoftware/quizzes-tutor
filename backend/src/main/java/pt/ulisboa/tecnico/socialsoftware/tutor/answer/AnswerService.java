@@ -27,11 +27,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -81,19 +81,19 @@ public class AnswerService {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
         if (!quizAnswer.isCompleted()) {
-            quizAnswer.setAnswerDate(LocalDateTime.now());
+            quizAnswer.setAnswerDate(LocalDateTime.now(ZoneOffset.UTC));
             quizAnswer.setCompleted(true);
         }
 
         // In class quiz When student submits before conclusionDate
         if (quizAnswer.getQuiz().getConclusionDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            LocalDateTime.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+            LocalDateTime.now(ZoneOffset.UTC).isBefore(quizAnswer.getQuiz().getConclusionDate())) {
 
             return new ArrayList<>();
         }
@@ -123,11 +123,11 @@ public class AnswerService {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
         }
 
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now())) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
@@ -148,7 +148,7 @@ public class AnswerService {
 
                 questionAnswer.setOption(option);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(LocalDateTime.now());
+                quizAnswer.setAnswerDate(LocalDateTime.now(ZoneOffset.UTC));
             }
         }
     }

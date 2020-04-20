@@ -28,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
@@ -112,7 +113,7 @@ class ConcludeQuizTest extends Specification {
         optionOk.setSequence(1)
         optionOk.setQuestion(question)
 
-        date = LocalDateTime.now()
+        date = LocalDateTime.now(ZoneOffset.UTC)
 
         quizAnswer = new QuizAnswer(user, quiz)
         userRepository.save(user)
@@ -147,7 +148,7 @@ class ConcludeQuizTest extends Specification {
 
     def 'conclude quiz IN_CLASS without answering, before conclusionDate'() {
         given: 'an IN_CLASS quiz with future conclusionDate'
-        quiz.setConclusionDate(LocalDateTime.now().plusDays(2));
+        quiz.setConclusionDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(2));
         quiz.setType(Quiz.QuizType.IN_CLASS);
 
         when:
@@ -169,7 +170,7 @@ class ConcludeQuizTest extends Specification {
 
     def 'conclude quiz with answer, before conclusionDate'() {
         given: 'a quiz with future conclusionDate'
-        quiz.setConclusionDate(LocalDateTime.now().plusDays(2))
+        quiz.setConclusionDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(2))
         and: 'an answer'
         def statementAnswerDto = new StatementAnswerDto();
         statementAnswerDto.setOptionId(optionOk.getId())
@@ -199,7 +200,7 @@ class ConcludeQuizTest extends Specification {
 
     def 'conclude quiz without answering, before availableDate'() {
         given: 'a quiz with future availableDate'
-        quiz.setAvailableDate(LocalDateTime.now().plusDays(2))
+        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(2))
 
         when:
         answerService.concludeQuiz(user, quiz.getId())

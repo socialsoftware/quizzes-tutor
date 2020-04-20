@@ -5,6 +5,8 @@
       :custom-filter="customFilter"
       :items="questions"
       :search="search"
+      :sort-by="['creationDate']"
+      sort-desc
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
@@ -27,11 +29,11 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.content="{ item }">
-        <p
-          v-html="convertMarkDownNoFigure(item.content, null)"
-          @click="showQuestionDialog(item)"
-      /></template>
+      <template v-slot:item.title="{ item }">
+        <p @click="showQuestionDialog(item)" style="cursor: pointer">
+          {{ item.title }}
+        </p>
+      </template>
 
       <template v-slot:item.topics="{ item }">
         <edit-question-topics
@@ -141,7 +143,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDownNoFigure } from '@/services/ConvertMarkdownService';
+import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
@@ -166,8 +168,13 @@ export default class QuestionsView extends Vue {
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
 
   headers: object = [
-    { text: 'Title', value: 'title', align: 'center' },
-    { text: 'Question', value: 'content', align: 'left' },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center'
+    },
+    { text: 'Title', value: 'title', align: 'left' },
+    { text: 'Status', value: 'status', align: 'left', width: '150px' },
     {
       text: 'Topics',
       value: 'topics',
@@ -184,12 +191,6 @@ export default class QuestionsView extends Vue {
     {
       text: 'Nº of non generated quizzes',
       value: 'numberOfNonGeneratedQuizzes',
-      align: 'center'
-    },
-    { text: 'Status', value: 'status', align: 'center' },
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
       align: 'center'
     },
     {
@@ -236,8 +237,8 @@ export default class QuestionsView extends Vue {
     );
   }
 
-  convertMarkDownNoFigure(text: string, image: Image | null = null): string {
-    return convertMarkDownNoFigure(text, image);
+  convertMarkDown(text: string, image: Image | null = null): string {
+    return convertMarkDown(text, image);
   }
 
   onQuestionChangedTopics(questionId: Number, changedTopics: Topic[]) {

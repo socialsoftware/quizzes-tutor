@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -195,7 +196,7 @@ public class Question implements DomainEntity {
 
     public void setCreationDate(LocalDateTime creationDate) {
         if (this.creationDate == null) {
-            this.creationDate = LocalDateTime.now();
+            this.creationDate = LocalDateTime.now(ZoneOffset.UTC);
         } else {
             this.creationDate = creationDate;
         }

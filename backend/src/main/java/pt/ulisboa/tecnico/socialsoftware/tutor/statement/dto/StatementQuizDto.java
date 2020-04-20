@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -40,7 +41,7 @@ public class StatementQuizDto implements Serializable {
             this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
 
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-                this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(), quizAnswer.getQuiz().getConclusionDate());
+                this.secondsToSubmission = ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), quizAnswer.getQuiz().getConclusionDate());
             }
         }
 
