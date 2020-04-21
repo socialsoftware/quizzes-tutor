@@ -12,7 +12,6 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
-      multi-sort
     >
       <template v-slot:top>
         <v-card-title>

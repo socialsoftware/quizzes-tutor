@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -13,7 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "course_executions")
-public class CourseExecution {
+public class CourseExecution implements DomainEntity {
      public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
@@ -34,13 +36,13 @@ public class CourseExecution {
     private Course course;
 
     @ManyToMany(mappedBy = "courseExecutions")
-    private Set<User> users = new HashSet<>();
+    private final Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<Quiz> quizzes = new HashSet<>();
+    private final Set<Quiz> quizzes = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<Assessment> assessments = new HashSet<>();
+    private final Set<Assessment> assessments = new HashSet<>();
 
     public CourseExecution() {
     }
@@ -55,6 +57,11 @@ public class CourseExecution {
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
         setStatus(Status.ACTIVE);
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitCourseExecution(this);
     }
 
     public Integer getId() {
@@ -149,7 +156,7 @@ public class CourseExecution {
                 '}';
     }
 
-    public void delete() {
+    public void remove() {
         if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
             throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
         }

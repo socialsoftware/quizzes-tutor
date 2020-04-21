@@ -21,9 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-
 @DataJpaTest
 class ImportExportQuizzesTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
@@ -83,9 +80,9 @@ class ImportExportQuizzesTest extends Specification {
         quizDto.setQrCodeOnly(true)
         quizDto.setOneWay(false)
         quizDto.setTitle(QUIZ_TITLE)
-        creationDate = LocalDateTime.now(ZoneOffset.UTC)
-        availableDate = LocalDateTime.now(ZoneOffset.UTC)
-        conclusionDate = LocalDateTime.now(ZoneOffset.UTC).plusDays(2)
+        creationDate = DateHandler.now()
+        availableDate = DateHandler.now()
+        conclusionDate = DateHandler.now().plusDays(2)
         quizDto.setCreationDate(DateHandler.toISOString(creationDate))
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))

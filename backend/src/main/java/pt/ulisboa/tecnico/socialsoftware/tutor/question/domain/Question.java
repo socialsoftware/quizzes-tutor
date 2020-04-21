@@ -12,18 +12,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(
-        name = "questions",
-        indexes = {
-                @Index(name = "question_indx_0", columnList = "key")
-        })
+@Table(name = "questions")
 public class Question implements DomainEntity {
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
@@ -57,13 +52,13 @@ public class Question implements DomainEntity {
     private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
-    private List<Option> options = new ArrayList<>();
+    private final List<Option> options = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
-    private Set<QuizQuestion> quizQuestions = new HashSet<>();
+    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
-    private Set<Topic> topics = new HashSet<>();
+    private final Set<Topic> topics = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -196,7 +191,7 @@ public class Question implements DomainEntity {
 
     public void setCreationDate(LocalDateTime creationDate) {
         if (this.creationDate == null) {
-            this.creationDate = LocalDateTime.now(ZoneOffset.UTC);
+            this.creationDate = DateHandler.now();
         } else {
             this.creationDate = creationDate;
         }
@@ -244,14 +239,6 @@ public class Question implements DomainEntity {
                 '}';
     }
 
-    public void remove() {
-        canRemove();
-        getCourse().getQuestions().remove(this);
-        course = null;
-        getTopics().forEach(topic -> topic.getQuestions().remove(this));
-        getTopics().clear();
-    }
-
     private void generateKeys() {
         int max = this.course.getQuestions().stream()
                 .filter(question -> question.key != null)
@@ -291,6 +278,10 @@ public class Question implements DomainEntity {
         return numberOfCorrect * 100 / numberOfAnswers;
     }
 
+    public boolean belongsToAssessment(Assessment chosenAssessment) {
+        return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
+    }
+
     public void update(QuestionDto questionDto) {
         if (getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).findAny().isPresent()) {
             throw new TutorException(CANNOT_CHANGE_ANSWERED_QUESTION);
@@ -312,13 +303,15 @@ public class Question implements DomainEntity {
         newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(this::addTopic);
     }
 
-    private void canRemove() {
+    public void remove() {
         if (!getQuizQuestions().isEmpty()) {
             throw new TutorException(QUESTION_IS_USED_IN_QUIZ, getQuizQuestions().iterator().next().getQuiz().getTitle());
         }
-    }
 
-    public boolean belongsToAssessment(Assessment chosenAssessment) {
-        return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
+        getCourse().getQuestions().remove(this);
+        course = null;
+
+        getTopics().forEach(topic -> topic.getQuestions().remove(this));
+        getTopics().clear();
     }
 }

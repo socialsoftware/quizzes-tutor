@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -23,9 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
-
-import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @DataJpaTest
 class GetSolvedQuizzesTest extends Specification {
@@ -99,7 +97,7 @@ class GetSolvedQuizzesTest extends Specification {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.PROPOSED)
-        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(1))
+        quiz.setAvailableDate(DateHandler.now().minusDays(1))
         quiz.setCourseExecution(courseExecution)
 
         quizQuestion = new QuizQuestion()
@@ -108,7 +106,7 @@ class GetSolvedQuizzesTest extends Specification {
         quizQuestion.setQuestion(question)
 
         def quizAnswer = new QuizAnswer()
-        quizAnswer.setAnswerDate(LocalDateTime.now(ZoneOffset.UTC))
+        quizAnswer.setAnswerDate(DateHandler.now())
         quizAnswer.setCompleted(true)
         quizAnswer.setUser(user)
         quizAnswer.setQuiz(quiz)

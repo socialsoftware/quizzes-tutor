@@ -36,3 +36,19 @@ h2 {
 i {
   padding: 0 10px 0 0;
 }
+
+
+
+code::before {
+  display: none;
+}
+
+code::after {
+  display: none;
+}
+
+code {
+  padding: 10px;
+  color: #2c3e50 !important;
+  font-size: large !important;
+}

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -29,7 +30,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 @DataJpaTest
 class ImportExportAnswersTest extends Specification {
@@ -43,7 +43,7 @@ class ImportExportAnswersTest extends Specification {
     public static final String OPTION_CONTENT = "optionId content"
     public static final Integer TIME_TAKEN = 1234
     public static final Integer SEQUENCE = 0
-    public static final LocalDateTime ANSWER_DATE = LocalDateTime.now(ZoneOffset.UTC)
+    public static final LocalDateTime ANSWER_DATE = DateHandler.now()
 
     @Autowired
     AnswerService answerService
@@ -108,9 +108,9 @@ class ImportExportAnswersTest extends Specification {
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
 
-        quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC))
-        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC))
-        quiz.setConclusionDate(LocalDateTime.now(ZoneOffset.UTC))
+        quiz.setCreationDate(DateHandler.now())
+        quiz.setAvailableDate(DateHandler.now())
+        quiz.setConclusionDate(DateHandler.now())
         quiz.setType(Quiz.QuizType.EXAM)
         quiz.setSeries(1)
         quiz.setVersion(VERSION)

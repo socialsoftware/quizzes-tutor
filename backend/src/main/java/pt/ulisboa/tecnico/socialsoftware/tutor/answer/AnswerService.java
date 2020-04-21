@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
@@ -26,8 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -81,19 +80,19 @@ public class AnswerService {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
                 new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
         if (!quizAnswer.isCompleted()) {
-            quizAnswer.setAnswerDate(LocalDateTime.now(ZoneOffset.UTC));
+            quizAnswer.setAnswerDate(DateHandler.now());
             quizAnswer.setCompleted(true);
         }
 
         // In class quiz When student submits before conclusionDate
         if (quizAnswer.getQuiz().getConclusionDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            LocalDateTime.now(ZoneOffset.UTC).isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+            DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
 
             return new ArrayList<>();
         }
@@ -123,11 +122,11 @@ public class AnswerService {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
         }
 
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(LocalDateTime.now(ZoneOffset.UTC))) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
+        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
@@ -148,7 +147,7 @@ public class AnswerService {
 
                 questionAnswer.setOption(option);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(LocalDateTime.now(ZoneOffset.UTC));
+                quizAnswer.setAnswerDate(DateHandler.now());
             }
         }
     }
@@ -185,7 +184,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
-        List<QuestionAnswer> questionAnswers = quizAnswer.getQuestionAnswers().stream().collect(Collectors.toList());
+        List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
         questionAnswers.forEach(questionAnswer ->
         {
             questionAnswer.remove();

@@ -25,9 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-
 @DataJpaTest
 class GetAvailableQuizzesTest extends Specification {
     static final USERNAME = 'username'
@@ -88,7 +85,7 @@ class GetAvailableQuizzesTest extends Specification {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.PROPOSED)
-        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC).minusDays(1))
+        quiz.setAvailableDate(DateHandler.now().minusDays(1))
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)
 
@@ -124,7 +121,7 @@ class GetAvailableQuizzesTest extends Specification {
 
     def 'the quiz is not available'() {
         given:
-        quiz.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC).plusDays(1))
+        quiz.setAvailableDate(DateHandler.now().plusDays(1))
 
         when:
         def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())

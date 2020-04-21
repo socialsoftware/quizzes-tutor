@@ -23,9 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 
-import java.time.LocalDateTime
-import java.time.ZoneOffset
-
 @DataJpaTest
 class CreateQuizTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
@@ -67,9 +64,8 @@ class CreateQuizTest extends Specification {
 
         quizDto = new QuizDto()
         quizDto.setKey(1)
-        availableDate = LocalDateTime.now(ZoneOffset.UTC)
-        println(availableDate)
-        conclusionDate = LocalDateTime.now(ZoneOffset.UTC).plusDays(1)
+        availableDate = DateHandler.now()
+        conclusionDate = DateHandler.now().plusDays(1)
         quizDto.setScramble(true)
         quizDto.setOneWay(true)
         quizDto.setQrCodeOnly(true)

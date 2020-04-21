@@ -32,7 +32,7 @@ export default class Question {
       this.difficulty = jsonObj.difficulty;
       this.content = jsonObj.content;
       this.creationDate = ISOtoString(jsonObj.creationDate);
-      this.image = new Image(jsonObj.image);
+      this.image = jsonObj.image;
 
       this.options = jsonObj.options.map(
         (option: Option) => new Option(option)

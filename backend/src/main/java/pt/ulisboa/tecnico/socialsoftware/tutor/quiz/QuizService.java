@@ -40,8 +40,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -118,11 +116,15 @@ public class QuizService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        Quiz quiz = new Quiz(quizDto);
 
         if (quizDto.getKey() == null) {
             quizDto.setKey(getMaxQuizKey() + 1);
         }
-        Quiz quiz = new Quiz(quizDto);
+
+        if (quizDto.getCreationDate() == null) {
+            quiz.setCreationDate(DateHandler.now());
+        }
         quiz.setCourseExecution(courseExecution);
 
         if (quizDto.getQuestions() != null) {
@@ -132,11 +134,7 @@ public class QuizService {
                 new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
             }
         }
-        if (quizDto.getCreationDate() == null) {
-            quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
-        } else {
-            quiz.setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
-        }
+
         quizRepository.save(quiz);
 
         return new QuizDto(quiz, true);
@@ -153,9 +151,9 @@ public class QuizService {
         quiz.checkCanChange();
 
         quiz.setTitle(quizDto.getTitle());
-        if (!DateHandler.isInvalidDateFormat(quizDto.getAvailableDate()))
+        if (DateHandler.isValidDateFormat(quizDto.getAvailableDate()))
             quiz.setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
-        if (!DateHandler.isInvalidDateFormat(quizDto.getConclusionDate()))
+        if (DateHandler.isValidDateFormat(quizDto.getConclusionDate()))
             quiz.setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
@@ -232,8 +230,8 @@ public class QuizService {
         ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
-        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(LocalDateTime.now(ZoneOffset.UTC))) {
-            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), quiz.getConclusionDate()));
+        if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(DateHandler.now())) {
+            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(DateHandler.now(), quiz.getConclusionDate()));
         }
 
         return quizAnswersDto;

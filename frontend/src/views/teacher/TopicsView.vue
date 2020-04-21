@@ -25,7 +25,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editTopic(item)"
+            <v-icon large class="mr-2" v-on="on" @click="editTopic(item)"
               >edit</v-icon
             >
           </template>
@@ -34,7 +34,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="deleteTopic(item)"
@@ -78,19 +78,19 @@ export default class TopicsView extends Vue {
   topicDialog: boolean = false;
   search: string = '';
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '15%',
+      sortable: false
+    },
     { text: 'Topic', value: 'name', align: 'left' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
       align: 'center',
       width: '115px'
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      width: '7%',
-      sortable: false
     }
   ];
 

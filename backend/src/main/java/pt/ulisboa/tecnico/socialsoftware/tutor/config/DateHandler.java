@@ -34,9 +34,13 @@ public class DateHandler {
      *  If it returns that format, it means the date wasn't changed
      *  Because the component v-datetime-picker returns ISO8601 string format
      *
-     *  Do not convert this to LocalDateTime because it does not have timezone information
+     *  Do not convert this string to LocalDateTime because it does not have timezone information
      */
-    public static boolean isInvalidDateFormat(String string) {
-        return string != null && string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
+    public static boolean isValidDateFormat(String string) {
+        return string == null || !string.matches("\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}");
+    }
+
+    public static LocalDateTime now() {
+        return LocalDateTime.now(ZoneOffset.UTC);
     }
 }

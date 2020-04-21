@@ -111,7 +111,7 @@ public class CourseService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        courseExecution.delete();
+        courseExecution.remove();
 
         courseExecutionRepository.delete(courseExecution);
     }

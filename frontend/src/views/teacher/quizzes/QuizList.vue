@@ -4,7 +4,6 @@
       :headers="headers"
       :items="quizzes"
       :search="search"
-      multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
@@ -27,7 +26,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showQuizDialog(item.id)"
@@ -39,7 +38,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showQuizAnswers(item.id)"
@@ -50,8 +49,24 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
+            <v-icon large class="mr-2" v-on="on" @click="exportQuiz(item.id)"
+              >fas fa-download</v-icon
+            >
+          </template>
+          <span>Export</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.qrCodeOnly">
+          <template v-slot:activator="{ on }">
+            <v-icon large class="mr-2" v-on="on" @click="showQrCode(item.id)"
+              >fas fa-qrcode</v-icon
+            >
+          </template>
+          <span>Show QR Code</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+          <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="$emit('editQuiz', item.id)"
@@ -60,10 +75,10 @@
           </template>
           <span>Edit Quiz</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="deleteQuiz(item.id)"
@@ -72,22 +87,6 @@
             >
           </template>
           <span>Delete Quiz</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="showQrCode(item.id)"
-              >fas fa-qrcode</v-icon
-            >
-          </template>
-          <span>Show QR Code</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="exportQuiz(item.id)"
-              >fas fa-download</v-icon
-            >
-          </template>
-          <span>Export</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -150,6 +149,13 @@ export default class QuizList extends Vue {
 
   qrValue: number | null = null;
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '15%',
+      sortable: false
+    },
     { text: 'Title', value: 'title', align: 'left', width: '20%' },
     {
       text: 'Creation Date',
@@ -197,13 +203,6 @@ export default class QuizList extends Vue {
       value: 'numberOfAnswers',
       align: 'center',
       width: '5%'
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      width: '10%',
-      sortable: false
     }
   ];
 

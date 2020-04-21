@@ -246,6 +246,13 @@
   outline: rgb(51, 51, 51) none 0;
   overflow: hidden;
 
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none;
+
   .question {
     width: 100%;
     bottom: 0;
@@ -260,7 +267,6 @@
     column-rule-color: rgb(51, 51, 51);
     perspective-origin: 492px 35px;
     transform-origin: 492px 35px;
-    user-select: text;
     caret-color: rgb(51, 51, 51);
     border: 0 none rgb(51, 51, 51);
     outline: rgb(51, 51, 51) none 0;
@@ -320,7 +326,6 @@
       column-rule-color: rgb(51, 51, 51);
       perspective-origin: 422px 35px;
       transform-origin: 422px 35px;
-      user-select: text;
       caret-color: rgb(51, 51, 51);
       background: rgba(108, 120, 130, 0.21) none repeat scroll 0 0 / auto
         padding-box border-box;
@@ -368,7 +373,6 @@
       column-rule-color: rgb(51, 51, 51);
       perspective-origin: 492px 35px;
       transform-origin: 492px 35px;
-      user-select: text;
       caret-color: rgb(51, 51, 51);
       background: rgb(255, 255, 255) none repeat scroll 0 0 / auto padding-box
         border-box;
@@ -415,7 +419,6 @@
         column-rule-color: rgb(51, 51, 51);
         perspective-origin: 457px 35px;
         transform-origin: 457px 35px;
-        user-select: text;
         caret-color: rgb(51, 51, 51);
         border: 0 none rgb(51, 51, 51);
         list-style: none outside none;

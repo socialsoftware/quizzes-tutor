@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
@@ -14,7 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 
 @Entity
 @Table(name = "courses")
-public class Course {
+public class Course implements DomainEntity {
     public enum Type {TECNICO, EXTERNAL}
 
     @Id
@@ -28,13 +30,13 @@ public class Course {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<CourseExecution> courseExecutions = new HashSet<>();
+    private final Set<CourseExecution> courseExecutions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<Question> questions = new HashSet<>();
+    private final Set<Question> questions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
-    private Set<Topic> topics = new HashSet<>();
+    private final Set<Topic> topics = new HashSet<>();
 
     public Course() {}
 
@@ -42,6 +44,12 @@ public class Course {
         setType(type);
         setName(name);
     }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitCourse(this);
+    }
+
 
     public Integer getId() {
         return id;

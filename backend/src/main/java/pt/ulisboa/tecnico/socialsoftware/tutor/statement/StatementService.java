@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -29,7 +30,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -75,7 +75,7 @@ public class StatementService {
         Quiz quiz = new Quiz();
         quiz.setKey(quizService.getMaxQuizKey() + 1);
         quiz.setType(Quiz.QuizType.GENERATED);
-        quiz.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
+        quiz.setCreationDate(DateHandler.now());
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -117,7 +117,7 @@ public class StatementService {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
 
-        if (quiz.getConclusionDate() != null && LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getConclusionDate())) {
+        if (quiz.getConclusionDate() != null && DateHandler.now().isAfter(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
@@ -135,13 +135,13 @@ public class StatementService {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
 
-        if (quiz.getAvailableDate() == null || LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getAvailableDate())) {
+        if (quiz.getAvailableDate() == null || DateHandler.now().isAfter(quiz.getAvailableDate())) {
             return new StatementQuizDto(quizAnswer);
 
         // Send timer
         } else {
             StatementQuizDto quizDto = new StatementQuizDto();
-            quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(LocalDateTime.now(ZoneOffset.UTC), quiz.getAvailableDate()));
+            quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(DateHandler.now(), quiz.getAvailableDate()));
             return quizDto;
         }
     }
@@ -153,7 +153,7 @@ public class StatementService {
     public List<StatementQuizDto> getAvailableQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+        LocalDateTime now = DateHandler.now();
 
         Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
@@ -178,7 +178,7 @@ public class StatementService {
                 .filter(quizAnswer -> !quizAnswer.isCompleted())
                 .filter(quizAnswer -> !quizAnswer.getQuiz().isOneWay() || quizAnswer.getCreationDate() == null)
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
-                .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || LocalDateTime.now(ZoneOffset.UTC).isBefore(quizAnswer.getQuiz().getConclusionDate()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getConclusionDate() == null || DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate()))
                 .filter(quizAnswer -> quizAnswer.getQuiz().getAvailableDate().isBefore(now))
                 .map(StatementQuizDto::new)
                 .sorted(Comparator.comparing(StatementQuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
@@ -225,7 +225,7 @@ public class StatementService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void completeOpenQuizAnswers() {
-        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(LocalDateTime.now(ZoneOffset.UTC));
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(DateHandler.now());
 
         quizAnswersToClose.forEach(quizAnswer -> {
             if (!quizAnswer.isCompleted()) {
@@ -249,7 +249,7 @@ public class StatementService {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
 
-        if (quiz.getConclusionDate() != null && LocalDateTime.now(ZoneOffset.UTC).isAfter(quiz.getConclusionDate())) {
+        if (quiz.getConclusionDate() != null && DateHandler.now().isAfter(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
@@ -258,7 +258,7 @@ public class StatementService {
         if (quizAnswer.isCompleted()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         } else if (quizAnswer.getCreationDate() == null) {
-            quizAnswer.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
+            quizAnswer.setCreationDate(DateHandler.now());
         } else if (quiz.isOneWay()) {
             throw new TutorException(QUIZ_ALREADY_STARTED);
         }

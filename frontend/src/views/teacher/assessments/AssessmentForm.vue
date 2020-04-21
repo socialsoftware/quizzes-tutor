@@ -63,20 +63,25 @@
                 </v-autocomplete>
               </template>
               <template v-slot:item.topics="{ item }">
-                <v-chip v-for="topic in item.topics" :key="topic.id">
-                  {{ topic.name }}
-                </v-chip>
+                <div v-if="item.topics.length > 0">
+                  <v-chip v-for="topic in item.topics" :key="topic.id">
+                    {{ topic.name }}
+                  </v-chip>
+                </div>
+                <div v-else>
+                  No Topic
+                </div>
               </template>
               <template v-slot:item.action="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      small
+                      large
                       class="mr-2"
                       v-on="on"
                       @click="removeTopicConjunction(item)"
                     >
-                      remove</v-icon
+                      chevron_right</v-icon
                     >
                   </template>
                   <span>Remove from Assessment</span>
@@ -85,7 +90,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      small
+                      large
                       class="mr-2"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
@@ -130,20 +135,30 @@
                 </v-autocomplete>
               </template>
               <template v-slot:item.topics="{ item }">
-                <v-chip v-for="topic in item.topics" :key="topic.id">
-                  {{ topic.name }}
-                </v-chip>
+                <div v-if="item.topics.length > 0">
+                  <div v-if="item.topics">
+                    <v-chip v-for="topic in item.topics" :key="topic.id">
+                      {{ topic.name }}
+                    </v-chip>
+                  </div>
+                  <div v-else>
+                    No Topic
+                  </div>
+                </div>
+                <div v-else>
+                  No Topic
+                </div>
               </template>
               <template v-slot:item.action="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      small
+                      large
                       class="mr-2"
                       v-on="on"
                       @click="addTopicConjunction(item)"
                     >
-                      add</v-icon
+                      chevron_left</v-icon
                     >
                   </template>
                   <span>Add to Assessment</span>
@@ -151,7 +166,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      small
+                      large
                       class="mr-2"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
@@ -244,16 +259,16 @@ export default class AssessmentForm extends Vue {
 
   topicHeaders: object = [
     {
-      text: 'Topics',
-      value: 'topics',
+      text: 'Actions',
+      value: 'action',
       align: 'left',
+      width: '30%',
       sortable: false
     },
     {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      width: '150px',
+      text: 'Topics',
+      value: 'topics',
+      align: 'left',
       sortable: false
     }
   ];

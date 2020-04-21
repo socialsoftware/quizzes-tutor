@@ -25,6 +25,7 @@ public class QuizAnswerDto implements Serializable {
         this.id = quizAnswer.getId();
         this.username = quizAnswer.getUser().getUsername();
         this.name = quizAnswer.getUser().getName();
+
         if (quizAnswer.getAnswerDate() != null)
             this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());
 

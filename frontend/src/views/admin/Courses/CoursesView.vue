@@ -7,7 +7,6 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
-      multi-sort
     >
       <template v-slot:top>
         <v-card-title>
@@ -28,7 +27,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="createFromCourse(item)"
@@ -41,7 +40,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="deleteCourse(item)"
@@ -83,6 +82,13 @@ export default class CoursesView extends Vue {
   search: string = '';
   headers: object = [
     {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      sortable: false,
+      width: '15%'
+    },
+    {
       text: 'Course Type',
       value: 'courseType',
       align: 'center',
@@ -112,13 +118,6 @@ export default class CoursesView extends Vue {
       value: 'status',
       align: 'center',
       width: '10%'
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false,
-      width: '20%'
     }
   ];
 

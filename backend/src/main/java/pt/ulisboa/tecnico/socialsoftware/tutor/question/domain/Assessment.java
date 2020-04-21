@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 
 import javax.persistence.*;
@@ -13,8 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 
 @Entity
 @Table(name = "assessments")
-public class Assessment {
-    @SuppressWarnings("unused")
+public class Assessment implements DomainEntity {
     public enum Status {
         DISABLED, AVAILABLE, REMOVED
     }
@@ -46,10 +47,14 @@ public class Assessment {
         setStatus(Assessment.Status.valueOf(assessmentDto.getStatus()));
         setSequence(assessmentDto.getSequence());
         setCourseExecution(courseExecution);
-
-        this.topicConjunctions = topicConjunctions;
-        topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
+        setTopicConjunctions(topicConjunctions);
     }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitAssessment(this);
+    }
+
 
     public Integer getId() {
         return id;
@@ -95,6 +100,11 @@ public class Assessment {
         return topicConjunctions;
     }
 
+    public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
+        this.topicConjunctions = topicConjunctions;
+        topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
+    }
+
     public void addTopicConjunction(TopicConjunction topicConjunction) {
         this.topicConjunctions.add(topicConjunction);
     }
@@ -110,14 +120,14 @@ public class Assessment {
                 '}';
     }
 
-    public void remove() {
-        new ArrayList<>(getTopicConjunctions()).forEach(TopicConjunction::remove);
-        getTopicConjunctions().clear();
-    }
-
     public List<Question> getQuestions() {
         return this.topicConjunctions.stream()
                 .flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
                 .collect(Collectors.toList());
+    }
+
+    public void remove() {
+        new ArrayList<>(getTopicConjunctions()).forEach(TopicConjunction::remove);
+        getTopicConjunctions().clear();
     }
 }

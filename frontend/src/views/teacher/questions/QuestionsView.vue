@@ -7,7 +7,6 @@
       :search="search"
       :sort-by="['creationDate']"
       sort-desc
-      multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
@@ -22,7 +21,13 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
+          <v-btn
+            color="primary"
+            dark
+            @click="newQuestion"
+            data-cy="NewQuestionButton"
+            >New Question</v-btn
+          >
           <v-btn color="primary" dark @click="exportCourseQuestions"
             >Export Questions</v-btn
           >
@@ -30,7 +35,11 @@
       </template>
 
       <template v-slot:item.title="{ item }">
-        <p @click="showQuestionDialog(item)" style="cursor: pointer">
+        <p
+          @click="showQuestionDialog(item)"
+          @contextmenu="rightClickEditQuestion($event, item)"
+          style="cursor: pointer"
+        >
           {{ item.title }}
         </p>
       </template>
@@ -81,7 +90,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="showQuestionDialog(item)"
@@ -90,18 +99,10 @@
           </template>
           <span>Show Question</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
-          <template v-slot:activator="{ on }">
-            <v-icon small class="mr-2" v-on="on" @click="editQuestion(item)"
-              >edit</v-icon
-            >
-          </template>
-          <span>Edit Question</span>
-        </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="duplicateQuestion(item)"
@@ -110,10 +111,19 @@
           </template>
           <span>Duplicate Question</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+          <template v-slot:activator="{ on }">
+            <v-icon large class="mr-2" v-on="on" @click="editQuestion(item)"
+              >edit</v-icon
+            >
+          </template>
+          <span>Edit Question</span>
+        </v-tooltip>
+
+        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="deleteQuestion(item)"
@@ -125,6 +135,10 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <footer>
+      <v-icon class="mr-2">mouse</v-icon> Left-click on title to view question.
+      <v-icon class="mr-2">mouse</v-icon>Right -click on title to edit question.
+    </footer>
     <edit-question-dialog
       v-if="currentQuestion"
       v-model="editQuestionDialog"
@@ -143,7 +157,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
@@ -169,15 +182,23 @@ export default class QuestionsView extends Vue {
 
   headers: object = [
     {
-      text: 'Creation Date',
-      value: 'creationDate',
-      align: 'center'
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '15%',
+      sortable: false
     },
     { text: 'Title', value: 'title', align: 'left' },
     { text: 'Status', value: 'status', align: 'left', width: '150px' },
     {
       text: 'Topics',
       value: 'topics',
+      align: 'center',
+      sortable: false
+    },
+    {
+      text: 'Image',
+      value: 'image',
       align: 'center',
       sortable: false
     },
@@ -194,16 +215,9 @@ export default class QuestionsView extends Vue {
       align: 'center'
     },
     {
-      text: 'Image',
-      value: 'image',
-      align: 'center',
-      sortable: false
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center'
     }
   ];
 
@@ -235,10 +249,6 @@ export default class QuestionsView extends Vue {
         .toLowerCase()
         .indexOf(search.toLowerCase()) !== -1
     );
-  }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
   }
 
   onQuestionChangedTopics(questionId: Number, changedTopics: Topic[]) {
@@ -305,6 +315,11 @@ export default class QuestionsView extends Vue {
     this.editQuestionDialog = true;
   }
 
+  rightClickEditQuestion(e: Event, question: Question) {
+    e.preventDefault();
+    this.editQuestion(question);
+  }
+
   editQuestion(question: Question) {
     this.currentQuestion = question;
     this.editQuestionDialog = true;
@@ -361,6 +376,12 @@ export default class QuestionsView extends Vue {
 </script>
 
 <style lang="scss" scoped>
+footer {
+  color: dimgrey;
+  font-style: italic;
+  padding-bottom: 20px;
+  font-size: 20px;
+}
 .question-textarea {
   text-align: left;
 

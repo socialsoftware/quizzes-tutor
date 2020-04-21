@@ -163,7 +163,13 @@
           <v-icon>fa fa-book</v-icon>
         </v-btn>
 
-        <v-btn v-if="isLoggedIn" @click="logout" text dark>
+        <v-btn
+          v-if="isLoggedIn"
+          @click="logout"
+          data-cy="LogoutButton"
+          text
+          dark
+        >
           Logout
           <v-icon>fas fa-sign-out-alt</v-icon>
         </v-btn>

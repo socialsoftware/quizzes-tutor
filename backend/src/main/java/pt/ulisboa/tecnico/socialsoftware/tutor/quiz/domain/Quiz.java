@@ -12,10 +12,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_HAS_ANSWERS;
@@ -36,7 +37,6 @@ public class Quiz implements DomainEntity {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
     private Integer key;
 
     @Column(name = "creation_date")
@@ -67,10 +67,10 @@ public class Quiz implements DomainEntity {
     private String version;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
-    private Set<QuizQuestion> quizQuestions = new HashSet<>();
+    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
-    private Set<QuizAnswer> quizAnswers = new HashSet<>();
+    private final Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -79,19 +79,19 @@ public class Quiz implements DomainEntity {
     public Quiz() {}
 
     public Quiz(QuizDto quizDto) {
-        checkQuestions(quizDto.getQuestions());
+        checkQuestionsSequence(quizDto.getQuestions());
 
-        this.key = quizDto.getKey();
+        setKey(quizDto.getKey());
         setTitle(quizDto.getTitle());
-        this.type = quizDto.getType();
-        this.scramble = quizDto.isScramble();
-        this.qrCodeOnly = quizDto.isQrCodeOnly();
-        this.oneWay = quizDto.isOneWay();
-        this.creationDate = DateHandler.toLocalDateTime(quizDto.getCreationDate());
+        setType(quizDto.getType());
+        setScramble(quizDto.isScramble());
+        setQrCodeOnly(quizDto.isQrCodeOnly());
+        setOneWay(quizDto.isOneWay());
+        setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
         setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
-        this.series = quizDto.getSeries();
-        this.version = quizDto.getVersion();
+        setSeries(quizDto.getSeries());
+        setVersion(quizDto.getVersion());
     }
 
     @Override
@@ -104,6 +104,9 @@ public class Quiz implements DomainEntity {
     }
 
     public Integer getKey() {
+        if (this.key == null)
+            generateKeys();
+
         return key;
     }
 
@@ -235,6 +238,22 @@ public class Quiz implements DomainEntity {
                 '}';
     }
 
+    private void generateKeys() {
+        int max = this.courseExecution.getQuizzes().stream()
+                .filter(quiz -> quiz.key != null)
+                .map(Quiz::getKey)
+                .max(Comparator.comparing(Integer::valueOf))
+                .orElse(0);
+
+        List<Quiz> nullKeyQuizzes = this.courseExecution.getQuizzes().stream()
+                .filter(quiz -> quiz.key == null).collect(Collectors.toList());
+
+        for (Quiz quiz: nullKeyQuizzes) {
+            max = max + 1;
+            quiz.key = max;
+        }
+    }
+
     private void checkTitle(String title) {
         if (title == null || title.trim().length() == 0) {
             throw new TutorException(QUIZ_NOT_CONSISTENT, "Title");
@@ -259,7 +278,7 @@ public class Quiz implements DomainEntity {
         }
     }
 
-    private void checkQuestions(List<QuestionDto> questions) {
+    private void checkQuestionsSequence(List<QuestionDto> questions) {
         if (questions != null) {
             for (QuestionDto questionDto : questions) {
                 if (questionDto.getSequence() != questions.indexOf(questionDto) + 1) {
@@ -287,8 +306,8 @@ public class Quiz implements DomainEntity {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
-        this.setAvailableDate(LocalDateTime.now(ZoneOffset.UTC));
-        this.setCreationDate(LocalDateTime.now(ZoneOffset.UTC));
+        this.setAvailableDate(DateHandler.now());
+        this.setCreationDate(DateHandler.now());
         this.setType(QuizType.GENERATED);
         this.title = "Generated Quiz";
     }

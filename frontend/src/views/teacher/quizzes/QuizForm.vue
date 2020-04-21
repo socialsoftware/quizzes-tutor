@@ -115,12 +115,15 @@
             </v-row>
           </v-container>
         </template>
-        <template v-slot:item.content="{ item }">
-          <div
-            class="text-left"
-            v-html="convertMarkDown(item.content, item.image)"
-            @click="openShowQuestionDialog(item)"
-          ></div>
+
+        <template v-slot:item.title="{ item }">
+          <p
+            @click="showQuestionDialog(item)"
+            @contextmenu="rightClickEditQuestion($event, item)"
+            style="cursor: pointer"
+          >
+            {{ item.title }}
+          </p>
         </template>
 
         <template v-slot:item.topics="{ item }">
@@ -133,10 +136,10 @@
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-icon
-                small
+                large
                 class="mr-2"
                 v-on="on"
-                @click="openShowQuestionDialog(item)"
+                @click="showQuestionDialog(item)"
               >
                 visibility</v-icon
               >
@@ -145,7 +148,7 @@
           </v-tooltip>
           <v-tooltip bottom v-if="!item.sequence">
             <template v-slot:activator="{ on }">
-              <v-icon small class="mr-2" v-on="on" @click="addToQuiz(item)">
+              <v-icon large class="mr-2" v-on="on" @click="addToQuiz(item)">
                 add</v-icon
               >
             </template>
@@ -155,7 +158,7 @@
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="removeFromQuiz(item)"
@@ -168,7 +171,7 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="changeQuestionPosition(item, 0)"
@@ -181,7 +184,7 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -199,7 +202,7 @@
             <v-tooltip bottom v-if="quizQuestions.length > 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="openSetPosition(item)"
@@ -212,7 +215,7 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -230,7 +233,7 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  small
+                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -245,6 +248,12 @@
           </div>
         </template>
       </v-data-table>
+
+      <footer>
+        <v-icon class="mr-2">mouse</v-icon> Left-click on title to view
+        question. <v-icon class="mr-2">mouse</v-icon>Right -click on title to
+        edit question.
+      </footer>
     </v-card-text>
 
     <show-quiz-dialog
@@ -278,10 +287,8 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import { Quiz } from '@/models/management/Quiz';
 import Question from '@/models/management/Question';
-import Image from '@/models/management/Image';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 
@@ -306,16 +313,23 @@ export default class QuizForm extends Vue {
 
   headers: object = [
     {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '25%',
+      sortable: false
+    },
+    {
       text: 'Sequence',
       value: 'sequence',
-      align: 'left',
+      align: 'center',
       width: '1%'
     },
     {
-      text: 'Question',
-      value: 'content',
+      text: 'Title',
+      value: 'title',
       align: 'left',
-      width: '70%',
+      width: '20%',
       sortable: false
     },
     {
@@ -324,22 +338,7 @@ export default class QuizForm extends Vue {
       align: 'left',
       width: '20%'
     },
-    { text: 'Difficulty', value: 'difficulty', align: 'center', width: '1%' },
-    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '1%' },
-    {
-      text: 'Title',
-      value: 'title',
-      align: 'left',
-      width: '5%',
-      sortable: false
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      width: '1%',
-      sortable: false
-    }
+    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '1%' }
   ];
 
   async created() {
@@ -445,7 +444,7 @@ export default class QuizForm extends Vue {
     }
   }
 
-  openShowQuestionDialog(question: Question) {
+  showQuestionDialog(question: Question) {
     this.currentQuestion = question;
     this.questionDialog = true;
   }
@@ -453,10 +452,6 @@ export default class QuizForm extends Vue {
   onCloseShowQuestionDialog() {
     this.currentQuestion = null;
     this.questionDialog = false;
-  }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
   }
 
   addToQuiz(question: Question) {

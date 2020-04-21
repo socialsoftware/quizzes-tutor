@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -9,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -150,18 +150,10 @@ public class QuizAnswer implements DomainEntity {
                 '}';
     }
 
-    public void remove() {
-        user.getQuizAnswers().remove(this);
-        user = null;
-        quiz.getQuizAnswers().remove(this);
-        quiz = null;
-        questionAnswers.clear();
-    }
-
     public boolean canResultsBePublic(CourseExecution courseExecution) {
         return isCompleted() &&
                 getQuiz().getCourseExecution() == courseExecution &&
-                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(LocalDateTime.now(ZoneOffset.UTC)));
+                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(DateHandler.now()));
     }
 
     public void calculateStatistics() {
@@ -182,4 +174,13 @@ public class QuizAnswer implements DomainEntity {
         }
     }
 
+    public void remove() {
+        user.getQuizAnswers().remove(this);
+        user = null;
+
+        quiz.getQuizAnswers().remove(this);
+        quiz = null;
+
+        questionAnswers.clear();
+    }
 }

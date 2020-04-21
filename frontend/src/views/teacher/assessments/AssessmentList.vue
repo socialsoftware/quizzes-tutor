@@ -6,7 +6,6 @@
       :search="search"
       :sort-by="['sequence']"
       :mobile-breakpoint="0"
-      multi-sort
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
@@ -43,7 +42,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="editAssessment(item.id)"
@@ -55,7 +54,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              small
+              large
               class="mr-2"
               v-on="on"
               @click="deleteAssessment(item.id)"
@@ -131,6 +130,13 @@ export default class AssessmentList extends Vue {
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
   dialog: boolean = false;
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      sortable: false,
+      width: '15%'
+    },
     { text: 'Order', value: 'sequence', align: 'center', width: '95px' },
     { text: 'Title', value: 'title', align: 'left' },
     {
@@ -139,14 +145,7 @@ export default class AssessmentList extends Vue {
       align: 'center',
       width: '7%'
     },
-    { text: 'Status', value: 'status', align: 'center', width: '7%' },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      sortable: false,
-      width: '7%'
-    }
+    { text: 'Status', value: 'status', align: 'center', width: '7%' }
   ];
 
   closeAssessment() {

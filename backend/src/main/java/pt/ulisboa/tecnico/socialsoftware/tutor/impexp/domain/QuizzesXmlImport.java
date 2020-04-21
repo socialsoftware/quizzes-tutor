@@ -30,8 +30,7 @@ public class QuizzesXmlImport {
 	private QuizService quizService;
 	private QuestionRepository questionRepository;
 	private QuizQuestionRepository quizQuestionRepository;
-	private CourseExecutionRepository courseExecutionRepository;
-	private CourseRepository courseRepository;
+    private CourseRepository courseRepository;
 
 	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository,
 							  QuizQuestionRepository quizQuestionRepository, CourseExecutionRepository courseExecutionRepository,
@@ -39,8 +38,7 @@ public class QuizzesXmlImport {
 		this.quizService = quizService;
 		this.questionRepository = questionRepository;
 		this.quizQuestionRepository = quizQuestionRepository;
-		this.courseExecutionRepository = courseExecutionRepository;
-		this.courseRepository = courseRepository;
+        this.courseRepository = courseRepository;
 
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
