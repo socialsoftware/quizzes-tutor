@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -150,12 +149,10 @@ public class QuizAnswer implements DomainEntity {
                 '}';
     }
 
-    public boolean canResultsBePublic(CourseExecution courseExecution) {
+    public boolean canResultsBePublic(Integer courseExecutionId) {
         return isCompleted() &&
-                getQuiz().getCourseExecution() == courseExecution &&
-                (
-                        !getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) ||
-                        (getQuiz().getResultsDate() != null && getQuiz().getResultsDate().isAfter(DateHandler.now()))
+                getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
+                (!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || getQuiz().getResultsDate().isBefore(DateHandler.now())
                 );
     }
 

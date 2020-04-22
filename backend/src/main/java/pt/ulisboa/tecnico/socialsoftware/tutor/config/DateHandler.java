@@ -22,7 +22,7 @@ public class DateHandler {
      */
     public static LocalDateTime toLocalDateTime(String date) {
         try {
-            return LocalDateTime.ofInstant(Instant.parse(date), ZoneId.of(ZoneOffset.UTC.getId()));
+            return ZonedDateTime.parse(date).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
         } catch (Exception e) {
             return null;
         }

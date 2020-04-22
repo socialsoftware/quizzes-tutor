@@ -18,27 +18,34 @@
       <v-container fluid>
         <v-row>
           <v-col>
-            <v-datetime-picker
+            <VueCtkDateTimePicker
               label="*Available Date"
-              format="yyyy-MM-dd HH:mm"
+              id="availableDateInput"
               v-model="quiz.availableDate"
-              date-format="yyyy-MM-dd"
-              time-format="HH:mm"
-            >
-            </v-datetime-picker>
+              format="YYYY-MM-DDTHH:mm:ssZ"
+            ></VueCtkDateTimePicker>
           </v-col>
           <v-col>
-            <v-datetime-picker
+            <VueCtkDateTimePicker
               :label="
                 quiz.type === 'IN_CLASS'
                   ? '*Conclusion Date'
                   : 'Conclusion Date'
               "
+              id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              date-format="yyyy-MM-dd"
-              time-format="HH:mm"
-            >
-            </v-datetime-picker>
+              :min-date="quiz.availableDate"
+              format="YYYY-MM-DDTHH:mm:ssZ"
+            ></VueCtkDateTimePicker>
+          </v-col>
+          <v-col>
+            <VueCtkDateTimePicker
+              label="Results Date"
+              id="resultsDateInput"
+              v-model="quiz.resultsDate"
+              :min-date="quiz.conclusionDate"
+              format="YYYY-MM-DDTHH:mm:ssZ"
+            ></VueCtkDateTimePicker>
           </v-col>
         </v-row>
         <v-row>
@@ -291,6 +298,10 @@ import { Quiz } from '@/models/management/Quiz';
 import Question from '@/models/management/Question';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
+import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
+import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+
+Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component({
   components: {
@@ -316,7 +327,7 @@ export default class QuizForm extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '25%',
+      width: '1%',
       sortable: false
     },
     {

@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
@@ -47,22 +46,20 @@ public class StatsService {
     public StatsDto getStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
-
         StatsDto statsDto = new StatsDto();
 
         int totalQuizzes = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .count();
 
         int totalAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
                 .sum();
 
         int uniqueQuestions = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getQuizQuestion)
@@ -71,7 +68,7 @@ public class StatsService {
                 .distinct().count();
 
         int correctAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getOption)
@@ -79,7 +76,7 @@ public class StatsService {
                 .filter(Option::getCorrect).count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)

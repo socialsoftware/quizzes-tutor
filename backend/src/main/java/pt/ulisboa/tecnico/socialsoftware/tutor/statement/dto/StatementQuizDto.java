@@ -19,9 +19,9 @@ public class StatementQuizDto implements Serializable {
     private boolean oneWay;
     private String availableDate;
     private String conclusionDate;
-    private Long secondsToAvailability;
-    private Long secondsToSubmission;
-    private Long secondsToResults;
+    private Long timeToAvailability;
+    private Long timeToSubmission;
+    private Long timeToResults;
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
@@ -40,12 +40,12 @@ public class StatementQuizDto implements Serializable {
             this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
 
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-                this.secondsToSubmission = ChronoUnit.SECONDS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
+                this.timeToSubmission = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
             }
         }
 
         if (quizAnswer.getQuiz().getResultsDate() != null && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-            this.secondsToResults = ChronoUnit.SECONDS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
+            this.timeToResults = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
         }
 
         this.questions = quizAnswer.getQuestionAnswers().stream()
@@ -111,28 +111,28 @@ public class StatementQuizDto implements Serializable {
         this.conclusionDate = conclusionDate;
     }
 
-    public Long getSecondsToAvailability() {
-        return secondsToAvailability;
+    public Long getTimeToAvailability() {
+        return timeToAvailability;
     }
 
-    public void setSecondsToAvailability(Long secondsToAvailability) {
-        this.secondsToAvailability = secondsToAvailability;
+    public void setTimeToAvailability(Long timeToAvailability) {
+        this.timeToAvailability = timeToAvailability;
     }
 
-    public Long getSecondsToSubmission() {
-        return secondsToSubmission;
+    public Long getTimeToSubmission() {
+        return timeToSubmission;
     }
 
-    public void setSecondsToSubmission(Long secondsToSubmission) {
-        this.secondsToSubmission = secondsToSubmission;
+    public void setTimeToSubmission(Long timeToSubmission) {
+        this.timeToSubmission = timeToSubmission;
     }
 
-    public Long getSecondsToResults() {
-        return secondsToResults;
+    public Long getTimeToResults() {
+        return timeToResults;
     }
 
-    public void setSecondsToResults(Long secondsToResults) {
-        this.secondsToResults = secondsToResults;
+    public void setTimeToResults(Long timeToResults) {
+        this.timeToResults = timeToResults;
     }
 
     public List<StatementQuestionDto> getQuestions() {
@@ -161,9 +161,9 @@ public class StatementQuizDto implements Serializable {
                 ", oneWay=" + oneWay +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
-                ", secondsToAvailability=" + secondsToAvailability +
-                ", secondsToSubmission=" + secondsToSubmission +
-                ", secondsToResults=" + secondsToResults +
+                ", timeToAvailability=" + timeToAvailability +
+                ", timeToSubmission=" + timeToSubmission +
+                ", timeToResults=" + timeToResults +
                 ", questions=" + questions +
                 ", answers=" + answers +
                 '}';

@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -24,8 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
@@ -37,9 +34,9 @@ class CreateQuizTest extends Specification {
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String QUESTION_TITLE = 'question title'
     public static final String VERSION = 'B'
-    public static final LocalDateTime AVAILABLE_DATE = DateHandler.now()
-    public static final LocalDateTime CONCLUSION_DATE = DateHandler.now().plusDays(1)
-    public static final LocalDateTime RESULTS_DATE = DateHandler.now().plusDays(2)
+    public static final String TODAY = DateHandler.toISOString(DateHandler.now())
+    public static final String TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    public static final String LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
 
     @Autowired
     QuizService quizService
@@ -73,9 +70,9 @@ class CreateQuizTest extends Specification {
         quizDto.setScramble(true)
         quizDto.setOneWay(true)
         quizDto.setQrCodeOnly(true)
-        quizDto.setAvailableDate(DateHandler.toISOString(AVAILABLE_DATE))
-        quizDto.setConclusionDate(DateHandler.toISOString(CONCLUSION_DATE))
-        quizDto.setResultsDate(DateHandler.toISOString(RESULTS_DATE))
+        quizDto.setAvailableDate(TODAY)
+        quizDto.setConclusionDate(TOMORROW)
+        quizDto.setResultsDate(LATER)
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
 
@@ -98,9 +95,9 @@ class CreateQuizTest extends Specification {
     def "valid arguments: quizType=#quizType | title=#title | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
         given: 'a quizDto'
         quizDto.setTitle(title)
-        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
-        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
-        quizDto.setResultsDate(DateHandler.toISOString(resultsDate))
+        quizDto.setAvailableDate(availableDate)
+        quizDto.setConclusionDate(conclusionDate)
+        quizDto.setResultsDate(resultsDate)
         quizDto.setType(quizType.toString())
 
         when:
@@ -116,12 +113,12 @@ class CreateQuizTest extends Specification {
         result.isQrCodeOnly()
         result.getTitle() == title
         result.getCreationDate() != null
-        result.getAvailableDate() == availableDate
-        result.getConclusionDate() == conclusionDate
+        result.getAvailableDate() == DateHandler.toLocalDateTime(availableDate)
+        result.getConclusionDate() == DateHandler.toLocalDateTime(conclusionDate)
         if (resultsDate == null) {
-            result.getResultsDate() == conclusionDate
+            result.getResultsDate() == DateHandler.toLocalDateTime(conclusionDate)
         } else {
-            result.getResultsDate() == resultsDate
+            result.getResultsDate() == DateHandler.toLocalDateTime(resultsDate)
         }
         result.getType() == quizType
         result.getSeries() == 1
@@ -129,21 +126,22 @@ class CreateQuizTest extends Specification {
         result.getQuizQuestions().size() == 1
 
         where:
-        quizType                | title      | availableDate                 | conclusionDate                 | resultsDate
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(2)
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | null
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(2)
-        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | null
+        quizType                | title      | availableDate               | conclusionDate | resultsDate
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TODAY                       | TOMORROW       | LATER
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | "2020-04-22T02:03:00+01:00" | TOMORROW       | LATER
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TODAY                       | null           | LATER
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TODAY                       | null           | null
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TODAY                       | null           | LATER
+        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | TODAY                       | TOMORROW       | null
     }
 
     @Unroll
     def "invalid arguments: quizType=#quizType | title=#title | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate || errorMessage=#errorMessage "() {
         given: 'a quizDto'
         quizDto.setTitle(title)
-        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
-        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
-        quizDto.setResultsDate(DateHandler.toISOString(resultsDate))
+        quizDto.setAvailableDate(availableDate)
+        quizDto.setConclusionDate(conclusionDate)
+        quizDto.setResultsDate(resultsDate)
         quizDto.setType(quizType.toString())
 
         when:
@@ -155,20 +153,20 @@ class CreateQuizTest extends Specification {
         quizRepository.count() == 0L
 
         where:
-        quizType                | title      | availableDate                 | conclusionDate                 | resultsDate                    || errorMessage
-        null                    | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
-        "   "                   | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
-        "Açores"                | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | null       | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TITLE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | "        " | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TITLE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | null                          | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_AVAILABLE_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().minusDays(1) | DateHandler.now().plusDays(2)  || INVALID_CONCLUSION_DATE_FOR_QUIZ
-        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(1)  || INVALID_CONCLUSION_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(2)  | DateHandler.now().plusDays(1)  || INVALID_RESULTS_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(2)  | DateHandler.now().minusDays(1) || INVALID_RESULTS_DATE_FOR_QUIZ
+        quizType                | title      | availableDate | conclusionDate     | resultsDate        || errorMessage
+        null                    | QUIZ_TITLE | TODAY         | TOMORROW           | LATER              || INVALID_TYPE_FOR_QUIZ
+        "   "                   | QUIZ_TITLE | TODAY         | TOMORROW           | LATER              || INVALID_TYPE_FOR_QUIZ
+        "Açores"                | QUIZ_TITLE | TODAY         | TOMORROW           | LATER              || INVALID_TYPE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | null       | TODAY         | TOMORROW           | LATER              || INVALID_TITLE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | "        " | TODAY         | TOMORROW           | LATER              || INVALID_TITLE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | null          | TOMORROW           | LATER              || INVALID_AVAILABLE_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TOMORROW      | TODAY              | LATER              || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | TODAY         | null               | TOMORROW           || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TODAY         | LATER              | TOMORROW           || INVALID_RESULTS_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | TOMORROW      | LATER              | TODAY              || INVALID_RESULTS_DATE_FOR_QUIZ
     }
 
-    def "create a TEACHER quiz wrong sequence"() {
+    def "create quiz with wrong question sequence"() {
         given: 'createQuiz a quiz'
         quizDto.setTitle(QUIZ_TITLE)
         quizDto.setType(Quiz.QuizType.GENERATED.toString())
@@ -179,7 +177,7 @@ class CreateQuizTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.INVALID_QUESTION_SEQUENCE_FOR_QUIZ
+        exception.getErrorMessage() == INVALID_QUESTION_SEQUENCE_FOR_QUIZ
         quizRepository.count() == 0L
     }
 

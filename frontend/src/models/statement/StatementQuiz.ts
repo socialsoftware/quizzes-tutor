@@ -11,10 +11,13 @@ export default class StatementQuiz {
   oneWay!: boolean;
   availableDate!: string;
   conclusionDate!: string;
-  secondsToAvailability!: number;
-  secondsToSubmission!: number;
+  timeToAvailability!: number;
+  timeToSubmission!: number;
+  timeToResults!: number;
   questions: StatementQuestion[] = [];
   answers: StatementAnswer[] = [];
+  private lastTimeCalled: number = Date.now();
+  private timerId!: number;
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {
@@ -25,11 +28,11 @@ export default class StatementQuiz {
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;
       this.availableDate = ISOtoString(jsonObj.availableDate);
-      this.secondsToAvailability = jsonObj.secondsToAvailability;
-      if (jsonObj.conclusionDate) {
-        this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
-        this.secondsToSubmission = jsonObj.secondsToSubmission;
-      }
+      this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
+
+      this.timeToAvailability = jsonObj.timeToAvailability;
+      this.timeToSubmission = jsonObj.timeToSubmission;
+      this.timeToResults = jsonObj.timeToResults;
 
       this.questions = jsonObj.questions.map(question => {
         return new StatementQuestion(question);
@@ -39,6 +42,26 @@ export default class StatementQuiz {
         this.answers = jsonObj.answers.map(answer => {
           return new StatementAnswer(answer);
         });
+      }
+
+      if (this.timeToSubmission || this.timeToResults) {
+        this.timerId = setInterval(() => {
+          if (this.timeToSubmission > 0) {
+            this.timeToSubmission -= Math.floor(
+              Date.now() - this.lastTimeCalled
+            );
+          }
+
+          if (this.timeToResults > 0) {
+            this.timeToResults -= Math.floor(Date.now() - this.lastTimeCalled);
+          }
+
+          if (this.timeToSubmission <= 0 && this.timeToResults <= 0) {
+            clearInterval(this.timerId);
+          }
+
+          this.lastTimeCalled = Date.now();
+        }, 1000);
       }
     }
   }

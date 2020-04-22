@@ -11,10 +11,10 @@
         <span
           class="timer"
           @click="hideTime = !hideTime"
-          v-if="secondsToSubmission > 0"
+          v-if="submissionTimer"
         >
           <i class="fas fa-clock"></i>
-          <span v-if="!hideTime">{{ timer }}</span>
+          <span v-if="!hideTime">{{ submissionTimer }}</span>
         </span>
         <span class="end-quiz" @click="confirmationDialog = true"
           ><i class="fas fa-times" />End Quiz</span
@@ -132,20 +132,23 @@
       </v-dialog>
     </div>
 
-    <v-card v-else-if="secondsToSubmission">
+    <v-card v-else-if="timeToResults">
       <v-card-title>
-        Hold on and wait for {{ timer }} seconds to view the results
+        Hold on and wait for {{ resultsTimer }} seconds to view the results
       </v-card-title>
     </v-card>
+    {{ resultsTimer }}
+    {{ submissionTimer }}
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
+import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {
@@ -161,13 +164,9 @@ export default class QuizView extends Vue {
   nextConfirmationDialog: boolean = false;
   startTime: Date = new Date();
   questionOrder: number = 0;
-  secondsToSubmission: number =
-    StatementManager.getInstance.statementQuiz?.secondsToSubmission ?? 0;
   hideTime: boolean = false;
-
-  intervalId!: number;
-  startDate!: number;
-  timer: string = '';
+  submissionTimer: string = '';
+  resultsTimer: string = '';
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -180,31 +179,18 @@ export default class QuizView extends Vue {
         await this.$router.push({ name: 'available-quizzes' });
       }
     }
-
-    if (this.secondsToSubmission > 0) {
-      if (this.intervalId) {
-        clearTimeout(this.intervalId);
-      }
-      this.startDate = Date.now();
-      this.intervalId = setInterval(this.updateTimer, 1000);
-    }
   }
 
-  updateTimer() {
-    if (
-      this.secondsToSubmission -
-        Math.floor((Date.now() - this.startDate) / 1000) >=
-      0
-    ) {
-      this.timer = this.getTimeAsHHMMSS();
+  @Watch('statementQuiz.timeToResults')
+  timeToResultsChanged() {
+    this.resultsTimer = milisecondsToHHMMSS(this.statementQuiz?.timeToResults);
+  }
 
-      if (this.$router.currentRoute.name !== 'solve-quiz') {
-        clearInterval(this.intervalId);
-      }
-    } else {
-      clearInterval(this.intervalId);
-      this.endQuiz();
-    }
+  @Watch('statementQuiz.timeToSubmission')
+  timeToSubmissionChanged() {
+    this.submissionTimer = milisecondsToHHMMSS(
+      this.statementQuiz?.timeToSubmission
+    );
   }
 
   increaseOrder(): void {
@@ -274,12 +260,7 @@ export default class QuizView extends Vue {
       this.calculateTime();
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
-      if (
-        this.secondsToSubmission == undefined ||
-        this.secondsToSubmission <= 0
-      ) {
-        await this.$router.push({ name: 'quiz-results' });
-      }
+      await this.$router.push({ name: 'quiz-results' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -292,22 +273,6 @@ export default class QuizView extends Vue {
         new Date().getTime() - this.startTime.getTime();
       this.startTime = new Date();
     }
-  }
-
-  getTimeAsHHMMSS() {
-    let localSecondsToSubmission =
-      this.secondsToSubmission -
-      Math.floor((Date.now() - this.startDate) / 1000);
-
-    let hours = Math.floor(localSecondsToSubmission / 3600);
-    let minutes = Math.floor((localSecondsToSubmission - hours * 3600) / 60);
-    let seconds = localSecondsToSubmission - hours * 3600 - minutes * 60;
-
-    let hoursString = hours < 10 ? '0' + hours : hours;
-    let minutesString = minutes < 10 ? '0' + minutes : minutes;
-    let secondsString = seconds < 10 ? '0' + seconds : seconds;
-
-    return `${hoursString}:${minutesString}:${secondsString}`;
   }
 }
 </script>

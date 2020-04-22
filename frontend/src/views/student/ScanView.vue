@@ -4,7 +4,7 @@ import QrcodeVue from "*.vue";
     <qrcode-stream v-if="!quizId" @decode="onDecode"></qrcode-stream>
     <v-card v-else>
       <v-card-title>
-        Hold on and wait for {{ secondsToRequest + 1 }} seconds to start the
+        Hold on and wait for {{ timeToRequest / 1000 }} seconds to start the
         quiz!
       </v-card-title>
     </v-card>
@@ -25,8 +25,8 @@ import StatementManager from '@/models/statement/StatementManager';
 })
 export default class ScanView extends Vue {
   quizId: number | null = null;
-  secondsToRequest: number = 0;
-  intervalId!: number;
+  timeToRequest: number = 0;
+  timerId!: number;
   startDate!: number;
 
   async onDecode(decodedString: String) {
@@ -40,10 +40,10 @@ export default class ScanView extends Vue {
         let quiz: StatementQuiz = await RemoteServices.getQuizByQRCode(
           this.quizId
         );
-        if (quiz.secondsToAvailability) {
-          this.secondsToRequest = quiz.secondsToAvailability;
+        if (quiz.timeToAvailability) {
+          this.timeToRequest = quiz.timeToAvailability;
           this.startDate = Date.now();
-          this.intervalId = setInterval(this.updateTimer, 1000);
+          this.timerId = setInterval(this.updateTimer, 1000);
         } else {
           this.goToSolveQuiz(quiz);
         }
@@ -55,16 +55,12 @@ export default class ScanView extends Vue {
   }
 
   updateTimer() {
-    if (
-      this.secondsToRequest -
-        Math.floor((Date.now() - this.startDate) / 1000) >=
-      0
-    ) {
+    if (this.timeToRequest - Math.floor(Date.now() - this.startDate) >= 0) {
       if (this.$router.currentRoute.name !== 'scan') {
-        clearInterval(this.intervalId);
+        clearInterval(this.timerId);
       }
     } else {
-      clearInterval(this.intervalId);
+      clearInterval(this.timerId);
       this.getQuizByQRCode();
     }
   }

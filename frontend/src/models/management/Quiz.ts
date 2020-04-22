@@ -11,7 +11,9 @@ export class Quiz {
   creationDate!: string;
   availableDate!: string;
   conclusionDate!: string;
-  secondsToConclusion!: number;
+  resultsDate!: string;
+  timeToConclusion!: number;
+  timeToResults!: number;
   type!: string;
   series!: number;
   version!: string;
@@ -33,10 +35,17 @@ export class Quiz {
       this.version = jsonObj.version;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
-      this.creationDate = ISOtoString(jsonObj.creationDate);
-      this.availableDate = ISOtoString(jsonObj.availableDate);
-      this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
-      this.secondsToConclusion = jsonObj.secondsToConclusion;
+      this.timeToConclusion = jsonObj.timeToConclusion;
+      this.timeToResults = jsonObj.timeToResults;
+
+      if (jsonObj.creationDate)
+        this.creationDate = ISOtoString(jsonObj.creationDate);
+      if (jsonObj.availableDate)
+        this.availableDate = ISOtoString(jsonObj.availableDate);
+      if (jsonObj.conclusionDate)
+        this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
+      if (jsonObj.resultsDate)
+        this.resultsDate = ISOtoString(jsonObj.resultsDate);
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(

@@ -155,6 +155,8 @@ public class QuizService {
             quiz.setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
         if (DateHandler.isValidDateFormat(quizDto.getConclusionDate()))
             quiz.setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
+        if (DateHandler.isValidDateFormat(quizDto.getResultsDate()))
+            quiz.setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
         quiz.setOneWay(quizDto.isOneWay());
@@ -231,7 +233,7 @@ public class QuizService {
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
         if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(DateHandler.now())) {
-            quizAnswersDto.setSecondsToSubmission(ChronoUnit.SECONDS.between(DateHandler.now(), quiz.getConclusionDate()));
+            quizAnswersDto.setTimeToSubmission(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getConclusionDate()));
         }
 
         return quizAnswersDto;

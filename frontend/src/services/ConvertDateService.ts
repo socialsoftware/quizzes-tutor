@@ -17,3 +17,19 @@ export function ISOtoString(dateString: string | null): string {
     return '-';
   }
 }
+
+export function milisecondsToHHMMSS(time: number | undefined): string {
+  if (time) {
+    let timeInSeconds = time / 1000;
+    let hours = Math.floor(timeInSeconds / 3600);
+    let minutes = Math.floor((timeInSeconds - hours * 3600) / 60);
+    let seconds = Math.floor(timeInSeconds - hours * 3600 - minutes * 60);
+
+    let hoursString = hours < 10 ? '0' + hours : hours;
+    let minutesString = minutes < 10 ? '0' + minutes : minutes;
+    let secondsString = seconds < 10 ? '0' + seconds : seconds;
+
+    return `${hoursString}:${minutesString}:${secondsString}`;
+  }
+  return '';
+}

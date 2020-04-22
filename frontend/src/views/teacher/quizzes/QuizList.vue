@@ -4,6 +4,8 @@
       :headers="headers"
       :items="quizzes"
       :search="search"
+      :sort-by="['creationDate']"
+      sort-desc
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
@@ -97,7 +99,7 @@
       v-model="quizAnswersDialog"
       :quiz-answers="quizAnswers"
       :correct-sequence="correctSequence"
-      :secondsToSubmission="secondsToSubmission"
+      :timeToSubmission="timeToSubmission"
     />
 
     <v-dialog
@@ -140,7 +142,7 @@ export default class QuizList extends Vue {
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswer[] = [];
   correctSequence: number[] = [];
-  secondsToSubmission: number = 0;
+  timeToSubmission: number = 0;
   search: string = '';
 
   quizDialog: boolean = false;
@@ -153,16 +155,10 @@ export default class QuizList extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '15%',
+      width: '310px',
       sortable: false
     },
     { text: 'Title', value: 'title', align: 'left', width: '20%' },
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
-      align: 'center',
-      width: '10%'
-    },
     {
       text: 'Available Date',
       value: 'availableDate',
@@ -175,26 +171,16 @@ export default class QuizList extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Scramble', value: 'scramble', align: 'center', width: '5%' },
-    { text: 'QRCode Only', value: 'qrCodeOnly', align: 'center', width: '5%' },
     {
-      text: 'One Way Quiz',
-      value: 'oneWay',
+      text: 'Results Date',
+      value: 'resultsDate',
       align: 'center',
-      width: '5%'
+      width: '10%'
     },
     { text: 'Type', value: 'type', align: 'center', width: '5%' },
-    { text: 'Series', value: 'series', align: 'center', width: '5%' },
-    { text: 'Version', value: 'version', align: 'center', width: '5%' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
-      align: 'center',
-      width: '5%'
-    },
-    {
-      text: 'Timer to submission',
-      value: 'timerToSubmission',
       align: 'center',
       width: '5%'
     },
@@ -203,6 +189,12 @@ export default class QuizList extends Vue {
       value: 'numberOfAnswers',
       align: 'center',
       width: '5%'
+    },
+    {
+      text: 'Creation Date',
+      value: 'creationDate',
+      align: 'center',
+      width: '10%'
     }
   ];
 
@@ -223,7 +215,7 @@ export default class QuizList extends Vue {
 
       this.quizAnswers = quizAnswers.quizAnswers;
       this.correctSequence = quizAnswers.correctSequence;
-      this.secondsToSubmission = quizAnswers.secondsToSubmission;
+      this.timeToSubmission = quizAnswers.timeToSubmission;
       this.quizAnswersDialog = true;
     } catch (error) {
       await this.$store.dispatch('error', error);

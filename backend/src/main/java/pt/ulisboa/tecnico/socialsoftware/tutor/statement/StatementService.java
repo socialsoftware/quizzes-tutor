@@ -141,7 +141,7 @@ public class StatementService {
         // Send timer
         } else {
             StatementQuizDto quizDto = new StatementQuizDto();
-            quizDto.setSecondsToAvailability(ChronoUnit.SECONDS.between(DateHandler.now(), quiz.getAvailableDate()));
+            quizDto.setTimeToAvailability(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getAvailableDate()));
             return quizDto;
         }
     }
@@ -191,10 +191,9 @@ public class StatementService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<SolvedQuizDto> getSolvedQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         return user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(courseExecution))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());

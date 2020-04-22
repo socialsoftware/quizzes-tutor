@@ -261,10 +261,10 @@ export default class QuestionsView extends Vue {
   }
 
   getDifficultyColor(difficulty: number) {
-    if (difficulty < 25) return 'green';
-    else if (difficulty < 50) return 'lime';
-    else if (difficulty < 75) return 'orange';
-    else return 'red';
+    if (difficulty < 25) return 'red';
+    else if (difficulty < 50) return 'orange';
+    else if (difficulty < 75) return 'lime';
+    else return 'green';
   }
 
   async setStatus(questionId: number, status: string) {
