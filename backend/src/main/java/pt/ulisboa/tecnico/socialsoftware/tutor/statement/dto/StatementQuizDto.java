@@ -21,6 +21,7 @@ public class StatementQuizDto implements Serializable {
     private String conclusionDate;
     private Long secondsToAvailability;
     private Long secondsToSubmission;
+    private Long secondsToResults;
     private List<StatementQuestionDto> questions = new ArrayList<>();
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
@@ -41,6 +42,10 @@ public class StatementQuizDto implements Serializable {
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 this.secondsToSubmission = ChronoUnit.SECONDS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
             }
+        }
+
+        if (quizAnswer.getQuiz().getResultsDate() != null && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+            this.secondsToResults = ChronoUnit.SECONDS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
         }
 
         this.questions = quizAnswer.getQuestionAnswers().stream()
@@ -122,6 +127,14 @@ public class StatementQuizDto implements Serializable {
         this.secondsToSubmission = secondsToSubmission;
     }
 
+    public Long getSecondsToResults() {
+        return secondsToResults;
+    }
+
+    public void setSecondsToResults(Long secondsToResults) {
+        this.secondsToResults = secondsToResults;
+    }
+
     public List<StatementQuestionDto> getQuestions() {
         return questions;
     }
@@ -144,10 +157,13 @@ public class StatementQuizDto implements Serializable {
                 "id=" + id +
                 ", quizAnswerId=" + quizAnswerId +
                 ", title='" + title + '\'' +
+                ", qrCodeOnly=" + qrCodeOnly +
+                ", oneWay=" + oneWay +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
                 ", secondsToAvailability=" + secondsToAvailability +
                 ", secondsToSubmission=" + secondsToSubmission +
+                ", secondsToResults=" + secondsToResults +
                 ", questions=" + questions +
                 ", answers=" + answers +
                 '}';

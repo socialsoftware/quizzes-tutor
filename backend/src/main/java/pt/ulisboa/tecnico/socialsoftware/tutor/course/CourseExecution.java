@@ -149,7 +149,6 @@ public class CourseExecution implements DomainEntity {
                 ", acronym='" + acronym + '\'' +
                 ", academicTerm='" + academicTerm + '\'' +
                 ", status=" + status +
-                ", course=" + course +
                 ", users=" + users +
                 ", quizzes=" + quizzes +
                 ", assessments=" + assessments +

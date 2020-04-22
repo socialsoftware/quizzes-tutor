@@ -107,13 +107,13 @@ class FindQuestionsTest extends Specification {
         questionRepository.save(question)
 
         def quiz = new Quiz()
-        quiz.setType(Quiz.QuizType.PROPOSED)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setKey(1)
 
         def quizQuestion = new QuizQuestion()
         quizQuestion.setQuestion(question)
         quizQuestion.setQuiz(quiz)
-        quizRepository.save(quiz);
+        quizRepository.save(quiz)
         quizQuestionRepository.save(quizQuestion)
 
         def quizAnswer = new QuizAnswer()

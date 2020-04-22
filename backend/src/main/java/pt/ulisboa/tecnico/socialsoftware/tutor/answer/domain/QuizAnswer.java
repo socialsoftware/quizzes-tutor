@@ -153,7 +153,10 @@ public class QuizAnswer implements DomainEntity {
     public boolean canResultsBePublic(CourseExecution courseExecution) {
         return isCompleted() &&
                 getQuiz().getCourseExecution() == courseExecution &&
-                !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getQuiz().getConclusionDate().isAfter(DateHandler.now()));
+                (
+                        !getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) ||
+                        (getQuiz().getResultsDate() != null && getQuiz().getResultsDate().isAfter(DateHandler.now()))
+                );
     }
 
     public void calculateStatistics() {

@@ -170,7 +170,7 @@ class UpdateQuestionTest extends Specification {
         given: "a question with answers"
         def quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.GENERATED)
+        quiz.setType(Quiz.QuizType.GENERATED.toString())
         quizRepository.save(quiz)
         def quizQuestion = new QuizQuestion()
         quizQuestionRepository.save(quizQuestion)

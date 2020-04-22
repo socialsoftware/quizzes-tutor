@@ -15,6 +15,12 @@ public enum ErrorMessage {
     INVALID_URL_FOR_IMAGE("Invalid url for image"),
     INVALID_TYPE_FOR_COURSE("Invalid type for course"),
     INVALID_TYPE_FOR_COURSE_EXECUTION("Invalid type for course execution"),
+    INVALID_AVAILABLE_DATE_FOR_QUIZ("Invalid available date for quiz"),
+    INVALID_CONCLUSION_DATE_FOR_QUIZ("Invalid conclusion date for quiz"),
+    INVALID_RESULTS_DATE_FOR_QUIZ("Invalid results date for quiz"),
+    INVALID_TITLE_FOR_QUIZ("Invalid title for quiz"),
+    INVALID_TYPE_FOR_QUIZ("Invalid type for quiz"),
+    INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
@@ -48,7 +54,6 @@ public enum ErrorMessage {
     QUIZZES_IMPORT_ERROR("Error importing quizzes: %s"),
 
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
-    QUIZ_NOT_CONSISTENT("Field %s of quiz is not consistent"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),

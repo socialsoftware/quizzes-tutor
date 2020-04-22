@@ -89,8 +89,9 @@ class ConcludeQuizTest extends Specification {
 
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.GENERATED)
+        quiz.setType(Quiz.QuizType.GENERATED.toString())
         quiz.setCourseExecution(courseExecution)
+        quiz.setAvailableDate(DateHandler.now())
         courseExecution.addQuiz(quiz)
 
 
@@ -146,8 +147,8 @@ class ConcludeQuizTest extends Specification {
 
     def 'conclude quiz IN_CLASS without answering, before conclusionDate'() {
         given: 'an IN_CLASS quiz with future conclusionDate'
-        quiz.setConclusionDate(DateHandler.now().plusDays(2));
-        quiz.setType(Quiz.QuizType.IN_CLASS);
+        quiz.setConclusionDate(DateHandler.now().plusDays(2))
+        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
 
         when:
         def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
@@ -170,11 +171,11 @@ class ConcludeQuizTest extends Specification {
         given: 'a quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         and: 'an answer'
-        def statementAnswerDto = new StatementAnswerDto();
+        def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
-        answerService.submitAnswer(user, quiz.getId(), statementAnswerDto);
+        answerService.submitAnswer(user, quiz.getId(), statementAnswerDto)
 
         when:
         def correctAnswers = answerService.concludeQuiz(user, quiz.getId())

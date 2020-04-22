@@ -89,10 +89,10 @@ public class AnswerService {
             quizAnswer.setCompleted(true);
         }
 
-        // In class quiz When student submits before conclusionDate
-        if (quizAnswer.getQuiz().getConclusionDate() != null &&
+        // In class quiz when student submits before resultsDate
+        if (quizAnswer.getQuiz().getResultsDate() != null &&
             quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            DateHandler.now().isBefore(quizAnswer.getQuiz().getConclusionDate())) {
+            DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
 
             return new ArrayList<>();
         }

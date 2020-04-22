@@ -86,7 +86,7 @@ class ImportExportQuizzesTest extends Specification {
         quizDto.setCreationDate(DateHandler.toISOString(creationDate))
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
-        quizDto.setType(Quiz.QuizType.EXAM)
+        quizDto.setType(Quiz.QuizType.EXAM.toString())
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
         quiz = quizService.createQuiz(courseExecution.getId(), quizDto)

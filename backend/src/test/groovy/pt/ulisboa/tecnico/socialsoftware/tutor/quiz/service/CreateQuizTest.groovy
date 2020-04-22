@@ -22,6 +22,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import java.time.LocalDateTime
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreateQuizTest extends Specification {
@@ -32,6 +37,9 @@ class CreateQuizTest extends Specification {
     public static final String QUIZ_TITLE = 'quiz title'
     public static final String QUESTION_TITLE = 'question title'
     public static final String VERSION = 'B'
+    public static final LocalDateTime AVAILABLE_DATE = DateHandler.now()
+    public static final LocalDateTime CONCLUSION_DATE = DateHandler.now().plusDays(1)
+    public static final LocalDateTime RESULTS_DATE = DateHandler.now().plusDays(2)
 
     @Autowired
     QuizService quizService
@@ -51,8 +59,6 @@ class CreateQuizTest extends Specification {
     def course
     def courseExecution
     def quizDto
-    def availableDate
-    def conclusionDate
     def questionDto
 
     def setup() {
@@ -64,13 +70,12 @@ class CreateQuizTest extends Specification {
 
         quizDto = new QuizDto()
         quizDto.setKey(1)
-        availableDate = DateHandler.now()
-        conclusionDate = DateHandler.now().plusDays(1)
         quizDto.setScramble(true)
         quizDto.setOneWay(true)
         quizDto.setQrCodeOnly(true)
-        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
-        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
+        quizDto.setAvailableDate(DateHandler.toISOString(AVAILABLE_DATE))
+        quizDto.setConclusionDate(DateHandler.toISOString(CONCLUSION_DATE))
+        quizDto.setResultsDate(DateHandler.toISOString(RESULTS_DATE))
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
 
@@ -89,10 +94,14 @@ class CreateQuizTest extends Specification {
         quizDto.setQuestions(questions)
     }
 
-    def "create a quiz"() {
-        given: 'student quiz with title'
-        quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setType(Quiz.QuizType.GENERATED)
+    @Unroll
+    def "valid arguments: quizType=#quizType | title=#title | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
+        given: 'a quizDto'
+        quizDto.setTitle(title)
+        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
+        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
+        quizDto.setResultsDate(DateHandler.toISOString(resultsDate))
+        quizDto.setType(quizType.toString())
 
         when:
         quizService.createQuiz(courseExecution.getId(), quizDto)
@@ -105,63 +114,64 @@ class CreateQuizTest extends Specification {
         result.getScramble()
         result.isOneWay()
         result.isQrCodeOnly()
-        result.getTitle() == QUIZ_TITLE
+        result.getTitle() == title
         result.getCreationDate() != null
         result.getAvailableDate() == availableDate
         result.getConclusionDate() == conclusionDate
-        result.getType() == Quiz.QuizType.GENERATED
+        if (resultsDate == null) {
+            result.getResultsDate() == conclusionDate
+        } else {
+            result.getResultsDate() == resultsDate
+        }
+        result.getType() == quizType
         result.getSeries() == 1
         result.getVersion() == VERSION
         result.getQuizQuestions().size() == 1
+
+        where:
+        quizType                | title      | availableDate                 | conclusionDate                 | resultsDate
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(2)
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | null
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(2)
+        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | null
     }
 
-    def "create a quiz no title"() {
-        given: 'student quiz'
-        quizDto.setType(Quiz.QuizType.GENERATED)
+    @Unroll
+    def "invalid arguments: quizType=#quizType | title=#title | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate || errorMessage=#errorMessage "() {
+        given: 'a quizDto'
+        quizDto.setTitle(title)
+        quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
+        quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
+        quizDto.setResultsDate(DateHandler.toISOString(resultsDate))
+        quizDto.setType(quizType.toString())
 
         when:
         quizService.createQuiz(courseExecution.getId(), quizDto)
 
         then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
+        def error = thrown(TutorException)
+        error.errorMessage == errorMessage
         quizRepository.count() == 0L
-    }
 
-    def "create a TEACHER quiz no available date"() {
-        given: 'createQuiz a quiz'
-        quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setAvailableDate(null)
-        quizDto.setType(Quiz.QuizType.PROPOSED)
-
-        when:
-        quizService.createQuiz(courseExecution.getId(), quizDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
-        quizRepository.count() == 0L
-    }
-
-    def "create a TEACHER quiz with available date after conclusion"() {
-        given: 'createQuiz a quiz'
-        quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setConclusionDate(DateHandler.toISOString(getAvailableDate().minusDays(1)))
-        quizDto.setType(Quiz.QuizType.PROPOSED)
-
-        when:
-        quizService.createQuiz(courseExecution.getId(), quizDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
-        quizRepository.count() == 0L
+        where:
+        quizType                | title      | availableDate                 | conclusionDate                 | resultsDate                    || errorMessage
+        null                    | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
+        "   "                   | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
+        "Açores"                | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TYPE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | null       | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TITLE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | "        " | DateHandler.now()             | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_TITLE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | null                          | DateHandler.now().plusDays(1)  | DateHandler.now().plusDays(2)  || INVALID_AVAILABLE_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().minusDays(1) | DateHandler.now().plusDays(2)  || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | DateHandler.now()             | null                           | DateHandler.now().plusDays(1)  || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(2)  | DateHandler.now().plusDays(1)  || INVALID_RESULTS_DATE_FOR_QUIZ
+        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | DateHandler.now()             | DateHandler.now().plusDays(2)  | DateHandler.now().minusDays(1) || INVALID_RESULTS_DATE_FOR_QUIZ
     }
 
     def "create a TEACHER quiz wrong sequence"() {
         given: 'createQuiz a quiz'
         quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setType(Quiz.QuizType.GENERATED)
+        quizDto.setType(Quiz.QuizType.GENERATED.toString())
         questionDto.setSequence(3)
 
         when:
@@ -169,7 +179,7 @@ class CreateQuizTest extends Specification {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUIZ_NOT_CONSISTENT
+        exception.getErrorMessage() == ErrorMessage.INVALID_QUESTION_SEQUENCE_FOR_QUIZ
         quizRepository.count() == 0L
     }
 

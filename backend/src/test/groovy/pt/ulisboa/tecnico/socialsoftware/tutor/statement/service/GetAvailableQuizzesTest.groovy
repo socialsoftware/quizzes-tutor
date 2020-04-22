@@ -84,7 +84,7 @@ class GetAvailableQuizzesTest extends Specification {
 
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.PROPOSED)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setAvailableDate(DateHandler.now().minusDays(1))
         quiz.setCourseExecution(courseExecution)
         courseExecution.addQuiz(quiz)

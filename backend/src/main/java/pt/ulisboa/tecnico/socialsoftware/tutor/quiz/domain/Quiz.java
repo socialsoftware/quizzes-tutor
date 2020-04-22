@@ -19,8 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_HAS_ANSWERS;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_CONSISTENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(
@@ -47,6 +46,9 @@ public class Quiz implements DomainEntity {
 
     @Column(name = "conclusion_date")
     private LocalDateTime conclusionDate;
+
+    @Column(name = "results_date")
+    private LocalDateTime resultsDate;
 
     @Column(columnDefinition = "boolean default false")
     private boolean scramble = false;
@@ -90,6 +92,7 @@ public class Quiz implements DomainEntity {
         setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
         setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
+        setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
     }
@@ -143,7 +146,9 @@ public class Quiz implements DomainEntity {
     }
 
     public void setTitle(String title) {
-        checkTitle(title);
+        if (title == null || title.isBlank())
+            throw new TutorException(INVALID_TITLE_FOR_QUIZ);
+
         this.title = title;
     }
 
@@ -160,7 +165,13 @@ public class Quiz implements DomainEntity {
     }
 
     public void setAvailableDate(LocalDateTime availableDate) {
-        checkAvailableDate(availableDate);
+        if (availableDate == null) {
+            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
+        }
+        if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
+        }
+
         this.availableDate = availableDate;
     }
 
@@ -169,16 +180,47 @@ public class Quiz implements DomainEntity {
     }
 
     public void setConclusionDate(LocalDateTime conclusionDate) {
-        checkConclusionDate(conclusionDate);
+        if (conclusionDate != null && conclusionDate.isBefore(availableDate)) {
+            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
+        }
+
+        if (conclusionDate == null && type.equals(QuizType.IN_CLASS)) {
+            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
+        }
+
         this.conclusionDate = conclusionDate;
+    }
+
+    public LocalDateTime getResultsDate() {
+        if (resultsDate == null)
+            return conclusionDate;
+        return resultsDate;
+    }
+
+    public void setResultsDate(LocalDateTime resultsDate) {
+        if (resultsDate != null && resultsDate.isBefore(availableDate)) {
+            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
+        }
+        if (resultsDate != null && conclusionDate != null && resultsDate.isBefore(conclusionDate)) {
+            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
+        }
+
+        this.resultsDate = resultsDate;
     }
 
     public QuizType getType() {
         return type;
     }
 
-    public void setType(QuizType type) {
-    this.type = type;
+    public void setType(String type) {
+        if (type == null)
+            throw new TutorException(INVALID_TYPE_FOR_QUIZ);
+
+        try {
+            this.type = QuizType.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new TutorException(INVALID_TYPE_FOR_QUIZ);
+        }
     }
 
     public Integer getSeries() {
@@ -226,15 +268,19 @@ public class Quiz implements DomainEntity {
     public String toString() {
         return "Quiz{" +
                 "id=" + id +
+                ", key=" + key +
                 ", creationDate=" + creationDate +
                 ", availableDate=" + availableDate +
                 ", conclusionDate=" + conclusionDate +
+                ", resultsDate=" + resultsDate +
                 ", scramble=" + scramble +
+                ", qrCodeOnly=" + qrCodeOnly +
+                ", oneWay=" + oneWay +
                 ", title='" + title + '\'' +
                 ", type=" + type +
-                ", id=" + id +
                 ", series=" + series +
                 ", version='" + version + '\'' +
+                ", quizQuestions=" + quizQuestions +
                 '}';
     }
 
@@ -254,35 +300,11 @@ public class Quiz implements DomainEntity {
         }
     }
 
-    private void checkTitle(String title) {
-        if (title == null || title.trim().length() == 0) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Title");
-        }
-    }
-
-    private void checkAvailableDate(LocalDateTime availableDate) {
-        if (this.type.equals(QuizType.PROPOSED) && availableDate == null) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
-        }
-        if (this.type.equals(QuizType.PROPOSED) && this.availableDate != null && this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Available date");
-        }
-    }
-
-    private void checkConclusionDate(LocalDateTime conclusionDate) {
-        if (this.type.equals(QuizType.PROPOSED) &&
-                conclusionDate != null &&
-                availableDate != null &&
-                conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(QUIZ_NOT_CONSISTENT, "Conclusion date " + conclusionDate + availableDate);
-        }
-    }
-
     private void checkQuestionsSequence(List<QuestionDto> questions) {
         if (questions != null) {
             for (QuestionDto questionDto : questions) {
                 if (questionDto.getSequence() != questions.indexOf(questionDto) + 1) {
-                    throw new TutorException(QUIZ_NOT_CONSISTENT, "sequence of questions not correct");
+                    throw new TutorException(INVALID_QUESTION_SEQUENCE_FOR_QUIZ);
                 }
             }
         }
@@ -306,9 +328,9 @@ public class Quiz implements DomainEntity {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
-        this.setAvailableDate(DateHandler.now());
-        this.setCreationDate(DateHandler.now());
-        this.setType(QuizType.GENERATED);
-        this.title = "Generated Quiz";
+        setAvailableDate(DateHandler.now());
+        setCreationDate(DateHandler.now());
+        setType(QuizType.GENERATED.toString());
+        setTitle("Generated Quiz");
     }
 }
