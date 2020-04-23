@@ -75,7 +75,7 @@ public class CourseService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto createExternalCourseExecution(CourseDto courseDto) {
         courseDto.setCourseExecutionType(Course.Type.EXTERNAL);
 
