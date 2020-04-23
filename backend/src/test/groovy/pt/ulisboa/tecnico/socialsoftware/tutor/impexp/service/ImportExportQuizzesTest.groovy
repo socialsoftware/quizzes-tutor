@@ -97,7 +97,6 @@ class ImportExportQuizzesTest extends Specification {
     def 'export and import quizzes'() {
         given: 'a xml with a quiz'
         def quizzesXml = quizService.exportQuizzesToXml()
-        System.out.println(quizzesXml)
         and: 'delete quiz and quizQuestion'
         quizService.removeQuiz(quiz.getId())
 
@@ -132,7 +131,6 @@ class ImportExportQuizzesTest extends Specification {
 
         then:
         quizzesLatex != null
-        System.out.println(quizzesLatex)
     }
 
     @TestConfiguration

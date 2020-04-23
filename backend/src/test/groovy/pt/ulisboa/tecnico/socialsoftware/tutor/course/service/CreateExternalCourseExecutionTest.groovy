@@ -38,7 +38,6 @@ class CreateExternalCourseExecutionTest extends Specification {
         courseDto.setAcronym(ACRONYM_ONE)
         courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
         def a = courseRepository.findAll().size()
-        println a
 
         when:
         def result = courseService.createExternalCourseExecution(courseDto)

@@ -34,7 +34,6 @@
               "
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              :min-date="quiz.availableDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
             ></VueCtkDateTimePicker>
           </v-col>
@@ -43,7 +42,6 @@
               label="Results Date"
               id="resultsDateInput"
               v-model="quiz.resultsDate"
-              :min-date="quiz.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
             ></VueCtkDateTimePicker>
           </v-col>

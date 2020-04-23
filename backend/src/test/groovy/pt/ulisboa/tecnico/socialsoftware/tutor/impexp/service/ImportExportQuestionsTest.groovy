@@ -78,7 +78,6 @@ class ImportExportQuestionsTest extends Specification {
     def 'export and import questions to xml'() {
         given: 'a xml with questions'
         def questionsXml = questionService.exportQuestionsToXml()
-        System.out.println(questionsXml)
         and: 'a clean database'
         questionService.removeQuestion(questionId)
 
@@ -111,7 +110,6 @@ class ImportExportQuestionsTest extends Specification {
 
         then:
         questionsLatex != null
-        System.out.println(questionsLatex)
     }
 
     @TestConfiguration

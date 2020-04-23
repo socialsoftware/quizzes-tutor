@@ -143,7 +143,6 @@ class ImportExportAnswersTest extends Specification {
     def 'export and import answers'() {
         given: 'a xml with a quiz'
         def answersXml = answerService.exportAnswers()
-        println answersXml
         and: 'delete answers'
         answerService.deleteQuizAnswer(quizAnswer)
 
