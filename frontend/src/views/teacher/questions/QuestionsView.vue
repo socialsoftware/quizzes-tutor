@@ -37,7 +37,7 @@
       <template v-slot:item.title="{ item }">
         <p
           @click="showQuestionDialog(item)"
-          @contextmenu="rightClickEditQuestion($event, item)"
+          @contextmenu="editQuestion(item, $event)"
           style="cursor: pointer"
         >
           {{ item.title }}
@@ -136,8 +136,9 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon> Left-click on title to view question.
-      <v-icon class="mr-2">mouse</v-icon>Right -click on title to edit question.
+      <v-icon class="mr-2">mouse</v-icon>Left-click on question's title to view
+      it. <v-icon class="mr-2">mouse</v-icon>Right-click on question's title to
+      edit it.
     </footer>
     <edit-question-dialog
       v-if="currentQuestion"
@@ -315,12 +316,8 @@ export default class QuestionsView extends Vue {
     this.editQuestionDialog = true;
   }
 
-  rightClickEditQuestion(e: Event, question: Question) {
-    e.preventDefault();
-    this.editQuestion(question);
-  }
-
-  editQuestion(question: Question) {
+  editQuestion(question: Question, e?: Event) {
+    if (e) e.preventDefault();
     this.currentQuestion = question;
     this.editQuestionDialog = true;
   }
@@ -376,12 +373,6 @@ export default class QuestionsView extends Vue {
 </script>
 
 <style lang="scss" scoped>
-footer {
-  color: dimgrey;
-  font-style: italic;
-  padding-bottom: 20px;
-  font-size: 20px;
-}
 .question-textarea {
   text-align: left;
 

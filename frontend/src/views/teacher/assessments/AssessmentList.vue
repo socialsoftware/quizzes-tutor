@@ -19,7 +19,7 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newAssessment"
+          <v-btn color="primary" dark @click="$emit('newAssessment')"
             >New Assessment</v-btn
           >
         </v-card-title>
@@ -65,7 +65,19 @@
           <span>Delete Assessment</span>
         </v-tooltip>
       </template>
+      <template v-slot:item.title="{ item }">
+        <p
+          @contextmenu="editAssessment(item.id, $event)"
+          style="cursor: pointer"
+        >
+          {{ item.title }}
+        </p>
+      </template>
     </v-data-table>
+    <footer>
+      <v-icon class="mr-2">mouse</v-icon>Right-click on assessment's title to
+      edit it.
+    </footer>
 
     <v-dialog
       v-model="dialog"
@@ -167,11 +179,8 @@ export default class AssessmentList extends Vue {
     }
   }
 
-  newAssessment() {
-    this.$emit('newAssessment');
-  }
-
-  editAssessment(assessmentId: number) {
+  editAssessment(assessmentId: number, e?: Event) {
+    if (e) e.preventDefault();
     this.$emit('editAssessment', assessmentId);
   }
 

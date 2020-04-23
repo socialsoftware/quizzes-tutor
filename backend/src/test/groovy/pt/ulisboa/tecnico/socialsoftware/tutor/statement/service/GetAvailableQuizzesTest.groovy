@@ -8,22 +8,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 
 @DataJpaTest
 class GetAvailableQuizzesTest extends Specification {
@@ -31,12 +29,11 @@ class GetAvailableQuizzesTest extends Specification {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
-
-    @Autowired
-    QuizService quizService
-
-    @Autowired
-    AnswerService answerService
+    public static final String QUIZ_TITLE = "Quiz title"
+    public static final LocalDateTime BEFORE = DateHandler.now().minusDays(2)
+    public static final LocalDateTime YESTERDAY = DateHandler.now().minusDays(1)
+    public static final LocalDateTime TOMORROW = DateHandler.now().plusDays(1)
+    public static final LocalDateTime LATER = DateHandler.now().plusDays(2)
 
     @Autowired
     StatementService statementService
@@ -54,112 +51,156 @@ class GetAvailableQuizzesTest extends Specification {
     QuizRepository quizRepository
 
     @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
     QuizAnswerRepository quizAnswerRepository
 
     def user
-    def courseExecution
-    def question
+    def courseDto
     def quiz
-    def quizQuestion
+    def course
+    def courseExecution
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
+        courseDto = new CourseDto(courseExecution)
+
         user = new User('name', USERNAME, 1, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
-        question = new Question()
-        question.setKey(1)
-        question.setTitle("Question Title")
-        question.setContent("Question Content")
-        question.setCourse(course)
+        userRepository.save(user)
+    }
 
+    @Unroll
+    def "returns available quiz with: quizType=#quizType | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
+        given: 'a quiz'
         quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(DateHandler.now().minusDays(1))
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(BEFORE)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
-
-        quizQuestion = new QuizQuestion()
-        quizQuestion.setSequence(1)
-        quizQuestion.setQuiz(quiz)
-        quizQuestion.setQuestion(question)
-
-        userRepository.save(user)
+        quiz.setOneWay(true)
         quizRepository.save(quiz)
-        questionRepository.save(question)
-    }
 
-    def 'get the quizzes for the student'() {
         when:
         def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
-        then: 'the quiz answer is created'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement contains one quiz'
+        then: 'the return statement contains one quiz'
         statementQuizDtos.size() == 1
-        def statementResult = statementQuizDtos.get(0)
-        statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == DateHandler.toISOString(quiz.getAvailableDate())
-        statementResult.getQuizAnswerId() == result.getId()
-        statementResult.getQuestions().size() == 1
+        def statementQuizDto = statementQuizDtos.get(0)
+        statementQuizDto.getId() != null
+        statementQuizDto.getQuizAnswerId() != null
+        statementQuizDto.getTitle() == QUIZ_TITLE
+        statementQuizDto.isOneWay()
+        statementQuizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
+        statementQuizDto.getConclusionDate() == DateHandler.toISOString(conclusionDate)
+        statementQuizDto.getQuestions().size() == 0
+        statementQuizDto.getAnswers().size() == 0
+        statementQuizDto.getTimeToAvailability() == null
+
+        if (quiz.getConclusionDate()) {
+            statementQuizDto.getTimeToSubmission() == ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getConclusionDate())
+        } else {
+            statementQuizDto.getTimeToSubmission() == null
+        }
+
+        if (quiz.getResultsDate()) {
+            statementQuizDto.getTimeToResults() == ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getResultsDate())
+        } else {
+            statementQuizDto.getTimeToResults() == null
+        }
+
+        where:
+        quizType                | conclusionDate | resultsDate
+        Quiz.QuizType.PROPOSED  | null           | null
+        Quiz.QuizType.PROPOSED  | null           | LATER
+        Quiz.QuizType.PROPOSED  | TOMORROW       | null
+        Quiz.QuizType.PROPOSED  | TOMORROW       | LATER
+        Quiz.QuizType.IN_CLASS  | TOMORROW       | null
+        Quiz.QuizType.IN_CLASS  | TOMORROW       | LATER
     }
 
-    def 'the quiz is not available'() {
-        given:
-        quiz.setAvailableDate(DateHandler.now().plusDays(1))
-
-        when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
-
-        then: 'the quiz answer is not created'
-        quizAnswerRepository.count() == 0
-        user.getQuizAnswers().size() == 0
-        quiz.getQuizAnswers().size() == 0
-        and: 'the return statement is empty'
-        statementQuizDtos.size() == 0
-    }
-
-    def 'the quiz is already created'() {
-        given:
+    def 'returns a qrOnly quiz if it was scanned already (if it has a quizAnswer)'() {
+        given: 'a quiz'
+        quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setQrCodeOnly(true)
+        quiz.setOneWay(true)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setAvailableDate(BEFORE)
+        quiz.setConclusionDate(TOMORROW)
+        quiz.setCourseExecution(courseExecution)
+        quizRepository.save(quiz)
         def quizAnswer = new QuizAnswer(user, quiz)
         quizAnswerRepository.save(quizAnswer)
 
         when:
         def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
-        then: 'the quiz answer exists'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement contains one quiz'
+        then: 'the return statement contains one quiz'
         statementQuizDtos.size() == 1
-        def statementResult = statementQuizDtos.get(0)
-        statementResult.getTitle() == quiz.getTitle()
-        statementResult.getAvailableDate() == DateHandler.toISOString(quiz.getAvailableDate())
-        statementResult.getQuizAnswerId() == result.getId()
-        statementResult.getQuestions().size() == 1
+        def statementQuizDto = statementQuizDtos.get(0)
+        statementQuizDto.getId() != null
+        statementQuizDto.getQuizAnswerId() != null
+        statementQuizDto.getTitle() == QUIZ_TITLE
+        statementQuizDto.isOneWay()
+        statementQuizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
+        statementQuizDto.getConclusionDate() == DateHandler.toISOString(TOMORROW)
+        statementQuizDto.getTimeToAvailability() == null
+        statementQuizDto.getTimeToSubmission() == null
+        statementQuizDto.getTimeToResults() == null
+        statementQuizDto.getQuestions().size() == 0
+        statementQuizDto.getAnswers().size() == 0
     }
 
-    def 'the quiz is completed'() {
-        given:
+    @Unroll
+    def "does not return quiz with: quizType=#quizType | qrOnly=#qrOnly | availableDate=#availableDate | conclusionDate=#conclusionDate"() {
+        given: 'a quiz'
+        quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(availableDate)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setCourseExecution(courseExecution)
+        quiz.setQrCodeOnly(qrOnly)
+        quizRepository.save(quiz)
+
+        when:
+        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+
+        then: 'no quiz is returned'
+        statementQuizDtos.size() == 0
+
+        where:
+        quizType                | qrOnly | availableDate  | conclusionDate
+        Quiz.QuizType.PROPOSED  | true   | YESTERDAY      | TOMORROW
+        Quiz.QuizType.IN_CLASS  | true   | YESTERDAY      | TOMORROW
+        Quiz.QuizType.PROPOSED  | true   | YESTERDAY      | null
+        Quiz.QuizType.PROPOSED  | false  | TOMORROW       | LATER
+        Quiz.QuizType.IN_CLASS  | false  | TOMORROW       | LATER
+        Quiz.QuizType.PROPOSED  | false  | BEFORE         | YESTERDAY
+        Quiz.QuizType.IN_CLASS  | false  | BEFORE         | YESTERDAY
+    }
+
+    def 'does not return a completed quiz'() {
+        given: 'a completed quiz'
+        quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setAvailableDate(BEFORE)
+        quiz.setConclusionDate(TOMORROW)
+        quiz.setCourseExecution(courseExecution)
+        quizRepository.save(quiz)
         def quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
@@ -167,14 +208,7 @@ class GetAvailableQuizzesTest extends Specification {
         when:
         def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
-        then: 'the quiz answer exists'
-        quizAnswerRepository.count() == 1L
-        def result = quizAnswerRepository.findAll().get(0)
-        result.getUser() == user
-        user.getQuizAnswers().size() == 1
-        result.getQuiz() == quiz
-        quiz.getQuizAnswers().size() == 1
-        and: 'the return statement is empty'
+        then: 'no quiz is returned'
         statementQuizDtos.size() == 0
      }
 

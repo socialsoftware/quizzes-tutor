@@ -15,7 +15,6 @@ public class StatementQuizDto implements Serializable {
     private Integer id;
     private Integer quizAnswerId;
     private String title;
-    private boolean qrCodeOnly;
     private boolean oneWay;
     private String availableDate;
     private String conclusionDate;
@@ -31,7 +30,6 @@ public class StatementQuizDto implements Serializable {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
-        this.qrCodeOnly = quizAnswer.getQuiz().isQrCodeOnly();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
         if (quizAnswer.getQuiz().getAvailableDate() != null) {
             this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
@@ -45,7 +43,7 @@ public class StatementQuizDto implements Serializable {
         }
 
         if (quizAnswer.getQuiz().getResultsDate() != null && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-            this.timeToResults = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
+            this.timeToResults = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getResultsDate());
         }
 
         this.questions = quizAnswer.getQuestionAnswers().stream()
@@ -77,14 +75,6 @@ public class StatementQuizDto implements Serializable {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public boolean isQrCodeOnly() {
-        return qrCodeOnly;
-    }
-
-    public void setQrCodeOnly(boolean qrCodeOnly) {
-        this.qrCodeOnly = qrCodeOnly;
     }
 
     public boolean isOneWay() {
@@ -157,7 +147,6 @@ public class StatementQuizDto implements Serializable {
                 "id=" + id +
                 ", quizAnswerId=" + quizAnswerId +
                 ", title='" + title + '\'' +
-                ", qrCodeOnly=" + qrCodeOnly +
                 ", oneWay=" + oneWay +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +

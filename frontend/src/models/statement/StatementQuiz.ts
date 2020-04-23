@@ -11,9 +11,9 @@ export default class StatementQuiz {
   oneWay!: boolean;
   availableDate!: string;
   conclusionDate!: string;
-  timeToAvailability!: number;
-  timeToSubmission!: number;
-  timeToResults!: number;
+  timeToAvailability!: number | null;
+  timeToSubmission!: number | null;
+  timeToResults!: number | null;
   questions: StatementQuestion[] = [];
   answers: StatementAnswer[] = [];
   private lastTimeCalled: number = Date.now();
@@ -44,19 +44,41 @@ export default class StatementQuiz {
         });
       }
 
-      if (this.timeToSubmission || this.timeToResults) {
+      // if there is timeTo... start an interval that decreases the timeTo... every second
+      if (
+        (this.timeToSubmission != null && this.timeToSubmission > 0) ||
+        (this.timeToResults != null && this.timeToResults > 0) ||
+        (this.timeToAvailability != null && this.timeToAvailability > 0)
+      ) {
         this.timerId = setInterval(() => {
-          if (this.timeToSubmission > 0) {
-            this.timeToSubmission -= Math.floor(
-              Date.now() - this.lastTimeCalled
+          if (this.timeToAvailability != null && this.timeToAvailability > 0) {
+            this.timeToAvailability = Math.max(
+              0,
+              this.timeToAvailability -
+                Math.floor(Date.now() - this.lastTimeCalled)
             );
           }
 
-          if (this.timeToResults > 0) {
-            this.timeToResults -= Math.floor(Date.now() - this.lastTimeCalled);
+          if (this.timeToSubmission != null && this.timeToSubmission > 0) {
+            this.timeToSubmission = Math.max(
+              0,
+              this.timeToSubmission -
+                Math.floor(Date.now() - this.lastTimeCalled)
+            );
           }
 
-          if (this.timeToSubmission <= 0 && this.timeToResults <= 0) {
+          if (this.timeToResults != null && this.timeToResults > 0) {
+            this.timeToResults = Math.max(
+              0,
+              this.timeToResults - Math.floor(Date.now() - this.lastTimeCalled)
+            );
+          }
+
+          if (
+            this.timeToSubmission === 0 &&
+            this.timeToResults === 0 &&
+            this.timeToAvailability === 0
+          ) {
             clearInterval(this.timerId);
           }
 

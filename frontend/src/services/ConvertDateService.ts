@@ -18,7 +18,7 @@ export function ISOtoString(dateString: string | null): string {
   }
 }
 
-export function milisecondsToHHMMSS(time: number | undefined): string {
+export function milisecondsToHHMMSS(time: number | undefined | null): string {
   if (time) {
     let timeInSeconds = time / 1000;
     let hours = Math.floor(timeInSeconds / 3600);

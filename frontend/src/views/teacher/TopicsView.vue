@@ -45,7 +45,16 @@
           <span>Delete Topic</span>
         </v-tooltip>
       </template>
+      <template v-slot:item.name="{ item }">
+        <p @contextmenu="editTopic(item, $event)" style="cursor: pointer">
+          {{ item.name }}
+        </p>
+      </template>
     </v-data-table>
+    <footer>
+      <v-icon class="mr-2">mouse</v-icon>Right-click on topic's name to edit it.
+    </footer>
+
     <v-dialog v-model="topicDialog" max-width="75%">
       <v-card>
         <v-card-title>
@@ -85,7 +94,7 @@ export default class TopicsView extends Vue {
       width: '15%',
       sortable: false
     },
-    { text: 'Topic', value: 'name', align: 'left' },
+    { text: 'Name', value: 'name', align: 'left' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
@@ -126,7 +135,8 @@ export default class TopicsView extends Vue {
     this.topicDialog = false;
   }
 
-  editTopic(topic: Topic) {
+  editTopic(topic: Topic, e?: Event) {
+    if (e) e.preventDefault();
     this.editedTopic = { ...topic };
     this.topicDialog = true;
   }

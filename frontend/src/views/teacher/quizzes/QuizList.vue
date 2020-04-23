@@ -24,6 +24,16 @@
         </v-card-title>
       </template>
 
+      <template v-slot:item.title="{ item }">
+        <p
+          @click="showQuizDialog(item.id)"
+          @contextmenu="editQuiz(item, $event)"
+          style="cursor: pointer"
+        >
+          {{ item.title }}
+        </p>
+      </template>
+
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -67,11 +77,7 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="$emit('editQuiz', item.id)"
+            <v-icon large class="mr-2" v-on="on" @click="editQuiz(item)"
               >edit</v-icon
             >
           </template>
@@ -92,6 +98,11 @@
         </v-tooltip>
       </template>
     </v-data-table>
+    <footer>
+      <v-icon class="mr-2">mouse</v-icon>Left-click on quiz's title to view it.
+      <v-icon class="mr-2">mouse</v-icon>Right-click on quiz's title to edit it.
+    </footer>
+
     <show-quiz-dialog v-if="quiz" v-model="quizDialog" :quiz="quiz" />
 
     <show-quiz-answers-dialog
@@ -220,6 +231,11 @@ export default class QuizList extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+  }
+
+  editQuiz(quiz: Quiz, e?: Event) {
+    if (e) e.preventDefault();
+    this.$emit('editQuiz', quiz.id);
   }
 
   showQrCode(quizId: number) {
