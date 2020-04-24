@@ -38,22 +38,22 @@ public class QuestionDto implements Serializable {
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
         this.numberOfAnswers = question.getNumberOfAnswers();
+        this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
+        this.numberOfCorrect = question.getNumberOfCorrect();
+        this.status = question.getStatus().name();
+        this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+        this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+        this.creationDate = DateHandler.toISOString(question.getCreationDate());
+
         if (!question.getQuizQuestions().isEmpty()) {
             this.numberOfGeneratedQuizzes = (int) question.getQuizQuestions().stream()
                     .map(QuizQuestion::getQuiz)
                     .filter(quiz -> quiz.getType().equals(Quiz.QuizType.GENERATED))
                     .count();
         }
-        this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
-        this.numberOfCorrect = question.getNumberOfCorrect();
-        this.status = question.getStatus().name();
-        this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
-        this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
 
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
-        if (question.getCreationDate() != null)
-            this.creationDate = DateHandler.toISOString(question.getCreationDate());
     }
 
     public Integer getId() {

@@ -31,15 +31,11 @@ public class StatementQuizDto implements Serializable {
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
         this.oneWay = quizAnswer.getQuiz().isOneWay();
-        if (quizAnswer.getQuiz().getAvailableDate() != null) {
-            this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
-        }
-        if (quizAnswer.getQuiz().getConclusionDate() != null) {
-            this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
+        this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
+        this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
 
-            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-                this.timeToSubmission = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
-            }
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+            this.timeToSubmission = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
         }
 
         if (quizAnswer.getQuiz().getResultsDate() != null && quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {

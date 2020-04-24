@@ -20,7 +20,7 @@
           v-if="!isCreateCourse"
           v-model="editCourse.name"
           label="Name"
-          data-cy="Name"
+          data-cy="courseExecutionNameInput"
         />
         <p>
           <b>Course Execution Type:</b>
@@ -29,12 +29,12 @@
         <v-text-field
           v-model="editCourse.acronym"
           label="Acronym"
-          data-cy="Acronym"
+          data-cy="courseExecutionAcronymInput"
         />
         <v-text-field
           v-model="editCourse.academicTerm"
           label="Academic Term"
-          data-cy="AcademicTerm"
+          data-cy="courseExecutionAcademicTermInput"
         />
       </v-card-text>
 
