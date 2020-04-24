@@ -82,8 +82,8 @@
               </template>
               <span>Displays a timer to conclusion and to show results</span>
             </v-tooltip>
-          </v-col>
-        </v-row>
+          </v-col> </v-row
+        >\
       </v-container>
 
       <v-data-table
