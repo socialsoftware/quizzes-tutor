@@ -148,6 +148,10 @@ public class AnswerService {
                 questionAnswer.setOption(option);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
                 quizAnswer.setAnswerDate(DateHandler.now());
+            } else {
+                questionAnswer.setOption(null);
+                questionAnswer.setTimeTaken(answer.getTimeTaken());
+                quizAnswer.setAnswerDate(DateHandler.now());
             }
         }
     }
