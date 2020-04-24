@@ -83,9 +83,15 @@ public class Quiz implements DomainEntity {
     public Quiz(QuizDto quizDto) {
         checkQuestionsSequence(quizDto.getQuestions());
 
+        if (quizDto.getType() != null)
+            setType(quizDto.getType());
+        else if (quizDto.isTimed())
+            setType(QuizType.IN_CLASS.toString());
+        else
+            setType(QuizType.PROPOSED.toString());
+
         setKey(quizDto.getKey());
         setTitle(quizDto.getTitle());
-        setType(quizDto.getType());
         setScramble(quizDto.isScramble());
         setQrCodeOnly(quizDto.isQrCodeOnly());
         setOneWay(quizDto.isOneWay());
@@ -95,6 +101,8 @@ public class Quiz implements DomainEntity {
         setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
+
+
     }
 
     @Override

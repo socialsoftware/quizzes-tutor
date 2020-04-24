@@ -264,7 +264,7 @@ export default class QuizView extends Vue {
       await this.statementManager.concludeQuiz();
 
       if (
-        this.statementQuiz?.timeToResults === 0 &&
+        !this.statementQuiz?.timeToResults &&
         this.statementManager.correctAnswers.length !== 0
       ) {
         await this.$router.push({ name: 'quiz-results' });

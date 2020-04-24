@@ -17,12 +17,13 @@ public class QuizDto implements Serializable {
     private boolean scramble;
     private boolean qrCodeOnly;
     private boolean oneWay;
+    private boolean timed;
+    private String type;
     private String title;
     private String creationDate;
     private String availableDate;
     private String conclusionDate;
     private String resultsDate;
-    private String type;
     private Integer series;
     private String version;
     private int numberOfQuestions;
@@ -39,6 +40,7 @@ public class QuizDto implements Serializable {
         this.qrCodeOnly = quiz.isQrCodeOnly();
         this.oneWay = quiz.isOneWay();
         this.title = quiz.getTitle();
+        this.timed = quiz.getType().equals(Quiz.QuizType.IN_CLASS);
         this.type = quiz.getType().toString();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
@@ -97,6 +99,22 @@ public class QuizDto implements Serializable {
         this.oneWay = oneWay;
     }
 
+    public boolean isTimed() {
+        return timed;
+    }
+
+    public void setTimed(boolean timed) {
+        this.timed = timed;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -106,7 +124,7 @@ public class QuizDto implements Serializable {
     }
 
     public String getCreationDate() {
-        return this.creationDate;
+        return creationDate;
     }
 
     public void setCreationDate(String creationDate) {
@@ -114,7 +132,7 @@ public class QuizDto implements Serializable {
     }
 
     public String getAvailableDate() {
-        return this.availableDate;
+        return availableDate;
     }
 
     public void setAvailableDate(String availableDate) {
@@ -135,14 +153,6 @@ public class QuizDto implements Serializable {
 
     public void setResultsDate(String resultsDate) {
         this.resultsDate = resultsDate;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public Integer getSeries() {
@@ -193,12 +203,12 @@ public class QuizDto implements Serializable {
                 ", scramble=" + scramble +
                 ", qrCodeOnly=" + qrCodeOnly +
                 ", oneWay=" + oneWay +
+                ", timed=" + timed +
                 ", title='" + title + '\'' +
                 ", creationDate='" + creationDate + '\'' +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
                 ", resultsDate='" + resultsDate + '\'' +
-                ", type=" + type +
                 ", series=" + series +
                 ", version='" + version + '\'' +
                 ", numberOfQuestions=" + numberOfQuestions +

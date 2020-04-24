@@ -24,16 +24,6 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.title="{ item }">
-        <p
-          @click="showQuizDialog(item.id)"
-          @contextmenu="editQuiz(item, $event)"
-          style="cursor: pointer"
-        >
-          {{ item.title }}
-        </p>
-      </template>
-
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -95,6 +85,37 @@
             >
           </template>
           <span>Delete Quiz</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.title="{ item }">
+        <p
+          @click="showQuizDialog(item.id)"
+          @contextmenu="editQuiz(item, $event)"
+          style="cursor: pointer"
+        >
+          {{ item.title }}
+        </p>
+      </template>
+
+      <template v-slot:item.options="{ item }">
+        <v-tooltip bottom v-if="item.timed">
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">timer</v-icon>
+          </template>
+          <span>Displays a timer to conclusion and to show results</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.scramble">
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">shuffle</v-icon>
+          </template>
+          <span>Question order is scrambled</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.oneWay">
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on">forward</v-icon>
+          </template>
+          <span>Students cannot go to previous question</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -188,7 +209,7 @@ export default class QuizList extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Type', value: 'type', align: 'center', width: '5%' },
+    { text: 'Options', value: 'options', align: 'center', width: '150px' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',

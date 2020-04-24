@@ -6,6 +6,7 @@ export class Quiz {
   number!: number;
   scramble!: boolean;
   qrCodeOnly!: boolean;
+  timed!: boolean;
   oneWay!: boolean;
   title!: string;
   creationDate!: string;
@@ -28,6 +29,7 @@ export class Quiz {
       this.number = jsonObj.number;
       this.scramble = jsonObj.scramble;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
+      this.timed = jsonObj.timed;
       this.oneWay = jsonObj.oneWay;
       this.title = jsonObj.title;
       this.type = jsonObj.type;

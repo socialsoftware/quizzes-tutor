@@ -160,7 +160,13 @@ public class QuizService {
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
         quiz.setOneWay(quizDto.isOneWay());
-        quiz.setType(quizDto.getType());
+
+        if (quizDto.getType() != null)
+            quiz.setType(quizDto.getType());
+        else if (quizDto.isTimed())
+            quiz.setType(Quiz.QuizType.IN_CLASS.toString());
+        else
+            quiz.setType(Quiz.QuizType.PROPOSED.toString());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 

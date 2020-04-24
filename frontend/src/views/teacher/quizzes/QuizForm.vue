@@ -25,19 +25,15 @@
               format="YYYY-MM-DDTHH:mm:ssZ"
             ></VueCtkDateTimePicker>
           </v-col>
-          <v-col>
+          <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
-              :label="
-                quiz.type === 'IN_CLASS'
-                  ? '*Conclusion Date'
-                  : 'Conclusion Date'
-              "
+              label="*Conclusion Date"
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
               format="YYYY-MM-DDTHH:mm:ssZ"
             ></VueCtkDateTimePicker>
           </v-col>
-          <v-col>
+          <v-col v-if="quiz.timed">
             <VueCtkDateTimePicker
               label="Results Date"
               id="resultsDateInput"
@@ -80,11 +76,12 @@
             </v-tooltip>
           </v-col>
           <v-col>
-            <v-select
-              v-model="quiz.type"
-              :items="['PROPOSED', 'IN_CLASS']"
-              label="*Type"
-            ></v-select>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-switch v-on="on" v-model="quiz.timed" label="Timer" />
+              </template>
+              <span>Displays a timer to conclusion and to show results</span>
+            </v-tooltip>
           </v-col>
         </v-row>
       </v-container>
@@ -389,10 +386,8 @@ export default class QuizForm extends Vue {
     return (
       !!this.quiz.title &&
       !!this.quiz.availableDate &&
-      !!this.quiz.type &&
-      ((this.quiz.type == 'IN_CLASS' &&
-        this.quiz.conclusionDate !== undefined) ||
-        this.quiz.type !== 'IN_CLASS')
+      ((this.quiz.timed && this.quiz.conclusionDate !== undefined) ||
+        !this.quiz.timed)
     );
   }
 
