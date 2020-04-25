@@ -25,7 +25,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon large class="mr-2" v-on="on" @click="editTopic(item)"
+            <v-icon class="mr-2" v-on="on" @click="editTopic(item)"
               >edit</v-icon
             >
           </template>
@@ -34,7 +34,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="deleteTopic(item)"
@@ -45,10 +44,10 @@
           <span>Delete Topic</span>
         </v-tooltip>
       </template>
-      <template v-slot:item.name="{ item }">
-        <p @contextmenu="editTopic(item, $event)" style="cursor: pointer">
+      <template v-slot:item.name="{ item }" style="background: rebeccapurple">
+        <div @contextmenu="editTopic(item, $event)" class="clickableTitle">
           {{ item.name }}
-        </p>
+        </div>
       </template>
     </v-data-table>
     <footer>
@@ -91,7 +90,7 @@ export default class TopicsView extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '15%',
+      width: '5px',
       sortable: false
     },
     { text: 'Name', value: 'name', align: 'left' },

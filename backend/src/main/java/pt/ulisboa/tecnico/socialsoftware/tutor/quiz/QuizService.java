@@ -161,9 +161,7 @@ public class QuizService {
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
         quiz.setOneWay(quizDto.isOneWay());
 
-        if (quizDto.getType() != null)
-            quiz.setType(quizDto.getType());
-        else if (quizDto.isTimed())
+        if (quizDto.isTimed())
             quiz.setType(Quiz.QuizType.IN_CLASS.toString());
         else
             quiz.setType(Quiz.QuizType.PROPOSED.toString());

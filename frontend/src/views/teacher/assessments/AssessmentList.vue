@@ -41,11 +41,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="editAssessment(item.id)"
+            <v-icon class="mr-2" v-on="on" @click="editAssessment(item.id)"
               >edit</v-icon
             >
           </template>
@@ -54,7 +50,6 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="deleteAssessment(item.id)"
@@ -66,12 +61,12 @@
         </v-tooltip>
       </template>
       <template v-slot:item.title="{ item }">
-        <p
+        <div
           @contextmenu="editAssessment(item.id, $event)"
-          style="cursor: pointer"
+          class="clickableTitle"
         >
           {{ item.title }}
-        </p>
+        </div>
       </template>
     </v-data-table>
     <footer>
@@ -147,17 +142,17 @@ export default class AssessmentList extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '15%'
+      width: '5px'
     },
-    { text: 'Order', value: 'sequence', align: 'center', width: '95px' },
-    { text: 'Title', value: 'title', align: 'left' },
+    { text: 'Order', value: 'sequence', align: 'center', width: '5px' },
+    { text: 'Title', value: 'title', width: '80%', align: 'left' },
     {
       text: 'Number of questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '7%'
+      width: '5px'
     },
-    { text: 'Status', value: 'status', align: 'center', width: '7%' }
+    { text: 'Status', value: 'status', align: 'center', width: '5px' }
   ];
 
   closeAssessment() {

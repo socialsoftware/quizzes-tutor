@@ -229,7 +229,10 @@ export default class QuizView extends Vue {
   }
 
   confirmAnswer() {
-    if (this.statementQuiz?.oneWay) {
+    if (
+      this.statementQuiz?.oneWay &&
+      this.questionOrder + 1 < +this.statementQuiz!.questions.length
+    ) {
       this.nextConfirmationDialog = true;
     } else {
       this.increaseOrder();

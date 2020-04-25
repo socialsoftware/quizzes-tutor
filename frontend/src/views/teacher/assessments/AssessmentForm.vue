@@ -76,7 +76,6 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      large
                       class="mr-2"
                       v-on="on"
                       @click="removeTopicConjunction(item)"
@@ -90,7 +89,6 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      large
                       class="mr-2"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
@@ -153,7 +151,6 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      large
                       class="mr-2"
                       v-on="on"
                       @click="addTopicConjunction(item)"
@@ -166,7 +163,6 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      large
                       class="mr-2"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
@@ -262,7 +258,7 @@ export default class AssessmentForm extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '30%',
+      width: '5px',
       sortable: false
     },
     {

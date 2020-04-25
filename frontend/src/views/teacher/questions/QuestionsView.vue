@@ -29,13 +29,13 @@
       </template>
 
       <template v-slot:item.title="{ item }">
-        <p
+        <div
           @click="showQuestionDialog(item)"
           @contextmenu="editQuestion(item, $event)"
-          style="cursor: pointer"
+          class="clickableTitle"
         >
           {{ item.title }}
-        </p>
+        </div>
       </template>
 
       <template v-slot:item.topics="{ item }">
@@ -83,11 +83,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="showQuestionDialog(item)"
+            <v-icon class="mr-2" v-on="on" @click="showQuestionDialog(item)"
               >visibility</v-icon
             >
           </template>
@@ -95,11 +91,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon
-              large
-              class="mr-2"
-              v-on="on"
-              @click="duplicateQuestion(item)"
+            <v-icon class="mr-2" v-on="on" @click="duplicateQuestion(item)"
               >cached</v-icon
             >
           </template>
@@ -107,7 +99,7 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
-            <v-icon large class="mr-2" v-on="on" @click="editQuestion(item)"
+            <v-icon class="mr-2" v-on="on" @click="editQuestion(item)"
               >edit</v-icon
             >
           </template>
@@ -117,7 +109,6 @@
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
-              large
               class="mr-2"
               v-on="on"
               @click="deleteQuestion(item)"
@@ -180,38 +171,48 @@ export default class QuestionsView extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '15%',
+      width: '5px',
       sortable: false
     },
-    { text: 'Title', value: 'title', align: 'left' },
-    { text: 'Status', value: 'status', align: 'left', width: '150px' },
+    { text: 'Title', value: 'title', width: '50%', align: 'left' },
     {
       text: 'Topics',
       value: 'topics',
+      width: '30%',
       align: 'center',
       sortable: false
     },
+    { text: 'Status', value: 'status', width: '150px', align: 'left' },
     {
       text: 'Image',
       value: 'image',
+      width: '10%',
       align: 'center',
       sortable: false
     },
-    { text: 'Difficulty', value: 'difficulty', align: 'center' },
-    { text: 'Answers', value: 'numberOfAnswers', align: 'center' },
+    { text: 'Difficulty', value: 'difficulty', width: '5px', align: 'center' },
+    {
+      text: 'Answers',
+      value: 'numberOfAnswers',
+      width: '5px',
+      align: 'center'
+    },
     {
       text: 'Nº of generated quizzes',
       value: 'numberOfGeneratedQuizzes',
+      width: '5px',
       align: 'center'
     },
     {
       text: 'Nº of non generated quizzes',
       value: 'numberOfNonGeneratedQuizzes',
+      width: '5px',
       align: 'center'
     },
     {
       text: 'Creation Date',
       value: 'creationDate',
+      width: '150px',
       align: 'center'
     }
   ];

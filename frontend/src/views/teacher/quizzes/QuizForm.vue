@@ -82,8 +82,8 @@
               </template>
               <span>Displays a timer to conclusion and to show results</span>
             </v-tooltip>
-          </v-col> </v-row
-        >\
+          </v-col>
+        </v-row>
       </v-container>
 
       <v-data-table
@@ -119,13 +119,13 @@
         </template>
 
         <template v-slot:item.title="{ item }">
-          <p
+          <div
             @click="showQuestionDialog(item)"
             @contextmenu="rightClickEditQuestion($event, item)"
-            style="cursor: pointer"
+            class="clickableTitle"
           >
             {{ item.title }}
-          </p>
+          </div>
         </template>
 
         <template v-slot:item.topics="{ item }">
@@ -137,12 +137,7 @@
         <template v-slot:item.action="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
-              <v-icon
-                large
-                class="mr-2"
-                v-on="on"
-                @click="showQuestionDialog(item)"
-              >
+              <v-icon class="mr-2" v-on="on" @click="showQuestionDialog(item)">
                 visibility</v-icon
               >
             </template>
@@ -150,7 +145,7 @@
           </v-tooltip>
           <v-tooltip bottom v-if="!item.sequence">
             <template v-slot:activator="{ on }">
-              <v-icon large class="mr-2" v-on="on" @click="addToQuiz(item)">
+              <v-icon class="mr-2" v-on="on" @click="addToQuiz(item)">
                 add</v-icon
               >
             </template>
@@ -159,12 +154,7 @@
           <div v-if="item.sequence" :key="item.sequence">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-icon
-                  large
-                  class="mr-2"
-                  v-on="on"
-                  @click="removeFromQuiz(item)"
-                >
+                <v-icon class="mr-2" v-on="on" @click="removeFromQuiz(item)">
                   remove</v-icon
                 >
               </template>
@@ -173,7 +163,6 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  large
                   class="mr-2"
                   v-on="on"
                   @click="changeQuestionPosition(item, 0)"
@@ -186,7 +175,6 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -203,12 +191,7 @@
             </v-tooltip>
             <v-tooltip bottom v-if="quizQuestions.length > 1">
               <template v-slot:activator="{ on }">
-                <v-icon
-                  large
-                  class="mr-2"
-                  v-on="on"
-                  @click="openSetPosition(item)"
-                >
+                <v-icon class="mr-2" v-on="on" @click="openSetPosition(item)">
                   mdi-weather-sunny</v-icon
                 >
               </template>
@@ -217,7 +200,6 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -235,7 +217,6 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  large
                   class="mr-2"
                   v-on="on"
                   @click="
@@ -322,29 +303,29 @@ export default class QuizForm extends Vue {
       text: 'Actions',
       value: 'action',
       align: 'left',
-      width: '1%',
+      width: '5px',
       sortable: false
     },
     {
       text: 'Sequence',
       value: 'sequence',
       align: 'center',
-      width: '1%'
+      width: '5px'
     },
     {
       text: 'Title',
       value: 'title',
       align: 'left',
-      width: '20%',
+      width: '60%',
       sortable: false
     },
     {
       text: 'Topics',
       value: 'topics',
       align: 'left',
-      width: '20%'
+      width: '40%'
     },
-    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '1%' }
+    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '5px' }
   ];
 
   async created() {
