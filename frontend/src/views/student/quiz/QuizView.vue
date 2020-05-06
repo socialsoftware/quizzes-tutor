@@ -241,7 +241,7 @@ export default class QuizView extends Vue {
 
   @Watch('statementQuiz.timeToSubmission')
   submissionTimerWatcher() {
-    if (!!this.statementQuiz && this.statementQuiz.timeToSubmission === 0) {
+    if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
       this.concludeQuiz();
     }
 
@@ -252,7 +252,7 @@ export default class QuizView extends Vue {
 
   @Watch('statementQuiz.timeToResults')
   resultsTimerWatcher() {
-    if (!!this.statementQuiz && this.statementQuiz.timeToResults === 0) {
+    if (!!this.statementQuiz && !this.statementQuiz.timeToResults) {
       this.concludeQuiz();
     }
 
