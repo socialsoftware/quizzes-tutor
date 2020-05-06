@@ -98,6 +98,7 @@ class ImportExportQuizzesTest extends Specification {
         given: 'a xml with a quiz'
         def quizzesXml = quizService.exportQuizzesToXml()
         and: 'delete quiz and quizQuestion'
+        print quizzesXml
         quizService.removeQuiz(quiz.getId())
 
         when:

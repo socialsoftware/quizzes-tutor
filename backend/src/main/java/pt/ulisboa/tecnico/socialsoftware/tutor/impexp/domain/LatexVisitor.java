@@ -32,7 +32,13 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuestion(Question question) {
-        this.result = this.result + "\\newcommand{\\q" + question.getTitle().replaceAll("\\s+","") + "}{\n" + "\\begin{ClosedQuestion}\n";
+        this.result = this.result
+                + "\\newcommand{\\q"
+                + question.getTitle().replaceAll("\\s+","")
+                + "-"
+                + question.getKey()
+                + "}{\n"
+                + "\\begin{ClosedQuestion}\n";
 
         this.questionContent = question.getContent();
 
