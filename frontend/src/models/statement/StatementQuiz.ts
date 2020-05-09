@@ -75,9 +75,9 @@ export default class StatementQuiz {
           }
 
           if (
-            this.timeToSubmission === 0 &&
-            this.timeToResults === 0 &&
-            this.timeToAvailability === 0
+            !this.timeToSubmission &&
+            !this.timeToResults &&
+            !this.timeToAvailability
           ) {
             clearInterval(this.timerId);
           }
