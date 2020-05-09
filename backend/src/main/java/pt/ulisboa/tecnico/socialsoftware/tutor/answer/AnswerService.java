@@ -60,7 +60,7 @@ public class AnswerService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
