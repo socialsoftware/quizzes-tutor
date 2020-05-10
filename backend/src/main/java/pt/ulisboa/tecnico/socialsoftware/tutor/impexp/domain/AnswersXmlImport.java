@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
@@ -90,7 +91,7 @@ public class AnswersXmlImport {
 	private void loadQuestionMap() {
 		questionMap = questionRepository.findAll().stream()
 				.collect(Collectors.toMap(Question::getKey,
-						question -> question.getOptions().stream()
+						question -> ((MultipleChoiceQuestion)question).getOptions().stream()
 								.collect(Collectors.toMap(Option::getSequence,Option::getId))));
 	}
 

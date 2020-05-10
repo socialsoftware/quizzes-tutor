@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -157,7 +158,7 @@ public class AnswerService {
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
-        return quizQuestion.getQuestion().getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
+        return ((MultipleChoiceQuestion)quizQuestion.getQuestion()).getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {

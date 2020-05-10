@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -70,21 +71,21 @@ class FilterByAssessmentTest extends Specification {
 
         questionList = new ArrayList<>()
 
-        questionTopic1 = new Question()
+        questionTopic1 = new MultipleChoiceQuestion()
         questionTopic1.setTitle(QUESTION_TITLE_1)
         questionTopic1.setContent(QUESTION_CONTENT_1)
         questionTopic1.setKey(1)
         questionTopic1.addTopic(topic1)
         questionList.add(questionTopic1)
 
-        questionTopic2 = new Question()
+        questionTopic2 = new MultipleChoiceQuestion()
         questionTopic2.setTitle(QUESTION_TITLE_2)
         questionTopic2.setContent(QUESTION_CONTENT_2)
         questionTopic2.setKey(2)
         questionTopic2.addTopic(topic2)
         questionList.add(questionTopic2)
 
-        questionTopic1_2 = new Question()
+        questionTopic1_2 = new MultipleChoiceQuestion()
         questionTopic1_2.setTitle(QUESTION_TITLE_3)
         questionTopic1_2.setContent(QUESTION_CONTENT_3)
         questionTopic1_2.setKey(3)
@@ -92,13 +93,13 @@ class FilterByAssessmentTest extends Specification {
         questionTopic1_2.addTopic(topic2)
         questionList.add(questionTopic1_2)
 
-        questionNoTopic = new Question()
+        questionNoTopic = new MultipleChoiceQuestion()
         questionNoTopic.setTitle(QUESTION_TITLE_4)
         questionNoTopic.setContent(QUESTION_CONTENT_4)
         questionNoTopic.setKey(4)
         questionList.add(questionNoTopic)
 
-        questionTopic1Again = new Question()
+        questionTopic1Again = new MultipleChoiceQuestion()
         questionTopic1Again.setTitle(QUESTION_TITLE_5)
         questionTopic1Again.setContent(QUESTION_CONTENT_5)
         questionTopic1Again.setKey(5)

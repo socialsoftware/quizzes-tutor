@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -47,13 +48,14 @@ public abstract class LatexVisitor implements Visitor {
 
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
-        for (Option option: question.getOptions().stream().sorted(Comparator.comparing(Option::getSequence)).collect(Collectors.toList())) {
-            option.accept(this);
-        }
+        question.visitDependencies(this);
+//        for (Option option: question.getOptions().stream().sorted(Comparator.comparing(Option::getSequence)).collect(Collectors.toList())) {
+//            option.accept(this);
+//        }
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
-            convertSequenceToLetter(question.getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
+            convertSequenceToLetter(((MultipleChoiceQuestion)question).getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }

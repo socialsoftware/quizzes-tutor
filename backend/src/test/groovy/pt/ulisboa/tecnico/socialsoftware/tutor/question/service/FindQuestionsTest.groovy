@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
@@ -77,7 +78,7 @@ class FindQuestionsTest extends Specification {
 
     def "create a question with image and two options and a quiz questions with two answers"() {
         given: "createQuestion a question"
-        def question = new Question()
+        def question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent(QUESTION_CONTENT)

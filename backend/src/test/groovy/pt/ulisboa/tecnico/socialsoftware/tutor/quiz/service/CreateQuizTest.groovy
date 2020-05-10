@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -76,7 +77,7 @@ class CreateQuizTest extends Specification {
         quizDto.setSeries(1)
         quizDto.setVersion(VERSION)
 
-        def question = new Question()
+        def question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle(QUESTION_TITLE)

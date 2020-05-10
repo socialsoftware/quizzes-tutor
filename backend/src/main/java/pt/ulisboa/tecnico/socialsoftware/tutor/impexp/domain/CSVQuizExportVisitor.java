@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -77,7 +78,7 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizQuestion(QuizQuestion quizQuestion) {
-        line[column++] = quizQuestion.getQuestion().getOptions().stream()
+        line[column++] = ((MultipleChoiceQuestion)quizQuestion.getQuestion()).getOptions().stream()
                 .filter(Option::getCorrect)
                 .findAny()
                 .map(option -> convertSequenceToLetter(option.getSequence())).orElse("");

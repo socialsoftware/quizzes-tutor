@@ -62,9 +62,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         this.currentElement.addContent(optionsElement);
 
         this.currentElement = optionsElement;
-        for (Option option: question.getOptions()) {
-            option.accept(this);
-        }
+        question.visitDependencies(this);
 
         this.currentElement = this.rootElement;
     }

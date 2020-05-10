@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -33,7 +34,7 @@ class AddQuestionToQuizTest extends Specification {
         def quiz = new Quiz()
         quiz.setKey(1)
         quizRepository.save(quiz)
-        def question = new Question()
+        def question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setTitle("Question title")
         questionRepository.save(question)

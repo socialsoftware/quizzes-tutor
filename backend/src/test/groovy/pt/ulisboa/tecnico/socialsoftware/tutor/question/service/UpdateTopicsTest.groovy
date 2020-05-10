@@ -6,6 +6,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -47,7 +48,7 @@ class UpdateTopicsTest extends Specification {
         course.setName(COURSE_NAME)
         courseRepository.save(course)
 
-        question = new Question()
+        question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent("Question Content")

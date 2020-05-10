@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExport
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -111,7 +112,7 @@ public class QuestionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        Question question = new Question(course, questionDto);
+        Question question = new MultipleChoiceQuestion(course, questionDto);
         questionRepository.save(question);
         return new QuestionDto(question);
     }
@@ -272,7 +273,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuestion(Question question) {
-        for (Option option : question.getOptions()) {
+        for (Option option : ((MultipleChoiceQuestion)question).getOptions()) {
             option.remove();
             optionRepository.delete(option);
         }

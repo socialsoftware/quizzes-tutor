@@ -31,7 +31,7 @@ public class Option implements DomainEntity {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
-    private Question question;
+    private MultipleChoiceQuestion question;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
     private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
@@ -83,13 +83,13 @@ public class Option implements DomainEntity {
         this.content = content;
     }
 
-    public Question getQuestion() {
+    public MultipleChoiceQuestion getQuestion() {
         return question;
     }
 
-    public void setQuestion(Question question) {
+    public void setQuestion(MultipleChoiceQuestion question) {
         this.question = question;
-        question.addOption(this);
+        ((MultipleChoiceQuestion)question).addOption(this);
     }
 
     public Set<QuestionAnswer> getQuestionAnswers() {

@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -89,7 +90,7 @@ class GenerateStudentQuizTest extends Specification {
         topic.setCourse(course)
         topicRepository.save(topic)
 
-        questionOne = new Question()
+        questionOne = new MultipleChoiceQuestion()
         questionOne.setKey(1)
         questionOne.setContent("Question Content")
         questionOne.setTitle("Question Title")
@@ -97,7 +98,7 @@ class GenerateStudentQuizTest extends Specification {
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
 
-        questionTwo = new Question()
+        questionTwo = new MultipleChoiceQuestion()
         questionTwo.setKey(2)
         questionTwo.setContent("Question Content")
         questionTwo.setTitle("Question Title")

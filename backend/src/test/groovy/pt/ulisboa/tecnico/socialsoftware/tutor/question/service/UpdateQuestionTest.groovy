@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
@@ -28,8 +29,8 @@ class UpdateQuestionTest extends Specification {
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
-    public static final String NEW_QUESTION_TITLE = 'new question title'
-    public static final String NEW_QUESTION_CONTENT = 'new question content'
+    public static final String NEW_QUESTION_TITLE = 'new MultipleChoiceQuestion title'
+    public static final String NEW_QUESTION_CONTENT = 'new MultipleChoiceQuestion content'
     public static final String NEW_OPTION_CONTENT = "new optionId content"
     public static final String URL = 'URL'
 
@@ -60,7 +61,7 @@ class UpdateQuestionTest extends Specification {
 
     def setup() {
         given: "create a question"
-        question = new Question()
+        question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)

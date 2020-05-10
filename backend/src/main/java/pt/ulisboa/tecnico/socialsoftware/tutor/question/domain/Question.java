@@ -19,50 +19,51 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "questions")
-public class Question implements DomainEntity {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "question_type",
+        columnDefinition = "varchar(50) not null default 'MultipleChoice'",
+        discriminatorType = DiscriminatorType.STRING)
+public abstract class Question implements DomainEntity {
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    protected Integer id;
 
-    private Integer key;
+    protected Integer key;
 
     @Column(columnDefinition = "TEXT")
-    private String content;
+    protected String content;
 
     @Column(nullable = false)
-    private String title;
+    protected String title;
 
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
-    private Integer numberOfAnswers = 0;
+    protected Integer numberOfAnswers = 0;
 
     @Column(name = "number_of_correct", columnDefinition = "integer default 0")
-    private Integer numberOfCorrect = 0;
+    protected Integer numberOfCorrect = 0;
 
     @Enumerated(EnumType.STRING)
-    private Status status = Status.DISABLED;
+    protected Status status = Status.DISABLED;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
-    private Image image;
+    protected Image image;
 
     @Column(name = "creation_date")
-    private LocalDateTime creationDate;
+    protected LocalDateTime creationDate;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
-    private final List<Option> options = new ArrayList<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval=true)
-    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval = true)
+    protected final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
-    private final Set<Topic> topics = new HashSet<>();
+    protected final Set<Topic> topics = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "course_id")
-    private Course course;
+    protected Course course;
 
     public Question() {
     }
@@ -74,7 +75,6 @@ public class Question implements DomainEntity {
         setStatus(Status.valueOf(questionDto.getStatus()));
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
-        setOptions(questionDto.getOptions());
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
@@ -96,7 +96,7 @@ public class Question implements DomainEntity {
         return key;
     }
 
-   public void setKey(Integer key) {
+    public void setKey(Integer key) {
         this.key = key;
     }
 
@@ -117,37 +117,6 @@ public class Question implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public List<Option> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<OptionDto> options) {
-        if (options.stream().filter(OptionDto::getCorrect).count() != 1) {
-            throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
-        }
-
-        int index = 0;
-        for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
-                optionDto.setSequence(index++);
-                new Option(optionDto).setQuestion(this);
-            } else {
-                Option option = getOptions()
-                        .stream()
-                        .filter(op -> op.getId().equals(optionDto.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
-
-                option.setContent(optionDto.getContent());
-                option.setCorrect(optionDto.getCorrect());
-            }
-        }
-    }
-
-    public void addOption(Option option) {
-        options.add(option);
     }
 
     public Image getImage() {
@@ -223,22 +192,6 @@ public class Question implements DomainEntity {
         course.addQuestion(this);
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", key=" + key +
-                ", content='" + content + '\'' +
-                ", title='" + title + '\'' +
-                ", numberOfAnswers=" + numberOfAnswers +
-                ", numberOfCorrect=" + numberOfCorrect +
-                ", status=" + status +
-                ", image=" + image +
-                ", options=" + options +
-                ", topics=" + topics +
-                '}';
-    }
-
     private void generateKeys() {
         int max = this.course.getQuestions().stream()
                 .filter(question -> question.key != null)
@@ -249,18 +202,10 @@ public class Question implements DomainEntity {
         List<Question> nullKeyQuestions = this.course.getQuestions().stream()
                 .filter(question -> question.key == null).collect(Collectors.toList());
 
-        for (Question question: nullKeyQuestions) {
+        for (Question question : nullKeyQuestions) {
             max = max + 1;
             question.key = max;
         }
-    }
-
-    public Integer getCorrectOptionId() {
-        return this.getOptions().stream()
-                .filter(Option::getCorrect)
-                .findAny()
-                .map(Option::getId)
-                .orElse(null);
     }
 
     public void addAnswerStatistics(QuestionAnswer questionAnswer) {
@@ -289,7 +234,6 @@ public class Question implements DomainEntity {
 
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
-        setOptions(questionDto.getOptions());
     }
 
     public void updateTopics(Set<Topic> newTopics) {
@@ -314,4 +258,6 @@ public class Question implements DomainEntity {
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }
+
+    public abstract void visitDependencies(Visitor visitor);
 }
