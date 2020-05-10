@@ -10,6 +10,7 @@ import org.jdom2.xpath.XPathFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
@@ -163,9 +164,9 @@ public class AnswersXmlImport {
 			questionAnswer.setTimeTaken(timeTaken);
 
 			if (optionId == null) {
-                questionAnswer.setOption(null);
+				((MultipleChoiceQuestionAnswer)questionAnswer).setOption(null);
             } else {
-    			questionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
+				((MultipleChoiceQuestionAnswer)questionAnswer).setOption(optionRepository.findById(optionId).orElse(null));
             }
 
             questionAnswerRepository.save(questionAnswer);

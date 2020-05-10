@@ -210,7 +210,7 @@ public abstract class Question implements DomainEntity {
 
     public void addAnswerStatistics(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
-        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
+        if (questionAnswer.isCorrect()) {
             numberOfCorrect++;
         }
     }

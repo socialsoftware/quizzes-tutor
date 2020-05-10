@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
@@ -250,8 +251,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                            questionAnswer.getOption().getCorrect())
+                    .filter(QuestionAnswer::isCorrect)
                     .count();
 
             return numberOfCorrectTeacherAnswers;
@@ -267,8 +267,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                    .filter(QuestionAnswer::isCorrect)
                     .count();
 
         return numberOfCorrectInClassAnswers;
@@ -284,8 +283,7 @@ public class User implements UserDetails, DomainEntity {
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(questionAnswer -> questionAnswer.getOption() != null &&
-                        questionAnswer.getOption().getCorrect())
+                    .filter(QuestionAnswer::isCorrect)
                     .count();
 
         return numberOfCorrectStudentAnswers;

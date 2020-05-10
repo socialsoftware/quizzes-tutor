@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -133,7 +134,7 @@ class GetSolvedQuizzesTest extends Specification {
         quizAnswer.setUser(user)
         quizAnswer.setQuiz(quiz)
 
-        def questionAnswer = new QuestionAnswer()
+        def questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
@@ -190,7 +191,7 @@ class GetSolvedQuizzesTest extends Specification {
         quizAnswer.setUser(user)
         quizAnswer.setQuiz(quiz)
 
-        def questionAnswer = new QuestionAnswer()
+        def questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)

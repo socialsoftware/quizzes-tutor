@@ -4,6 +4,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 
@@ -84,10 +85,10 @@ public class AnswersXmlExport {
 		quizQuestionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
 		questionAnswerElement.addContent(quizQuestionElement);
 
-		if ( questionAnswer.getOption() != null) {
+		if ( ((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
 			Element optionElement = new Element("option");
-			optionElement.setAttribute("questionKey", String.valueOf(questionAnswer.getOption().getQuestion().getKey()));
-			optionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getOption().getSequence()));
+			optionElement.setAttribute("questionKey", String.valueOf(((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getQuestion().getKey()));
+			optionElement.setAttribute(SEQUENCE, String.valueOf(((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getSequence()));
 			questionAnswerElement.addContent(optionElement);
 		}
 

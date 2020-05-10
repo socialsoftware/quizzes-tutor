@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
@@ -34,7 +35,7 @@ public class Option implements DomainEntity {
     private MultipleChoiceQuestion question;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
-    private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
+    private final Set<MultipleChoiceQuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option() {}
 
@@ -89,14 +90,14 @@ public class Option implements DomainEntity {
 
     public void setQuestion(MultipleChoiceQuestion question) {
         this.question = question;
-        ((MultipleChoiceQuestion)question).addOption(this);
+        question.addOption(this);
     }
 
-    public Set<QuestionAnswer> getQuestionAnswers() {
+    public Set<MultipleChoiceQuestionAnswer> getQuestionAnswers() {
         return questionAnswers;
     }
 
-    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+    public void addQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {
         questionAnswers.add(questionAnswer);
     }
 

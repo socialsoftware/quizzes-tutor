@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
@@ -142,15 +143,15 @@ public class AnswerService {
                     throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
                 }
 
-                if (questionAnswer.getOption() != null) {
-                    questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
+                if (((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
+                    ((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getQuestionAnswers().remove(questionAnswer);
                 }
 
-                questionAnswer.setOption(option);
+                ((MultipleChoiceQuestionAnswer)questionAnswer).setOption(option);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
                 quizAnswer.setAnswerDate(DateHandler.now());
             } else {
-                questionAnswer.setOption(null);
+                ((MultipleChoiceQuestionAnswer)questionAnswer).setOption(null);
                 questionAnswer.setTimeTaken(answer.getTimeTaken());
                 quizAnswer.setAnswerDate(DateHandler.now());
             }

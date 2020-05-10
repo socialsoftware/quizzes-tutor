@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -120,12 +121,12 @@ class FindQuestionsTest extends Specification {
         def quizAnswer = new QuizAnswer()
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
-        def questionAnswer = new QuestionAnswer()
+        def questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionOK)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer = new QuestionAnswer()
+        questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionKO)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)

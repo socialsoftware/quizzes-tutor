@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -16,8 +17,8 @@ public class QuestionAnswerDto implements Serializable {
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
         this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
 
-        if (questionAnswer.getOption() != null)
-            this.option = new OptionDto(questionAnswer.getOption());
+        if (((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null)
+            this.option = new OptionDto(((MultipleChoiceQuestionAnswer)questionAnswer).getOption());
     }
 
     public QuestionDto getQuestion() {

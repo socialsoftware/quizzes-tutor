@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
@@ -71,9 +72,11 @@ public class StatsService {
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect).count();
+                .filter(QuestionAnswer::isCorrect)
+//                .map(questionAnswer -> ((MultipleChoiceQuestionAnswer)questionAnswer).getOption())
+//                .filter(Objects::nonNull)
+//                .filter(Option::getCorrect)
+                .count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -82,9 +85,7 @@ public class StatsService {
                 .flatMap(Collection::stream)
                 .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion().getId()))),
                         ArrayList::new)).stream()
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect)
+                .filter(QuestionAnswer::isCorrect)
                 .count();
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();

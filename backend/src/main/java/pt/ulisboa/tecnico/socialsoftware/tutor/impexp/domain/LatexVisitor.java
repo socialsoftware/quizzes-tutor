@@ -49,9 +49,7 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
         question.visitDependencies(this);
-//        for (Option option: question.getOptions().stream().sorted(Comparator.comparing(Option::getSequence)).collect(Collectors.toList())) {
-//            option.accept(this);
-//        }
+
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +

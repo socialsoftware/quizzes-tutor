@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
@@ -15,8 +16,8 @@ public class StatementAnswerDto implements Serializable {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
 
-        if (questionAnswer.getOption() != null) {
-            this.optionId = questionAnswer.getOption().getId();
+        if (((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
+            this.optionId = ((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getId();
         }
     }
 

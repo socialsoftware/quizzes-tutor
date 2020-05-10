@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.user
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
@@ -60,7 +61,7 @@ class FilterQuestionsByStudentModelTest extends Specification {
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        new QuestionAnswer(quizAnswer, quizQuestionOne,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionOne,  10, option,  0)
 
         when:
         def result = user.filterQuestionsByStudentModel(5, availableQuestions)
@@ -78,10 +79,10 @@ class FilterQuestionsByStudentModelTest extends Specification {
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        new QuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionFive,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionSix,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionFive,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionSix,  10, option,  0)
 
         when:
         def result = user.filterQuestionsByStudentModel(5, availableQuestions)
@@ -100,11 +101,11 @@ class FilterQuestionsByStudentModelTest extends Specification {
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        new QuestionAnswer(quizAnswer, quizQuestionTwo,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionFive,  10, option,  0)
-        new QuestionAnswer(quizAnswer, quizQuestionSix,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionTwo,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionThree,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionFour,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionFive,  10, option,  0)
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestionSix,  10, option,  0)
 
         when:
         def result = user.filterQuestionsByStudentModel(5, availableQuestions)

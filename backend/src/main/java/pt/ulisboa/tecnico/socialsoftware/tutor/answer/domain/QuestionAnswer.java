@@ -12,7 +12,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 
 @Entity
 @Table(name = "question_answers")
-public class QuestionAnswer implements DomainEntity {
+@DiscriminatorColumn(name = "question_answer_type",
+        columnDefinition = "varchar(50) not null default 'MultipleChoice'",
+        discriminatorType = DiscriminatorType.STRING)
+public abstract class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,20 +31,15 @@ public class QuestionAnswer implements DomainEntity {
     @JoinColumn(name = "quiz_answer_id")
     private QuizAnswer quizAnswer;
 
-    @ManyToOne
-    @JoinColumn(name = "option_id")
-    private Option option;
-
     private Integer sequence;
 
     public QuestionAnswer() {
     }
 
-    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, Option option, int sequence) {
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, int sequence) {
         setTimeTaken(timeTaken);
         setQuizAnswer(quizAnswer);
         setQuizQuestion(quizQuestion);
-        setOption(option);
         setSequence(sequence);
     }
 
@@ -86,17 +84,6 @@ public class QuestionAnswer implements DomainEntity {
         quizAnswer.addQuestionAnswer(this);
     }
 
-    public Option getOption() {
-        return option;
-    }
-
-    public void setOption(Option option) {
-        this.option = option;
-
-        if (option != null)
-            option.addQuestionAnswer(this);
-    }
-
     public Integer getSequence() {
         return sequence;
     }
@@ -117,9 +104,9 @@ public class QuestionAnswer implements DomainEntity {
                 '}';
     }
 
-    public boolean isCorrect() {
-        return getOption() != null && getOption().getCorrect();
-    }
+    public abstract boolean isCorrect();
+
+    protected abstract void removeChild();
 
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
@@ -128,9 +115,6 @@ public class QuestionAnswer implements DomainEntity {
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
 
-        if (option != null) {
-            option.getQuestionAnswers().remove(this);
-            option = null;
-        }
+        removeChild();
     }
 }

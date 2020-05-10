@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -178,11 +179,11 @@ class UpdateQuestionTest extends Specification {
         quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
         question.addQuizQuestion(quizQuestion)
-        def questionAnswer = new QuestionAnswer()
+        def questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionOK)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
-        questionAnswer = new QuestionAnswer()
+        questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionKO)
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)

@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -132,7 +133,7 @@ class ImportExportAnswersTest extends Specification {
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
 
-        questionAnswer = new QuestionAnswer()
+        questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setTimeTaken(TIME_TAKEN)
         questionAnswer.setOption(option)
