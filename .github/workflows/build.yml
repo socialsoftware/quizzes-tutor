@@ -57,9 +57,11 @@ jobs:
     
     - name: Install root dependencies
       uses: bahmutov/npm-install@v1
+      with:
+          working-directory: frontend
 
     - name: Run frontend server
-      run: npm start &
+      run: cd frontend && npm start &
       
     - name: Cypress run
       uses: cypress-io/github-action@v1
