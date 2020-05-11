@@ -55,16 +55,17 @@ jobs:
       working-directory: ./backend
       run: mvn clean -Ptest spring-boot:run &
     
-    - name: Install root dependencies
-      uses: bahmutov/npm-install@v1
-      with:
-          working-directory: frontend
+#     - name: Install root dependencies
+#       uses: bahmutov/npm-install@v1
+#       with:
+#           working-directory: frontend
 
-    - name: Run frontend server
-      run: cd frontend && npm start &
+#     - name: Run frontend server
+#       run: cd frontend && npm start &
       
     - name: Cypress run
       uses: cypress-io/github-action@v1
       with:
         working-directory: frontend
-        wait-on: http://localhost:8080
+        start: npm start
+#         wait-on: http://localhost:8081
