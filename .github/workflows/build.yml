@@ -51,12 +51,18 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
-    - run: cd backend
-    - run: mvn clean -Ptest spring-boot:run &
+    - name: Run backend server
+      working-directory: ./backend
+      run: mvn clean -Ptest spring-boot:run &
+    
+    - name: Install root dependencies
+      uses: bahmutov/npm-install@v1
 
-    - run: cd ../frontend
+    - name: Run frontend server
+      run: npm start &
+      
     - name: Cypress run
       uses: cypress-io/github-action@v1
       with:
-        start: npm start
+        working-directory: frontend/tests/e2e
         wait-on: http://localhost:8080
