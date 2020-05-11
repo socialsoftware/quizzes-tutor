@@ -66,5 +66,5 @@ jobs:
     - name: Cypress run
       uses: cypress-io/github-action@v1
       with:
-        working-directory: frontend/tests/e2e
+        working-directory: frontend
         wait-on: http://localhost:8080
