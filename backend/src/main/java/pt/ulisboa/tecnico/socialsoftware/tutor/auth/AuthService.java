@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -23,9 +22,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 
 @Service
 public class AuthService {
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
     @Autowired
     private UserService userService;
 
@@ -111,32 +107,13 @@ public class AuthService {
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
-    private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {
-        return courses.stream()
-                .map(courseDto ->  {
-                    Course course = courseRepository.findByNameType(courseDto.getName(), Course.Type.TECNICO.name()).orElse(null);
-                    if (course == null) {
-                        return null;
-                    }
-                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO)
-                                .orElse(null);
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
-    }
-
     @Retryable(
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthDto demoStudentAuth() {
-        User user;
-//        if (activeProfile.equals("dev")) {
-//            user = this.userService.createDemoStudent();
-//        } else {
-            user = this.userService.getDemoStudent();
-//        }
+        User user = this.userService.getDemoStudent();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
@@ -161,5 +138,19 @@ public class AuthService {
         User user = this.userService.getDemoAdmin();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
+
+    private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {
+        return courses.stream()
+                .map(courseDto ->  {
+                    Course course = courseRepository.findByNameType(courseDto.getName(), Course.Type.TECNICO.name()).orElse(null);
+                    if (course == null) {
+                        return null;
+                    }
+                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO)
+                            .orElse(null);
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
     }
 }

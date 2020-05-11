@@ -12,11 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.CSVQuizExportVisitor;
@@ -71,6 +67,9 @@ public class QuizService {
     @Autowired
     private QuestionService questionService;
 
+    @Autowired
+    private CourseService courseService;
+
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseDto findQuizCourseExecution(int quizId) {
         return this.quizRepository.findById(quizId)
@@ -98,7 +97,7 @@ public class QuizService {
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
-        return quizRepository.findQuizzes(executionId).stream()
+        return quizRepository.findQuizzesOfExecution(executionId).stream()
                 .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .sorted(comparator)
                 .map(quiz -> new QuizDto(quiz, false))
@@ -327,7 +326,7 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void resetDemoQuizzes() {
-        quizRepository.findQuizzes(Demo.COURSE_EXECUTION_ID).stream().filter(quiz -> quiz.getId() > 5360).forEach(quiz -> {
+        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(quiz -> quiz.getId() > 5360).forEach(quiz -> {
             for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
                 answerService.deleteQuizAnswer(quizAnswer);
             }
@@ -341,7 +340,7 @@ public class QuizService {
         });
 
         // remove questions that weren't in any quiz
-        for (Question question: questionRepository.findQuestions(Demo.COURSE_ID).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
+        for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId()).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
             questionService.deleteQuestion(question);
         }
     }

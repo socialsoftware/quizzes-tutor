@@ -162,7 +162,7 @@ public class StatementService {
                 .collect(Collectors.toSet());
 
         // create QuizAnswer for quizzes
-        quizRepository.findQuizzes(executionId).stream()
+        quizRepository.findQuizzesOfExecution(executionId).stream()
                 .filter(quiz -> !quiz.isQrCodeOnly())
                 .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
                 .filter(quiz -> quiz.getAvailableDate() == null || quiz.getAvailableDate().isBefore(now))

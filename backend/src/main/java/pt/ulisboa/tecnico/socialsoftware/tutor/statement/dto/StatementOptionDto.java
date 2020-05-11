@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+
 import java.io.Serializable;
 
 public class StatementOptionDto implements Serializable {

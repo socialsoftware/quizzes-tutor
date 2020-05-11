@@ -180,7 +180,7 @@ public class AnswerService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAnswers(String answersXml) {
-        xmlImporter.importAnswers(answersXml, this, questionRepository, quizRepository, quizAnswerRepository, userRepository);
+        xmlImporter.importAnswers(answersXml);
     }
 
     @Retryable(

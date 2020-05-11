@@ -3,15 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
@@ -212,27 +208,7 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 0
      }
 
+
     @TestConfiguration
-    static class QuizServiceImplTestContextConfiguration {
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-        @Bean
-        AnswerService answerService() {
-            return new AnswerService()
-        }
-        @Bean
-        AnswersXmlImport answersXmlImport() {
-            return new AnswersXmlImport()
-        }
-        @Bean
-        QuizService quizService() {
-            return new QuizService()
-        }
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }

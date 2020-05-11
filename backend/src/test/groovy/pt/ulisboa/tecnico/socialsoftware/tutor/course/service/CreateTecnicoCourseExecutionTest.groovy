@@ -3,20 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Specification
 
 @DataJpaTest
 class CreateTecnicoCourseExecutionTest extends Specification {
     public static final String COURSE_ONE = "CourseOne"
-    public static final String ACRONYM_ONE = "C12"
+    public static final String ACRONYM_ONE = "C13"
     public static final String ACADEMIC_TERM_ONE = "1º Semestre"
 
     @Autowired
@@ -153,12 +148,7 @@ class CreateTecnicoCourseExecutionTest extends Specification {
         thrown(TutorException)
     }
 
-    @TestConfiguration
-    static class CourseServiceImplTestContextConfiguration {
 
-        @Bean
-        CourseService courseService() {
-            return new CourseService()
-        }
-    }
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }

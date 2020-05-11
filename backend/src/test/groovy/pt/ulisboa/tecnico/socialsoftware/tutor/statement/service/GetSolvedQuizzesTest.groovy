@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
@@ -23,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -211,27 +213,7 @@ class GetSolvedQuizzesTest extends Specification {
         Quiz.QuizType.IN_CLASS  | TOMORROW       | null
     }
 
+
     @TestConfiguration
-    static class QuizServiceImplTestContextConfiguration {
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-        @Bean
-        AnswerService answerService() {
-            return new AnswerService()
-        }
-        @Bean
-        AnswersXmlImport answersXmlImport() {
-            return new AnswersXmlImport()
-        }
-        @Bean
-        QuizService quizService() {
-            return new QuizService()
-        }
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }

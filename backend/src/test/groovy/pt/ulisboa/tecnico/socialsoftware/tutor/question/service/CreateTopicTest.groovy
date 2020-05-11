@@ -3,12 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
@@ -71,15 +70,7 @@ class CreateTopicTest extends Specification {
     }
 
     @TestConfiguration
-    static class QuestionServiceImplTestContextConfiguration {
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        TopicService topicService() {
-            return new TopicService()
-        }
     }
 }

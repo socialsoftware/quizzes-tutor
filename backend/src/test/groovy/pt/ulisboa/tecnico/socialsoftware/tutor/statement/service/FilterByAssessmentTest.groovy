@@ -3,17 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import spock.lang.Specification
@@ -171,30 +167,5 @@ class FilterByAssessmentTest extends Specification {
     }
 
     @TestConfiguration
-    static class StatementServiceImplTestContextConfiguration {
-
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-
-        @Bean
-        QuizService quizService() {
-            return new QuizService()
-        }
-
-        @Bean
-        AnswerService answerService() {
-            return new AnswerService()
-        }
-        @Bean
-        AnswersXmlImport answersXmlImport() {
-            return new AnswersXmlImport()
-        }
-
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }

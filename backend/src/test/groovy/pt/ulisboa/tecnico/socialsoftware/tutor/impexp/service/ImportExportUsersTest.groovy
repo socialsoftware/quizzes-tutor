@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -72,14 +72,14 @@ class ImportExportUsersTest extends Specification {
         courseExecution.getUsers().size() == 2
 
         userRepository.findAll().size() == 2
-        def userOne = userRepository.findByUsername(AR)
+        def userOne = userRepository.findByUsername(AR).orElse(null)
         userOne != null
         userOne.getKey() == 1
         userOne.getName() == RITO
         userOne.getRole().name() == TEACHER
         userOne.getCourseExecutions().size() == 1
 
-        def userTwo = userRepository.findByUsername(PC)
+        def userTwo = userRepository.findByUsername(PC).orElse(null)
         userTwo != null
         userTwo.getKey() == 2
         userTwo.getName() == PEDRO
@@ -88,11 +88,7 @@ class ImportExportUsersTest extends Specification {
     }
 
     @TestConfiguration
-    static class UserServiceImplTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        UserService userService() {
-            return new UserService()
-        }
     }
 }
