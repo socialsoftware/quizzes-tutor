@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
@@ -153,11 +153,7 @@ class UpdateAssessmentTest extends Specification {
     }
 
     @TestConfiguration
-    static class AssessmentServiceImplTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        AssessmentService assessmentService() {
-            return new AssessmentService()
-        }
     }
 }

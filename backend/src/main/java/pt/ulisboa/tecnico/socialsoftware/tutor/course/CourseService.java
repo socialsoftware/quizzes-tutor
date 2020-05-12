@@ -32,6 +32,16 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseDto getCourseExecutionById(int courseExecutionId) {
+        return courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseDto> getCourseExecutions(User.Role role) {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
@@ -51,25 +61,13 @@ public class CourseService {
         courseDto.setCourseExecutionType(Course.Type.TECNICO);
         courseDto.setCourseType(Course.Type.TECNICO);
 
-        Course course = getCourse(courseDto);
+        Course course = getCourse(courseDto.getName(), Course.Type.TECNICO);
 
-        CourseExecution courseExecution = course.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType()).orElse(null);
-
-        if (courseExecution == null) {
-            courseExecution = createCourseExecution(course, courseDto);
-        }
+        CourseExecution courseExecution = course.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType())
+                .orElseGet(() -> createCourseExecution(course, courseDto));
 
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deactivateCourseExecution(int executionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
-        courseExecution.setStatus(CourseExecution.Status.INACTIVE);
     }
 
     @Retryable(
@@ -79,28 +77,12 @@ public class CourseService {
     public CourseDto createExternalCourseExecution(CourseDto courseDto) {
         courseDto.setCourseExecutionType(Course.Type.EXTERNAL);
 
-        Course course = getCourse(courseDto);
+        Course course = getCourse(courseDto.getName(), courseDto.getCourseType());
 
         CourseExecution courseExecution = createCourseExecution(course, courseDto);
 
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StudentDto> courseStudents(int executionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);
-        if (courseExecution == null) {
-            return new ArrayList<>();
-        }
-        return courseExecution.getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.STUDENT))
-                .sorted(Comparator.comparing(User::getKey))
-                .map(StudentDto::new)
-                .collect(Collectors.toList());
     }
 
     @Retryable(
@@ -120,28 +102,55 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public CourseDto getCourseExecutionById(int courseExecutionId) {
-        return courseExecutionRepository.findById(courseExecutionId)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-
+    public void deactivateCourseExecution(int executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+        courseExecution.setStatus(CourseExecution.Status.INACTIVE);
     }
 
-    private Course getCourse(CourseDto courseDto) {
-        if (courseDto.getCourseType() == null)
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<StudentDto> getCourseStudents(int executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);
+        if (courseExecution == null) {
+            return new ArrayList<>();
+        }
+        return courseExecution.getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .sorted(Comparator.comparing(User::getKey))
+                .map(StudentDto::new)
+                .collect(Collectors.toList());
+    }
+
+    private Course getCourse(String name, Course.Type type) {
+        if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE);
 
-        return courseRepository.findByNameType(courseDto.getName(), courseDto.getCourseType().name())
-                .orElseGet(() -> {
-                    Course course = new Course(courseDto.getName(), courseDto.getCourseType());
-                    courseRepository.save(course);
-                    return course;
-                });
+        return courseRepository.findByNameType(name, type.toString())
+                .orElseGet(() -> courseRepository.save(new Course(name, type)));
     }
 
     private CourseExecution createCourseExecution(Course existingCourse, CourseDto courseDto) {
         CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
         courseExecutionRepository.save(courseExecution);
         return courseExecution;
+    }
+
+    public CourseDto getDemoCourse() {
+        Course course =  this.courseRepository.findByNameType(Demo.COURSE_NAME, Course.Type.TECNICO.toString()).orElse(null);
+        if (course == null) {
+            return createTecnicoCourseExecution(new CourseDto(Demo.COURSE_NAME, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM));
+        }
+        return new CourseDto(course);
+    }
+
+    public CourseExecution getDemoCourseExecution() {
+        return this.courseExecutionRepository.findByFields(Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElseGet(() -> {
+            Course course = getCourse(Demo.COURSE_NAME, Course.Type.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO);
+            courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+            return courseExecutionRepository.save(courseExecution);
+        });
     }
 }

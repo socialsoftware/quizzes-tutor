@@ -81,8 +81,8 @@ import Store from '@/store';
 
 @Component
 export default class HomeView extends Vue {
-  appName: string = process.env.VUE_APP_NAME;
-  fenixUrl: string = process.env.VUE_APP_FENIX_URL;
+  appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
+  fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
 
   get isLoggedIn() {
     return Store.state.token;

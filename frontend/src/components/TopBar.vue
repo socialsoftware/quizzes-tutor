@@ -347,8 +347,8 @@ import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class TopBar extends Vue {
-  fenixUrl: string = process.env.VUE_APP_FENIX_URL;
-  appName: string = process.env.VUE_APP_NAME;
+  appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
+  fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
   drawer: boolean = false;
 
   get currentCourse() {

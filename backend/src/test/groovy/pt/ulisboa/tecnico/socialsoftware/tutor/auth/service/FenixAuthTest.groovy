@@ -3,14 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Specification
 
 import java.util.stream.Collectors
@@ -63,7 +62,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME) != null
+        userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == 0
         courseExecutionRepository.findAll().size() == 0
@@ -88,7 +87,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        def user = userRepository.findByUsername(USERNAME)
+        def user = userRepository.findByUsername(USERNAME).orElse(null)
         user != null
         and: 'is teaching'
         user.getCourseExecutions().size() == 1
@@ -136,7 +135,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME) != null
+        userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == 0
         courseExecutionRepository.findAll().size() == 0
@@ -164,7 +163,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME) != null
+        userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == 0
         courseExecutionRepository.findAll().size() == 0
@@ -196,7 +195,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        def user2 = userRepository.findByUsername(USERNAME)
+        def user2 = userRepository.findByUsername(USERNAME).orElse(null)
         user2 != null
         and: 'is teaching'
         user2.getCourseExecutions().size() == 1
@@ -260,7 +259,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        User user = userRepository.findByUsername(USERNAME)
+        User user = userRepository.findByUsername(USERNAME).orElse(null)
         user.getRole() == User.Role.STUDENT
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
@@ -343,7 +342,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME).getRole() == User.Role.STUDENT
+        userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.STUDENT
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == ACRONYM
@@ -374,7 +373,7 @@ class FenixAuthTest extends Specification {
         thrown(TutorException)
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME).getRole() == User.Role.STUDENT
+        userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.STUDENT
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -405,7 +404,7 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME).getRole() == User.Role.TEACHER
+        userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -436,23 +435,12 @@ class FenixAuthTest extends Specification {
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
         userRepository.findAll().size() == 1
-        userRepository.findByUsername(USERNAME).getRole() == User.Role.TEACHER
+        userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == ACRONYM
     }
 
     @TestConfiguration
-    static class AuthServiceImplTestContextConfiguration {
-
-        @Bean
-        AuthService authService() {
-            return new AuthService()
-        }
-
-        @Bean
-        UserService userService() {
-            return new UserService()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }

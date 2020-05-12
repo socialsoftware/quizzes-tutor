@@ -5,6 +5,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -216,11 +217,7 @@ class UpdateQuestionTest extends Specification {
     }
 
     @TestConfiguration
-    static class QuestionServiceImplTestContextConfiguration {
+    static class LocalBeanConfiguration extends BeanConfiguration {
 
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
     }
 }

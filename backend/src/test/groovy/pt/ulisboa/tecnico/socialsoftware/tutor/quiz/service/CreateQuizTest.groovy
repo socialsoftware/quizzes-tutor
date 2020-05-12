@@ -3,8 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
@@ -183,26 +182,5 @@ class CreateQuizTest extends Specification {
     }
 
     @TestConfiguration
-    static class QuizServiceImplTestContextConfiguration {
-
-        @Bean
-        QuizService quizService() {
-            return new QuizService()
-        }
-
-        @Bean
-        AnswerService answerService() {
-            return new AnswerService()
-        }
-
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
-
-        @Bean
-        AnswersXmlImport xmlImporter() {
-            return new AnswersXmlImport()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration{}
 }
