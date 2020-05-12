@@ -11,10 +11,11 @@ import javax.persistence.*;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "question_answers")
 @DiscriminatorColumn(name = "question_answer_type",
-        columnDefinition = "varchar(50) not null default 'MultipleChoice'",
-        discriminatorType = DiscriminatorType.STRING)
+        columnDefinition = "smallint not null default 0",
+        discriminatorType = DiscriminatorType.INTEGER)
 public abstract class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

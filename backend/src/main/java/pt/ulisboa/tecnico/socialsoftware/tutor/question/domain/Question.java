@@ -21,9 +21,13 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_type",
-        columnDefinition = "varchar(50) not null default 'MultipleChoice'",
-        discriminatorType = DiscriminatorType.STRING)
+        columnDefinition = "smallint not null default 0",
+        discriminatorType = DiscriminatorType.INTEGER)
 public abstract class Question implements DomainEntity {
+    public static class QuestionTypes{
+        public static final String MultipleChoice = "0";
+    }
+
     public enum Status {
         DISABLED, REMOVED, AVAILABLE
     }
