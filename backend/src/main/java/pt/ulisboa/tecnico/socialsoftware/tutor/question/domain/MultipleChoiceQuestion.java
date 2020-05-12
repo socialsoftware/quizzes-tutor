@@ -18,13 +18,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OP
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MultipleChoice)
 public class MultipleChoiceQuestion extends Question {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.LAZY, orphanRemoval=true)
     private final List<Option> options = new ArrayList<>();
-
-
-    public List<Option> getOptions() {
-        return options;
-    }
 
     public MultipleChoiceQuestion(){
 
@@ -33,6 +28,10 @@ public class MultipleChoiceQuestion extends Question {
     public MultipleChoiceQuestion(Course course, QuestionDto questionDto) {
         super(course, questionDto);
         setOptions(questionDto.getOptions());
+    }
+
+    public List<Option> getOptions() {
+        return options;
     }
 
     public void setOptions(List<OptionDto> options) {

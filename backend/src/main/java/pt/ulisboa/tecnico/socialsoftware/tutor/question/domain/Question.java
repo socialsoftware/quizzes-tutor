@@ -26,6 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public abstract class Question implements DomainEntity {
     public static class QuestionTypes{
         public static final String MultipleChoice = "0";
+        public static final String CodeFillIn = "1";
     }
 
     public enum Status {
