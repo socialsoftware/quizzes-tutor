@@ -1,38 +1,26 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Specification
 
 import java.util.stream.Collectors
 
 @DataJpaTest
-class FenixAuthTest extends Specification {
+class FenixAuthTest extends SpockTest {
     public static final String USERNAME = "ist12628"
     public static final String PERSON_NAME = "NAME"
     public static final String COURSE_NAME = "Arquitecturas de Software"
     public static final String ACRONYM = "ASof7"
     public static final String ACADEMIC_TERM = "1º Semestre 2019/2020"
-
-    @Autowired
-    private AuthService authService
-
-    @Autowired
-    private UserRepository userRepository
-
-    @Autowired
-    private CourseRepository courseRepository
-
-    @Autowired
-    private CourseExecutionRepository courseExecutionRepository
 
     def client
     def courses
@@ -442,5 +430,5 @@ class FenixAuthTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

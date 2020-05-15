@@ -112,6 +112,30 @@ export default class CoursesView extends Vue {
       width: '10%'
     },
     {
+      text: 'Number of Teachers',
+      value: 'numberOfTeachers',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Number of Students',
+      value: 'numberOfStudents',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Number of Questions',
+      value: 'numberOfQuestions',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Number of Quizzes',
+      value: 'numberOfQuizzes',
+      align: 'center',
+      width: '10%'
+    },
+    {
       text: 'Status',
       value: 'status',
       align: 'center',

@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain
 
+import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import spock.lang.Specification
 
-class CreateCourseExecutionsTest extends Specification {
+class CreateCourseExecutionsTest extends SpockTest {
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
 
@@ -39,4 +41,7 @@ class CreateCourseExecutionsTest extends Specification {
         and: "it is not added to course"
         0 * course.addCourseExecution(_)
     }
+
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

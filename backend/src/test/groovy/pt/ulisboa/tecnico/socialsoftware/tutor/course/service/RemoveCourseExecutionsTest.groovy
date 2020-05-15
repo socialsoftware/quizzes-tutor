@@ -1,39 +1,23 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class RemoveCourseExecutionsTest extends Specification {
+class RemoveCourseExecutionsTest extends SpockTest {
     static final String COURSE_ONE = "CourseOne"
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
     static final String ACRONYM_TWO = "C22"
     static final String ACADEMIC_TERM_TWO = "2º Semestre"
-
-    @Autowired
-    CourseService courseService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    AssessmentRepository assessmentRepository
 
     def courseExecutionTecnico
     def courseExecutionExternal
@@ -92,7 +76,6 @@ class RemoveCourseExecutionsTest extends Specification {
         courseExecutionRepository.findAll().size() == 2
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

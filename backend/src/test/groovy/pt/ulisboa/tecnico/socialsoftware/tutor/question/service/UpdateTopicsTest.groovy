@@ -1,38 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class UpdateTopicsTest extends Specification {
+class UpdateTopicsTest extends SpockTest {
     public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String TOPIC_ONE = 'nameOne'
     public static final String TOPIC_TWO = 'nameTwo'
     public static final String TOPIC_THREE = 'nameThree'
-
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    TopicRepository topicRepository
 
     def course
     def question
@@ -140,7 +123,5 @@ class UpdateTopicsTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

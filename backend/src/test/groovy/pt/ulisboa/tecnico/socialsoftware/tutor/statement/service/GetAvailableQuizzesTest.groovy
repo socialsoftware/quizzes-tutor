@@ -1,26 +1,24 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 @DataJpaTest
-class GetAvailableQuizzesTest extends Specification {
+class GetAvailableQuizzesTest extends SpockTest {
     static final USERNAME = 'username'
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
@@ -30,24 +28,6 @@ class GetAvailableQuizzesTest extends Specification {
     public static final LocalDateTime YESTERDAY = DateHandler.now().minusDays(1)
     public static final LocalDateTime TOMORROW = DateHandler.now().plusDays(1)
     public static final LocalDateTime LATER = DateHandler.now().plusDays(2)
-
-    @Autowired
-    StatementService statementService
-
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuizAnswerRepository quizAnswerRepository
 
     def user
     def courseDto
@@ -208,7 +188,6 @@ class GetAvailableQuizzesTest extends Specification {
         statementQuizDtos.size() == 0
      }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

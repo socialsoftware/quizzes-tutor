@@ -16,7 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution implements DomainEntity {
-     public enum Status {ACTIVE, INACTIVE, HISTORIC}
+    public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -163,4 +163,21 @@ public class CourseExecution implements DomainEntity {
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
     }
+
+    public int getNumberOfTeachers() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER)).count();
+    }
+
+    public int getNumberOfStudents() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT)).count();
+    }
+
+    public int getNumberOfQuizzes() {
+        return this.quizzes.size();
+    }
+
+    public int getNumberOfQuestions() {
+        return this.course.getQuestions().size();
+    }
+
 }

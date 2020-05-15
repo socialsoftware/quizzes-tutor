@@ -1,30 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class AddQuestionToQuizTest extends Specification {
-    @Autowired
-    QuizService quizService
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    QuizQuestionRepository quizQuestionRepository
+class AddQuestionToQuizTest extends SpockTest {
 
     def setup() {
         def quiz = new Quiz()
@@ -58,7 +43,5 @@ class AddQuestionToQuizTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }
