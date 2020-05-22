@@ -417,6 +417,28 @@ export default class RemoteServices {
     }
   }
 
+  static async removeNonAnsweredQuizAnswers(quizId: number): Promise<Quiz> {
+    return httpClient
+      .post(`/quizzes/${quizId}/unpopulate`)
+      .then(response => {
+        return new Quiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async populateWithQuizAnswers(quizId: number): Promise<Quiz> {
+    return httpClient
+      .post(`/quizzes/${quizId}/populate`)
+      .then(response => {
+        return new Quiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getCourseStudents(course: Course) {
     return httpClient
       .get(`/executions/${course.courseExecutionId}/students`)

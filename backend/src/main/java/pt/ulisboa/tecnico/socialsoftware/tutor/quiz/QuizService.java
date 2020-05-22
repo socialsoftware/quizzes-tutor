@@ -30,6 +30,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -343,5 +344,38 @@ public class QuizService {
         for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId()).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
             questionService.deleteQuestion(question);
         }
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuizDto populateWithQuizAnswers(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        for (User student : quiz.getCourseExecution().getStudents()) {
+            if (student.getQuizAnswer(quiz) == null) {
+                answerService.createQuizAnswer(student.getId(), quizId);
+            }
+        }
+
+        return new QuizDto(quiz, false);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuizDto removeNonFilledQuizAnswers(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        for (User student : quiz.getCourseExecution().getStudents()) {
+            QuizAnswer quizAnswer = student.getQuizAnswer(quiz);
+            if (quizAnswer != null && quizAnswer.getCreationDate() == null) {
+                answerService.deleteQuizAnswer(quizAnswer);
+            }
+        }
+
+        return new QuizDto(quiz, false);
     }
 }

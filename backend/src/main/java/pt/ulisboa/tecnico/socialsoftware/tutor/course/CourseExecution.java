@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -180,4 +181,9 @@ public class CourseExecution implements DomainEntity {
         return this.course.getQuestions().size();
     }
 
+    public Set<User> getStudents() {
+        return getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .collect(Collectors.toSet());
+    }
 }
