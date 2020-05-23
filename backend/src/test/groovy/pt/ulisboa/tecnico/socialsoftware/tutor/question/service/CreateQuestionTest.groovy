@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
@@ -51,7 +52,7 @@ class CreateQuestionTest extends Specification {
 
     def "create a question with no image and one option"() {
         given: "a questionDto"
-        def questionDto = new QuestionDto()
+        def questionDto = new MultipleChoiceQuestionDto()
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
@@ -87,7 +88,7 @@ class CreateQuestionTest extends Specification {
 
     def "create a question with image and two options"() {
         given: "a questionDto"
-        def questionDto = new QuestionDto()
+        def questionDto = new MultipleChoiceQuestionDto()
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
@@ -129,7 +130,7 @@ class CreateQuestionTest extends Specification {
 
     def "create two questions"() {
         given: "a questionDto"
-        def questionDto = new QuestionDto()
+        def questionDto = new MultipleChoiceQuestionDto()
         questionDto.setTitle(QUESTION_TITLE)
         questionDto.setContent(QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())

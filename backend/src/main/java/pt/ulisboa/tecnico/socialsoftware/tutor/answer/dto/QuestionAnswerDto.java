@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDtoFactory;
 
 import java.io.Serializable;
 
@@ -14,7 +15,7 @@ public abstract class QuestionAnswerDto implements Serializable {
     public QuestionAnswerDto() {}
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
-        this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
+        this.question = QuestionDtoFactory.getQuestionDto(questionAnswer.getQuizQuestion().getQuestion());
     }
 
     public QuestionDto getQuestion() {

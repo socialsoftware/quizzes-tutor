@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
@@ -59,7 +60,7 @@ public class QuestionController {
 
     @PostMapping("/courses/{courseId}/questions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
+    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(courseId, question);
     }
@@ -72,7 +73,7 @@ public class QuestionController {
 
     @PutMapping("/questions/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
+    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
         return this.questionService.updateQuestion(questionId, question);
     }
 

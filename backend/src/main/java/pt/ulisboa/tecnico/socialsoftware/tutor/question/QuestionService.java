@@ -19,7 +19,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
@@ -69,7 +71,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionById(Integer questionId) {
-        return questionRepository.findById(questionId).map(QuestionDto::new)
+        return questionRepository.findById(questionId).map(QuestionDtoFactory::getQuestionDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
@@ -86,7 +88,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionDto findQuestionByKey(Integer key) {
-        return questionRepository.findByKey(key).map(QuestionDto::new)
+        return questionRepository.findByKey(key).map(QuestionDtoFactory::getQuestionDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
 
@@ -95,7 +97,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().map(QuestionDtoFactory::getQuestionDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -103,18 +105,19 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
-        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDtoFactory::getQuestionDto).collect(Collectors.toList());
     }
 
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        Question question = new MultipleChoiceQuestion(course, questionDto);
+    public QuestionDto createQuestion(int courseId, MultipleChoiceQuestionDto questionDto) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        MultipleChoiceQuestion question = new MultipleChoiceQuestion(course, questionDto);
         questionRepository.save(question);
-        return new QuestionDto(question);
+        return new MultipleChoiceQuestionDto(question);
     }
 
 
@@ -122,10 +125,13 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
-        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    public QuestionDto updateQuestion(Integer questionId, MultipleChoiceQuestionDto questionDto) {
+        // todo Should we use a specific query to find the MultipleChoiceQuestion directly from the db?
+        MultipleChoiceQuestion question = (MultipleChoiceQuestion) questionRepository
+                .findById(questionId)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
-        return new QuestionDto(question);
+        return new MultipleChoiceQuestionDto(question);
     }
 
 

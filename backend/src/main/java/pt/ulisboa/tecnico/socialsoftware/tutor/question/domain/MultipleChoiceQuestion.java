@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
@@ -18,21 +17,21 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OP
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MultipleChoice)
 public class MultipleChoiceQuestion extends Question {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
 
-    public List<Option> getOptions() {
-        return options;
-    }
-
-    public MultipleChoiceQuestion(){
+    public MultipleChoiceQuestion() {
 
     }
 
-    public MultipleChoiceQuestion(Course course, QuestionDto questionDto) {
+    public MultipleChoiceQuestion(Course course, MultipleChoiceQuestionDto questionDto) {
         super(course, questionDto);
         setOptions(questionDto.getOptions());
+    }
+
+    public List<Option> getOptions() {
+        return options;
     }
 
     public void setOptions(List<OptionDto> options) {
@@ -70,7 +69,7 @@ public class MultipleChoiceQuestion extends Question {
                 .orElse(null);
     }
 
-    public void update(QuestionDto questionDto) {
+    public void update(MultipleChoiceQuestionDto questionDto) {
         super.update(questionDto);
         setOptions(questionDto.getOptions());
     }
@@ -82,7 +81,7 @@ public class MultipleChoiceQuestion extends Question {
 
     @Override
     public void visitOptions(Visitor visitor) {
-        for (Option option: this.getOptions()) {
+        for (Option option : this.getOptions()) {
             option.accept(visitor);
         }
     }
@@ -102,7 +101,6 @@ public class MultipleChoiceQuestion extends Question {
                 ", topics=" + getTopics() +
                 '}';
     }
-
 
 
 }

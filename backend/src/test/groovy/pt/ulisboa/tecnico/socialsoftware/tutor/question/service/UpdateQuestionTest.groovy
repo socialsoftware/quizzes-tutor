@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
@@ -94,7 +95,7 @@ class UpdateQuestionTest extends Specification {
 
     def "update a question"() {
         given: "a changed question"
-        def questionDto = new QuestionDto(question)
+        def questionDto = new MultipleChoiceQuestionDto(question)
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
         and: '2 changed options'
@@ -135,7 +136,7 @@ class UpdateQuestionTest extends Specification {
 
     def "update question with missing data"() {
         given: 'a question'
-        def questionDto = new QuestionDto(question)
+        def questionDto = new MultipleChoiceQuestionDto(question)
         questionDto.setTitle('     ')
 
         when:
@@ -148,7 +149,7 @@ class UpdateQuestionTest extends Specification {
 
     def "update question with two options true"() {
         given: 'a question'
-        def questionDto = new QuestionDto(question)
+        def questionDto = new MultipleChoiceQuestionDto(question)
 
         def optionDto = new OptionDto(optionOK)
         optionDto.setContent(NEW_OPTION_CONTENT)
@@ -189,7 +190,7 @@ class UpdateQuestionTest extends Specification {
         questionAnswerRepository.save(questionAnswer)
         quizQuestion.addQuestionAnswer(questionAnswer)
         and: "createQuestion a question dto"
-        def questionDto = new QuestionDto(question)
+        def questionDto = new MultipleChoiceQuestionDto(question)
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.DISABLED.name())
