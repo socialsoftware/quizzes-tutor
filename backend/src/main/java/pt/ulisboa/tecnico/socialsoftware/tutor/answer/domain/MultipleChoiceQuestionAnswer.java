@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -44,6 +45,11 @@ public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
     @Override
     public boolean isCorrect() {
         return getOption() != null && getOption().getCorrect();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuestionAnswer(this);
     }
 
     @Override

@@ -73,8 +73,8 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
-        line[column++] = ((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null ? convertSequenceToLetter(((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getSequence()) : "X";
+    public void visitQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {
+        line[column++] = questionAnswer.getOption() != null ? convertSequenceToLetter(questionAnswer.getOption().getSequence()) : "X";
     }
 
     @Override
