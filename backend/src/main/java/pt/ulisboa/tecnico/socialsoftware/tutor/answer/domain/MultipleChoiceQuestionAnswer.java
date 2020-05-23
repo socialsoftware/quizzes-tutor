@@ -47,7 +47,8 @@ public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
     }
 
     @Override
-    protected void removeChild() {
+    public void remove() {
+        super.remove();
         if (option != null) {
             option.getQuestionAnswers().remove(this);
             option = null;
