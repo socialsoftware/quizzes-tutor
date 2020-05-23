@@ -76,7 +76,12 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     @Override
-    public void visitDependencies(Visitor visitor) {
+    public void accept(Visitor visitor) {
+        visitor.visitQuestion(this);
+    }
+
+    @Override
+    public void visitOptions(Visitor visitor) {
         for (Option option: this.getOptions()) {
             option.accept(visitor);
         }

@@ -84,11 +84,6 @@ public abstract class Question implements DomainEntity {
             setImage(new Image(questionDto.getImage()));
     }
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visitQuestion(this);
-    }
-
     public Integer getId() {
         return id;
     }
@@ -263,5 +258,5 @@ public abstract class Question implements DomainEntity {
         getTopics().clear();
     }
 
-    public abstract void visitDependencies(Visitor visitor);
+    public abstract void visitOptions(Visitor visitor);
 }
