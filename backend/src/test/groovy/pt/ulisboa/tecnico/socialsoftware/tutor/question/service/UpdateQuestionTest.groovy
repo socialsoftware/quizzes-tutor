@@ -31,8 +31,8 @@ class UpdateQuestionTest extends Specification {
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
-    public static final String NEW_QUESTION_TITLE = 'new MultipleChoiceQuestion title'
-    public static final String NEW_QUESTION_CONTENT = 'new MultipleChoiceQuestion content'
+    public static final String NEW_QUESTION_TITLE = 'new question title'
+    public static final String NEW_QUESTION_CONTENT = 'new question content'
     public static final String NEW_OPTION_CONTENT = "new optionId content"
     public static final String URL = 'URL'
 
