@@ -65,13 +65,15 @@ public class AnswersXmlExport {
 		Element questionAnswersElement = new Element("questionAnswers");
 
 		for (QuestionAnswer questionAnswer: questionAnswers) {
-			exportQuestionAnswer(questionAnswersElement, questionAnswer);
+			if(questionAnswer instanceof MultipleChoiceQuestionAnswer) {
+				exportQuestionAnswer(questionAnswersElement, (MultipleChoiceQuestionAnswer)questionAnswer);
+			}
 		}
 
 		quizAnswerElement.addContent(questionAnswersElement);
 	}
 
-	private void exportQuestionAnswer(Element questionAnswersElement, QuestionAnswer questionAnswer) {
+	private void exportQuestionAnswer(Element questionAnswersElement, MultipleChoiceQuestionAnswer questionAnswer) {
 		Element questionAnswerElement = new Element("questionAnswer");
 
 		if (questionAnswer.getTimeTaken() != null) {
@@ -85,10 +87,10 @@ public class AnswersXmlExport {
 		quizQuestionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
 		questionAnswerElement.addContent(quizQuestionElement);
 
-		if ( ((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
+		if ( questionAnswer.getOption() != null) {
 			Element optionElement = new Element("option");
-			optionElement.setAttribute("questionKey", String.valueOf(((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getQuestion().getKey()));
-			optionElement.setAttribute(SEQUENCE, String.valueOf(((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getSequence()));
+			optionElement.setAttribute("questionKey", String.valueOf(questionAnswer.getOption().getQuestion().getKey()));
+			optionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getOption().getSequence()));
 			questionAnswerElement.addContent(optionElement);
 		}
 
