@@ -343,7 +343,9 @@ public class QuizService {
 
         // remove questions that weren't in any quiz
         for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId()).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
-            questionService.deleteQuestion(question);
+            if (question instanceof MultipleChoiceQuestion) {
+                questionService.deleteQuestion((MultipleChoiceQuestion)question);
+            }
         }
     }
 

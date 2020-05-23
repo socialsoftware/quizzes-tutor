@@ -272,12 +272,15 @@ public class QuestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteQuestion(Question question) {
-        for (Option option : ((MultipleChoiceQuestion)question).getOptions()) {
+    public void deleteQuestion(MultipleChoiceQuestion question) {
+        for (Option option : question.getOptions()) {
             option.remove();
             optionRepository.delete(option);
         }
+        deleteQuestion(question);
+    }
 
+    private void deleteQuestion(Question question){
         if (question.getImage() != null) {
             imageRepository.delete(question.getImage());
         }
@@ -286,7 +289,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-
     }
 }
 
