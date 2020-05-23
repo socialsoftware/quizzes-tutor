@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceQuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 
 import java.io.Serializable;
@@ -24,7 +27,7 @@ public class SolvedQuizDto implements Serializable {
 
         this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                .map(CorrectAnswerDto::new)
+                .map(AnswerDtoFactory::getCorrectAnswerDto)
                 .collect(Collectors.toList());
 
         this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());
