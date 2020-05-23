@@ -446,4 +446,13 @@ public class User implements UserDetails, DomainEntity {
 
         return result;
     }
+
+    public QuizAnswer getQuizAnswer(Quiz quiz) {
+        return getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz() == quiz)
+                .findAny()
+                .orElse(null);
+    }
+
+
 }

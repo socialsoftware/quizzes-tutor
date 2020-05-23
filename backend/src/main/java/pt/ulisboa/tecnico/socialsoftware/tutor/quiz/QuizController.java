@@ -42,6 +42,18 @@ public class QuizController {
         return this.quizService.updateQuiz(quizId, quiz);
     }
 
+    @PostMapping("/quizzes/{quizId}/populate")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizDto populateWithQuizAnswers(@PathVariable Integer quizId) {
+        return this.quizService.populateWithQuizAnswers(quizId);
+    }
+
+    @PostMapping("/quizzes/{quizId}/unpopulate")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizDto removeNonFilledQuizAnswers(@PathVariable Integer quizId) {
+        return this.quizService.removeNonFilledQuizAnswers(quizId);
+    }
+
     @DeleteMapping("/quizzes/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public ResponseEntity deleteQuiz(@PathVariable Integer quizId) {
@@ -49,7 +61,6 @@ public class QuizController {
 
         return ResponseEntity.ok().build();
     }
-
 
     @GetMapping(value = "/quizzes/{quizId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")

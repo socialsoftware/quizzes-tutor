@@ -9,6 +9,7 @@
     <quiz-list
       v-if="!editMode"
       @editQuiz="editQuiz"
+      @updateQuiz="updateQuiz"
       @deleteQuiz="deleteQuiz"
       @newQuiz="newQuiz"
       :quizzes="quizzes"
