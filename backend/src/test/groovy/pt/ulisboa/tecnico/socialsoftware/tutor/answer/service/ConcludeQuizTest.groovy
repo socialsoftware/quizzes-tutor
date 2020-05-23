@@ -24,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
@@ -172,7 +173,7 @@ class ConcludeQuizTest extends Specification {
         given: 'a quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         and: 'an answer'
-        def statementAnswerDto = new StatementAnswerDto()
+        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)

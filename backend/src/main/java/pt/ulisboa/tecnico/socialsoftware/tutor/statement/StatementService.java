@@ -21,10 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -213,7 +210,7 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void submitAnswer(int userId, Integer quizId, StatementAnswerDto answer) {
+    public void submitAnswer(int userId, Integer quizId, MultipleChoiceStatementAnswerDto answer) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         answerService.submitAnswer(user, quizId, answer);

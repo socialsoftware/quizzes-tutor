@@ -1,32 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
 import java.io.Serializable;
 
-public class StatementAnswerDto implements Serializable {
+public abstract class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
-    private Integer optionId;
 
-    public StatementAnswerDto() {}
+    public StatementAnswerDto() {
+    }
 
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
-
-        if (((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
-            this.optionId = ((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getId();
-        }
-    }
-
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
     }
 
     public Integer getTimeTaken() {
@@ -43,14 +30,5 @@ public class StatementAnswerDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
-    }
-
-    @Override
-    public String toString() {
-        return "StatementAnswerDto{" +
-                ", optionId=" + optionId +
-                ", timeTaken=" + timeTaken +
-                ", sequence=" + sequence +
-                '}';
     }
 }
