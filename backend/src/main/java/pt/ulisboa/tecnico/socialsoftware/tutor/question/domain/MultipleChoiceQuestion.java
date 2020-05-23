@@ -85,16 +85,16 @@ public class MultipleChoiceQuestion extends Question {
     @Override
     public String toString() {
         return "Question{" +
-                "id=" + id +
-                ", key=" + key +
-                ", content='" + content + '\'' +
-                ", title='" + title + '\'' +
-                ", numberOfAnswers=" + numberOfAnswers +
-                ", numberOfCorrect=" + numberOfCorrect +
-                ", status=" + status +
-                ", image=" + image +
-                ", options=" + options +
-                ", topics=" + topics +
+                "id=" + getId() +
+                ", key=" + getKey() +
+                ", content='" + getContent() + '\'' +
+                ", title='" + getTitle() + '\'' +
+                ", numberOfAnswers=" + getNumberOfAnswers() +
+                ", numberOfCorrect=" + getNumberOfAnswers() +
+                ", status=" + getStatus() +
+                ", image=" + getImage() +
+                ", options=" + getOptions() +
+                ", topics=" + getTopics() +
                 '}';
     }
 
