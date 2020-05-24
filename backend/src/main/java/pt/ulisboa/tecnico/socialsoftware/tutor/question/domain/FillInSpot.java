@@ -45,6 +45,6 @@ public class FillInSpot implements DomainEntity{
 
     @Override
     public void accept(Visitor visitor) {
-        throw new TutorException(ErrorMessage.ACCESS_DENIED);
+        visitor.visitFillInSpot(this);
     }
 }

@@ -13,9 +13,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 public interface Visitor {
     default void visitQuestion(MultipleChoiceQuestion question) {}
 
+    default void visitQuestion(CodeFillInQuestion question) {}
+
     default void visitImage(Image image) {}
 
     default void visitOption(Option option) {}
+
+    default void visitFillInSpot(FillInSpot fillInSpot) {}
 
     default void visitQuiz(Quiz quiz) {}
 
@@ -49,4 +53,5 @@ public interface Visitor {
                 return "X";
         }
     }
+
 }
