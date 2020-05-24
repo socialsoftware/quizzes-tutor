@@ -6,6 +6,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
@@ -41,7 +42,7 @@ public class XMLQuestionExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestion(Question question) {
+    public void visitQuestion(MultipleChoiceQuestion question) {
         Element questionElement = new Element("question");
         questionElement.setAttribute("courseType", question.getCourse().getType().name());
         questionElement.setAttribute("courseName", question.getCourse().getName());
@@ -62,7 +63,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         this.currentElement.addContent(optionsElement);
 
         this.currentElement = optionsElement;
-        question.visitDependencies(this);
+        question.visitOptions(this);
 
         this.currentElement = this.rootElement;
     }

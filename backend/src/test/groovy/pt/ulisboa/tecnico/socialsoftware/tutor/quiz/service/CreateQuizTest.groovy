@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -82,7 +83,7 @@ class CreateQuizTest extends Specification {
         question.setTitle(QUESTION_TITLE)
         questionRepository.save(question)
 
-        questionDto = new QuestionDto(question)
+        questionDto = new MultipleChoiceQuestionDto(question)
         questionDto.setKey(1)
         questionDto.setSequence(1)
 

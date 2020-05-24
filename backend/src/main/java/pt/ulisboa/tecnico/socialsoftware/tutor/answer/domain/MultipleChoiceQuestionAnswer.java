@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -47,7 +48,13 @@ public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
     }
 
     @Override
-    protected void removeChild() {
+    public void accept(Visitor visitor) {
+        visitor.visitQuestionAnswer(this);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
         if (option != null) {
             option.getQuestionAnswers().remove(this);
             option = null;

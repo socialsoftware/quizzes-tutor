@@ -10,13 +10,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution implements DomainEntity {
-     public enum Status {ACTIVE, INACTIVE, HISTORIC}
+    public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -163,4 +164,11 @@ public class CourseExecution implements DomainEntity {
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
     }
+
+    public Set<User> getStudents() {
+        return getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .collect(Collectors.toSet());
+    }
+
 }

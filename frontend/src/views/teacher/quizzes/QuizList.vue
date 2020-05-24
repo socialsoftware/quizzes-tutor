@@ -63,6 +63,28 @@
           </template>
           <span>Edit Quiz</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="populateWithQuizAnswers(item.id)"
+              >people</v-icon
+            >
+          </template>
+          <span>Populate with answers</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="removeNonAnsweredQuizAnswers(item.id)"
+              >people_outline</v-icon
+            >
+          </template>
+          <span>Remove non answered</span>
+        </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -277,6 +299,26 @@ export default class QuizList extends Vue {
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
+    }
+  }
+
+  async populateWithQuizAnswers(quizId: number) {
+    try {
+      let quiz: Quiz = await RemoteServices.populateWithQuizAnswers(quizId);
+      this.$emit('updateQuiz', quiz);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async removeNonAnsweredQuizAnswers(quizId: number) {
+    try {
+      let quiz: Quiz = await RemoteServices.removeNonAnsweredQuizAnswers(
+        quizId
+      );
+      this.$emit('updateQuiz', quiz);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }

@@ -73,9 +73,6 @@ public class StatsService {
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .filter(QuestionAnswer::isCorrect)
-//                .map(questionAnswer -> ((MultipleChoiceQuestionAnswer)questionAnswer).getOption())
-//                .filter(Objects::nonNull)
-//                .filter(Option::getCorrect)
                 .count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()

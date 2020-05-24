@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
@@ -79,7 +80,7 @@ public class QuestionsXmlImport {
 		String status = questionElement.getAttributeValue("status");
 		String creationDate = questionElement.getAttributeValue("creationDate");
 
-		QuestionDto questionDto = new QuestionDto();
+		MultipleChoiceQuestionDto questionDto = new MultipleChoiceQuestionDto();
 		questionDto.setKey(key);
 		questionDto.setContent(content);
 		questionDto.setTitle(title);

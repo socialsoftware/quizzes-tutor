@@ -35,40 +35,40 @@ public abstract class Question implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    private Integer id;
 
-    protected Integer key;
+    private Integer key;
 
     @Column(columnDefinition = "TEXT")
-    protected String content;
+    private String content;
 
     @Column(nullable = false)
-    protected String title;
+    private String title;
 
     @Column(name = "number_of_answers", columnDefinition = "integer default 0")
-    protected Integer numberOfAnswers = 0;
+    private Integer numberOfAnswers = 0;
 
     @Column(name = "number_of_correct", columnDefinition = "integer default 0")
-    protected Integer numberOfCorrect = 0;
+    private Integer numberOfCorrect = 0;
 
     @Enumerated(EnumType.STRING)
-    protected Status status = Status.DISABLED;
+    private Status status = Status.DISABLED;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
-    protected Image image;
+    private Image image;
 
     @Column(name = "creation_date")
-    protected LocalDateTime creationDate;
+    private LocalDateTime creationDate;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval = true)
-    protected final Set<QuizQuestion> quizQuestions = new HashSet<>();
+    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
-    protected final Set<Topic> topics = new HashSet<>();
+    private final Set<Topic> topics = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "course_id")
-    protected Course course;
+    private Course course;
 
     public Question() {
     }
@@ -83,11 +83,6 @@ public abstract class Question implements DomainEntity {
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visitQuestion(this);
     }
 
     public Integer getId() {
@@ -264,5 +259,5 @@ public abstract class Question implements DomainEntity {
         getTopics().clear();
     }
 
-    public abstract void visitDependencies(Visitor visitor);
+    public abstract void visitOptions(Visitor visitor);
 }

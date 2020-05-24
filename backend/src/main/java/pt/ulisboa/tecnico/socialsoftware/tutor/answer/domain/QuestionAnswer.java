@@ -50,11 +50,6 @@ public abstract class QuestionAnswer implements DomainEntity {
         setSequence(sequence);
     }
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visitQuestionAnswer(this);
-    }
-
     public Integer getId() {
         return id;
     }
@@ -107,15 +102,11 @@ public abstract class QuestionAnswer implements DomainEntity {
 
     public abstract boolean isCorrect();
 
-    protected abstract void removeChild();
-
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
         quizAnswer = null;
 
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
-
-        removeChild();
     }
 }

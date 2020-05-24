@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -13,7 +14,15 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class QuestionDto implements Serializable {
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        defaultImpl = MultipleChoiceQuestionDto.class,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = "multiple_choice")
+        })
+public abstract class QuestionDto implements Serializable {
     private Integer id;
     private Integer key;
     private String title;
@@ -25,7 +34,6 @@ public class QuestionDto implements Serializable {
     private int numberOfCorrect;
     private String creationDate;
     private String status;
-    private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
@@ -42,7 +50,6 @@ public class QuestionDto implements Serializable {
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
-        this.options = ((MultipleChoiceQuestion)question).getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
         this.creationDate = DateHandler.toISOString(question.getCreationDate());
 
@@ -141,14 +148,6 @@ public class QuestionDto implements Serializable {
         this.status = status;
     }
 
-    public List<OptionDto> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<OptionDto> options) {
-        this.options = options;
-    }
-
     public ImageDto getImage() {
         return image;
     }
@@ -171,26 +170,5 @@ public class QuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
-    }
-
-    @Override
-    public String toString() {
-        return "QuestionDto{" +
-                "id=" + id +
-                ", key=" + key +
-                ", title='" + title + '\'' +
-                ", content='" + content + '\'' +
-                ", difficulty=" + difficulty +
-                ", numberOfAnswers=" + numberOfAnswers +
-                ", numberOfGeneratedQuizzes=" + numberOfGeneratedQuizzes +
-                ", numberOfNonGeneratedQuizzes=" + numberOfNonGeneratedQuizzes +
-                ", numberOfCorrect=" + numberOfCorrect +
-                ", creationDate='" + creationDate + '\'' +
-                ", status='" + status + '\'' +
-                ", options=" + options +
-                ", image=" + image +
-                ", topics=" + topics +
-                ", sequence=" + sequence +
-                '}';
     }
 }

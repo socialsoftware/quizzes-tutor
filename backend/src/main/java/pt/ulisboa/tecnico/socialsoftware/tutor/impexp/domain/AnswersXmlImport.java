@@ -94,9 +94,9 @@ public class AnswersXmlImport {
 	}
 
 	private void loadQuestionMap() {
-		questionMap = questionRepository.findAll().stream()
+		questionMap = questionRepository.findAllMultipleChoiceQuestions().stream()
 				.collect(Collectors.toMap(Question::getKey,
-						question -> ((MultipleChoiceQuestion)question).getOptions().stream()
+						question -> question.getOptions().stream()
 								.collect(Collectors.toMap(Option::getSequence,Option::getId))));
 	}
 
@@ -166,11 +166,14 @@ public class AnswersXmlImport {
 
 			questionAnswer.setTimeTaken(timeTaken);
 
-			if (optionId == null) {
-				((MultipleChoiceQuestionAnswer)questionAnswer).setOption(null);
-            } else {
-				((MultipleChoiceQuestionAnswer)questionAnswer).setOption(optionRepository.findById(optionId).orElse(null));
-            }
+			if (questionAnswer instanceof MultipleChoiceQuestionAnswer) {
+				MultipleChoiceQuestionAnswer multipleChoiceQuestionAnswer = (MultipleChoiceQuestionAnswer) questionAnswer;
+				if (optionId == null) {
+					multipleChoiceQuestionAnswer.setOption(null);
+				} else {
+					multipleChoiceQuestionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
+				}
+			}
 
             questionAnswerRepository.save(questionAnswer);
 		}

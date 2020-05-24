@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
@@ -24,7 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -62,7 +64,7 @@ public class AnswerService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -101,7 +103,7 @@ public class AnswerService {
 
         return quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                .map(CorrectAnswerDto::new)
+                .map(AnswerDtoFactory::getCorrectAnswerDto)
                 .collect(Collectors.toList());
     }
 
@@ -109,7 +111,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
+    public void submitAnswer(User user, Integer quizId, MultipleChoiceStatementAnswerDto answer) {
         QuizAnswer quizAnswer = user.getQuizAnswers().stream()
                 .filter(qa -> qa.getQuiz().getId().equals(quizId))
                 .findFirst()
@@ -134,27 +136,34 @@ public class AnswerService {
 
         if (!quizAnswer.isCompleted()) {
 
-            Option option;
-            if (answer.getOptionId() != null) {
-                option = optionRepository.findById(answer.getOptionId())
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
-
-                if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
-                    throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
-                }
-
-                if (((MultipleChoiceQuestionAnswer)questionAnswer).getOption() != null) {
-                    ((MultipleChoiceQuestionAnswer)questionAnswer).getOption().getQuestionAnswers().remove(questionAnswer);
-                }
-
-                ((MultipleChoiceQuestionAnswer)questionAnswer).setOption(option);
-                questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(DateHandler.now());
-            } else {
-                ((MultipleChoiceQuestionAnswer)questionAnswer).setOption(null);
-                questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(DateHandler.now());
+            if (questionAnswer instanceof MultipleChoiceQuestionAnswer){
+                handleMultipleChoiceQuestionAnswer((MultipleChoiceQuestionAnswer)questionAnswer, answer);
             }
+            else{
+                // todo we might want to throw an exception if we do not to know how to handle a given type
+            }
+            questionAnswer.setTimeTaken(answer.getTimeTaken());
+            quizAnswer.setAnswerDate(DateHandler.now());
+        }
+    }
+
+    // todo evaluate if we want to have this being handled by the QuestionAnswer
+    private void handleMultipleChoiceQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer, MultipleChoiceStatementAnswerDto answer){
+        if (answer.getOptionId() != null) {
+            Option option = optionRepository.findById(answer.getOptionId())
+                    .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
+
+            if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
+                throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
+            }
+
+            if (questionAnswer.getOption() != null) {
+                questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
+            }
+
+            questionAnswer.setOption(option);
+        } else {
+            questionAnswer.setOption(null);
         }
     }
 
