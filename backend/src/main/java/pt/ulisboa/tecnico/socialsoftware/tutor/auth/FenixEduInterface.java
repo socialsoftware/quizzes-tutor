@@ -39,6 +39,7 @@ public class FenixEduInterface {
         try {
             userDetails = client.getUserDetailsFromCode(code);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new TutorException(FENIX_ERROR);
         }
 

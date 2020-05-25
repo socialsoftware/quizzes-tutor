@@ -205,24 +205,19 @@ export default class QuizView extends Vue {
         .optionId;
       try {
         this.calculateTime();
+        let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
 
-        if (
-          this.statementQuiz.answers[this.questionOrder].optionId === optionId
-        ) {
-          this.statementQuiz.answers[this.questionOrder].optionId = null;
+        if (newAnswer.optionId === optionId) {
+          newAnswer.optionId = null;
         } else {
-          this.statementQuiz.answers[this.questionOrder].optionId = optionId;
+          newAnswer.optionId = optionId;
         }
 
-        await RemoteServices.submitAnswer(
-          this.statementQuiz.id,
-          this.statementQuiz.answers[this.questionOrder]
-        );
-      } catch (error) {
-        this.statementQuiz.answers[
-          this.questionOrder
-        ].optionId = previousAnswer;
+        await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
 
+        this.statementQuiz.answers[this.questionOrder].optionId =
+          newAnswer.optionId;
+      } catch (error) {
         await this.$store.dispatch('error', error);
       }
     }

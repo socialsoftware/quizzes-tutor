@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 import org.apache.catalina.connector.ClientAbortException;
+import org.hibernate.exception.LockAcquisitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,13 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     public TutorExceptionDto accessDeniedException(AccessDeniedException e) {
         myLogger.error(e.getMessage());
         return new TutorExceptionDto(ACCESS_DENIED);
+    }
+
+    @ExceptionHandler(LockAcquisitionException.class)
+    @ResponseStatus(HttpStatus.OK)
+    public TutorExceptionDto lockAcquisitionException(LockAcquisitionException e) {
+        myLogger.error("LockAcquisitionException");
+        return new TutorExceptionDto(e);
     }
 
     @ExceptionHandler(ClientAbortException.class)
