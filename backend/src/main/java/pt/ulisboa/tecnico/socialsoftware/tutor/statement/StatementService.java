@@ -108,7 +108,7 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto getQuizByQRCode(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -149,7 +149,7 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<StatementQuizDto> getAvailableQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -188,7 +188,7 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SolvedQuizDto> getSolvedQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -202,7 +202,7 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(int userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -212,7 +212,7 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(int userId, Integer quizId, StatementAnswerDto answer) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -239,7 +239,7 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void startQuiz(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
