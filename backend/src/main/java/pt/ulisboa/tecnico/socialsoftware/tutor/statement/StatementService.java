@@ -222,7 +222,7 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void completeOpenQuizAnswers() {
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(DateHandler.now());
 
