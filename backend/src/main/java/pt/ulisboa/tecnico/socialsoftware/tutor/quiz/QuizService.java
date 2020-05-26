@@ -71,7 +71,7 @@ public class QuizService {
     @Autowired
     private CourseService courseService;
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public CourseDto findQuizCourseExecution(int quizId) {
         return this.quizRepository.findById(quizId)
                 .map(Quiz::getCourseExecution)
@@ -82,7 +82,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto findById(Integer quizId) {
         return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -92,7 +92,7 @@ public class QuizService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuizDto> findNonGeneratedQuizzes(int executionId) {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
@@ -113,7 +113,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         Quiz quiz = new Quiz(quizDto);
@@ -144,7 +144,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -187,7 +187,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -203,7 +203,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -220,7 +220,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizAnswersDto getQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
@@ -247,7 +247,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportQuizzesToXml() {
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
 
@@ -257,7 +257,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importQuizzesFromXml(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
@@ -267,7 +267,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportQuizzesToLatex(int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -276,7 +276,7 @@ public class QuizService {
         return latexExport.export(quiz);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ByteArrayOutputStream exportQuiz(int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -325,7 +325,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
         quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(quiz -> quiz.getId() > 5360).forEach(quiz -> {
             for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
@@ -349,7 +349,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto populateWithQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -365,7 +365,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto removeNonFilledQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 

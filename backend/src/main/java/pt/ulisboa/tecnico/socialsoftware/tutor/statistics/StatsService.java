@@ -42,7 +42,7 @@ public class StatsService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatsDto getStats(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 

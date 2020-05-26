@@ -34,7 +34,7 @@ public class AuthService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto fenixAuth(FenixEduInterface fenix) {
         String username = fenix.getPersonUsername();
         List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
