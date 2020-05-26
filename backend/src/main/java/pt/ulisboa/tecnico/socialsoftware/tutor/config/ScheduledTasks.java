@@ -31,7 +31,7 @@ public class ScheduledTasks {
 		impExpService.exportAll();
 	}
 
-	@Scheduled(cron = "0 0/15 * * * *")
+	@Scheduled(cron = "0 0 3 * * *")
 	public void completeOpenQuizAnswers() {
 		statementService.completeOpenQuizAnswers();
 	}
