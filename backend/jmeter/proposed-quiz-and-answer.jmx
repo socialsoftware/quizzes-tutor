@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -818,7 +818,7 @@
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">200</stringProp>
+        <stringProp name="ThreadGroup.num_threads">100</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -923,36 +923,6 @@
               <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 1" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id_1</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].questions[0].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 2" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id_2</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].questions[1].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 3" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id_3</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].questions[2].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 4" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id_4</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].questions[3].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 5" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id_5</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$[0].questions[4].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Start quiz" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
@@ -972,7 +942,38 @@
             <stringProp name="HTTPSampler.connect_timeout"></stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
-          <hashTree/>
+          <hashTree>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 1" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id_1</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[0].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 2" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id_2</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[1].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 3" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id_3</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[2].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 4" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id_4</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[3].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id 5" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id_5</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[4].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Submit answer 1" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
