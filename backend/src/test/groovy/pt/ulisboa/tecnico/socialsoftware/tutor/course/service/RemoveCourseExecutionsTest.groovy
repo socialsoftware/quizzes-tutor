@@ -22,7 +22,11 @@ class RemoveCourseExecutionsTest extends SpockTest {
     def courseExecutionTecnico
     def courseExecutionExternal
 
+    def existingCourseExecutions
+
     def setup() {
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
         courseRepository.save(course)
         and: "two course executions"
@@ -37,8 +41,8 @@ class RemoveCourseExecutionsTest extends SpockTest {
         courseService.removeCourseExecution(courseExecutionExternal.id)
 
         then: "the returned data are correct"
-        courseExecutionRepository.findAll().size() == 1
-        def tecnicoExecutionCourse = courseExecutionRepository.findAll().get(0)
+        courseExecutionRepository.findAll().size() == existingCourseExecutions + 1
+        def tecnicoExecutionCourse = courseExecutionRepository.findByFields(ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO.name()).get()
         tecnicoExecutionCourse.acronym == ACRONYM_ONE
         tecnicoExecutionCourse.academicTerm == ACADEMIC_TERM_ONE
         tecnicoExecutionCourse.type == Course.Type.TECNICO
@@ -57,7 +61,7 @@ class RemoveCourseExecutionsTest extends SpockTest {
 
         then: "the returned data are correct"
         thrown(TutorException)
-        courseExecutionRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == existingCourseExecutions + 2
     }
 
     def "cannot delete a execution course with assessments"() {
@@ -73,7 +77,7 @@ class RemoveCourseExecutionsTest extends SpockTest {
 
         then: "the returned data are correct"
         thrown(TutorException)
-        courseExecutionRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == existingCourseExecutions + 2
     }
 
     @TestConfiguration

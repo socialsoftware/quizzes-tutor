@@ -67,32 +67,17 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
         then: 'the return statement contains one quiz'
-        statementQuizDtos.size() == 1
-        def statementQuizDto = statementQuizDtos.get(0)
-        statementQuizDto.getId() != null
-        statementQuizDto.getQuizAnswerId() != null
-        statementQuizDto.getTitle() == QUIZ_TITLE
-        statementQuizDto.isOneWay()
-        statementQuizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
-        statementQuizDto.getConclusionDate() == DateHandler.toISOString(conclusionDate)
-        statementQuizDto.getQuestions().size() == 0
-        statementQuizDto.getAnswers().size() == 0
-        statementQuizDto.getTimeToAvailability() == null
-
-        if (quiz.getConclusionDate()) {
-            statementQuizDto.getTimeToSubmission() == ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getConclusionDate())
-        } else {
-            statementQuizDto.getTimeToSubmission() == null
-        }
-
-        if (quiz.getResultsDate()) {
-            statementQuizDto.getTimeToResults() == ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getResultsDate())
-        } else {
-            statementQuizDto.getTimeToResults() == null
-        }
+        quizDtos.size() == 1
+        def quizDto = quizDtos.get(0)
+        quizDto.getId() != null
+        quizDto.getTitle() == QUIZ_TITLE
+        quizDto.isOneWay()
+        quizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
+        quizDto.getConclusionDate() == DateHandler.toISOString(conclusionDate)
+        quizDto.getQuestions().size() == 0
 
         where:
         quizType                | conclusionDate | resultsDate
@@ -120,22 +105,17 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
         then: 'the return statement contains one quiz'
-        statementQuizDtos.size() == 1
-        def statementQuizDto = statementQuizDtos.get(0)
-        statementQuizDto.getId() != null
-        statementQuizDto.getQuizAnswerId() != null
-        statementQuizDto.getTitle() == QUIZ_TITLE
-        statementQuizDto.isOneWay()
-        statementQuizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
-        statementQuizDto.getConclusionDate() == DateHandler.toISOString(TOMORROW)
-        statementQuizDto.getTimeToAvailability() == null
-        statementQuizDto.getTimeToSubmission() == null
-        statementQuizDto.getTimeToResults() == null
-        statementQuizDto.getQuestions().size() == 0
-        statementQuizDto.getAnswers().size() == 0
+        quizDtos.size() == 1
+        def quizDto = quizDtos.get(0)
+        quizDto.getId() != null
+        quizDto.getTitle() == QUIZ_TITLE
+        quizDto.isOneWay()
+        quizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
+        quizDto.getConclusionDate() == DateHandler.toISOString(TOMORROW)
+        quizDto.getQuestions().size() == 0
     }
 
     @Unroll
@@ -152,10 +132,10 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
         then: 'no quiz is returned'
-        statementQuizDtos.size() == 0
+        quizDtos.size() == 0
 
         where:
         quizType                | qrOnly | availableDate  | conclusionDate
@@ -183,10 +163,10 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
         then: 'no quiz is returned'
-        statementQuizDtos.size() == 0
+        quizDtos.size() == 0
      }
 
     @TestConfiguration

@@ -24,7 +24,11 @@ class CreateAssessmentTest extends SpockTest {
     def course
     def courseExecution
 
+    def existingCourseExecutions
+
     def setup() {
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
@@ -52,10 +56,10 @@ class CreateAssessmentTest extends SpockTest {
         assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
 
         then: "the correct assessment is inside the repository"
-        courseExecutionRepository.count() == 1L
+        courseExecutionRepository.count() == existingCourseExecutions + 1
         assessmentRepository.count() == 1L
         topicRepository.count() == 1L
-        def result = courseExecutionRepository.findAll().get(0).getAssessments().stream().findAny().get()
+        def result = courseExecutionRepository.findByFields(ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO.name()).get().getAssessments().stream().findAny().get()
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE
         result.getTitle() == ASSESSMENT_TITLE

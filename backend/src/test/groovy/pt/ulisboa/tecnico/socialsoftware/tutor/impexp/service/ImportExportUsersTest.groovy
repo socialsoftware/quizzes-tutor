@@ -24,7 +24,11 @@ class ImportExportUsersTest extends SpockTest {
     def course
     def courseExecution
 
+    def existingUsers
+
     def setup() {
+        existingUsers = userRepository.findAll().size()
+
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
@@ -57,17 +61,17 @@ class ImportExportUsersTest extends SpockTest {
         then:
         courseExecution.getUsers().size() == 2
 
-        userRepository.findAll().size() == 2
+        userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByUsername(AR).orElse(null)
         userOne != null
-        userOne.getKey() == 1
+        userOne.getKey() == existingUsers + 1
         userOne.getName() == RITO
         userOne.getRole().name() == TEACHER
         userOne.getCourseExecutions().size() == 1
 
         def userTwo = userRepository.findByUsername(PC).orElse(null)
         userTwo != null
-        userTwo.getKey() == 2
+        userTwo.getKey() == existingUsers + 2
         userTwo.getName() == PEDRO
         userTwo.getRole().name() == STUDENT
         userOne.getCourseExecutions().size() == 1

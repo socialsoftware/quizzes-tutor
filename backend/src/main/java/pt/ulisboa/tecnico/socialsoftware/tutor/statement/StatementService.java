@@ -159,14 +159,16 @@ public class StatementService {
                 .map(quizAnswer -> quizAnswer.getQuiz().getId())
                 .collect(Collectors.toSet());
 
-        Stream<Quiz> studentPendingQuizToAnswer= quizAnswerRepository.findQuizAnswers(userId, executionId).stream()
-                .filter(quizAnswer -> !quizAnswer.isCompleted() && !(quizAnswer.getQuiz().isOneWay() && quizAnswer.getCreationDate() != null))
+        Stream<Quiz> studentPendingGenerateQuizzesToAnswer= quizAnswerRepository.findQuizAnswers(userId, executionId).stream()
+                .filter(quizAnswer -> !quizAnswer.isCompleted())
+                .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED) || quizAnswer.getQuiz().isQrCodeOnly())
                 .map(quizAnswer -> quizAnswer.getQuiz());
 
         return Stream.concat(
-                    studentPendingQuizToAnswer,
+                studentPendingGenerateQuizzesToAnswer,
                     quizRepository.findAvailableQuizzes(executionId, DateHandler.now()).stream()
                             .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
+                            .filter(quiz -> !quiz.isQrCodeOnly())
                             .filter(quiz -> !studentAnsweredQuizIds.contains(quiz.getId())))
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))

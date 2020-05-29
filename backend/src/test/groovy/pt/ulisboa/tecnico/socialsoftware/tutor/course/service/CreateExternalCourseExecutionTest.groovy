@@ -18,6 +18,14 @@ class CreateExternalCourseExecutionTest extends SpockTest {
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
 
+    def existingCourses
+    def existingCourseExecutions
+
+    def setup() {
+        existingCourses = courseRepository.findAll().size()
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+    }
+
     def "the tecnico course exists and create execution course"() {
         given: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
@@ -69,14 +77,14 @@ class CreateExternalCourseExecutionTest extends SpockTest {
         result.acronym == ACRONYM_ONE
         result.academicTerm == ACADEMIC_TERM_ONE
         and: "course is created"
-        courseRepository.findAll().size() == 1
+        courseRepository.findAll().size() == existingCourses + 1
         def course = courseRepository.findByNameType(COURSE_ONE, Course.Type.EXTERNAL.name()).get()
         course != null
         course.type == Course.Type.EXTERNAL
         course.getName() == COURSE_ONE
         and: "course execution is created"
-        courseExecutionRepository.findAll().size() == 1
-        def courseExecution = courseExecutionRepository.findAll().get(0)
+        courseExecutionRepository.findAll().size() == existingCourseExecutions + 1
+        def courseExecution = courseExecutionRepository.findByFields(ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.EXTERNAL.name()).get()
         courseExecution != null
         and: "has the correct value"
         courseExecution.type == Course.Type.EXTERNAL

@@ -19,6 +19,14 @@ class GetCourseExecutionsTest extends SpockTest {
     static final String ACRONYM_TWO = "C22"
     static final String ACADEMIC_TERM_TWO = "2º Semestre"
 
+    def existingCourses
+    def existingCourseExecutions
+
+    def setup() {
+        existingCourses = courseRepository.findAll().size()
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+    }
+
     def "returned a tecnico course with 0 info"() {
         given: "a course"
         def course = new Course(COURSE_ONE, Course.Type.TECNICO)
@@ -32,7 +40,7 @@ class GetCourseExecutionsTest extends SpockTest {
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == 1
+        result.size() == existingCourses + 1
         def tecnicoCourse = result.get(0)
         tecnicoCourse.name == COURSE_ONE
         tecnicoCourse.courseType == Course.Type.TECNICO
@@ -76,7 +84,7 @@ class GetCourseExecutionsTest extends SpockTest {
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == 1
+        result.size() == existingCourses + 1
         def externalCourse = result.get(0)
         externalCourse.name == COURSE_ONE
         externalCourse.courseType == Course.Type.TECNICO

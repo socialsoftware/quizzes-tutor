@@ -25,6 +25,10 @@ class FenixAuthTest extends SpockTest {
     def client
     def courses
 
+    def existingUsers
+    def existingCourses
+    def existingCourseExecutions
+
     def setup() {
         client = Mock(FenixEduInterface)
 
@@ -33,6 +37,10 @@ class FenixAuthTest extends SpockTest {
         courses.add(courseDto)
         courseDto = new CourseDto("Tópicos Avançados em Engenharia de Software", "TAES", ACADEMIC_TERM)
         courses.add(courseDto)
+
+        existingUsers = userRepository.findAll().size()
+        existingCourses = courseRepository.findAll().size()
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
     }
 
     def "no teacher has courses create teacher"() {
@@ -49,11 +57,11 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "no teacher has course and is in database, then create and add"() {
@@ -74,7 +82,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         def user = userRepository.findByUsername(USERNAME).orElse(null)
         user != null
         and: 'is teaching'
@@ -95,16 +103,16 @@ class FenixAuthTest extends SpockTest {
         then:
         thrown(TutorException)
         and: 'the user is not created db'
-        userRepository.findAll().size() == 0
+        userRepository.findAll().size() == existingUsers
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "teacher has courses"() {
         given: 'a teacher'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -122,17 +130,17 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "teacher does not have courses"() {
         given: 'a teacher'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -150,17 +158,17 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null) != null
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "teacher has course and is in database, then add"() {
         given: 'a teacher'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -182,7 +190,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         def user2 = userRepository.findByUsername(USERNAME).orElse(null)
         user2 != null
         and: 'is teaching'
@@ -203,10 +211,10 @@ class FenixAuthTest extends SpockTest {
         then:
         thrown(TutorException)
         and: 'the user is not created in the db'
-        userRepository.findAll().size() == 0
+        userRepository.findAll().size() == existingUsers
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "no student has courses but not in database, throw exception"() {
@@ -222,10 +230,10 @@ class FenixAuthTest extends SpockTest {
         then:
         thrown(TutorException)
         and: 'the user is not created in the db'
-        userRepository.findAll().size() == 0
+        userRepository.findAll().size() == existingUsers
         and: 'no courses are created'
-        courseRepository.findAll().size() == 0
-        courseExecutionRepository.findAll().size() == 0
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "no student has courses and in database, create student with attending course"() {
@@ -246,7 +254,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         User user = userRepository.findByUsername(USERNAME).orElse(null)
         user.getRole() == User.Role.STUDENT
         and: 'is enrolled'
@@ -257,7 +265,7 @@ class FenixAuthTest extends SpockTest {
     def "student does not have courses, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -274,7 +282,7 @@ class FenixAuthTest extends SpockTest {
         then: "the returned data are correct"
         thrown(TutorException)
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -282,7 +290,7 @@ class FenixAuthTest extends SpockTest {
     def "student has courses but not in the database, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -299,7 +307,7 @@ class FenixAuthTest extends SpockTest {
         then: "the returned data are correct"
         thrown(TutorException)
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -307,7 +315,7 @@ class FenixAuthTest extends SpockTest {
     def "student has courses and in the database, add course"() {
         given: 'a student'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -329,7 +337,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.STUDENT
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
@@ -339,7 +347,7 @@ class FenixAuthTest extends SpockTest {
     def "student has teaching courses, throw exception"() {
         given: 'a student'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.STUDENT)
@@ -360,7 +368,7 @@ class FenixAuthTest extends SpockTest {
         then:
         thrown(TutorException)
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.STUDENT
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
@@ -369,7 +377,7 @@ class FenixAuthTest extends SpockTest {
     def "teacher has attending courses, does not add course"() {
         given: 'a teacher'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -391,7 +399,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 0
@@ -400,7 +408,7 @@ class FenixAuthTest extends SpockTest {
     def "student has attending and teaching courses, add attending course"() {
         given: 'a teacher'
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         user.setUsername(USERNAME)
         user.setName(PERSON_NAME)
         user.setRole(User.Role.TEACHER)
@@ -422,7 +430,7 @@ class FenixAuthTest extends SpockTest {
         result.user.username == USERNAME
         result.user.name == PERSON_NAME
         and: 'the user is created in the db'
-        userRepository.findAll().size() == 1
+        userRepository.findAll().size() == existingUsers + 1
         userRepository.findByUsername(USERNAME).orElse(null).getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1

@@ -13,7 +13,7 @@ class CreateQuizAnswerTest extends SpockTest {
 
     def setup() {
         def user = new User()
-        user.setKey(1)
+        user.setKey(4)
         userRepository.save(user)
         def quiz = new Quiz()
         quiz.setKey(1)
