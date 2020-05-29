@@ -13,7 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -98,6 +100,18 @@ public class UserService {
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public User createDemoStudent() {
+        String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
+        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, User.Role.STUDENT);
+        CourseExecution courseExecution = courseService.getDemoCourseExecution();
+        if (courseExecution != null) {
+            courseExecution.addUser(newDemoUser);
+            newDemoUser.addCourse(courseExecution);
+        }
+        return newDemoUser;
     }
 
     public String exportUsers() {

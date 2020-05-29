@@ -149,13 +149,13 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<StatementQuizDto> getAvailableQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         LocalDateTime now = DateHandler.now();
 
-        Set<Integer> studentQuizIds =  quizAnswerRepository.getUserQuizIds(userId);
+        Set<Integer> studentQuizIds = quizAnswerRepository.getUserQuizIds(userId);
 
         // create QuizAnswer for quizzes
         quizRepository.findQuizzesOfExecution(executionId).stream()
