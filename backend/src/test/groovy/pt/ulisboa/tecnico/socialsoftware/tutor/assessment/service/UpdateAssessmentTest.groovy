@@ -1,25 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicConjunctionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class UpdateAssessmentTest extends Specification {
+class UpdateAssessmentTest extends SpockTest {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -27,24 +21,6 @@ class UpdateAssessmentTest extends Specification {
     public static final String ASSESSMENT_TITLE_2 = 'assessment title 2'
     public static final String TOPIC_NAME_1 = "topic name 1"
     public static final String TOPIC_NAME_2 = "topic name 2"
-
-    @Autowired
-    AssessmentService assessmentService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    AssessmentRepository assessmentRepository
-
-    @Autowired
-    TopicRepository topicRepository
-
-    @Autowired
-    TopicConjunctionRepository topicConjunctionRepository
 
     def assessment
     def topicConjunction
@@ -153,7 +129,5 @@ class UpdateAssessmentTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

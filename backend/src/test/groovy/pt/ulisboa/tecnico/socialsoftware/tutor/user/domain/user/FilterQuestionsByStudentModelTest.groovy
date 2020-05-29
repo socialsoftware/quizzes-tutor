@@ -1,5 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.user
 
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -7,9 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Specification
 
-class FilterQuestionsByStudentModelTest extends Specification {
+@DataJpaTest
+class FilterQuestionsByStudentModelTest extends SpockTest {
     def availableQuestions
     def user
     def quiz
@@ -113,4 +117,7 @@ class FilterQuestionsByStudentModelTest extends Specification {
         and: 'it contains the not answered question'
         result.contains(questionOne)
     }
+
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

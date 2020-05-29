@@ -32,11 +32,11 @@ public class CourseExecution implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "courseExecutions")
+    @ManyToMany(mappedBy = "courseExecutions", fetch=FetchType.LAZY)
     private final Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -165,10 +165,25 @@ public class CourseExecution implements DomainEntity {
         users.forEach(user -> user.getCourseExecutions().remove(this));
     }
 
+    public int getNumberOfTeachers() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER)).count();
+    }
+
+    public int getNumberOfStudents() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT)).count();
+    }
+
+    public int getNumberOfQuizzes() {
+        return this.quizzes.size();
+    }
+
+    public int getNumberOfQuestions() {
+        return this.course.getQuestions().size();
+    }
+
     public Set<User> getStudents() {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .collect(Collectors.toSet());
     }
-
 }

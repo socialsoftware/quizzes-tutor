@@ -18,5 +18,8 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
 
     @Query(value = "SELECT * FROM quiz_answers qa JOIN quizzes q ON qa.quiz_id = q.id WHERE (NOT qa.completed AND q.conclusion_date < :now) OR (qa.completed AND NOT qa.used_in_statistics)", nativeQuery = true)
     Set<QuizAnswer> findQuizAnswersToClose(LocalDateTime now);
+
+    @Query(value = "SELECT quiz_id FROM quiz_answers qa WHERE qa.user_id = :userId", nativeQuery = true)
+    Set<Integer> getUserQuizIds(int userId);
 }
 

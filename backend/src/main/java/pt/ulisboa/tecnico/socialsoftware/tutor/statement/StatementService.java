@@ -67,7 +67,7 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+      backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto generateStudentQuiz(int userId, int executionId, StatementCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -107,7 +107,7 @@ public class StatementService {
 
     @Retryable(
             value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+            backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto getQuizByQRCode(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -148,18 +148,14 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+      backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public List<StatementQuizDto> getAvailableQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         LocalDateTime now = DateHandler.now();
 
-        Set<Integer> studentQuizIds =  user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId() == executionId)
-                .map(QuizAnswer::getQuiz)
-                .map(Quiz::getId)
-                .collect(Collectors.toSet());
+        Set<Integer> studentQuizIds =  quizAnswerRepository.getUserQuizIds(userId);
 
         // create QuizAnswer for quizzes
         quizRepository.findQuizzesOfExecution(executionId).stream()
@@ -187,7 +183,7 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+      backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<SolvedQuizDto> getSolvedQuizzes(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -201,7 +197,7 @@ public class StatementService {
 
     @Retryable(
       value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+      backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(int userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -211,7 +207,7 @@ public class StatementService {
 
     @Retryable(
             value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+            backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(int userId, Integer quizId, StatementAnswerDto answer) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -221,7 +217,7 @@ public class StatementService {
 
     @Retryable(
             value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+            backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void completeOpenQuizAnswers() {
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(DateHandler.now());
@@ -238,7 +234,7 @@ public class StatementService {
 
     @Retryable(
             value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+            backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void startQuiz(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));

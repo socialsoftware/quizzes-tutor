@@ -1,20 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import spock.lang.Specification
 
 @DataJpaTest
-class ImportExportUsersTest extends Specification {
+class ImportExportUsersTest extends SpockTest {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -24,18 +20,6 @@ class ImportExportUsersTest extends Specification {
     public static final String PC = 'pc'
     public static final String TEACHER = 'TEACHER'
     public static final String STUDENT = 'STUDENT'
-
-    @Autowired
-    UserService userService
-
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
 
     def course
     def courseExecution
@@ -47,15 +31,17 @@ class ImportExportUsersTest extends Specification {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        def user = new User(RITO, AR, 1, User.Role.TEACHER)
+        def user = new User(RITO, AR, User.Role.TEACHER)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)
+        user.setKey(user.getId())
 
-        user = new User(PEDRO, PC, 2, User.Role.STUDENT)
+        user = new User(PEDRO, PC, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)
+        user.setKey(user.getId())
     }
 
     def 'export and import users'() {
@@ -88,7 +74,5 @@ class ImportExportUsersTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

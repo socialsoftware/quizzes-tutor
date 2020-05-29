@@ -1,21 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
-import spock.lang.Specification
 
 @DataJpaTest
-class FilterByAssessmentTest extends Specification {
+class FilterByAssessmentTest extends SpockTest {
     public static final String QUESTION_TITLE_1 = 'question title 1'
     public static final String QUESTION_TITLE_2 = 'question title 2'
     public static final String QUESTION_TITLE_3 = 'question title 3'
@@ -31,15 +28,6 @@ class FilterByAssessmentTest extends Specification {
     public static final String TOPIC_NAME_3 = 'topic name 3'
     public static final String ASSESSMENT_TITLE_1 = 'assessment title 1'
     public static final String ASSESSMENT_TITLE_2 = 'assessment title 2'
-
-    @Autowired
-    StatementService statementService
-
-    @Autowired
-    TopicRepository topicRepository
-
-    @Autowired
-    AssessmentRepository assessmentRepository
 
     def questionTopic1
     def questionTopic2
@@ -167,5 +155,5 @@ class FilterByAssessmentTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

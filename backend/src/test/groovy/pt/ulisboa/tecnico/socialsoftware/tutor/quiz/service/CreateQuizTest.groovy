@@ -1,29 +1,24 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import spock.lang.Specification
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CreateQuizTest extends Specification {
+class CreateQuizTest extends SpockTest {
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -34,21 +29,6 @@ class CreateQuizTest extends Specification {
     public static final String TODAY = DateHandler.toISOString(DateHandler.now())
     public static final String TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
     public static final String LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
-
-    @Autowired
-    QuizService quizService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuestionRepository questionRepository
 
     def course
     def courseExecution
@@ -179,5 +159,5 @@ class CreateQuizTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

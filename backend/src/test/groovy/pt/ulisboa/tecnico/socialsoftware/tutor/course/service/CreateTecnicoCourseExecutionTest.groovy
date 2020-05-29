@@ -1,27 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import spock.lang.Specification
 
 @DataJpaTest
-class CreateTecnicoCourseExecutionTest extends Specification {
+class CreateTecnicoCourseExecutionTest extends SpockTest {
     public static final String COURSE_ONE = "CourseOne"
     public static final String ACRONYM_ONE = "C13"
     public static final String ACADEMIC_TERM_ONE = "1º Semestre"
-
-    @Autowired
-    CourseService courseService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
 
     def "the course exists and create execution course"() {
         given: "a course"
@@ -148,7 +141,6 @@ class CreateTecnicoCourseExecutionTest extends Specification {
         thrown(TutorException)
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

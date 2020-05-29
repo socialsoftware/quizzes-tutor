@@ -34,7 +34,7 @@ public class Option implements DomainEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option() {}

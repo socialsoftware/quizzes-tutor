@@ -1,65 +1,29 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Specification
 
 import java.util.stream.Collectors
 
 @DataJpaTest
-class GenerateStudentQuizTest extends Specification {
+class GenerateStudentQuizTest extends SpockTest {
     static final USERNAME = 'username'
     public static final String COURSE_NAME = "Software Architecture"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
-
-    @Autowired
-    StatementService statementService
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    AssessmentRepository assessmentRepository
-
-    @Autowired
-    TopicRepository topicRepository
-
-    @Autowired
-    TopicConjunctionRepository topicConjunctionRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    OptionRepository optionRepository
 
     def user
     def courseExecution
@@ -76,7 +40,7 @@ class GenerateStudentQuizTest extends Specification {
         courseExecutionRepository.save(courseExecution)
         courseRepository.save(course)
 
-        user = new User('name', USERNAME, 1, User.Role.STUDENT)
+        user = new User('name', USERNAME, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -102,6 +66,7 @@ class GenerateStudentQuizTest extends Specification {
         questionTwo.addTopic(topic)
 
         userRepository.save(user)
+        user.setKey(user.getId())
         questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
 
@@ -183,7 +148,6 @@ class GenerateStudentQuizTest extends Specification {
         quizRepository.count() == 0L
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

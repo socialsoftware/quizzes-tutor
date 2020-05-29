@@ -1,23 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class ImportExportQuestionsTest extends Specification {
+class ImportExportQuestionsTest extends SpockTest {
     public static final String COURSE_NAME = "Arquitetura de Software"
     public static final String ACRONYM = "AS1"
     public static final String ACADEMIC_TERM = "1 SEM"
@@ -25,18 +21,6 @@ class ImportExportQuestionsTest extends Specification {
     public static final String QUESTION_CONTENT = 'question content\n ![image][image]\n question content'
     public static final String OPTION_CONTENT = "optionId content"
     public static final String URL = 'URL'
-
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    QuestionRepository questionRepository
 
     def course
     def questionId
@@ -112,7 +96,6 @@ class ImportExportQuestionsTest extends Specification {
         questionsLatex != null
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

@@ -1,30 +1,22 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-import org.springframework.beans.factory.annotation.Autowired
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import spock.lang.Specification
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CreateExternalCourseExecutionTest extends Specification {
+class CreateExternalCourseExecutionTest extends SpockTest {
     static final String COURSE_ONE = "CourseOne"
     static final String ACRONYM_ONE = "C12"
     static final String ACADEMIC_TERM_ONE = "1º Semestre"
-
-    @Autowired
-    CourseService courseService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
 
     def "the tecnico course exists and create execution course"() {
         given: "a course"
@@ -120,7 +112,6 @@ class CreateExternalCourseExecutionTest extends Specification {
         Course.Type.EXTERNAL | COURSE_ONE | ACRONYM_ONE | "     "           || INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }
