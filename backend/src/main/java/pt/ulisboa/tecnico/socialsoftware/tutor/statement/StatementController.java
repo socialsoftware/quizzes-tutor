@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
@@ -25,7 +26,7 @@ public class StatementController {
 
     @GetMapping("/executions/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<StatementQuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
+    public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -85,14 +86,14 @@ public class StatementController {
 
     @GetMapping("/quizzes/{quizId}/start")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public void startQuiz(Principal principal, @PathVariable int quizId) {
+    public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        statementService.startQuiz(user.getId(), quizId);
+        return statementService.startQuiz(user.getId(), quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/conclude")
