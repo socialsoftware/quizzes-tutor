@@ -47,8 +47,9 @@ public class UserService {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, getMaxUserNumber() + 1, role);
+        User user = new User(name, username, role);
         userRepository.save(user);
+        user.setKey(user.getId());
         return user;
     }
 
@@ -73,7 +74,6 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         user.addCourse(courseExecution);
-        courseExecution.addUser(user);
     }
 
     public User getDemoTeacher() {

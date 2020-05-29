@@ -50,7 +50,7 @@ class GetSolvedQuizzesTest extends SpockTest {
 
         courseDto = new CourseDto(courseExecution)
 
-        user = new User('name', USERNAME, 1, User.Role.STUDENT)
+        user = new User('name', USERNAME, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -67,6 +67,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         option.setQuestion(question)
 
         userRepository.save(user)
+        user.setKey(user.getId())
         questionRepository.save(question)
     }
 

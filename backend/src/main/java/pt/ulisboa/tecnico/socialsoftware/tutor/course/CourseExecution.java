@@ -32,11 +32,11 @@ public class CourseExecution implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "courseExecutions")
+    @ManyToMany(mappedBy = "courseExecutions", fetch=FetchType.LAZY)
     private final Set<User> users = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)

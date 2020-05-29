@@ -14,7 +14,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name = "quiz_answers")
+@Table(name = "quiz_answers",
+        uniqueConstraints={
+        @UniqueConstraint(columnNames = {"quiz_id", "user_id"})
+})
 public class QuizAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

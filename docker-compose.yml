@@ -4,6 +4,7 @@ services:
   postgres:
     image: postgres:alpine
     container_name: postgres
+    command: postgres -c 'max_connections=50'
     ports:
       - 5433:5432
     restart: unless-stopped

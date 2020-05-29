@@ -31,15 +31,17 @@ class ImportExportUsersTest extends SpockTest {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        def user = new User(RITO, AR, 1, User.Role.TEACHER)
+        def user = new User(RITO, AR, User.Role.TEACHER)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)
+        user.setKey(user.getId())
 
-        user = new User(PEDRO, PC, 2, User.Role.STUDENT)
+        user = new User(PEDRO, PC, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(user)
+        user.setKey(user.getId())
     }
 
     def 'export and import users'() {

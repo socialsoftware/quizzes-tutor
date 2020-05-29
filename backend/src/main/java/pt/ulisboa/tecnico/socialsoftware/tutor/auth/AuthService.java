@@ -111,10 +111,9 @@ public class AuthService {
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoStudentAuth() {
-        User user = this.userService.getDemoStudent();
-
+         User user = this.userService.getDemoStudent();
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
 
@@ -122,7 +121,7 @@ public class AuthService {
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoTeacherAuth() {
         User user = this.userService.getDemoTeacher();
 
@@ -133,7 +132,7 @@ public class AuthService {
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoAdminAuth() {
         User user = this.userService.getDemoAdmin();
 

@@ -40,7 +40,7 @@ class GenerateStudentQuizTest extends SpockTest {
         courseExecutionRepository.save(courseExecution)
         courseRepository.save(course)
 
-        user = new User('name', USERNAME, 1, User.Role.STUDENT)
+        user = new User('name', USERNAME, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -66,6 +66,7 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.addTopic(topic)
 
         userRepository.save(user)
+        user.setKey(user.getId())
         questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
 

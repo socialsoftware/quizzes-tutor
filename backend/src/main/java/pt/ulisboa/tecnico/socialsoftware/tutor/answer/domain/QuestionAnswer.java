@@ -20,15 +20,15 @@ public class QuestionAnswer implements DomainEntity {
     @Column(name = "time_taken")
     private Integer timeTaken;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "quiz_question_id")
     private QuizQuestion quizQuestion;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "quiz_answer_id")
     private QuizAnswer quizAnswer;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER)
     @JoinColumn(name = "option_id")
     private Option option;
 

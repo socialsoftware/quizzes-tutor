@@ -42,7 +42,7 @@ class ConcludeQuizTest extends SpockTest {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User('name', "username", 1, User.Role.STUDENT)
+        user = new User('name', "username", User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
@@ -75,6 +75,7 @@ class ConcludeQuizTest extends SpockTest {
 
         quizAnswer = new QuizAnswer(user, quiz)
         userRepository.save(user)
+        user.setKey(user.getId())
         quizRepository.save(quiz)
         questionRepository.save(question)
         quizQuestionRepository.save(quizQuestion)
@@ -170,10 +171,11 @@ class ConcludeQuizTest extends SpockTest {
 
     def 'user not consistent'() {
         given: 'another user'
-        def otherUser = new User('name', "username2", 2, User.Role.STUDENT)
+        def otherUser = new User('name', "username2", User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
         userRepository.save(otherUser)
+        otherUser.setKey(otherUser.getId())
 
         when:
         answerService.concludeQuiz(otherUser, quiz.getId())

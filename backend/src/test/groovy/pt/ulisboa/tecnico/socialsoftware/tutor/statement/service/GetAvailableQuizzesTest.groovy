@@ -44,11 +44,12 @@ class GetAvailableQuizzesTest extends SpockTest {
 
         courseDto = new CourseDto(courseExecution)
 
-        user = new User('name', USERNAME, 1, User.Role.STUDENT)
+        user = new User('name', USERNAME, User.Role.STUDENT)
         user.getCourseExecutions().add(courseExecution)
         courseExecution.getUsers().add(user)
 
         userRepository.save(user)
+        user.setKey(user.getId())
     }
 
     @Unroll
