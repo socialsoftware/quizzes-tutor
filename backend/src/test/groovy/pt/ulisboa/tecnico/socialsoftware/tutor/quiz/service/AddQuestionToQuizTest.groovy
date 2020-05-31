@@ -1,10 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 
@@ -12,11 +11,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 class AddQuestionToQuizTest extends SpockTest {
 
     def setup() {
+        def course = new Course("COURSE_NAME", Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
         def quiz = new Quiz()
         quiz.setKey(1)
         quizRepository.save(quiz)
+
         def question = new Question()
         question.setKey(1)
+        question.setCourse(course)
         question.setTitle("Question title")
         questionRepository.save(question)
     }

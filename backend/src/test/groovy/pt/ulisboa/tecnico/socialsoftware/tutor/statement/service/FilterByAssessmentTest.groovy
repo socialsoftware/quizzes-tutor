@@ -1,10 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -40,6 +39,12 @@ class FilterByAssessmentTest extends SpockTest {
     def questionList
 
     def setup() {
+        def course = new Course("COURSE_NAME", Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
         topic1 = new Topic()
         topic1.setName(TOPIC_NAME_1)
         topic1 = topicRepository.save(topic1)
@@ -55,6 +60,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionList = new ArrayList<>()
 
         questionTopic1 = new Question()
+        questionTopic1.setCourse(course)
         questionTopic1.setTitle(QUESTION_TITLE_1)
         questionTopic1.setContent(QUESTION_CONTENT_1)
         questionTopic1.setKey(1)
@@ -62,6 +68,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic1)
 
         questionTopic2 = new Question()
+        questionTopic2.setCourse(course)
         questionTopic2.setTitle(QUESTION_TITLE_2)
         questionTopic2.setContent(QUESTION_CONTENT_2)
         questionTopic2.setKey(2)
@@ -69,6 +76,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic2)
 
         questionTopic1_2 = new Question()
+        questionTopic1_2.setCourse(course)
         questionTopic1_2.setTitle(QUESTION_TITLE_3)
         questionTopic1_2.setContent(QUESTION_CONTENT_3)
         questionTopic1_2.setKey(3)
@@ -77,12 +85,14 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic1_2)
 
         questionNoTopic = new Question()
+        questionNoTopic.setCourse(course)
         questionNoTopic.setTitle(QUESTION_TITLE_4)
         questionNoTopic.setContent(QUESTION_CONTENT_4)
         questionNoTopic.setKey(4)
         questionList.add(questionNoTopic)
 
         questionTopic1Again = new Question()
+        questionTopic1Again.setCourse(course)
         questionTopic1Again.setTitle(QUESTION_TITLE_5)
         questionTopic1Again.setContent(QUESTION_CONTENT_5)
         questionTopic1Again.setKey(5)

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -33,16 +32,16 @@ class GenerateStudentQuizTest extends SpockTest {
 
     def setup() {
         def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        course.addCourseExecution(courseExecution)
-        courseExecution.setCourse(course)
-
-        courseExecutionRepository.save(courseExecution)
         courseRepository.save(course)
 
+        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecution.setCourse(course)
+        courseExecutionRepository.save(courseExecution)
+
         user = new User('name', USERNAME, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
 
         def topic = new Topic()
         topic.setName("TOPIC")
@@ -56,6 +55,7 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
+        questionRepository.save(questionOne)
 
         questionTwo = new Question()
         questionTwo.setKey(2)
@@ -64,25 +64,18 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
         questionTwo.addTopic(topic)
-
-        userRepository.save(user)
-        user.setKey(user.getId())
-        questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
-
-        def topicConjunction = new TopicConjunction()
-        topicConjunction.addTopic(topic)
-        topic.addTopicConjunction(topicConjunction)
-        topicConjunctionRepository.save(topicConjunction)
 
         assessment = new Assessment()
         assessment.setTitle("Assessment title")
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setCourseExecution(courseExecution)
-        assessment.addTopicConjunction(topicConjunction)
-        topicConjunction.setAssessment(assessment)
         assessmentRepository.save(assessment)
 
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
+        topicConjunction.setAssessment(assessment)
+        topicConjunctionRepository.save(topicConjunction)
     }
 
     def 'generate quiz for one question and there are two questions available'() {

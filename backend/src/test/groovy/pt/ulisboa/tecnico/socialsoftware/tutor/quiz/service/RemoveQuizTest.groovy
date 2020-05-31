@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class RemoveQuizTest extends SpockTest {
@@ -28,6 +29,7 @@ class RemoveQuizTest extends SpockTest {
     def question
     def quiz
     def quizQuestion
+    def user
 
     def setup() {
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
@@ -36,23 +38,29 @@ class RemoveQuizTest extends SpockTest {
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
 
+        user = new User('name', "username", User.Role.STUDENT)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
+
         question = new Question()
         question.setKey(1)
+        question.setCourse(course)
         question.setTitle("Question Title")
         question.setContent("Question Content")
+        questionRepository.save(question)
 
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
+        quizRepository.save(quiz)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
+        quizQuestionRepository.save(quizQuestion)
 
-        quizRepository.save(quiz)
-        questionRepository.save(question)
     }
 
     def "remove a quiz"() {
@@ -66,10 +74,11 @@ class RemoveQuizTest extends SpockTest {
         question.getQuizQuestions().size() == 0
     }
 
-    def "remove a qiz that has an answer"() {
+    def "remove a quiz that has an answer"() {
         given: 'a quiz answer'
         def quizAnswer = new QuizAnswer()
         quizAnswer.setQuiz(quiz)
+        quizAnswer.setUser(user)
         quizAnswerRepository.save(quizAnswer)
 
         when:

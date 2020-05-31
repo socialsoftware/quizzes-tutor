@@ -134,7 +134,6 @@ public class AssessmentService {
                         .map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId())))
                         .collect(Collectors.toSet());
                 topicConjunction.updateTopics(newTopics);
-                assessment.addTopicConjunction(topicConjunction);
                 topicConjunction.setAssessment(assessment);
                 topicConjunctionRepository.save(topicConjunction);
             }
@@ -167,7 +166,10 @@ public class AssessmentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoAssessments() {
-        this.assessmentRepository.findByExecutionCourseId(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(assessment -> assessment.getId() > 10).forEach(assessment -> assessmentRepository.delete(assessment));
+        this.assessmentRepository.findByExecutionCourseId(courseService.getDemoCourse().getCourseExecutionId())
+                .stream()
+                .skip(5)
+                .forEach(assessment -> assessmentRepository.delete(assessment));
     }
 
 }

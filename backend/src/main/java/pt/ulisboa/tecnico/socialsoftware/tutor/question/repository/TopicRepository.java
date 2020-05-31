@@ -12,7 +12,7 @@ import java.util.List;
 @Repository
 @Transactional
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
-    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId", nativeQuery = true)
+    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId ORDER BY t.id", nativeQuery = true)
     List<Topic> findTopics(int courseId);
 
     @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)

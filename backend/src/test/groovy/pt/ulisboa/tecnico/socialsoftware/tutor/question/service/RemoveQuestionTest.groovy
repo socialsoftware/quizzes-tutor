@@ -1,11 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -19,6 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 @DataJpaTest
 class RemoveQuestionTest extends SpockTest {
     public static final String COURSE_NAME = "Arquitetura de Software"
+    public static final String ACRONYM = "AS1"
+    public static final String ACADEMIC_TERM = "1 SEM"
     public static final String QUESTION_TITLE = 'question title'
     public static final String QUESTION_CONTENT = 'question content'
     public static final String OPTION_CONTENT = "optionId content"
@@ -30,9 +30,16 @@ class RemoveQuestionTest extends SpockTest {
     def optionKO
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
+        course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
+
+        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+        def image = new Image()
+        image.setUrl(URL)
+        image.setWidth(20)
+        imageRepository.save(image)
 
         question = new Question()
         question.setKey(1)
@@ -42,12 +49,8 @@ class RemoveQuestionTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
-
-        def image = new Image()
-        image.setUrl(URL)
-        image.setWidth(20)
-        imageRepository.save(image)
         question.setImage(image)
+        questionRepository.save(question)
 
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
@@ -55,13 +58,13 @@ class RemoveQuestionTest extends SpockTest {
         optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
+
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        questionRepository.save(question)
     }
 
     def "remove a question"() {

@@ -1,6 +1,3 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -37,11 +34,9 @@ class UpdateAssessmentTest extends SpockTest {
         assessmentRepository.save(assessment)
 
         topicConjunction = new TopicConjunction()
-        topicConjunction.setAssessment(assessment)
         topicConjunction.addTopic(topic)
+        topicConjunction.setAssessment(assessment)
         topicConjunctionRepository.save(topicConjunction)
-
-        assessment.addTopicConjunction(topicConjunction)
     }
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {

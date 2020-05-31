@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -15,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class UpdateQuestionTest extends SpockTest {
@@ -29,22 +32,39 @@ class UpdateQuestionTest extends SpockTest {
     def question
     def optionOK
     def optionKO
+    def courseExecution
+    def user
 
     def setup() {
+        def course = new Course("COURSE_NAME", Course.Type.TECNICO)
+        courseRepository.save(course)
+
+        courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+        user = new User('name', "username", User.Role.STUDENT)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
+
+        and: 'an image'
+        def image = new Image()
+        image.setUrl(URL)
+        image.setWidth(20)
+        imageRepository.save(image)
+
         given: "create a question"
         question = new Question()
+        question.setCourse(course)
         question.setKey(1)
         question.setTitle(QUESTION_TITLE)
         question.setContent(QUESTION_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        and: 'an image'
-        def image = new Image()
-        image.setUrl(URL)
-        image.setWidth(20)
-        imageRepository.save(image)
         question.setImage(image)
+        questionRepository.save(question)
+
         and: 'two options'
         optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
@@ -52,13 +72,13 @@ class UpdateQuestionTest extends SpockTest {
         optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
+
         optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        questionRepository.save(question)
     }
 
     def "update a question"() {
@@ -143,31 +163,44 @@ class UpdateQuestionTest extends SpockTest {
         def quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setCourseExecution(courseExecution)
         quizRepository.save(quiz)
+
         def quizQuestion = new QuizQuestion()
-        quizQuestionRepository.save(quizQuestion)
-        quiz.addQuizQuestion(quizQuestion)
         quizQuestion.setQuiz(quiz)
-        question.addQuizQuestion(quizQuestion)
+        quizQuestion.setQuestion(question)
+        quizQuestionRepository.save(quizQuestion)
+
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.setUser(user)
+        quizAnswer.setQuiz(quiz)
+        quizAnswerRepository.save(quizAnswer)
+
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionOK)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
+
         questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionKO)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
-        and: "createQuestion a question dto"
+
         def questionDto = new QuestionDto(question)
         questionDto.setTitle(NEW_QUESTION_TITLE)
         questionDto.setContent(NEW_QUESTION_CONTENT)
         questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
+
         and: 'a optionId'
         def optionDto = new OptionDto(optionOK)
         optionDto.setContent(NEW_OPTION_CONTENT)
         optionDto.setCorrect(false)
+
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)

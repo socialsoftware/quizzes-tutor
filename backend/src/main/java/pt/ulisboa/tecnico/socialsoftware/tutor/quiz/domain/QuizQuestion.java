@@ -19,11 +19,11 @@ public class QuizQuestion implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "question_id")
     private Question question;
 

@@ -63,7 +63,6 @@ class ImportExportAnswersTest extends SpockTest {
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
 
         quiz.setCreationDate(DateHandler.now())
         quiz.setAvailableDate(DateHandler.now())

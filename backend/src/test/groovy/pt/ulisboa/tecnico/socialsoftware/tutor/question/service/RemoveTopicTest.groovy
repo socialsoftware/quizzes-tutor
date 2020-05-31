@@ -1,14 +1,11 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 
 @DataJpaTest
 class RemoveTopicTest extends SpockTest {
@@ -18,44 +15,42 @@ class RemoveTopicTest extends SpockTest {
     private static final String TOPIC_THREE = 'nameThree'
     private static final Integer KEY = 1
 
-    def course
+
     def question
-    def topicDtoOne
-    def topicDtoTwo
-    def topicDtoThree
     def topicOne
     def topicTwo
     def topicThree
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
+        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
+        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+
+        topicOne = new Topic()
+        topicOne.setName(TOPIC_ONE)
+        topicOne.setCourse(course)
+        topicRepository.save(topicOne)
+
+        topicTwo = new Topic()
+        topicTwo.setName(TOPIC_TWO)
+        topicTwo.setCourse(course)
+        topicRepository.save(topicTwo)
+
+        topicThree = new Topic()
+        topicThree.setName(TOPIC_THREE)
+        topicThree.setCourse(course)
+        topicRepository.save(topicThree)
+
         question = new Question()
+        question.setCourse(course)
         question.setTitle("Question Title")
         question.setContent("Question Content")
         question.setKey(KEY)
-
-        topicDtoOne = new TopicDto()
-        topicDtoOne.setName(TOPIC_ONE)
-        topicDtoTwo = new TopicDto()
-        topicDtoTwo.setName(TOPIC_TWO)
-        topicDtoThree = new TopicDto()
-        topicDtoThree.setName(TOPIC_THREE)
-
-        topicOne = new Topic(course, topicDtoOne)
-        topicTwo = new Topic(course, topicDtoTwo)
-        question.getTopics().add(topicOne)
-        topicOne.getQuestions().add(question)
-        question.getTopics().add(topicTwo)
-        topicTwo.getQuestions().add(question)
+        question.addTopic(topicOne)
+        question.addTopic(topicTwo)
         questionRepository.save(question)
-        topicRepository.save(topicOne)
-        topicRepository.save(topicTwo)
-
-        topicThree = new Topic(course, topicDtoThree)
-        topicRepository.save(topicThree)
     }
 
     def "remove topic"() {

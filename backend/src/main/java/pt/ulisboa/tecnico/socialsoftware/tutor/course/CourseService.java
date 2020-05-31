@@ -138,11 +138,12 @@ public class CourseService {
     }
 
     public CourseDto getDemoCourse() {
-        Course course =  this.courseRepository.findByNameType(Demo.COURSE_NAME, Course.Type.TECNICO.toString()).orElse(null);
-        if (course == null) {
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElse(null);
+
+        if (courseExecution == null) {
             return createTecnicoCourseExecution(new CourseDto(Demo.COURSE_NAME, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM));
         }
-        return new CourseDto(course);
+        return new CourseDto(courseExecution);
     }
 
     public CourseExecution getDemoCourseExecution() {

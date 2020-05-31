@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class FindQuestionsTest extends SpockTest {
@@ -26,6 +27,7 @@ class FindQuestionsTest extends SpockTest {
 
     def course
     def courseExecution
+    def user
 
     def setup() {
         course = new Course(COURSE_NAME, Course.Type.TECNICO)
@@ -33,6 +35,11 @@ class FindQuestionsTest extends SpockTest {
 
         courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
+
+        user = new User('name', "username", User.Role.STUDENT)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
     }
 
     def "create a question with image and two options and a quiz questions with two answers"() {
@@ -45,12 +52,15 @@ class FindQuestionsTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
+        questionRepository.save(question)
+
         and: 'an image'
         def image = new Image()
         image.setUrl(URL)
         image.setWidth(20)
         imageRepository.save(image)
         question.setImage(image)
+
         and: 'two options'
         def optionOK = new Option()
         optionOK.setContent(OPTION_CONTENT)
@@ -58,37 +68,42 @@ class FindQuestionsTest extends SpockTest {
         optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
+
         def optionKO = new Option()
         optionKO.setContent(OPTION_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        questionRepository.save(question)
 
         def quiz = new Quiz()
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setKey(1)
+        quiz.setCourseExecution(courseExecution)
+        quizRepository.save(quiz)
 
         def quizQuestion = new QuizQuestion()
         quizQuestion.setQuestion(question)
         quizQuestion.setQuiz(quiz)
-        quizRepository.save(quiz)
         quizQuestionRepository.save(quizQuestion)
 
         def quizAnswer = new QuizAnswer()
         quizAnswer.setCompleted(true)
+        quizAnswer.setUser(user)
+        quizAnswer.setQuiz(quiz)
         quizAnswerRepository.save(quizAnswer)
+
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionOK)
-        questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+
         questionAnswer = new QuestionAnswer()
         questionAnswer.setOption(optionKO)
-        questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
         questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
 
         when:
         def result = questionService.findQuestions(course.getId())
