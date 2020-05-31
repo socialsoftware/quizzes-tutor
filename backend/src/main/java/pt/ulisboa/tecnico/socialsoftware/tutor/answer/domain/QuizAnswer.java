@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -12,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ALREADY_COMPLETED;
 
 @Entity
 @Table(name = "quiz_answers",
@@ -186,4 +189,9 @@ public class QuizAnswer implements DomainEntity {
 
         questionAnswers.clear();
     }
+
+    public boolean openToAnswer() {
+        return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
+    }
+
 }

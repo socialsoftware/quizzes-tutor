@@ -130,11 +130,7 @@ public class StatementService {
             return qa;
         });
 
-        if (quizAnswer.isCompleted()) {
-            throw new TutorException(QUIZ_ALREADY_COMPLETED);
-        }
-
-        if (quizAnswer.getQuiz().isOneWay() && quizAnswer.getAnswerDate() != null) {
+        if (!quizAnswer.openToAnswer()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
 
@@ -154,22 +150,20 @@ public class StatementService {
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuizDto> getAvailableQuizzes(int userId, int executionId) {
-        Set<Integer> studentAnsweredQuizIds = quizAnswerRepository.findQuizAnswers(userId, executionId).stream()
-                .filter(quizAnswer -> quizAnswer.isCompleted() || (quizAnswer.getQuiz().isOneWay() && quizAnswer.getCreationDate() != null))
+        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswers(userId, executionId).stream()
                 .map(quizAnswer -> quizAnswer.getQuiz().getId())
                 .collect(Collectors.toSet());
 
-        Stream<Quiz> studentPendingGenerateQuizzesToAnswer= quizAnswerRepository.findQuizAnswers(userId, executionId).stream()
-                .filter(quizAnswer -> !quizAnswer.isCompleted())
+        Stream<Quiz> availableNonGeneratedAndNonQRCodeQuizzes = quizRepository.findAvailableQuizzes(executionId, DateHandler.now()).stream()
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
+                .filter(quiz -> !quiz.isQrCodeOnly())
+                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
+
+        Stream<Quiz> pendingGenerateAndQRCodeOnlyQuizzes= quizAnswerRepository.findNotCompletedQuizAnswers(userId, executionId).stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED) || quizAnswer.getQuiz().isQrCodeOnly())
                 .map(quizAnswer -> quizAnswer.getQuiz());
 
-        return Stream.concat(
-                studentPendingGenerateQuizzesToAnswer,
-                    quizRepository.findAvailableQuizzes(executionId, DateHandler.now()).stream()
-                            .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
-                            .filter(quiz -> !quiz.isQrCodeOnly())
-                            .filter(quiz -> !studentAnsweredQuizIds.contains(quiz.getId())))
+        return Stream.concat(availableNonGeneratedAndNonQRCodeQuizzes, pendingGenerateAndQRCodeOnlyQuizzes)
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
@@ -248,12 +242,10 @@ public class StatementService {
             return qa;
         });
 
-        if (quizAnswer.isCompleted()) {
+        if (!quizAnswer.openToAnswer()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         } else if (quizAnswer.getCreationDate() == null) {
             quizAnswer.setCreationDate(DateHandler.now());
-        } else if (quiz.isOneWay()) {
-            throw new TutorException(QUIZ_ALREADY_STARTED);
         }
 
         return new StatementQuizDto(quizAnswer);
