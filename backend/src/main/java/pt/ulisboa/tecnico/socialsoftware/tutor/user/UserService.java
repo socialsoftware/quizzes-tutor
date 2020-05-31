@@ -78,6 +78,7 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
@@ -86,6 +87,7 @@ public class UserService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
@@ -94,6 +96,7 @@ public class UserService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);

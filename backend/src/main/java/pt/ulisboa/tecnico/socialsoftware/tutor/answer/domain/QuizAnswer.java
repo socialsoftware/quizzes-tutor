@@ -34,11 +34,11 @@ public class QuizAnswer implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 

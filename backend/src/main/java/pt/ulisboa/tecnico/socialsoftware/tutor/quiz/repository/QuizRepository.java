@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
-    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId", nativeQuery = true)
+    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId ORDER BY c.id", nativeQuery = true)
     List<Quiz> findQuizzesOfExecution(int executionId);
 
     @Query(value = "SELECT MAX(key) FROM quizzes", nativeQuery = true)

@@ -11,6 +11,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 @PropertySource({ "classpath:application.properties" })
@@ -27,12 +31,28 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     @Autowired
     UserService userService;
 
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private StatementService statementService;
+
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
+    private AssessmentService assessmentService;
+
     @Override
-    public void afterPropertiesSet() throws Exception {
+    public void afterPropertiesSet() {
         // Run on startup
         JwtTokenProvider.generateKeys();
-//        userService.getDemoTeacher();
-//        userService.getDemoStudent();
-//        userService.getDemoAdmin();
+        userService.getDemoTeacher();
+        userService.getDemoStudent();
+        userService.getDemoAdmin();
+
+        quizService.resetDemoQuizzes();
+        topicService.resetDemoTopics();
+        assessmentService.resetDemoAssessments();
     }
 }

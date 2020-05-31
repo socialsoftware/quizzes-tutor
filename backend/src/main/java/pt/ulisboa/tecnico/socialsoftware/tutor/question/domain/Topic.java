@@ -31,7 +31,7 @@ public class Topic implements DomainEntity {
     @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
     private final List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
 

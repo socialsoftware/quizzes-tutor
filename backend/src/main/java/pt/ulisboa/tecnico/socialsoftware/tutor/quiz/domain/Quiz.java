@@ -74,7 +74,7 @@ public class Quiz implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 

@@ -285,7 +285,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-
     }
 }
 

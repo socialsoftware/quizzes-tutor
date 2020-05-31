@@ -32,7 +32,7 @@ public class Assessment implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 

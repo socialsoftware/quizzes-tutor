@@ -123,9 +123,10 @@ public class TopicService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTopics() {
-        this.topicRepository.findTopics(courseService.getDemoCourse().getCourseId()).stream().filter(topic -> topic.getId() > 125).forEach(topic ->
-                this.topicRepository.delete(topic)
-        );
+        this.topicRepository.findTopics(courseService.getDemoCourse().getCourseId())
+                .stream()
+                .skip(5)
+                .forEach(topic -> this.topicRepository.delete(topic));
     }
 }
 

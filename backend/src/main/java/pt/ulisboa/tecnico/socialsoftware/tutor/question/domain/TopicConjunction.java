@@ -17,7 +17,7 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 

@@ -327,21 +327,31 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
-        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(quiz -> quiz.getId() > 5360).forEach(quiz -> {
-            for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
-                answerService.deleteQuizAnswer(quizAnswer);
-            }
+        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId())
+                .stream()
+                .filter(quiz -> quiz.getId() > 5360)
+                // TODO replace for .skip(2)
+                .forEach(quiz -> {
+                    for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
+                        answerService.deleteQuizAnswer(quizAnswer);
+                    }
 
-            for (QuizQuestion quizQuestion : quiz.getQuizQuestions().stream().filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty()).collect(Collectors.toList())) {
-                questionService.deleteQuizQuestion(quizQuestion);
-            }
+                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
+                            .stream()
+                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
+                            .collect(Collectors.toList())) {
+                        questionService.deleteQuizQuestion(quizQuestion);
+                    }
 
-            quiz.remove();
-            this.quizRepository.delete(quiz);
-        });
+                    quiz.remove();
+                    this.quizRepository.delete(quiz);
+                });
 
         // remove questions that weren't in any quiz
-        for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId()).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
+        for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId())
+                .stream()
+                .filter(question -> question.getQuizQuestions().isEmpty())
+                .collect(Collectors.toList())) {
             questionService.deleteQuestion(question);
         }
     }
