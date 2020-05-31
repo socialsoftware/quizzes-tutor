@@ -97,7 +97,6 @@ public class StatementService {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
 
         quiz.setCourseExecution(courseExecution);
-        courseExecution.addQuiz(quiz);
 
         quizRepository.save(quiz);
         quizAnswerRepository.save(quizAnswer);

@@ -134,7 +134,6 @@ public class AssessmentService {
                         .map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicDto.getId())))
                         .collect(Collectors.toSet());
                 topicConjunction.updateTopics(newTopics);
-                assessment.addTopicConjunction(topicConjunction);
                 topicConjunction.setAssessment(assessment);
                 topicConjunctionRepository.save(topicConjunction);
             }

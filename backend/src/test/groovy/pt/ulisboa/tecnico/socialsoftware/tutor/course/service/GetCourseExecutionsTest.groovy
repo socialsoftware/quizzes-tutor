@@ -70,7 +70,7 @@ class GetCourseExecutionsTest extends SpockTest {
         and: "a quiz"
         def quiz = new Quiz()
         quiz.setTitle("Title")
-        courseExecution.addQuiz(quiz)
+        quiz.setCourseExecution(courseExecution)
 
         when:
         def result = courseService.getCourseExecutions(User.Role.ADMIN)

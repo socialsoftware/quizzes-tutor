@@ -1,6 +1,3 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
-
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -43,45 +40,45 @@ class ConcludeQuizTest extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         user = new User('name', "username", User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
 
         quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setTitle("Quiz Title")
         quiz.setType(Quiz.QuizType.GENERATED.toString())
         quiz.setCourseExecution(courseExecution)
         quiz.setAvailableDate(DateHandler.now())
-        courseExecution.addQuiz(quiz)
-
+        quizRepository.save(quiz)
 
         def question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setCourse(course)
+        questionRepository.save(question)
 
         quizQuestion = new QuizQuestion(quiz, question, 0)
+        quizQuestionRepository.save(quizQuestion)
+
         optionKO = new Option()
         optionKO.setContent("Option Content")
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
         optionKO.setQuestion(question)
+        optionRepository.save(optionKO)
+
         optionOk = new Option()
         optionOk.setContent("Option Content")
         optionOk.setCorrect(true)
         optionOk.setSequence(1)
         optionOk.setQuestion(question)
+        optionRepository.save(optionOk)
 
         date = DateHandler.now()
 
         quizAnswer = new QuizAnswer(user, quiz)
-        userRepository.save(user)
-        user.setKey(user.getId())
-        quizRepository.save(quiz)
-        questionRepository.save(question)
-        quizQuestionRepository.save(quizQuestion)
         quizAnswerRepository.save(quizAnswer)
-        optionRepository.save(optionOk)
-        optionRepository.save(optionKO)
     }
 
     def 'conclude quiz without conclusionDate, without answering'() {

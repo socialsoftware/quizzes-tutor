@@ -35,10 +35,12 @@ public class TopicConjunction {
 
     public void setAssessment(Assessment assessment) {
         this.assessment = assessment;
+        assessment.addTopicConjunction(this);
     }
 
     public void addTopic(Topic topic) {
         topics.add(topic);
+        topic.addTopicConjunction(this);
     }
 
     public void remove() {
@@ -78,10 +80,7 @@ public class TopicConjunction {
             topic.getTopicConjunctions().remove(this);
         });
 
-        newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
-            this.topics.add(topic);
-            topic.addTopicConjunction(this);
-        });
+        newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(this::addTopic);
     }
 
     public List<Question> getQuestions() {

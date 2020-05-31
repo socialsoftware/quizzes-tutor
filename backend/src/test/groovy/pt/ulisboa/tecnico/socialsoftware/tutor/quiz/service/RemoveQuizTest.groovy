@@ -44,7 +44,6 @@ class RemoveQuizTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setCourseExecution(courseExecution)
-        courseExecution.addQuiz(quiz)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
