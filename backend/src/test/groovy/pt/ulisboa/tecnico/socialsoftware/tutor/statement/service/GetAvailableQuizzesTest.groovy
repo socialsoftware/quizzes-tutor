@@ -1,53 +1,27 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
-
 @DataJpaTest
 class GetAvailableQuizzesTest extends SpockTest {
-    static final USERNAME = 'username'
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String QUIZ_TITLE = "Quiz title"
-    public static final LocalDateTime BEFORE = DateHandler.now().minusDays(2)
-    public static final LocalDateTime YESTERDAY = DateHandler.now().minusDays(1)
-    public static final LocalDateTime TOMORROW = DateHandler.now().plusDays(1)
-    public static final LocalDateTime LATER = DateHandler.now().plusDays(2)
-
     def user
     def courseDto
     def quiz
-    def course
-    def courseExecution
 
     def setup() {
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
         courseDto = new CourseDto(courseExecution)
 
-        user = new User('name', USERNAME, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
-
+        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.addCourse(courseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
     }
@@ -59,7 +33,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(quizType.toString())
-        quiz.setAvailableDate(BEFORE)
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
         quiz.setConclusionDate(conclusionDate)
         quiz.setResultsDate(resultsDate)
         quiz.setCourseExecution(courseExecution)
@@ -75,18 +49,18 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizDto.getId() != null
         quizDto.getTitle() == QUIZ_TITLE
         quizDto.isOneWay()
-        quizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
+        quizDto.getAvailableDate() == DateHandler.toISOString(LOCAL_DATE_BEFORE)
         quizDto.getConclusionDate() == DateHandler.toISOString(conclusionDate)
         quizDto.getQuestions().size() == 0
 
         where:
-        quizType                | conclusionDate | resultsDate
-        Quiz.QuizType.PROPOSED  | null           | null
-        Quiz.QuizType.PROPOSED  | null           | LATER
-        Quiz.QuizType.PROPOSED  | TOMORROW       | null
-        Quiz.QuizType.PROPOSED  | TOMORROW       | LATER
-        Quiz.QuizType.IN_CLASS  | TOMORROW       | null
-        Quiz.QuizType.IN_CLASS  | TOMORROW       | LATER
+        quizType                | conclusionDate      | resultsDate
+        Quiz.QuizType.PROPOSED  | null                | null
+        Quiz.QuizType.PROPOSED  | null                | LOCAL_DATE_LATER
+        Quiz.QuizType.PROPOSED  | LOCAL_DATE_TOMORROW | null
+        Quiz.QuizType.PROPOSED  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
+        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | null
+        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
     }
 
     def 'returns a qrOnly quiz if it was scanned already (if it has a quizAnswer)'() {
@@ -97,8 +71,8 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz.setOneWay(true)
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(BEFORE)
-        quiz.setConclusionDate(TOMORROW)
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
+        quiz.setConclusionDate(LOCAL_DATE_TOMORROW)
         quiz.setCourseExecution(courseExecution)
         quizRepository.save(quiz)
         def quizAnswer = new QuizAnswer(user, quiz)
@@ -113,8 +87,8 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizDto.getId() != null
         quizDto.getTitle() == QUIZ_TITLE
         quizDto.isOneWay()
-        quizDto.getAvailableDate() == DateHandler.toISOString(BEFORE)
-        quizDto.getConclusionDate() == DateHandler.toISOString(TOMORROW)
+        quizDto.getAvailableDate() == DateHandler.toISOString(LOCAL_DATE_BEFORE)
+        quizDto.getConclusionDate() == DateHandler.toISOString(LOCAL_DATE_TOMORROW)
         quizDto.getQuestions().size() == 0
     }
 
@@ -138,14 +112,14 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizDtos.size() == 0
 
         where:
-        quizType                | qrOnly | availableDate  | conclusionDate
-        Quiz.QuizType.PROPOSED  | true   | YESTERDAY      | TOMORROW
-        Quiz.QuizType.IN_CLASS  | true   | YESTERDAY      | TOMORROW
-        Quiz.QuizType.PROPOSED  | true   | YESTERDAY      | null
-        Quiz.QuizType.PROPOSED  | false  | TOMORROW       | LATER
-        Quiz.QuizType.IN_CLASS  | false  | TOMORROW       | LATER
-        Quiz.QuizType.PROPOSED  | false  | BEFORE         | YESTERDAY
-        Quiz.QuizType.IN_CLASS  | false  | BEFORE         | YESTERDAY
+        quizType                | qrOnly | availableDate             | conclusionDate
+        Quiz.QuizType.PROPOSED  | true   | LOCAL_DATE_YESTERDAY      | LOCAL_DATE_TOMORROW
+        Quiz.QuizType.IN_CLASS  | true   | LOCAL_DATE_YESTERDAY      | LOCAL_DATE_TOMORROW
+        Quiz.QuizType.PROPOSED  | true   | LOCAL_DATE_YESTERDAY      | null
+        Quiz.QuizType.PROPOSED  | false  | LOCAL_DATE_TOMORROW       | LOCAL_DATE_LATER
+        Quiz.QuizType.IN_CLASS  | false  | LOCAL_DATE_TOMORROW       | LOCAL_DATE_LATER
+        Quiz.QuizType.PROPOSED  | false  | LOCAL_DATE_BEFORE         | LOCAL_DATE_YESTERDAY
+        Quiz.QuizType.IN_CLASS  | false  | LOCAL_DATE_BEFORE         | LOCAL_DATE_YESTERDAY
     }
 
     def 'does not return a completed quiz'() {
@@ -154,8 +128,8 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(BEFORE)
-        quiz.setConclusionDate(TOMORROW)
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
+        quiz.setConclusionDate(LOCAL_DATE_TOMORROW)
         quiz.setCourseExecution(courseExecution)
         quizRepository.save(quiz)
         def quizAnswer = new QuizAnswer(user, quiz)

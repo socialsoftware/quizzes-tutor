@@ -1,19 +1,14 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 
 @DataJpaTest
 class RemoveTopicTest extends SpockTest {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    private static final String TOPIC_ONE = 'nameOne'
-    private static final String TOPIC_TWO = 'nameTwo'
-    private static final String TOPIC_THREE = 'nameThree'
-    private static final Integer KEY = 1
 
 
     def question
@@ -22,24 +17,18 @@ class RemoveTopicTest extends SpockTest {
     def topicThree
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
         topicOne = new Topic()
-        topicOne.setName(TOPIC_ONE)
+        topicOne.setName(TOPIC_1_NAME)
         topicOne.setCourse(course)
         topicRepository.save(topicOne)
 
         topicTwo = new Topic()
-        topicTwo.setName(TOPIC_TWO)
+        topicTwo.setName(TOPIC_2_NAME)
         topicTwo.setCourse(course)
         topicRepository.save(topicTwo)
 
         topicThree = new Topic()
-        topicThree.setName(TOPIC_THREE)
+        topicThree.setName(TOPIC_3_NAME)
         topicThree.setCourse(course)
         topicRepository.save(topicThree)
 
@@ -47,7 +36,6 @@ class RemoveTopicTest extends SpockTest {
         question.setCourse(course)
         question.setTitle("Question Title")
         question.setContent("Question Content")
-        question.setKey(KEY)
         question.addTopic(topicOne)
         question.addTopic(topicTwo)
         questionRepository.save(question)

@@ -1,3 +1,5 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -11,26 +13,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 
 @DataJpaTest
 class UpdateAssessmentTest extends SpockTest {
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String ASSESSMENT_TITLE_1 = 'assessment title 1'
-    public static final String ASSESSMENT_TITLE_2 = 'assessment title 2'
-    public static final String TOPIC_NAME_1 = "topic name 1"
-    public static final String TOPIC_NAME_2 = "topic name 2"
-
-    def assessment
-    def topicConjunction
+    Assessment assessment
+    TopicConjunction topicConjunction
 
     def setup() {
-       def topic = new Topic()
-        topic.setName(TOPIC_NAME_1)
+        def topic = new Topic()
+        topic.setName(TOPIC_1_NAME)
+        topic.setCourse(course)
         topicRepository.save(topic)
 
         assessment = new Assessment()
-        assessment.setTitle(ASSESSMENT_TITLE_1)
+        assessment.setTitle(ASSESSMENT_1_TITLE)
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setSequence(1)
+        assessment.setCourseExecution(courseExecution)
         assessmentRepository.save(assessment)
 
         topicConjunction = new TopicConjunction()
@@ -40,21 +36,21 @@ class UpdateAssessmentTest extends SpockTest {
     }
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
-        given: "an assessment dto"
-        def assessmentDto = new AssessmentDto(assessment)
-        assessmentDto.setTitle(ASSESSMENT_TITLE_2)
-        assessmentDto.setStatus(Assessment.Status.DISABLED.name())
-        assessmentDto.setSequence(assessment.getSequence())
-        and: "a new topic"
         def topic = new Topic()
-        topic.setName(TOPIC_NAME_2)
+        topic.setName(TOPIC_2_NAME)
+        topic.setCourse(course)
         topicRepository.save(topic)
-        and: "a new TopicConjunction"
+
         def topicConjunctionDto = new TopicConjunctionDto()
         topicConjunctionDto.addTopic(new TopicDto(topic))
-        and: "a topicConjunction list without the old topicConjunction"
+
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunctionDto)
+
+        def assessmentDto = new AssessmentDto(assessment)
+        assessmentDto.setTitle(ASSESSMENT_2_TITLE)
+        assessmentDto.setStatus(Assessment.Status.DISABLED.name())
+        assessmentDto.setSequence(assessment.getSequence())
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
@@ -66,43 +62,42 @@ class UpdateAssessmentTest extends SpockTest {
         assessmentRepository.findAll().get(0) == assessment
         assessment.getId() != null
         assessment.getStatus() == Assessment.Status.DISABLED
-        assessment.getTitle() == ASSESSMENT_TITLE_2
+        assessment.getTitle() == ASSESSMENT_2_TITLE
         assessment.getTopicConjunctions().size() == 1
         def topicConjunction = assessment.getTopicConjunctions().first()
         topicConjunction.getId() != null
         topicConjunction.getTopics().size() == 1
-        topicConjunction.getTopics().first().getName() == TOPIC_NAME_2
+        topicConjunction.getTopics().first().getName() == TOPIC_2_NAME
         and: "the returned dto has the correct values"
         result.getId() != null
         result.getStatus() == Assessment.Status.DISABLED.name()
-        result.getTitle() == ASSESSMENT_TITLE_2
+        result.getTitle() == ASSESSMENT_2_TITLE
         result.getTopicConjunctions().size() == 1
         def resTopicConjunction = result.getTopicConjunctions().first()
         resTopicConjunction.getId() != null
         resTopicConjunction.getTopics().size() == 1
         def resTopic = resTopicConjunction.getTopics().first()
         resTopic.getId() != null
-        resTopic.getName() == TOPIC_NAME_2
+        resTopic.getName() == TOPIC_2_NAME
     }
 
     def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
-        given: "an assessment dto"
         def assessmentDto = new AssessmentDto(assessment)
-        assessmentDto.setTitle(ASSESSMENT_TITLE_1)
+        assessmentDto.setTitle(ASSESSMENT_1_TITLE)
         assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         assessmentDto.setSequence(assessment.getSequence())
         assessmentDto.setTopicConjunctions(new ArrayList())
-        and: "a topic"
+
         def topic = new Topic()
-        topic.setName(TOPIC_NAME_2)
+        topic.setName(TOPIC_2_NAME)
+        topic.setCourse(course)
         topicRepository.save(topic)
-        and: "a conjunction"
-        def newTopicConjunction = new TopicConjunctionDto()
-        newTopicConjunction.topics.add(new TopicDto(topic))
-        assessmentDto.addTopicConjunction(newTopicConjunction)
-        and: "a empty conjunction"
+
+        def topicConjunctionDto = new TopicConjunctionDto()
+        topicConjunctionDto.topics.add(new TopicDto(topic))
+        assessmentDto.addTopicConjunction(topicConjunctionDto)
+
         assessmentDto.addTopicConjunction(new TopicConjunctionDto())
-        and: "the previous topic conjunction"
         assessmentDto.addTopicConjunction(new TopicConjunctionDto(topicConjunction))
 
         when:
@@ -113,7 +108,7 @@ class UpdateAssessmentTest extends SpockTest {
         def result = assessmentRepository.findAll().get(0)
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE
-        result.getTitle() == ASSESSMENT_TITLE_1
+        result.getTitle() == ASSESSMENT_1_TITLE
         result.getTopicConjunctions().size() == 3
         def resTopicConjunction1 = result.getTopicConjunctions().get(0)
         def resTopicConjunction2 = result.getTopicConjunctions().get(1)

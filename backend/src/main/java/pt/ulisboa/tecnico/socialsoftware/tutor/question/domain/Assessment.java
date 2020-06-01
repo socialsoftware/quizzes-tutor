@@ -101,7 +101,6 @@ public class Assessment implements DomainEntity {
     }
 
     public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
-        this.topicConjunctions = topicConjunctions;
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
     }
 

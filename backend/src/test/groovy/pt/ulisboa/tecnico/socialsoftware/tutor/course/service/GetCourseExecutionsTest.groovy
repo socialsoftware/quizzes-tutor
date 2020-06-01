@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -13,12 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class GetCourseExecutionsTest extends SpockTest {
-    static final String COURSE_ONE = "CourseOne"
-    static final String ACRONYM_ONE = "C12"
-    static final String ACADEMIC_TERM_ONE = "1º Semestre"
-    static final String ACRONYM_TWO = "C22"
-    static final String ACADEMIC_TERM_TWO = "2º Semestre"
-
     def existingCourses
     def existingCourseExecutions
 
@@ -28,24 +21,16 @@ class GetCourseExecutionsTest extends SpockTest {
     }
 
     def "returned a tecnico course with 0 info"() {
-        given: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        and: "a tecnico course execution"
-        def courseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
         when:
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == existingCourses + 1
+        result.size() == existingCourses
         def tecnicoCourse = result.get(0)
-        tecnicoCourse.name == COURSE_ONE
+        tecnicoCourse.name == COURSE_1_NAME
         tecnicoCourse.courseType == Course.Type.TECNICO
-        tecnicoCourse.acronym == ACRONYM_ONE
-        tecnicoCourse.academicTerm == ACADEMIC_TERM_ONE
+        tecnicoCourse.acronym == COURSE_1_ACRONYM
+        tecnicoCourse.academicTerm == COURSE_1_ACADEMIC_TERM
         tecnicoCourse.courseExecutionType == Course.Type.TECNICO
         tecnicoCourse.numberOfQuestions == 0
         tecnicoCourse.numberOfQuizzes == 0
@@ -54,29 +39,27 @@ class GetCourseExecutionsTest extends SpockTest {
     }
 
     def "returned an external course with more info"() {
-        given: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+        userRepository.deleteAll()
+        courseExecutionRepository.deleteAll()
+        courseRepository.deleteAll()
+
+        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
 
-        and: "an external course execution"
-        def courseExecution = new CourseExecution(course, ACRONYM_TWO, ACADEMIC_TERM_TWO, Course.Type.EXTERNAL)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        and: "a teacher"
-        def teacher = new User("NAME 1", "USERNAME 1", User.Role.TEACHER)
-        courseExecution.addUser(teacher)
+        def teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        teacher.addCourse(courseExecution)
 
-        and: "a student"
-        def student = new User("NAME 2", "USERNAME 2", User.Role.STUDENT)
-        courseExecution.addUser(student)
+        def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        student.addCourse(courseExecution)
 
-        and: "a question"
-        def question = new Question()
+        Question question = new Question()
         question.setTitle("Title")
-        course.addQuestion(question)
+        question.setCourse(course)
 
-        and: "a quiz"
-        def quiz = new Quiz()
+        Quiz quiz = new Quiz()
         quiz.setTitle("Title")
         quiz.setCourseExecution(courseExecution)
 
@@ -84,12 +67,12 @@ class GetCourseExecutionsTest extends SpockTest {
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == existingCourses + 1
+        result.size() == 1
         def externalCourse = result.get(0)
-        externalCourse.name == COURSE_ONE
+        externalCourse.name == COURSE_1_NAME
         externalCourse.courseType == Course.Type.TECNICO
-        externalCourse.acronym == ACRONYM_TWO
-        externalCourse.academicTerm == ACADEMIC_TERM_TWO
+        externalCourse.acronym == COURSE_2_ACRONYM
+        externalCourse.academicTerm == COURSE_2_ACADEMIC_TERM
         externalCourse.courseExecutionType == Course.Type.EXTERNAL
         externalCourse.numberOfQuestions == 1
         externalCourse.numberOfQuizzes == 1

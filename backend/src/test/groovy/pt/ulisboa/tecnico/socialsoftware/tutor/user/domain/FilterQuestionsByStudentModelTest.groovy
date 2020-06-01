@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.user
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -42,8 +42,9 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
         quizQuestionFive = new QuizQuestion(quiz, questionFive, 4)
         quizQuestionSix = new QuizQuestion(quiz, questionSix, 5)
 
-        user = new User()
-        user.setKey(1)
+        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        userRepository.save(user)
+        user.setKey(user.getId())
 
         availableQuestions = [questionOne, questionTwo, questionThree, questionFour, questionFive, questionSix]
     }
@@ -59,7 +60,7 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
     def 'the user answered 1 question' () {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
-        def option = new Option()
+        Option option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
@@ -77,7 +78,7 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
     def 'the user answered 4 questions' () {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
-        def option = new Option()
+        Option option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
@@ -99,7 +100,7 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
     def 'the user answered 5 questions' () {
         given:
         def quizAnswer = new QuizAnswer(user, quiz)
-        def option = new Option()
+        Option option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)

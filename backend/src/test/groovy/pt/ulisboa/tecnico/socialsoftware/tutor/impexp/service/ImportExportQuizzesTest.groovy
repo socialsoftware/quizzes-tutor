@@ -1,13 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -16,36 +13,21 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 
 @DataJpaTest
 class ImportExportQuizzesTest extends SpockTest {
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String QUIZ_TITLE = 'quiz title'
-    public static final String VERSION = 'B'
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-
     def quiz
     def creationDate
     def availableDate
     def conclusionDate
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        def courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
         def questionDto = new QuestionDto()
         questionDto.setKey(1)
-        questionDto.setTitle(QUESTION_TITLE)
-        questionDto.setContent(QUESTION_CONTENT)
+        questionDto.setTitle(QUESTION_1_TITLE)
+        questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
 
         def optionDto = new OptionDto()
         optionDto.setSequence(1)
-        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
@@ -65,8 +47,6 @@ class ImportExportQuizzesTest extends SpockTest {
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
         quizDto.setType(Quiz.QuizType.EXAM.toString())
-        quizDto.setSeries(1)
-        quizDto.setVersion(VERSION)
         quiz = quizService.createQuiz(courseExecution.getId(), quizDto)
 
         quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
@@ -95,8 +75,6 @@ class ImportExportQuizzesTest extends SpockTest {
         quizResult.getAvailableDate() == availableDate
         quizResult.getConclusionDate() == conclusionDate
         quizResult.getType() == Quiz.QuizType.EXAM
-        quizResult.getSeries() == 1
-        quizResult.getVersion() == VERSION
         quizResult.getQuizQuestions().size() == 1
         def quizQuestionResult =  quizResult.getQuizQuestions().stream().findAny().orElse(null)
         quizQuestionResult.getSequence() == 0

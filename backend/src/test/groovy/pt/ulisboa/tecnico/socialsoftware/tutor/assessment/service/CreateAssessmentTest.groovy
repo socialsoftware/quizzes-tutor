@@ -1,9 +1,10 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
@@ -12,54 +13,38 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 
 @DataJpaTest
 class CreateAssessmentTest extends SpockTest {
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-    public static final String ASSESSMENT_TITLE = 'assessment title'
-    public static final String TOPIC_NAME = "topic name"
-
-    def course
-    def courseExecution
-
-    def existingCourseExecutions
-
-    def setup() {
-        existingCourseExecutions = courseExecutionRepository.findAll().size()
-
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-    }
-
     def "create a assessment with one topicConjunction with one topic"() {
         given: "a assessmentDto"
-        def assessmentDto = new AssessmentDto()
-        assessmentDto.setTitle(ASSESSMENT_TITLE)
-        assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
-        def topicConjunction = new TopicConjunctionDto()
         def topic = new Topic()
-        topic.setName(TOPIC_NAME)
+        topic.setCourse(course)
+        topic.setName(TOPIC_1_NAME)
         topic = topicRepository.save(topic)
+
         def topicList = new ArrayList()
         topicList.add(new TopicDto(topic))
+
+        def topicConjunction = new TopicConjunctionDto()
         topicConjunction.setTopics(topicList)
+
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunction)
+
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.setTitle(ASSESSMENT_1_TITLE)
+        assessmentDto.setStatus(Assessment.Status.AVAILABLE.name())
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
         assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
 
         then: "the correct assessment is inside the repository"
-        courseExecutionRepository.count() == existingCourseExecutions + 1
         assessmentRepository.count() == 1L
         topicRepository.count() == 1L
-        def result = courseExecutionRepository.findByFields(ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO.name()).get().getAssessments().stream().findAny().get()
+        def result = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO.name())
+                .get().getAssessments().stream().findAny().get()
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE
-        result.getTitle() == ASSESSMENT_TITLE
+        result.getTitle() == ASSESSMENT_1_TITLE
         result.getCourseExecution() == courseExecution
         result.getTopicConjunctions().size() == 1
         def resTopicConjunction = result.getTopicConjunctions().first()
@@ -67,7 +52,7 @@ class CreateAssessmentTest extends SpockTest {
         resTopicConjunction.getTopics().size() == 1
         def resTopic = resTopicConjunction.getTopics().first()
         resTopic.getId() != null
-        resTopic.getName() == TOPIC_NAME
+        resTopic.getName() == TOPIC_1_NAME
     }
 
     @TestConfiguration

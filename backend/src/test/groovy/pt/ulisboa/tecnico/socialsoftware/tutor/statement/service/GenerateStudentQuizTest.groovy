@@ -4,8 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
@@ -19,26 +17,13 @@ import java.util.stream.Collectors
 
 @DataJpaTest
 class GenerateStudentQuizTest extends SpockTest {
-    static final USERNAME = 'username'
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-
     def user
-    def courseExecution
     def questionOne
     def questionTwo
     def assessment
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecution.setCourse(course)
-        courseExecutionRepository.save(courseExecution)
-
-        user = new User('name', USERNAME, User.Role.STUDENT)
+        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
         user.addCourse(courseExecution)
         userRepository.save(user)
         user.setKey(user.getId())

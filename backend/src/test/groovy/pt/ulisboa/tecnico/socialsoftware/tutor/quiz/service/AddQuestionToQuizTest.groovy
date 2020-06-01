@@ -1,27 +1,27 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 
 @DataJpaTest
 class AddQuestionToQuizTest extends SpockTest {
 
     def setup() {
-        def course = new Course("COURSE_NAME", Course.Type.TECNICO)
-        courseRepository.save(course)
-
-        def courseExecution = new CourseExecution(course, "ACRONYM", "ACADEMIC_TERM", Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-
-        def quiz = new Quiz()
+        Quiz quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
+        quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(true)
         quizRepository.save(quiz)
 
-        def question = new Question()
+        Question question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle("Question title")
@@ -38,7 +38,7 @@ class AddQuestionToQuizTest extends SpockTest {
 
         then:
         quizQuestionRepository.findAll().size() == 1
-        def quizQuestion = quizQuestionRepository.findAll().get(0)
+        QuizQuestion quizQuestion = quizQuestionRepository.findAll().get(0)
         quizQuestion.getId() != null
         quizQuestion.getSequence() == 0
         quizQuestion.getQuiz() != null
