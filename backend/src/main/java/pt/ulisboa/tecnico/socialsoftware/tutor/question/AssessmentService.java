@@ -118,7 +118,10 @@ public class AssessmentService {
         assessment.getTopicConjunctions().stream()
                 .filter(topicConjunction -> assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunction.getId().equals(topicConjunctionDto.getId())))
                 .collect(Collectors.toList())
-                .forEach(TopicConjunction::remove);
+                .forEach(topicConjunction -> {
+                    topicConjunction.remove();
+                    topicConjunctionRepository.delete(topicConjunction);
+                });
 
         for (TopicConjunctionDto topicConjunctionDto: assessmentDto.getTopicConjunctions()) {
             // topicConjunction already existed

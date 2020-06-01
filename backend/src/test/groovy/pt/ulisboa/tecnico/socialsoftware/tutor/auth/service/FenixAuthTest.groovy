@@ -258,6 +258,10 @@ class FenixAuthTest extends SpockTest {
     }
 
     def "student has courses but not in the database, throw exception"() {
+        userRepository.deleteAll()
+        courseExecutionRepository.deleteAll()
+        courseRepository.deleteAll()
+
         given: 'a student'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
         userRepository.save(user)
@@ -275,7 +279,7 @@ class FenixAuthTest extends SpockTest {
         then: "the returned data are correct"
         thrown(TutorException)
         and: 'the user is created in the db'
-        userRepository.findAll().size() == existingUsers + 1
+        userRepository.findAll().size() == 1
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
