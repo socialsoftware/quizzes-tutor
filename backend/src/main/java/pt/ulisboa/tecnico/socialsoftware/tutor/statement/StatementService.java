@@ -29,6 +29,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import javax.persistence.criteria.*;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -41,7 +44,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class StatementService {
-
     @Autowired
     private UserRepository userRepository;
 
@@ -147,9 +149,7 @@ public class StatementService {
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuizDto> getAvailableQuizzes(int userId, int executionId) {
-        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswers(userId, executionId).stream()
-                .map(quizAnswer -> quizAnswer.getQuiz().getId())
-                .collect(Collectors.toSet());
+        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId);
 
         Stream<Quiz> availableNonGeneratedAndNonQRCodeQuizzes = quizRepository.findAvailableNonGeneratedNonQRCodeOnlyQuizzes(executionId, DateHandler.now()).stream()
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
