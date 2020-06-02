@@ -77,8 +77,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
-        QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
-                new TutorException(QUIZ_NOT_FOUND, quizId));
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
@@ -108,10 +107,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
-        QuizAnswer quizAnswer = user.getQuizAnswers().stream()
-                .filter(qa -> qa.getQuiz().getId().equals(quizId))
-                .findFirst()
-                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
 
         QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
                 .filter(qa -> qa.getSequence().equals(answer.getSequence()))
