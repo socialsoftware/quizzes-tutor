@@ -14,8 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ANSWER_NOT_FOUND
 
 @DataJpaTest
 class ConcludeQuizTest extends SpockTest {
@@ -156,7 +156,7 @@ class ConcludeQuizTest extends SpockTest {
         exception.getErrorMessage() == QUIZ_NOT_YET_AVAILABLE
     }
 
-    def 'user not consistent'() {
+    def 'quiz answer not found'() {
         given: 'another user'
         def otherUser = new User(USER_2_USERNAME, USER_2_USERNAME, User.Role.STUDENT)
         user.addCourse(courseExecution)
@@ -168,7 +168,7 @@ class ConcludeQuizTest extends SpockTest {
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == QUIZ_NOT_FOUND
+        exception.getErrorMessage() == QUIZ_ANSWER_NOT_FOUND
     }
 
     @TestConfiguration

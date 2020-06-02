@@ -8,7 +8,10 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "topic_conjunctions")
+@Table(name = "topic_conjunctions",
+        indexes = {
+                @Index(name = "topic_conjunctions_indx_0", columnList = "assessment_id")
+        })
 public class TopicConjunction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

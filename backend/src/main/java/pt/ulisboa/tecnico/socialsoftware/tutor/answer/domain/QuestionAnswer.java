@@ -11,7 +11,10 @@ import javax.persistence.*;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
 
 @Entity
-@Table(name = "question_answers")
+@Table(name = "question_answers",
+        indexes = {
+        @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
+})
 public class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
