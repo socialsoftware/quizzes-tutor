@@ -36,10 +36,10 @@ public class ScheduledTasks {
 		statementService.completeOpenQuizAnswers();
 	}
 
-//    @Scheduled(cron = "0 0 1 * * *")
-//    public void resetDemoInfo() {
-//	    quizService.resetDemoQuizzes();
-//	    topicService.resetDemoTopics();
-//	    assessmentService.resetDemoAssessments();
-//    }
+    @Scheduled(cron = "0 0 1 * * *")
+    public void resetDemoInfo() {
+	    quizService.resetDemoQuizzes();
+	    topicService.resetDemoTopics();
+	    assessmentService.resetDemoAssessments();
+    }
 }

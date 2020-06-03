@@ -151,7 +151,7 @@ public class AnswerService {
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
-        return quizQuestion.getQuestion().getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
+        return !option.getQuestion().getId().equals(quizQuestion.getQuestion().getId());
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {

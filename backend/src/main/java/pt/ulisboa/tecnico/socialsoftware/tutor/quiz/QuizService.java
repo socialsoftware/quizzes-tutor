@@ -339,19 +339,20 @@ public class QuizService {
                 .stream()
                 .skip(2)
                 .forEach(quiz -> {
+
                     for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);
                     }
 
-                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
-                            .stream()
-                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
-                            .collect(Collectors.toList())) {
-                        questionService.deleteQuizQuestion(quizQuestion);
-                    }
+//                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
+//                            .stream()
+//                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
+//                            .collect(Collectors.toList())) {
+//                        questionService.deleteQuizQuestion(quizQuestion);
+//                    }
 
-                    quiz.remove();
-                    this.quizRepository.delete(quiz);
+//                    quiz.remove();
+//                    this.quizRepository.delete(quiz);
                 });
 
         // remove questions that weren't in any quiz
