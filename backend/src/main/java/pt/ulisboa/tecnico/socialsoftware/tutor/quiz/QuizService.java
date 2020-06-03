@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -59,6 +60,9 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -382,11 +386,8 @@ public class QuizService {
     public QuizDto removeNonFilledQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        for (User student : quiz.getCourseExecution().getStudents()) {
-            QuizAnswer quizAnswer = student.getQuizAnswer(quiz);
-            if (quizAnswer != null && quizAnswer.getCreationDate() == null) {
-                answerService.deleteQuizAnswer(quizAnswer);
-            }
+        for (QuizAnswer quizAnswer: quizAnswerRepository.findNotAnsweredQuizAnswers(quizId)) {
+            answerService.deleteQuizAnswer(quizAnswer);
         }
 
         return new QuizDto(quiz, false);

@@ -24,5 +24,9 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
 
     @Query(value = "SELECT qa FROM QuizAnswer qa JOIN qa.quiz q WHERE qa.user.id = :userId AND q.courseExecution.id = :executionId AND qa.completed = FALSE AND (q.type = 'GENERATED' OR q.qrCodeOnly = true)")
     Set<QuizAnswer> findNotCompletedGeneratedOrQRCodeOnlyQuizAnswers(int userId, int executionId);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.id = :quizId AND qa.creationDate IS NULL")
+    Set<QuizAnswer> findNotAnsweredQuizAnswers(int quizId);
+
 }
 
