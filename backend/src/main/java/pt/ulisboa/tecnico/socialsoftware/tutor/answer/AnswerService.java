@@ -107,12 +107,10 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+        QuestionAnswer questionAnswer = questionAnswerRepository.findById(answer.getQuestionAnswerId())
+                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getQuestionAnswerId()));
 
-        QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
-                .filter(qa -> qa.getSequence().equals(answer.getSequence()))
-                .findFirst()
-                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getSequence()));
+        QuizAnswer quizAnswer = questionAnswer.getQuizAnswer();
 
         if (isNotAssignedStudent(user, quizAnswer)) {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());

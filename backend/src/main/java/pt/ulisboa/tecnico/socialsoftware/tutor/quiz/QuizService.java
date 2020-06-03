@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -47,6 +49,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
+    private static Logger logger = LoggerFactory.getLogger(QuizService.class);
+
     @Autowired
     private CourseRepository courseRepository;
 
@@ -329,8 +333,7 @@ public class QuizService {
     public void resetDemoQuizzes() {
         quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId())
                 .stream()
-                .filter(quiz -> quiz.getId() > 5360)
-                // TODO replace for .skip(2)
+                .skip(2)
                 .forEach(quiz -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);
