@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -42,7 +43,7 @@ class ConcludeQuizTest extends SpockTest {
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
 
-        Question question = new Question()
+        def question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setCourse(course)
@@ -122,6 +123,7 @@ class ConcludeQuizTest extends SpockTest {
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
         answerService.submitAnswer(user, quiz.getId(), statementAnswerDto)
 
         when:
