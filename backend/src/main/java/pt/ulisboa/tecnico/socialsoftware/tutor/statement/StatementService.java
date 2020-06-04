@@ -29,9 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -155,7 +152,7 @@ public class StatementService {
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
 
         Stream<Quiz> pendingGenerateAndQRCodeOnlyQuizzes= quizAnswerRepository.findNotCompletedGeneratedOrQRCodeOnlyQuizAnswers(userId, executionId).stream()
-                .map(quizAnswer -> quizAnswer.getQuiz());
+                .map(QuizAnswer::getQuiz);
 
         return Stream.concat(availableNonGeneratedAndNonQRCodeQuizzes, pendingGenerateAndQRCodeOnlyQuizzes)
                 .map(quiz -> new QuizDto(quiz, false))

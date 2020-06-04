@@ -215,8 +215,6 @@ public class QuestionService {
     public ByteArrayOutputStream exportCourseQuestions(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
-        course.getQuestions();
-
         String name = course.getName();
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
@@ -258,13 +256,11 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuizQuestion(QuizQuestion quizQuestion) {
-        System.out.println("Deleting quiz question " + quizQuestion.getId());
         Question question = quizQuestion.getQuestion();
         quizQuestion.remove();
         quizQuestionRepository.delete(quizQuestion);
 
         if (question.getQuizQuestions().isEmpty()) {
-            System.out.println("Deleting question " + question.getId());
             this.deleteQuestion(question);
         }
     }

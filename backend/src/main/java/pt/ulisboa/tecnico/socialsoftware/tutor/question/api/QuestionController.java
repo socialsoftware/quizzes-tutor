@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -78,7 +77,7 @@ public class QuestionController {
 
     @DeleteMapping("/questions/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public ResponseEntity removeQuestion(@PathVariable Integer questionId) throws IOException {
+    public void removeQuestion(@PathVariable Integer questionId) throws IOException {
         logger.debug("removeQuestion questionId: {}: ", questionId);
         QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
@@ -88,16 +87,13 @@ public class QuestionController {
         if (url != null && Files.exists(getTargetLocation(url))) {
             Files.delete(getTargetLocation(url));
         }
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/questions/{questionId}/set-status")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public ResponseEntity questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
+    public void questionSetStatus(@PathVariable Integer questionId, @Valid @RequestBody String status) {
         logger.debug("questionSetStatus questionId: {}: ", questionId);
         questionService.questionSetStatus(questionId, Question.Status.valueOf(status));
-        return ResponseEntity.ok().build();
     }
 
     @PutMapping("/questions/{questionId}/image")
@@ -124,10 +120,8 @@ public class QuestionController {
 
     @PutMapping("/questions/{questionId}/topics")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public ResponseEntity updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
+    public void updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         questionService.updateQuestionTopics(questionId, topics);
-
-        return ResponseEntity.ok().build();
     }
 
     private Path getTargetLocation(String url) {
