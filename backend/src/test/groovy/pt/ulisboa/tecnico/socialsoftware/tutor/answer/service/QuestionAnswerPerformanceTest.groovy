@@ -6,10 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-<<<<<<< HEAD
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-=======
->>>>>>> f34355801edddea4595af204df247f72d6d12f17
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -17,12 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
-<<<<<<< HEAD
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ANSWER_NOT_FOUND
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
-
-=======
->>>>>>> f34355801edddea4595af204df247f72d6d12f17
 @DataJpaTest
 class QuestionAnswerPerformanceTest extends SpockTest {
 
