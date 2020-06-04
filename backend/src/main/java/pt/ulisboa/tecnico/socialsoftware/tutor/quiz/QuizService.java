@@ -50,8 +50,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
-    private static Logger logger = LoggerFactory.getLogger(QuizService.class);
-
+    @SuppressWarnings("unused")
+    private static final Logger logger = LoggerFactory.getLogger(QuizService.class);
     @Autowired
     private CourseRepository courseRepository;
 
@@ -269,7 +269,7 @@ public class QuizService {
     public void importQuizzesFromXml(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
-        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository, courseRepository);
+        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseRepository);
     }
 
     @Retryable(
@@ -344,15 +344,15 @@ public class QuizService {
                         answerService.deleteQuizAnswer(quizAnswer);
                     }
 
-//                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
-//                            .stream()
-//                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
-//                            .collect(Collectors.toList())) {
-//                        questionService.deleteQuizQuestion(quizQuestion);
-//                    }
+                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
+                            .stream()
+                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
+                            .collect(Collectors.toList())) {
+                        questionService.deleteQuizQuestion(quizQuestion);
+                    }
 
-//                    quiz.remove();
-//                    this.quizRepository.delete(quiz);
+                    quiz.remove();
+                    this.quizRepository.delete(quiz);
                 });
 
         // remove questions that weren't in any quiz

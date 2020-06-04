@@ -13,8 +13,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Entity
 @Table(name = "question_answers",
         indexes = {
-        @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
-})
+            @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
+        }
+)
+
 public class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -116,6 +118,9 @@ public class QuestionAnswer implements DomainEntity {
         return "QuestionAnswer{" +
                 "id=" + id +
                 ", timeTaken=" + timeTaken +
+                ", quizQuestion=" + quizQuestion.getId() +
+                ", quizAnswer=" + quizAnswer.getId() +
+                ", option=" + option.getId() +
                 ", sequence=" + sequence +
                 '}';
     }

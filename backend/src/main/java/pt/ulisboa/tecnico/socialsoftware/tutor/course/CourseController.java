@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -39,10 +38,8 @@ public class CourseController {
 
     @GetMapping("/executions/{executionId}/deactivate")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ResponseEntity deactivateCourseExecution(@PathVariable int executionId) {
+    public void deactivateCourseExecution(@PathVariable int executionId) {
         courseService.deactivateCourseExecution(executionId);
-
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/courses/external")
@@ -59,9 +56,7 @@ public class CourseController {
 
     @DeleteMapping("/executions/{courseExecutionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
-    public ResponseEntity removeCourseExecution(@PathVariable Integer courseExecutionId) {
+    public void removeCourseExecution(@PathVariable Integer courseExecutionId) {
         courseService.removeCourseExecution(courseExecutionId);
-
-        return ResponseEntity.ok().build();
     }
 }

@@ -155,7 +155,7 @@ public class StatementService {
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
 
         Stream<Quiz> pendingGenerateAndQRCodeOnlyQuizzes= quizAnswerRepository.findNotCompletedGeneratedOrQRCodeOnlyQuizAnswers(userId, executionId).stream()
-                .map(quizAnswer -> quizAnswer.getQuiz());
+                .map(QuizAnswer::getQuiz);
 
         return Stream.concat(availableNonGeneratedAndNonQRCodeQuizzes, pendingGenerateAndQRCodeOnlyQuizzes)
                 .map(quiz -> new QuizDto(quiz, false))

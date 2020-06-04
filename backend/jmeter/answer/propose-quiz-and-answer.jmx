@@ -61,7 +61,11 @@
           </elementProp>
           <elementProp name="number_of_questions" elementType="Argument">
             <stringProp name="Argument.name">number_of_questions</stringProp>
+<<<<<<< HEAD
             <stringProp name="Argument.value">20</stringProp>
+=======
+            <stringProp name="Argument.value">5</stringProp>
+>>>>>>> f34355801edddea4595af204df247f72d6d12f17
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -408,7 +412,11 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
+<<<<<<< HEAD
         <stringProp name="ThreadGroup.num_threads">100</stringProp>
+=======
+        <stringProp name="ThreadGroup.num_threads">3</stringProp>
+>>>>>>> f34355801edddea4595af204df247f72d6d12f17
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
