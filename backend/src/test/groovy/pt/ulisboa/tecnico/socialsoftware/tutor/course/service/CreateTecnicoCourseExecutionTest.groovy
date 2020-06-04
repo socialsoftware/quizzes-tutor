@@ -1,99 +1,97 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 
 @DataJpaTest
 class CreateTecnicoCourseExecutionTest extends SpockTest {
-    public static final String COURSE_ONE = "CourseOne"
-    public static final String ACRONYM_ONE = "C13"
-    public static final String ACADEMIC_TERM_ONE = "1º Semestre"
+
+    def existingCourses
+    def existingCourseExecutions
+
+    def setup() {
+        existingCourses = courseRepository.findAll().size()
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+    }
 
     def "the course exists and create execution course"() {
-        given: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: 'a courseDto'
+        userRepository.deleteAll()
+        courseExecutionRepository.deleteAll()
+
         def courseDto = new CourseDto(course)
         courseDto.setCourseType(Course.Type.TECNICO)
-        courseDto.setName(COURSE_ONE)
-        courseDto.setAcronym(ACRONYM_ONE)
-        courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
+        courseDto.setName(COURSE_1_NAME)
+        courseDto.setAcronym(COURSE_1_ACRONYM)
+        courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
 
         when:
         def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
-        result.name == COURSE_ONE
-        result.acronym == ACRONYM_ONE
-        result.academicTerm == ACADEMIC_TERM_ONE
+        result.name == COURSE_1_NAME
+        result.acronym == COURSE_1_ACRONYM
+        result.academicTerm == COURSE_1_ACADEMIC_TERM
         and: 'is in the database'
         courseExecutionRepository.findAll().size() == 1
-        def courseExecution = courseExecutionRepository.findAll().get(0)
+        def courseExecution = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO.name()).get()
         courseExecution != null
         and: 'has the correct value'
-        courseExecution.acronym ==ACRONYM_ONE
-        courseExecution.academicTerm == ACADEMIC_TERM_ONE
+        courseExecution.acronym == COURSE_1_ACRONYM
+        courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
         courseExecution.getCourse() == course
     }
 
     def "the course does not exist and create both, course and execution course"() {
-        given: 'a courseDto'
+        userRepository.deleteAll()
+        courseExecutionRepository.deleteAll()
+        courseRepository.deleteAll()
+
         def courseDto = new CourseDto()
         courseDto.setCourseType(Course.Type.TECNICO)
-        courseDto.setName(COURSE_ONE)
-        courseDto.setAcronym(ACRONYM_ONE)
-        courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
+        courseDto.setName(COURSE_1_NAME)
+        courseDto.setAcronym(COURSE_1_ACRONYM)
+        courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
 
         when:
         def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
-        result.name == COURSE_ONE
-        result.acronym == ACRONYM_ONE
-        result.academicTerm == ACADEMIC_TERM_ONE
+        result.name == COURSE_1_NAME
+        result.acronym == COURSE_1_ACRONYM
+        result.academicTerm == COURSE_1_ACADEMIC_TERM
         and: 'course is in the database'
         courseRepository.findAll().size() == 1
-        def course = courseRepository.findByNameType(COURSE_ONE, Course.Type.TECNICO.name()).get()
+        def course = courseRepository.findByNameType(COURSE_1_NAME, Course.Type.TECNICO.name()).get()
         course != null
         course.getCourseExecutions().size() == 1
         and: 'course execution is in the database'
         courseExecutionRepository.findAll().size() == 1
-        def courseExecution = courseExecutionRepository.findAll().get(0)
+        def courseExecution = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO.name()).get()
         courseExecution != null
         and: 'has the correct value'
-        courseExecution.acronym ==ACRONYM_ONE
-        courseExecution.academicTerm == ACADEMIC_TERM_ONE
+        courseExecution.acronym == COURSE_1_ACRONYM
+        courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
         courseExecution.getCourse() == course
     }
 
     def "the course and course execution exist"() {
-        given: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
-        courseRepository.save(course)
-        and: 'a course execution'
-        def courseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
-        and: 'a courseDto'
         def courseDto = new CourseDto(courseExecution)
 
         when:
         def result = courseService.createTecnicoCourseExecution(courseDto)
 
         then: "the returned data are correct"
-        result.name == COURSE_ONE
-        result.acronym == ACRONYM_ONE
-        result.academicTerm == ACADEMIC_TERM_ONE
+        result.name == COURSE_1_NAME
+        result.acronym == COURSE_1_ACRONYM
+        result.academicTerm == COURSE_1_ACADEMIC_TERM
         and: 'are in the database'
-        courseRepository.findAll().size() == 1
-        courseExecutionRepository.findAll().size() == 1
+        courseRepository.findAll().size() == existingCourses
+        courseExecutionRepository.findAll().size() == existingCourseExecutions
     }
 
     def "course name is empty"() {
@@ -101,8 +99,8 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         def courseDto = new CourseDto()
         courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setName("  ")
-        courseDto.setAcronym(ACRONYM_ONE)
-        courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
+        courseDto.setAcronym(COURSE_1_ACRONYM)
+        courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
 
         when:
         courseService.createTecnicoCourseExecution(courseDto)
@@ -115,9 +113,9 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         given: 'a courseDto'
         def courseDto = new CourseDto()
         courseDto.setCourseType(Course.Type.TECNICO)
-        courseDto.setName(COURSE_ONE)
+        courseDto.setName(COURSE_1_NAME)
         courseDto.setAcronym("   ")
-        courseDto.setAcademicTerm(ACADEMIC_TERM_ONE)
+        courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
 
         when:
         courseService.createTecnicoCourseExecution(courseDto)
@@ -130,8 +128,8 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         given: 'a courseDto'
         def courseDto = new CourseDto()
         courseDto.setCourseType(Course.Type.TECNICO)
-        courseDto.setName(COURSE_ONE)
-        courseDto.setAcronym(ACRONYM_ONE)
+        courseDto.setName(COURSE_1_NAME)
+        courseDto.setAcronym(COURSE_1_ACRONYM)
         courseDto.setAcademicTerm("   ")
 
         when:

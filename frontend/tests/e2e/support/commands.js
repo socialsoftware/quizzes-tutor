@@ -45,7 +45,7 @@ Cypress.Commands.add('deleteCourseExecution', acronym => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 7)
+    .should('have.length', 11)
     .find('[data-cy="deleteCourse"]')
     .click();
 });
@@ -57,7 +57,7 @@ Cypress.Commands.add(
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 7)
+      .should('have.length', 11)
       .find('[data-cy="createFromCourse"]')
       .click();
     cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);

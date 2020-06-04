@@ -9,7 +9,6 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -32,7 +31,7 @@ public class QuizzesXmlImport {
     private CourseRepository courseRepository;
 
 	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository,
-							  QuizQuestionRepository quizQuestionRepository, CourseExecutionRepository courseExecutionRepository,
+							  QuizQuestionRepository quizQuestionRepository,
 							  CourseRepository courseRepository) {
 		this.quizService = quizService;
 		this.questionRepository = questionRepository;
@@ -62,14 +61,14 @@ public class QuizzesXmlImport {
 	}
 
 	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository,
-							  QuizQuestionRepository quizQuestionRepository, CourseExecutionRepository courseExecutionRepository,
+							  QuizQuestionRepository quizQuestionRepository,
 							  CourseRepository courseRepository) {
 		SAXBuilder builder = new SAXBuilder();
 		builder.setIgnoringElementContentWhitespace(true);
 
 		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());
 
-		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository, courseExecutionRepository, courseRepository);
+		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository, courseRepository);
 	}
 
 	private void importQuizzes(Document doc) {

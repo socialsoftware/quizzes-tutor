@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
@@ -18,50 +16,40 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 
 @DataJpaTest
 class RemoveQuestionTest extends SpockTest {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final String URL = 'URL'
-
-    def course
     def question
     def optionOK
     def optionKO
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
-        courseRepository.save(course)
+        def image = new Image()
+        image.setUrl(IMAGE_1_URL)
+        image.setWidth(20)
+        imageRepository.save(image)
 
         question = new Question()
         question.setKey(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
+        question.setTitle(QUESTION_1_TITLE)
+        question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
-
-        def image = new Image()
-        image.setUrl(URL)
-        image.setWidth(20)
-        imageRepository.save(image)
         question.setImage(image)
+        questionRepository.save(question)
 
         optionOK = new Option()
-        optionOK.setContent(OPTION_CONTENT)
+        optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
+
         optionKO = new Option()
-        optionKO.setContent(OPTION_CONTENT)
+        optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        questionRepository.save(question)
     }
 
     def "remove a question"() {
@@ -76,11 +64,16 @@ class RemoveQuestionTest extends SpockTest {
 
     def "remove a question used in a quiz"() {
         given: "a question with answers"
-        def quiz = new Quiz()
+        Quiz quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
+        quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(true)
         quizRepository.save(quiz)
 
-        def quizQuestion = new QuizQuestion()
+        QuizQuestion quizQuestion= new QuizQuestion()
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)

@@ -1,12 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
@@ -20,29 +17,16 @@ import java.util.stream.Collectors
 
 @DataJpaTest
 class GenerateStudentQuizTest extends SpockTest {
-    static final USERNAME = 'username'
-    public static final String COURSE_NAME = "Software Architecture"
-    public static final String ACRONYM = "AS1"
-    public static final String ACADEMIC_TERM = "1 SEM"
-
     def user
-    def courseExecution
     def questionOne
     def questionTwo
     def assessment
 
     def setup() {
-        def course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseExecution = new CourseExecution(course, ACRONYM, ACADEMIC_TERM, Course.Type.TECNICO)
-        course.addCourseExecution(courseExecution)
-        courseExecution.setCourse(course)
-
-        courseExecutionRepository.save(courseExecution)
-        courseRepository.save(course)
-
-        user = new User('name', USERNAME, User.Role.STUDENT)
-        user.getCourseExecutions().add(courseExecution)
-        courseExecution.getUsers().add(user)
+        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
 
         def topic = new Topic()
         topic.setName("TOPIC")
@@ -56,6 +40,7 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
+        questionRepository.save(questionOne)
 
         questionTwo = new Question()
         questionTwo.setKey(2)
@@ -64,25 +49,18 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
         questionTwo.addTopic(topic)
-
-        userRepository.save(user)
-        user.setKey(user.getId())
-        questionRepository.save(questionOne)
         questionRepository.save(questionTwo)
-
-        def topicConjunction = new TopicConjunction()
-        topicConjunction.addTopic(topic)
-        topic.addTopicConjunction(topicConjunction)
-        topicConjunctionRepository.save(topicConjunction)
 
         assessment = new Assessment()
         assessment.setTitle("Assessment title")
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setCourseExecution(courseExecution)
-        assessment.addTopicConjunction(topicConjunction)
-        topicConjunction.setAssessment(assessment)
         assessmentRepository.save(assessment)
 
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
+        topicConjunction.setAssessment(assessment)
+        topicConjunctionRepository.save(topicConjunction)
     }
 
     def 'generate quiz for one question and there are two questions available'() {

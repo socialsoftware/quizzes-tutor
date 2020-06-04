@@ -1,9 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
@@ -13,7 +17,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
+import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -30,6 +36,9 @@ public class UserService {
 
     @Autowired
     private CourseService courseService;
+
+    @Autowired
+    private AnswerService answerService;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -78,6 +87,7 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
@@ -86,6 +96,7 @@ public class UserService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
@@ -94,6 +105,7 @@ public class UserService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
             User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
@@ -122,5 +134,22 @@ public class UserService {
     public void importUsers(String usersXML) {
         UsersXmlImport xmlImporter = new UsersXmlImport();
         xmlImporter.importUsers(usersXML, this);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoStudents() {
+        userRepository.findAll()
+                .stream()
+                .filter(user -> user.getName().startsWith("Demo-Student-"))
+                .forEach(user -> {
+                    for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
+                        answerService.deleteQuizAnswer(quizAnswer);
+                    }
+
+                    this.userRepository.delete(user);
+                });
     }
 }

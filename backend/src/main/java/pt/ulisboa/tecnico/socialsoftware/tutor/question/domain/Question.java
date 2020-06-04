@@ -45,11 +45,11 @@ public class Question implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
-    private Image image;
-
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
+    private Image image;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
     private final List<Option> options = new ArrayList<>();
@@ -60,7 +60,7 @@ public class Question implements DomainEntity {
     @ManyToMany(mappedBy = "questions")
     private final Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
 

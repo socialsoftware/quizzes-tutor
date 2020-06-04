@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
+    private Integer questionAnswerId;
     private Integer optionId;
 
     public StatementAnswerDto() {}
@@ -14,18 +15,11 @@ public class StatementAnswerDto implements Serializable {
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
+        this.questionAnswerId = questionAnswer.getId();
 
         if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
         }
-    }
-
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
     }
 
     public Integer getTimeTaken() {
@@ -44,12 +38,29 @@ public class StatementAnswerDto implements Serializable {
         this.sequence = sequence;
     }
 
+    public Integer getQuestionAnswerId() {
+        return questionAnswerId;
+    }
+
+    public void setQuestionAnswerId(Integer questionAnswerId) {
+        this.questionAnswerId = questionAnswerId;
+    }
+
+    public Integer getOptionId() {
+        return optionId;
+    }
+
+    public void setOptionId(Integer optionId) {
+        this.optionId = optionId;
+    }
+
     @Override
     public String toString() {
         return "StatementAnswerDto{" +
-                ", optionId=" + optionId +
-                ", timeTaken=" + timeTaken +
+                "timeTaken=" + timeTaken +
                 ", sequence=" + sequence +
+                ", questionAnswerId=" + questionAnswerId +
+                ", optionId=" + optionId +
                 '}';
     }
 }

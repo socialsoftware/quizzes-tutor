@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -13,20 +11,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 
 @DataJpaTest
 class CreateTopicTest extends SpockTest {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    public static final String NAME = 'name'
-
-    def course
-
-    def setup() {
-        course = new Course(COURSE_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
-    }
-
     def "create a topic"() {
         given:
         def topicDto = new TopicDto()
-        topicDto.setName(NAME)
+        topicDto.setName(TOPIC_1_NAME)
 
         when:
         topicService.createTopic(course.getId(), topicDto)
@@ -35,19 +23,19 @@ class CreateTopicTest extends SpockTest {
         topicRepository.count() == 1L
         def result = topicRepository.findAll().get(0)
         result.getId() != null
-        result.getName() == NAME
+        result.getName() == TOPIC_1_NAME
     }
 
     def "create a topic with the same name"() {
         given: "createQuestion a question"
         Topic topic = new Topic()
-        topic.setName(NAME)
+        topic.setName(TOPIC_1_NAME)
         topic.setCourse(course)
         course.addTopic(topic)
         topicRepository.save(topic)
         and: 'topic dto'
         def topicDto = new TopicDto()
-        topicDto.setName(NAME)
+        topicDto.setName(TOPIC_1_NAME)
 
         when: 'createQuestion another with the same name'
         topicService.createTopic(course.getId(), topicDto)

@@ -215,8 +215,6 @@ public class QuestionService {
     public ByteArrayOutputStream exportCourseQuestions(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
-        course.getQuestions();
-
         String name = course.getName();
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
@@ -285,7 +283,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-
     }
 }
 

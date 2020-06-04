@@ -32,7 +32,7 @@ public class CourseExecution implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    @ManyToOne(fetch=FetchType.EAGER)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
 
@@ -150,9 +150,6 @@ public class CourseExecution implements DomainEntity {
                 ", acronym='" + acronym + '\'' +
                 ", academicTerm='" + academicTerm + '\'' +
                 ", status=" + status +
-                ", users=" + users +
-                ", quizzes=" + quizzes +
-                ", assessments=" + assessments +
                 '}';
     }
 

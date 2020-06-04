@@ -140,4 +140,22 @@ public class CourseDto implements Serializable {
     public void setStatus(CourseExecution.Status status) {
         this.status = status;
     }
+
+    @Override
+    public String toString() {
+        return "CourseDto{" +
+                "courseExecutionType=" + courseExecutionType +
+                ", courseType=" + courseType +
+                ", status=" + status +
+                ", academicTerm='" + academicTerm + '\'' +
+                ", acronym='" + acronym + '\'' +
+                ", name='" + name + '\'' +
+                ", courseExecutionId=" + courseExecutionId +
+                ", courseId=" + courseId +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", numberOfQuizzes=" + numberOfQuizzes +
+                ", numberOfStudents=" + numberOfStudents +
+                ", numberOfTeachers=" + numberOfTeachers +
+                '}';
+    }
 }

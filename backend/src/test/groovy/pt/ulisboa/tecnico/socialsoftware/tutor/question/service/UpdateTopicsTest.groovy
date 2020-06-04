@@ -1,23 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 
 @DataJpaTest
 class UpdateTopicsTest extends SpockTest {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    public static final String TOPIC_ONE = 'nameOne'
-    public static final String TOPIC_TWO = 'nameTwo'
-    public static final String TOPIC_THREE = 'nameThree'
-
-    def course
     def question
     def topicDtoOne
     def topicDtoTwo
@@ -27,10 +19,6 @@ class UpdateTopicsTest extends SpockTest {
     def topicThree
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
-        courseRepository.save(course)
-
         question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
@@ -38,11 +26,11 @@ class UpdateTopicsTest extends SpockTest {
         question.setCourse(course)
 
         topicDtoOne = new TopicDto()
-        topicDtoOne.setName(TOPIC_ONE)
+        topicDtoOne.setName(TOPIC_1_NAME)
         topicDtoTwo = new TopicDto()
-        topicDtoTwo.setName(TOPIC_TWO)
+        topicDtoTwo.setName(TOPIC_2_NAME)
         topicDtoThree = new TopicDto()
-        topicDtoThree.setName(TOPIC_THREE)
+        topicDtoThree.setName(TOPIC_3_NAME)
 
         topicOne = new Topic(course, topicDtoOne)
         topicTwo = new Topic(course, topicDtoTwo)
