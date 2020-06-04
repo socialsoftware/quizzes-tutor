@@ -34,6 +34,40 @@ class QuestionAnswerPerformanceTest extends SpockTest {
         userRepository.save(user)
         user.setKey(user.getId())
 
+        def question = new Question()
+        question.setKey(1)
+        question.setTitle("Question Title")
+        question.setCourse(course)
+        questionRepository.save(question)
+
+        optionKO = new Option()
+        optionKO.setContent("Option Content")
+        optionKO.setCorrect(false)
+        optionKO.setSequence(1)
+        optionKO.setQuestion(question)
+        optionRepository.save(optionKO)
+
+        optionKO = new Option()
+        optionKO.setContent("Option Content")
+        optionKO.setCorrect(false)
+        optionKO.setSequence(2)
+        optionKO.setQuestion(question)
+        optionRepository.save(optionKO)
+
+        optionKO = new Option()
+        optionKO.setContent("Option Content")
+        optionKO.setCorrect(false)
+        optionKO.setSequence(3)
+        optionKO.setQuestion(question)
+        optionRepository.save(optionKO)
+
+        optionOk = new Option()
+        optionOk.setContent("Option Content")
+        optionOk.setCorrect(true)
+        optionOk.setSequence(4)
+        optionOk.setQuestion(question)
+        optionRepository.save(optionOk)
+
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle("Quiz Title")
@@ -42,43 +76,9 @@ class QuestionAnswerPerformanceTest extends SpockTest {
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
 
-        1.upto(10000, {
-            def question = new Question()
-            question.setKey(1)
-            question.setTitle("Question Title")
-            question.setCourse(course)
-            questionRepository.save(question)
-
+        1.upto(1, {
             quizQuestion = new QuizQuestion(quiz, question, 0)
             quizQuestionRepository.save(quizQuestion)
-
-            optionKO = new Option()
-            optionKO.setContent("Option Content")
-            optionKO.setCorrect(false)
-            optionKO.setSequence(1)
-            optionKO.setQuestion(question)
-            optionRepository.save(optionKO)
-
-            optionKO = new Option()
-            optionKO.setContent("Option Content")
-            optionKO.setCorrect(false)
-            optionKO.setSequence(2)
-            optionKO.setQuestion(question)
-            optionRepository.save(optionKO)
-
-            optionKO = new Option()
-            optionKO.setContent("Option Content")
-            optionKO.setCorrect(false)
-            optionKO.setSequence(3)
-            optionKO.setQuestion(question)
-            optionRepository.save(optionKO)
-
-            optionOk = new Option()
-            optionOk.setContent("Option Content")
-            optionOk.setCorrect(true)
-            optionOk.setSequence(4)
-            optionOk.setQuestion(question)
-            optionRepository.save(optionOk)
         })
 
         date = DateHandler.now()

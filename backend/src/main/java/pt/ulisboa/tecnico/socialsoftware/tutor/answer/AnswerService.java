@@ -125,10 +125,15 @@ public class AnswerService {
         }
 
         if (!quizAnswer.isCompleted()) {
-
-            Option option;
             if (answer.getOptionId() != null) {
-                option = optionRepository.findById(answer.getOptionId())
+
+                // TO DO: Assess performance
+//                Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
+//                        .filter(option1 -> option1.getId().equals(answer.getOptionId()))
+//                        .findAny()
+//                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
+
+                Option option = optionRepository.findById(answer.getOptionId())
                         .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
 
                 if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
