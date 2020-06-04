@@ -26,12 +26,12 @@ public class ScheduledTasks {
     @Autowired
     private AssessmentService assessmentService;
 
-	@Scheduled(cron = "0 0 1,13 * * *")
+	@Scheduled(cron = "0 0 3,13 * * *")
 	public void exportAll() {
 		impExpService.exportAll();
 	}
 
-	@Scheduled(cron = "0 0 3 * * *")
+	@Scheduled(cron = "0 0 2 * * *")
 	public void completeOpenQuizAnswers() {
 		statementService.completeOpenQuizAnswers();
 	}
