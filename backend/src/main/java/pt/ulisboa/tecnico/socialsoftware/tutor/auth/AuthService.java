@@ -112,9 +112,9 @@ public class AuthService {
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto demoStudentAuth() {
-         User user = this.userService.getDemoStudent();
-//        User user = this.userService.createDemoStudent();
+    public AuthDto demoStudentAuth() Qu{
+//         User user = this.userService.getDemoStudent();
+        User user = this.userService.createDemoStudent();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
