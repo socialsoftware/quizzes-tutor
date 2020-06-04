@@ -112,7 +112,7 @@ public class AuthService {
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto demoStudentAuth() Qu{
+    public AuthDto demoStudentAuth() {
 //         User user = this.userService.getDemoStudent();
         User user = this.userService.createDemoStudent();
 
