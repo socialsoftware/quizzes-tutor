@@ -7,6 +7,7 @@ import java.io.Serializable;
 public abstract class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
+    private Integer questionAnswerId;
 
     public StatementAnswerDto() {
     }
@@ -14,6 +15,7 @@ public abstract class StatementAnswerDto implements Serializable {
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
+        this.questionAnswerId = questionAnswer.getId();
     }
 
     public Integer getTimeTaken() {
@@ -30,5 +32,13 @@ public abstract class StatementAnswerDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public Integer getQuestionAnswerId() {
+        return questionAnswerId;
+    }
+
+    public void setQuestionAnswerId(Integer questionAnswerId) {
+        this.questionAnswerId = questionAnswerId;
     }
 }

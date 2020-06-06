@@ -64,7 +64,7 @@ public class AnswerService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
@@ -79,10 +79,9 @@ public class AnswerService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
-        QuizAnswer quizAnswer = user.getQuizAnswers().stream().filter(qa -> qa.getQuiz().getId().equals(quizId)).findFirst().orElseThrow(() ->
-                new TutorException(QUIZ_NOT_FOUND, quizId));
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
@@ -110,17 +109,12 @@ public class AnswerService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(User user, Integer quizId, MultipleChoiceStatementAnswerDto answer) {
-        QuizAnswer quizAnswer = user.getQuizAnswers().stream()
-                .filter(qa -> qa.getQuiz().getId().equals(quizId))
-                .findFirst()
-                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        QuestionAnswer questionAnswer = questionAnswerRepository.findById(answer.getQuestionAnswerId())
+                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getQuestionAnswerId()));
 
-        QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
-                .filter(qa -> qa.getSequence().equals(answer.getSequence()))
-                .findFirst()
-                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getSequence()));
+        QuizAnswer quizAnswer = questionAnswer.getQuizAnswer();
 
         if (isNotAssignedStudent(user, quizAnswer)) {
             throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
@@ -150,6 +144,13 @@ public class AnswerService {
     // todo evaluate if we want to have this being handled by the QuestionAnswer
     private void handleMultipleChoiceQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer, MultipleChoiceStatementAnswerDto answer){
         if (answer.getOptionId() != null) {
+            // TO DO: Assess performance
+//                Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
+//                        .filter(option1 -> option1.getId().equals(answer.getOptionId()))
+//                        .findAny()
+//                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
+
+
             Option option = optionRepository.findById(answer.getOptionId())
                     .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
 
@@ -168,7 +169,7 @@ public class AnswerService {
     }
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
-        return ((MultipleChoiceQuestion)quizQuestion.getQuestion()).getOptions().stream().map(Option::getId).noneMatch(value -> value.equals(option.getId()));
+        return !option.getQuestion().getId().equals(quizQuestion.getQuestion().getId());
     }
 
     private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
@@ -178,7 +179,7 @@ public class AnswerService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportAnswers() {
         AnswersXmlExport xmlExport = new AnswersXmlExport();
 
@@ -189,7 +190,7 @@ public class AnswerService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importAnswers(String answersXml) {
         xmlImporter.importAnswers(answersXml);
     }
@@ -197,7 +198,7 @@ public class AnswerService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
         List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
         questionAnswers.forEach(questionAnswer ->

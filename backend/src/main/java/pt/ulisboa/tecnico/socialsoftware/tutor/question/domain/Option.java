@@ -31,11 +31,11 @@ public class Option implements DomainEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "question_id")
     private MultipleChoiceQuestion question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<MultipleChoiceQuestionAnswer> questionAnswers = new HashSet<>();
 
     public Option() {}
@@ -109,6 +109,8 @@ public class Option implements DomainEntity {
                 ", sequence=" + sequence +
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
+                ", question=" + question.getId() +
+                ", questionAnswers=" + questionAnswers +
                 '}';
     }
 

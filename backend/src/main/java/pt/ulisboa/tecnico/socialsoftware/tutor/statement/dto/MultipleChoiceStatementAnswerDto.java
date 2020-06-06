@@ -26,9 +26,10 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDto {
     @Override
     public String toString() {
         return "StatementAnswerDto{" +
-                ", optionId=" + getOptionId() +
-                ", timeTaken=" + getTimeTaken() +
+                "timeTaken=" + getTimeTaken() +
                 ", sequence=" + getSequence() +
+                ", questionAnswerId=" + getQuestionAnswerId() +
+                ", optionId=" + getOptionId() +
                 '}';
     }
 }

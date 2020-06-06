@@ -15,7 +15,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 const httpClient = axios.create();
-httpClient.defaults.timeout = 10000;
+httpClient.defaults.timeout = 100000;
 httpClient.defaults.baseURL =
   process.env.VUE_APP_ROOT_API || 'http://localhost:8080';
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
@@ -287,10 +287,15 @@ export default class RemoteServices {
       });
   }
 
-  static async startQuiz(quizId: number) {
-    return httpClient.get(`/quizzes/${quizId}/start`).catch(async error => {
-      throw Error(await this.errorMessage(error));
-    });
+  static async startQuiz(quizId: number): Promise<StatementQuiz> {
+    return httpClient
+      .get(`/quizzes/${quizId}/start`)
+      .then(response => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async submitAnswer(quizId: number, answer: StatementAnswer) {

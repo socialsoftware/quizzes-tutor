@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -8,71 +7,42 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class RemoveTopicTest extends Specification {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    private static final String TOPIC_ONE = 'nameOne'
-    private static final String TOPIC_TWO = 'nameTwo'
-    private static final String TOPIC_THREE = 'nameThree'
-    private static final Integer KEY = 1
+class RemoveTopicTest extends SpockTest {
 
-    @Autowired
-    TopicService topicService
 
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    TopicRepository topicRepository
-
-    def course
     def question
-    def topicDtoOne
-    def topicDtoTwo
-    def topicDtoThree
     def topicOne
     def topicTwo
     def topicThree
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
-        courseRepository.save(course)
-
-        question = new MultipleChoiceQuestion()
-        question.setTitle("Question Title")
-        question.setContent("Question Content")
-        question.setKey(KEY)
-
-        topicDtoOne = new TopicDto()
-        topicDtoOne.setName(TOPIC_ONE)
-        topicDtoTwo = new TopicDto()
-        topicDtoTwo.setName(TOPIC_TWO)
-        topicDtoThree = new TopicDto()
-        topicDtoThree.setName(TOPIC_THREE)
-
-        topicOne = new Topic(course, topicDtoOne)
-        topicTwo = new Topic(course, topicDtoTwo)
-        question.getTopics().add(topicOne)
-        topicOne.getQuestions().add(question)
-        question.getTopics().add(topicTwo)
-        topicTwo.getQuestions().add(question)
-        questionRepository.save(question)
+        topicOne = new Topic()
+        topicOne.setName(TOPIC_1_NAME)
+        topicOne.setCourse(course)
         topicRepository.save(topicOne)
+
+        topicTwo = new Topic()
+        topicTwo.setName(TOPIC_2_NAME)
+        topicTwo.setCourse(course)
         topicRepository.save(topicTwo)
 
-        topicThree = new Topic(course, topicDtoThree)
+        topicThree = new Topic()
+        topicThree.setName(TOPIC_3_NAME)
+        topicThree.setCourse(course)
         topicRepository.save(topicThree)
+
+        question = new MultipleChoiceQuestion()
+        question.setCourse(course)
+        question.setTitle("Question Title")
+        question.setContent("Question Content")
+        question.addTopic(topicOne)
+        question.addTopic(topicTwo)
+        questionRepository.save(question)
     }
 
     def "remove topic"() {

@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
@@ -56,10 +55,8 @@ public class QuizController {
 
     @DeleteMapping("/quizzes/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public ResponseEntity deleteQuiz(@PathVariable Integer quizId) {
+    public void deleteQuiz(@PathVariable Integer quizId) {
         quizService.removeQuiz(quizId);
-
-        return ResponseEntity.ok().build();
     }
 
     @GetMapping(value = "/quizzes/{quizId}/export")

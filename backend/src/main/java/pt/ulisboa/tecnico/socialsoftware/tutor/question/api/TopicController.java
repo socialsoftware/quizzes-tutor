@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
@@ -40,8 +39,7 @@ public class TopicController {
 
     @DeleteMapping("/topics/{topicId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
-    public ResponseEntity removeTopic(@PathVariable Integer topicId) {
+    public void removeTopic(@PathVariable Integer topicId) {
         topicService.removeTopic(topicId);
-        return ResponseEntity.ok().build();
     }
 }

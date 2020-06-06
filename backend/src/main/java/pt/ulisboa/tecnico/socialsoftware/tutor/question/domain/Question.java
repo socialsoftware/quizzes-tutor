@@ -53,19 +53,19 @@ public abstract class Question implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question")
-    private Image image;
-
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
+    private Image image;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
     private final Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
 
