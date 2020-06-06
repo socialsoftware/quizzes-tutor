@@ -16,6 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OP
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MultipleChoice)
 public class MultipleChoiceQuestion extends Question {
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 

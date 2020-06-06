@@ -8,13 +8,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import spock.lang.Unroll
 
 @DataJpaTest
 class FindQuestionsTest extends SpockTest {
@@ -107,6 +113,91 @@ class FindQuestionsTest extends SpockTest {
         resQuestion.getImage().getWidth() == 20
         resQuestion.getOptions().size() == 2
     }
+
+    @Unroll
+    def "find #size multiple choice questions"(int size) {
+        given: "#size questions created for a given course"
+        for (int i = 0; i < size; i++) {
+            Question question = new MultipleChoiceQuestion()
+            question.setTitle("Question Title")
+            question.setContent(QUESTION_1_CONTENT)
+            question.setStatus(Question.Status.AVAILABLE)
+            question.setCourse(course)
+            questionRepository.save(question)
+        }
+
+        when:
+        def result = questionService.findQuestions(course.getId())
+
+        then: "the returned data are correct"
+        result.size() == size
+        result.stream().allMatch({ q -> q instanceof MultipleChoiceQuestionDto })
+
+        where:
+        size << [1, 0, 10]
+    }
+
+    @Unroll
+    def "find #size code fill in questions"(int size) {
+        given: "#size questions created for a given course"
+        for (int i = 0; i < size; i++) {
+            Question question = new CodeFillInQuestion()
+            question.setTitle("Question Title")
+            question.setContent(QUESTION_1_CONTENT)
+            question.setStatus(Question.Status.AVAILABLE)
+            question.setCourse(course)
+            questionRepository.save(question)
+        }
+
+        when:
+        def result = questionService.findQuestions(course.getId())
+
+        then: "the returned data are correct"
+        result.size() == size
+        result.stream().allMatch({ q -> q instanceof CodeFillInQuestionDto })
+
+        where:
+        size << [1, 0, 10]
+    }
+
+    @Unroll
+    def "find questions"() {
+        given: "different type questions created for a given course"
+        Question question = new CodeFillInQuestion()
+        question.setTitle("Question Title")
+        question.setContent(QUESTION_1_CONTENT)
+        question.setStatus(Question.Status.AVAILABLE)
+        question.setCourse(course)
+        questionRepository.save(question)
+
+        question = new MultipleChoiceQuestion()
+        question.setTitle("Question Title")
+        question.setContent(QUESTION_1_CONTENT)
+        question.setStatus(Question.Status.AVAILABLE)
+        question.setCourse(course)
+        questionRepository.save(question)
+
+        when:
+        def result = questionService.findQuestions(course.getId())
+
+        then: "the returned data are correct"
+        result.size() == 2
+        result.stream().any {q -> q instanceof MultipleChoiceQuestionDto}
+        result.stream().any {q -> q instanceof CodeFillInQuestionDto }
+    }
+
+    @Unroll
+    def "find questions by invalid/non-existent courses (#courseId)"(int courseId) {
+        when:
+        def result = questionService.findQuestions(courseId)
+
+        then:
+        result.empty
+
+        where:
+        courseId << [-1,0,400]
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

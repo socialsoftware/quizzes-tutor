@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,23 +14,25 @@ import java.util.List;
 public class CodeFillInQuestion extends CodeQuestion {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.LAZY, orphanRemoval=true)
-    private final List<FillInSpot> answerSpots = new ArrayList<>();
+    private final List<FillInSpot> fillInSpots = new ArrayList<>();
 
     public CodeFillInQuestion() {
 
     }
 
-    // todo add code fill question dto.
-    public CodeFillInQuestion(Course course, QuestionDto questionDto) {
+    public CodeFillInQuestion(Course course, CodeFillInQuestionDto questionDto) {
         super(course, questionDto);
-        //setAnswerSpots(questionDto.getOptions());
+        setFillInSpots(questionDto.getFillInSpots());
     }
 
-    public List<FillInSpot> getAnswerSpots() {
-        return answerSpots;
+    public List<FillInSpot> getFillInSpots() {
+        return fillInSpots;
     }
 
-    // todo setAnswerSpots from DTO
+    public void setFillInSpots(List<FillInSpotDto> fillInSpots){
+        // todo add exception if none are given.
+        // todo set fill in spots
+    }
 
     @Override
     public void accept(Visitor visitor) {
@@ -41,7 +41,7 @@ public class CodeFillInQuestion extends CodeQuestion {
 
     @Override
     public void visitOptions(Visitor visitor) {
-        for (FillInSpot spot : this.getAnswerSpots()) {
+        for (FillInSpot spot : this.getFillInSpots()) {
             spot.accept(visitor);
         }
     }

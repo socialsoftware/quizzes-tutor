@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -20,7 +21,8 @@ import java.util.stream.Collectors;
         defaultImpl = MultipleChoiceQuestionDto.class,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = "multiple_choice")
+        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = "multiple_choice"),
+        @JsonSubTypes.Type(value = CodeFillInQuestionDto.class, name = "code_fill_in")
         })
 public abstract class QuestionDto implements Serializable {
     private Integer id;
@@ -171,4 +173,5 @@ public abstract class QuestionDto implements Serializable {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
+
 }

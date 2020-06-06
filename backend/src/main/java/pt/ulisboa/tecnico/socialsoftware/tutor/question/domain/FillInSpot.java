@@ -13,7 +13,6 @@ import java.util.List;
 @Entity
 @Table(name = "fill_in_spot")
 public class FillInSpot implements DomainEntity{
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
