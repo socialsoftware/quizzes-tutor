@@ -36,8 +36,6 @@ import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import StatementManager from '@/models/statement/StatementManager';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-import StatementQuestion from '@/models/statement/StatementQuestion';
-import StatementAnswer from '@/models/statement/StatementAnswer';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
@@ -55,8 +53,13 @@ export default class AvailableQuizzesView extends Vue {
 
   async solveQuiz(quiz: StatementQuiz) {
     let statementManager: StatementManager = StatementManager.getInstance;
-    statementManager.statementQuiz = quiz;
-    await this.$router.push({ name: 'solve-quiz' });
+
+    try {
+      statementManager.statementQuiz = await RemoteServices.startQuiz(quiz.id);
+      await this.$router.push({ name: 'solve-quiz' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

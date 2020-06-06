@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
@@ -45,15 +44,13 @@ public class AssessmentController {
 
     @DeleteMapping("/assessments/{assessmentId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')")
-    public ResponseEntity removeAssessment(@PathVariable Integer assessmentId) {
+    public void removeAssessment(@PathVariable Integer assessmentId) {
         assessmentService.removeAssessment(assessmentId);
-        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/assessments/{assessmentId}/set-status")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')")
-    public ResponseEntity assessmentSetStatus(@PathVariable Integer assessmentId, @Valid @RequestBody String status) {
+    public void assessmentSetStatus(@PathVariable Integer assessmentId, @Valid @RequestBody String status) {
         assessmentService.assessmentSetStatus(assessmentId, Assessment.Status.valueOf(status));
-        return ResponseEntity.ok().build();
     }
 }

@@ -1,16 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -18,90 +17,67 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import spock.lang.Specification
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
-class UpdateQuestionTest extends Specification {
-    public static final String QUESTION_TITLE = 'question title'
-    public static final String QUESTION_CONTENT = 'question content'
-    public static final String OPTION_CONTENT = "optionId content"
-    public static final String NEW_QUESTION_TITLE = 'new question title'
-    public static final String NEW_QUESTION_CONTENT = 'new question content'
-    public static final String NEW_OPTION_CONTENT = "new optionId content"
-    public static final String URL = 'URL'
-
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    OptionRepository optionRepository
-
-    @Autowired
-    ImageRepository imageRepository
-
-    @Autowired
-    QuizQuestionRepository quizQuestionRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuestionAnswerRepository questionAnswerRepository
+class UpdateQuestionTest extends SpockTest {
 
     def question
     def optionOK
     def optionKO
+    def user
 
     def setup() {
+        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.addCourse(courseExecution)
+        userRepository.save(user)
+        user.setKey(user.getId())
+
+        and: 'an image'
+        def image = new Image()
+        image.setUrl(IMAGE_1_URL)
+        image.setWidth(20)
+        imageRepository.save(image)
+
         given: "create a question"
         question = new MultipleChoiceQuestion()
+        question.setCourse(course)
         question.setKey(1)
-        question.setTitle(QUESTION_TITLE)
-        question.setContent(QUESTION_CONTENT)
+        question.setTitle(QUESTION_1_TITLE)
+        question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        and: 'an image'
-        def image = new Image()
-        image.setUrl(URL)
-        image.setWidth(20)
-        imageRepository.save(image)
         question.setImage(image)
+        questionRepository.save(question)
+
         and: 'two options'
         optionOK = new Option()
-        optionOK.setContent(OPTION_CONTENT)
+        optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
         optionOK.setQuestion(question)
         optionRepository.save(optionOK)
+
         optionKO = new Option()
-        optionKO.setContent(OPTION_CONTENT)
+        optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestion(question)
         optionRepository.save(optionKO)
-        questionRepository.save(question)
     }
 
     def "update a question"() {
         given: "a changed question"
         def questionDto = new MultipleChoiceQuestionDto(question)
-        questionDto.setTitle(NEW_QUESTION_TITLE)
-        questionDto.setContent(NEW_QUESTION_CONTENT)
+        questionDto.setTitle(QUESTION_2_TITLE)
+        questionDto.setContent(QUESTION_2_CONTENT)
         and: '2 changed options'
         def options = new ArrayList<OptionDto>()
         def optionDto = new OptionDto(optionOK)
-        optionDto.setContent(NEW_OPTION_CONTENT)
+        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)
@@ -116,8 +92,8 @@ class UpdateQuestionTest extends Specification {
         questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
         result.getId() == question.getId()
-        result.getTitle() == NEW_QUESTION_TITLE
-        result.getContent() == NEW_QUESTION_CONTENT
+        result.getTitle() == QUESTION_2_TITLE
+        result.getContent() == QUESTION_2_CONTENT
         and: 'are not changed'
         result.getStatus() == Question.Status.AVAILABLE
         result.getNumberOfAnswers() == 2
@@ -127,10 +103,10 @@ class UpdateQuestionTest extends Specification {
         and: 'an option is changed'
         result.getOptions().size() == 2
         def resOptionOne = result.getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
-        resOptionOne.getContent() == NEW_OPTION_CONTENT
+        resOptionOne.getContent() == OPTION_2_CONTENT
         !resOptionOne.getCorrect()
         def resOptionTwo = result.getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
-        resOptionTwo.getContent() == OPTION_CONTENT
+        resOptionTwo.getContent() == OPTION_1_CONTENT
         resOptionTwo.getCorrect()
     }
 
@@ -152,12 +128,12 @@ class UpdateQuestionTest extends Specification {
         def questionDto = new MultipleChoiceQuestionDto(question)
 
         def optionDto = new OptionDto(optionOK)
-        optionDto.setContent(NEW_OPTION_CONTENT)
+        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)
-        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.setOptions(options)
@@ -172,38 +148,51 @@ class UpdateQuestionTest extends Specification {
 
     def "update correct option in a question with answers"() {
         given: "a question with answers"
-        def quiz = new Quiz()
+        Quiz quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setCourseExecution(courseExecution)
         quizRepository.save(quiz)
-        def quizQuestion = new QuizQuestion()
-        quizQuestionRepository.save(quizQuestion)
-        quiz.addQuizQuestion(quizQuestion)
+
+        QuizQuestion quizQuestion= new QuizQuestion()
         quizQuestion.setQuiz(quiz)
-        question.addQuizQuestion(quizQuestion)
+        quizQuestion.setQuestion(question)
+        quizQuestionRepository.save(quizQuestion)
+
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.setUser(user)
+        quizAnswer.setQuiz(quiz)
+        quizAnswerRepository.save(quizAnswer)
+
         def questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionOK)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
+
         questionAnswer = new MultipleChoiceQuestionAnswer()
         questionAnswer.setOption(optionKO)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        quizQuestion.addQuestionAnswer(questionAnswer)
-        and: "createQuestion a question dto"
+
         def questionDto = new MultipleChoiceQuestionDto(question)
-        questionDto.setTitle(NEW_QUESTION_TITLE)
-        questionDto.setContent(NEW_QUESTION_CONTENT)
+        questionDto.setTitle(QUESTION_2_TITLE)
+        questionDto.setContent(QUESTION_2_CONTENT)
         questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
+
         and: 'a optionId'
         def optionDto = new OptionDto(optionOK)
-        optionDto.setContent(NEW_OPTION_CONTENT)
+        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
+
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)
-        optionDto.setContent(OPTION_CONTENT)
+        optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.setOptions(options)
@@ -214,11 +203,8 @@ class UpdateQuestionTest extends Specification {
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
-
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

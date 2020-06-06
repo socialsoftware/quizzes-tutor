@@ -32,7 +32,7 @@ public class Course implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Question> questions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
@@ -108,8 +108,6 @@ public class Course implements DomainEntity {
                 ", type=" + type +
                 ", name='" + name + '\'' +
                 ", courseExecutions=" + courseExecutions +
-                ", questions=" + questions +
-                ", topics=" + topics +
                 '}';
     }
 

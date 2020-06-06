@@ -14,7 +14,14 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-@Table(name = "quiz_answers")
+@Table(name = "quiz_answers",
+        uniqueConstraints={
+        @UniqueConstraint(columnNames = {"quiz_id", "user_id"})
+        },
+        indexes = {
+                @Index(name = "quiz_answers_indx_0", columnList = "user_id"),
+                @Index(name = "quiz_answers_indx_1", columnList = "quiz_id")
+        })
 public class QuizAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,11 +38,11 @@ public class QuizAnswer implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
@@ -184,4 +191,9 @@ public class QuizAnswer implements DomainEntity {
 
         questionAnswers.clear();
     }
+
+    public boolean openToAnswer() {
+        return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
+    }
+
 }

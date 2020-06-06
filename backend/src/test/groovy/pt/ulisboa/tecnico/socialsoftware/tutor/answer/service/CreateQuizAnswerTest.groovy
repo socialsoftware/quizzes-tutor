@@ -1,37 +1,29 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class CreateQuizAnswerTest extends Specification {
-    @Autowired
-    AnswerService answerService
+class CreateQuizAnswerTest extends SpockTest {
 
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuizAnswerRepository quizAnswerRepository
 
     def setup() {
-        def user = new User()
-        user.setKey(1)
+        User user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.addCourse(courseExecution)
+
         userRepository.save(user)
-        def quiz = new Quiz()
+        user.setKey(user.getId())
+
+        Quiz quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setCourseExecution(courseExecution)
+        quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
 
     }
@@ -56,7 +48,5 @@ class CreateQuizAnswerTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

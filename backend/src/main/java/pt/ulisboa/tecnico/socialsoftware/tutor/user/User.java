@@ -18,7 +18,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "users")
+@Table(name = "users",
+        indexes = {
+                @Index(name = "users_indx_0", columnList = "username")
+        })
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
@@ -26,7 +29,7 @@ public class User implements UserDetails, DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true, nullable = false)
+    @Column(unique=true)
     private Integer key;
 
     @Enumerated(EnumType.STRING)
@@ -38,15 +41,15 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
 
-    private Integer numberOfTeacherQuizzes;
-    private Integer numberOfStudentQuizzes;
-    private Integer numberOfInClassQuizzes;
-    private Integer numberOfTeacherAnswers;
-    private Integer numberOfInClassAnswers;
-    private Integer numberOfStudentAnswers;
-    private Integer numberOfCorrectTeacherAnswers;
-    private Integer numberOfCorrectInClassAnswers;
-    private Integer numberOfCorrectStudentAnswers;
+    private Integer numberOfTeacherQuizzes = 0;
+    private Integer numberOfStudentQuizzes = 0;
+    private Integer numberOfInClassQuizzes = 0;
+    private Integer numberOfTeacherAnswers = 0;
+    private Integer numberOfInClassAnswers = 0;
+    private Integer numberOfStudentAnswers = 0;
+    private Integer numberOfCorrectTeacherAnswers = 0;
+    private Integer numberOfCorrectInClassAnswers = 0;
+    private Integer numberOfCorrectStudentAnswers = 0;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -63,21 +66,11 @@ public class User implements UserDetails, DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, Integer key, User.Role role) {
-        this.name = name;
+    public User(String name, String username, User.Role role) {
+        setName(name);
         setUsername(username);
-        this.key = key;
-        this.role = role;
-        this.creationDate = DateHandler.now();
-        this.numberOfTeacherQuizzes = 0;
-        this.numberOfInClassQuizzes = 0;
-        this.numberOfStudentQuizzes = 0;
-        this.numberOfTeacherAnswers = 0;
-        this.numberOfInClassAnswers = 0;
-        this.numberOfStudentAnswers = 0;
-        this.numberOfCorrectTeacherAnswers = 0;
-        this.numberOfCorrectInClassAnswers = 0;
-        this.numberOfCorrectStudentAnswers = 0;
+        setRole(role);
+        setCreationDate(DateHandler.now());
     }
 
     @Override
@@ -370,6 +363,7 @@ public class User implements UserDetails, DomainEntity {
 
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
+        course.addUser(this);
     }
 
     @Override

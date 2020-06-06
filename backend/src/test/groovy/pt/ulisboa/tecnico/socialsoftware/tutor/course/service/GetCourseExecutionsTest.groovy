@@ -1,60 +1,86 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Specification
 
 @DataJpaTest
-class GetCourseExecutionsTest extends Specification {
-    static final String COURSE_ONE = "CourseOne"
-    static final String ACRONYM_ONE = "C12"
-    static final String ACADEMIC_TERM_ONE = "1º Semestre"
-    static final String ACRONYM_TWO = "C22"
-    static final String ACADEMIC_TERM_TWO = "2º Semestre"
+class GetCourseExecutionsTest extends SpockTest {
+    def existingCourses
+    def existingCourseExecutions
 
-    @Autowired
-    CourseService courseService
+    def setup() {
+        existingCourses = courseRepository.findAll().size()
+        existingCourseExecutions = courseExecutionRepository.findAll().size()
+    }
 
-    @Autowired
-    CourseRepository courseRepository
+    def "returned a tecnico course with 0 info"() {
+        when:
+        def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
+        then: "the returned data are correct"
+        result.size() == existingCourses
+        def tecnicoCourse = result.get(0)
+        tecnicoCourse.name == COURSE_1_NAME
+        tecnicoCourse.courseType == Course.Type.TECNICO
+        tecnicoCourse.acronym == COURSE_1_ACRONYM
+        tecnicoCourse.academicTerm == COURSE_1_ACADEMIC_TERM
+        tecnicoCourse.courseExecutionType == Course.Type.TECNICO
+        tecnicoCourse.numberOfQuestions == 0
+        tecnicoCourse.numberOfQuizzes == 0
+        tecnicoCourse.numberOfTeachers == 0
+        tecnicoCourse.numberOfStudents == 0
+    }
 
-    def "the tecnico course exists and create execution course"() {
-        given: "a course"
-        def course = new Course(COURSE_ONE, Course.Type.TECNICO)
+    def "returned an external course with more info"() {
+        userRepository.deleteAll()
+        courseExecutionRepository.deleteAll()
+        courseRepository.deleteAll()
+
+        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-        and: "two course executions"
-        def courseExecution = new CourseExecution(course, ACRONYM_ONE, ACADEMIC_TERM_ONE, Course.Type.TECNICO)
+
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
-        courseExecution = new CourseExecution(course, ACRONYM_TWO, ACADEMIC_TERM_TWO, Course.Type.EXTERNAL)
-        courseExecutionRepository.save(courseExecution)
+
+        def teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        teacher.addCourse(courseExecution)
+
+        def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        student.addCourse(courseExecution)
+
+        Question question = new MultipleChoiceQuestion()
+        question.setTitle("Title")
+        question.setCourse(course)
+
+        Quiz quiz = new Quiz()
+        quiz.setTitle("Title")
+        quiz.setCourseExecution(courseExecution)
 
         when:
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == 2
-        def tecnicoExecutionCourse = result.get(0)
-        tecnicoExecutionCourse.name == COURSE_ONE
-        tecnicoExecutionCourse.courseType == Course.Type.TECNICO
-        tecnicoExecutionCourse.acronym == ACRONYM_ONE
-        tecnicoExecutionCourse.academicTerm == ACADEMIC_TERM_ONE
-        tecnicoExecutionCourse.courseExecutionType == Course.Type.TECNICO
-        def externalExecutionCourse = result.get(1)
-        externalExecutionCourse.name == COURSE_ONE
-        externalExecutionCourse.courseType == Course.Type.TECNICO
-        externalExecutionCourse.acronym == ACRONYM_TWO
-        externalExecutionCourse.academicTerm == ACADEMIC_TERM_TWO
-        externalExecutionCourse.courseExecutionType == Course.Type.EXTERNAL
+        result.size() == 1
+        def externalCourse = result.get(0)
+        externalCourse.name == COURSE_1_NAME
+        externalCourse.courseType == Course.Type.TECNICO
+        externalCourse.acronym == COURSE_2_ACRONYM
+        externalCourse.academicTerm == COURSE_2_ACADEMIC_TERM
+        externalCourse.courseExecutionType == Course.Type.EXTERNAL
+        externalCourse.numberOfQuestions == 1
+        externalCourse.numberOfQuizzes == 1
+        externalCourse.numberOfTeachers == 1
+        externalCourse.numberOfStudents == 1
     }
 
-
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration{}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

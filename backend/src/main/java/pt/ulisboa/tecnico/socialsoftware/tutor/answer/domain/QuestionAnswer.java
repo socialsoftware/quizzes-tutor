@@ -12,7 +12,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@Table(name = "question_answers")
+@Table(name = "question_answers",
+        indexes = {
+                @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
+        }
+)
 @DiscriminatorColumn(name = "question_answer_type",
         columnDefinition = "smallint not null default 0",
         discriminatorType = DiscriminatorType.INTEGER)
@@ -24,11 +28,11 @@ public abstract class QuestionAnswer implements DomainEntity {
     @Column(name = "time_taken")
     private Integer timeTaken;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "quiz_question_id")
     private QuizQuestion quizQuestion;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "quiz_answer_id")
     private QuizAnswer quizAnswer;
 
@@ -89,15 +93,6 @@ public abstract class QuestionAnswer implements DomainEntity {
             throw new TutorException(INVALID_SEQUENCE_FOR_QUESTION_ANSWER);
 
         this.sequence = sequence;
-    }
-
-    @Override
-    public String toString() {
-        return "QuestionAnswer{" +
-                "id=" + id +
-                ", timeTaken=" + timeTaken +
-                ", sequence=" + sequence +
-                '}';
     }
 
     public abstract boolean isCorrect();

@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -11,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -48,6 +51,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
+    @SuppressWarnings("unused")
+    private static final Logger logger = LoggerFactory.getLogger(QuizService.class);
     @Autowired
     private CourseRepository courseRepository;
 
@@ -56,6 +61,9 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -72,7 +80,7 @@ public class QuizService {
     @Autowired
     private CourseService courseService;
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public CourseDto findQuizCourseExecution(int quizId) {
         return this.quizRepository.findById(quizId)
                 .map(Quiz::getCourseExecution)
@@ -83,7 +91,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto findById(Integer quizId) {
         return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -93,7 +101,7 @@ public class QuizService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuizDto> findNonGeneratedQuizzes(int executionId) {
         Comparator<Quiz> comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))
                 .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))
@@ -114,7 +122,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         Quiz quiz = new Quiz(quizDto);
@@ -145,7 +153,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() ->new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -188,7 +196,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() ->new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -204,7 +212,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -221,7 +229,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizAnswersDto getQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
@@ -248,7 +256,7 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportQuizzesToXml() {
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
 
@@ -258,17 +266,17 @@ public class QuizService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importQuizzesFromXml(String quizzesXml) {
         QuizzesXmlImport xmlImport = new QuizzesXmlImport();
 
-        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseExecutionRepository, courseRepository);
+        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseRepository);
     }
 
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportQuizzesToLatex(int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -277,7 +285,7 @@ public class QuizService {
         return latexExport.export(quiz);
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ByteArrayOutputStream exportQuiz(int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -326,23 +334,33 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
-        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId()).stream().filter(quiz -> quiz.getId() > 5360).forEach(quiz -> {
-            for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
-                answerService.deleteQuizAnswer(quizAnswer);
-            }
+        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId())
+                .stream()
+                .skip(2)
+                .forEach(quiz -> {
 
-            for (QuizQuestion quizQuestion : quiz.getQuizQuestions().stream().filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty()).collect(Collectors.toList())) {
-                questionService.deleteQuizQuestion(quizQuestion);
-            }
+                    for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
+                        answerService.deleteQuizAnswer(quizAnswer);
+                    }
 
-            quiz.remove();
-            this.quizRepository.delete(quiz);
-        });
+                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
+                            .stream()
+                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
+                            .collect(Collectors.toList())) {
+                        questionService.deleteQuizQuestion(quizQuestion);
+                    }
+
+                    quiz.remove();
+                    this.quizRepository.delete(quiz);
+                });
 
         // remove questions that weren't in any quiz
-        for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId()).stream().filter(question -> question.getQuizQuestions().isEmpty()).collect(Collectors.toList())) {
+        for (Question question: questionRepository.findQuestions(courseService.getDemoCourse().getCourseId())
+                .stream()
+                .filter(question -> question.getQuizQuestions().isEmpty())
+                .collect(Collectors.toList())) {
             if (question instanceof MultipleChoiceQuestion) {
                 questionService.deleteQuestion((MultipleChoiceQuestion)question);
             }
@@ -352,7 +370,7 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto populateWithQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
@@ -368,15 +386,12 @@ public class QuizService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto removeNonFilledQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        for (User student : quiz.getCourseExecution().getStudents()) {
-            QuizAnswer quizAnswer = student.getQuizAnswer(quiz);
-            if (quizAnswer != null && quizAnswer.getCreationDate() == null) {
-                answerService.deleteQuizAnswer(quizAnswer);
-            }
+        for (QuizAnswer quizAnswer: quizAnswerRepository.findNotAnsweredQuizAnswers(quizId)) {
+            answerService.deleteQuizAnswer(quizAnswer);
         }
 
         return new QuizDto(quiz, false);

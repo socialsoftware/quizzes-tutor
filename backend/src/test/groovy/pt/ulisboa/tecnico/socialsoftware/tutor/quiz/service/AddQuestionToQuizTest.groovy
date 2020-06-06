@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -9,34 +8,27 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import spock.lang.Specification
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 
 @DataJpaTest
-class AddQuestionToQuizTest extends Specification {
-    @Autowired
-    QuizService quizService
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    QuizQuestionRepository quizQuestionRepository
+class AddQuestionToQuizTest extends SpockTest {
 
     def setup() {
-        def quiz = new Quiz()
+        Quiz quiz = new Quiz()
         quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
+        quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(true)
         quizRepository.save(quiz)
-        def question = new MultipleChoiceQuestion()
+
+        Question question = new MultipleChoiceQuestion()
         question.setKey(1)
+        question.setCourse(course)
         question.setTitle("Question title")
         questionRepository.save(question)
     }
@@ -51,7 +43,7 @@ class AddQuestionToQuizTest extends Specification {
 
         then:
         quizQuestionRepository.findAll().size() == 1
-        def quizQuestion = quizQuestionRepository.findAll().get(0)
+        QuizQuestion quizQuestion = quizQuestionRepository.findAll().get(0)
         quizQuestion.getId() != null
         quizQuestion.getSequence() == 0
         quizQuestion.getQuiz() != null
@@ -63,7 +55,5 @@ class AddQuestionToQuizTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

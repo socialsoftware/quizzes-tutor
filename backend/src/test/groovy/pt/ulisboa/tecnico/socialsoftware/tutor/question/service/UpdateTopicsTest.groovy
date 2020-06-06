@@ -1,41 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
-import spock.lang.Specification
 
 @DataJpaTest
-class UpdateTopicsTest extends Specification {
-    public static final String COURSE_NAME = "Arquitetura de Software"
-    public static final String TOPIC_ONE = 'nameOne'
-    public static final String TOPIC_TWO = 'nameTwo'
-    public static final String TOPIC_THREE = 'nameThree'
-
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    TopicRepository topicRepository
-
-    def course
+class UpdateTopicsTest extends SpockTest {
     def question
     def topicDtoOne
     def topicDtoTwo
@@ -45,10 +23,6 @@ class UpdateTopicsTest extends Specification {
     def topicThree
 
     def setup() {
-        course = new Course()
-        course.setName(COURSE_NAME)
-        courseRepository.save(course)
-
         question = new MultipleChoiceQuestion()
         question.setKey(1)
         question.setTitle("Question Title")
@@ -56,11 +30,11 @@ class UpdateTopicsTest extends Specification {
         question.setCourse(course)
 
         topicDtoOne = new TopicDto()
-        topicDtoOne.setName(TOPIC_ONE)
+        topicDtoOne.setName(TOPIC_1_NAME)
         topicDtoTwo = new TopicDto()
-        topicDtoTwo.setName(TOPIC_TWO)
+        topicDtoTwo.setName(TOPIC_2_NAME)
         topicDtoThree = new TopicDto()
-        topicDtoThree.setName(TOPIC_THREE)
+        topicDtoThree.setName(TOPIC_3_NAME)
 
         topicOne = new Topic(course, topicDtoOne)
         topicTwo = new Topic(course, topicDtoTwo)
@@ -141,7 +115,5 @@ class UpdateTopicsTest extends Specification {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {
-
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }
