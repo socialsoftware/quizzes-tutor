@@ -4,11 +4,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "fill_in_spot")
@@ -26,6 +29,10 @@ public class FillInSpot implements DomainEntity{
 
     public FillInSpot() {}
 
+    public FillInSpot(FillInSpotDto fillInSpotDto) {
+        setOptions(fillInSpotDto.getOptions());
+    }
+
     public Integer getId() {
         return id;
     }
@@ -40,6 +47,33 @@ public class FillInSpot implements DomainEntity{
 
     public void setQuestion(CodeFillInQuestion question) {
         this.question = question;
+    }
+
+    public List<FillInOption> getOptions() {
+        return options;
+    }
+
+    public void setOptions(List<OptionDto> options) {
+        if (options.stream().filter(OptionDto::getCorrect).count() == 0) {
+            throw new TutorException(NO_CORRECT_OPTION);
+        }
+
+        int index = 0;
+        for (OptionDto optionDto : options) {
+            if (optionDto.getId() == null) {
+                optionDto.setSequence(index++);
+                new FillInOption(optionDto).setFillInSpot(this);
+            } else {
+                FillInOption option = getOptions()
+                        .stream()
+                        .filter(op -> op.getId().equals(optionDto.getId()))
+                        .findFirst()
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
+
+                option.setContent(optionDto.getContent());
+                option.setCorrect(optionDto.getCorrect());
+            }
+        }
     }
 
     @Override

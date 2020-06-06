@@ -33,6 +33,12 @@ public class FillInOption implements DomainEntity{
 
     public FillInOption() {}
 
+    public FillInOption(OptionDto option) {
+        setSequence(option.getSequence());
+        setContent(option.getContent());
+        setCorrect(option.getCorrect());
+    }
+
     public Integer getId() {
         return id;
     }

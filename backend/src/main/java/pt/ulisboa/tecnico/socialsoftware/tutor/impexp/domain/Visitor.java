@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
@@ -30,6 +31,8 @@ public interface Visitor {
     default void visitQuizAnswer(QuizAnswer quizAnswer) {}
 
     default void visitQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {}
+
+    default void visitQuestionAnswer(CodeFillInQuestionAnswer questionAnswer) {}
 
     default void visitTopic(Topic topic) {}
 

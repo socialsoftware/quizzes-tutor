@@ -25,6 +25,7 @@ public enum ErrorMessage {
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
     OPTION_NOT_FOUND("Option not found with id %d"),
+    FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
@@ -60,6 +61,7 @@ public enum ErrorMessage {
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
+    AT_LEAST_ONE_OPTION_NEEDED("Question need to have at least one option."),
     ONE_CORRECT_OPTION_NEEDED("Questions need to have 1 and only 1 correct option"),
     CANNOT_CHANGE_ANSWERED_QUESTION("Can not change answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
