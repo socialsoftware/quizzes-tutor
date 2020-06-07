@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
 
     @ManyToOne
-    @JoinColumn(name = "option_id")
+    @JoinColumn(name = "multiple_choice_option_id")
     private Option option;
 
     public MultipleChoiceQuestionAnswer(){

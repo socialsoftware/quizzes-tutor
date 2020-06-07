@@ -61,7 +61,7 @@ public enum ErrorMessage {
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
-    AT_LEAST_ONE_OPTION_NEEDED("Question need to have at least one option."),
+    AT_LEAST_ONE_OPTION_NEEDED("Questions need to have at least one option."),
     ONE_CORRECT_OPTION_NEEDED("Questions need to have 1 and only 1 correct option"),
     CANNOT_CHANGE_ANSWERED_QUESTION("Can not change answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),

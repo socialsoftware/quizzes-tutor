@@ -15,14 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDtoFactory;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -118,6 +112,18 @@ public class QuestionService {
         MultipleChoiceQuestion question = new MultipleChoiceQuestion(course, questionDto);
         questionRepository.save(question);
         return new MultipleChoiceQuestionDto(question);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuestionDto createQuestion(int courseId, CodeFillInQuestionDto questionDto) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        CodeFillInQuestion question = new CodeFillInQuestion(course, questionDto);
+        questionRepository.save(question);
+        return new CodeFillInQuestionDto(question);
     }
 
 

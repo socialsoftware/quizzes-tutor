@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -8,7 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "fill_in_options")
@@ -16,7 +20,7 @@ public class FillInOption implements DomainEntity{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    private Integer id;
 
     @Column(nullable = false)
     private Integer sequence;
@@ -30,6 +34,9 @@ public class FillInOption implements DomainEntity{
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "fill_in_id")
     private FillInSpot fillInSpot;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval=true)
+    private final Set<CodeFillInQuestionAnswer> questionAnswers = new HashSet<>();
 
     public FillInOption() {}
 

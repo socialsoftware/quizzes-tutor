@@ -4,17 +4,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInSpot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FillInSpotDto implements Serializable {
     private Integer id;
-    private List<OptionDto> options;
+    private List<OptionDto> options = new ArrayList<>();
 
     public FillInSpotDto() {
     }
 
     public FillInSpotDto(FillInSpot option) {
         this.id = option.getId();
+        this.options = option.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {

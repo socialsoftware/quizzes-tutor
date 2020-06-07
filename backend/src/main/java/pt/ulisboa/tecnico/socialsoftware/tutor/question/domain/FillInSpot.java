@@ -62,7 +62,9 @@ public class FillInSpot implements DomainEntity{
         for (OptionDto optionDto : options) {
             if (optionDto.getId() == null) {
                 optionDto.setSequence(index++);
-                new FillInOption(optionDto).setFillInSpot(this);
+                FillInOption fillInOption = new FillInOption(optionDto);
+                fillInOption.setFillInSpot(this);
+                this.options.add(fillInOption);
             } else {
                 FillInOption option = getOptions()
                         .stream()

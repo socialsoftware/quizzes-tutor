@@ -42,7 +42,9 @@ public class CodeFillInQuestion extends CodeQuestion {
         int index = 0;
         for (FillInSpotDto fillInSpotDto : fillInSpots) {
             if (fillInSpotDto.getId() == null) {
-                new FillInSpot(fillInSpotDto).setQuestion(this);
+                FillInSpot fillInSpot = new FillInSpot(fillInSpotDto);
+                fillInSpot.setQuestion(this);
+                this.fillInSpots.add(fillInSpot);
             } else {
                 FillInSpot option = getFillInSpots()
                         .stream()

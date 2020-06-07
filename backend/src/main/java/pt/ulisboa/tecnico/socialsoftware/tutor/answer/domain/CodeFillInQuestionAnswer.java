@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -16,8 +15,8 @@ import javax.persistence.ManyToOne;
 public class CodeFillInQuestionAnswer extends QuestionAnswer {
 
     @ManyToOne
-    @JoinColumn(name = "option_id")
-    private FillInOption option;
+    @JoinColumn(name = "code_fill_in_option_id")
+    private FillInOption fillInOption;
 
     public CodeFillInQuestionAnswer(){
 
@@ -27,21 +26,21 @@ public class CodeFillInQuestionAnswer extends QuestionAnswer {
         super(quizAnswer,quizQuestion, sequence);
     }
 
-    public FillInOption getOption() {
-        return option;
+    public FillInOption getFillInOption() {
+        return fillInOption;
     }
 
-    public void setOption(FillInOption option) {
-        this.option = option;
+    public void setFillInOption(FillInOption fillInOption) {
+        this.fillInOption = fillInOption;
 
-        if (option != null) {
-            //TODO CHECK IT -> option.addQuestionAnswer(this);
+        if (fillInOption != null) {
+            //TODO CHECK IT -> fillInOption.addQuestionAnswer(this);
         }
     }
 
     @Override
     public boolean isCorrect() {
-        return getOption() != null && getOption().isCorrect();
+        return getFillInOption() != null && getFillInOption().isCorrect();
     }
 
     @Override
@@ -52,9 +51,9 @@ public class CodeFillInQuestionAnswer extends QuestionAnswer {
     @Override
     public void remove() {
         super.remove();
-        if (option != null) {
-            //TODO CHECK IT option.getQuestionAnswers().remove(this);
-            option = null;
+        if (fillInOption != null) {
+            //TODO CHECK IT fillInOption.getQuestionAnswers().remove(this);
+            fillInOption = null;
         }
     }
 }

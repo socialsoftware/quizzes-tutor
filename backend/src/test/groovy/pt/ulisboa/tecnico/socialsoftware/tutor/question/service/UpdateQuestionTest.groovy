@@ -100,7 +100,7 @@ class UpdateQuestionTest extends SpockTest {
         result.getNumberOfCorrect() == 1
         result.getDifficulty() == 50
         result.getImage() != null
-        and: 'an option is changed'
+        and: 'an fillInOption is changed'
         result.getOptions().size() == 2
         def resOptionOne = result.getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
         resOptionOne.getContent() == OPTION_2_CONTENT
