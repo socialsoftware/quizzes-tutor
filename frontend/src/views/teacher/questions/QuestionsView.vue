@@ -149,11 +149,13 @@ import Topic from '@/models/management/Topic';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
+import CreateOrEditQuestionDialog from './CreateOrEditQuestionDialog.vue';
+import MultipleChoiceQuestion from '../../../models/management/questions/MultipleChoiceQuestion';
 
 @Component({
   components: {
     'show-question-dialog': ShowQuestionDialog,
-    'edit-question-dialog': EditQuestionDialog,
+    'edit-question-dialog': CreateOrEditQuestionDialog,
     'edit-question-topics': EditQuestionTopics
   }
 })
@@ -307,7 +309,7 @@ export default class QuestionsView extends Vue {
   }
 
   newQuestion() {
-    this.currentQuestion = new Question();
+    this.currentQuestion = new MultipleChoiceQuestion();
     this.editQuestionDialog = true;
   }
 
@@ -320,9 +322,9 @@ export default class QuestionsView extends Vue {
   duplicateQuestion(question: Question) {
     this.currentQuestion = new Question(question);
     this.currentQuestion.id = null;
-    this.currentQuestion.options.forEach(option => {
-      option.id = null;
-    });
+    // this.currentQuestion.options.forEach(option => {
+    //   option.id = null;
+    // });
     this.currentQuestion.image = null;
     this.editQuestionDialog = true;
   }

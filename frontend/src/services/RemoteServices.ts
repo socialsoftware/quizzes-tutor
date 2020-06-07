@@ -13,6 +13,7 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { QuestionFactory } from './QuestionFactory';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -97,7 +98,7 @@ export default class RemoteServices {
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
       .then(response => {
         return response.data.map((question: any) => {
-          return new Question(question);
+          return QuestionFactory.createQuestion(question);
         });
       })
       .catch(async error => {
@@ -130,7 +131,7 @@ export default class RemoteServices {
       )
       .then(response => {
         return response.data.map((question: any) => {
-          return new Question(question);
+          return QuestionFactory.createQuestion(question);
         });
       })
       .catch(async error => {
@@ -145,7 +146,7 @@ export default class RemoteServices {
         question
       )
       .then(response => {
-        return new Question(response.data);
+        return QuestionFactory.createQuestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -156,7 +157,7 @@ export default class RemoteServices {
     return httpClient
       .put(`/questions/${question.id}`, question)
       .then(response => {
-        return new Question(response.data);
+        return QuestionFactory.createQuestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -176,7 +177,7 @@ export default class RemoteServices {
     return httpClient
       .post(`/questions/${questionId}/set-status`, status, {})
       .then(response => {
-        return new Question(response.data);
+        return QuestionFactory.createQuestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

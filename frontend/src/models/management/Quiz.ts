@@ -1,5 +1,6 @@
 import Question from '@/models/management/Question';
 import { ISOtoString } from '@/services/ConvertDateService';
+import { QuestionFactory } from '@/services/QuestionFactory';
 
 export class Quiz {
   id!: number;
@@ -51,7 +52,7 @@ export class Quiz {
 
       if (jsonObj.questions) {
         this.questions = jsonObj.questions.map(
-          (question: Question) => new Question(question)
+          (question: Question) => QuestionFactory.createQuestion(question)
         );
       }
     }

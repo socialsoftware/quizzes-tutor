@@ -3,7 +3,7 @@ import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
 
-export default class Question {
+export default abstract class Question {
   id: number | null = null;
   title: string = '';
   status: string = 'AVAILABLE';
@@ -16,9 +16,8 @@ export default class Question {
   creationDate!: string | null;
   image: Image | null = null;
   sequence: number | null = null;
-
-  options: Option[] = [new Option(), new Option(), new Option(), new Option()];
   topics: Topic[] = [];
+  type: string | null = 'multiple_choice';
 
   constructor(jsonObj?: Question) {
     if (jsonObj) {
@@ -33,12 +32,8 @@ export default class Question {
       this.content = jsonObj.content;
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.image = jsonObj.image;
-
-      this.options = jsonObj.options.map(
-        (option: Option) => new Option(option)
-      );
-
+      this.type = jsonObj.type;
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
-  }
+  }   
 }
