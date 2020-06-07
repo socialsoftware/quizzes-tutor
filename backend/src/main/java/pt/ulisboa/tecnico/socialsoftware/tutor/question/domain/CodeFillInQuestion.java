@@ -4,9 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,7 +14,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CodeFillIn)
-public class CodeFillInQuestion extends CodeQuestion {
+public class CodeFillInQuestion extends Question {
+    public enum Language {
+        Java,
+    }
+
+    private Language language;
+
+    @Column(columnDefinition = "TEXT")
+    private String code;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.LAZY, orphanRemoval=true)
     private final List<FillInSpot> fillInSpots = new ArrayList<>();
@@ -28,6 +34,8 @@ public class CodeFillInQuestion extends CodeQuestion {
     public CodeFillInQuestion(Course course, CodeFillInQuestionDto questionDto) {
         super(course, questionDto);
         setFillInSpots(questionDto.getFillInSpots());
+        setLanguage(Language.valueOf(questionDto.getLanguage()));
+        setCode(questionDto.getCode());
     }
 
     public List<FillInSpot> getFillInSpots() {
@@ -55,6 +63,23 @@ public class CodeFillInQuestion extends CodeQuestion {
                 option.setOptions(fillInSpotDto.getOptions());
             }
         }
+    }
+
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     @Override

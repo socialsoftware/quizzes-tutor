@@ -11,7 +11,12 @@
       </v-card-title>
 
       <v-card-text class="text-left">
-        <show-question :question="question" />
+        <show-multiple-choice-question 
+          v-if="question.type === 'multiple_choice'" 
+          :question="question" />
+        <show-code-fill-in-question 
+          v-if="question.type === 'code_fill_in'" 
+          :question="question" />
       </v-card-text>
 
       <v-card-actions>
@@ -26,10 +31,12 @@
 import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
+import ShowCodeFillInQuestion from '@/views/teacher/questions/ShowCodeFillInQuestion.vue';
 
 @Component({
   components: {
-    'show-question': ShowQuestion
+    'show-multiple-choice-question': ShowQuestion,
+    'show-code-fill-in-question': ShowCodeFillInQuestion
   }
 })
 export default class ShowQuestionDialog extends Vue {

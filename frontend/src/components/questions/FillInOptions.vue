@@ -12,7 +12,9 @@
     <v-list>
       <v-list-item>
         <v-list-item-content>
-           <v-list-item-title><v-text-field v-model="currentText" label="Add option" /></v-list-item-title>
+           <v-list-item-title>
+             <v-text-field v-model="currentText" label="Add option" v-on:keyup.enter="addNewElement" />
+             </v-list-item-title>
         </v-list-item-content>
         <v-list-item-action>
           <v-btn @click="addNewElement" class="ma-2" icon>

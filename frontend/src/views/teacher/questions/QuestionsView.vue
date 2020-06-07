@@ -149,8 +149,8 @@ import Topic from '@/models/management/Topic';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
-import CreateOrEditQuestionDialog from './CreateOrEditQuestionDialog.vue';
-import MultipleChoiceQuestion from '../../../models/management/questions/MultipleChoiceQuestion';
+import CreateOrEditQuestionDialog from '@/views/teacher/questions/CreateOrEditQuestionDialog.vue';
+import MultipleChoiceQuestion from '@/models/management/questions/MultipleChoiceQuestion';
 
 @Component({
   components: {
@@ -299,6 +299,7 @@ export default class QuestionsView extends Vue {
   }
 
   showQuestionDialog(question: Question) {
+    this.currentQuestion = null;
     this.currentQuestion = question;
     this.questionDialog = true;
   }

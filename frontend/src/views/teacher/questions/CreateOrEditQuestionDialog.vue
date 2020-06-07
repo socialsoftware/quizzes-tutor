@@ -61,8 +61,8 @@ import {
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 
-import CreateOrEditMultipleChoice from '@/components/questions/CreateOrEditMultipleChoice';
-import CreateOrEditCodeFillIn from '@/components/questions/CreateOrEditCodeFillIn';
+import CreateOrEditMultipleChoice from '@/components/questions/CreateOrEditMultipleChoice.vue';
+import CreateOrEditCodeFillIn from '@/components/questions/CreateOrEditCodeFillIn.vue';
 import { QuestionFactory } from '@/services/QuestionFactory';
 import MultipleChoiceQuestion from '../../../models/management/questions/MultipleChoiceQuestion';
 

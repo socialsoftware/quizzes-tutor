@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
 
+import org.aspectj.apache.bcel.classfile.Unknown;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -9,10 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -61,9 +59,17 @@ public class QuestionController {
 
     @PostMapping("/courses/{courseId}/questions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
+    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
-        return this.questionService.createQuestion(courseId, question);
+        if (question instanceof MultipleChoiceQuestionDto){
+            return this.questionService.createQuestion(courseId, (MultipleChoiceQuestionDto)question);
+        }
+        else if (question instanceof CodeFillInQuestionDto){
+            return this.questionService.createQuestion(courseId, (CodeFillInQuestionDto)question);
+        }
+        else {
+            return null;
+        }
     }
 
     @GetMapping("/questions/{questionId}")

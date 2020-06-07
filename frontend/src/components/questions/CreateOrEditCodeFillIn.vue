@@ -30,10 +30,10 @@
 
       </codemirror>
       <FillInOptions
-        v-for="(item, index) in question.codeFillInSpots"
+        v-for="(item, index) in question.fillInSpots"
         :key="index"
         :option="item"
-        v-model="question.codeFillInSpots[index]"
+        v-model="question.fillInSpots[index]"
       />
               <!-- v-on:change="handleInput" -->
 
@@ -47,7 +47,7 @@ import CodeFillInQuestion from '@/models/management/questions/CodeFillInQuestion
 import Question from '../../models/management/Question';
 import { codemirror } from 'vue-codemirror';
 import CodeMirror from 'codemirror';
-import FillInOptions from '@/components/questions/FillInOptions';
+import FillInOptions from '@/components/questions/FillInOptions.vue';
 import Option from '@/models/management/Option';
 
 import 'codemirror/lib/codemirror.css'
@@ -55,7 +55,7 @@ import 'codemirror/mode/clike/clike.js'
 //
 import 'codemirror/theme/eclipse.css'
 import 'codemirror/addon/mode/overlay.js'
-import CodeFillInSpot from '../../models/management/questions/CodeFillInSpot';
+import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
@@ -116,7 +116,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
       item.options = [option];
       item.sequence = this.counter;
       
-      this.question.codeFillInSpots.push(item);
+      this.question.fillInSpots.push(item);
       this.$refs.myCm.codemirror.replaceSelection("{{slot-"+this.counter+"}}");
       this.counter++;
     }

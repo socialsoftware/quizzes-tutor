@@ -1,16 +1,21 @@
 import Question from '../Question';
 
+var DEFAULT_CONTENT: string = "Use the dropdown to complete the snippet of code below correctly.";
+
 export default class CodeFillInQuestion extends Question {
   language: string = 'Java';
   code: string = '';
-  codeFillInSpots: any[] = [];
+  fillInSpots: any[] = [];
 
   constructor(jsonObj?: CodeFillInQuestion) {
     super(jsonObj);
     if (jsonObj) {
       this.language = jsonObj.language || this.language;
       this.code = jsonObj.code || this.code;
-      this.codeFillInSpots = jsonObj.codeFillInSpots || this.codeFillInSpots;
+      this.fillInSpots = jsonObj.fillInSpots || this.fillInSpots;
+    }
+    if(!this.content){
+      this.content = DEFAULT_CONTENT;
     }
   }
 }
