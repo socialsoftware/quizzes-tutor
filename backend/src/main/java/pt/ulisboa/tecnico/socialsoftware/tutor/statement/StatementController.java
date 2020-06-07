@@ -81,7 +81,7 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        statementService.submitAnswer(user.getId(), quizId, answer);
+        statementService.submitAnswer(user.getId(), answer);
     }
 
     @GetMapping("/quizzes/{quizId}/start")
@@ -96,9 +96,9 @@ public class StatementController {
         return statementService.startQuiz(user.getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/conclude")
+    @PostMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId) {
+    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -106,6 +106,6 @@ public class StatementController {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.concludeQuiz(user.getId(), quizId);
+        return statementService.concludeQuiz(user.getId(), statementQuizDto);
     }
 }

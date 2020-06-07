@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
@@ -73,8 +74,18 @@ class ConcludeQuizTest extends SpockTest {
     }
 
     def 'conclude quiz without conclusionDate, without answering'() {
+        given: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        def statementAnswerDto = new StatementAnswerDto()
+        statementAnswerDto.setOptionId(null)
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
+
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -97,9 +108,18 @@ class ConcludeQuizTest extends SpockTest {
         given: 'an IN_CLASS quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        def statementAnswerDto = new StatementAnswerDto()
+        statementAnswerDto.setOptionId(null)
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -119,15 +139,17 @@ class ConcludeQuizTest extends SpockTest {
         given: 'a quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         and: 'an answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
         def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
-        answerService.submitAnswer(user, quiz.getId(), statementAnswerDto)
+        statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -149,9 +171,12 @@ class ConcludeQuizTest extends SpockTest {
     def 'conclude quiz without answering, before availableDate'() {
         given: 'a quiz with future availableDate'
         quiz.setAvailableDate(DateHandler.now().plusDays(2))
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
 
         when:
-        answerService.concludeQuiz(user, quiz.getId())
+        answerService.concludeQuiz(user, statementQuizDto)
 
         then:
         TutorException exception = thrown()
@@ -164,9 +189,18 @@ class ConcludeQuizTest extends SpockTest {
         user.addCourse(courseExecution)
         userRepository.save(otherUser)
         otherUser.setKey(otherUser.getId())
+        and: 'an answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        def statementAnswerDto = new StatementAnswerDto()
+        statementAnswerDto.setOptionId(optionOk.getId())
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        answerService.concludeQuiz(otherUser, quiz.getId())
+        answerService.concludeQuiz(otherUser, statementQuizDto)
 
         then:
         TutorException exception = thrown()

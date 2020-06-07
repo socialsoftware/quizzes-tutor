@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -76,16 +77,25 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CorrectAnswerDto> concludeQuiz(User user, Integer quizId) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+    public List<CorrectAnswerDto> concludeQuiz(User user, StatementQuizDto statementQuizDto) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(statementQuizDto.getId(), user.getId())
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, statementQuizDto.getId()));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
+            throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
+        }
+
         if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(DateHandler.now());
             quizAnswer.setCompleted(true);
+
+            for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+                writeQuestionAnswer(questionAnswer, statementQuizDto);
+            }
         }
 
         // In class quiz when student submits before resultsDate
@@ -102,11 +112,47 @@ public class AnswerService {
                 .collect(Collectors.toList());
     }
 
+    private void writeQuestionAnswer(QuestionAnswer questionAnswer, StatementQuizDto statementQuizDto) {
+//        QuestionAnswer questionAnswer = questionAnswerRepository.findById(statementAnswerDto.getQuestionAnswerId())
+//                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, statementAnswerDto.getQuestionAnswerId()));
+
+        StatementAnswerDto statementAnswerDto = statementQuizDto.getAnswers().stream()
+                .filter(statementAnswerDto1 -> statementAnswerDto1.getQuestionAnswerId().equals(questionAnswer.getId()))
+                .findAny()
+                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
+
+        if (statementAnswerDto.getOptionId() != null) {
+
+            // TO DO: Assess performance
+                Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
+                        .filter(option1 -> option1.getId().equals(statementAnswerDto.getOptionId()))
+                        .findAny()
+                        .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, statementAnswerDto.getOptionId()));
+
+//            Option option = optionRepository.findById(statementAnswerDto.getOptionId())
+//                    .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, statementAnswerDto.getOptionId()));
+//            if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
+//                throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
+//            }
+
+            if (questionAnswer.getOption() != null) {
+                questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
+            }
+
+            questionAnswer.setOption(option);
+            questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
+        } else {
+            questionAnswer.setOption(null);
+            questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
+        }
+    }
+
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
+    public void submitAnswer(User user, StatementAnswerDto answer) {
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(answer.getQuestionAnswerId())
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getQuestionAnswerId()));
 

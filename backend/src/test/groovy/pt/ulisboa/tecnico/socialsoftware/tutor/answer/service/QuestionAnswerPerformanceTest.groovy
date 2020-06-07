@@ -95,7 +95,7 @@ class QuestionAnswerPerformanceTest extends SpockTest {
             statementAnswerDto.setSequence(questionAnswer.getSequence())
             statementAnswerDto.setQuestionAnswerId(questionAnswer.getId())
             statementAnswerDto.setOptionId(questionAnswer.getQuizQuestion().getQuestion().getOptions().get(0).getId())
-            answerService.submitAnswer(user, quiz.getId(), statementAnswerDto)
+            answerService.submitAnswer(user, statementAnswerDto)
         }
 
         then: 'the value is createQuestion and persistent'

@@ -206,7 +206,7 @@ export default class QuizView extends Vue {
           newAnswer.optionId = optionId;
         }
 
-        await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        //await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
 
         this.statementQuiz.answers[this.questionOrder].optionId =
           newAnswer.optionId;

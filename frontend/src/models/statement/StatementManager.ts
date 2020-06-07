@@ -25,7 +25,7 @@ export default class StatementManager {
 
   async concludeQuiz() {
     if (this.statementQuiz) {
-      let answers = await RemoteServices.concludeQuiz(this.statementQuiz.id);
+      let answers = await RemoteServices.concludeQuiz(this.statementQuiz);
       if (answers) {
         this.correctAnswers = answers;
       }

@@ -307,10 +307,11 @@ export default class RemoteServices {
   }
 
   static async concludeQuiz(
-    quizId: number
+    statementQuiz: StatementQuiz
   ): Promise<StatementCorrectAnswer[] | void> {
+    let sendStatement = { ...statementQuiz, questions: [] };
     return httpClient
-      .get(`/quizzes/${quizId}/conclude`)
+      .post(`/quizzes/${statementQuiz.id}/conclude`, sendStatement)
       .then(response => {
         if (response.data) {
           return response.data.map((answer: any) => {

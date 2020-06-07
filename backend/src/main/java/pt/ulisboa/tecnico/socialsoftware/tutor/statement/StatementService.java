@@ -181,20 +181,20 @@ public class StatementService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CorrectAnswerDto> concludeQuiz(int userId, Integer quizId) {
+    public List<CorrectAnswerDto> concludeQuiz(int userId, StatementQuizDto statementQuizDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        return answerService.concludeQuiz(user, quizId);
+        return answerService.concludeQuiz(user, statementQuizDto);
     }
 
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(int userId, Integer quizId, StatementAnswerDto answer) {
+    public void submitAnswer(int userId, StatementAnswerDto answer) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        answerService.submitAnswer(user, quizId, answer);
+        answerService.submitAnswer(user, answer);
     }
 
     @Retryable(
