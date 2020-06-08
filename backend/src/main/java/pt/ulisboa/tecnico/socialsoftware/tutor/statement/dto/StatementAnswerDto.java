@@ -2,8 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 
+import javax.persistence.Embeddable;
 import java.io.Serializable;
 
+@Embeddable
 public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;

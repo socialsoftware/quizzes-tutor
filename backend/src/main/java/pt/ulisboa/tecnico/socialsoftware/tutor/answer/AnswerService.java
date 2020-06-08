@@ -95,29 +95,31 @@ public class AnswerService {
         }
 
         QuizAnswerQueue quizAnswerQueue = new QuizAnswerQueue(statementQuizDto);
-        //QuizAnswerQueueRepository quizAnswerQueueRepository.save(quizAnswerQueue);
+        quizAnswerQueueRepository.save(quizAnswerQueue);
 
-        if (!quizAnswer.isCompleted()) {
-            quizAnswer.setAnswerDate(DateHandler.now());
-            quizAnswer.setCompleted(true);
+        return new ArrayList<>();
 
-            for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
-                writeQuestionAnswer(questionAnswer, statementQuizDto);
-            }
-        }
-
-        // In class quiz when student submits before resultsDate
-        if (quizAnswer.getQuiz().getResultsDate() != null &&
-            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-            DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
-
-            return new ArrayList<>();
-        }
-
-        return quizAnswer.getQuestionAnswers().stream()
-                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                .map(CorrectAnswerDto::new)
-                .collect(Collectors.toList());
+//        if (!quizAnswer.isCompleted()) {
+//            quizAnswer.setAnswerDate(DateHandler.now());
+//            quizAnswer.setCompleted(true);
+//
+//            for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+//                writeQuestionAnswer(questionAnswer, statementQuizDto);
+//            }
+//        }
+//
+//        // In class quiz when student submits before resultsDate
+//        if (quizAnswer.getQuiz().getResultsDate() != null &&
+//            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
+//            DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
+//
+//            return new ArrayList<>();
+//        }
+//
+//        return quizAnswer.getQuestionAnswers().stream()
+//                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+//                .map(CorrectAnswerDto::new)
+//                .collect(Collectors.toList());
     }
 
     private void writeQuestionAnswer(QuestionAnswer questionAnswer, StatementQuizDto statementQuizDto) {
