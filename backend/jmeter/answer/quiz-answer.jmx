@@ -408,7 +408,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">15</stringProp>
+        <stringProp name="ThreadGroup.num_threads">200</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -526,15 +526,21 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].options[0].optionId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get quiz answer id" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">quiz_answer_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.quizAnswerId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question answer ids" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">question_answer_id</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.answers[*].questionAnswerId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].options[0].optionId</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
@@ -549,7 +555,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
 &quot;answers&quot;:[${answers}],&#xd;
 &quot;lastTimeCalled&quot;:1591438460789,&#xd;
 &quot;id&quot;:${__property(quiz_id)},&#xd;
-&quot;quizAnswerId&quot;:8,&#xd;
+&quot;quizAnswerId&quot;:${quiz_answer_id},&#xd;
 &quot;title&quot;:&quot;XXXX&quot;,&#xd;
 &quot;oneWay&quot;:false,&#xd;
 &quot;availableDate&quot;:&quot;2020-06-06 10:04&quot;,&#xd;

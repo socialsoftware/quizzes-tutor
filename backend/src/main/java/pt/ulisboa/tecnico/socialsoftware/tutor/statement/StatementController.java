@@ -99,13 +99,12 @@ public class StatementController {
     @PostMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
-
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.concludeQuiz(user.getId(), statementQuizDto);
+        return statementService.concludeQuiz(statementQuizDto);
     }
 }
