@@ -77,8 +77,8 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CorrectAnswerDto> concludeQuiz(User user, StatementQuizDto statementQuizDto) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(statementQuizDto.getId(), user.getId())
+    public List<CorrectAnswerDto> concludeQuiz(StatementQuizDto statementQuizDto) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(statementQuizDto.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, statementQuizDto.getId()));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {

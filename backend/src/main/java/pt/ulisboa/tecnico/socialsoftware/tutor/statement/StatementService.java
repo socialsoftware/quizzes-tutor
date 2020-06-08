@@ -181,10 +181,8 @@ public class StatementService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CorrectAnswerDto> concludeQuiz(int userId, StatementQuizDto statementQuizDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        return answerService.concludeQuiz(user, statementQuizDto);
+    public List<CorrectAnswerDto> concludeQuiz(StatementQuizDto statementQuizDto) {
+        return answerService.concludeQuiz(statementQuizDto);
     }
 
     @Retryable(
