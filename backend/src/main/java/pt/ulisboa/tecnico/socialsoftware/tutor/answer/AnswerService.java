@@ -22,6 +22,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerQueue;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerQueueRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -53,6 +55,9 @@ public class AnswerService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
+    private QuizAnswerQueueRepository quizAnswerQueueRepository;
+
+    @Autowired
     private OptionRepository optionRepository;
 
     @Autowired
@@ -78,7 +83,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(User user, StatementQuizDto statementQuizDto) {
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(statementQuizDto.getId(), user.getId())
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(statementQuizDto.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, statementQuizDto.getId()));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
@@ -88,6 +93,9 @@ public class AnswerService {
         if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
+
+        QuizAnswerQueue quizAnswerQueue = new QuizAnswerQueue(statementQuizDto);
+        QuizAnswerQueueRepository quizAnswerQueueRepository.save(quizAnswerQueue);
 
         if (!quizAnswer.isCompleted()) {
             quizAnswer.setAnswerDate(DateHandler.now());
