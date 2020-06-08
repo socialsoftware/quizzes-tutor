@@ -29,9 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import javax.persistence.criteria.*;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
@@ -199,15 +196,10 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void completeOpenQuizAnswers() {
-        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToClose(DateHandler.now());
+    public void calculateQuizAnswersStatistics() {
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());
 
         quizAnswersToClose.forEach(quizAnswer -> {
-            if (!quizAnswer.isCompleted()) {
-                quizAnswer.setAnswerDate(quizAnswer.getQuiz().getConclusionDate());
-                quizAnswer.setCompleted(true);
-            }
-
             quizAnswer.calculateStatistics();
         });
     }

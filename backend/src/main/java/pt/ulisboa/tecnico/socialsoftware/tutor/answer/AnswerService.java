@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerQueue;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerQueueRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
@@ -33,6 +33,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -94,66 +96,65 @@ public class AnswerService {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        QuizAnswerQueue quizAnswerQueue = new QuizAnswerQueue(statementQuizDto);
-        quizAnswerQueueRepository.save(quizAnswerQueue);
+        QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
+        quizAnswerQueueRepository.save(quizAnswerItem);
 
-        return new ArrayList<>();
-
-//        if (!quizAnswer.isCompleted()) {
-//            quizAnswer.setAnswerDate(DateHandler.now());
-//            quizAnswer.setCompleted(true);
-//
-//            for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
-//                writeQuestionAnswer(questionAnswer, statementQuizDto);
-//            }
-//        }
-//
-//        // In class quiz when student submits before resultsDate
-//        if (quizAnswer.getQuiz().getResultsDate() != null &&
-//            quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) &&
-//            DateHandler.now().isBefore(quizAnswer.getQuiz().getResultsDate())) {
-//
-//            return new ArrayList<>();
-//        }
-//
-//        return quizAnswer.getQuestionAnswers().stream()
-//                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-//                .map(CorrectAnswerDto::new)
-//                .collect(Collectors.toList());
+        if (!quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+            writeQuizAnswers(quizAnswer.getQuiz().getId());
+            return quizAnswer.getQuestionAnswers().stream()
+                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                    .map(CorrectAnswerDto::new)
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
     }
 
-    private void writeQuestionAnswer(QuestionAnswer questionAnswer, StatementQuizDto statementQuizDto) {
-//        QuestionAnswer questionAnswer = questionAnswerRepository.findById(statementAnswerDto.getQuestionAnswerId())
-//                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, statementAnswerDto.getQuestionAnswerId()));
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void writeQuizAnswers(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        Map<Integer, QuizAnswer> quizAnswersMap = quiz.getQuizAnswers().stream().collect(Collectors.toMap(QuizAnswer::getId, Function.identity()));
 
-        StatementAnswerDto statementAnswerDto = statementQuizDto.getAnswers().stream()
+        List<QuizAnswerItem> quizAnswerItems = quizAnswerQueueRepository.findQuizAnswers(quizId);
+
+        quizAnswerItems.forEach(quizAnswerItem -> {
+            QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
+
+            if (!quizAnswer.isCompleted()) {
+                quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
+                quizAnswer.setCompleted(true);
+
+                for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+                    writeQuestionAnswer(questionAnswer, quizAnswerItem);
+                }
+            }
+        });
+    }
+
+    private void writeQuestionAnswer(QuestionAnswer questionAnswer, QuizAnswerItem quizAnswerItem) {
+        StatementAnswerDto statementAnswerDto = quizAnswerItem.getAnswers().stream()
                 .filter(statementAnswerDto1 -> statementAnswerDto1.getQuestionAnswerId().equals(questionAnswer.getId()))
                 .findAny()
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
+        questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
+
         if (statementAnswerDto.getOptionId() != null) {
 
-            // TO DO: Assess performance
                 Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
                         .filter(option1 -> option1.getId().equals(statementAnswerDto.getOptionId()))
                         .findAny()
                         .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, statementAnswerDto.getOptionId()));
 
-//            Option option = optionRepository.findById(statementAnswerDto.getOptionId())
-//                    .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, statementAnswerDto.getOptionId()));
-//            if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
-//                throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
-//            }
-
             if (questionAnswer.getOption() != null) {
                 questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
             }
-
             questionAnswer.setOption(option);
-            questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
         } else {
             questionAnswer.setOption(null);
-            questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
         }
     }
 

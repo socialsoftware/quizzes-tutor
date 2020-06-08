@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Entity
-public class QuizAnswerQueue {
+public class QuizAnswerItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -27,16 +27,19 @@ public class QuizAnswerQueue {
 
     private Integer quizAnswerId;
 
+    private LocalDateTime answerDate;
+
     @ElementCollection
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
-    public QuizAnswerQueue() {
+    public QuizAnswerItem() {
     }
 
-    public QuizAnswerQueue(StatementQuizDto statementQuizDto) {
+    public QuizAnswerItem(StatementQuizDto statementQuizDto) {
         this.quizId = statementQuizDto.getId();
         this.quizAnswerId = statementQuizDto.getQuizAnswerId();
         this.answers = statementQuizDto.getAnswers();
+        this.answerDate = DateHandler.now();
     }
 
     public Integer getId() {
@@ -69,5 +72,13 @@ public class QuizAnswerQueue {
 
     public void setAnswers(List<StatementAnswerDto> answers) {
         this.answers = answers;
+    }
+
+    public LocalDateTime getAnswerDate() {
+        return answerDate;
+    }
+
+    public void setAnswerDate(LocalDateTime answerDate) {
+        this.answerDate = answerDate;
     }
 }
