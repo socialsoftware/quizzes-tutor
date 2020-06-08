@@ -23,7 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerQueueRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -57,7 +57,7 @@ public class AnswerService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
-    private QuizAnswerQueueRepository quizAnswerQueueRepository;
+    private QuizAnswerItemRepository quizAnswerItemRepository;
 
     @Autowired
     private OptionRepository optionRepository;
@@ -96,18 +96,24 @@ public class AnswerService {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
-        quizAnswerQueueRepository.save(quizAnswerItem);
+        if (!quizAnswer.isCompleted()) {
+            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+                QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
+                quizAnswerItemRepository.save(quizAnswerItem);
+            } else {
+                quizAnswer.setAnswerDate(DateHandler.now());
+                quizAnswer.setCompleted(true);
 
-        if (!quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
-            writeQuizAnswers(quizAnswer.getQuiz().getId());
-            return quizAnswer.getQuestionAnswers().stream()
-                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                    .map(CorrectAnswerDto::new)
-                    .collect(Collectors.toList());
-        } else {
-            return new ArrayList<>();
+                for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
+                    writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
+                }
+                return quizAnswer.getQuestionAnswers().stream()
+                        .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                        .map(CorrectAnswerDto::new)
+                        .collect(Collectors.toList());
+            }
         }
+        return new ArrayList<>();
     }
 
     @Retryable(
@@ -118,7 +124,7 @@ public class AnswerService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Map<Integer, QuizAnswer> quizAnswersMap = quiz.getQuizAnswers().stream().collect(Collectors.toMap(QuizAnswer::getId, Function.identity()));
 
-        List<QuizAnswerItem> quizAnswerItems = quizAnswerQueueRepository.findQuizAnswers(quizId);
+        List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswers(quizId);
 
         quizAnswerItems.forEach(quizAnswerItem -> {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
@@ -128,14 +134,14 @@ public class AnswerService {
                 quizAnswer.setCompleted(true);
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
-                    writeQuestionAnswer(questionAnswer, quizAnswerItem);
+                    writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswers());
                 }
             }
         });
     }
 
-    private void writeQuestionAnswer(QuestionAnswer questionAnswer, QuizAnswerItem quizAnswerItem) {
-        StatementAnswerDto statementAnswerDto = quizAnswerItem.getAnswers().stream()
+    private void writeQuestionAnswer(QuestionAnswer questionAnswer, List<StatementAnswerDto> statementAnswerDtoList) {
+        StatementAnswerDto statementAnswerDto = statementAnswerDtoList.stream()
                 .filter(statementAnswerDto1 -> statementAnswerDto1.getQuestionAnswerId().equals(questionAnswer.getId()))
                 .findAny()
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));

@@ -4,7 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -77,6 +76,7 @@ class ConcludeQuizTest extends SpockTest {
         given: 'an empty answer'
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setOptionId(null)
         statementAnswerDto.setSequence(0)
@@ -85,7 +85,7 @@ class ConcludeQuizTest extends SpockTest {
         statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -111,6 +111,7 @@ class ConcludeQuizTest extends SpockTest {
         and: 'an empty answer'
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setOptionId(null)
         statementAnswerDto.setSequence(0)
@@ -119,18 +120,21 @@ class ConcludeQuizTest extends SpockTest {
         statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
-        quizAnswer.isCompleted()
-        quizAnswer.getAnswerDate() != null
-        questionAnswerRepository.findAll().size() == 1
-        def questionAnswer = questionAnswerRepository.findAll().get(0)
-        questionAnswer.getQuizAnswer() == quizAnswer
-        quizAnswer.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getQuizQuestion() == quizQuestion
-        quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getOption() == null
+        !quizAnswer.isCompleted()
+        quizAnswer.getAnswerDate() == null
+        quizAnswerItemRepository.findAll().size() == 1
+        def quizAnswerItem = quizAnswerItemRepository.findAll().get(0)
+        quizAnswerItem.getQuizId() == quiz.getId()
+        quizAnswerItem.getQuizAnswerId() == quizAnswer.getId()
+        quizAnswerItem.getAnswerDate() != null
+        quizAnswerItem.getAnswers().size() == 1
+        def resStatementAnswerDto = quizAnswerItem.getAnswers().get(0)
+        resStatementAnswerDto.getOptionId() == null
+        resStatementAnswerDto.getSequence() == 0
+        resStatementAnswerDto.getTimeTaken() == 100
         and: 'does not return answers'
         correctAnswers == []
     }
@@ -141,6 +145,7 @@ class ConcludeQuizTest extends SpockTest {
         and: 'an answer'
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
@@ -149,7 +154,7 @@ class ConcludeQuizTest extends SpockTest {
         statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, statementQuizDto)
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -174,37 +179,14 @@ class ConcludeQuizTest extends SpockTest {
         and: 'an empty answer'
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
 
         when:
-        answerService.concludeQuiz(user, statementQuizDto)
+        answerService.concludeQuiz(statementQuizDto)
 
         then:
         TutorException exception = thrown()
         exception.getErrorMessage() == QUIZ_NOT_YET_AVAILABLE
-    }
-
-    def 'quiz answer not found'() {
-        given: 'another user'
-        def otherUser = new User(USER_2_USERNAME, USER_2_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
-        userRepository.save(otherUser)
-        otherUser.setKey(otherUser.getId())
-        and: 'an answer'
-        def statementQuizDto = new StatementQuizDto()
-        statementQuizDto.id = quiz.getId()
-        def statementAnswerDto = new StatementAnswerDto()
-        statementAnswerDto.setOptionId(optionOk.getId())
-        statementAnswerDto.setSequence(0)
-        statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
-        statementQuizDto.getAnswers().add(statementAnswerDto)
-
-        when:
-        answerService.concludeQuiz(otherUser, statementQuizDto)
-
-        then:
-        TutorException exception = thrown()
-        exception.getErrorMessage() == QUIZ_ANSWER_NOT_FOUND
     }
 
     @TestConfiguration

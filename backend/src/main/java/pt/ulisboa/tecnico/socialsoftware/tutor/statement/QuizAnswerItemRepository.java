@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface QuizAnswerQueueRepository extends JpaRepository<QuizAnswerItem, Integer> {
+public interface QuizAnswerItemRepository extends JpaRepository<QuizAnswerItem, Integer> {
     @Query(value = "SELECT qaq FROM QuizAnswerItem qaq WHERE qaq.quizId = :quizId")
     List<QuizAnswerItem> findQuizAnswers(Integer quizId);
 }
