@@ -54,6 +54,7 @@ public class QuizController {
     @PostMapping("/quizzes/{quizId}/write")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void writeQuizAnswers(@PathVariable Integer quizId) {
+        System.out.println("writeQuizAnswers   ");
         this.answerService.writeQuizAnswers(quizId);
     }
 

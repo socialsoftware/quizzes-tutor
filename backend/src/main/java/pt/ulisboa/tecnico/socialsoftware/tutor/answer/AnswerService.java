@@ -124,7 +124,7 @@ public class AnswerService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Map<Integer, QuizAnswer> quizAnswersMap = quiz.getQuizAnswers().stream().collect(Collectors.toMap(QuizAnswer::getId, Function.identity()));
 
-        List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswers(quizId);
+        List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswerItemsByQuizId(quizId);
 
         quizAnswerItems.forEach(quizAnswerItem -> {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
@@ -134,9 +134,10 @@ public class AnswerService {
                 quizAnswer.setCompleted(true);
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
-                    writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswers());
+                    writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswersList());
                 }
             }
+            quizAnswerItemRepository.deleteById(quizAnswerItem.getId());
         });
     }
 

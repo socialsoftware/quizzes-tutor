@@ -130,8 +130,8 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswerItem.getQuizId() == quiz.getId()
         quizAnswerItem.getQuizAnswerId() == quizAnswer.getId()
         quizAnswerItem.getAnswerDate() != null
-        quizAnswerItem.getAnswers().size() == 1
-        def resStatementAnswerDto = quizAnswerItem.getAnswers().get(0)
+        quizAnswerItem.getAnswersList().size() == 1
+        def resStatementAnswerDto = quizAnswerItem.getAnswersList().get(0)
         resStatementAnswerDto.getOptionId() == null
         resStatementAnswerDto.getSequence() == 0
         resStatementAnswerDto.getTimeTaken() == 100

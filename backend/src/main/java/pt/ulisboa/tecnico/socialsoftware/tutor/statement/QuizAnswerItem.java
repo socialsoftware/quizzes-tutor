@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
@@ -12,6 +14,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,8 +35,8 @@ public class QuizAnswerItem {
 
     private LocalDateTime answerDate;
 
-    @ElementCollection
-    private List<StatementAnswerDto> answers = new ArrayList<>();
+    @Lob
+    private String answers;
 
     public QuizAnswerItem() {
     }
@@ -38,7 +44,8 @@ public class QuizAnswerItem {
     public QuizAnswerItem(StatementQuizDto statementQuizDto) {
         this.quizId = statementQuizDto.getId();
         this.quizAnswerId = statementQuizDto.getQuizAnswerId();
-        this.answers = statementQuizDto.getAnswers();
+        Gson gson = new Gson();
+        this.answers = gson.toJson(statementQuizDto.getAnswers());;
         this.answerDate = DateHandler.now();
     }
 
@@ -66,11 +73,11 @@ public class QuizAnswerItem {
         this.quizAnswerId = quizAnswerId;
     }
 
-    public List<StatementAnswerDto> getAnswers() {
+    public String getAnswers() {
         return answers;
     }
 
-    public void setAnswers(List<StatementAnswerDto> answers) {
+    public void setAnswers(String answers) {
         this.answers = answers;
     }
 
@@ -80,5 +87,11 @@ public class QuizAnswerItem {
 
     public void setAnswerDate(LocalDateTime answerDate) {
         this.answerDate = answerDate;
+    }
+
+    public List<StatementAnswerDto> getAnswersList() {
+        Type listOfMyClassObject = new TypeToken<ArrayList<StatementAnswerDto>>() {}.getType();
+        Gson gson = new Gson();
+        return gson.fromJson(getAnswers(), listOfMyClassObject);
     }
 }
