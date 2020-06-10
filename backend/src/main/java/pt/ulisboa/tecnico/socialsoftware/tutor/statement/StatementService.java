@@ -54,6 +54,9 @@ public class StatementService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
+    private QuizAnswerItemRepository quizAnswerItemRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -196,7 +199,12 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void calculateQuizAnswersStatistics() {
+    public void writeQuizAnswersAndCalculateStatistics() {
+        Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
+        quizzesToWrite.forEach(quizToWrite -> {
+            answerService.writeQuizAnswers(quizToWrite);
+        });
+
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());
 
         quizAnswersToClose.forEach(quizAnswer -> {

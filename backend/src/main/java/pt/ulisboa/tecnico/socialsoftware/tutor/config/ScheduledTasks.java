@@ -32,8 +32,8 @@ public class ScheduledTasks {
 	}
 
 	@Scheduled(cron = "0 0 2 * * *")
-	public void calculateQuizAnswersStatistics() {
-		statementService.calculateQuizAnswersStatistics();
+	public void writeQuizAnswersAndCalculateStatistics() {
+		statementService.writeQuizAnswersAndCalculateStatistics();
 	}
 
     @Scheduled(cron = "0 0 1 * * *")
