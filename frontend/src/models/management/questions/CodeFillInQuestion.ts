@@ -6,7 +6,7 @@ var DEFAULT_CONTENT: string = "Use the dropdown to complete the snippet of code 
 export default class CodeFillInQuestion extends Question {
   language: string = 'Java';
   code: string = '';
-  fillInSpots: any[] = [];
+  fillInSpots: CodeFillInSpot[] = [];
 
   constructor(jsonObj?: CodeFillInQuestion) {
     super(jsonObj);

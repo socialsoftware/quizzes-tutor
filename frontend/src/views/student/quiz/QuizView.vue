@@ -47,9 +47,22 @@
         ><i class="fas fa-chevron-right"
       /></span>
     </div>
+
     <question-component
       v-model="questionOrder"
-      v-if="statementQuiz.answers[questionOrder]"
+      v-if="statementQuiz.answers[questionOrder] && statementQuiz.questions[questionOrder].type === 'multiple_choice'"
+      :optionId="statementQuiz.answers[questionOrder].optionId"
+      :question="statementQuiz.questions[questionOrder]"
+      :questionNumber="statementQuiz.questions.length"
+      :backsies="!statementQuiz.oneWay"
+      @increase-order="confirmAnswer"
+      @select-option="changeAnswer"
+      @decrease-order="decreaseOrder"
+    />
+
+    <code-question-component
+      v-model="questionOrder"
+      v-if="statementQuiz.answers[questionOrder] && statementQuiz.questions[questionOrder].type === 'code_fill_in'"
       :optionId="statementQuiz.answers[questionOrder].optionId"
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
@@ -139,6 +152,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
+import CodeQuestionComponent from '@/views/student/quiz/CodeQuestionComponent.vue';
 import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
@@ -146,7 +160,8 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {
-    'question-component': QuestionComponent
+    'question-component': QuestionComponent,
+    'code-question-component': CodeQuestionComponent,
   }
 })
 export default class QuizView extends Vue {

@@ -1,9 +1,22 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        defaultImpl = MultipleChoiceStatementAnswerDto.class,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDto.class, name = "multiple_choice"),
+        @JsonSubTypes.Type(value = CodeFillInStatementAnswerDto.class, name = "code_fill_in")
+})
 public abstract class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;

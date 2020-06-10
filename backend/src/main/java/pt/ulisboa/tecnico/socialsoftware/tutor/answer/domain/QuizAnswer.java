@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -64,8 +66,11 @@ public class QuizAnswer implements DomainEntity {
         }
 
         for (int i = 0; i < quizQuestions.size(); i++) {
-            // TODO: Create using factory.
-            new MultipleChoiceQuestionAnswer(this, quizQuestions.get(i), i);
+            if (quizQuestions.get(i).getQuestion() instanceof MultipleChoiceQuestion) {
+                new MultipleChoiceQuestionAnswer(this, quizQuestions.get(i), i);
+            }else if (quizQuestions.get(i).getQuestion() instanceof CodeFillInQuestion){
+                new CodeFillInQuestionAnswer(this, quizQuestions.get(i), i);
+            }
         }
     }
 

@@ -44,14 +44,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
-import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementQuestionMultipleChoice from '@/models/statement/StatementQuestionMultipleChoice';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 
 @Component
 export default class QuestionComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
+  @Prop(StatementQuestionMultipleChoice) readonly question: StatementQuestionMultipleChoice | undefined;
   @Prop(Number) optionId: number | undefined;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;

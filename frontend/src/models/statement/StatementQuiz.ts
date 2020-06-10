@@ -1,6 +1,7 @@
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { ISOtoString } from '@/services/ConvertDateService';
+import { QuestionFactory } from '@/services/QuestionFactory';
 
 export default class StatementQuiz {
   id!: number;
@@ -35,7 +36,7 @@ export default class StatementQuiz {
       this.timeToResults = jsonObj.timeToResults;
 
       this.questions = jsonObj.questions.map(question => {
-        return new StatementQuestion(question);
+        return QuestionFactory.createStatementQuestion(question);
       });
 
       if (jsonObj.answers) {
