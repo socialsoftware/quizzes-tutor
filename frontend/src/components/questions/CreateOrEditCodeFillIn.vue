@@ -113,6 +113,11 @@ export default class CreateOrEditMultipleChoice extends Vue {
 
   created() {
     this.updateQuestion()
+    this.counter = this.getMaxDropdown()
+  }
+
+  getMaxDropdown() {
+      return Math.max.apply(Math, this.question.fillInSpots.map(function(o) { return o.sequence; })) | 0 + 1;
   }
 
   onCmCodeChange(newCode: string) {

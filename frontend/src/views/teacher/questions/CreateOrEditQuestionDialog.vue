@@ -85,6 +85,12 @@ export default class CreateOrEditQuestionDialog extends Vue {
     this.questionType = this.editQuestion.type;
   }
 
+  @Watch('question', { immediate: true, deep: true })
+  updateQuestion() {
+    this.editQuestion = QuestionFactory.createQuestion(this.question);
+    this.questionType = this.editQuestion.type;
+  }
+
   typeUpdated() {
     this.editQuestion.type = this.questionType;
     this.editQuestion = QuestionFactory.createQuestion(this.editQuestion);

@@ -10,6 +10,7 @@ import java.util.stream.Collectors;
 
 public class FillInSpotDto implements Serializable {
     private Integer id;
+    private Integer sequence;
     private List<OptionDto> options = new ArrayList<>();
 
     public FillInSpotDto() {
@@ -17,6 +18,7 @@ public class FillInSpotDto implements Serializable {
 
     public FillInSpotDto(FillInSpot option) {
         this.id = option.getId();
+        this.sequence = option.getSequence();
         this.options = option.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
     }
 
@@ -26,6 +28,14 @@ public class FillInSpotDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public List<OptionDto> getOptions() {

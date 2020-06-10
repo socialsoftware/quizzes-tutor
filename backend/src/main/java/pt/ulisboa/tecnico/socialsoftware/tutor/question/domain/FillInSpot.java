@@ -14,11 +14,15 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(name = "fill_in_spot")
+@Table(name = "fill_in_spot",
+uniqueConstraints = @UniqueConstraint(columnNames = {"question_id","sequence"}))
 public class FillInSpot implements DomainEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer id;
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer sequence;
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
@@ -31,6 +35,7 @@ public class FillInSpot implements DomainEntity{
 
     public FillInSpot(FillInSpotDto fillInSpotDto) {
         setOptions(fillInSpotDto.getOptions());
+        setSequence(fillInSpotDto.getSequence());
     }
 
     public Integer getId() {
@@ -47,6 +52,14 @@ public class FillInSpot implements DomainEntity{
 
     public void setQuestion(CodeFillInQuestion question) {
         this.question = question;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 
     public List<FillInOption> getOptions() {

@@ -6,7 +6,7 @@
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror ref="myCm" :value="question.code" :options="cmOptions">
+      <codemirror ref="myCmView" :value="question.code" :options="cmOptions">
       </codemirror>
     </div>
     <br />
@@ -117,10 +117,10 @@ export default class ShowCodeFillInQuestion extends Vue {
       });
     }
 
-    // function getOptions(name: number, options: CodeFillInSpot[]) {
-    //   const result = options.find(el => el.sequence === name);
-    //   return result ? result.options : result;
-    // }
+    function getOptions(name: number, options: CodeFillInSpot[]) {
+      const result = options.find(el => el.sequence === name);
+      return result ? result.options : result;
+    }
 
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       console.log(e.innerHTML);
@@ -130,7 +130,8 @@ export default class ShowCodeFillInQuestion extends Vue {
       console.log(e.parentNode);
       console.log(d);
       e.parentNode.replaceChild(d, e);
-      addOptions(d, this.question.fillInSpots[index].options);
+      var num = e.innerHTML.match(/\d+/)[0];
+      addOptions(d, getOptions(Number(num) ,this.question.fillInSpots));
     });
   }
 
@@ -138,7 +139,7 @@ export default class ShowCodeFillInQuestion extends Vue {
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
-      this.$refs.myCm.codemirror.refresh();
+      this.$refs.myCmView.codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
