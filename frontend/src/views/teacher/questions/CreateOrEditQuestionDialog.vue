@@ -78,7 +78,7 @@ export default class CreateOrEditQuestionDialog extends Vue {
 
   types: Array<string> = ['multiple_choice', 'code_fill_in'];
   questionType: string | null = 'multiple_choice';
-  editQuestion: Question = this.question;
+  editQuestion: Question = QuestionFactory.createQuestion(this.question);
 
   created() {
     // this.updateQuestion();

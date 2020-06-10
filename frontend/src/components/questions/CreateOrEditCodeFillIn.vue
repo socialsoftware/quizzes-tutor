@@ -15,28 +15,35 @@
               Answer Slot
             </v-btn>
           </template>
-          <span
-            >Select code on the editor and click here to create a fillable
-            space.</span
-          >
+          <span>
+            Select code on the editor and click here to create a fillable space.
+          </span>
         </v-tooltip>
       </v-card-actions>
-      <codemirror
-        ref="myCm"
-        :value="question.code"
-        :options="cmOptions"
-        @input="onCmCodeChange"
-      >
+      <div style="position:relative">
+        <v-overlay
+          :value="!CodemirrorUpdated"
+          absolute
+          color="white"
+          opacity="1"
+        >
+          <v-progress-circular indeterminate size="40" color="primary" />
+        </v-overlay>
+        <codemirror
+          ref="myCm"
+          :value="question.code"
+          :options="cmOptions"
+          @input="onCmCodeChange"
+        />
+      </div>
 
-      </codemirror>
       <FillInOptions
         v-for="(item, index) in question.fillInSpots"
         :key="index"
         :option="item"
         v-model="question.fillInSpots[index]"
       />
-              <!-- v-on:change="handleInput" -->
-
+      <!-- v-on:change="handleInput" -->
     </div>
   </v-card-text>
 </template>
@@ -50,13 +57,12 @@ import CodeMirror from 'codemirror';
 import FillInOptions from '@/components/questions/FillInOptions.vue';
 import Option from '@/models/management/Option';
 
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/mode/clike/clike.js'
+import 'codemirror/lib/codemirror.css';
+import 'codemirror/mode/clike/clike.js';
 //
-import 'codemirror/theme/eclipse.css'
-import 'codemirror/addon/mode/overlay.js'
+import 'codemirror/theme/eclipse.css';
+import 'codemirror/addon/mode/overlay.js';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
-
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
@@ -89,7 +95,8 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   }
 })
 export default class CreateOrEditMultipleChoice extends Vue {
-  @PropSync('value', { type: CodeFillInQuestion }) question!: CodeFillInQuestion;
+  @PropSync('value', { type: CodeFillInQuestion })
+  question!: CodeFillInQuestion;
 
   languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
@@ -102,8 +109,22 @@ export default class CreateOrEditMultipleChoice extends Vue {
     line: true
   };
 
-  onCmCodeChange (newCode : string) {
-      this.question.code = newCode;
+  CodemirrorUpdated: boolean = false
+
+  created() {
+    this.updateQuestion()
+  }
+
+  onCmCodeChange(newCode: string) {
+    this.question.code = newCode;
+  }
+
+  updateQuestion() {
+    this.CodemirrorUpdated = false;
+    setTimeout(() => {
+      this.$refs.myCm.codemirror.refresh();
+      this.CodemirrorUpdated = true;
+    }, 500);
   }
 
   Dropdownify() {
@@ -115,9 +136,11 @@ export default class CreateOrEditMultipleChoice extends Vue {
       const item = new CodeFillInSpot();
       item.options = [option];
       item.sequence = this.counter;
-      
+
       this.question.fillInSpots.push(item);
-      this.$refs.myCm.codemirror.replaceSelection("{{slot-"+this.counter+"}}");
+      this.$refs.myCm.codemirror.replaceSelection(
+        '{{slot-' + this.counter + '}}'
+      );
       this.counter++;
     }
   }
@@ -126,7 +149,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
 
 <style>
 .cm-custom-drop-down {
-  background: #FFA014;
+  background: #ffa014;
   color: white;
   font-size: x-small;
   padding: 4px 2px 4px 2px;
@@ -135,7 +158,11 @@ export default class CreateOrEditMultipleChoice extends Vue {
   height: 16px;
 }
 
-.code-create{
+.code-create {
   text-align: left;
+}
+
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+  left: 0;
 }
 </style>

@@ -1,4 +1,5 @@
 import Question from '../Question';
+import CodeFillInSpot from './CodeFillInSpot';
 
 var DEFAULT_CONTENT: string = "Use the dropdown to complete the snippet of code below correctly.";
 
@@ -12,7 +13,9 @@ export default class CodeFillInQuestion extends Question {
     if (jsonObj) {
       this.language = jsonObj.language || this.language;
       this.code = jsonObj.code || this.code;
-      this.fillInSpots = jsonObj.fillInSpots || this.fillInSpots;
+      this.fillInSpots =  jsonObj.fillInSpots
+      ? jsonObj.fillInSpots.map((option: CodeFillInSpot) => new CodeFillInSpot(option))
+      : this.fillInSpots;
     }
     if(!this.content){
       this.content = DEFAULT_CONTENT;

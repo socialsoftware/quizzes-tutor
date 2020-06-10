@@ -1,18 +1,20 @@
 <template>
-  <div>
+  <div id="ViewCodeMirror">
     <span v-html="convertMarkDown(question.content, question.image)" />
     <br />
-      <codemirror 
-        ref="myCm" 
-        :value="question.code" 
-        :options="cmOptions">
+    <div style="position:relative">
+      <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
+        <v-progress-circular indeterminate size="40" color="primary" />
+      </v-overlay>
+      <codemirror ref="myCm" :value="question.code" :options="cmOptions">
       </codemirror>
+    </div>
     <br />
   </div>
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
@@ -22,6 +24,7 @@ import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
 //
 import 'codemirror/theme/eclipse.css';
+import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
@@ -58,7 +61,8 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   }
 })
 export default class ShowCodeFillInQuestion extends Vue {
-  @Prop({ type: CodeFillInQuestion, required: true }) readonly question!: CodeFillInQuestion;
+  @Prop({ type: CodeFillInQuestion, required: true })
+  readonly question!: CodeFillInQuestion;
 
   cmOptions: any = {
     // codemirror options
@@ -67,8 +71,10 @@ export default class ShowCodeFillInQuestion extends Vue {
     theme: 'eclipse',
     lineNumbers: true,
     line: true,
-    // readonly: true
+    readOnly: true
   };
+
+  CodemirrorUpdated: boolean = false;
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
@@ -95,7 +101,11 @@ export default class ShowCodeFillInQuestion extends Vue {
 
     function createOptionChild(optText: any, index: any) {
       const o = document.createElement('option');
-      o.appendChild(document.createTextNode((optText.correct ? ' ✔: ' : ' ✖: ')+ optText.content));
+      o.appendChild(
+        document.createTextNode(
+          (optText.correct ? ' ✔: ' : ' ✖: ') + optText.content
+        )
+      );
       o.value = index;
       return o;
     }
@@ -113,17 +123,22 @@ export default class ShowCodeFillInQuestion extends Vue {
     // }
 
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
+      console.log(e.innerHTML);
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.name = e.innerHTML;
+      console.log(e.parentNode);
+      console.log(d);
       e.parentNode.replaceChild(d, e);
       addOptions(d, this.question.fillInSpots[index].options);
     });
   }
 
-  mounted() {
-    this.$nextTick(() => {
-      console.log("trying");
+  @Watch('question', { immediate: true, deep: true })
+  updateQuestion() {
+    this.CodemirrorUpdated = false;
+    setTimeout(() => {
+      this.$refs.myCm.codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
@@ -134,34 +149,54 @@ export default class ShowCodeFillInQuestion extends Vue {
         },
         true
       );
-    });
+      this.CodemirrorUpdated = true;
+    }, 500);
   }
+
+  mounted() {
+    this.updateQuestion();
+  }
+
+  // updated() {
+  //   console.log('updated');
+  //   setTimeout(() => {
+  //     this.$refs.myCm.codemirror.refresh();
+  //     this.replaceDropdowns();
+  //     document.body.addEventListener(
+  //       'mousedown',
+  //       function(evt: Event) {
+  //         if (evt && evt.target && evt.target.className === 'code-dropdown') {
+  //           evt.stopPropagation();
+  //         }
+  //       },
+  //       true
+  //     );
+  //   }, 200);
+  // }
 }
 </script>
 
 <style>
-
-select.code-dropdown.incorrect{
+select.code-dropdown.incorrect {
   background-color: rgba(187, 36, 36, 0.76);
 }
 
-select.code-dropdown.correct{
+select.code-dropdown.correct {
   background-color: rgba(33, 201, 33, 0.76);
 }
 
 select.code-dropdown {
-    background-color: transparent;
-    color: inherit;
-    border-radius: 0px;
-    border-width: 0 0 1px 0;
-    border-style: solid;
-    border-color: rgb(169, 169, 169);
-    font-size: 0.8rem;
-    padding: 0;
+  background-color: transparent;
+  color: inherit;
+  border-radius: 0px;
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: rgb(169, 169, 169);
+  font-size: 0.8rem;
+  padding: 0;
 }
 
 select.code-dropdown option {
-    color: #272822;
+  color: #272822;
 }
-
 </style>
