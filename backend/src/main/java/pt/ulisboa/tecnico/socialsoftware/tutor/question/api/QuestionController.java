@@ -68,7 +68,7 @@ public class QuestionController {
             return this.questionService.createQuestion(courseId, (CodeFillInQuestionDto)question);
         }
         else {
-            return null;
+            return null;//todo throw an exception
         }
     }
 
@@ -80,8 +80,16 @@ public class QuestionController {
 
     @PutMapping("/questions/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
-        return this.questionService.updateQuestion(questionId, question);
+    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
+        if (question instanceof MultipleChoiceQuestionDto){
+            return this.questionService.updateQuestion(questionId, (MultipleChoiceQuestionDto)question);
+        }
+        else if (question instanceof CodeFillInQuestionDto){
+            return this.questionService.updateQuestion(questionId, (CodeFillInQuestionDto)question);
+        }
+        else {
+            return null;//todo throw an exception
+        }
     }
 
     @DeleteMapping("/questions/{questionId}")

@@ -95,8 +95,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   }
 })
 export default class CreateOrEditMultipleChoice extends Vue {
-  @PropSync('value', { type: CodeFillInQuestion })
-  question!: CodeFillInQuestion;
+  @PropSync('value', { type: CodeFillInQuestion }) question!: CodeFillInQuestion;
 
   languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
@@ -117,7 +116,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
   }
 
   getMaxDropdown() {
-      return Math.max.apply(Math, this.question.fillInSpots.map(function(o) { return o.sequence; })) | 0 + 1;
+      return (Math.max.apply(Math, this.question.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
   }
 
   onCmCodeChange(newCode: string) {
@@ -129,7 +128,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
     setTimeout(() => {
       this.$refs.myCm.codemirror.refresh();
       this.CodemirrorUpdated = true;
-    }, 500);
+    }, 1000);
   }
 
   Dropdownify() {

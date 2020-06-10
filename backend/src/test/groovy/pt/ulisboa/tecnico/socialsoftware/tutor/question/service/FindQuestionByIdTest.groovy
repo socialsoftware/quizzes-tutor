@@ -50,6 +50,7 @@ class FindQuestionByIdTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
+        question.setLanguage(CodeFillInQuestion.Language.Java)
         questionRepository.save(question)
 
         when:

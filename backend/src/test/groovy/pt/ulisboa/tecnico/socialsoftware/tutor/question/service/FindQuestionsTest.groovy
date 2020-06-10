@@ -146,6 +146,7 @@ class FindQuestionsTest extends SpockTest {
             question.setContent(QUESTION_1_CONTENT)
             question.setStatus(Question.Status.AVAILABLE)
             question.setCourse(course)
+            question.setLanguage(CodeFillInQuestion.Language.Java)
             questionRepository.save(question)
         }
 
@@ -168,6 +169,7 @@ class FindQuestionsTest extends SpockTest {
         question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
         question.setCourse(course)
+        question.setLanguage(CodeFillInQuestion.Language.Java)
         questionRepository.save(question)
 
         question = new MultipleChoiceQuestion()

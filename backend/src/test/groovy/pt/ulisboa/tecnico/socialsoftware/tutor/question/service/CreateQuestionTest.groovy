@@ -125,12 +125,14 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setLanguage(CodeFillInQuestion.Language.Java.name())
 
         FillInSpotDto fillInSpotDto = new FillInSpotDto();
         OptionDto optionDto = new OptionDto();
         optionDto.setContent(OPTION_1_CONTENT);
         optionDto.setCorrect(true);
         fillInSpotDto.getOptions().add(optionDto);
+        fillInSpotDto.setSequence(1);
 
         questionDto.getFillInSpots().add(fillInSpotDto);
 

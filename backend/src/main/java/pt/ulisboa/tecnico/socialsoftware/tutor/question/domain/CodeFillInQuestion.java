@@ -82,6 +82,12 @@ public class CodeFillInQuestion extends Question {
         this.code = code;
     }
 
+    public void update(CodeFillInQuestionDto questionDto) {
+        super.update(questionDto);
+        setFillInSpots(questionDto.getFillInSpots());
+        setCode(questionDto.getCode());
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
