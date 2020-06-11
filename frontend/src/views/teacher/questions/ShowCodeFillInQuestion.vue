@@ -122,6 +122,8 @@ export default class ShowCodeFillInQuestion extends Vue {
       return result ? result.options : result;
     }
 
+    console.log(document.querySelectorAll('.cm-custom-drop-down'));
+
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       console.log(e.innerHTML);
       const d = document.createElement('select');
@@ -139,6 +141,10 @@ export default class ShowCodeFillInQuestion extends Vue {
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
+      var that = this;
+      // this.$refs.myCmView.codemirror.on("refresh", function() {console.log("refresssh")})
+      // this.$refs.myCmView.codemirror.on("renderLine", function() {console.log("renderLine");that.replaceDropdowns();})
+      // this.$refs.myCmView.codemirror.on("redraw", function() {console.log("redraw")})
       this.$refs.myCmView.codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
@@ -178,26 +184,31 @@ export default class ShowCodeFillInQuestion extends Vue {
 </script>
 
 <style>
-select.code-dropdown.incorrect {
+#ViewCodeMirror select.code-dropdown.incorrect {
   background-color: rgba(187, 36, 36, 0.76);
 }
 
-select.code-dropdown.correct {
+#ViewCodeMirror select.code-dropdown.correct {
   background-color: rgba(33, 201, 33, 0.76);
 }
 
-select.code-dropdown {
+#ViewCodeMirror select.code-dropdown {
   background-color: transparent;
   color: inherit;
   border-radius: 0px;
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: rgb(169, 169, 169);
-  font-size: 0.8rem;
+  /* font-size: 0.8rem; */
   padding: 0;
 }
 
-select.code-dropdown option {
+#ViewCodeMirror select.code-dropdown option {
   color: #272822;
+}
+
+#ViewCodeMirror .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
 }
 </style>

@@ -167,8 +167,18 @@ export default class QuestionComponent extends Vue {
       return o;
     }
 
+     function creatBlankeOptionChild() {
+      const o = document.createElement('option');
+      o.innerHTML =  "-- select an option --";
+      o.setAttribute("disabled","");
+      o.setAttribute("selected","");
+      o.setAttribute("value","");
+      o.setAttribute("hidden","");
+      return o;
+    }
+
     function addOptions(select: any, options: any) {
-      console.log(options);
+      select.appendChild(creatBlankeOptionChild())
       options.forEach((opt: any, i: any) => {
         select.appendChild(createOptionChild(opt, i));
       });
@@ -200,16 +210,9 @@ export default class QuestionComponent extends Vue {
 
 <style lang="scss" scoped />
 <style>
-/* select.code-dropdown.incorrect {
-  background-color: rgba(187, 36, 36, 0.76);
-}
 
-select.code-dropdown.correct {
-  background-color: rgba(33, 201, 33, 0.76);
-} */
-
-select.code-dropdown {
-  background-color: skyblue;
+.question-container select.code-dropdown {
+  background-color: #e0e2e5;
   color: inherit;
   border-radius: 0px;
   border-width: 0 0 1px 0;
@@ -221,7 +224,12 @@ select.code-dropdown {
   -moz-appearance: auto;
 }
 
-select.code-dropdown option {
+.question-container select.code-dropdown option {
   color: #272822;
+}
+
+.question-container .CodeMirror {
+  border: 1px solid #eee;
+  height: auto;
 }
 </style>
