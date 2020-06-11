@@ -4,6 +4,9 @@ import CodeFillInQuestion from '@/models/management/questions/CodeFillInQuestion
 import StatementQuestionCodeFillIn from '@/models/statement/StatementQuestionCodeFillIn';
 import StatementQuestionMultipleChoice from '@/models/statement/StatementQuestionMultipleChoice';
 import StatementQuestion from '@/models/statement/StatementQuestion';
+import StatementAnswerMultipleChoice from '@/models/statement/StatementAnswerMultipleChoice';
+import StatementAnswerCodeFillIn from '@/models/statement/StatementAnswerCodeFillIn';
+import StatementAnswer from '@/models/statement/StatementAnswer';
 
 export class QuestionFactory {
   static createQuestion(question: any): Question {
@@ -21,6 +24,16 @@ export class QuestionFactory {
       return new StatementQuestionMultipleChoice(question);
     } else if (question.type === 'code_fill_in') {
       return new StatementQuestionCodeFillIn(question);
+    } else {
+      throw new Error('Unknown question type.');
+    }
+  }
+
+  static createStatementAnswer(answer: any): StatementAnswer {
+    if (answer.type === 'multiple_choice') {
+      return new StatementAnswerMultipleChoice(answer);
+    } else if (answer.type === 'code_fill_in') {
+      return new StatementAnswerCodeFillIn(answer);
     } else {
       throw new Error('Unknown question type.');
     }

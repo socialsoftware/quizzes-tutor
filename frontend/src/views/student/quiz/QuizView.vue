@@ -63,12 +63,12 @@
     <code-question-component
       v-model="questionOrder"
       v-if="statementQuiz.answers[questionOrder] && statementQuiz.questions[questionOrder].type === 'code_fill_in'"
-      :optionId="statementQuiz.answers[questionOrder].optionId"
+      :answer="statementQuiz.answers[questionOrder]"
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
       :backsies="!statementQuiz.oneWay"
       @increase-order="confirmAnswer"
-      @select-option="changeAnswer"
+      @select-option="changeCodeAnswer"
       @decrease-order="decreaseOrder"
     />
 
@@ -84,16 +84,12 @@
           <br />
           <span
             v-if="
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
+              statementQuiz.numberOfUnansweredQuestions()
             "
           >
             You still have
             {{
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
+              statementQuiz.numberOfUnansweredQuestions()
             }}
             unanswered questions!
           </span>
@@ -209,8 +205,8 @@ export default class QuizView extends Vue {
 
   async changeAnswer(optionId: number) {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      let previousAnswer = this.statementQuiz.answers[this.questionOrder]
-        .optionId;
+      // let previousAnswer = this.statementQuiz.answers[this.questionOrder]
+      //   .optionId;
       try {
         this.calculateTime();
         let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
@@ -220,6 +216,23 @@ export default class QuizView extends Vue {
         } else {
           newAnswer.optionId = optionId;
         }
+
+        await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+
+        this.statementQuiz.answers[this.questionOrder].optionId =
+          newAnswer.optionId;
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+    async changeCodeAnswer() {
+    console.log("ran :D");
+    if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
+      try {
+        this.calculateTime();
+        let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
 
         await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
 

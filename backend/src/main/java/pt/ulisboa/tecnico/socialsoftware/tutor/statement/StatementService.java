@@ -188,7 +188,7 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(int userId, Integer quizId, MultipleChoiceStatementAnswerDto answer) {
+    public void submitAnswer(int userId, Integer quizId, StatementAnswerDto answer) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         answerService.submitAnswer(user, quizId, answer);

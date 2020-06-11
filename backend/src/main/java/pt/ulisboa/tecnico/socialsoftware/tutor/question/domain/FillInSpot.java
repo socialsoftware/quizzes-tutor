@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -70,6 +72,9 @@ public class FillInSpot implements DomainEntity{
         if (options.stream().filter(OptionDto::getCorrect).count() == 0) {
             throw new TutorException(NO_CORRECT_OPTION);
         }
+
+        // Ensures some randomization when creating the options ids.
+        Collections.shuffle(options);
 
         int index = 0;
         for (OptionDto optionDto : options) {

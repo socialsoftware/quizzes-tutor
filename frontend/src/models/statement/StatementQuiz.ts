@@ -41,7 +41,7 @@ export default class StatementQuiz {
 
       if (jsonObj.answers) {
         this.answers = jsonObj.answers.map(answer => {
-          return new StatementAnswer(answer);
+          return QuestionFactory.createStatementAnswer(answer);
         });
       }
 
@@ -87,5 +87,9 @@ export default class StatementQuiz {
         }, 1000);
       }
     }
+  }
+
+  numberOfUnansweredQuestions(): number{
+    return this.answers.filter(x => !x.isAnswered()).length;
   }
 }

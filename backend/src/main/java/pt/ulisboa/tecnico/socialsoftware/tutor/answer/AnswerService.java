@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
@@ -19,14 +20,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.FillInOptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInOptionStatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -57,6 +63,10 @@ public class AnswerService {
 
     @Autowired
     private OptionRepository optionRepository;
+
+    @Autowired
+    private FillInOptionRepository fillInOptionRepository;
+
 
     @Autowired
     private AnswersXmlImport xmlImporter;
@@ -110,7 +120,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(User user, Integer quizId, MultipleChoiceStatementAnswerDto answer) {
+    public void submitAnswer(User user, Integer quizId, StatementAnswerDto answer) {
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(answer.getQuestionAnswerId())
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getQuestionAnswerId()));
 
@@ -131,7 +141,10 @@ public class AnswerService {
         if (!quizAnswer.isCompleted()) {
 
             if (questionAnswer instanceof MultipleChoiceQuestionAnswer){
-                handleMultipleChoiceQuestionAnswer((MultipleChoiceQuestionAnswer)questionAnswer, answer);
+                handleMultipleChoiceQuestionAnswer((MultipleChoiceQuestionAnswer)questionAnswer, (MultipleChoiceStatementAnswerDto)answer);
+            }
+            else if(questionAnswer instanceof CodeFillInQuestionAnswer){
+                handleMultipleCodeFillInAnswer((CodeFillInQuestionAnswer)questionAnswer, (CodeFillInStatementAnswerDto)answer);
             }
             else{
                 // todo we might want to throw an exception if we do not to know how to handle a given type
@@ -167,6 +180,32 @@ public class AnswerService {
             questionAnswer.setOption(null);
         }
     }
+
+    private void handleMultipleCodeFillInAnswer(CodeFillInQuestionAnswer questionAnswer, CodeFillInStatementAnswerDto answer){
+        if (answer.getSelectedOptions() != null) {
+
+            for (CodeFillInOptionStatementAnswerDto option:answer.getSelectedOptions()) {
+                FillInOption fillInOption = fillInOptionRepository.findById(option.getOptionId())
+                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, option.getOptionId()));
+
+                // todo validate answer.
+                /*if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
+                    throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
+                }*/
+
+                // todo remove old answer
+                /*if (questionAnswer.getOption() != null) {
+                    questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
+                }*/
+
+                questionAnswer.getFillInOptions().add(fillInOption);
+            }
+
+        } else {
+            questionAnswer.setFillInOptions(null);
+        }
+    }
+
 
     private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
         return !option.getQuestion().getId().equals(quizQuestion.getQuestion().getId());

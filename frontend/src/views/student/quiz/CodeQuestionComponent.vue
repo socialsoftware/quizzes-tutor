@@ -39,12 +39,14 @@ import {
   Prop,
   Model,
   Emit,
-  Watch
+  Watch,
+  PropSync
 } from 'vue-property-decorator';
 import StatementQuestionCodeFillIn from '@/models/statement/StatementQuestionCodeFillIn';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import StatementFillInSpot from '../../../models/statement/StatementFillInSpot';
+import StatementAnswerCodeFillIn from '../../../models/statement/StatementAnswerCodeFillIn';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
@@ -54,6 +56,7 @@ import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
+import StatementAnswerCodeFillInOption from '../../../models/statement/StatementAnswerCodeFillInOption';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
@@ -89,11 +92,10 @@ export default class QuestionComponent extends Vue {
   @Prop(StatementQuestionCodeFillIn) readonly question:
     | StatementQuestionCodeFillIn
     | undefined;
-  @Prop(Number) optionId: number | undefined;
+  @PropSync('answer', StatementAnswerCodeFillIn) answerData: StatementAnswerCodeFillIn | undefined;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   cmOptions: any = {
     // codemirror options
@@ -117,10 +119,10 @@ export default class QuestionComponent extends Vue {
     return 1;
   }
 
-  @Emit()
-  selectOption(optionId: number) {
-    return optionId;
-  }
+  // @Emit()
+  // selectOption(optionId: number) {
+  //   return optionId;
+  // }
 
   @Watch('question', { immediate: true, deep: true })
   updateQuestion() {
@@ -142,6 +144,8 @@ export default class QuestionComponent extends Vue {
   }
 
   replaceDropdowns() {
+    var that = this;
+
     function shuffle(arr: any) {
       const array = arr.slice();
       let currentIndex = array.length;
@@ -160,50 +164,74 @@ export default class QuestionComponent extends Vue {
       return array;
     }
 
-    function createOptionChild(optText: any, index: any) {
+    function createOptionChild(optText: any, index: any, selected: boolean | undefined) {
       const o = document.createElement('option');
       o.appendChild(document.createTextNode(optText.content));
       o.value = index;
+      if (selected){
+        o.setAttribute("selected","");
+      }
       return o;
     }
 
-     function creatBlankeOptionChild() {
+     function creatBlankOptionChild(selected: boolean) {
       const o = document.createElement('option');
       o.innerHTML =  "-- select an option --";
       o.setAttribute("disabled","");
-      o.setAttribute("selected","");
+      if(selected){
+        o.setAttribute("selected","");
+      }
       o.setAttribute("value","");
       o.setAttribute("hidden","");
       return o;
     }
 
     function addOptions(select: any, options: any) {
-      select.appendChild(creatBlankeOptionChild())
-      options.forEach((opt: any, i: any) => {
-        select.appendChild(createOptionChild(opt, i));
+      console.log(that.answerData.selectedOptions);
+      const data = that.answerData.selectedOptions.find(el => el.sequence === options.sequence);
+      select.appendChild(creatBlankOptionChild(!data))
+      options.options.forEach((opt: any, i: any) => {
+        select.appendChild(createOptionChild(opt, i, data && data.optionId == opt.optionId));
       });
     }
 
     function getOptions(name: number, options: StatementFillInSpot[]) {
       const result = options.find(el => el.sequence === name);
-      return result ? result.options : result;
+      return result;
     }
 
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
-      console.log(e.innerHTML);
       const d = document.createElement('select');
       d.className = 'code-dropdown';
+      console.log("ok");
+      d.onchange = this.selectedANewOption;
       d.name = e.innerHTML;
-      console.log(e.parentNode);
-      console.log(d);
       e.parentNode.replaceChild(d, e);
       var num = e.innerHTML.match(/\d+/)[0];
-      addOptions(d, getOptions(Number(num), this.question.fillInSpots));
+      var something = getOptions(Number(num), this.question.fillInSpots);
+      addOptions(d, something);
     });
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  selectedANewOption(event: Event){
+    var num = Number(event.target.name.match(/\d+/)[0]);
+    var selectIndex = event.target.selectedIndex - 1;
+    var dataQuestion = this.question.fillInSpots.find(el => el.sequence === num);
+    var data = this.answerData.selectedOptions.find(el => el.sequence === num);
+    if(data){
+      data.optionId = dataQuestion.options[selectIndex].optionId;
+    }else{
+      var newData = new StatementAnswerCodeFillInOption();
+      newData.optionId = dataQuestion.options[selectIndex].optionId;
+      newData.sequence = num;
+      this.answerData.selectedOptions.push(newData);
+    }
+    console.log(dataQuestion.options[selectIndex].content);
+    this.$emit("select-option");
   }
 }
 </script>
