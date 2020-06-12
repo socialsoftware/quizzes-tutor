@@ -134,6 +134,9 @@ public class StatementService {
         }
 
         if (quiz.getAvailableDate() == null || DateHandler.now().isAfter(quiz.getAvailableDate())) {
+            if (quizAnswer.getCreationDate() == null) {
+                quizAnswer.setCreationDate(DateHandler.now());
+            }
             return new StatementQuizDto(quizAnswer);
 
         // Send timer
@@ -236,7 +239,9 @@ public class StatementService {
 
         if (!quizAnswer.openToAnswer()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
-        } else if (quizAnswer.getCreationDate() == null) {
+        }
+
+        if (quizAnswer.getCreationDate() == null) {
             quizAnswer.setCreationDate(DateHandler.now());
         }
 
