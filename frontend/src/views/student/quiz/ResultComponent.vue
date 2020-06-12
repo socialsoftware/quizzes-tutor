@@ -4,8 +4,7 @@
     v-bind:class="[
       'question-container',
       answer.optionId === null ? 'unanswered' : '',
-      answer.optionId !== null &&
-      correctAnswer.correctOptionId === answer.optionId
+      answer.isCorrect(correctAnswer)
         ? 'correct-question'
         : 'incorrect-question'
     ]"
@@ -70,13 +69,16 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
+import StatementQuestionMultipleChoice from '@/models/statement/StatementQuestionMultipleChoice';
+import StatementAnswerMultipleChoice from '@/models/statement/StatementAnswerMultipleChoice';
+import StatementCorrectAnswerMultipleChoice from '@/models/statement/StatementCorrectAnswerMultipleChoice';
 
 @Component
 export default class ResultComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(StatementQuestion) readonly question!: StatementQuestion;
-  @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
-  @Prop(StatementAnswer) readonly answer!: StatementAnswer;
+  @Prop(StatementQuestionMultipleChoice) readonly question!: StatementQuestionMultipleChoice;
+  @Prop(StatementCorrectAnswerMultipleChoice) readonly correctAnswer!: StatementCorrectAnswerMultipleChoice;
+  @Prop(StatementAnswerMultipleChoice) readonly answer!: StatementAnswerMultipleChoice;
   @Prop() readonly questionNumber!: number;
   hover: boolean = false;
   optionLetters: string[] = ['A', 'B', 'C', 'D'];

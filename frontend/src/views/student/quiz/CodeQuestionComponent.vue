@@ -140,7 +140,7 @@ export default class QuestionComponent extends Vue {
         true
       );
       this.CodemirrorUpdated = true;
-    }, 500);
+    }, 100);
   }
 
   replaceDropdowns() {

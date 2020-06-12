@@ -315,7 +315,7 @@ export default class RemoteServices {
       .then(response => {
         if (response.data) {
           return response.data.map((answer: any) => {
-            return new StatementCorrectAnswer(answer);
+            return QuestionFactory.createCorrectAnswer(answer);
           });
         }
       })

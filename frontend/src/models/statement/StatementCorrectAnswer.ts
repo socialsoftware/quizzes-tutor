@@ -1,13 +1,13 @@
-export default class StatementCorrectAnswer {
+export default abstract class StatementCorrectAnswer {
   quizQuestionId!: number;
-  correctOptionId!: number;
   sequence!: number;
+  type: string = "multiple_choice";
 
   constructor(jsonObj?: StatementCorrectAnswer) {
     if (jsonObj) {
       this.quizQuestionId = jsonObj.quizQuestionId;
-      this.correctOptionId = jsonObj.correctOptionId;
       this.sequence = jsonObj.sequence;
+      this.type = jsonObj.type;
     }
   }
 }

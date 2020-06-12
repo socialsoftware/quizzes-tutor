@@ -1,3 +1,5 @@
+import StatementCorrectAnswer from './StatementCorrectAnswer';
+
 export default abstract class StatementAnswer {
   public timeTaken: number = 0;
   public sequence!: number;
@@ -14,4 +16,5 @@ export default abstract class StatementAnswer {
   }
 
   abstract isAnswered(): boolean;
+  abstract isCorrect(correctAnswer : StatementCorrectAnswer): boolean;
 }

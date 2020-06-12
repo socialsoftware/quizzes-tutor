@@ -9,4 +9,8 @@ export default class StatementAnswerCodeFillInOption {
       this.sequence = jsonObj.sequence;
     }
   }
+
+  isCorrect(correctAnswerSlot: any): any {
+    return this.optionId != null && this.optionId === correctAnswerSlot.optionId;
+  }
 }

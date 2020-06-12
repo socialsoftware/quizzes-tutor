@@ -7,6 +7,9 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswerMultipleChoice from '@/models/statement/StatementAnswerMultipleChoice';
 import StatementAnswerCodeFillIn from '@/models/statement/StatementAnswerCodeFillIn';
 import StatementAnswer from '@/models/statement/StatementAnswer';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
+import StatementCorrectAnswerMultipleChoice from '@/models/statement/StatementCorrectAnswerMultipleChoice';
+import StatementCorrectAnswerCodeFillIn from '@/models/statement/StatementCorrectAnswerCodeFillIn';
 
 export class QuestionFactory {
   static createQuestion(question: any): Question {
@@ -34,6 +37,16 @@ export class QuestionFactory {
       return new StatementAnswerMultipleChoice(answer);
     } else if (answer.type === 'code_fill_in') {
       return new StatementAnswerCodeFillIn(answer);
+    } else {
+      throw new Error('Unknown question type.');
+    }
+  }
+
+  static createCorrectAnswer(answer: any): StatementCorrectAnswer {
+    if (answer.type === 'multiple_choice') {
+      return new StatementCorrectAnswerMultipleChoice(answer);
+    } else if (answer.type === 'code_fill_in') {
+      return new StatementCorrectAnswerCodeFillIn(answer);
     } else {
       throw new Error('Unknown question type.');
     }

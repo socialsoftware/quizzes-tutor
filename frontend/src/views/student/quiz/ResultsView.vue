@@ -8,12 +8,10 @@
             'question-button',
             index === questionOrder + 1 ? 'current-question-button' : '',
             index === questionOrder + 1 &&
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-              statementManager.statementQuiz.answers[index - 1].optionId
+            !statementManager.statementQuiz.answers[index - 1].isCorrect(statementManager.correctAnswers[index - 1])
               ? 'incorrect-current'
               : '',
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-            statementManager.statementQuiz.answers[index - 1].optionId
+            !statementManager.statementQuiz.answers[index - 1].isCorrect(statementManager.correctAnswers[index - 1])
               ? 'incorrect'
               : ''
           ]"
@@ -40,6 +38,18 @@
     </div>
     <result-component
       v-model="questionOrder"
+      v-if="statementManager.statementQuiz.questions[questionOrder].type === 'multiple_choice'"
+      :answer="statementManager.statementQuiz.answers[questionOrder]"
+      :correctAnswer="statementManager.correctAnswers[questionOrder]"
+      :question="statementManager.statementQuiz.questions[questionOrder]"
+      :questionNumber="statementManager.statementQuiz.questions.length"
+      @increase-order="increaseOrder"
+      @decrease-order="decreaseOrder"
+    />
+
+    <code-result-component
+      v-model="questionOrder"
+      v-if="statementManager.statementQuiz.questions[questionOrder].type === 'code_fill_in'"
       :answer="statementManager.statementQuiz.answers[questionOrder]"
       :correctAnswer="statementManager.correctAnswers[questionOrder]"
       :question="statementManager.statementQuiz.questions[questionOrder]"
@@ -54,10 +64,12 @@
 import { Component, Vue } from 'vue-property-decorator';
 import StatementManager from '@/models/statement/StatementManager';
 import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
+import CodeResultComponent from '@/views/student/quiz/CodeResultComponent.vue';
 
 @Component({
   components: {
-    'result-component': ResultComponent
+    'result-component': ResultComponent,
+    'code-result-component': CodeResultComponent
   }
 })
 export default class ResultsView extends Vue {

@@ -54,11 +54,7 @@ export default class AvailableQuizzesView extends Vue {
   calculateScore(quiz: SolvedQuiz) {
     let correct = 0;
     for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {
-      if (
-        quiz.statementQuiz.answers[i] &&
-        quiz.correctAnswers[i].correctOptionId ===
-          quiz.statementQuiz.answers[i].optionId
-      ) {
+      if (quiz.statementQuiz.answers[i].isCorrect(quiz.correctAnswers[i])) {
         correct += 1;
       }
     }

@@ -1,4 +1,6 @@
 import StatementAnswer from './StatementAnswer';
+import StatementCorrectAnswerCodeFillIn from './StatementCorrectAnswerCodeFillIn';
+import StatementCorrectAnswerMultipleChoice from './StatementCorrectAnswerMultipleChoice';
 
 export default class StatementAnswerMultipleChoice extends StatementAnswer {
 
@@ -13,5 +15,9 @@ export default class StatementAnswerMultipleChoice extends StatementAnswer {
 
   isAnswered(): boolean {
     return this.optionId !== null
+  }
+
+  isCorrect(correctAnswer: StatementCorrectAnswerMultipleChoice): boolean {
+    return this.optionId != null && this.optionId === correctAnswer.correctOptionId;
   }
 }

@@ -12,22 +12,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class CodeFillInCorrectAnswerDto extends CorrectAnswerDto {
-    private List<OptionDto> correctOptions;
+    private List<CodeFillInSpotCorrectAnswerDto> correctOptions;
 
     public CodeFillInCorrectAnswerDto(CodeFillInQuestionAnswer questionAnswer) {
         super(questionAnswer);
         // todo improve code
         this.correctOptions = ((CodeFillInQuestion) questionAnswer.getQuizQuestion().getQuestion()).getFillInSpots()
                 .stream()
-                .map(x -> new OptionDto(x.getOptions().stream().filter(FillInOption::isCorrect).findFirst().get()))
+                .map(CodeFillInSpotCorrectAnswerDto::new)
                 .collect(Collectors.toList());
     }
 
-    public List<OptionDto> getCorrectOptions() {
+    public List<CodeFillInSpotCorrectAnswerDto> getCorrectOptions() {
         return correctOptions;
     }
 
-    public void setCorrectOptions(List<OptionDto> correctOptions) {
+    public void setCorrectOptions(List<CodeFillInSpotCorrectAnswerDto> correctOptions) {
         this.correctOptions = correctOptions;
     }
 
