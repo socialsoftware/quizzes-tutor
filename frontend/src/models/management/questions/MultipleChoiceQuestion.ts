@@ -12,4 +12,14 @@ export default class MultipleChoiceQuestion extends Question {
         : this.options;
     }
   }
+  duplicate(): MultipleChoiceQuestion {
+    const dup = new MultipleChoiceQuestion(this);
+    dup.id = null;
+    dup.image = null;
+    dup.options.forEach(spot => {
+      spot.id = null;
+    });
+    return dup;
+  }
+
 }

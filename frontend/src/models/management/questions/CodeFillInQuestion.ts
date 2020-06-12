@@ -1,7 +1,8 @@
 import Question from '../Question';
 import CodeFillInSpot from './CodeFillInSpot';
 
-var DEFAULT_CONTENT: string = "Use the dropdown to complete the snippet of code below correctly.";
+var DEFAULT_CONTENT: string =
+  'Use the dropdown to complete the snippet of code below correctly.';
 
 export default class CodeFillInQuestion extends Question {
   language: string = 'Java';
@@ -13,12 +14,25 @@ export default class CodeFillInQuestion extends Question {
     if (jsonObj) {
       this.language = jsonObj.language || this.language;
       this.code = jsonObj.code || this.code;
-      this.fillInSpots =  jsonObj.fillInSpots
-      ? jsonObj.fillInSpots.map((option: CodeFillInSpot) => new CodeFillInSpot(option))
-      : this.fillInSpots;
+      this.fillInSpots = jsonObj.fillInSpots
+        ? jsonObj.fillInSpots.map(
+            (option: CodeFillInSpot) => new CodeFillInSpot(option)
+          )
+        : this.fillInSpots;
     }
-    if(!this.content){
+    if (!this.content) {
       this.content = DEFAULT_CONTENT;
     }
+  }
+
+  duplicate(): CodeFillInQuestion {
+    const dup = new CodeFillInQuestion(this);
+    dup.id = null;
+    dup.image = null;
+    dup.fillInSpots.forEach(spot => {
+      spot.id = null;
+      spot.options.forEach(opt => (opt.id = null));
+    });
+    return dup;
   }
 }

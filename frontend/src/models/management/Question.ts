@@ -36,4 +36,6 @@ export default abstract class Question {
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }   
+
+  abstract duplicate(): Question;
 }

@@ -194,7 +194,7 @@ export default class ResultComponent extends Vue {
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .answer-spot {
   border: solid 1px black;
 
@@ -208,6 +208,8 @@ export default class ResultComponent extends Vue {
     color: white;
   }
 }
+</style>
+<style lang="scss" scoped>
 
 .unanswered {
   .question {
