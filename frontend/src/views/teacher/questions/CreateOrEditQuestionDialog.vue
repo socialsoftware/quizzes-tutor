@@ -6,25 +6,26 @@
     max-width="75%"
     max-height="80%"
   >
-    <v-card>
+    <v-card data-cy="createOrEditQuestionDialog">
       <v-card-title>
         <span class="headline">
           {{
             editQuestion && editQuestion.id === null
-              ? 'New Code Question'
-              : 'Edit Code Question'
+              ? 'New Question'
+              : 'Edit Question'
           }}
         </span>
       </v-card-title>
 
       <v-card-text class="text-left">
-        <v-text-field v-model="editQuestion.title" label="Title" />
+        <v-text-field v-model="editQuestion.title" label="Title" data-cy="questionTitleInput"/>
         <v-select
           :items="types"
           v-model="questionType"
           label="Type"
           v-on:change="typeUpdated()"
           :disabled="editQuestion.id != null"
+          data-cy="questionTypeInput"
         />
 
         <v-textarea
@@ -32,6 +33,7 @@
           rows="4"
           v-model="editQuestion.content"
           label="Question"
+          data-cy="questionContentInput"
         ></v-textarea>
       </v-card-text>
 

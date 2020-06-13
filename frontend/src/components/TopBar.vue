@@ -47,13 +47,13 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="managementMenuButton">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/management/questions">
+            <v-list-item to="/management/questions" data-cy="manageQuestionsMenuButton">
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
               </v-list-item-action>

@@ -1,6 +1,6 @@
 <template>
   <v-card-text class="text-left">
-    <div v-for="index in value.options.length" :key="index">
+    <div v-for="index in value.options.length" :key="index" data-cy="questionOptionsInput">
       <v-switch
         v-model="value.options[index - 1].correct"
         class="ma-4"
