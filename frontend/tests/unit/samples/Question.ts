@@ -1,6 +1,7 @@
 import Question from '@/models/management/Question';
+import MultipleChoiceQuestion from '@/models/management/questions/MultipleChoiceQuestion';
 
-export const questionWithFigure = new Question({
+export const questionWithFigure = new MultipleChoiceQuestion({
   id: 395,
   title: 'GraphiteDecompositionMemcached',
   content:
@@ -11,6 +12,7 @@ export const questionWithFigure = new Question({
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,
+  type: "multiple_choice",
   status: 'AVAILABLE',
   options: [
     {
@@ -60,7 +62,7 @@ export const questionWithFigure = new Question({
   sequence: null
 });
 
-export const questionWithoutFigure = new Question({
+export const questionWithoutFigure = new MultipleChoiceQuestion({
   id: 395,
   title: 'GraphiteDecompositionMemcached',
   content:
@@ -71,6 +73,7 @@ export const questionWithoutFigure = new Question({
   numberOfAnswers: 94,
   numberOfCorrect: 51,
   creationDate: null,
+  type: "multiple_choice",
   status: 'AVAILABLE',
   options: [
     {

@@ -20,11 +20,7 @@ import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import CodeFillInQuestion from '@/models/management/questions/CodeFillInQuestion';
 
-import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
-//
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
@@ -184,6 +180,10 @@ export default class ShowCodeFillInQuestion extends Vue {
 </script>
 
 <style>
+@import '~codemirror/lib/codemirror.css';
+@import '~codemirror/theme/eclipse.css';
+@import '~codemirror/theme/monokai.css';
+
 #ViewCodeMirror select.code-dropdown.incorrect {
   background-color: rgba(187, 36, 36, 0.76);
 }
