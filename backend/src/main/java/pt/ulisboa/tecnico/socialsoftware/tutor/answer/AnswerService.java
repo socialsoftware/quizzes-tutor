@@ -92,7 +92,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now().minusMinutes(5))) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
@@ -236,7 +236,6 @@ public class AnswerService {
 
         return xmlExport.export(quizAnswerRepository.findAll());
     }
-
 
     @Retryable(
       value = { SQLException.class },

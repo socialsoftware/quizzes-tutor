@@ -7,11 +7,7 @@
     v-if="!confirmed"
   >
     <header>
-      <span
-        class="timer"
-        @click="hideTime = !hideTime"
-        v-if="statementQuiz && statementQuiz.timeToSubmission"
-      >
+      <span class="timer" @click="hideTime = !hideTime" v-if="statementQuiz">
         <i class="fas fa-clock"></i>
         <span v-if="!hideTime">{{ submissionTimer }}</span>
       </span>
@@ -230,7 +226,7 @@ export default class QuizView extends Vue {
   @Watch('statementQuiz.timeToSubmission')
   submissionTimerWatcher() {
     if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
-      this.concludeQuiz();
+      //   this.concludeQuiz();
     }
 
     this.submissionTimer = milisecondsToHHMMSS(
@@ -241,7 +237,7 @@ export default class QuizView extends Vue {
   @Watch('statementQuiz.timeToResults')
   resultsTimerWatcher() {
     if (!!this.statementQuiz && !this.statementQuiz.timeToResults) {
-      this.concludeQuiz();
+      //    this.concludeQuiz();
     }
 
     this.resultsTimer = milisecondsToHHMMSS(this.statementQuiz?.timeToResults);

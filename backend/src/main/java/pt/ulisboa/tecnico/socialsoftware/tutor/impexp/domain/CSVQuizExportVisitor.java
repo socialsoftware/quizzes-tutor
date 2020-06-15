@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -22,16 +23,17 @@ public class CSVQuizExportVisitor implements Visitor {
     public String export(Quiz quiz) {
         int numberOfQuestions = quiz.getQuizQuestions().size();
 
-        line = new String[numberOfQuestions + 4];
+        line = new String[numberOfQuestions + 5];
         Arrays.fill(line, "");
         line[0] = "Username";
         line[1] = "Name";
         line[2] = "Start";
-        line[3] = "Finish";
+        line[3] = "Delivered";
+        line[4] = "Delay in Seconds";
         table.add(line);
 
         for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {
-            line = new String[numberOfQuestions + 4];
+            line = new String[numberOfQuestions + 5];
             Arrays.fill(line, "");
             column = 0;
             quizAnswer.getUser().accept(this);
@@ -46,10 +48,10 @@ public class CSVQuizExportVisitor implements Visitor {
             table.add(line);
         }
 
-        line = new String[numberOfQuestions + 4];
+        line = new String[numberOfQuestions + 5];
         Arrays.fill(line, "");
-        line[3] = "KEYS";
-        column = 4;
+        line[4] = "KEYS";
+        column = 5;
         quiz.getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .forEach(quizQuestion -> quizQuestion.accept(this));
@@ -68,6 +70,14 @@ public class CSVQuizExportVisitor implements Visitor {
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
         line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
         line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
+        if (quizAnswer.getAnswerDate() != null &&
+                quizAnswer.getQuiz().getConclusionDate() != null &&
+                quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {
+            Duration duration = Duration.between(quizAnswer.getAnswerDate(), quizAnswer.getQuiz().getConclusionDate());
+            line[column++] = String.valueOf(Math.abs(duration.toSeconds()));
+        }
+        else
+            line[column++] = "";
     }
 
     @Override
