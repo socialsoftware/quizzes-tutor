@@ -77,11 +77,7 @@ public class StatementController {
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if (user == null) {
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
-
-        statementService.submitAnswer(user.getId(), answer);
+        statementService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @GetMapping("/quizzes/{quizId}/start")

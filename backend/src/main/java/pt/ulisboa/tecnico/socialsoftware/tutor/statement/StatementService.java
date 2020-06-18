@@ -58,6 +58,9 @@ public class StatementService {
     private QuizAnswerItemRepository quizAnswerItemRepository;
 
     @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -192,11 +195,18 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(int userId, StatementAnswerDto answer) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        answerService.submitAnswer(user, answer);
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public void submitAnswer(String username, int quizId, StatementAnswerDto answer) {
+        if (answer.getTimeToSubmission() == null) {
+            answer.setTimeToSubmission(0);
+        }
+        if (answer.getOptionId() == null) {
+            questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
+                    answer.getTimeTaken(), answer.getTimeToSubmission());
+        } else {
+            questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
+                    answer.getTimeTaken(), answer.getTimeToSubmission(), answer.getOptionId());
+        }
     }
 
     @Retryable(
@@ -206,7 +216,9 @@ public class StatementService {
     public void writeQuizAnswersAndCalculateStatistics() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
-            answerService.writeQuizAnswers(quizToWrite);
+            if (quizRepository.findByKey(quizToWrite).isPresent()) {
+                answerService.writeQuizAnswers(quizToWrite);
+            }
         });
 
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());

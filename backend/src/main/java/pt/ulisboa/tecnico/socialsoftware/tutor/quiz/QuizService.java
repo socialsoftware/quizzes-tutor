@@ -33,6 +33,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.ByteArrayOutputStream;
@@ -60,6 +62,9 @@ public class QuizService {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
@@ -288,6 +293,8 @@ public class QuizService {
     public ByteArrayOutputStream exportQuiz(int quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
+        List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
+
         String name = quiz.getTitle();
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
@@ -309,7 +316,7 @@ public class QuizService {
 
             CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
             zos.putNextEntry(new ZipEntry(name + ".csv"));
-            in = IOUtils.toInputStream( csvExport.export(quiz), StandardCharsets.UTF_8);
+            in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);
             copyToZipStream(zos, in);
             zos.closeEntry();
 
