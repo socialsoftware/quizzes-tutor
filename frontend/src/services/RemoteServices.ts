@@ -306,7 +306,7 @@ export default class RemoteServices {
 
   static async concludeQuiz(
     statementQuiz: StatementQuiz
-  ): Promise<StatementCorrectAnswer[] | void> {
+  ): Promise<StatementCorrectAnswer[]> {
     let sendStatement = { ...statementQuiz, questions: [] };
     return httpClient
       .post(`/quizzes/${statementQuiz.id}/conclude`, sendStatement)

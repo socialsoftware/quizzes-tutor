@@ -92,7 +92,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
         }
 
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now().minusMinutes(5))) {
+        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now().minusMinutes(10))) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 

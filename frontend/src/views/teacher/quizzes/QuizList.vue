@@ -35,7 +35,7 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showQuizAnswers(item.id)"
+            <v-icon class="mr-2" v-on="on" @click="showQuizAnswers(item)"
               >mdi-table</v-icon
             >
           </template>
@@ -138,8 +138,9 @@
     <show-quiz-dialog v-if="quiz" v-model="quizDialog" :quiz="quiz" />
 
     <show-quiz-answers-dialog
-      v-if="quizAnswers"
+      v-if="quizAnswers && quiz"
       v-model="quizAnswersDialog"
+      :quiz-conclusion-date="quiz.conclusionDate"
       :quiz-answers="quizAnswers"
       :correct-sequence="correctSequence"
       :timeToSubmission="timeToSubmission"
@@ -250,12 +251,13 @@ export default class QuizList extends Vue {
     }
   }
 
-  async showQuizAnswers(quizId: number) {
+  async showQuizAnswers(quiz: Quiz) {
     try {
       let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
-        quizId
+        quiz.id
       );
 
+      this.quiz = quiz;
       this.quizAnswers = quizAnswers.quizAnswers;
       this.correctSequence = quizAnswers.correctSequence;
       this.timeToSubmission = quizAnswers.timeToSubmission;

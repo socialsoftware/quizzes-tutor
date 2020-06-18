@@ -123,10 +123,10 @@
     </v-dialog>
   </div>
 
-  <div class="container" v-else-if="statementQuiz.timeToResults">
+  <div class="container" v-else-if="quizSubmitted">
     <v-card>
       <v-card-title class="justify-center">
-        Hold on and wait {{ resultsTimer }} to view the results
+        The quiz was submitted!
       </v-card-title>
     </v-card>
   </div>
@@ -156,7 +156,7 @@ export default class QuizView extends Vue {
   questionOrder: number = 0;
   hideTime: boolean = false;
   submissionTimer: string = '';
-  resultsTimer: string = '';
+  quizSubmitted: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -227,21 +227,12 @@ export default class QuizView extends Vue {
   @Watch('statementQuiz.timeToSubmission')
   submissionTimerWatcher() {
     if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
-      //   this.concludeQuiz();
+      this.concludeQuiz();
     }
 
     this.submissionTimer = milisecondsToHHMMSS(
       this.statementQuiz?.timeToSubmission
     );
-  }
-
-  @Watch('statementQuiz.timeToResults')
-  resultsTimerWatcher() {
-    if (!!this.statementQuiz && !this.statementQuiz.timeToResults) {
-      //    this.concludeQuiz();
-    }
-
-    this.resultsTimer = milisecondsToHHMMSS(this.statementQuiz?.timeToResults);
   }
 
   async concludeQuiz() {
@@ -251,11 +242,10 @@ export default class QuizView extends Vue {
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
 
-      if (
-        !this.statementQuiz?.timeToResults &&
-        this.statementManager.correctAnswers.length !== 0
-      ) {
+      if (this.statementManager.correctAnswers.length !== 0) {
         await this.$router.push({ name: 'quiz-results' });
+      } else {
+        this.quizSubmitted = true;
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

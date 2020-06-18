@@ -14,7 +14,6 @@ export class Quiz {
   conclusionDate!: string;
   resultsDate!: string;
   timeToConclusion!: number;
-  timeToResults!: number;
   type!: string;
   series!: number;
   version!: string;
@@ -38,7 +37,6 @@ export class Quiz {
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfAnswers = jsonObj.numberOfAnswers;
       this.timeToConclusion = jsonObj.timeToConclusion;
-      this.timeToResults = jsonObj.timeToResults;
 
       if (jsonObj.creationDate)
         this.creationDate = ISOtoString(jsonObj.creationDate);

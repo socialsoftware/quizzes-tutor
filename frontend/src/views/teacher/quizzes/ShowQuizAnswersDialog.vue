@@ -27,6 +27,17 @@
         </v-card-title>
       </template>
 
+      <template v-if="quizConclusionDate" v-slot:item.submissionLag="{ item }">
+        {{
+          new Date(quizConclusionDate).getTime() +
+            '' +
+            new Date(item.answerDate).getTime() +
+            '' +
+            new Date(quizConclusionDate).getTime() -
+            new Date(item.answerDate).getTime()
+        }}
+      </template>
+
       <template v-slot:item.answers="{ item }">
         <td
           v-for="questionAnswer in item.questionAnswers"
@@ -76,6 +87,7 @@ export default class ShowStudentAnswersDialog extends Vue {
   @Prop({ required: true }) readonly quizAnswers!: QuizAnswer[];
   @Prop({ required: true }) readonly correctSequence!: number[];
   @Prop({ required: true }) readonly timeToSubmission!: number;
+  @Prop({ required: true }) readonly quizConclusionDate!: String;
 
   secondsLeft: number = 0;
   search: string = '';
@@ -107,8 +119,8 @@ export default class ShowStudentAnswersDialog extends Vue {
       width: '5%'
     },
     {
-      text: 'Answer Date',
-      value: 'answerDate',
+      text: 'Submission Lag',
+      value: 'submissionLag',
       align: 'center',
       width: '5%'
     },
