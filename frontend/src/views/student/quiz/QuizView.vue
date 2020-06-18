@@ -190,8 +190,6 @@ export default class QuizView extends Vue {
 
   async changeAnswer(optionId: number) {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      let previousAnswer = this.statementQuiz.answers[this.questionOrder]
-        .optionId;
       try {
         this.calculateTime();
         let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
@@ -202,7 +200,10 @@ export default class QuizView extends Vue {
           newAnswer.optionId = optionId;
         }
 
-        //await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        if (!!this.statementQuiz && this.statementQuiz.timed) {
+          newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
+          RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        }
 
         this.statementQuiz.answers[this.questionOrder].optionId =
           newAnswer.optionId;

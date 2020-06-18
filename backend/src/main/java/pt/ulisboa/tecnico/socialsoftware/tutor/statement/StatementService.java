@@ -30,6 +30,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
@@ -55,6 +56,9 @@ public class StatementService {
 
     @Autowired
     private QuizAnswerItemRepository quizAnswerItemRepository;
+
+    @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -150,7 +154,7 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<QuizDto> getAvailableQuizzes(int userId, int executionId) {
         Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId);
 
@@ -169,9 +173,9 @@ public class StatementService {
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<SolvedQuizDto> getSolvedQuizzes(int userId, int executionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        User user = userRepository.findUserWithQuizAnswersAndQuestionAnswersById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -191,11 +195,18 @@ public class StatementService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(int userId, StatementAnswerDto answer) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        answerService.submitAnswer(user, answer);
+    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    public void submitAnswer(String username, int quizId, StatementAnswerDto answer) {
+        if (answer.getTimeToSubmission() == null) {
+            answer.setTimeToSubmission(0);
+        }
+        if (answer.getOptionId() == null) {
+            questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
+                    answer.getTimeTaken(), answer.getTimeToSubmission());
+        } else {
+            questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
+                    answer.getTimeTaken(), answer.getTimeToSubmission(), answer.getOptionId());
+        }
     }
 
     @Retryable(
@@ -205,7 +216,9 @@ public class StatementService {
     public void writeQuizAnswersAndCalculateStatistics() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
-            answerService.writeQuizAnswers(quizToWrite);
+            if (quizRepository.findByKey(quizToWrite).isPresent()) {
+                answerService.writeQuizAnswers(quizToWrite);
+            }
         });
 
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());

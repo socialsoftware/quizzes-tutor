@@ -9,6 +9,7 @@ export default class StatementQuiz {
   title!: string;
   qrCodeOnly!: boolean;
   oneWay!: boolean;
+  timed!: boolean;
   availableDate!: string;
   conclusionDate!: string;
   timeToAvailability!: number | null;
@@ -27,6 +28,7 @@ export default class StatementQuiz {
       this.title = jsonObj.title;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;
+      this.timed = jsonObj.timed;
       this.availableDate = ISOtoString(jsonObj.availableDate);
       this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
 

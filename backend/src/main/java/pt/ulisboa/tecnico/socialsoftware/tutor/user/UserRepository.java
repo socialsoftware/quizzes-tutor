@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -10,6 +11,9 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<User, Integer> {
+    @EntityGraph(attributePaths = {"quizAnswers.questionAnswers"})
+    Optional<User> findUserWithQuizAnswersAndQuestionAnswersById(int userId);
+
     @Query(value = "select * from users u where u.username = :username", nativeQuery = true)
     Optional<User> findByUsername(String username);
 

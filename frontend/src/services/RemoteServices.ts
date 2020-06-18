@@ -298,12 +298,10 @@ export default class RemoteServices {
       });
   }
 
-  static async submitAnswer(quizId: number, answer: StatementAnswer) {
-    return httpClient
-      .post(`/quizzes/${quizId}/submit`, answer)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+  static submitAnswer(quizId: number, answer: StatementAnswer) {
+    httpClient.post(`/quizzes/${quizId}/submit`, answer).catch(error => {
+      console.debug(error);
+    });
   }
 
   static async concludeQuiz(

@@ -121,7 +121,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void writeQuizAnswers(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        Quiz quiz = quizRepository.findQuizWithAnswersAndQuestionsById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Map<Integer, QuizAnswer> quizAnswersMap = quiz.getQuizAnswers().stream().collect(Collectors.toMap(QuizAnswer::getId, Function.identity()));
 
         List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswerItemsByQuizId(quizId);
@@ -163,68 +163,6 @@ public class AnswerService {
         } else {
             questionAnswer.setOption(null);
         }
-    }
-
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void submitAnswer(User user, StatementAnswerDto answer) {
-        QuestionAnswer questionAnswer = questionAnswerRepository.findById(answer.getQuestionAnswerId())
-                .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answer.getQuestionAnswerId()));
-
-        QuizAnswer quizAnswer = questionAnswer.getQuizAnswer();
-
-        if (isNotAssignedStudent(user, quizAnswer)) {
-            throw new TutorException(QUIZ_USER_MISMATCH, String.valueOf(quizAnswer.getQuiz().getId()), user.getUsername());
-        }
-
-        if (quizAnswer.getQuiz().getConclusionDate() != null && quizAnswer.getQuiz().getConclusionDate().isBefore(DateHandler.now())) {
-            throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
-        }
-
-        if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
-            throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
-        }
-
-        if (!quizAnswer.isCompleted()) {
-            if (answer.getOptionId() != null) {
-
-                // TO DO: Assess performance
-//                Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
-//                        .filter(option1 -> option1.getId().equals(answer.getOptionId()))
-//                        .findAny()
-//                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
-
-                Option option = optionRepository.findById(answer.getOptionId())
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, answer.getOptionId()));
-
-                if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
-                    throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
-                }
-
-                if (questionAnswer.getOption() != null) {
-                    questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
-                }
-
-                questionAnswer.setOption(option);
-                questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(DateHandler.now());
-            } else {
-                questionAnswer.setOption(null);
-                questionAnswer.setTimeTaken(answer.getTimeTaken());
-                quizAnswer.setAnswerDate(DateHandler.now());
-            }
-        }
-    }
-
-    private boolean isNotQuestionOption(QuizQuestion quizQuestion, Option option) {
-        return !option.getQuestion().getId().equals(quizQuestion.getQuestion().getId());
-    }
-
-    private boolean isNotAssignedStudent(User user, QuizAnswer quizAnswer) {
-        return !user.getId().equals(quizAnswer.getUser().getId());
     }
 
     @Retryable(

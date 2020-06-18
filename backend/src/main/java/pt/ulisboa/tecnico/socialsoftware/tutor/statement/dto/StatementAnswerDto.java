@@ -9,6 +9,8 @@ public class StatementAnswerDto implements Serializable {
     private Integer sequence;
     private Integer questionAnswerId;
     private Integer optionId;
+    private Integer quizQuestionId;
+    private Integer timeToSubmission;
 
     public StatementAnswerDto() {}
 
@@ -16,6 +18,7 @@ public class StatementAnswerDto implements Serializable {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
         this.questionAnswerId = questionAnswer.getId();
+        this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
 
         if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
@@ -52,6 +55,22 @@ public class StatementAnswerDto implements Serializable {
 
     public void setOptionId(Integer optionId) {
         this.optionId = optionId;
+    }
+
+    public Integer getQuizQuestionId() {
+        return quizQuestionId;
+    }
+
+    public void setQuizQuestionId(Integer quizQuestionId) {
+        this.quizQuestionId = quizQuestionId;
+    }
+
+    public Integer getTimeToSubmission() {
+        return timeToSubmission;
+    }
+
+    public void setTimeToSubmission(Integer timeToSubmission) {
+        this.timeToSubmission = timeToSubmission;
     }
 
     @Override
