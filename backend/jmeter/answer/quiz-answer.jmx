@@ -538,6 +538,12 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get quiz question ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">quiz_question_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.answers[*].quizQuestionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].options[0].optionId</stringProp>
@@ -566,7 +572,12 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;optionId&quot;:${__V(option_id_${counter_value})},&quot;timeTaken&quot;:1278,&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&quot;sequence&quot;:${counter_value}}&#xd;
+                    <stringProp name="Argument.value">{&quot;optionId&quot;:${__V(option_id_${counter_value})},&#xd;
+&quot;timeTaken&quot;:1278,&#xd;
+&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&#xd;
+&quot;quizQuestionId&quot;:${__V(quiz_question_id_${counter_value})},&#xd;
+&quot;sequence&quot;:${counter_value},&#xd;
+&quot;timeToSubmission&quot;: 12345}&#xd;
 &#xd;
 </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -577,7 +588,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/quizanswers/${quiz_answer_id}/submit</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/submit</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
