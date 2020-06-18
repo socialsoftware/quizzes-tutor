@@ -9,7 +9,7 @@
     <header>
       <span class="timer" @click="hideTime = !hideTime" v-if="statementQuiz">
         <i class="fas fa-clock"></i>
-        <span v-if="!hideTime">{{ submissionTimer }}</span>
+        <span v-if="!hideTime">{{ convertToHHMMSS(statementQuiz.timeToSubmission) }}</span>
       </span>
       <span class="end-quiz" @click="confirmationDialog = true"
         ><i class="fas fa-times" />End Quiz</span
@@ -155,7 +155,6 @@ export default class QuizView extends Vue {
   startTime: Date = new Date();
   questionOrder: number = 0;
   hideTime: boolean = false;
-  submissionTimer: string = '';
   quizSubmitted: boolean = false;
 
   async created() {
@@ -229,10 +228,10 @@ export default class QuizView extends Vue {
     if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
       this.concludeQuiz();
     }
+  }
 
-    this.submissionTimer = milisecondsToHHMMSS(
-      this.statementQuiz?.timeToSubmission
-    );
+  convertToHHMMSS(time: number | undefined | null): string {
+    return milisecondsToHHMMSS(time);
   }
 
   async concludeQuiz() {

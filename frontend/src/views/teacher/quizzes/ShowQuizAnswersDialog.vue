@@ -7,7 +7,7 @@
   >
     <v-data-table
       :headers="headers"
-      :items="quizAnswers"
+      :items="quizAnswers.quizAnswers"
       :search="search"
       disable-pagination
       :hide-default-footer="true"
@@ -23,19 +23,18 @@
           />
 
           <v-spacer />
-          <span v-if="timeToSubmission > 0">{{ getTimeAsHHMMSS }}</span>
+          <span>{{ convertToHHMMSS(quizAnswers.timeToSubmission) }}</span>
         </v-card-title>
       </template>
 
-      <template v-if="quizConclusionDate" v-slot:item.submissionLag="{ item }">
-        {{
-          new Date(quizConclusionDate).getTime() +
-            '' +
-            new Date(item.answerDate).getTime() +
-            '' +
-            new Date(quizConclusionDate).getTime() -
-            new Date(item.answerDate).getTime()
-        }}
+      <template v-slot:item.submissionLag="{ item }">
+        <span v-bind:class="[
+          new Date(item.answerDate).getTime() - new Date(conclusionDate).getTime() < 0 ? 'green' : 'red darken-4'
+        ]">
+
+          {{ convertToHHMMSS(new Date(item.answerDate).getTime() - new Date(conclusionDate).getTime()) }}
+
+        </span>
       </template>
 
       <template v-slot:item.answers="{ item }">
@@ -50,7 +49,7 @@
           {{ convertToLetter(questionAnswer.option.sequence) }}
         </td>
         <template v-if="item.questionAnswers.length === 0">
-          <td v-for="i in correctSequence.length" :key="i" style="border: 0">
+          <td v-for="i in quizAnswers.correctSequence.length" :key="i" style="border: 0">
             X
           </td>
         </template>
@@ -64,7 +63,7 @@
           <div>
             <td></td>
             <td
-              v-for="(sequence, index) in correctSequence"
+              v-for="(sequence, index) in quizAnswers.correctSequence"
               :key="index"
               style="border: 0"
             >
@@ -79,30 +78,17 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
+import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 @Component
 export default class ShowStudentAnswersDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ required: true }) readonly quizAnswers!: QuizAnswer[];
-  @Prop({ required: true }) readonly correctSequence!: number[];
-  @Prop({ required: true }) readonly timeToSubmission!: number;
-  @Prop({ required: true }) readonly quizConclusionDate!: String;
+  @Prop({ required: true }) readonly quizAnswers!: QuizAnswers;
+  @Prop({ required: true }) readonly conclusionDate!: String;
 
-  secondsLeft: number = 0;
   search: string = '';
   timeout: number | null = null;
-
-  @Watch('timeToSubmission')
-  updateTimer() {
-    if (this.timeToSubmission > 0) {
-      this.secondsLeft = this.timeToSubmission;
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-      }
-      this.countDownTimer();
-    }
-  }
 
   headers: object = [
     { text: 'Name', value: 'name', align: 'left', width: '5%' },
@@ -132,25 +118,8 @@ export default class ShowStudentAnswersDialog extends Vue {
     }
   ];
 
-  countDownTimer() {
-    if (this.secondsLeft >= 0) {
-      this.secondsLeft -= 1;
-      this.timeout = setTimeout(() => {
-        this.countDownTimer();
-      }, 1000);
-    }
-  }
-
-  get getTimeAsHHMMSS() {
-    let hours = Math.floor(this.secondsLeft / 3600);
-    let minutes = Math.floor((this.secondsLeft - hours * 3600) / 60);
-    let seconds = this.secondsLeft - hours * 3600 - minutes * 60;
-
-    let hoursString = hours < 10 ? '0' + hours : hours;
-    let minutesString = minutes < 10 ? '0' + minutes : minutes;
-    let secondsString = seconds < 10 ? '0' + seconds : seconds;
-
-    return `${hoursString}:${minutesString}:${secondsString}`;
+  convertToHHMMSS(time: number | undefined | null): string {
+    return milisecondsToHHMMSS(time);
   }
 
   convertToLetter(number: number) {

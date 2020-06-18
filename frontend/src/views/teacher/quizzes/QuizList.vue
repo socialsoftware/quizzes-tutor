@@ -140,10 +140,8 @@
     <show-quiz-answers-dialog
       v-if="quizAnswers && quiz"
       v-model="quizAnswersDialog"
-      :quiz-conclusion-date="quiz.conclusionDate"
-      :quiz-answers="quizAnswers"
-      :correct-sequence="correctSequence"
-      :timeToSubmission="timeToSubmission"
+      :conclusion-date="quiz.conclusionDate"
+      :quizAnswers="quizAnswers"
     />
 
     <v-dialog
@@ -171,7 +169,6 @@ import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
-import { QuizAnswer } from '@/models/management/QuizAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 @Component({
@@ -184,7 +181,7 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
-  quizAnswers: QuizAnswer[] = [];
+  quizAnswers: QuizAnswers | null = null;
   correctSequence: number[] = [];
   timeToSubmission: number = 0;
   search: string = '';
@@ -253,14 +250,11 @@ export default class QuizList extends Vue {
 
   async showQuizAnswers(quiz: Quiz) {
     try {
-      let quizAnswers: QuizAnswers = await RemoteServices.getQuizAnswers(
+      this.quizAnswers = await RemoteServices.getQuizAnswers(
         quiz.id
       );
 
       this.quiz = quiz;
-      this.quizAnswers = quizAnswers.quizAnswers;
-      this.correctSequence = quizAnswers.correctSequence;
-      this.timeToSubmission = quizAnswers.timeToSubmission;
       this.quizAnswersDialog = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
