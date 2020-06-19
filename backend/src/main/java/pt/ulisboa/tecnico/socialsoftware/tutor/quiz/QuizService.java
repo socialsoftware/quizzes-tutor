@@ -84,14 +84,6 @@ public class QuizService {
     @Autowired
     private CourseService courseService;
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CourseDto findQuizCourseExecution(int quizId) {
-        return this.quizRepository.findById(quizId)
-                .map(Quiz::getCourseExecution)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-    }
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))

@@ -29,4 +29,7 @@ public interface QuizRepository extends JpaRepository<Quiz, Integer> {
 
     @Query(value = "SELECT * FROM quizzes q WHERE q.key = :key", nativeQuery = true)
     Optional<Quiz> findByKey(Integer key);
+
+    @Query(value = "SELECT q.course_execution_id FROM quizzes q WHERE q.id = :id", nativeQuery = true)
+    Optional<Integer> findCourseExecutionIdById(int id);
 }

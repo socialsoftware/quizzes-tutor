@@ -72,10 +72,11 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CourseDto> getCourseExecutions(int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        return user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+    public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
+        return userRepository.findUserWithCourseExecutionsById(userId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId))
+                .getCourseExecutions().stream()
+                .anyMatch(courseExecution -> courseExecution.getCourse().getId().equals(courseId));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

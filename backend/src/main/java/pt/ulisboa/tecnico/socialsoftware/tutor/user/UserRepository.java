@@ -14,6 +14,9 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"quizAnswers.questionAnswers"})
     Optional<User> findUserWithQuizAnswersAndQuestionAnswersById(int userId);
 
+    @EntityGraph(attributePaths = {"courseExecutions"})
+    Optional<User> findUserWithCourseExecutionsById(int userId);
+
     @Query(value = "select * from users u where u.username = :username", nativeQuery = true)
     Optional<User> findByUsername(String username);
 
@@ -22,4 +25,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select MAX(id) from users", nativeQuery = true)
     Integer getMaxUserNumber();
+
+    @Query(value = "select count(*) from users_course_executions uc where uc.users_id = :userId and uc.course_executions_id = :courseExecutionId", nativeQuery = true)
+    Integer countUserCourseExecutionsPairById(int userId, int courseExecutionId);
 }
