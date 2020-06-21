@@ -32,10 +32,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -90,10 +87,11 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        if(quizDetails.getAssessment() != null) {
+        if (quizDetails.getAssessment() != null) {
             availableQuestions = filterByAssessment(availableQuestions, quizDetails);
+        } else {
+            availableQuestions = new ArrayList<>();
         }
-        // TODO else use default assessment
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
