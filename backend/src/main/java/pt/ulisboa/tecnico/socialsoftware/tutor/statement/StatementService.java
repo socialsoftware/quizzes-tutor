@@ -34,7 +34,9 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -156,15 +158,13 @@ public class StatementService {
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<QuizDto> getAvailableQuizzes(int userId, int executionId) {
-        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId);
+        LocalDateTime now = DateHandler.now();
+        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId, now);
 
-        Stream<Quiz> availableNonGeneratedAndNonQRCodeQuizzes = quizRepository.findAvailableNonGeneratedNonQRCodeOnlyQuizzes(executionId, DateHandler.now()).stream()
+        Stream<Quiz> availableQuizzes = quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
 
-        Stream<Quiz> pendingGenerateAndQRCodeOnlyQuizzes= quizAnswerRepository.findNotCompletedGeneratedOrQRCodeOnlyQuizAnswers(userId, executionId).stream()
-                .map(QuizAnswer::getQuiz);
-
-        return Stream.concat(availableNonGeneratedAndNonQRCodeQuizzes, pendingGenerateAndQRCodeOnlyQuizzes)
+        return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
@@ -216,7 +216,7 @@ public class StatementService {
     public void writeQuizAnswersAndCalculateStatistics() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
-            if (quizRepository.findByKey(quizToWrite).isPresent()) {
+            if (quizRepository.findById(quizToWrite).isPresent()) {
                 answerService.writeQuizAnswers(quizToWrite);
             }
         });

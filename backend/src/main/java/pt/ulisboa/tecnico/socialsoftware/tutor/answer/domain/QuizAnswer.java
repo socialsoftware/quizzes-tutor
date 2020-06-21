@@ -192,7 +192,7 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public boolean openToAnswer() {
-        return !isCompleted() && !(getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && getCreationDate() != null);
+        return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
     }
 
 }

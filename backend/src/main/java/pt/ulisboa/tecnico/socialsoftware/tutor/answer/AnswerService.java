@@ -45,9 +45,6 @@ public class AnswerService {
     private UserRepository userRepository;
 
     @Autowired
-    private QuestionRepository questionRepository;
-
-    @Autowired
     private QuestionAnswerRepository questionAnswerRepository;
 
     @Autowired
@@ -58,9 +55,6 @@ public class AnswerService {
 
     @Autowired
     private QuizAnswerItemRepository quizAnswerItemRepository;
-
-    @Autowired
-    private OptionRepository optionRepository;
 
     @Autowired
     private AnswersXmlImport xmlImporter;
@@ -97,12 +91,13 @@ public class AnswerService {
         }
 
         if (!quizAnswer.isCompleted()) {
+            quizAnswer.setCompleted(true);
+
             if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
                 quizAnswerItemRepository.save(quizAnswerItem);
             } else {
                 quizAnswer.setAnswerDate(DateHandler.now());
-                quizAnswer.setCompleted(true);
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
@@ -129,9 +124,8 @@ public class AnswerService {
         quizAnswerItems.forEach(quizAnswerItem -> {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
 
-            if (!quizAnswer.isCompleted()) {
+            if (quizAnswer.getAnswerDate() == null) {
                 quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
-                quizAnswer.setCompleted(true);
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswersList());

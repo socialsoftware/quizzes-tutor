@@ -98,10 +98,11 @@ class GetSolvedQuizzesTest extends SpockTest {
         correct.getCorrectOptionId() == option.getId()
 
         where:
-        quizType                | conclusionDate    | resultsDate
-        Quiz.QuizType.PROPOSED  | LOCAL_DATE_BEFORE | LOCAL_DATE_YESTERDAY
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_BEFORE | LOCAL_DATE_YESTERDAY
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_BEFORE | null
+        quizType                 | conclusionDate    | resultsDate
+        Quiz.QuizType.GENERATED  | null              | null
+        Quiz.QuizType.PROPOSED   | null              | null
+        Quiz.QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | LOCAL_DATE_YESTERDAY
+        Quiz.QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | null
     }
 
     @Unroll

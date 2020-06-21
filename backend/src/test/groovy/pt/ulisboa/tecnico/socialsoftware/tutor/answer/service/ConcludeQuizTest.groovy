@@ -123,7 +123,7 @@ class ConcludeQuizTest extends SpockTest {
         def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
-        !quizAnswer.isCompleted()
+        quizAnswer.isCompleted()
         quizAnswer.getAnswerDate() == null
         quizAnswerItemRepository.findAll().size() == 1
         def quizAnswerItem = quizAnswerItemRepository.findAll().get(0)
