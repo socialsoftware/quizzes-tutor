@@ -28,12 +28,21 @@
       </template>
 
       <template v-slot:item.submissionLag="{ item }">
-        <span v-bind:class="[
-          new Date(item.answerDate).getTime() - new Date(conclusionDate).getTime() < 0 ? 'green' : 'red darken-4'
-        ]">
-
-          {{ convertToHHMMSS(new Date(item.answerDate).getTime() - new Date(conclusionDate).getTime()) }}
-
+        <span
+          v-bind:class="[
+            new Date(item.answerDate).getTime() -
+              new Date(conclusionDate).getTime() <
+            0
+              ? 'green'
+              : 'red darken-4'
+          ]"
+        >
+          {{
+            convertToHHMMSS(
+              new Date(item.answerDate).getTime() -
+                new Date(conclusionDate).getTime()
+            )
+          }}
         </span>
       </template>
 
@@ -49,7 +58,11 @@
           {{ convertToLetter(questionAnswer.option.sequence) }}
         </td>
         <template v-if="item.questionAnswers.length === 0">
-          <td v-for="i in quizAnswers.correctSequence.length" :key="i" style="border: 0">
+          <td
+            v-for="i in quizAnswers.correctSequence.length"
+            :key="i"
+            style="border: 0"
+          >
             X
           </td>
         </template>
