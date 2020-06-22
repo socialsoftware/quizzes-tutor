@@ -42,7 +42,6 @@ class RemoveQuizTest extends SpockTest {
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)
-
     }
 
     def "remove a quiz"() {

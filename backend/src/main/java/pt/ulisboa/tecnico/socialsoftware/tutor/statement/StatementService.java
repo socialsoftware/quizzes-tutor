@@ -238,11 +238,21 @@ public class StatementService {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
 
+        if (quiz.getAvailableDate() != null && quiz.getAvailableDate().isAfter(DateHandler.now())) {
+            throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
+        }
+
         if (quiz.getConclusionDate() != null && DateHandler.now().isAfter(quiz.getConclusionDate())) {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId()).orElseGet(() -> {
+        Optional<QuizAnswer> optionalQuizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId());
+
+        if (!optionalQuizAnswer.isPresent() && quiz.isQrCodeOnly()) {
+            throw new TutorException(CANNOT_START_QRCODE_QUIZ);
+        }
+
+        QuizAnswer quizAnswer = optionalQuizAnswer.orElseGet(() -> {
             QuizAnswer qa = new QuizAnswer(user, quiz);
             quizAnswerRepository.save(qa);
             return qa;
