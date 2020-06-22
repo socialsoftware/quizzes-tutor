@@ -119,6 +119,10 @@ public class StatementService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
+        if (!quiz.isQrCodeOnly()) {
+            throw new TutorException(NOT_QRCODE_QUIZ);
+        }
+
         if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
