@@ -23,8 +23,7 @@ export class QuizAnswers {
         if (this.timeToSubmission != null && this.timeToSubmission > 0) {
           this.timeToSubmission = Math.max(
             0,
-            this.timeToSubmission -
-            Math.floor(Date.now() - this.lastTimeCalled)
+            this.timeToSubmission - Math.floor(Date.now() - this.lastTimeCalled)
           );
         }
 

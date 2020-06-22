@@ -250,9 +250,7 @@ export default class QuizList extends Vue {
 
   async showQuizAnswers(quiz: Quiz) {
     try {
-      this.quizAnswers = await RemoteServices.getQuizAnswers(
-        quiz.id
-      );
+      this.quizAnswers = await RemoteServices.getQuizAnswers(quiz.id);
 
       this.quiz = quiz;
       this.quizAnswersDialog = true;

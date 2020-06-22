@@ -9,7 +9,9 @@
     <header>
       <span class="timer" @click="hideTime = !hideTime" v-if="statementQuiz">
         <i class="fas fa-clock"></i>
-        <span v-if="!hideTime">{{ convertToHHMMSS(statementQuiz.timeToSubmission) }}</span>
+        <span v-if="!hideTime">{{
+          convertToHHMMSS(statementQuiz.timeToSubmission)
+        }}</span>
       </span>
       <span class="end-quiz" @click="confirmationDialog = true"
         ><i class="fas fa-times" />End Quiz</span
