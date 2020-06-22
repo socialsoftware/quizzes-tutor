@@ -18,26 +18,37 @@
       </v-card-title>
 
       <v-card-text class="text-left" v-if="editQuestion">
-        <v-text-field v-model="editQuestion.title" label="Title" />
-        <v-textarea
-          outline
-          rows="10"
-          v-model="editQuestion.content"
-          label="Question"
-        ></v-textarea>
-        <div v-for="index in editQuestion.options.length" :key="index">
-          <v-switch
-            v-model="editQuestion.options[index - 1].correct"
-            class="ma-4"
-            label="Correct"
+        <v-form ref="form" lazy-validation>
+          <v-text-field
+            v-model="editQuestion.title"
+            :rules="[v => !!v || 'Question title is required']"
+            label="Title"
+            required
           />
           <v-textarea
-            outline
-            rows="10"
-            v-model="editQuestion.options[index - 1].content"
-            :label="`Option ${index}`"
+            v-model="editQuestion.content"
+            label="Question"
+            :rules="[v => !!v || 'Question content is required']"
+            auto-grow
+            required
+            rows="5"
           ></v-textarea>
-        </div>
+          <div v-for="index in editQuestion.options.length" :key="index">
+            <v-row>
+              <v-textarea
+                v-model="editQuestion.options[index - 1].content"
+                :label="`Option ${index}`"
+                rows="2"
+                auto-grow
+              ></v-textarea>
+              <v-switch
+                v-model="editQuestion.options[index - 1].correct"
+                class="ma-4"
+                :label="`Correct ${index}`"
+              />
+            </v-row>
+          </div>
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
@@ -82,16 +93,7 @@ export default class EditQuestionDialog extends Vue {
   // };
 
   async saveQuestion() {
-    if (
-      this.editQuestion &&
-      (!this.editQuestion.title || !this.editQuestion.content)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Question must have title and content'
-      );
-      return;
-    }
+    this.$refs.form.validate();
 
     try {
       const result =
