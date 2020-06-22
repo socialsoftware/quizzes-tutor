@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 @PropertySource({ "classpath:application.properties" })
@@ -39,6 +40,9 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     @Autowired
     private AssessmentService assessmentService;
 
+    @Autowired
+    private StatementService statementService;
+
     @Override
     public void afterPropertiesSet() {
         // Run on startup
@@ -46,6 +50,8 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         userService.getDemoTeacher();
         userService.getDemoStudent();
         userService.getDemoAdmin();
+
+        statementService.writeQuizAnswersAndCalculateStatistics();
 
         userService.resetDemoStudents();
         quizService.resetDemoQuizzes();
