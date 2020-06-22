@@ -126,6 +126,20 @@ class GenerateStudentQuizTest extends SpockTest {
         quizRepository.count() == 0L
     }
 
+    def 'cannot generate quiz because there is no assessment'() {
+        given:
+        def quizForm = new StatementCreationDto()
+        quizForm.setNumberOfQuestions(1)
+
+        when:
+        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+
+        then:
+        TutorException exception = thrown()
+        exception.getErrorMessage() == ErrorMessage.NOT_ENOUGH_QUESTIONS
+        quizRepository.count() == 0L
+    }
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
