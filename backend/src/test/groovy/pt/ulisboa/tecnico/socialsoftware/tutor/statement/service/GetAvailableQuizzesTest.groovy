@@ -27,82 +27,55 @@ class GetAvailableQuizzesTest extends SpockTest {
     }
 
     @Unroll
-    def "returns available quiz with: quizType=#quizType | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
+    def "returns available quiz with no quiz answer and with: quizType=#quizType | OneWay=#oneWay | qRCodeOnly=#qRCodeOnly | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
         given: 'a quiz'
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(quizType.toString())
-        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setConclusionDate(conclusionDate)
-        quiz.setResultsDate(resultsDate)
         quiz.setCourseExecution(courseExecution)
-        quiz.setOneWay(true)
-        quizRepository.save(quiz)
-
-        when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
-
-        then: 'the return statement contains one quiz'
-        quizDtos.size() == 1
-        def quizDto = quizDtos.get(0)
-        quizDto.getId() != null
-        quizDto.getTitle() == QUIZ_TITLE
-        quizDto.isOneWay()
-        quizDto.getAvailableDate() == DateHandler.toISOString(LOCAL_DATE_BEFORE)
-        quizDto.getConclusionDate() == DateHandler.toISOString(conclusionDate)
-        quizDto.getQuestions().size() == 0
-
-        where:
-        quizType                | conclusionDate      | resultsDate
-        Quiz.QuizType.PROPOSED  | null                | null
-        Quiz.QuizType.PROPOSED  | null                | LOCAL_DATE_LATER
-        Quiz.QuizType.PROPOSED  | LOCAL_DATE_TOMORROW | null
-        Quiz.QuizType.PROPOSED  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | null
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
-    }
-
-    def 'returns a qrOnly quiz if it was scanned already (if it has a quizAnswer)'() {
-        given: 'a quiz'
-        quiz = new Quiz()
-        quiz.setKey(1)
-        quiz.setQrCodeOnly(true)
-        quiz.setOneWay(true)
-        quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setConclusionDate(LOCAL_DATE_TOMORROW)
-        quiz.setCourseExecution(courseExecution)
-        quizRepository.save(quiz)
-        def quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswerRepository.save(quizAnswer)
-
-        when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
-
-        then: 'the return statement contains one quiz'
-        quizDtos.size() == 1
-        def quizDto = quizDtos.get(0)
-        quizDto.getId() != null
-        quizDto.getTitle() == QUIZ_TITLE
-        quizDto.isOneWay()
-        quizDto.getAvailableDate() == DateHandler.toISOString(LOCAL_DATE_BEFORE)
-        quizDto.getConclusionDate() == DateHandler.toISOString(LOCAL_DATE_TOMORROW)
-        quizDto.getQuestions().size() == 0
-    }
-
-    @Unroll
-    def "does not return quiz with: quizType=#quizType | qrOnly=#qrOnly | availableDate=#availableDate | conclusionDate=#conclusionDate"() {
-        given: 'a quiz'
-        quiz = new Quiz()
-        quiz.setKey(1)
-        quiz.setTitle(QUIZ_TITLE)
+        quiz.setOneWay(oneWay)
+        quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
         quiz.setAvailableDate(availableDate)
         quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
+        quizRepository.save(quiz)
+
+        when:
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+
+        then: 'the return statement contains one quiz'
+        quizDtos.size() == 1
+        def quizDto = quizDtos.get(0)
+        quizDto.getId() != null
+        quizDto.getTitle() == QUIZ_TITLE
+        quizDto.isOneWay() == oneWay
+        quizDto.isQrCodeOnly() == qRCodeOnly
+        quizDto.getQuestions().size() == 0
+
+        where:
+        quizType                | oneWay | qRCodeOnly | availableDate     | conclusionDate      | resultsDate
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE | null                | null
+        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE | null                | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
+        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE | null                | null
+    }
+
+    @Unroll
+    def "does not return quiz with no quiz answer and with: quizType=#quizType | OneWay=#oneWay | qRCodeOnly=#qRCodeOnly | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate"() {
+        quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
         quiz.setCourseExecution(courseExecution)
-        quiz.setQrCodeOnly(qrOnly)
+        quiz.setOneWay(oneWay)
+        quiz.setQrCodeOnly(qRCodeOnly)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(availableDate)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
         quizRepository.save(quiz)
 
         when:
@@ -112,36 +85,113 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizDtos.size() == 0
 
         where:
-        quizType                | qrOnly | availableDate             | conclusionDate
-        Quiz.QuizType.PROPOSED  | true   | LOCAL_DATE_YESTERDAY      | LOCAL_DATE_TOMORROW
-        Quiz.QuizType.IN_CLASS  | true   | LOCAL_DATE_YESTERDAY      | LOCAL_DATE_TOMORROW
-        Quiz.QuizType.PROPOSED  | true   | LOCAL_DATE_YESTERDAY      | null
-        Quiz.QuizType.PROPOSED  | false  | LOCAL_DATE_TOMORROW       | LOCAL_DATE_LATER
-        Quiz.QuizType.IN_CLASS  | false  | LOCAL_DATE_TOMORROW       | LOCAL_DATE_LATER
-        Quiz.QuizType.PROPOSED  | false  | LOCAL_DATE_BEFORE         | LOCAL_DATE_YESTERDAY
-        Quiz.QuizType.IN_CLASS  | false  | LOCAL_DATE_BEFORE         | LOCAL_DATE_YESTERDAY
+        quizType                | oneWay | qRCodeOnly | availableDate         | conclusionDate       | resultsDate
+        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_TOMORROW   | null                 | null
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_TOMORROW   | null                 | null
+        Quiz.QuizType.PROPOSED  | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_TOMORROW   | LOCAL_DATE_LATER     | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | LOCAL_DATE_LATER
+        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_TOMORROW   | LOCAL_DATE_LATER     | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | LOCAL_DATE_LATER
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null
     }
 
-    def 'does not return a completed quiz'() {
-        given: 'a completed quiz'
+    @Unroll
+    def "returns available quiz with quiz answer and with: quizType=#quizType | OneWay=#oneWay | qRCodeOnly=#qRCodeOnly | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate | creationDate=#creationDate"() {
+        given: 'a quiz'
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setConclusionDate(LOCAL_DATE_TOMORROW)
         quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(oneWay)
+        quiz.setQrCodeOnly(qRCodeOnly)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(availableDate)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
         quizRepository.save(quiz)
         def quizAnswer = new QuizAnswer(user, quiz)
-        quizAnswer.setCompleted(true)
+        quizAnswer.setCompleted(false)
+        quizAnswer.setCreationDate(creationDate)
         quizAnswerRepository.save(quizAnswer)
 
         when:
         def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
 
+        then: 'the return statement contains one quiz'
+        quizDtos.size() == 1
+        def quizDto = quizDtos.get(0)
+        quizDto.getId() != null
+        quizDto.getTitle() == QUIZ_TITLE
+        quizDto.isOneWay() == oneWay
+        quizDto.isQrCodeOnly() == qRCodeOnly
+        quizDto.getQuestions().size() == 0
+
+        where:
+        quizType                | oneWay | qRCodeOnly | availableDate     | conclusionDate      | resultsDate      | creationDate
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE | null                | null             | null
+        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE | null                | null             | null
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | null
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | LOCAL_DATE_YESTERDAY
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null
+        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY
+        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE | null                | null             | LOCAL_DATE_YESTERDAY
+    }
+
+    @Unroll
+    def "does not return quiz with quiz answer and with: quizType=#quizType | OneWay=#oneWay | qRCodeOnly=#qRCodeOnly | availableDate=#availableDate | conclusionDate=#conclusionDate | resultsDate=#resultsDate | creationDate=#creationDate | completed=#completed"() {
+        quiz = new Quiz()
+        quiz.setKey(1)
+        quiz.setTitle(QUIZ_TITLE)
+        quiz.setCourseExecution(courseExecution)
+        quiz.setOneWay(oneWay)
+        quiz.setQrCodeOnly(qRCodeOnly)
+        quiz.setType(quizType.toString())
+        quiz.setAvailableDate(availableDate)
+        quiz.setConclusionDate(conclusionDate)
+        quiz.setResultsDate(resultsDate)
+        quizRepository.save(quiz)
+        def quizAnswer = new QuizAnswer(user, quiz)
+        quizAnswer.setCompleted(completed)
+        quizAnswer.setCreationDate(creationDate)
+        quizAnswerRepository.save(quizAnswer)
+        when:
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+
         then: 'no quiz is returned'
         quizDtos.size() == 0
-     }
+
+        where:
+        quizType                 | oneWay | qRCodeOnly | availableDate         | conclusionDate       | resultsDate      | creationDate         | completed
+        Quiz.QuizType.PROPOSED   | false  | false      | LOCAL_DATE_BEFORE     | null                 | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.PROPOSED   | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.PROPOSED   | true   | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.PROPOSED   | true   | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | false  | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true
+        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false
+        Quiz.QuizType.GENERATED  | false  | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_TODAY     | true
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

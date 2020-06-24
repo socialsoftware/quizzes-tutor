@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository;
 
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -14,15 +15,21 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
+    @EntityGraph(attributePaths = {"quizAnswers.questionAnswers.quizQuestion.question"})
+    Optional<Quiz> findQuizWithAnswersAndQuestionsById(int quizId);
+
     @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId ORDER BY c.id", nativeQuery = true)
     List<Quiz> findQuizzesOfExecution(int executionId);
 
-    @Query(value = "SELECT q FROM Quiz q WHERE q.courseExecution.id = :executionId AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate > :now) AND q.type <> 'GENERATED' AND q.qrCodeOnly = false")
-    List<Quiz> findAvailableNonGeneratedNonQRCodeOnlyQuizzes(int executionId, LocalDateTime now);
+    @Query(value = "SELECT q FROM Quiz q WHERE q.courseExecution.id = :executionId AND  q.qrCodeOnly = false AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate > :now)")
+    List<Quiz> findAvailableNonQRCodeQuizzes(int executionId, LocalDateTime now);
 
     @Query(value = "SELECT MAX(key) FROM quizzes", nativeQuery = true)
     Integer getMaxQuizKey();
 
     @Query(value = "SELECT * FROM quizzes q WHERE q.key = :key", nativeQuery = true)
     Optional<Quiz> findByKey(Integer key);
+
+    @Query(value = "SELECT q.course_execution_id FROM quizzes q WHERE q.id = :id", nativeQuery = true)
+    Optional<Integer> findCourseExecutionIdById(int id);
 }

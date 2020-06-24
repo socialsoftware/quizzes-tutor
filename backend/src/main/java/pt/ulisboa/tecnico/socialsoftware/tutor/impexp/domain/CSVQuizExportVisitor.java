@@ -7,12 +7,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,19 +24,38 @@ public class CSVQuizExportVisitor implements Visitor {
     private int column;
     private List<String[]> table = new ArrayList<>();
 
-    public String export(Quiz quiz) {
+    public String export(Quiz quiz, List<QuestionAnswerItem> questionAnswerItems) {
         int numberOfQuestions = quiz.getQuizQuestions().size();
+        int lineSize = numberOfQuestions + 5;
+        Map<Integer, QuizQuestion> quizQuestions = quiz.getQuizQuestions().stream()
+                .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
+        Map<Integer, Option> options = quiz.getQuizQuestions().stream()
+                .map(QuizQuestion::getQuestion)
+                .filter(q -> q instanceof MultipleChoiceQuestion)
+                .flatMap(question -> ((MultipleChoiceQuestion)question).getOptions().stream())
+                .collect(Collectors.toMap(Option::getId, Function.identity()));
 
-        line = new String[numberOfQuestions + 4];
+        // add header
+        line = new String[lineSize];
         Arrays.fill(line, "");
         line[0] = "Username";
         line[1] = "Name";
         line[2] = "Start";
-        line[3] = "Finish";
+        line[3] = "Delivered";
+        line[4] = "Delay in Seconds";
+        column = 4;
+
+        quiz.getQuizQuestions().stream()
+                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+                .forEach(quizQuestion -> {
+                    line[++column] = quizQuestion.getSequence().toString();
+                });
+
         table.add(line);
 
+        // add student answer
         for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {
-            line = new String[numberOfQuestions + 4];
+            line = new String[lineSize];
             Arrays.fill(line, "");
             column = 0;
             quizAnswer.getUser().accept(this);
@@ -48,14 +70,45 @@ public class CSVQuizExportVisitor implements Visitor {
             table.add(line);
         }
 
-        line = new String[numberOfQuestions + 4];
+        // add key
+        line = new String[lineSize];
         Arrays.fill(line, "");
-        line[3] = "KEYS";
-        column = 4;
+        line[4] = "KEYS";
+        column = 5;
         quiz.getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .forEach(quizQuestion -> quizQuestion.accept(this));
         table.add(line);
+
+        // add log of question answers
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        table.add(line);
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        table.add(line);
+
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        line[0] = "Username";
+        line[1] = "Question";
+        line[2] = "Option";
+        line[3] = "Answer Date";
+        line[4] = "Time To Submission";
+        line[5] = "Time Taken";
+        table.add(line);
+
+        for (QuestionAnswerItem questionAnswerItem: questionAnswerItems) {
+            line = new String[lineSize];
+            Arrays.fill(line, "");
+            line[0] = questionAnswerItem.getUsername();
+            line[1] = quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence().toString();
+            line[2] = questionAnswerItem.getOptionId() != null ? convertSequenceToLetter(options.get(questionAnswerItem.getOptionId()).getSequence()) : "X";
+            line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
+            line[4] = questionAnswerItem.getTimeToSubmission() != null ? questionAnswerItem.getTimeToSubmission().toString() : "";
+            line[5] = questionAnswerItem.getTimeTaken().toString();
+            table.add(line);
+        }
 
         return table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
     }
@@ -70,6 +123,14 @@ public class CSVQuizExportVisitor implements Visitor {
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
         line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
         line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
+        if (quizAnswer.getAnswerDate() != null &&
+                quizAnswer.getQuiz().getConclusionDate() != null &&
+                quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {
+            Duration duration = Duration.between(quizAnswer.getAnswerDate(), quizAnswer.getQuiz().getConclusionDate());
+            line[column++] = String.valueOf(Math.abs(duration.toSeconds()));
+        }
+        else
+            line[column++] = "";
     }
 
     @Override

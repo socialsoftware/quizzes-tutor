@@ -144,11 +144,7 @@ public class AuthService {
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {
         return courses.stream()
                 .map(courseDto ->  {
-                    Course course = courseRepository.findByNameType(courseDto.getName(), Course.Type.TECNICO.name()).orElse(null);
-                    if (course == null) {
-                        return null;
-                    }
-                    return course.getCourseExecution(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO)
+                    return courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
                             .orElse(null);
                 })
                 .filter(Objects::nonNull)

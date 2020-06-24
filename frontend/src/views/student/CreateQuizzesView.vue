@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container fluid v-if="availableAssessments.length > 0">
     <h2>Create Random Quiz</h2>
     <v-container class="create-buttons">
       <p>Assessment</p>
@@ -35,6 +35,12 @@
           Create quiz
         </v-btn>
       </div>
+    </v-container>
+  </v-container>
+  <v-container fluid v-else>
+    <h2>No assessment available</h2>
+    <v-container class="create-buttons">
+      <p>Ask your teacher to create an assessment</p>
     </v-container>
   </v-container>
 </template>

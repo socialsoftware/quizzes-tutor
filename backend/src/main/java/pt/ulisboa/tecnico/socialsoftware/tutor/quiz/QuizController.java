@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
@@ -16,6 +17,9 @@ public class QuizController {
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private AnswerService answerService;
 
     @GetMapping("/executions/{executionId}/quizzes/non-generated")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -47,6 +51,12 @@ public class QuizController {
         return this.quizService.populateWithQuizAnswers(quizId);
     }
 
+    @PostMapping("/quizzes/{quizId}/write")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void writeQuizAnswers(@PathVariable Integer quizId) {
+        this.answerService.writeQuizAnswers(quizId);
+    }
+
     @PostMapping("/quizzes/{quizId}/unpopulate")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizDto removeNonFilledQuizAnswers(@PathVariable Integer quizId) {
@@ -62,6 +72,8 @@ public class QuizController {
     @GetMapping(value = "/quizzes/{quizId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void exportQuiz(HttpServletResponse response, @PathVariable Integer quizId) throws IOException {
+        answerService.writeQuizAnswers(quizId);
+
         response.setHeader("Content-Disposition", "attachment; filename=file.zip");
         response.setContentType("application/zip");
         response.getOutputStream().write(this.quizService.exportQuiz(quizId).toByteArray());
@@ -72,6 +84,7 @@ public class QuizController {
     @GetMapping("/quizzes/{quizId}/answers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
+        answerService.writeQuizAnswers(quizId);
         return this.quizService.getQuizAnswers(quizId);
     }
 }

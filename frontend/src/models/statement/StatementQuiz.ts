@@ -9,11 +9,11 @@ export default class StatementQuiz {
   title!: string;
   qrCodeOnly!: boolean;
   oneWay!: boolean;
+  timed!: boolean;
   availableDate!: string;
   conclusionDate!: string;
   timeToAvailability!: number | null;
   timeToSubmission!: number | null;
-  timeToResults!: number | null;
   questions: StatementQuestion[] = [];
   answers: StatementAnswer[] = [];
   private lastTimeCalled: number = Date.now();
@@ -27,12 +27,12 @@ export default class StatementQuiz {
       this.title = jsonObj.title;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;
+      this.timed = jsonObj.timed;
       this.availableDate = ISOtoString(jsonObj.availableDate);
       this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
 
       this.timeToAvailability = jsonObj.timeToAvailability;
       this.timeToSubmission = jsonObj.timeToSubmission;
-      this.timeToResults = jsonObj.timeToResults;
 
       this.questions = jsonObj.questions.map(question => {
         return new StatementQuestion(question);
@@ -47,7 +47,6 @@ export default class StatementQuiz {
       // if there is timeTo... start an interval that decreases the timeTo... every second
       if (
         (this.timeToSubmission != null && this.timeToSubmission > 0) ||
-        (this.timeToResults != null && this.timeToResults > 0) ||
         (this.timeToAvailability != null && this.timeToAvailability > 0)
       ) {
         this.timerId = setInterval(() => {
@@ -67,18 +66,7 @@ export default class StatementQuiz {
             );
           }
 
-          if (this.timeToResults != null && this.timeToResults > 0) {
-            this.timeToResults = Math.max(
-              0,
-              this.timeToResults - Math.floor(Date.now() - this.lastTimeCalled)
-            );
-          }
-
-          if (
-            !this.timeToSubmission &&
-            !this.timeToResults &&
-            !this.timeToAvailability
-          ) {
+          if (!this.timeToSubmission && !this.timeToAvailability) {
             clearInterval(this.timerId);
           }
 

@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,6 +16,8 @@ public class StatementQuestionDto implements Serializable {
     private List<StatementOptionDto> options;
     private ImageDto image;
     private Integer sequence;
+
+    public StatementQuestionDto() {}
 
     public StatementQuestionDto(QuestionAnswer questionAnswer) {
         this.content = questionAnswer.getQuizQuestion().getQuestion().getContent();

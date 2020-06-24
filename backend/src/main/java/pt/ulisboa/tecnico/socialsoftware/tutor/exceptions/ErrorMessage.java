@@ -57,6 +57,8 @@ public enum ErrorMessage {
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
+    CANNOT_START_QRCODE_QUIZ("This is a QRCode only quiz"),
+    NOT_QRCODE_QUIZ("Not a QRCode only quiz"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),

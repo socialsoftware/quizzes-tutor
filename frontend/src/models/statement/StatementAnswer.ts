@@ -3,6 +3,8 @@ export default class StatementAnswer {
   public timeTaken: number = 0;
   public sequence!: number;
   public questionAnswerId!: number;
+  public quizQuestionId!: number;
+  public timeToSubmission: number | null = null;
 
   constructor(jsonObj?: StatementAnswer) {
     if (jsonObj) {
@@ -10,6 +12,7 @@ export default class StatementAnswer {
       this.timeTaken = jsonObj.timeTaken;
       this.sequence = jsonObj.sequence;
       this.questionAnswerId = jsonObj.questionAnswerId;
+      this.quizQuestionId = jsonObj.quizQuestionId;
     }
   }
 }

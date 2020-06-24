@@ -1,13 +1,27 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.google.gson.internal.$Gson$Types;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
 
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        include = JsonTypeInfo.As.PROPERTY,
+        defaultImpl = MultipleChoiceStatementAnswerDto.class,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDto.class, name = "multiple_choice")
+})
 public abstract class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
     private Integer questionAnswerId;
+    private Integer quizQuestionId;
+    private Integer timeToSubmission;
 
     public StatementAnswerDto() {
     }
@@ -16,6 +30,7 @@ public abstract class StatementAnswerDto implements Serializable {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
         this.questionAnswerId = questionAnswer.getId();
+        this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
     }
 
     public Integer getTimeTaken() {
@@ -41,4 +56,21 @@ public abstract class StatementAnswerDto implements Serializable {
     public void setQuestionAnswerId(Integer questionAnswerId) {
         this.questionAnswerId = questionAnswerId;
     }
+
+    public Integer getQuizQuestionId() {
+        return quizQuestionId;
+    }
+
+    public void setQuizQuestionId(Integer quizQuestionId) {
+        this.quizQuestionId = quizQuestionId;
+    }
+
+    public Integer getTimeToSubmission() {
+        return timeToSubmission;
+    }
+
+    public void setTimeToSubmission(Integer timeToSubmission) {
+        this.timeToSubmission = timeToSubmission;
+    }
+
 }

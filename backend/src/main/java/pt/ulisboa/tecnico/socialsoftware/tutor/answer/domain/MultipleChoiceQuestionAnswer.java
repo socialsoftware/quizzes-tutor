@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -40,6 +41,11 @@ public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
 
         if (option != null)
             option.addQuestionAnswer(this);
+    }
+
+    @Override
+    public MultipleChoiceQuestion getQuestion(){
+        return (MultipleChoiceQuestion) getQuizQuestion().getQuestion();
     }
 
     @Override
