@@ -118,7 +118,6 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto updateQuestion(Integer questionId, MultipleChoiceQuestionDto questionDto) {
-        // todo Should we use a specific query to find the MultipleChoiceQuestion directly from the db?
         MultipleChoiceQuestion question = (MultipleChoiceQuestion) questionRepository
                 .findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));

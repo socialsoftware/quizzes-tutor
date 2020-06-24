@@ -2,7 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED;
 
 public class StatementAnswerDtoFactory {
 
@@ -11,8 +14,7 @@ public class StatementAnswerDtoFactory {
             return new MultipleChoiceStatementAnswerDto((MultipleChoiceQuestionAnswer)questionAnswer);
         }
         else{
-            // todo might be better to throw a custom exception.
-            return null;
+            throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());
         }
     }
 }
