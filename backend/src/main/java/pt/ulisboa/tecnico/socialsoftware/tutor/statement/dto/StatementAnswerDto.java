@@ -2,9 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.gson.internal.$Gson$Types;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
 
