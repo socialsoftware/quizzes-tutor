@@ -14,14 +14,16 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
         defaultImpl = MultipleChoiceQuestionDto.class,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = "multiple_choice")
-        })
+        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION)
+})
 public abstract class QuestionDto implements Serializable {
     private Integer id;
     private Integer key;

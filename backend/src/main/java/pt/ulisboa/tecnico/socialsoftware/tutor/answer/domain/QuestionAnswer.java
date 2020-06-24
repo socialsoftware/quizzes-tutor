@@ -19,8 +19,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
         }
 )
 @DiscriminatorColumn(name = "question_answer_type",
-        columnDefinition = "smallint not null default 0",
-        discriminatorType = DiscriminatorType.INTEGER)
+        columnDefinition = "varchar(32) not null default 'multiple_choice'",
+        discriminatorType = DiscriminatorType.STRING)
 public abstract class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

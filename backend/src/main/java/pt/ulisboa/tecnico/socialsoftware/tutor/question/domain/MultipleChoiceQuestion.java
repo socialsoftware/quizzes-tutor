@@ -15,7 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ON
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MultipleChoice)
+@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceQuestion extends Question {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();

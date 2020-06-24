@@ -7,11 +7,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED;
 
-public class StatementAnswerDtoFactory {
+public class StatementDtoFactory {
 
     public static StatementAnswerDto getStatementAnswerDto(QuestionAnswer questionAnswer){
         if (questionAnswer instanceof MultipleChoiceQuestionAnswer){
             return new MultipleChoiceStatementAnswerDto((MultipleChoiceQuestionAnswer)questionAnswer);
+        }
+        else{
+            throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());
+        }
+    }
+
+    public static StatementQuestionDto getStatementQuestionDto(QuestionAnswer questionAnswer){
+        if (questionAnswer instanceof MultipleChoiceQuestionAnswer){
+            return new MultipleChoiceStatementQuestionDto((MultipleChoiceQuestionAnswer)questionAnswer);
         }
         else{
             throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());

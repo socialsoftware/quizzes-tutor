@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MultipleChoice)
+@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceQuestionAnswer extends QuestionAnswer {
 
     @ManyToOne
