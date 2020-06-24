@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.CodeFillIn)
+@DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN)
 public class CodeFillInQuestionAnswer extends QuestionAnswer {
 
     @ManyToMany

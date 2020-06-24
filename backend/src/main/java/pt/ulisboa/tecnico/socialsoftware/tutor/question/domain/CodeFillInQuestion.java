@@ -13,7 +13,7 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.CodeFillIn)
+@DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN)
 public class CodeFillInQuestion extends Question {
     public enum Language {
         Java,
