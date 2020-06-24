@@ -7,13 +7,11 @@
     v-if="!confirmed"
   >
     <header>
-      <span
-        class="timer"
-        @click="hideTime = !hideTime"
-        v-if="statementQuiz && statementQuiz.timeToSubmission"
-      >
+      <span class="timer" @click="hideTime = !hideTime" v-if="statementQuiz">
         <i class="fas fa-clock"></i>
-        <span v-if="!hideTime">{{ submissionTimer }}</span>
+        <span v-if="!hideTime">{{
+          convertToHHMMSS(statementQuiz.timeToSubmission)
+        }}</span>
       </span>
       <span class="end-quiz" @click="confirmationDialog = true"
         ><i class="fas fa-times" />End Quiz</span
@@ -136,10 +134,10 @@
     </v-dialog>
   </div>
 
-  <div class="container" v-else-if="statementQuiz.timeToResults">
+  <div class="container" v-else-if="quizSubmitted">
     <v-card>
       <v-card-title class="justify-center">
-        Hold on and wait {{ resultsTimer }} to view the results
+        The quiz was submitted!
       </v-card-title>
     </v-card>
   </div>
@@ -170,8 +168,7 @@ export default class QuizView extends Vue {
   startTime: Date = new Date();
   questionOrder: number = 0;
   hideTime: boolean = false;
-  submissionTimer: string = '';
-  resultsTimer: string = '';
+  quizSubmitted: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
@@ -205,8 +202,6 @@ export default class QuizView extends Vue {
 
   async changeAnswer(optionId: number) {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      // let previousAnswer = this.statementQuiz.answers[this.questionOrder]
-      //   .optionId;
       try {
         this.calculateTime();
         let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
@@ -217,7 +212,10 @@ export default class QuizView extends Vue {
           newAnswer.optionId = optionId;
         }
 
-        await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        if (!!this.statementQuiz && this.statementQuiz.timed) {
+          newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
+          RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        }
 
         this.statementQuiz.answers[this.questionOrder].optionId =
           newAnswer.optionId;
@@ -260,19 +258,10 @@ export default class QuizView extends Vue {
     if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
       this.concludeQuiz();
     }
-
-    this.submissionTimer = milisecondsToHHMMSS(
-      this.statementQuiz?.timeToSubmission
-    );
   }
 
-  @Watch('statementQuiz.timeToResults')
-  resultsTimerWatcher() {
-    if (!!this.statementQuiz && !this.statementQuiz.timeToResults) {
-      this.concludeQuiz();
-    }
-
-    this.resultsTimer = milisecondsToHHMMSS(this.statementQuiz?.timeToResults);
+  convertToHHMMSS(time: number | undefined | null): string {
+    return milisecondsToHHMMSS(time);
   }
 
   async concludeQuiz() {
@@ -282,11 +271,10 @@ export default class QuizView extends Vue {
       this.confirmed = true;
       await this.statementManager.concludeQuiz();
 
-      if (
-        !this.statementQuiz?.timeToResults &&
-        this.statementManager.correctAnswers.length !== 0
-      ) {
+      if (this.statementManager.correctAnswers.length !== 0) {
         await this.$router.push({ name: 'quiz-results' });
+      } else {
+        this.quizSubmitted = true;
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

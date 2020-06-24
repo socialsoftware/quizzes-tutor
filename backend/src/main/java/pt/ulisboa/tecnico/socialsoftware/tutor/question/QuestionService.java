@@ -69,14 +69,6 @@ public class QuestionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CourseDto findQuestionCourse(Integer questionId) {
-        return questionRepository.findById(questionId)
-                .map(Question::getCourse)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-    }
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))

@@ -50,14 +50,6 @@ public class AssessmentService {
     @Autowired
     private CourseService courseService;
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CourseDto findAssessmentCourseExecution(int assessmentId) {
-        return assessmentRepository.findById(assessmentId)
-                .map(Assessment::getCourseExecution)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
-    }
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))

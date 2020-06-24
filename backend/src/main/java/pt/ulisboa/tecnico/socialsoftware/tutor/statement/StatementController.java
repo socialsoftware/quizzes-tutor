@@ -74,19 +74,15 @@ public class StatementController {
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if (user == null) {
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
-        // TODO REVISIT
-        /*
         if(answer instanceof MultipleChoiceStatementAnswerDto) {
-            statementService.submitAnswer(user.getId(), quizId, (MultipleChoiceStatementAnswerDto)answer);
+            statementService.submitAnswer(user.getUsername(), quizId, (MultipleChoiceStatementAnswerDto)answer);
         }
         else if (answer instanceof CodeFillInStatementAnswerDto){
-            statementService.submitAnswer(user.getId(), quizId, (CodeFillInStatementAnswerDto)answer);
-        }*/
-
-        statementService.submitAnswer(user.getId(), quizId, answer);
+            //TODO REVISIT
+            //statementService.submitAnswer(user.getUsername(), quizId, (CodeFillInStatementAnswerDto)answer);
+        }
+        // TODO REMOVE
+        //statementService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @GetMapping("/quizzes/{quizId}/start")
@@ -101,16 +97,15 @@ public class StatementController {
         return statementService.startQuiz(user.getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/conclude")
+    @PostMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId) {
-
+    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
-        return statementService.concludeQuiz(user.getId(), quizId);
+        return statementService.concludeQuiz(statementQuizDto);
     }
 }

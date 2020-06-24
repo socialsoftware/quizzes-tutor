@@ -4,7 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -18,10 +17,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ANSWER_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE
 
 @DataJpaTest
 class ConcludeQuizTest extends SpockTest {
@@ -43,7 +44,7 @@ class ConcludeQuizTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle("Quiz Title")
-        quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setCourseExecution(courseExecution)
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
@@ -78,8 +79,19 @@ class ConcludeQuizTest extends SpockTest {
     }
 
     def 'conclude quiz without conclusionDate, without answering'() {
+        given: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
+        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
+        statementAnswerDto.setOptionId(null)
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
+
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -102,20 +114,33 @@ class ConcludeQuizTest extends SpockTest {
         given: 'an IN_CLASS quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
+        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
+        statementAnswerDto.setOptionId(null)
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
-        quizAnswer.getAnswerDate() != null
-        questionAnswerRepository.findAll().size() == 1
-        def questionAnswer = questionAnswerRepository.findAll().get(0)
-        questionAnswer.getQuizAnswer() == quizAnswer
-        quizAnswer.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getQuizQuestion() == quizQuestion
-        quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getOption() == null
+        quizAnswer.getAnswerDate() == null
+        quizAnswerItemRepository.findAll().size() == 1
+        def quizAnswerItem = quizAnswerItemRepository.findAll().get(0)
+        quizAnswerItem.getQuizId() == quiz.getId()
+        quizAnswerItem.getQuizAnswerId() == quizAnswer.getId()
+        quizAnswerItem.getAnswerDate() != null
+        quizAnswerItem.getAnswersList().size() == 1
+        def resStatementAnswerDto = quizAnswerItem.getAnswersList().get(0)
+        resStatementAnswerDto.getOptionId() == null
+        resStatementAnswerDto.getSequence() == 0
+        resStatementAnswerDto.getTimeTaken() == 100
         and: 'does not return answers'
         correctAnswers == []
     }
@@ -124,15 +149,18 @@ class ConcludeQuizTest extends SpockTest {
         given: 'a quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
         and: 'an answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
         statementAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
-        answerService.submitAnswer(user, quiz.getId(), statementAnswerDto)
+        statementQuizDto.getAnswers().add(statementAnswerDto)
 
         when:
-        def correctAnswers = answerService.concludeQuiz(user, quiz.getId())
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
 
         then: 'the value is createQuestion and persistent'
         quizAnswer.isCompleted()
@@ -154,30 +182,86 @@ class ConcludeQuizTest extends SpockTest {
     def 'conclude quiz without answering, before availableDate'() {
         given: 'a quiz with future availableDate'
         quiz.setAvailableDate(DateHandler.now().plusDays(2))
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
 
         when:
-        answerService.concludeQuiz(user, quiz.getId())
+        answerService.concludeQuiz(statementQuizDto)
 
         then:
         TutorException exception = thrown()
         exception.getErrorMessage() == QUIZ_NOT_YET_AVAILABLE
     }
 
-    def 'quiz answer not found'() {
-        given: 'another user'
-        def otherUser = new User(USER_2_USERNAME, USER_2_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
-        userRepository.save(otherUser)
-        otherUser.setKey(otherUser.getId())
+    def 'conclude quiz without answering, after conclusionDate'() {
+        given: 'an IN_CLASS quiz with conclusionDate before now in days'
+        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setAvailableDate(DateHandler.now().minusDays(2))
+        quiz.setConclusionDate(DateHandler.now().minusDays(1))
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
 
         when:
-        answerService.concludeQuiz(otherUser, quiz.getId())
+        answerService.concludeQuiz(statementQuizDto)
 
         then:
         TutorException exception = thrown()
-        exception.getErrorMessage() == QUIZ_ANSWER_NOT_FOUND
+        exception.getErrorMessage() == QUIZ_NO_LONGER_AVAILABLE
     }
 
+    def 'conclude quiz without answering, 9 minutes after conclusionDate'() {
+        given: 'an IN_CLASS quiz with conclusionDate before now in days'
+        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setAvailableDate(DateHandler.now().minusDays(2))
+        quiz.setConclusionDate(DateHandler.now().minusMinutes(9))
+        and: 'an empty answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
+
+        when:
+        answerService.concludeQuiz(statementQuizDto)
+
+        then: 'the value is createQuestion and persistent'
+        quizAnswer.isCompleted()
+        quizAnswer.getAnswerDate() == null
+        quizAnswerItemRepository.findAll().size() == 1
+    }
+
+    def 'conclude completed quiz'() {
+        given:  'a completed quiz'
+        quizAnswer.completed = true
+        and: 'an answer'
+        def statementQuizDto = new StatementQuizDto()
+        statementQuizDto.id = quiz.getId()
+        statementQuizDto.quizAnswerId = quizAnswer.getId()
+        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
+        statementAnswerDto.setOptionId(optionOk.getId())
+        statementAnswerDto.setSequence(0)
+        statementAnswerDto.setTimeTaken(100)
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
+        statementQuizDto.getAnswers().add(statementAnswerDto)
+
+        when:
+        def correctAnswers = answerService.concludeQuiz(statementQuizDto)
+
+        then: 'nothing occurs'
+        quizAnswer.getAnswerDate() == null
+        questionAnswerRepository.findAll().size() == 1
+        def questionAnswer = questionAnswerRepository.findAll().get(0)
+        questionAnswer.getQuizAnswer() == quizAnswer
+        quizAnswer.getQuestionAnswers().contains(questionAnswer)
+        questionAnswer.getQuizQuestion() == quizQuestion
+        quizQuestion.getQuestionAnswers().contains(questionAnswer)
+        questionAnswer.getOption() == null
+        and: 'the return value is OK'
+        correctAnswers.size() == 0
+    }
+    
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }

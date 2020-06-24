@@ -38,14 +38,6 @@ public class TopicService {
     @Autowired
     private TopicRepository topicRepository;
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CourseDto findTopicCourse(int topicId) {
-        return topicRepository.findById(topicId)
-                .map(Topic::getCourse)
-                .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
-    }
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -54,7 +46,6 @@ public class TopicService {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
-
 
     @Retryable(
       value = { SQLException.class },

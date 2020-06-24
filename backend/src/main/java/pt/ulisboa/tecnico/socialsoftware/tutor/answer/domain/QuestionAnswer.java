@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -68,6 +69,10 @@ public abstract class QuestionAnswer implements DomainEntity {
 
     public QuizQuestion getQuizQuestion() {
         return quizQuestion;
+    }
+
+    public Question getQuestion() {
+        return quizQuestion.getQuestion();
     }
 
     public void setQuizQuestion(QuizQuestion quizQuestion) {
