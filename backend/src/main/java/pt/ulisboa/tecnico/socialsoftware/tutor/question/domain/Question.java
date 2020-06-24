@@ -21,12 +21,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_type",
-        columnDefinition = "smallint not null default 0",
-        discriminatorType = DiscriminatorType.INTEGER)
+        columnDefinition = "varchar(32) not null default 'multiple_choice'",
+        discriminatorType = DiscriminatorType.STRING)
 public abstract class Question implements DomainEntity {
     public static class QuestionTypes{
-        public static final String MultipleChoice = "0";
-        public static final String CodeFillIn = "1";
+        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
+        public static final String CODE_FILL_IN = "code_fill_in";
     }
 
     public enum Status {

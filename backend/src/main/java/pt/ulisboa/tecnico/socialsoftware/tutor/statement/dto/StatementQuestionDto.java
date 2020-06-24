@@ -3,14 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceQuestionAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.CODE_FILL_IN;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -18,15 +16,16 @@ import java.util.stream.Collectors;
         defaultImpl = MultipleChoiceStatementQuestionDto.class,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceStatementQuestionDto.class, name = "multiple_choice"),
-        @JsonSubTypes.Type(value = CodeFillInStatementQuestionDto.class, name = "code_fill_in")
+        @JsonSubTypes.Type(value = MultipleChoiceStatementQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION),
+        @JsonSubTypes.Type(value = CodeFillInStatementQuestionDto.class, name = CODE_FILL_IN)
 })
 public abstract class StatementQuestionDto implements Serializable {
     private String content;
     private ImageDto image;
     private Integer sequence;
 
-    public StatementQuestionDto() {}
+    public StatementQuestionDto() {
+    }
 
     public StatementQuestionDto(QuestionAnswer questionAnswer) {
         this.content = questionAnswer.getQuizQuestion().getQuestion().getContent();

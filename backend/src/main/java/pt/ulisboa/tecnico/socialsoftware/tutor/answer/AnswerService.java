@@ -152,7 +152,7 @@ public class AnswerService {
         } else if (questionAnswer instanceof CodeFillInQuestionAnswer) {
             handleMultipleCodeFillInAnswer((CodeFillInQuestionAnswer) questionAnswer, (CodeFillInStatementAnswerDto) statementAnswerDto);
         } else {
-            // todo we might want to throw an exception if we do not to know how to handle a given type
+            throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());
         }
 
     }
