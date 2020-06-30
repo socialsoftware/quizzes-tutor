@@ -9,7 +9,6 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
@@ -104,7 +103,7 @@ public class AnswerService {
                 }
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                        .map(AnswerDtoFactory::getCorrectAnswerDto)
+                        .map(QuestionAnswer::getCorrectAnswerDto)
                         .collect(Collectors.toList());
             }
         }
@@ -142,30 +141,7 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-        if (questionAnswer instanceof MultipleChoiceQuestionAnswer) {
-            handleMultipleChoiceQuestionAnswer((MultipleChoiceQuestionAnswer) questionAnswer, (MultipleChoiceStatementAnswerDto) statementAnswerDto);
-        } else {
-            throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());
-        }
-
-    }
-
-    private void handleMultipleChoiceQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer, MultipleChoiceStatementAnswerDto statementAnswerDto) {
-        if (statementAnswerDto.getOptionId() != null) {
-
-            Option option = questionAnswer.getQuestion().getOptions().stream()
-                    .filter(option1 -> option1.getId().equals(statementAnswerDto.getOptionId()))
-                    .findAny()
-                    .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, statementAnswerDto.getOptionId()));
-
-            if (questionAnswer.getOption() != null) {
-                questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
-            }
-
-            questionAnswer.setOption(option);
-        } else {
-            questionAnswer.setOption(null);
-        }
+        questionAnswer.setResponse(statementAnswerDto);
     }
 
     @Retryable(

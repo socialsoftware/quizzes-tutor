@@ -8,7 +8,7 @@ public class MultipleChoiceCorrectAnswerDto extends CorrectAnswerDto {
 
     public MultipleChoiceCorrectAnswerDto(MultipleChoiceQuestionAnswer questionAnswer) {
         super(questionAnswer);
-        this.correctOptionId = ((MultipleChoiceQuestion) questionAnswer.getQuizQuestion().getQuestion()).getCorrectOptionId();
+        this.correctOptionId = questionAnswer.getQuestion().getCorrectOptionId();
     }
 
     public Integer getCorrectOptionId() {

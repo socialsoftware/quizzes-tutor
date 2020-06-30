@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 
 import javax.persistence.*;
 
@@ -101,6 +104,12 @@ public abstract class QuestionAnswer implements DomainEntity {
     }
 
     public abstract boolean isCorrect();
+
+    public abstract void setResponse(StatementAnswerDto statementAnswerDto);
+
+    public abstract QuestionAnswerDto getQuestionAnswerDto();
+
+    public abstract CorrectAnswerDto getCorrectAnswerDto();
 
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
