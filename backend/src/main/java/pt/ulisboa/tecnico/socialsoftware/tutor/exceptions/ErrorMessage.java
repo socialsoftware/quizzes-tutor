@@ -74,8 +74,11 @@ public enum ErrorMessage {
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
 
+    CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
+
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
+
 
     public final String label;
 
