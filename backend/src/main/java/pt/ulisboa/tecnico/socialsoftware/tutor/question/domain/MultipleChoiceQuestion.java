@@ -87,6 +87,11 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     @Override
+    public QuestionDto getQuestionDto() {
+        return new MultipleChoiceQuestionDto(this);
+    }
+
+    @Override
     public String toString() {
         return "Question{" +
                 "id=" + getId() +

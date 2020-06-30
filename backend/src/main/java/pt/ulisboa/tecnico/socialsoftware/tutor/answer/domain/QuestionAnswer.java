@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
 
 import javax.persistence.*;
 
@@ -110,6 +111,10 @@ public abstract class QuestionAnswer implements DomainEntity {
     public abstract QuestionAnswerDto getQuestionAnswerDto();
 
     public abstract CorrectAnswerDto getCorrectAnswerDto();
+
+    public abstract StatementAnswerDto getStatementAnswerDto();
+
+    public abstract StatementQuestionDto getStatementQuestionDto();
 
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -21,7 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
@@ -71,7 +69,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionById(Integer questionId) {
-        return questionRepository.findById(questionId).map(QuestionDtoFactory::getQuestionDto)
+        return questionRepository.findById(questionId).map(Question::getQuestionDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
@@ -80,7 +78,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionByKey(Integer key) {
-        return questionRepository.findByKey(key).map(QuestionDtoFactory::getQuestionDto)
+        return questionRepository.findByKey(key).map(Question::getQuestionDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
 
@@ -89,7 +87,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDtoFactory::getQuestionDto).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().map(Question::getQuestionDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -97,7 +95,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
-        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDtoFactory::getQuestionDto).collect(Collectors.toList());
+        return questionRepository.findAvailableQuestions(courseId).stream().map(Question::getQuestionDto).collect(Collectors.toList());
     }
 
     @Retryable(

@@ -44,6 +44,7 @@ class ImportExportQuestionsTest extends SpockTest {
     def 'export and import questions to xml'() {
         given: 'a xml with questions'
         def questionsXml = questionService.exportQuestionsToXml()
+        print questionsXml
         and: 'a clean database'
         questionService.removeQuestion(questionId)
 
