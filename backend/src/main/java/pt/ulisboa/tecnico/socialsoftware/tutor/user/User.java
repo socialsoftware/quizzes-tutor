@@ -40,6 +40,9 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
 
+    @Column(columnDefinition = "boolean default false")
+    private Boolean admin;
+
     private Integer numberOfTeacherQuizzes = 0;
     private Integer numberOfStudentQuizzes = 0;
     private Integer numberOfInClassQuizzes = 0;
@@ -104,6 +107,14 @@ public class User implements UserDetails, DomainEntity {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isAdmin() {
+        return  this.admin == null ? false : this.admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     public String getEnrolledCoursesAcronyms() {
@@ -373,6 +384,9 @@ public class User implements UserDetails, DomainEntity {
         List<GrantedAuthority> list = new ArrayList<>();
 
         list.add(new SimpleGrantedAuthority("ROLE_" + role));
+
+        if (isAdmin())
+            list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         return list;
     }
