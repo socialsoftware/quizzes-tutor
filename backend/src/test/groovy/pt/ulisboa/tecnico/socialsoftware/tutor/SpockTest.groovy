@@ -78,6 +78,8 @@ class SpockTest extends Specification {
 
     public static final String QUIZ_TITLE = "Quiz title"
 
+    public static final String REVIEW_JUSTIFICATION = 'Review Justification'
+
     @Autowired
     AuthService authService
 

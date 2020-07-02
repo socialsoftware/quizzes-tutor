@@ -75,7 +75,12 @@ public enum ErrorMessage {
     SUBMISSION_MISSING_QUESTION("Missing question for submission"),
     SUBMISSION_MISSING_STUDENT("Missing student for submission"),
     SUBMISSION_MISSING_COURSE("Submission is not assigned to a course"),
-    USER_NOT_STUDENT("Username %s is not a student"),
+    USER_NOT_STUDENT("User %s is not a student"),
+    USER_NOT_TEACHER("User %s is not a teacher"),
+    REVIEW_MISSING_JUSTIFICATION("Review must have justification"),
+    REVIEW_MISSING_SUBMISSION("Review is missing associated submission"),
+    INVALID_VALUE_FOR_REVIEW_TOGGLE("Toggle must have be a boolean value"),
+    INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
