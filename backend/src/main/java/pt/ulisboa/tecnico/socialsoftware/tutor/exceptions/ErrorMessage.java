@@ -72,6 +72,10 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
+    SUBMISSION_MISSING_QUESTION("Missing question for submission"),
+    SUBMISSION_MISSING_STUDENT("Missing student for submission"),
+    SUBMISSION_MISSING_COURSE("Submission is not assigned to a course"),
+    USER_NOT_STUDENT("Username %s is not a student"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
