@@ -80,7 +80,6 @@ public enum ErrorMessage {
     REVIEW_MISSING_JUSTIFICATION("Review must have justification"),
     REVIEW_MISSING_SUBMISSION("Review is missing associated submission"),
     REVIEW_MISSING_TEACHER("Review is missing associated teacher"),
-    INVALID_VALUE_FOR_REVIEW_TOGGLE("Toggle must have be a boolean value"),
     INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
 

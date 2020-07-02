@@ -85,6 +85,13 @@ public class SubmissionService {
         return new ReviewDto(review, reviewDto.getStatus());
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void toggleInReviewStatus(int questionId, boolean inReview) {
+        String status = inReview? "IN_REVIEW" : "SUBMITTED";
+        updateQuestionStatus(status, questionId);
+    }
+
     private void checkIfConsistentSubmission(SubmissionDto submissionDto) {
         if (submissionDto.getQuestion() == null)
             throw new TutorException(SUBMISSION_MISSING_QUESTION);
@@ -101,7 +108,8 @@ public class SubmissionService {
             throw new TutorException(REVIEW_MISSING_SUBMISSION);
         else if (reviewDto.getUserId() == null)
             throw new TutorException(REVIEW_MISSING_TEACHER);
-        else if (Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) || reviewDto.getStatus() == null)
+        else if (!Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) ||
+                reviewDto.getStatus() == null || reviewDto.getStatus().isBlank())
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
     }
 
