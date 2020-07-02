@@ -79,8 +79,11 @@ public enum ErrorMessage {
     USER_NOT_TEACHER("User %s is not a teacher"),
     REVIEW_MISSING_JUSTIFICATION("Review must have justification"),
     REVIEW_MISSING_SUBMISSION("Review is missing associated submission"),
+    REVIEW_MISSING_TEACHER("Review is missing associated teacher"),
     INVALID_VALUE_FOR_REVIEW_TOGGLE("Toggle must have be a boolean value"),
     INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
+    SUBMISSION_NOT_FOUND("Submission not found with id %d"),
+
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
