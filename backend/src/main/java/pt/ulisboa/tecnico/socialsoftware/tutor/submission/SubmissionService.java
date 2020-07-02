@@ -13,9 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -27,12 +27,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class SubmissionService {
-    
+
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Autowired
     private QuestionService questionService;
@@ -73,7 +76,8 @@ public class SubmissionService {
 
     private Question createQuestion(Course course, QuestionDto questionDto) {
         QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
-        return new Question(course, question);
+        return questionRepository.findById(question.getId())
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
     }
 
     private Submission createSubmission(SubmissionDto submissionDto, CourseExecution courseExecution, Question question, User user) {

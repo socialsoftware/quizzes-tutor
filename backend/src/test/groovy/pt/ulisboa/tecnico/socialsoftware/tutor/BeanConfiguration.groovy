@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.SubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
@@ -63,5 +64,10 @@ class BeanConfiguration {
     @Bean
     AssessmentService assessmentService() {
         return new AssessmentService()
+    }
+
+    @Bean
+    SubmissionService submissionService() {
+        return new SubmissionService()
     }
 }

@@ -21,8 +21,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.SubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -144,7 +147,14 @@ class SpockTest extends Specification {
     @Autowired
     UserService userService
 
+    @Autowired
+    SubmissionService submissionService
+
+    @Autowired
+    SubmissionRepository submissionRepository
+
     Course course
+    @Shared
     CourseExecution courseExecution
 
     def setup() {
