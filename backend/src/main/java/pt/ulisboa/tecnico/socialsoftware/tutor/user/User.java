@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -58,6 +59,9 @@ public class User implements UserDetails, DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Submission> submissions = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
@@ -367,6 +371,12 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions.add(course);
         course.addUser(this);
     }
+
+    public void addSubmission(Submission submission) {
+        submissions.add(submission);
+    }
+
+    public boolean isStudent() { return this.role == User.Role.STUDENT; }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
