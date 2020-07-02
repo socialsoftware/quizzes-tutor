@@ -5,6 +5,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "submissions")
@@ -27,6 +29,9 @@ public class Submission {
 
     @Column(columnDefinition = "boolean default false", nullable = false)
     private boolean anonymous;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submission", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
 
     public Submission() {
     }

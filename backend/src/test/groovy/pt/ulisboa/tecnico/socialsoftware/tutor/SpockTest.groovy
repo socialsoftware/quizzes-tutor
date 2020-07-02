@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.SubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
@@ -77,6 +78,8 @@ class SpockTest extends Specification {
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
     public static final String QUIZ_TITLE = "Quiz title"
+
+    public static final String REVIEW_JUSTIFICATION = 'Review Justification'
 
     @Autowired
     AuthService authService
@@ -152,6 +155,9 @@ class SpockTest extends Specification {
 
     @Autowired
     SubmissionRepository submissionRepository
+
+    @Autowired
+    ReviewRepository reviewRepository
 
     Course course
     @Shared
