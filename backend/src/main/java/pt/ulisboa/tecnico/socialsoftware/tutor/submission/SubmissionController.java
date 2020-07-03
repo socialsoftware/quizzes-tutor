@@ -3,15 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.submission;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
@@ -31,4 +31,9 @@ public class SubmissionController {
         return submissionService.createSubmission(submissionDto);
     }
 
+    @PostMapping("/executions/{executionId}/reviews")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ReviewDto createReview(@PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
+        return submissionService.createReview(reviewDto);
+    }
 }

@@ -82,9 +82,9 @@ public class SubmissionService {
 
         User user = getTeacher(reviewDto.getUserId());
 
-        Review review = new Review(user, submission, reviewDto);
-
         updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+
+        Review review = new Review(user, submission, reviewDto);
 
         entityManager.persist(review);
         return new ReviewDto(review);
@@ -197,6 +197,9 @@ public class SubmissionService {
 
     private void updateQuestionStatus(String status, Integer questionId) {
         Question question = getQuestion(questionId);
-        question.setStatus(Question.Status.valueOf(status));
+        if(question.getStatus() == Question.Status.SUBMITTED || question.getStatus() == Question.Status.IN_REVIEW)
+            question.setStatus(Question.Status.valueOf(status));
+        else
+            throw new TutorException(CANNOT_REVIEW_SUBMISSION);
     }
 }

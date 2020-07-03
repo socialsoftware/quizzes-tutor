@@ -132,6 +132,25 @@ class CreateReviewTest extends SpockTest{
         question.getStatus() == Question.Status.SUBMITTED
     }
 
+    def "create review for submission that has already been reviewed"() {
+        given: "a submission that has already been reviewed"
+        question.setStatus(Question.Status.AVAILABLE)
+        questionRepository.save(question)
+
+        and: "a reviewDto"
+        def reviewDto = new ReviewDto()
+        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setUserId(teacher.getId())
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
+        reviewDto.setStatus('REJECTED')
+
+        when:
+        submissionService.createReview(reviewDto)
+        then: "exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == CANNOT_REVIEW_SUBMISSION
+    }
+
     def "user is not a teacher"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
