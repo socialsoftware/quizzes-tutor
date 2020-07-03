@@ -183,6 +183,7 @@ public class SubmissionService {
     }
 
     private Question createQuestion(Course course, QuestionDto questionDto) {
+        questionDto.setStatus("SUBMITTED");
         QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
         return questionRepository.findById(question.getId())
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
