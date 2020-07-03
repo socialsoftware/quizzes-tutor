@@ -117,7 +117,21 @@ public class SubmissionService {
         return reviewRepository.getSubmissionReviews(submissionId).stream().map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
-    
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SubmissionDto> getAllStudentsSubmissions(Integer courseExecutionId) {
+        List<SubmissionDto> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId).stream()
+                .map(SubmissionDto::new).collect(Collectors.toList());
+
+        for (SubmissionDto submission : submissions) {
+            if (submission.isAnonymous())
+                submission.setUsername(null);
+        }
+
+        return submissions;
+    }
+
     private void checkIfConsistentSubmission(SubmissionDto submissionDto) {
         if (submissionDto.getQuestion() == null)
             throw new TutorException(SUBMISSION_MISSING_QUESTION);
