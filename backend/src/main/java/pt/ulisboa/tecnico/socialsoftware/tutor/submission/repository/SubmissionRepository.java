@@ -16,4 +16,7 @@ public interface SubmissionRepository extends JpaRepository<Submission, Integer>
 
     @Query(value = "select * from submissions s where s.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<Submission> getCourseExecutionSubmissions(Integer courseExecutionId);
+
+    @Query(value = "select * from submissions s where s.question_id = :questionId", nativeQuery = true)
+    Submission findByQuestionId(Integer questionId);
 }
