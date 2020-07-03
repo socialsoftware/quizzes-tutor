@@ -47,7 +47,7 @@ class GetAllStudentsSubmissionsTest extends SpockTest{
         and: "an anonymous submission"
         def submission2 = new Submission()
         submission2.setQuestion(question)
-        submission2.setUser(student1)
+        submission2.setUser(student2)
         submission2.setCourseExecution(courseExecution)
         submission2.setAnonymous(true)
         courseExecution.addSubmission(submission2)
@@ -61,9 +61,9 @@ class GetAllStudentsSubmissionsTest extends SpockTest{
         result.size() == 2
         def sub1 = result.get(0)
         def sub2 = result.get(1)
-        sub1.getStudentId() == student1.getId()
+        sub1.getUserId() == student1.getId()
         !sub1.isAnonymous()
-        sub2.getStudentId() == student2.getId()
+        sub2.getUserId() == student2.getId()
         sub2.isAnonymous()
     }
 
@@ -104,11 +104,11 @@ class GetAllStudentsSubmissionsTest extends SpockTest{
         def sub1 = result.get(0)
         def sub2 = result.get(1)
         def sub3 = result.get(2)
-        sub1.getStudentId() == student1.getId()
+        sub1.getUserId() == student1.getId()
         sub1.isAnonymous()
-        sub2.getStudentId() == student2.getId()
+        sub2.getUserId() == student2.getId()
         sub2.isAnonymous()
-        sub3.getStudentId() == student3.getId()
+        sub3.getUserId() == student3.getId()
         sub3.isAnonymous()
     }
 
@@ -146,11 +146,11 @@ class GetAllStudentsSubmissionsTest extends SpockTest{
         def sub1 = result.get(0)
         def sub2 = result.get(1)
         def sub3 = result.get(2)
-        sub1.getStudentId() == student1.getId()
+        sub1.getUserId() == student1.getId()
         !sub1.isAnonymous()
-        sub2.getStudentId() == student2.getId()
+        sub2.getUserId() == student2.getId()
         !sub2.isAnonymous()
-        sub3.getStudentId() == student3.getId()
+        sub3.getUserId() == student3.getId()
         !sub3.isAnonymous()
     }
 
