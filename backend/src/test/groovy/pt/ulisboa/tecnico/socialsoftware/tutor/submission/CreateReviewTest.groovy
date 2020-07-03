@@ -61,6 +61,7 @@ class CreateReviewTest extends SpockTest{
         result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
+        result.getStatus().equals("AVAILABLE")
         question.getStatus() == Question.Status.AVAILABLE
     }
 
@@ -82,6 +83,7 @@ class CreateReviewTest extends SpockTest{
         result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
+        result.getStatus().equals("DISABLED")
         question.getStatus() == Question.Status.DISABLED
     }
 
@@ -104,6 +106,7 @@ class CreateReviewTest extends SpockTest{
         result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
+        result.getStatus().equals("REJECTED")
         question.getStatus() == Question.Status.REJECTED
     }
 
@@ -126,6 +129,7 @@ class CreateReviewTest extends SpockTest{
         result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
+        result.getStatus().equals("SUBMITTED")
         question.getStatus() == Question.Status.SUBMITTED
     }
 
@@ -161,9 +165,9 @@ class CreateReviewTest extends SpockTest{
         exception.errorMessage == errorMessage
 
         where:
-        justification        | submissionId       | userId                          | status        || errorMessage
-        null                 | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
-        ' '                  | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
+        justification          | submissionId       | userId                          | status        || errorMessage
+        null                   | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
+        ' '                    | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
         REVIEW_1_JUSTIFICATION | null               | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_SUBMISSION
         REVIEW_1_JUSTIFICATION | submission.getId() | null                            | 'AVAILABLE'   || REVIEW_MISSING_TEACHER
         REVIEW_1_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | null          || INVALID_STATUS_FOR_QUESTION

@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -42,6 +43,7 @@ class GetSubmissionReviewsTest extends SpockTest{
         review.setJustification(REVIEW_1_JUSTIFICATION)
         review.setUser(teacher)
         review.setSubmission(submission)
+        review.setStatus("AVAILABLE")
         submission.addReview(review)
 
         when:
@@ -57,18 +59,21 @@ class GetSubmissionReviewsTest extends SpockTest{
         review1.setJustification(REVIEW_1_JUSTIFICATION)
         review1.setUser(teacher)
         review1.setSubmission(submission)
+        review1.setStatus("AVAILABLE")
         submission.addReview(review1)
         and: "another review"
         def review2 = new Review()
         review2.setJustification(REVIEW_2_JUSTIFICATION)
         review2.setUser(teacher)
         review2.setSubmission(submission)
+        review2.setStatus("AVAILABLE")
         submission.addReview(review2)
         and: "another review"
         def review3 = new Review()
         review3.setJustification(REVIEW_3_JUSTIFICATION)
         review3.setUser(teacher)
         review3.setSubmission(submission)
+        review3.setStatus("AVAILABLE")
         submission.addReview(review3)
 
         when:

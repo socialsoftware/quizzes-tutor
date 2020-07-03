@@ -41,7 +41,7 @@ class GetCourseExecutionSubmissionsTest extends SpockTest{
         submission.setUser(student1)
         submission.setCourseExecution(courseExecution)
         courseExecution.addSubmission(submission)
-        student.addSubmission(submission)
+        student1.addSubmission(submission)
         submissionRepository.save(submission)
 
         when:
