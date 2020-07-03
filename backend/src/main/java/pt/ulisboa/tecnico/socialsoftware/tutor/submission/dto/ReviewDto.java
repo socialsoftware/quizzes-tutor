@@ -15,12 +15,12 @@ public class ReviewDto implements Serializable {
 
     public ReviewDto() {}
 
-    public ReviewDto(Review review, String status){
+    public ReviewDto(Review review){
         this.id = review.getId();
         this.userId = review.getUser().getId();
         this.submissionId = review.getSubmission().getId();
         this.justification = review.getJustification();
-        this.status = status;
+        this.status = review.getStatus();
         if (review.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(review.getCreationDate());
     }
