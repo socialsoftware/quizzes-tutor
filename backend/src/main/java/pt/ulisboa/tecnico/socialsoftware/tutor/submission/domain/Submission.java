@@ -66,5 +66,7 @@ public class Submission {
 
     public void setAnonymous(boolean anonymous) { this.anonymous = anonymous; }
 
+    public Set<Review> getReviews() { return reviews; }
+
     public void addReview(Review review) { this.reviews.add(review); }
 }
