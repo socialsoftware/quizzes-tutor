@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -25,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -46,12 +48,15 @@ public class SubmissionService {
     private SubmissionRepository submissionRepository;
 
     @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Autowired
     private QuestionService questionService;
 
     @PersistenceContext
     EntityManager entityManager;
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto createSubmission(SubmissionDto submissionDto) {
         checkIfConsistentSubmission(submissionDto);
@@ -68,7 +73,7 @@ public class SubmissionService {
         return new SubmissionDto(submission);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ReviewDto createReview(ReviewDto reviewDto) {
         checkIfConsistentReview(reviewDto);
@@ -82,16 +87,37 @@ public class SubmissionService {
         updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
 
         entityManager.persist(review);
-        return new ReviewDto(review, reviewDto.getStatus());
+        return new ReviewDto(review);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void toggleInReviewStatus(int questionId, boolean inReview) {
+        String status = inReview ? "IN_REVIEW" : "SUBMITTED";
+        updateQuestionStatus(status, questionId);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void toggleInReviewStatus(int questionId, boolean inReview) {
-        String status = inReview? "IN_REVIEW" : "SUBMITTED";
-        updateQuestionStatus(status, questionId);
+    public List<SubmissionDto> getStudentSubmissions(Integer studentId, Integer courseExecutionId) {
+        return submissionRepository.getSubmissions(studentId, courseExecutionId).stream().map(SubmissionDto::new)
+                .collect(Collectors.toList());
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<SubmissionDto> getCourseExecutionSubmissions(Integer courseExecutionId) {
+        return submissionRepository.getCourseExecutionSubmissions(courseExecutionId).stream().map(SubmissionDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ReviewDto> getSubmissionReviews(Integer submissionId) {
+        return reviewRepository.getSubmissionReviews(submissionId).stream().map(ReviewDto::new)
+                .collect(Collectors.toList());
+    }
+    
     private void checkIfConsistentSubmission(SubmissionDto submissionDto) {
         if (submissionDto.getQuestion() == null)
             throw new TutorException(SUBMISSION_MISSING_QUESTION);

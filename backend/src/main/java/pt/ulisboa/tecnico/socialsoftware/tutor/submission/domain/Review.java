@@ -19,6 +19,9 @@ public class Review {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String justification;
 
+    @Column(columnDefinition = "TEXT")
+    private String status;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -37,6 +40,7 @@ public class Review {
         setJustification(reviewDto.getJustification());
         setUser(user);
         setSubmission(submission);
+        setStatus(reviewDto.getStatus());
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
     }
 
@@ -65,4 +69,8 @@ public class Review {
     public Submission getSubmission() { return submission; }
 
     public void setSubmission(Submission submission) { this.submission = submission; }
+
+    public String getStatus() { return status; }
+
+    public void setStatus(String status) { this.status = status; }
 }

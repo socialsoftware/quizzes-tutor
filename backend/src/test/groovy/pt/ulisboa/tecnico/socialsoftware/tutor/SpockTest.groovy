@@ -35,8 +35,10 @@ import java.time.LocalDateTime
 class SpockTest extends Specification {
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
+    public static final String USER_3_NAME = "User 3 Name"
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_3_USERNAME = "User 3 Username"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
@@ -79,7 +81,9 @@ class SpockTest extends Specification {
 
     public static final String QUIZ_TITLE = "Quiz title"
 
-    public static final String REVIEW_JUSTIFICATION = 'Review Justification'
+    public static final String REVIEW_1_JUSTIFICATION = 'Review Justification 1'
+    public static final String REVIEW_2_JUSTIFICATION = 'Review Justification 2'
+    public static final String REVIEW_3_JUSTIFICATION = 'Review Justification 3'
 
     @Autowired
     AuthService authService
