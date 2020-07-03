@@ -40,7 +40,6 @@ class CreateReviewTest extends SpockTest{
         submission.setUser(student)
         submission.setCourseExecution(courseExecution)
         submissionRepository.save(submission)
-
     }
 
     def "create review that approves submission (question available)"() {
