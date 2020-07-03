@@ -13,18 +13,23 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class RemoveQuestionTest extends SpockTest {
     def question
     def optionOK
     def optionKO
+    def teacher
 
     def setup() {
         def image = new Image()
         image.setUrl(IMAGE_1_URL)
         image.setWidth(20)
         imageRepository.save(image)
+
+        teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        userRepository.save(teacher)
 
         question = new Question()
         question.setKey(1)
@@ -54,7 +59,7 @@ class RemoveQuestionTest extends SpockTest {
 
     def "remove a question"() {
         when:
-        questionService.removeQuestion(question.getId())
+        questionService.removeQuestion(teacher.getId(), question.getId())
 
         then: "the question is removeQuestion"
         questionRepository.count() == 0L
@@ -79,7 +84,7 @@ class RemoveQuestionTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        questionService.removeQuestion(question.getId())
+        questionService.removeQuestion(teacher.getId(), question.getId())
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
@@ -101,7 +106,7 @@ class RemoveQuestionTest extends SpockTest {
         topicRepository.save(topicTwo)
 
         when:
-        questionService.removeQuestion(question.getId())
+        questionService.removeQuestion(teacher.getId(), question.getId())
 
         then:
         questionRepository.count() == 0L

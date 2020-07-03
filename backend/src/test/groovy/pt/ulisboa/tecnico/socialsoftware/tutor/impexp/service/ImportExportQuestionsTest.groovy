@@ -8,12 +8,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class ImportExportQuestionsTest extends SpockTest {
     def questionId
+    def teacher
 
     def setup() {
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, User.Role.TEACHER)
+        userRepository.save(teacher)
+
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
@@ -44,7 +49,7 @@ class ImportExportQuestionsTest extends SpockTest {
         given: 'a xml with questions'
         def questionsXml = questionService.exportQuestionsToXml()
         and: 'a clean database'
-        questionService.removeQuestion(questionId)
+        questionService.removeQuestion(teacher.getId(), questionId)
 
         when:
         questionService.importQuestionsFromXml(questionsXml)

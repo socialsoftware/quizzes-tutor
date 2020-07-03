@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 
 @DataJpaTest
-class RemoveSubmissionTest extends SpockTest{
+class RemoveSubmittedQuestionTest extends SpockTest{
     def student
     def teacher
     def question
@@ -123,7 +123,7 @@ class RemoveSubmissionTest extends SpockTest{
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_SUBMITTED_QUESTION
     }
-    
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
