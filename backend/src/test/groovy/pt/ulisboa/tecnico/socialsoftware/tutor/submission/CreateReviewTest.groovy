@@ -48,7 +48,7 @@ class CreateReviewTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
-        reviewDto.setJustification(REVIEW_JUSTIFICATION)
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
         reviewDto.setStatus('AVAILABLE')
 
         when:
@@ -58,7 +58,7 @@ class CreateReviewTest extends SpockTest{
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
-        result.getJustification() == REVIEW_JUSTIFICATION
+        result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
         question.getStatus() == Question.Status.AVAILABLE
@@ -69,7 +69,7 @@ class CreateReviewTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
-        reviewDto.setJustification(REVIEW_JUSTIFICATION)
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
         reviewDto.setStatus('DISABLED')
 
         when:
@@ -79,7 +79,7 @@ class CreateReviewTest extends SpockTest{
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
-        result.getJustification() == REVIEW_JUSTIFICATION
+        result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
         question.getStatus() == Question.Status.DISABLED
@@ -90,7 +90,7 @@ class CreateReviewTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
-        reviewDto.setJustification(REVIEW_JUSTIFICATION)
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
         reviewDto.setStatus('REJECTED')
 
         when:
@@ -101,7 +101,7 @@ class CreateReviewTest extends SpockTest{
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
-        result.getJustification() == REVIEW_JUSTIFICATION
+        result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
         question.getStatus() == Question.Status.REJECTED
@@ -112,7 +112,7 @@ class CreateReviewTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
-        reviewDto.setJustification(REVIEW_JUSTIFICATION)
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
         reviewDto.setStatus('SUBMITTED')
 
         when:
@@ -123,7 +123,7 @@ class CreateReviewTest extends SpockTest{
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
-        result.getJustification() == REVIEW_JUSTIFICATION
+        result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
         question.getStatus() == Question.Status.SUBMITTED
@@ -134,7 +134,7 @@ class CreateReviewTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(student.getId())
-        reviewDto.setJustification(REVIEW_JUSTIFICATION)
+        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
         reviewDto.setStatus('AVAILABLE')
 
         when:
@@ -164,11 +164,11 @@ class CreateReviewTest extends SpockTest{
         justification        | submissionId       | userId                          | status        || errorMessage
         null                 | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
         ' '                  | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_JUSTIFICATION
-        REVIEW_JUSTIFICATION | null               | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_SUBMISSION
-        REVIEW_JUSTIFICATION | submission.getId() | null                            | 'AVAILABLE'   || REVIEW_MISSING_TEACHER
-        REVIEW_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | null          || INVALID_STATUS_FOR_QUESTION
-        REVIEW_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | ' '           || INVALID_STATUS_FOR_QUESTION
-        REVIEW_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | 'INVALID'     || INVALID_STATUS_FOR_QUESTION
+        REVIEW_1_JUSTIFICATION | null               | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_SUBMISSION
+        REVIEW_1_JUSTIFICATION | submission.getId() | null                            | 'AVAILABLE'   || REVIEW_MISSING_TEACHER
+        REVIEW_1_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | null          || INVALID_STATUS_FOR_QUESTION
+        REVIEW_1_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | ' '           || INVALID_STATUS_FOR_QUESTION
+        REVIEW_1_JUSTIFICATION | submission.getId() | submission.getUser().getId()    | 'INVALID'     || INVALID_STATUS_FOR_QUESTION
 
     }
 
