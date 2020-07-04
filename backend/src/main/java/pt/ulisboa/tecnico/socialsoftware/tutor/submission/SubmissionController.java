@@ -37,7 +37,7 @@ public class SubmissionController {
         return submissionService.createReview(reviewDto);
     }
 
-    @PutMapping("/management/review/{questionId}")
+    @PutMapping("/management/reviews/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public void toggleInReviewStatus(@PathVariable int questionId, @Valid @RequestParam boolean inReview) {
         submissionService.toggleInReviewStatus(questionId, inReview);
@@ -60,7 +60,7 @@ public class SubmissionController {
         return submissionService.getCourseExecutionSubmissions(executionId);
     }
 
-    @GetMapping("/submission/{submissionId}/reviews")
+    @GetMapping("/submissions/{submissionId}/reviews")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
     public List<ReviewDto> getSubmissionReviews(@PathVariable int submissionId) {
         return submissionService.getSubmissionReviews(submissionId);

@@ -604,6 +604,59 @@ export default class RemoteServices {
       });
   }
 
+  static async toggleInReviewStatus(questionId: number){
+    return httpClient
+      .put(`/management/reviews/${questionId}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getStudentSubmissions(): Promise<Submission[]> {
+    return httpClient
+      .get(
+        `/student/submissions?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
+      .then(response => {
+        return response.data.map((submission: any) => {
+          return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCourseExecutionSubmissions(): Promise<Submission[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/submissions`
+      )
+      .then(response => {
+        return response.data.map((submission: any) => {
+          return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getSubmissionReviews(submissionId: number): Promise<Review[]> {
+    return httpClient
+      .get(
+        `/submissions/${submissionId}/reviews`
+      )
+      .then(response => {
+        return response.data.map((review: any) => {
+          return new Review(review);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
