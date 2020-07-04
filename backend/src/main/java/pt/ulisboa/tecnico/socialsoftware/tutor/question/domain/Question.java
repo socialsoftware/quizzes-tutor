@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -24,6 +25,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class Question implements DomainEntity {
+
     public static class QuestionTypes{
         public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
     }
@@ -263,4 +265,6 @@ public abstract class Question implements DomainEntity {
     public abstract Integer getCorrectAnswer();
 
     public abstract QuestionDto getQuestionDto();
+
+    public abstract void createAnswerForQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int i);
 }

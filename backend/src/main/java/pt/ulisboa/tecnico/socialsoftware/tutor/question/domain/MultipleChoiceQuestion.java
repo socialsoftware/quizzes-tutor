@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -88,6 +91,11 @@ public class MultipleChoiceQuestion extends Question {
     @Override
     public QuestionDto getQuestionDto() {
         return new MultipleChoiceQuestionDto(this);
+    }
+
+    @Override
+    public void createAnswerForQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int i) {
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestion, i);
     }
 
     @Override

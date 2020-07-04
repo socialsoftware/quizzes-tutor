@@ -64,8 +64,7 @@ public class QuizAnswer implements DomainEntity {
         }
 
         for (int i = 0; i < quizQuestions.size(); i++) {
-            // TODO: Create using factory.
-            new MultipleChoiceQuestionAnswer(this, quizQuestions.get(i), i);
+            quizQuestions.get(i).getQuestion().createAnswerForQuestion(this, quizQuestions.get(i), i);
         }
     }
 
