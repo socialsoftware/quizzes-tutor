@@ -26,7 +26,8 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
-import SubmissionView from '@/views/student/submission/SubmissionView.vue'
+import StudentSubmissionView from '@/views/student/submissions/SubmissionView.vue'
+import TeacherSubmissionView from '@/views/teacher/submissions/SubmissionView.vue'
 
 Vue.use(Router);
 
@@ -118,6 +119,15 @@ let router = new Router({
             title: APP_NAME + ' - ImpExp',
             requiredAuth: 'Teacher'
           }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: TeacherSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Teacher'
+          }
         }
       ]
     },
@@ -191,8 +201,8 @@ let router = new Router({
         },
         {
           path: 'submissions',
-          name: 'submissions',
-          component: SubmissionView,
+          name: 'student-submissions',
+          component: StudentSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
             requiredAuth: 'Student'

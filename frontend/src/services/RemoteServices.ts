@@ -14,6 +14,7 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Submission from '@/models/management/Submission';
+import Review from '@/models/management/Review';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -586,6 +587,17 @@ export default class RemoteServices {
       .post('/student/submissions', submission)
       .then(response => {
         return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createReview(review: Review): Promise<Review> {
+    return httpClient
+      .post(`/executions/${Store.getters.getCurrentCourse.courseExecutionId}/reviews`, review)
+      .then(response => {
+        return new Review(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
