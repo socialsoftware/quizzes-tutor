@@ -36,4 +36,33 @@ public class SubmissionController {
     public ReviewDto createReview(@PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
         return submissionService.createReview(reviewDto);
     }
+
+    @PutMapping("/management/review/{questionId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public void toggleInReviewStatus(@PathVariable int questionId, @Valid @RequestParam boolean inReview) {
+        submissionService.toggleInReviewStatus(questionId, inReview);
+    }
+
+    @GetMapping(value = "/student/submissions")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<SubmissionDto> getStudentSubmissions(Principal principal, @Valid @RequestParam int executionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        return submissionService.getStudentSubmissions(user.getId(), executionId);
+    }
+
+    @GetMapping("/executions/{executionId}/submissions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<SubmissionDto> getCourseExecutionSubmissions(@PathVariable int executionId) {
+        return submissionService.getCourseExecutionSubmissions(executionId);
+    }
+
+    @GetMapping("/submission/{submissionId}/reviews")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
+    public List<ReviewDto> getSubmissionReviews(@PathVariable int submissionId) {
+        return submissionService.getSubmissionReviews(submissionId);
+    }
 }
