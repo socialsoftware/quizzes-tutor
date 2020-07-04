@@ -11,8 +11,7 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ONE_CORRECT_OPTION_NEEDED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
@@ -89,6 +88,15 @@ public class MultipleChoiceQuestion extends Question {
     @Override
     public QuestionDto getQuestionDto() {
         return new MultipleChoiceQuestionDto(this);
+    }
+
+    @Override
+    public Integer getCorrectAnswer() {
+        return this.getOptions()
+                .stream()
+                .filter(Option::getCorrect)
+                .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
+                .getSequence();
     }
 
     @Override

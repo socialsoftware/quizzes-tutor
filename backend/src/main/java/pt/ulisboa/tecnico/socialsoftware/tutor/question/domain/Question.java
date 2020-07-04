@@ -260,5 +260,7 @@ public abstract class Question implements DomainEntity {
 
     public abstract void visitOptions(Visitor visitor);
 
+    public abstract Integer getCorrectAnswer();
+
     public abstract QuestionDto getQuestionDto();
 }

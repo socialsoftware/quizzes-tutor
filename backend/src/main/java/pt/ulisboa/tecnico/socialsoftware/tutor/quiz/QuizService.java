@@ -235,18 +235,9 @@ public class QuizService {
         QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
 
         quizAnswersDto.setCorrectSequence(
-                quiz.getQuizQuestions().stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).map(quizQuestion -> {
-                            if (quizQuestion.getQuestion() instanceof MultipleChoiceQuestion) {
-                                return ((MultipleChoiceQuestion) quizQuestion.getQuestion())
-                                        .getOptions()
-                                        .stream()
-                                        .filter(Option::getCorrect)
-                                        .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
-                                        .getSequence();
-                            } else {
-                                return -1;
-                            }
-                        }
+                quiz.getQuizQuestions().stream()
+                        .sorted(Comparator.comparing(QuizQuestion::getSequence))
+                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswer()
                 ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
