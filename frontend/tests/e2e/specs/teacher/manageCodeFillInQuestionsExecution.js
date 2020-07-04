@@ -34,10 +34,15 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.demoTeacherLogin();
     cy.server();
     cy.route('GET', '/courses/*/questions').as('getQuestions');
+    cy.route('GET', '/courses/*/topics').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageQuestionsMenuButton"]').click();
 
     cy.wait('@getQuestions')
+      .its('status')
+      .should('eq', 200);
+
+    cy.wait('@getTopics')
       .its('status')
       .should('eq', 200);
   });
