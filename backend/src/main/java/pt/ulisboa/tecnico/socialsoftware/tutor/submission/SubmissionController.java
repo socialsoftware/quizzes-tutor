@@ -65,4 +65,10 @@ public class SubmissionController {
     public List<ReviewDto> getSubmissionReviews(@PathVariable int submissionId) {
         return submissionService.getSubmissionReviews(submissionId);
     }
+
+    @GetMapping(value = "/student/submissions/all")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<SubmissionDto> getAllStudentSubmissions(@Valid @RequestParam int executionId) {
+        return submissionService.getAllStudentsSubmissions(executionId);
+    }
 }
