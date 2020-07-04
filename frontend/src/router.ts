@@ -26,6 +26,10 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
+import StudentSubmissionView from '@/views/student/submissions/SubmissionView.vue'
+import TeacherSubmissionView from '@/views/teacher/submissions/SubmissionView.vue'
+import AllSubmissionsView from '@/views/student/submissions/AllSubmissionsView.vue'
+
 Vue.use(Router);
 
 const APP_NAME = process.env.VUE_APP_NAME || '';
@@ -116,6 +120,15 @@ let router = new Router({
             title: APP_NAME + ' - ImpExp',
             requiredAuth: 'Teacher'
           }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: TeacherSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Teacher'
+          }
         }
       ]
     },
@@ -186,7 +199,26 @@ let router = new Router({
             title: APP_NAME + ' - Scan',
             requiredAuth: 'Student'
           }
+        },
+        {
+          path: 'submissions',
+          name: 'student-submissions',
+          component: StudentSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'all-submissions',
+          name: 'all-submissions',
+          component: AllSubmissionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - All Submissions',
+            requiredAuth: 'Student'
+          }
         }
+
       ]
     },
     {
