@@ -656,7 +656,23 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-  
+
+  static async getAllStudentSubmissions(): Promise<Submission[]> {
+    return httpClient
+      .get(
+        `/student/submission/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
+      .then(response => {
+        return response.data.map((submission: any) => {
+          return new Submission(submission);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+
   static async exportAll() {
     return httpClient
       .get('/admin/export', {

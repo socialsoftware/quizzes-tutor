@@ -28,6 +28,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import StudentSubmissionView from '@/views/student/submissions/SubmissionView.vue'
 import TeacherSubmissionView from '@/views/teacher/submissions/SubmissionView.vue'
+import AllSubmissionsView from '@/views/student/submissions/AllSubmissionsView.vue'
 
 Vue.use(Router);
 
@@ -205,6 +206,15 @@ let router = new Router({
           component: StudentSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'all-submissions',
+          name: 'all-submissions',
+          component: AllSubmissionsView,
+          meta: {
+            title: process.env.VUE_APP_NAME + ' - All Submissions',
             requiredAuth: 'Student'
           }
         }
