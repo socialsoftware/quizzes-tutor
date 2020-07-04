@@ -13,6 +13,7 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Submission from '@/models/management/Submission';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -575,6 +576,17 @@ export default class RemoteServices {
   static async deleteCourse(courseExecutionId: number | undefined) {
     return httpClient
       .delete(`/executions/${courseExecutionId}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createSubmission(submission: Submission): Promise<Submission> {
+    return httpClient
+      .post('/student/submissions', submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

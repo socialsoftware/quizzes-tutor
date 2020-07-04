@@ -26,6 +26,8 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
+import SubmissionView from '@/views/student/submission/SubmissionView.vue'
+
 Vue.use(Router);
 
 const APP_NAME = process.env.VUE_APP_NAME || '';
@@ -186,7 +188,17 @@ let router = new Router({
             title: APP_NAME + ' - Scan',
             requiredAuth: 'Student'
           }
+        },
+        {
+          path: 'submissions',
+          name: 'submissions',
+          component: SubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Student'
+          }
         }
+
       ]
     },
     {

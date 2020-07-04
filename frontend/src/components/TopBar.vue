@@ -147,6 +147,11 @@
           </v-list>
         </v-menu>
 
+        <v-btn to="/student/submissions" v-if="isStudent && currentCourse" text dark>
+          Submissions
+          <v-icon>fas fa-user-edit</v-icon>
+        </v-btn>
+
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
@@ -315,6 +320,13 @@
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Submissions</v-list-item-content>
           </v-list-item>
         </v-list-group>
 
