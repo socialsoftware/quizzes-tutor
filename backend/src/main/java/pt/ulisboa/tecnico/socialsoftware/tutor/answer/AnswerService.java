@@ -6,27 +6,23 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDtoFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.FillInOptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -109,7 +105,7 @@ public class AnswerService {
                 }
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                        .map(AnswerDtoFactory::getCorrectAnswerDto)
+                        .map(QuestionAnswer::getCorrectAnswerDto)
                         .collect(Collectors.toList());
             }
         }
@@ -147,58 +143,7 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-        if (questionAnswer instanceof MultipleChoiceQuestionAnswer) {
-            handleMultipleChoiceQuestionAnswer((MultipleChoiceQuestionAnswer) questionAnswer, (MultipleChoiceStatementAnswerDto) statementAnswerDto);
-        } else if (questionAnswer instanceof CodeFillInQuestionAnswer) {
-            handleMultipleCodeFillInAnswer((CodeFillInQuestionAnswer) questionAnswer, (CodeFillInStatementAnswerDto) statementAnswerDto);
-        } else {
-            throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionAnswer.getClass().getName());
-        }
-
-    }
-
-    private void handleMultipleChoiceQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer, MultipleChoiceStatementAnswerDto statementAnswerDto) {
-        if (statementAnswerDto.getOptionId() != null) {
-
-            Option option = questionAnswer.getQuestion().getOptions().stream()
-                    .filter(option1 -> option1.getId().equals(statementAnswerDto.getOptionId()))
-                    .findAny()
-                    .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, statementAnswerDto.getOptionId()));
-
-            if (questionAnswer.getOption() != null) {
-                questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
-            }
-
-            questionAnswer.setOption(option);
-        } else {
-            questionAnswer.setOption(null);
-        }
-    }
-
-
-    private void handleMultipleCodeFillInAnswer(CodeFillInQuestionAnswer questionAnswer, CodeFillInStatementAnswerDto answer) {
-        if (answer.getSelectedOptions() != null) {
-
-            for (CodeFillInOptionStatementAnswerDto option : answer.getSelectedOptions()) {
-                FillInOption fillInOption = fillInOptionRepository.findById(option.getOptionId())
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, option.getOptionId()));
-
-                // todo validate answer.
-                /*if (isNotQuestionOption(questionAnswer.getQuizQuestion(), option)) {
-                    throw new TutorException(QUESTION_OPTION_MISMATCH, questionAnswer.getQuizQuestion().getQuestion().getId(), option.getId());
-                }*/
-
-                // todo remove old answer
-                /*if (questionAnswer.getOption() != null) {
-                    questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
-                }*/
-
-                questionAnswer.getFillInOptions().add(fillInOption);
-            }
-
-        } else {
-            questionAnswer.setFillInOptions(null);
-        }
+        questionAnswer.setResponse(statementAnswerDto);
     }
 
     @Retryable(
@@ -206,7 +151,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportAnswers() {
-        AnswersXmlExport xmlExport = new AnswersXmlExport();
+        AnswersXmlExportVisitor xmlExport = new AnswersXmlExportVisitor();
 
         return xmlExport.export(quizAnswerRepository.findAll());
     }

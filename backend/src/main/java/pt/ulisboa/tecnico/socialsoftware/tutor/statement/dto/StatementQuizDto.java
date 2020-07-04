@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -41,12 +42,12 @@ public class StatementQuizDto implements Serializable {
         }
 
         this.questions = quizAnswer.getQuestionAnswers().stream()
-                .map(StatementDtoFactory::getStatementQuestionDto)
+                .map(QuestionAnswer::getStatementQuestionDto)
                 .sorted(Comparator.comparing(StatementQuestionDto::getSequence))
                 .collect(Collectors.toList());
 
         this.answers = quizAnswer.getQuestionAnswers().stream()
-                .map(StatementDtoFactory::getStatementAnswerDto)
+                .map(QuestionAnswer::getStatementAnswerDto)
                 .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
                 .collect(Collectors.toList());
     }

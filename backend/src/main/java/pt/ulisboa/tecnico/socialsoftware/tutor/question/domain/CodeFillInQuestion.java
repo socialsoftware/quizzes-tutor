@@ -1,10 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import com.google.common.collect.Queues;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -88,6 +92,8 @@ public class CodeFillInQuestion extends Question {
         setCode(questionDto.getCode());
     }
 
+
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
@@ -98,5 +104,20 @@ public class CodeFillInQuestion extends Question {
         for (FillInSpot spot : this.getFillInSpots()) {
             spot.accept(visitor);
         }
+    }
+
+    @Override
+    public Integer getCorrectAnswer() {
+        return -1;
+    }
+
+    @Override
+    public QuestionDto getQuestionDto() {
+        return new CodeFillInQuestionDto(this);
+    }
+
+    @Override
+    public void createAnswerForQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int i) {
+        new CodeFillInQuestionAnswer(quizAnswer, quizQuestion, i);
     }
 }

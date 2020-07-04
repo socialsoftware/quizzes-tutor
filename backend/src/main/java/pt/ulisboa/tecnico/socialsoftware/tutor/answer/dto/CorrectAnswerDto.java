@@ -32,5 +32,4 @@ public abstract class CorrectAnswerDto implements Serializable {
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
-
 }

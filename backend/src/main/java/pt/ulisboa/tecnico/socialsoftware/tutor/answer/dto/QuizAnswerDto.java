@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 
@@ -30,7 +31,7 @@ public class QuizAnswerDto implements Serializable {
 
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(qa -> qa.getQuizQuestion().getSequence()))
-                .map(AnswerDtoFactory::getQuestionAnswerDto)
+                .map(QuestionAnswer::getQuestionAnswerDto)
                 .collect(Collectors.toList());
     }
 

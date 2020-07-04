@@ -32,6 +32,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -154,28 +155,40 @@ public class AnswersXmlImport {
 
 			int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
 
-			Integer optionId = null;
-			if (questionAnswerElement.getChild(OPTION) != null) {
-				Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
-				Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
-				optionId = questionMap.get(questionKey).get(optionSequence);
-			}
-
             QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence().equals(answerSequence)).findFirst().orElseThrow(() ->
                     new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
 			questionAnswer.setTimeTaken(timeTaken);
 
-			if (questionAnswer instanceof MultipleChoiceQuestionAnswer) {
-				MultipleChoiceQuestionAnswer multipleChoiceQuestionAnswer = (MultipleChoiceQuestionAnswer) questionAnswer;
-				if (optionId == null) {
-					multipleChoiceQuestionAnswer.setOption(null);
-				} else {
-					multipleChoiceQuestionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
-				}
+
+			String questionType = Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+			if(questionAnswerElement.getChild("quizQuestion") != null){
+				questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
 			}
 
-            questionAnswerRepository.save(questionAnswer);
+			switch (questionType){
+				case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+					importMultipleChoiceXmlImport(questionAnswerElement, (MultipleChoiceQuestionAnswer)questionAnswer);
+					break;
+				default:
+					throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+			}
+
+			questionAnswerRepository.save(questionAnswer);
+		}
+	}
+
+	private void importMultipleChoiceXmlImport(Element questionAnswerElement, MultipleChoiceQuestionAnswer questionAnswer) {
+		Integer optionId = null;
+		if (questionAnswerElement.getChild(OPTION) != null) {
+			Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
+			Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
+			optionId = questionMap.get(questionKey).get(optionSequence);
+		}
+		if (optionId == null) {
+			questionAnswer.setOption(null);
+		} else {
+			questionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
 		}
 	}
 }

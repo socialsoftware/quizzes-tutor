@@ -160,7 +160,7 @@ public class ImpExpService {
     }
 
     private InputStream generateAnswersInputStream() {
-        AnswersXmlExport generator = new AnswersXmlExport();
+        AnswersXmlExportVisitor generator = new AnswersXmlExportVisitor();
         return IOUtils.toInputStream(generator.export(quizAnswerRepository.findAll()), StandardCharsets.UTF_8);
     }
 

@@ -1,17 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ONE_CORRECT_OPTION_NEEDED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
@@ -84,6 +87,25 @@ public class MultipleChoiceQuestion extends Question {
         for (Option option : this.getOptions()) {
             option.accept(visitor);
         }
+    }
+
+    @Override
+    public QuestionDto getQuestionDto() {
+        return new MultipleChoiceQuestionDto(this);
+    }
+
+    @Override
+    public void createAnswerForQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int i) {
+        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestion, i);
+    }
+
+    @Override
+    public Integer getCorrectAnswer() {
+        return this.getOptions()
+                .stream()
+                .filter(Option::getCorrect)
+                .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
+                .getSequence();
     }
 
     @Override
