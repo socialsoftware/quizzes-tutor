@@ -1,5 +1,5 @@
 import Question from '@/models/management/Question';
-import MultipleChoiceQuestion from '@/models/management/questions/MultipleChoiceQuestion';
+import MultipleChoiceQuestion from '@/models/management/multiple-choice/MultipleChoiceQuestion';
 
 export const questionWithFigure = new MultipleChoiceQuestion({
   id: 395,

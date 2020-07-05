@@ -1,4 +1,4 @@
-import StatementAnswer from './StatementAnswer';
+import StatementAnswer from '../StatementAnswer';
 import StatementAnswerCodeFillInOption from './StatementAnswerCodeFillInOption';
 import StatementCorrectAnswerCodeFillIn from './StatementCorrectAnswerCodeFillIn';
 

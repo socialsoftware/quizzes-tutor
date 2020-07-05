@@ -42,11 +42,11 @@ import {
   Watch,
   PropSync
 } from 'vue-property-decorator';
-import StatementQuestionCodeFillIn from '@/models/statement/StatementQuestionCodeFillIn';
+import StatementQuestionCodeFillIn from '@/models/statement/code-fill-in/StatementQuestionCodeFillIn';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import StatementFillInSpot from '../../../models/statement/StatementFillInSpot';
-import StatementAnswerCodeFillIn from '../../../models/statement/StatementAnswerCodeFillIn';
+import StatementFillInSpot from '@/models/statement/StatementFillInSpot';
+import StatementAnswerCodeFillIn from '@/models/statement/code-fill-in/StatementAnswerCodeFillIn';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
@@ -56,7 +56,7 @@ import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
-import StatementAnswerCodeFillInOption from '../../../models/statement/StatementAnswerCodeFillInOption';
+import StatementAnswerCodeFillInOption from '@/models/statement/code-fill-in/StatementAnswerCodeFillInOption';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {

@@ -53,8 +53,8 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
-import StatementCorrectAnswerCodeFillIn from '@/models/statement/StatementCorrectAnswerCodeFillIn';
-import StatementQuestionCodeFillIn from '@/models/statement/StatementQuestionCodeFillIn';
+import StatementCorrectAnswerCodeFillIn from '@/models/statement/code-fill-in/StatementCorrectAnswerCodeFillIn';
+import StatementQuestionCodeFillIn from '@/models/statement/code-fill-in/StatementQuestionCodeFillIn';
 
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
@@ -64,9 +64,9 @@ import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
-import StatementAnswerCodeFillInOption from '@/models/statement/StatementAnswerCodeFillInOption';
+import StatementAnswerCodeFillInOption from '@/models/statement/code-fill-in/StatementAnswerCodeFillInOption';
 import StatementFillInSpot from '@/models/statement/StatementFillInSpot';
-import StatementAnswerCodeFillIn from '../../../models/statement/StatementAnswerCodeFillIn';
+import StatementAnswerCodeFillIn from '@/models/statement/code-fill-in/StatementAnswerCodeFillIn';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {

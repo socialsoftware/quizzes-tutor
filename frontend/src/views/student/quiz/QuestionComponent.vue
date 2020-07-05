@@ -44,7 +44,7 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
-import StatementQuestionMultipleChoice from '@/models/statement/StatementQuestionMultipleChoice';
+import StatementQuestionMultipleChoice from '@/models/statement/multiple-choice/StatementQuestionMultipleChoice';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 

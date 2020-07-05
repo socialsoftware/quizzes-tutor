@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.11.2",
+    "@types/codemirror": "0.0.96",
     "axios": "^0.19.2",
     "material-design-icons-iconfont": "^5.0.1",
     "qrcode": "^1.4.4",

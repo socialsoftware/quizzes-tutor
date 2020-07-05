@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
-import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
+import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
 import Option from '@/models/management/Option';
 
 @Component

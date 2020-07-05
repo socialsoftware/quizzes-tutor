@@ -21,7 +21,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
-import MultipleChoiceQuestion from '../../../models/management/questions/MultipleChoiceQuestion';
+import MultipleChoiceQuestion from '@/models/management/multiple-choice/MultipleChoiceQuestion';
 
 @Component
 export default class ShowQuestion extends Vue {

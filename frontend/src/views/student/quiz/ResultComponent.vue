@@ -69,9 +69,9 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
-import StatementQuestionMultipleChoice from '@/models/statement/StatementQuestionMultipleChoice';
-import StatementAnswerMultipleChoice from '@/models/statement/StatementAnswerMultipleChoice';
-import StatementCorrectAnswerMultipleChoice from '@/models/statement/StatementCorrectAnswerMultipleChoice';
+import StatementQuestionMultipleChoice from '@/models/statement/multiple-choice/StatementQuestionMultipleChoice';
+import StatementAnswerMultipleChoice from '@/models/statement/multiple-choice/StatementAnswerMultipleChoice';
+import StatementCorrectAnswerMultipleChoice from '@/models/statement/multiple-choice/StatementCorrectAnswerMultipleChoice';
 
 @Component
 export default class ResultComponent extends Vue {

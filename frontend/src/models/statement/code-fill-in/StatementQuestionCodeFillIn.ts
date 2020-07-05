@@ -1,7 +1,7 @@
 import StatementFillInSpot from '@/models/statement/StatementFillInSpot';
 import Image from '@/models/management/Image';
 import { _ } from 'vue-underscore';
-import StatementQuestion from './StatementQuestion';
+import StatementQuestion from '../StatementQuestion';
 
 export default class StatementQuestionCodeFillIn extends StatementQuestion {
   language: string = 'Java';

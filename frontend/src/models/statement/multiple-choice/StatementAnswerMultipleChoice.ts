@@ -1,5 +1,5 @@
-import StatementAnswer from './StatementAnswer';
-import StatementCorrectAnswerCodeFillIn from './StatementCorrectAnswerCodeFillIn';
+import StatementAnswer from '../StatementAnswer';
+import StatementCorrectAnswerCodeFillIn from '../code-fill-in/StatementCorrectAnswerCodeFillIn';
 import StatementCorrectAnswerMultipleChoice from './StatementCorrectAnswerMultipleChoice';
 
 export default class StatementAnswerMultipleChoice extends StatementAnswer {

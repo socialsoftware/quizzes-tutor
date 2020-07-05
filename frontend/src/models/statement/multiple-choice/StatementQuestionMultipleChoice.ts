@@ -1,7 +1,7 @@
 import StatementOption from '@/models/statement/StatementOption';
 import Image from '@/models/management/Image';
 import { _ } from 'vue-underscore';
-import StatementQuestion from './StatementQuestion';
+import StatementQuestion from '../StatementQuestion';
 
 export default class StatementQuestionMultipleChoice extends StatementQuestion {
   options: StatementOption[] = [];

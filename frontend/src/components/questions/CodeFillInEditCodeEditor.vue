@@ -20,22 +20,11 @@
           </span>
         </v-tooltip>
       </v-card-actions>
-      <div style="position:relative">
-        <v-overlay
-          :value="!CodemirrorUpdated"
-          absolute
-          color="white"
-          opacity="1"
-        >
-          <v-progress-circular indeterminate size="40" color="primary" />
-        </v-overlay>
-        <codemirror
-          ref="myCm"
-          :value="question.code"
-          :options="cmOptions"
-          @input="onCmCodeChange"
-        />
-      </div>
+      <BaseCodeComponent
+        ref='codeEditor'
+        :code.sync="question.code"
+        :language.sync="question.language"
+      />
 
       <FillInOptions
         v-for="(item, index) in question.fillInSpots"
@@ -50,47 +39,18 @@
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
-import CodeFillInQuestion from '@/models/management/questions/CodeFillInQuestion';
+import CodeFillInQuestion from '@/models/management/code-fill-in/CodeFillInQuestion';
 import Question from '../../models/management/Question';
-import { codemirror } from 'vue-codemirror';
-import CodeMirror from 'codemirror';
 import FillInOptions from '@/components/questions/FillInOptions.vue';
 import Option from '@/models/management/Option';
+import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
 
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/clike/clike.js';
-//
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/addon/mode/overlay.js';
-import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
-
-CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function(stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {
-        // empty
-      }
-      return null;
-    }
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
-});
+import BaseCodeComponent from '@/components/questions/BaseCodeEditor.vue';
+import BaseCodeEditor from '@/components/questions/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    codemirror,
+    BaseCodeComponent,
     FillInOptions
   }
 })
@@ -99,19 +59,12 @@ export default class CreateOrEditMultipleChoice extends Vue {
 
   languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
-  cmOptions: any = {
-    // codemirror options
-    tabSize: 4,
-    mode: 'mustache',
-    theme: 'eclipse',
-    lineNumbers: true,
-    line: true
-  };
-
-  CodemirrorUpdated: boolean = false
+ 
+  get baseCodeEditorRef() : BaseCodeEditor{
+    return this.$refs.codeEditor as BaseCodeEditor;
+  }
 
   created() {
-    this.updateQuestion()
     this.counter = this.getMaxDropdown()
   }
 
@@ -123,16 +76,8 @@ export default class CreateOrEditMultipleChoice extends Vue {
     this.question.code = newCode;
   }
 
-  updateQuestion() {
-    this.CodemirrorUpdated = false;
-    setTimeout(() => {
-      this.$refs.myCm.codemirror.refresh();
-      this.CodemirrorUpdated = true;
-    }, 1000);
-  }
-
   Dropdownify() {
-    const content = this.$refs.myCm.codemirror.getSelection();
+    const content = this.baseCodeEditorRef.codemirror.getSelection();
     if (content) {
       const option = new Option();
       option.correct = true;
@@ -142,7 +87,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
       item.sequence = this.counter;
 
       this.question.fillInSpots.push(item);
-      this.$refs.myCm.codemirror.replaceSelection(
+      this.baseCodeEditorRef.codemirror.replaceSelection(
         '{{slot-' + this.counter + '}}'
       );
       this.counter++;

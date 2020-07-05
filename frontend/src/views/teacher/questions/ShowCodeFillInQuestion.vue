@@ -18,14 +18,14 @@ import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
-import CodeFillInQuestion from '@/models/management/questions/CodeFillInQuestion';
+import CodeFillInQuestion from '@/models/management/code-fill-in/CodeFillInQuestion';
 
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
-import FillInOptions from '../../../components/questions/FillInOptions.vue';
-import CodeFillInSpot from '../../../models/management/questions/CodeFillInSpot';
+import FillInOptions from '@/components/questions/FillInOptions.vue';
+import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {

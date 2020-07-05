@@ -1,4 +1,4 @@
-import StatementCorrectAnswer from './StatementCorrectAnswer';
+import StatementCorrectAnswer from '../StatementCorrectAnswer';
 
 export default class StatementCorrectAnswerMultipleChoice extends StatementCorrectAnswer {
   correctOptionId!: number;
