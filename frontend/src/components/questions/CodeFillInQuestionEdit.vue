@@ -4,7 +4,7 @@
       :items="languages"
       v-model="question.language"
       label="Language"
-      :disabled="value.id != null"
+      :disabled="syncedQuestion.id != null"
     />
     <div class="code-create">
       <v-card-actions>
@@ -40,7 +40,7 @@
 <script lang="ts">
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 import CodeFillInQuestion from '@/models/management/code-fill-in/CodeFillInQuestion';
-import Question from '../../models/management/Question';
+import Question from '@/models/management/Question';
 import FillInOptions from '@/components/questions/FillInOptions.vue';
 import Option from '@/models/management/Option';
 import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
@@ -54,8 +54,8 @@ import BaseCodeEditor from '@/components/questions/BaseCodeEditor.vue';
     FillInOptions
   }
 })
-export default class CreateOrEditMultipleChoice extends Vue {
-  @PropSync('value', { type: CodeFillInQuestion }) question!: CodeFillInQuestion;
+export default class CodeFillInQuestionEdit extends Vue {
+  @PropSync('question', { type: CodeFillInQuestion }) syncedQuestion!: CodeFillInQuestion;
 
   languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
@@ -69,11 +69,11 @@ export default class CreateOrEditMultipleChoice extends Vue {
   }
 
   getMaxDropdown() {
-      return (Math.max.apply(Math, this.question.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
+      return (Math.max.apply(Math, this.syncedQuestion.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
   }
 
   onCmCodeChange(newCode: string) {
-    this.question.code = newCode;
+    this.syncedQuestion.code = newCode;
   }
 
   Dropdownify() {
@@ -86,7 +86,7 @@ export default class CreateOrEditMultipleChoice extends Vue {
       item.options = [option];
       item.sequence = this.counter;
 
-      this.question.fillInSpots.push(item);
+      this.syncedQuestion.fillInSpots.push(item);
       this.baseCodeEditorRef.codemirror.replaceSelection(
         '{{slot-' + this.counter + '}}'
       );

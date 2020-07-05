@@ -20,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN)
 public class CodeFillInQuestion extends Question {
     public enum Language {
-        Java,
+        Java, Javascript
     }
 
     private Language language;

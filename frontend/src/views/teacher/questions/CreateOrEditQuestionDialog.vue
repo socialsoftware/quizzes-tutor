@@ -37,7 +37,7 @@
         ></v-textarea>
       </v-card-text>
 
-      <component v-bind:is="editQuestion.type" v-model="editQuestion">
+      <component v-bind:is="editQuestion.type" :question.sync="editQuestion">
       </component>
 
       <v-card-actions>
@@ -63,8 +63,8 @@ import {
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 
-import CreateOrEditMultipleChoice from '@/components/questions/CreateOrEditMultipleChoice.vue';
-import CreateOrEditCodeFillIn from '@/components/questions/CodeFillInEditCodeEditor.vue';
+import CreateOrEditMultipleChoice from '@/components/questions/MultipleChoiceQuestionEdit.vue';
+import CreateOrEditCodeFillIn from '@/components/questions/CodeFillInQuestionEdit.vue';
 import { QuestionFactory } from '@/services/QuestionFactory';
 
 @Component({
@@ -75,7 +75,7 @@ import { QuestionFactory } from '@/services/QuestionFactory';
 })
 export default class CreateOrEditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Question, required: true }) question!: Question;
+  @Prop() question!: Question;
 
   types: Array<string> = ['multiple_choice', 'code_fill_in'];
   questionType: string | null = 'multiple_choice';
