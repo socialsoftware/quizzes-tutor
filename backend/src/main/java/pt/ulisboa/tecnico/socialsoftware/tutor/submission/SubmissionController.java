@@ -27,6 +27,8 @@ public class SubmissionController {
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
+        
+        submissionDto.setUserId(user.getId());
 
         return submissionService.createSubmission(submissionDto);
     }

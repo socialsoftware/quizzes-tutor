@@ -75,7 +75,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
         return this.questionService.updateQuestion(questionId, question);
     }
@@ -130,7 +130,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}/topics")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public void updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         questionService.updateQuestionTopics(questionId, topics);
     }
