@@ -158,4 +158,12 @@ public class UserService {
     public User createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         return new User();
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean confirmRegistration(ExternalUserDto externalUserDto) {
+        User user = findByUsername(externalUserDto.getEmail());
+
+        return false;
+    }
+
 }
