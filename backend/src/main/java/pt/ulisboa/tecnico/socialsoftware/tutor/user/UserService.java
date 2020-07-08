@@ -9,13 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -152,5 +152,10 @@ public class UserService {
 
                     this.userRepository.delete(user);
                 });
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public User createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        return new User();
     }
 }

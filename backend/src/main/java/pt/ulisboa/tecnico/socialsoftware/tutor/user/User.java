@@ -39,6 +39,9 @@ public class User implements UserDetails, DomainEntity {
 
     private String name;
     private String enrolledCoursesAcronyms;
+    private String password;
+
+    private String email;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
@@ -160,6 +163,14 @@ public class User implements UserDetails, DomainEntity {
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
+
+
 
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
@@ -393,7 +404,7 @@ public class User implements UserDetails, DomainEntity {
 
     @Override
     public String getPassword() {
-        return null;
+        return password;
     }
 
     @Override
