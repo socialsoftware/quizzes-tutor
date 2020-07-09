@@ -15,6 +15,7 @@ public class ExternalUserDto implements Serializable {
     private String username;
     private String email;
     private String password;
+    private boolean active;
     private User.Role role;
     private boolean isAdmin;
     private List<CourseDto> courseExecutions;
@@ -81,6 +82,14 @@ public class ExternalUserDto implements Serializable {
     public void setRole(User.Role role) {
         this.role = role;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }        
 
     public boolean isAdmin() {
         return isAdmin;

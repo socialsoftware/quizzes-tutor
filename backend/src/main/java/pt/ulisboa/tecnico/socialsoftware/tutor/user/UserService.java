@@ -194,10 +194,22 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public boolean confirmRegistration(ExternalUserDto externalUserDto) {
-        User user = findByUsername(externalUserDto.getEmail());
+    public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
+        User user = findByUsername(externalUserDto.getUsername());
 
-        return false;
+        if (user == null)
+            throw new TutorException(USERNAME_NOT_FOUND, externalUserDto.getUsername());
+
+        if (user.isActive())
+            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
+
+        if (user.getPassword().equals("") || user.getPassword() == null)
+            throw new TutorException(INVALID_PASSWORD);
+
+        user.setActive(true);
+        // TODO: encode password and save
+
+        return new ExternalUserDto(user);
     }
 
 }
