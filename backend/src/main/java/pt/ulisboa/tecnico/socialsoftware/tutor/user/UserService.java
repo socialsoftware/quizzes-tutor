@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -14,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -164,7 +165,7 @@ public class UserService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void importListOfUsers(String fileName) {
+    public void importListOfUsers(String fileName, int courseExecutionId) {
         String line = "";
         String cvsSplitBy = ",";
         User.Role auxRole;
@@ -183,13 +184,17 @@ public class UserService {
                     }
                 }
                 else {
-                    throw new TutorException(INVALID_CSV_FILE);
+                    throw new TutorException(INVALID_CSV_FILE_FORMAT);
                 }
+                ExternalUserDto userDto = new ExternalUserDto();
+                userDto.setEmail(userInfo[0]);
+                userDto.setName(userInfo[1]);
+                userDto.setRole(auxRole);
                 //this.createUser(userInfo[0], userInfo[1], auxRole);
-                System.out.println("Email is" + userInfo[0] + "and name is" + userInfo[1]);
+                createExternalUser(courseExecutionId, userDto);
             }
-        } catch (IOException | java.io.IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
     }
 
@@ -198,10 +203,10 @@ public class UserService {
 
         if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
             throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
-
+        /*
         if(externalUserDto.getPassword() == null || externalUserDto.getPassword().trim().equals(""))
             throw new TutorException(INVALID_PASSWORD, externalUserDto.getPassword());
-
+        */
         if(externalUserDto.getRole() == null)
             throw new TutorException(INVALID_ROLE);
 
@@ -222,7 +227,7 @@ public class UserService {
         }
 
         user1.setEmail(externalUserDto.getEmail());
-        user1.setPassword(externalUserDto.getPassword());
+        //user1.setPassword(externalUserDto.getPassword());
 
         courseExecution.addUser(user1);
         user1.addCourse(courseExecution);

@@ -80,7 +80,7 @@ public enum ErrorMessage {
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
 
-    INVALID_CSV_FILE("The csv file uploaded has a wrong format");
+    INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format");
 
     public final String label;
 

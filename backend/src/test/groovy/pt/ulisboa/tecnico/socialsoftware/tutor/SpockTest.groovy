@@ -75,6 +75,9 @@ class SpockTest extends Specification {
 
     public static final String QUIZ_TITLE = "Quiz title"
     public static final String CSVFILE = System.getProperty("user.dir") + "/src/test/resources/importUsers.csv"
+    public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
+    public static final String WRONGCSVFILENAME = "wrongFilePath"
+    public static final int noOfUsersInFile = 5
 
     @Autowired
     AuthService authService
