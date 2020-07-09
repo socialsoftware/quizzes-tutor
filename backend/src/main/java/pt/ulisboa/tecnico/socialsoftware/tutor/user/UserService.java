@@ -200,22 +200,20 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        verifyEmail(externalUserDto);
+        verifyRole(externalUserDto);
+        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+        User user1 = getUser(externalUserDto, courseExecution);
+        associateUserWithExecution(courseExecution, user1);
+        return new ExternalUserDto(user1);
+    }
 
-        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
-            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
-        /*
-        if(externalUserDto.getPassword() == null || externalUserDto.getPassword().trim().equals(""))
-            throw new TutorException(INVALID_PASSWORD, externalUserDto.getPassword());
-        */
-        if(externalUserDto.getRole() == null)
-            throw new TutorException(INVALID_ROLE);
+    private void associateUserWithExecution(CourseExecution courseExecution, User user1) {
+        courseExecution.addUser(user1);
+        user1.addCourse(courseExecution);
+    }
 
-        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-
-        if (courseExecution.getType() != Course.Type.EXTERNAL)
-            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
-
+    private User getUser(ExternalUserDto externalUserDto, CourseExecution courseExecution) {
         Optional<User> user = userRepository.findByUsername(externalUserDto.getEmail());
         User user1;
         if(user.isPresent()){
@@ -225,14 +223,28 @@ public class UserService {
             user1 = new User("", externalUserDto.getEmail(), externalUserDto.getRole());
             userRepository.save(user1);
         }
-
-        user1.setEmail(externalUserDto.getEmail());
-        //user1.setPassword(externalUserDto.getPassword());
-
-        courseExecution.addUser(user1);
-        user1.addCourse(courseExecution);
         user1.setAdmin(false);
-        return new ExternalUserDto(user1);
+        user1.setEmail(externalUserDto.getEmail());
+        return user1;
+    }
+
+    private CourseExecution getCourseExecution(Integer courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if (courseExecution.getType() != Course.Type.EXTERNAL)
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        return courseExecution;
+    }
+
+    private void verifyRole(ExternalUserDto externalUserDto) {
+        if(externalUserDto.getRole() == null)
+            throw new TutorException(INVALID_ROLE);
+    }
+
+    private void verifyEmail(ExternalUserDto externalUserDto) {
+        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
+            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
