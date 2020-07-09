@@ -192,4 +192,12 @@ public class UserService {
         user1.setAdmin(false);
         return new ExternalUserDto(user1);
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean confirmRegistration(ExternalUserDto externalUserDto) {
+        User user = findByUsername(externalUserDto.getEmail());
+
+        return false;
+    }
+
 }
