@@ -78,6 +78,15 @@ public class User implements UserDetails, DomainEntity {
         setCreationDate(DateHandler.now());
     }
 
+    public User(String name, String username, String email, String password, User.Role role){
+        this.name = name;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.creationDate = DateHandler.now();
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
@@ -168,9 +177,13 @@ public class User implements UserDetails, DomainEntity {
         this.password = password;
     }
 
+    public String getEmail() {
+        return email;
+    }
 
-
-
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)

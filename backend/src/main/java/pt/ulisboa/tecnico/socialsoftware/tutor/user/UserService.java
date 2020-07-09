@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
@@ -21,6 +22,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -155,7 +157,39 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        return new User();
+    public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+
+        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
+            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
+
+        if(externalUserDto.getPassword() == null || externalUserDto.getPassword().trim().equals(""))
+            throw new TutorException(INVALID_PASSWORD, externalUserDto.getPassword());
+
+        if(externalUserDto.getRole() == null)
+            throw new TutorException(INVALID_ROLE);
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if (courseExecution.getType() != Course.Type.EXTERNAL)
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+
+        Optional<User> user = userRepository.findByUsername(externalUserDto.getEmail());
+        User user1;
+        if(user.isPresent()){
+            user.get().addCourse(courseExecution);
+            user1 = user.get();
+        }else{
+            user1 = new User("", externalUserDto.getEmail(), externalUserDto.getRole());
+            userRepository.save(user1);
+        }
+
+        user1.setEmail(externalUserDto.getEmail());
+        user1.setPassword(externalUserDto.getPassword());
+
+        courseExecution.addUser(user1);
+        user1.addCourse(courseExecution);
+        user1.setAdmin(false);
+        return new ExternalUserDto(user1);
     }
 }

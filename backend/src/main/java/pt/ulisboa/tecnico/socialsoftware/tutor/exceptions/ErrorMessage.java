@@ -24,6 +24,10 @@ public enum ErrorMessage {
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
+    COURSE_EXECUTION_NOT_EXTERNAL("The course execution with id %d is not external"),
+    INVALID_EMAIL("The mail %s is invalid."),
+    INVALID_PASSWORD("The password %s is invalid."),
+    INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
