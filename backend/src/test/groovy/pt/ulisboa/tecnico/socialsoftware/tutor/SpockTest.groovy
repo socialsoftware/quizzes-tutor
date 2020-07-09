@@ -148,6 +148,7 @@ class SpockTest extends Specification {
     Course course
     CourseExecution courseExecution
 
+
     def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
