@@ -1,47 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import org.springframework.web.servlet.resource.EncodedResourceResolver
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 
 @DataJpaTest
 class CreateExternalUserTest extends SpockTest {
-
-    @Autowired
-    UserService userService
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    UserRepository userRepository
-
 
     static final String COURSE_NAME = "Course1"
 
@@ -49,9 +21,6 @@ class CreateExternalUserTest extends SpockTest {
     static final String TERM = "19-20 Spring"
 
     static final String EMAIL = "test@mail.com"
-    static final String PASSWORD = "123456abc"
-
-    static final String USERNAME = "test@mail.com"
 
 
     Course course
@@ -74,7 +43,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
-        externalUserDto.setPassword(PASSWORD)
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
@@ -93,7 +61,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
-        externalUserDto.setPassword(PASSWORD)
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
@@ -111,7 +78,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
-        externalUserDto.setPassword(PASSWORD)
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
@@ -122,7 +88,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "checks if user data is correct"
         result.getUsername() == EMAIL
         result.getEmail() == EMAIL
-        result.getPassword() == PASSWORD
         and:"checks if the user and the course execution are associated"
         result.getCourseExecutions().size() == 1
         result.getCourseExecutions().get(0).getAcronym() == ACRONYM
@@ -142,7 +107,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
-        externalUserDto.setPassword(PASSWORD)
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
@@ -154,7 +118,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "checks if user data is correct"
         result.getUsername() == EMAIL
         result.getEmail() == EMAIL
-        result.getPassword() == PASSWORD
         and:"checks if the user and the course execution are associated"
         result.getCourseExecutions().size() == 1
         result.getCourseExecutions().get(0).getAcronym() == ACRONYM
@@ -170,7 +133,6 @@ class CreateExternalUserTest extends SpockTest {
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(email)
-        externalUserDto.setPassword(password)
 
         when:
         userService.createExternalUser(executionId, externalUserDto)
@@ -180,68 +142,13 @@ class CreateExternalUserTest extends SpockTest {
         error.getErrorMessage() == errorMessage
 
         where:
-        email       | password      | role                     || errorMessage
-        null        | PASSWORD      | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        ""          | PASSWORD      | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        EMAIL       | null          | User.Role.STUDENT        || ErrorMessage.INVALID_PASSWORD
-        EMAIL       | ""            | User.Role.STUDENT        || ErrorMessage.INVALID_PASSWORD
-        EMAIL       | PASSWORD      | null                     || ErrorMessage.INVALID_ROLE
+        email       | role                     || errorMessage
+        null        | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        ""          | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        EMAIL       | null                     || ErrorMessage.INVALID_ROLE
 
     }
 
     @TestConfiguration
-    static class ServiceImplTestContextConfiguration {
-
-        @Bean
-        UserService userService() {
-            return new UserService()
-        }
-
-        @Bean
-        CourseService courseService(){
-            return new CourseService()
-        }
-
-        @Bean
-        AnswerService answerService(){
-            return new AnswerService()
-        }
-
-        @Bean
-        AnswersXmlImport answersXmlImport() {
-            return new AnswersXmlImport()
-        }
-
-        @Bean
-        QuizService quizService() {
-            return new QuizService()
-        }
-
-        @Bean
-        QuestionService questionService() {
-            return new QuestionService()
-        }
-
-        @Bean
-        TopicService topicService() {
-            return new TopicService()
-        }
-
-        @Bean
-        AssessmentService assessmentService() {
-            return  new AssessmentService()
-        }
-
-        @Bean
-        StatementService statementService() {
-            return new StatementService()
-        }
-
-        @Bean
-        AuthService authService() {
-            return new AuthService()
-        }
-    }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }
-
-

@@ -13,11 +13,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -156,24 +161,59 @@ public class UserService {
                 });
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void importListOfUsers(String fileName, int courseExecutionId) {
+        String line = "";
+        String cvsSplitBy = ",";
+        User.Role auxRole;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while ((line = br.readLine()) != null) {
+                String[] userInfo = line.split(cvsSplitBy);
+                if (userInfo.length == 2) {
+                    auxRole = User.Role.STUDENT;
+                }
+                else if (userInfo.length > 2) {
+                    if (userInfo[2] == "student") {
+                        auxRole = User.Role.STUDENT;
+                    }
+                    else {
+                        auxRole = User.Role.TEACHER;
+                    }
+                }
+                else {
+                    throw new TutorException(INVALID_CSV_FILE_FORMAT);
+                }
+                ExternalUserDto userDto = new ExternalUserDto();
+                userDto.setEmail(userInfo[0]);
+                userDto.setName(userInfo[1]);
+                userDto.setRole(auxRole);
+                //this.createUser(userInfo[0], userInfo[1], auxRole);
+                createExternalUser(courseExecutionId, userDto);
+            }
+        } catch (IOException ex) {
+            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
+        }
+    }
+
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        verifyEmail(externalUserDto);
+        verifyRole(externalUserDto);
+        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+        User user1 = getUser(externalUserDto, courseExecution);
+        associateUserWithExecution(courseExecution, user1);
+        return new ExternalUserDto(user1);
+    }
 
-        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
-            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
+    private void associateUserWithExecution(CourseExecution courseExecution, User user1) {
+        courseExecution.addUser(user1);
+        user1.addCourse(courseExecution);
+    }
 
-        if(externalUserDto.getPassword() == null || externalUserDto.getPassword().trim().equals(""))
-            throw new TutorException(INVALID_PASSWORD, externalUserDto.getPassword());
-
-        if(externalUserDto.getRole() == null)
-            throw new TutorException(INVALID_ROLE);
-
-        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-
-        if (courseExecution.getType() != Course.Type.EXTERNAL)
-            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
-
+    private User getUser(ExternalUserDto externalUserDto, CourseExecution courseExecution) {
         Optional<User> user = userRepository.findByUsername(externalUserDto.getEmail());
         User user1;
         if(user.isPresent()){
@@ -183,14 +223,28 @@ public class UserService {
             user1 = new User("", externalUserDto.getEmail(), externalUserDto.getRole());
             userRepository.save(user1);
         }
-
-        user1.setEmail(externalUserDto.getEmail());
-        user1.setPassword(externalUserDto.getPassword());
-
-        courseExecution.addUser(user1);
-        user1.addCourse(courseExecution);
         user1.setAdmin(false);
-        return new ExternalUserDto(user1);
+        user1.setEmail(externalUserDto.getEmail());
+        return user1;
+    }
+
+    private CourseExecution getCourseExecution(Integer courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if (courseExecution.getType() != Course.Type.EXTERNAL)
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        return courseExecution;
+    }
+
+    private void verifyRole(ExternalUserDto externalUserDto) {
+        if(externalUserDto.getRole() == null)
+            throw new TutorException(INVALID_ROLE);
+    }
+
+    private void verifyEmail(ExternalUserDto externalUserDto) {
+        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
+            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
