@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -17,6 +18,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -152,5 +156,37 @@ public class UserService {
 
                     this.userRepository.delete(user);
                 });
+    }
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void importListOfUsers(String fileName) {
+        String line = "";
+        String cvsSplitBy = ",";
+        User.Role auxRole;
+        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+            while ((line = br.readLine()) != null) {
+                String[] userInfo = line.split(cvsSplitBy);
+                if (userInfo.length == 2) {
+                    auxRole = User.Role.STUDENT;
+                }
+                else if (userInfo.length > 2) {
+                    if (userInfo[2] == "student") {
+                        auxRole = User.Role.STUDENT;
+                    }
+                    else {
+                        auxRole = User.Role.TEACHER;
+                    }
+                }
+                else {
+                    throw new TutorException(INVALID_CSV_FILE);
+                }
+                //this.createUser(userInfo[0], userInfo[1], auxRole);
+                System.out.println("Email is" + userInfo[0] + "and name is" + userInfo[1]);
+            }
+        } catch (IOException | java.io.IOException e) {
+            e.printStackTrace();
+        }
     }
 }
