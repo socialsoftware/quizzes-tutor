@@ -1,22 +1,25 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.crypto.password.PasswordEncoder
+import spock.lang.Unroll
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 @DataJpaTest
 class ConfirmRegistrationTest extends SpockTest {
 
-    @Autowired
-    UserService userService
 
     @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    UserRepository userRepository
+    private PasswordEncoder passwordEncoder;
 
     static final String COURSE_NAME = "Course1"
 
@@ -38,7 +41,7 @@ class ConfirmRegistrationTest extends SpockTest {
 
         def executionId = courseExecution.getId()
 
-        ExternalUserDto externalUserDto = new ExternalUserDto()
+        externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
         externalUserDto.setUsername(EMAIL)
         externalUserDto.setRole(User.Role.STUDENT)
@@ -53,18 +56,18 @@ class ConfirmRegistrationTest extends SpockTest {
         def result = userService.confirmRegistration(externalUserDto)
 
         then:"the user has a new password and matches"
-        // TODO: use PasswordEncoder.matches
-        and: "and his state is active"
+        passwordEncoder.matches(PASSWORD, result.getPassword())
+        and: "and is active"
         result.isActive() == true
 	}
 
     def "user is already active" () {
-        give: "an active user"
+        given: "an active user"
         externalUserDto.setPassword(PASSWORD)
         userService.confirmRegistration(externalUserDto)
 
         when:
-        def result = userService.confirmRegistration(externalUserDto)
+        userService.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
@@ -79,7 +82,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(password)
 
         when:
-        def result = userService.confirmRegistration(externalUserDto)
+        userService.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
@@ -87,9 +90,12 @@ class ConfirmRegistrationTest extends SpockTest {
 
         where:
         email       | password      || errorMessage
-        null        | PASSWORD      || ErrorMessage.USER_NOT_FOUND
+        null        | PASSWORD      || ErrorMessage.USERNAME_NOT_FOUND
         EMAIL       | null          || ErrorMessage.INVALID_PASSWORD
         EMAIL       | ""            || ErrorMessage.INVALID_PASSWORD
 	}
+
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 
 }

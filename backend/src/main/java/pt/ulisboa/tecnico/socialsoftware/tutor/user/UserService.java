@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,9 @@ public class UserService {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -257,11 +261,10 @@ public class UserService {
         if (user.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
 
-        if (user.getPassword().equals("") || user.getPassword() == null)
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
 
-        user.setActive(true);
-        // TODO: encode password and save
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
 
         return new ExternalUserDto(user);
     }

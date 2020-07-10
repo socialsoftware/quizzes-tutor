@@ -41,9 +41,6 @@ public class User implements UserDetails, DomainEntity {
     private String enrolledCoursesAcronyms;
     private String password;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean active;
-    
     private String email;
 
     @Column(columnDefinition = "boolean default false")
@@ -188,12 +185,8 @@ public class User implements UserDetails, DomainEntity {
         this.email = email;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public boolean isActive() {
-        return active;
+        return !(getPassword() == null || getPassword().isBlank());
     }
 
     public Integer getNumberOfTeacherQuizzes() {

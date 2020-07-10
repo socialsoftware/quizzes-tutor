@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor
 
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
@@ -38,6 +40,11 @@ class BeanConfiguration {
     @Bean
     UserService userService() {
         return new UserService()
+    }
+
+    @Bean
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder()
     }
 
     @Bean
