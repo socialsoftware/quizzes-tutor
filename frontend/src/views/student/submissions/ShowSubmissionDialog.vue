@@ -11,7 +11,7 @@
             </v-card-title>
 
             <v-card-text class="text-left">
-                <show-question :submission="submission" />
+                <show-question :question="submission.question" />
             </v-card-text>
 
             <v-card-actions>

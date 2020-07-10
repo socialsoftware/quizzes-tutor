@@ -12,7 +12,7 @@ export default class Submission {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.courseExecutionId = jsonObj.courseExecutionId;
-      this.question = jsonObj.question;
+      this.question = new Question(jsonObj.question);
       this.userId = jsonObj.userId;
       this.username = jsonObj.username;
       this.anonymous = jsonObj.anonymous;

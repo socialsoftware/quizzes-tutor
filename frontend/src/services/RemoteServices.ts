@@ -604,9 +604,9 @@ export default class RemoteServices {
       });
   }
 
-  static async toggleInReviewStatus(questionId: number){
+  static async toggleInReviewStatus(questionId: number, inReview: boolean){
     return httpClient
-      .put(`/management/reviews/${questionId}`)
+      .put(`/management/reviews/${questionId}?inReview=${inReview}`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

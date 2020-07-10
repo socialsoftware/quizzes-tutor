@@ -35,7 +35,13 @@ public class SubmissionController {
 
     @PostMapping("/executions/{executionId}/reviews")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ReviewDto createReview(@PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
+    public ReviewDto createReview(Principal principal, @PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        reviewDto.setUserId(user.getId());
         return submissionService.createReview(reviewDto);
     }
 

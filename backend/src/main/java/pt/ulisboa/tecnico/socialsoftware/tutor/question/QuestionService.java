@@ -99,7 +99,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(this::isValidQuestion).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -151,7 +151,7 @@ public class QuestionService {
     }
 
     private void removeSubmission(User user, Submission submission) {
-        if(user.isStudent() && submission.getReviews().size() > 0) {
+        if(user.isStudent() && !submission.getReviews().isEmpty()) {
             throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
         }
         deleteSubmission(submission);
@@ -320,6 +320,10 @@ public class QuestionService {
             reviewRepository.delete(review);
         }
         submissionRepository.delete(submission);
+    }
+
+    public boolean isValidQuestion(Question question) {
+        return Arrays.asList(Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REMOVED).contains(question.getStatus());
     }
 }
 

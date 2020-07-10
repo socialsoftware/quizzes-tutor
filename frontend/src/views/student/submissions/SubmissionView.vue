@@ -99,7 +99,6 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import ShowSubmissionDialog from '@/views/student/submissions/ShowSubmissionDialog.vue';
 import EditSubmissionTopics from '@/views/student/submissions/EditSubmissionTopics.vue';
 import ViewSubmissionTopics from '@/views/student/submissions/ViewSubmissionTopics.vue';
@@ -186,9 +185,10 @@ export default class SubmissionView extends Vue {
 
   getStatusColor(status: string) {
     if (status === 'AVAILABLE') return 'green';
+    else if (status === 'DISABLED') return 'orange';
     else if (status === 'REJECTED') return 'red';
     else if (status === 'SUBMITTED') return 'yellow';
-    else if (status === 'IN_REVIEW') return 'orange';
+    else if (status === 'IN_REVIEW') return 'blue';
   }
 
   submitQuestion() {
