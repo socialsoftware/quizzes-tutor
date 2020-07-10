@@ -1,5 +1,5 @@
 <template>
-  <v-card>
+  <v-card v-if='email !== undefined && email !== ""'>
     <v-card-title>{{title}}</v-card-title>
     <v-card-text v-if="!success">
       <form>
@@ -27,13 +27,17 @@
           :rules="[v => v == password || 'Passwords don\'t match']"
           @click:append="show2 = !show2"
         ></v-text-field>
-        <v-btn color="blue darken-1" class="white--text" @click="submit">submit</v-btn>
+        <v-btn color="blue darken-1" class="white--text" :disabled='!(password === confirmPassword && password != "")' @click="submit">submit</v-btn>
       </form>
     </v-card-text>
     <v-card-text v-if="success">
       Success
     </v-card-text>
   </v-card>
+  <v-card v-else>
+        <v-card-title>Invalid Query</v-card-title>
+  </v-card>
+
 </template>
 
 <script lang="ts">
