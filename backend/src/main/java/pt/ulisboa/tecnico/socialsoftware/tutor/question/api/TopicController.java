@@ -19,7 +19,7 @@ public class TopicController {
     private TopicService topicService;
 
     @GetMapping("/courses/{courseId}/topics")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<TopicDto> getCourseTopics(@PathVariable int courseId) {
         logger.debug("courseId {}", courseId);
         return this.topicService.findTopics(courseId);
