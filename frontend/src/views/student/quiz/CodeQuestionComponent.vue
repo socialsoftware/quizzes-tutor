@@ -22,7 +22,7 @@
         />
       </div>
     </div>
-    <div style="position:relative; text-align:left">
+    <div class="code-container" style="position:relative; text-align:left">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
@@ -187,7 +187,6 @@ export default class QuestionComponent extends Vue {
     }
 
     function addOptions(select: any, options: any) {
-      console.log(that.answerData.selectedOptions);
       const data = that.answerData.selectedOptions.find(el => el.sequence === options.sequence);
       select.appendChild(creatBlankOptionChild(!data))
       options.options.forEach((opt: any, i: any) => {
@@ -203,7 +202,7 @@ export default class QuestionComponent extends Vue {
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
-      console.log("ok");
+
       d.onchange = this.selectedANewOption;
       d.name = e.innerHTML;
       e.parentNode.replaceChild(d, e);
@@ -230,16 +229,15 @@ export default class QuestionComponent extends Vue {
       newData.sequence = num;
       this.answerData.selectedOptions.push(newData);
     }
-    console.log(dataQuestion.options[selectIndex].content);
+
     this.$emit("select-option");
   }
 }
 </script>
 
-<style lang="scss" scoped />
 <style>
 
-.question-container select.code-dropdown {
+.code-container select.code-dropdown {
   background-color: #e0e2e5;
   color: inherit;
   border-radius: 0px;
@@ -252,11 +250,11 @@ export default class QuestionComponent extends Vue {
   -moz-appearance: auto;
 }
 
-.question-container select.code-dropdown option {
+.code-container select.code-dropdown option {
   color: #272822;
 }
 
-.question-container .CodeMirror {
+.code-container .CodeMirror {
   border: 1px solid #eee;
   height: auto;
 }

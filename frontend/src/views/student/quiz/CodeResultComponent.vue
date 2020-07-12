@@ -29,7 +29,7 @@
         />
       </div>
     </div>
-    <div style="position:relative; text-align:left">
+    <div class="result-code-container" style="position:relative; text-align:left">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
@@ -153,7 +153,7 @@ export default class ResultComponent extends Vue {
   }
 
   replaceDropdowns() {
-      function getOptions(
+    function getOptions(
       name: number,
       options: StatementFillInSpot[]
     ): StatementFillInSpot {
@@ -162,55 +162,89 @@ export default class ResultComponent extends Vue {
     }
 
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
-      const d = document.createElement('span');
+      const d = document.createElement('select');
       d.className = 'code-dropdown';
+      d.name = e.innerHTML;
       e.parentNode.replaceChild(d, e);
       var num = Number(e.innerHTML.match(/\d+/)[0]);
-      console.log(this.answer);
-      console.log(this.correctAnswer);
+
+      const option = document.createElement('option');
+
       var something = getOptions(Number(num), this.question.fillInSpots);
       var optionAnswered = this.answer.selectedOptions.find(
         el => el.sequence === num
       );
-      var optionAnsweredQuestion = optionAnswered && something.options.find(
-        el => el.optionId === optionAnswered.optionId
-      );
+      var optionAnsweredQuestion =
+        optionAnswered &&
+        something.options.find(el => el.optionId === optionAnswered.optionId);
       var correctOption = this.correctAnswer.correctOptions.find(
         el => el.sequence === num
       );
       var correctOptionQuestion = something.options.find(
         el => el.optionId === correctOption.optionId
       );
-      var text = optionAnswered && optionAnswered.optionId === correctOption.optionId ? ' ✔: ' : ' ✖: '
-      d.innerHTML = text + (optionAnsweredQuestion ? optionAnsweredQuestion.content : 'Not Answered');
-      d.classList.add(
+      var text;
+      if (
+        optionAnswered &&
+        optionAnswered.optionId === correctOption.optionId
+      ) {
+        text = ' ✔: ';
+      } else {
+        text = ' ✖: ';
+        const correctOption = document.createElement('option');
+        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion.content;
+        correctOption.classList.add('answer-spot', 'correct');
+        d.appendChild(correctOption);
+      }
+      option.innerHTML =
+        text +
+        (optionAnsweredQuestion
+          ? optionAnsweredQuestion.content
+          : 'Not Answered');
+      option.classList.add(
         'answer-spot',
         optionAnswered && optionAnswered.optionId === correctOption.optionId
           ? 'correct'
           : 'incorrect'
       );
+
+      d.prepend(option);
+      d.selectedIndex = 0;
     });
   }
 }
 </script>
 
 <style lang="scss">
-.answer-spot {
-  border: solid 1px black;
-
-  &.correct {
-    background-color: #299455;
-    color: white;
+.result-code-container {
+  .code-dropdown{
+    border-radius: 0px;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: rgb(169, 169, 169);
+    font-size: 0.8rem;
+    padding: 0;
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
   }
+  .answer-spot,
+  .code-dropdown {
+    border: solid 1px black;
 
-  &.incorrect {
-    background-color: #cf2323;
-    color: white;
+    &.correct {
+      background-color: #299455;
+      color: white;
+    }
+
+    &.incorrect {
+      background-color: #cf2323;
+      color: white;
+    }
   }
 }
 </style>
-<style lang="scss" scoped>
 
+<style lang="scss" scoped>
 .unanswered {
   .question {
     background-color: #761515 !important;
