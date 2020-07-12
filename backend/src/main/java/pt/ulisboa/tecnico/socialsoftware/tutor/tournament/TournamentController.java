@@ -47,6 +47,42 @@ public class TournamentController {
         return tournamentService.getAllTournaments(user);
     }
 
+    @GetMapping(value = "/tournaments/getOpenTournaments")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    public List<TournamentDto> getOpenTournaments(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.getOpenedTournaments(user);
+    }
+
+    @GetMapping(value = "/tournaments/getClosedTournaments")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    public List<TournamentDto> getClosedTournaments(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.getClosedTournaments(user);
+    }
+
+    @GetMapping(value = "/tournaments/getUserTournaments")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<TournamentDto> getUserTournaments(Principal principal) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+
+        return tournamentService.getUserTournaments(user);
+    }
+
     private void formatDates(TournamentDto tournamentDto) {
         if (tournamentDto.getStartTime() != null && !DateHandler.isValidDateFormat(tournamentDto.getStartTime()))
             tournamentDto.setStartTime(DateHandler.toISOString(DateHandler.toLocalDateTime(tournamentDto.getStartTime())));
