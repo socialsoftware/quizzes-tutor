@@ -46,7 +46,7 @@ import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
 import Option from '@/models/management/Option';
 
 @Component
-export default class FillInOptions extends Vue {
+export default class CodeFillInOptions extends Vue {
   @PropSync('value', { type: CodeFillInSpot }) spot!: CodeFillInSpot;
 
   currentText: string = "";

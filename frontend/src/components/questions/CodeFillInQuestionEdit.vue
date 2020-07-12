@@ -41,7 +41,7 @@
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 import CodeFillInQuestion from '@/models/management/code-fill-in/CodeFillInQuestion';
 import Question from '@/models/management/Question';
-import FillInOptions from '@/components/questions/FillInOptions.vue';
+import FillInOptions from '@/components/questions/CodeFillInOptions.vue';
 import Option from '@/models/management/Option';
 import CodeFillInSpot from '@/models/management/code-fill-in/CodeFillInSpot';
 
