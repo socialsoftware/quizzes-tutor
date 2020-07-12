@@ -66,6 +66,16 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('seeTournamentsLists', type => {
+  cy.contains('Tournaments')
+    .should('be.visible')
+    .click();
+  cy.contains(type)
+    .should('be.visible')
+    .click();
+  cy.wait(100);
+});
+
 Cypress.Commands.add('createTournament', numberOfQuestions => {
   cy.get('[data-cy="createButton"]')
     .should('be.visible')
@@ -76,8 +86,8 @@ Cypress.Commands.add('createTournament', numberOfQuestions => {
   cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
     force: true
   });
-  cy.selectTopic('Adventure Builder');
   cy.selectTopic('Architectural Style');
+  cy.selectTopic('Case Studies');
   cy.get('[data-cy="saveButton"]').click();
 });
 
@@ -92,16 +102,17 @@ Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
     force: true
   });
   cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
-  cy.get('[data-cy="Password"]').type('123');
-  cy.selectTopic('Adventure Builder');
+  cy.wait(100);
+  cy.get('[data-cy="Password"]').type('123', { force: true });
   cy.selectTopic('Architectural Style');
+  cy.selectTopic('Case Studies');
   cy.get('[data-cy="saveButton"]').click();
 });
 
 Cypress.Commands.add('time', (date, day, type) => {
   let get1 = '';
   let get2 = '';
-  if (type == 0) {
+  if (type === 0) {
     get1 = '#startTimeInput-picker-container-DatePicker';
     get2 = '#startTimeInput-wrapper';
   } else {
@@ -111,7 +122,7 @@ Cypress.Commands.add('time', (date, day, type) => {
 
   cy.get('label')
     .contains(date)
-    .click();
+    .click({force: true});
 
   cy.get(get1)
     .should('have.length', 1)
@@ -123,8 +134,9 @@ Cypress.Commands.add('time', (date, day, type) => {
     .children()
     .should('have.length', 3)
     .eq(2)
-    .click()
-    .wait(500);
+    .click({force: true})
+
+  cy.wait(500);
 
   cy.get(get1)
     .should('have.length', 1)
@@ -140,7 +152,7 @@ Cypress.Commands.add('time', (date, day, type) => {
     .children()
     .should('have.length', 2)
     .eq(1)
-    .click();
+    .click({force: true});
 });
 
 Cypress.Commands.add('selectTopic', topic => {

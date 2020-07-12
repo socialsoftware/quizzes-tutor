@@ -1,17 +1,23 @@
 describe('Student walkthrough', () => {
   beforeEach(() => {
     cy.demoStudentLogin();
-    cy.contains('Tournaments')
-      .should('be.visible')
-      .click();
-    cy.contains('All')
-      .should('be.visible')
-      .click();
-    cy.wait(100);
+    cy.seeTournamentsLists('All');
   });
 
   afterEach(() => {
-    cy.contains('Logout').click();
+    cy.logout();
+  });
+
+  it('login sees open tournaments', () => {
+    cy.seeTournamentsLists('Open');
+  });
+
+  it('login sees closed tournaments', () => {
+    cy.seeTournamentsLists('Closed');
+  });
+
+  it('login sees my tournaments', () => {
+    cy.seeTournamentsLists('My');
   });
 
   it('login creates a tournament', () => {
