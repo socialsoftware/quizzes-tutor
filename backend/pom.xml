@@ -265,6 +265,11 @@
             <version>1.3-groovy-2.5</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy.modules.http-builder</groupId>
+            <artifactId>http-builder</artifactId>
+            <version>0.7.1</version>
+        </dependency>
 
         <!-- Specific Groovy version rather than the one specified by spock-core -->
         <dependency>
@@ -280,6 +285,7 @@
             <version>2.6</version>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

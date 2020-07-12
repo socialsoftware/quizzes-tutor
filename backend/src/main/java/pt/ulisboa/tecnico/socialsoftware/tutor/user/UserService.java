@@ -232,8 +232,9 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (courseExecution.getType() != Course.Type.EXTERNAL)
+        if (courseExecution.getType() != Course.Type.EXTERNAL){
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        }
         return courseExecution;
     }
 
