@@ -60,6 +60,16 @@ public enum ErrorMessage {
     CANNOT_START_QRCODE_QUIZ("This is a QRCode only quiz"),
     NOT_QRCODE_QUIZ("Not a QRCode only quiz"),
 
+    TOURNAMENT_MUST_HAVE_ONE_TOPIC("Tournament must have at least one topic"),
+    TOURNAMENT_MISSING_USER("Missing user for tournament"),
+    TOURNAMENT_MISSING_START_TIME("Missing start time for tournament"),
+    TOURNAMENT_MISSING_END_TIME("Missing end time for tournament"),
+    TOURNAMENT_MISSING_TOPICS("Missing topics for tournament"),
+    TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS("Missing number of questions for tournament"),
+    TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
+    TOURNAMENT_TOPIC_COURSE("Tournament topics must be of the same course execution"),
+    USER_NOT_STUDENT("Username %s is not a student"),
+
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     ONE_CORRECT_OPTION_NEEDED("Questions need to have 1 and only 1 correct option"),

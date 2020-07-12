@@ -15,6 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
@@ -38,6 +40,7 @@ class SpockTest extends Specification {
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
 
     public static final String COURSE_1_NAME = "Course 1 Name"
+    public static final String COURSE_2_NAME = "Course 2 Name"
     public static final String COURSE_1_ACADEMIC_TERM = "1º Semestre 2019/2020"
     public static final String COURSE_2_ACADEMIC_TERM = "2º Semestre 2019/2020"
     public static final String COURSE_1_ACRONYM = "C12"
@@ -55,9 +58,11 @@ class SpockTest extends Specification {
     public static final LocalDateTime LOCAL_DATE_TOMORROW = DateHandler.now().plusDays(1)
     public static final LocalDateTime LOCAL_DATE_LATER = DateHandler.now().plusDays(2)
 
-    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_BEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2))
+    public static final String STRING_DATE_YESTERDAY = DateHandler.toISOString(DateHandler.now().minusDays(1))
     public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
     public static final String STRING_DATE_TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
 
     public static final String QUESTION_1_CONTENT = "Question 1 Content\n ![image][image]\n question content"
     public static final String QUESTION_2_CONTENT = "Question 2 Content\n ![image][image]\n question content"
@@ -74,6 +79,9 @@ class SpockTest extends Specification {
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
     public static final String QUIZ_TITLE = "Quiz title"
+
+    public static final int NUMBER_OF_QUESTIONS = 1
+
 
     @Autowired
     AuthService authService
@@ -137,6 +145,12 @@ class SpockTest extends Specification {
 
     @Autowired
     TopicService topicService
+
+    @Autowired
+    TournamentRepository tournamentRepository
+
+    @Autowired
+    TournamentService tournamentService
 
     @Autowired
     UserRepository userRepository

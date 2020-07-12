@@ -18,4 +18,7 @@ public interface AssessmentRepository extends JpaRepository<Assessment, Integer>
 
     @Query(value = "SELECT a.course_execution_id FROM assessments a WHERE a.id = :id", nativeQuery = true)
     Optional<Integer> findCourseExecutionIdById(int id);
+
+    @Query(value = "SELECT * FROM assessments a WHERE a.title = 'Tournament'", nativeQuery = true)
+    Assessment findTournamentAssessment();
 }

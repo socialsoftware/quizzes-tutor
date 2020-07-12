@@ -17,7 +17,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Table(name = "assessments")
 public class Assessment implements DomainEntity {
     public enum Status {
-        DISABLED, AVAILABLE, REMOVED
+        DISABLED, AVAILABLE, REMOVED, TOURNAMENT
     }
 
     @Id
