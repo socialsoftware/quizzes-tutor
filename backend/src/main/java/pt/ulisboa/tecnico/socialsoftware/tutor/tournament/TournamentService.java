@@ -100,8 +100,31 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getAllTournaments(User user) {
-        List<CourseExecution> list = new ArrayList<>(user.getCourseExecutions());
-        return tournamentRepository.getAllTournaments(list).stream().map(TournamentDto::new)
+        Set<CourseExecution> set = user.getCourseExecutions();
+        return tournamentRepository.getAllTournaments(set).stream().map(TournamentDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> getOpenedTournaments(User user) {
+        Set<CourseExecution> set = user.getCourseExecutions();
+        return tournamentRepository.getOpenedTournaments(set).stream().map(TournamentDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> getClosedTournaments(User user) {
+        Set<CourseExecution> set = user.getCourseExecutions();
+        return tournamentRepository.getClosedTournaments(set).stream().map(TournamentDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<TournamentDto> getUserTournaments(User user) {
+        return tournamentRepository.getUserTournaments(user.getId()).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 

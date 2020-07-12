@@ -78,6 +78,33 @@ class CreateTournamentTest extends SpockTest {
         User.Role.STUDENT | STRING_DATE_TOMORROW | STRING_DATE_LATER    | NUMBER_OF_QUESTIONS
     }
 
+    def "create a private tournament"() {
+        given: 'a tournamentDto'
+        tournamentDto.setStartTime(STRING_DATE_TODAY)
+        tournamentDto.setEndTime(STRING_DATE_LATER)
+        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
+        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setPrivateTournament(true)
+        tournamentDto.setPassword('123')
+
+        when:
+        tournamentService.createTournament(user.getId(), topics, tournamentDto)
+
+        then: "the correct tournament is inside the repository"
+        tournamentRepository.count() == 1L
+        def result = tournamentRepository.findAll().get(0)
+        result.getId() != null
+        DateHandler.toISOString(result.getStartTime()) == STRING_DATE_TODAY
+        DateHandler.toISOString(result.getEndTime()) == STRING_DATE_LATER
+        result.getTopicConjunction().getTopics() == [topic2, topic1] as Set
+        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+        result.getState() == Tournament.Status.NOT_CANCELED
+        result.getCreator() == user
+        result.getCourseExecution() == courseExecution
+        result.isPrivateTournament() == true
+        result.getPassword() == '123'
+    }
+
     @Unroll
     def "invalid arguments: userRole=#userRole | startTime=#startTime | endTime=#endTime | numberOfQuestions=#numberOfQuestions || errorMessage=#errorMessage"() {
         given: 'a tournamentDto'
