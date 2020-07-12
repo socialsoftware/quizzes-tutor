@@ -60,6 +60,8 @@ public enum ErrorMessage {
     CANNOT_START_QRCODE_QUIZ("This is a QRCode only quiz"),
     NOT_QRCODE_QUIZ("Not a QRCode only quiz"),
 
+    DUPLICATE_TOURNAMENT_PARTICIPANT("Duplicate tournament participant: %s"),
+    STUDENT_NO_COURSE_EXECUTION("Student has no matching course execution : %s"),
     TOURNAMENT_MUST_HAVE_ONE_TOPIC("Tournament must have at least one topic"),
     TOURNAMENT_MISSING_USER("Missing user for tournament"),
     TOURNAMENT_MISSING_START_TIME("Missing start time for tournament"),
@@ -67,8 +69,12 @@ public enum ErrorMessage {
     TOURNAMENT_MISSING_TOPICS("Missing topics for tournament"),
     TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS("Missing number of questions for tournament"),
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
+    TOURNAMENT_NOT_FOUND("Tournament %s not found"),
     TOURNAMENT_TOPIC_COURSE("Tournament topics must be of the same course execution"),
+    TOURNAMENT_NOT_OPEN("Tournament not open: %s"),
+    TOURNAMENT_CANCELED("Tournament canceled: %s"),
     USER_NOT_STUDENT("Username %s is not a student"),
+    WRONG_TOURNAMENT_PASSWORD("Wrong tournament password for private tournament %d"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),

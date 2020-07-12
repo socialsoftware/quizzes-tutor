@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
@@ -21,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -57,11 +59,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         checkInput(userId, topicsId, tournamentDto);
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        if (user.getRole() != User.Role.STUDENT) {
-            throw new TutorException(USER_NOT_STUDENT, user.getId());
-        }
+        User user = checkUser(userId);
 
         List<TopicDto> topicDtos = new ArrayList<>();
         for (Integer topicId : topicsId) {
@@ -128,6 +126,43 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void joinTournament(Integer userId, TournamentDto tournamentDto, String password) {
+        User user = checkUser(userId);
+        Tournament tournament = checkTournament(tournamentDto);
+
+        if (DateHandler.now().isAfter(tournament.getEndTime())) {
+            throw new TutorException(TOURNAMENT_NOT_OPEN, tournament.getId());
+        }
+
+        if (tournament.getState() == Tournament.Status.CANCELED) {
+            throw new TutorException(TOURNAMENT_CANCELED, tournament.getId());
+        }
+
+        if (tournament.getParticipants().contains(user)) {
+            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, user.getUsername());
+        }
+
+        if (!user.getCourseExecutions().contains(tournament.getCourseExecution())) {
+            throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
+        }
+
+        if (tournament.isPrivateTournament() && !password.equals(tournament.getPassword())) {
+            throw new TutorException(WRONG_TOURNAMENT_PASSWORD, tournament.getId());
+        }
+
+        tournament.addParticipant(user);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<StudentDto> getTournamentParticipants(TournamentDto tournamentDto) {
+        Tournament tournament = checkTournament(tournamentDto);
+
+        return tournament.getParticipants().stream().map(StudentDto::new).collect(Collectors.toList());
+    }
+
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         if (userId == null) {
             throw new TutorException(TOURNAMENT_MISSING_USER);
@@ -144,5 +179,20 @@ public class TournamentService {
         if (tournamentDto.getNumberOfQuestions() == null) {
             throw new TutorException(TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS);
         }
+    }
+
+    private User checkUser(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        if (user.getRole() != User.Role.STUDENT) {
+            throw new TutorException(USER_NOT_STUDENT, user.getId());
+        }
+
+        return user;
+    }
+
+    private Tournament checkTournament(TournamentDto tournamentDto) {
+        return tournamentRepository.findById(tournamentDto.getId())
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
     }
 }
