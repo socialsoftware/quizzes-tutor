@@ -13,6 +13,7 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Tournament from '@/models/user/Tournament';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -616,5 +617,50 @@ export default class RemoteServices {
       console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static async createTournament(
+    topicsID: Number[],
+    tournament: Tournament
+  ): Promise<Tournament> {
+    let path: string = '/tournaments?';
+    for (let topicID of topicsID) {
+      path += 'topicsId=' + topicID + '&';
+    }
+    path = path.substring(0, path.length - 1);
+    return httpClient
+      .post(path, tournament)
+      .then(response => {
+        return new Tournament(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getAllTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/getAllTournaments')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament, Store.getters.getUser);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getClosedTournaments(): Promise<Tournament[]> {
+    return httpClient
+      .get('/tournaments/getClosedTournaments')
+      .then(response => {
+        return response.data.map((tournament: any) => {
+          return new Tournament(tournament, Store.getters.getUser);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }

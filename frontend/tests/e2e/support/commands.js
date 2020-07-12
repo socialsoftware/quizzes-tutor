@@ -65,3 +65,95 @@ Cypress.Commands.add(
     cy.get('[data-cy="saveButton"]').click();
   }
 );
+
+Cypress.Commands.add('createTournament', numberOfQuestions => {
+  cy.get('[data-cy="createButton"]')
+    .should('be.visible')
+    .click({ force: true });
+  cy.time('Start Time', 16, 0);
+  cy.wait(100);
+  cy.time('End Time', 18, 1);
+  cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
+    force: true
+  });
+  cy.selectTopic('Adventure Builder');
+  cy.selectTopic('Architectural Style');
+  cy.get('[data-cy="saveButton"]').click();
+});
+
+Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
+  cy.get('[data-cy="createButton"]')
+    .should('be.visible')
+    .click({ force: true });
+  cy.time('Start Time', 16, 0);
+  cy.wait(100);
+  cy.time('End Time', 18, 1);
+  cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
+    force: true
+  });
+  cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
+  cy.get('[data-cy="Password"]').type('123');
+  cy.selectTopic('Adventure Builder');
+  cy.selectTopic('Architectural Style');
+  cy.get('[data-cy="saveButton"]').click();
+});
+
+Cypress.Commands.add('time', (date, day, type) => {
+  let get1 = '';
+  let get2 = '';
+  if (type == 0) {
+    get1 = '#startTimeInput-picker-container-DatePicker';
+    get2 = '#startTimeInput-wrapper';
+  } else {
+    get1 = '#endTimeInput-picker-container-DatePicker';
+    get2 = '#endTimeInput-wrapper';
+  }
+
+  cy.get('label')
+    .contains(date)
+    .click();
+
+  cy.get(get1)
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 3)
+    .eq(0)
+    .children()
+    .should('have.length', 3)
+    .eq(2)
+    .click()
+    .wait(500);
+
+  cy.get(get1)
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 3)
+    .eq(2)
+    .children()
+    .contains(day)
+    .click()
+    .get(get2)
+    .children()
+    .should('have.length', 2)
+    .eq(1)
+    .click();
+});
+
+Cypress.Commands.add('selectTopic', topic => {
+  cy.get('[data-cy="Topics"]')
+    .should('be.visible')
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 4)
+    .contains(topic)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 2)
+    .find('[data-cy="addTopic"]')
+    .click();
+});
