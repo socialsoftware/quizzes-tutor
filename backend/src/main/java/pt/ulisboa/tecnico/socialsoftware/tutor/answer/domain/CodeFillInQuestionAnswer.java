@@ -7,14 +7,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInSpot;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
@@ -71,7 +70,9 @@ public class CodeFillInQuestionAnswer extends QuestionAnswer {
             if (answer.getSelectedOptions() != null) {
                 for (CodeFillInOptionStatementAnswerDto option : answer.getSelectedOptions()) {
 
-                    FillInOption fillInOption = fillInOptions.stream()
+                    FillInOption fillInOption = this.getQuestion().getFillInSpots().stream()
+                            .map(FillInSpot::getOptions)
+                            .flatMap(Collection::stream)
                             .filter(option1 -> option1.getId().equals(option.getOptionId()))
                             .findAny()
                             .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, option.getOptionId()));
@@ -119,6 +120,12 @@ public class CodeFillInQuestionAnswer extends QuestionAnswer {
     public void accept(Visitor visitor) {
         visitor.visitQuestionAnswer(this);
     }
+
+    @Override
+    public CodeFillInQuestion getQuestion() {
+        return (CodeFillInQuestion) getQuizQuestion().getQuestion();
+    }
+
 
     @Override
     public void remove() {

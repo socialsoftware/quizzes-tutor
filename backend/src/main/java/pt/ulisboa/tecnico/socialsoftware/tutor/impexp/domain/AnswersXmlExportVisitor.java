@@ -4,9 +4,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
@@ -73,8 +75,7 @@ public class AnswersXmlExportVisitor implements Visitor{
         this.rootElement.addContent(quizAnswerElement);
     }
 
-    @Override
-    public void visitQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {
+    private Element exportBaseQuestionAnswer(QuestionAnswer questionAnswer){
         Element questionAnswerElement = new Element("questionAnswer");
 
         if (questionAnswer.getTimeTaken() != null) {
@@ -89,11 +90,37 @@ public class AnswersXmlExportVisitor implements Visitor{
         quizQuestionElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         questionAnswerElement.addContent(quizQuestionElement);
 
+        return questionAnswerElement;
+    }
+
+    @Override
+    public void visitQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {
+        Element questionAnswerElement = exportBaseQuestionAnswer(questionAnswer);
+
         if ( questionAnswer.getOption() != null) {
             Element optionElement = new Element("option");
             optionElement.setAttribute("questionKey", String.valueOf(questionAnswer.getOption().getQuestion().getKey()));
             optionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getOption().getSequence()));
             questionAnswerElement.addContent(optionElement);
+        }
+
+        this.currentElement.addContent(questionAnswerElement);
+    }
+
+    @Override
+    public void visitQuestionAnswer(CodeFillInQuestionAnswer questionAnswer) {
+        Element questionAnswerElement = exportBaseQuestionAnswer(questionAnswer);
+
+        if (questionAnswer.getFillInOptions() != null && !questionAnswer.getFillInOptions().isEmpty()) {
+            Element selectedOptionsElement = new Element("options");
+            for (FillInOption option: questionAnswer.getFillInOptions()) {
+                Element optionElement = new Element("option");
+                optionElement.setAttribute("questionKey", String.valueOf(option.getFillInSpot().getQuestion().getKey()));
+                optionElement.setAttribute(SEQUENCE, String.valueOf(option.getSequence()));
+                selectedOptionsElement.addContent(optionElement);
+            }
+            questionAnswerElement.addContent(selectedOptionsElement);
+
         }
 
         this.currentElement.addContent(questionAnswerElement);
