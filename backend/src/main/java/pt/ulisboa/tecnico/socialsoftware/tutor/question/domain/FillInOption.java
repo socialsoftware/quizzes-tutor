@@ -88,6 +88,8 @@ public class FillInOption implements DomainEntity{
 
     @Override
     public void accept(Visitor visitor) {
-        throw new TutorException(ErrorMessage.ACCESS_DENIED);
+        visitor.visitFillInOption(this);
     }
+
+
 }

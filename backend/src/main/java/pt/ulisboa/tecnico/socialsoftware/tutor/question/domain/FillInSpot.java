@@ -100,4 +100,10 @@ public class FillInSpot implements DomainEntity{
     public void accept(Visitor visitor) {
         visitor.visitFillInSpot(this);
     }
+
+    public void visitOptions(Visitor visitor) {
+        for (FillInOption option : this.getOptions()) {
+            option.accept(visitor);
+        }
+    }
 }

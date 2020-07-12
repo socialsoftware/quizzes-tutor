@@ -42,6 +42,8 @@ public interface Visitor {
 
     default void visitCourseExecution(CourseExecution courseExecution) {}
 
+    default void visitFillInOption(FillInOption fillInOption) {}
+
     default String convertSequenceToLetter(Integer value) {
         switch (value) {
             case 0:
