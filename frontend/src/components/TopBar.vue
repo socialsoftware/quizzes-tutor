@@ -149,13 +149,13 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="Tournament">
               Tournaments
               <v-icon>fas fa-trophy</v-icon>
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/myTournaments">
+            <v-list-item to="/student/myTournaments" data-cy="My">
               <v-list-item-action>
                 <v-icon>fas fa-user-check</v-icon>
               </v-list-item-action>
@@ -163,7 +163,7 @@
                 <v-list-item-title>My Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/all">
+            <v-list-item to="/student/all" data-cy="All">
               <v-list-item-action>
                 <v-icon>fas fa-calendar</v-icon>
               </v-list-item-action>
@@ -171,7 +171,7 @@
                 <v-list-item-title>All</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/open">
+            <v-list-item to="/student/open" data-cy="Open">
               <v-list-item-action>
                 <v-icon>fas fa-medal</v-icon>
               </v-list-item-action>
@@ -179,7 +179,7 @@
                 <v-list-item-title>Open</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/closed">
+            <v-list-item to="/student/closed" data-cy="Closed">
               <v-list-item-action>
                 <v-icon>fas fa-award</v-icon>
               </v-list-item-action>

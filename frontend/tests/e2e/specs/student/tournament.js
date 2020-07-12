@@ -27,4 +27,16 @@ describe('Student walkthrough', () => {
   it('login creates private tournament', () => {
     cy.createPrivateTournament('3');
   });
+
+  it('login creates a tournament and joins', () => {
+    cy.createTournament('3');
+    cy.wait(100);
+    cy.joinTournament('-1');
+  });
+
+  it('login creates a private tournament and joins', () => {
+    cy.createPrivateTournament('3');
+    cy.wait(100);
+    cy.joinPrivateTournament('-1');
+  });
 });

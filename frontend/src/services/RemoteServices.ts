@@ -689,4 +689,11 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static joinTournament(tournament: Tournament, password: String) {
+    let path: string = 'tournaments/joinTournament?password=' + password;
+    return httpClient.put(path, tournament).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
 }

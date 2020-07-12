@@ -67,12 +67,8 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('seeTournamentsLists', type => {
-  cy.contains('Tournaments')
-    .should('be.visible')
-    .click();
-  cy.contains(type)
-    .should('be.visible')
-    .click();
+  cy.get('[data-cy="Tournament"]').click();
+  cy.get('[data-cy="' + type + '"]').click();
   cy.wait(100);
 });
 
@@ -92,17 +88,9 @@ Cypress.Commands.add('createTournament', numberOfQuestions => {
 });
 
 Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
-  cy.get('[data-cy="createButton"]')
-    .should('be.visible')
-    .click({ force: true });
-  cy.time('Start Time', 16, 0);
-  cy.wait(100);
-  cy.time('End Time', 18, 1);
-  cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
-    force: true
-  });
+  cy.createTournament(numberOfQuestions);
   cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
-  cy.wait(100);
+  cy.wait(500);
   cy.get('[data-cy="Password"]').type('123', { force: true });
   cy.selectTopic('Architectural Style');
   cy.selectTopic('Case Studies');
@@ -157,7 +145,6 @@ Cypress.Commands.add('time', (date, day, type) => {
 
 Cypress.Commands.add('selectTopic', topic => {
   cy.get('[data-cy="Topics"]')
-    .should('be.visible')
     .should('have.length', 1)
     .children()
     .should('have.length', 4)
@@ -168,4 +155,28 @@ Cypress.Commands.add('selectTopic', topic => {
     .should('have.length', 2)
     .find('[data-cy="addTopic"]')
     .click();
+});
+
+Cypress.Commands.add('joinTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="JoinTournament"]')
+    .click({ force: true });
+});
+
+Cypress.Commands.add('joinPrivateTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="JoinTournament"]')
+    .click({ force: true });
+
+  cy.get('[data-cy="Password"]').type('123');
 });

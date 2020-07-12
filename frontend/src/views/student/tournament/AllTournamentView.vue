@@ -132,6 +132,13 @@
       v-on:new-tournament="onCreateTournament"
       v-on:close-dialog="onCloseDialog"
     />
+    <edit-password-dialog
+      v-if="currentTournament"
+      v-model="editPasswordDialog"
+      :tournament="currentTournament"
+      v-on:enter-password="joinPrivateTournament"
+      v-on:close-password-dialog="onClosePasswordDialog"
+    />
   </v-card>
 </template>
 
@@ -140,11 +147,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
+import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 
 @Component({
   components: {
     'edit-tournament-dialog': CreateTournamentDialog,
+    'edit-password-dialog': EditPasswordDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
 })
@@ -310,6 +319,24 @@ export default class AllTournamentView extends Vue {
   isClosed(tournamentToJoin: Tournament) {
     if (tournamentToJoin.id)
       return this.closedTournamentsId.includes(tournamentToJoin.id);
+  }
+
+  async joinPrivateTournament(password: string) {
+    this.password = password;
+    if (this.currentTournament)
+      await this.joinPublicTournament(this.currentTournament);
+    this.editPasswordDialog = false;
+    this.currentTournament = null;
+    this.password = '';
+  }
+
+  async joinPublicTournament(tournamentToJoin: Tournament) {
+    try {
+      await RemoteServices.joinTournament(tournamentToJoin, this.password);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+      return;
+    }
   }
 }
 </script>

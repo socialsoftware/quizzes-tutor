@@ -10,7 +10,7 @@ export default class Tournament {
   state!: string;
   courseAcronym!: string;
   enrolled!: boolean;
-  topics?: String[];
+  topics!: String[];
   participants!: User[];
   quizId!: number;
   privateTournament!: boolean;
