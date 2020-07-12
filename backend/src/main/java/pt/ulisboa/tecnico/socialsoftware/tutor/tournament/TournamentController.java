@@ -83,6 +83,17 @@ public class TournamentController {
         return tournamentService.getUserTournaments(user);
     }
 
+    @PutMapping(value = "/tournaments/joinTournament")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    public void joinTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam String password) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        tournamentService.joinTournament(user.getId(), tournamentDto, password);
+    }
+
     private void formatDates(TournamentDto tournamentDto) {
         if (tournamentDto.getStartTime() != null && !DateHandler.isValidDateFormat(tournamentDto.getStartTime()))
             tournamentDto.setStartTime(DateHandler.toISOString(DateHandler.toLocalDateTime(tournamentDto.getStartTime())));
