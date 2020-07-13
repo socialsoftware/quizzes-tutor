@@ -76,7 +76,7 @@ public class SubmissionController {
 
     @GetMapping(value = "/student/submissions/all")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<SubmissionDto> getAllStudentSubmissions(@Valid @RequestParam int executionId) {
+    public List<SubmissionDto> getAllStudentsSubmissions(@Valid @RequestParam int executionId) {
         return submissionService.getAllStudentsSubmissions(executionId);
     }
 }

@@ -126,7 +126,7 @@ public class SubmissionService {
 
         for (SubmissionDto submission : submissions) {
             if (submission.isAnonymous())
-                submission.setUsername(null);
+                submission.setName(null);
         }
 
         return submissions;

@@ -7,7 +7,7 @@ export default class Review {
   justification!: string;
   status!: string;
   creationDate!: string;
-  username!: string;
+  name!: string;
 
   constructor(jsonObj?: Review) {
     if (jsonObj) {
@@ -17,7 +17,7 @@ export default class Review {
       this.justification = jsonObj.justification;
       this.status = jsonObj.status;
       this.creationDate = ISOtoString(jsonObj.creationDate);
-      this.username = jsonObj.username;
+      this.name = jsonObj.name;
     }
   }
 }

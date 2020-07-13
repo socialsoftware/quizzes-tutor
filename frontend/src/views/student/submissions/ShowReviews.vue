@@ -6,7 +6,7 @@
                 <v-chip small :color="getStatusColor(review.status)">
                     <span>{{ reviewStatus(review.status) }}</span>
                 </v-chip>
-                {{ ' by ' + review.username }}
+                {{ ' by ' + review.name }}
             </p>
             <p>
                 {{ "'" + review.justification + "'" }}

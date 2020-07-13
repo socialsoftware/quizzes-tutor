@@ -26,6 +26,12 @@
           {{ item.question.title }}
         </div>
       </template>
+      <template v-slot:item.anonymous="{ item }">
+          <span v-if="item.anonymous">
+            <v-icon color="green">fa-check</v-icon>
+          </span>
+        <span v-else> <v-icon color="red">fa-times</v-icon> </span>
+      </template>
       <template v-slot:item.question.status="{ item }">
         <v-chip :color="getStatusColor(item.question.status)" small>
           <span>{{ item.question.status }}</span>
@@ -110,6 +116,13 @@ export default class SubmissionView extends Vue {
       sortable: false
     },
     { text: 'Title', value: 'question.title', align: 'center', width: '50%' },
+    { text: 'Submitted by', value: 'name', align: 'center', width: '10%' },
+    {
+      text: 'Anonymous',
+      value: 'anonymous',
+      align: 'center',
+      width: '150px'
+    },
     {
       text: 'Status',
       value: 'question.status',
