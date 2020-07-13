@@ -4,9 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
@@ -17,6 +16,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class JoinTournamentTest extends SpockTest {
+    def question1
     def topic1
     def topic2
     def tournamentDto
@@ -65,6 +65,17 @@ class JoinTournamentTest extends SpockTest {
         privateTournamentDto.setPrivateTournament(true)
         privateTournamentDto.setPassword('123')
         privateTournamentDto = tournamentService.createTournament(user1.getId(), topics, privateTournamentDto)
+
+        question1 = new Question()
+        question1.setKey(1)
+        question1.setCreationDate(LOCAL_DATE_TODAY)
+        question1.setContent(QUESTION_1_CONTENT)
+        question1.setTitle(QUESTION_1_TITLE)
+        question1.setStatus(Question.Status.AVAILABLE)
+        question1.setCourse(course)
+        question1.addTopic(topic1)
+        question1.addTopic(topic2)
+        questionRepository.save(question1)
     }
 
     def "2 student join an open tournament and get participants" () {

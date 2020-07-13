@@ -17,6 +17,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
@@ -44,13 +49,19 @@ public class TournamentService {
     private AssessmentRepository assessmentRepository;
 
     @Autowired
-    private UserRepository userRepository;
+    private QuizRepository quizRepository;
+
+    @Autowired
+    private StatementService statementService;
 
     @Autowired
     private TopicRepository topicRepository;
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @PersistenceContext
     EntityManager entityManager;
@@ -81,7 +92,7 @@ public class TournamentService {
 
         AssessmentDto assessmentDto = new AssessmentDto();
         assessmentDto.setTitle("Tournament");
-        assessmentDto.setStatus("TOURNAMENT");
+        assessmentDto.setStatus(Assessment.Status.TOURNAMENT.name());
         assessmentDto.setTopicConjunctions(topicConjunctions);
         assessmentService.createAssessment(user.getCourseExecutions().iterator().next().getId(), assessmentDto);
 
@@ -90,7 +101,7 @@ public class TournamentService {
         Tournament tournament = new Tournament(user, assessment, tournamentDto);
         this.entityManager.persist(tournament);
 
-        tournament.getAssessment().setTitle("Tournament " + tournament.getId());
+        tournament.getAssessment().setTitle("Tournament " + tournament.getId() + " Assessment");
 
         return new TournamentDto(tournament);
     }
@@ -153,6 +164,27 @@ public class TournamentService {
         }
 
         tournament.addParticipant(user);
+
+        if (!tournament.hasQuiz()) {
+            StatementCreationDto quizForm = new StatementCreationDto();
+            quizForm.setNumberOfQuestions(tournament.getNumberOfQuestions());
+            quizForm.setAssessment(tournament.getAssessment().getId());
+
+            StatementQuizDto statementQuizDto = statementService.generateStudentQuiz(tournament.getCreator().getId(),
+                    tournament.getCourseExecution().getId(), quizForm);
+
+            Quiz quiz = quizRepository.findById(statementQuizDto.getId())
+                    .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
+
+            if (DateHandler.now().isBefore(tournament.getStartTime())) {
+                quiz.setAvailableDate(tournament.getStartTime());
+            }
+            quiz.setConclusionDate(tournament.getEndTime());
+            quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
+            quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
+
+            tournament.setQuizId(statementQuizDto.getId());
+        }
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

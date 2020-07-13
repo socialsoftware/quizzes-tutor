@@ -169,6 +169,7 @@ public class StatementService {
         return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
+                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.TOURNAMENT.name()))
                 .collect(Collectors.toList());
     }
 
