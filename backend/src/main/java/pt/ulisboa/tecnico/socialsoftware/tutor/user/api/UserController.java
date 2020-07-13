@@ -18,4 +18,9 @@ public class UserController {
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
         return userService.createExternalUser(executionId,externalUserDto);
     }
+
+    @PostMapping ("/users/registration/confirm")
+    public ExternalUserDto confirmRegistration(@Valid @RequestBody ExternalUserDto externalUserDto){
+        return userService.confirmRegistration(externalUserDto);
+    }
 }

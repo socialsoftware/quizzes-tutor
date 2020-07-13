@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,9 @@ public class UserService {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -246,10 +250,21 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public boolean confirmRegistration(ExternalUserDto externalUserDto) {
-        User user = findByUsername(externalUserDto.getEmail());
+    public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
+        User user = findByUsername(externalUserDto.getUsername());
 
-        return false;
+        if (user == null)
+            throw new TutorException(USERNAME_NOT_FOUND, externalUserDto.getUsername());
+
+        if (user.isActive())
+            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
+
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
+            throw new TutorException(INVALID_PASSWORD);
+
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+
+        return new ExternalUserDto(user);
     }
 
 }

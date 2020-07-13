@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Store from '@/store';
 
 import LoginView from '@/views/LoginView.vue';
+import RegistrationConfirmationView from '@/views/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
@@ -46,6 +47,15 @@ let router = new Router({
       component: LoginView,
       meta: {
         title: APP_NAME + ' - Login',
+        requiredAuth: 'None'
+      }
+    },
+    {
+      path: '/registration/confirmation',
+      name: 'registration-confirmation',
+      component: RegistrationConfirmationView,
+      meta: {
+        title: APP_NAME + ' - Registration Confirmation',
         requiredAuth: 'None'
       }
     },
