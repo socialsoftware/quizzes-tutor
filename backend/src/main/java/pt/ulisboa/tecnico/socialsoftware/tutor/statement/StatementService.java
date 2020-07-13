@@ -123,6 +123,29 @@ public class StatementService {
             throw new TutorException(NOT_QRCODE_QUIZ);
         }
 
+        return getQuiz(user, quiz);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto getTournamentQuiz(int userId, int quizId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        if (!quiz.isTournamentQuiz()) {
+            throw new TutorException(NOT_TOURNAMENT_QUIZ);
+        }
+
+        return getQuiz(user, quiz);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto getQuiz(User user, Quiz quiz) {
         if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
@@ -147,7 +170,7 @@ public class StatementService {
             }
             return new StatementQuizDto(quizAnswer);
 
-        // Send timer
+            // Send timer
         } else {
             StatementQuizDto quizDto = new StatementQuizDto();
             quizDto.setTimeToAvailability(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getAvailableDate()));
@@ -184,6 +207,24 @@ public class StatementService {
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
+    public List<QuizDto> getTournamentQuizzes(int userId, int executionId) {
+        LocalDateTime now = DateHandler.now();
+        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId, now);
+
+        Stream<Quiz> availableQuizzes = quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
+                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
+
+        return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
+                .map(quiz -> new QuizDto(quiz, false))
+                .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
+                .filter(quiz -> quiz.getType().equals(Quiz.QuizType.TOURNAMENT.name()))
                 .collect(Collectors.toList());
     }
 

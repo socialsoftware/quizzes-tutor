@@ -141,6 +141,8 @@ public class Quiz implements DomainEntity {
         this.qrCodeOnly = qrCodeOnly;
     }
 
+    public boolean isTournamentQuiz() { return type == QuizType.TOURNAMENT; }
+
     public boolean isOneWay() {
         return oneWay;
     }

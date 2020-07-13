@@ -189,6 +189,25 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatementQuizDto solveQuiz(Integer userId, TournamentDto tournamentDto) {
+        User user = checkUser(userId);
+        Tournament tournament = checkTournament(tournamentDto);
+
+        if (!tournament.getParticipants().contains(user)) {
+            throw new TutorException(USER_NOT_JOINED, userId);
+        }
+
+        if (!tournament.hasQuiz()) {
+            throw new TutorException(TOURNAMENT_NO_QUIZ, tournamentDto.getId());
+        }
+
+        return statementService.startQuiz(userId, tournament.getQuizId());
+    }
+
+
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> getTournamentParticipants(TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto);
 

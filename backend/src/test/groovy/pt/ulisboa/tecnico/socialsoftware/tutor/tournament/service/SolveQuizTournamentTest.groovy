@@ -4,16 +4,18 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
+
 @DataJpaTest
-class QuizTournamentGenerateTest extends SpockTest {
+class SolveQuizTournamentTest extends SpockTest {
     def question1
     def topic1
     def topic2
@@ -59,42 +61,45 @@ class QuizTournamentGenerateTest extends SpockTest {
         questionRepository.save(question1)
     }
 
-    def "1 student join a tournament" () {
+    def "1 student join a tournament and solves it" () {
         given:
-
-        when:
         tournamentService.joinTournament(user1.getId(), tournamentDto, "")
 
-        then: "the correct quiz is inside the repository"
-        quizRepository.count() == 1L
-        def result = statementService.getTournamentQuizzes(user1.getId(), courseExecution.getId()).get(0)
-        result.getId() != null
-        result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT.name()
-        result.getConclusionDate() == STRING_DATE_LATER
-        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+        when:
+        def result = tournamentService.solveQuiz(user1.getId(), tournamentDto)
+
+        then: "solved it"
+        result != null
     }
 
-    def "2 student join a tournament" () {
+    def "2 student join a tournament and solve it" () {
         given:
         def user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         user2.addCourse(courseExecution)
         userRepository.save(user2)
 
-        when: 'both students join the tournament'
+        and:
         tournamentService.joinTournament(user1.getId(), tournamentDto, "")
         tournamentService.joinTournament(user2.getId(), tournamentDto, "")
 
-        then: 'there is only one quiz generated'
-        quizRepository.count() == 1L
+        when:
+        def result1 = tournamentService.solveQuiz(user1.getId(), tournamentDto)
+        def result2 = tournamentService.solveQuiz(user2.getId(), tournamentDto)
 
-        and: "the correct quiz is inside the repository"
-        def result = statementService.getTournamentQuizzes(user1.getId(), courseExecution.getId()).get(0)
-        result.getId() != null
-        result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT.name()
-        result.getConclusionDate() == STRING_DATE_LATER
-        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+        then: "solved it"
+        result1 != null
+        result2 != null
+    }
+
+    def "student that did not join tries to solve tournament" () {
+        given:
+
+        when:
+        def result = tournamentService.solveQuiz(user1.getId(), tournamentDto)
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == USER_NOT_JOINED
     }
 
     @TestConfiguration
