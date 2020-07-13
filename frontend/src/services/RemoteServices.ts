@@ -11,6 +11,7 @@ import Topic from '@/models/management/Topic';
 import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
+import ExternalUser from '@/models/user/ExternalUser';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 
@@ -73,6 +74,17 @@ export default class RemoteServices {
       .get('/auth/demo/admin')
       .then(response => {
         return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async confirmRegistration(externalUser: ExternalUser): Promise<ExternalUser> {
+    return httpClient
+      .post('/users/registration/confirm', externalUser)
+      .then(response => {
+        return new ExternalUser(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

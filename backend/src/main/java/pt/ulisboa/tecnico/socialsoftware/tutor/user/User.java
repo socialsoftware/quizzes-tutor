@@ -185,6 +185,10 @@ public class User implements UserDetails, DomainEntity {
         this.email = email;
     }
 
+    public boolean isActive() {
+        return !(getPassword() == null || getPassword().isBlank());
+    }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()

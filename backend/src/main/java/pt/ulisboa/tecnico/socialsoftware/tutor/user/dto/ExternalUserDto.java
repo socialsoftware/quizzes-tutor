@@ -82,6 +82,10 @@ public class ExternalUserDto implements Serializable {
         this.role = role;
     }
 
+    public boolean isActive() {
+        return !(password == null || password.isEmpty());
+    }
+
     public boolean isAdmin() {
         return isAdmin;
     }
