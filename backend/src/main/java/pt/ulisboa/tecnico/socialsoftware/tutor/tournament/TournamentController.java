@@ -107,6 +107,17 @@ public class TournamentController {
         return tournamentService.solveQuiz(user.getId(), tournamentDto);
     }
 
+    @PutMapping(value = "/tournaments/leaveTournament")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    public void leaveTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        tournamentService.leaveTournament(user.getId(), tournamentDto);
+    }
+
     private void formatDates(TournamentDto tournamentDto) {
         if (tournamentDto.getStartTime() != null && !DateHandler.isValidDateFormat(tournamentDto.getStartTime()))
             tournamentDto.setStartTime(DateHandler.toISOString(DateHandler.toLocalDateTime(tournamentDto.getStartTime())));
