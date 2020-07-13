@@ -657,10 +657,10 @@ export default class RemoteServices {
       });
   }
 
-  static async getAllStudentSubmissions(): Promise<Submission[]> {
+  static async getAllStudentsSubmissions(): Promise<Submission[]> {
     return httpClient
       .get(
-        `/student/submission/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/student/submissions/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
         return response.data.map((submission: any) => {
