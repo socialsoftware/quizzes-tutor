@@ -180,3 +180,14 @@ Cypress.Commands.add('joinPrivateTournament', tournament => {
 
   cy.get('[data-cy="Password"]').type('123');
 });
+
+Cypress.Commands.add('solveTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="SolveQuiz"]')
+    .click({ force: true });
+});

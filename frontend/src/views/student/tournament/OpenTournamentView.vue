@@ -154,6 +154,8 @@ import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementManager from '@/models/statement/StatementManager';
 
 @Component({
   components: {
@@ -323,6 +325,22 @@ export default class OpenTournamentView extends Vue {
       await this.$store.dispatch('error', error);
       return;
     }
+  }
+
+  async solveQuiz(tournament: Tournament) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    const participants = tournament.participants;
+    tournament.participants = [];
+    try {
+      statementManager.statementQuiz = await RemoteServices.solveTournament(
+        tournament
+      );
+      await this.$router.push({ name: 'solve-quiz' });
+    } catch (error) {
+      tournament.participants = participants;
+      await this.$store.dispatch('error', error);
+    }
+    tournament.participants = participants;
   }
 }
 </script>
