@@ -23,7 +23,7 @@ import javax.transaction.Transactional
 
 @SpringBootTest
 @ActiveProfiles("dev")
-class CreateExternalUserWebServiceSpec extends Specification{
+class CreateExternalUserWebServiceIntegrationTest extends Specification{
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String COURSE_1_NAME = "Course 1 Name"

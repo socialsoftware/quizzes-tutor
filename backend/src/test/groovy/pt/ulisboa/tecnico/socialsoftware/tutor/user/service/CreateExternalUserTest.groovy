@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 
 @DataJpaTest
-class CreateExternalUserIntegrationTest extends SpockTest {
+class CreateExternalUserTest extends SpockTest {
 
     static final String COURSE_NAME = "Course1"
 
