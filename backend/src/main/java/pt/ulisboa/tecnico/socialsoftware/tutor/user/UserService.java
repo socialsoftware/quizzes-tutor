@@ -21,16 +21,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -236,8 +233,9 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (courseExecution.getType() != Course.Type.EXTERNAL)
+        if (courseExecution.getType() != Course.Type.EXTERNAL){
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        }
         return courseExecution;
     }
 

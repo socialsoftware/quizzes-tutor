@@ -491,6 +491,4 @@ public class User implements UserDetails, DomainEntity {
                 .findAny()
                 .orElse(null);
     }
-
-
 }
