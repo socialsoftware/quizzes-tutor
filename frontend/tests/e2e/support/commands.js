@@ -191,3 +191,14 @@ Cypress.Commands.add('solveTournament', tournament => {
     .find('[data-cy="SolveQuiz"]')
     .click({ force: true });
 });
+
+Cypress.Commands.add('leaveTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="LeaveTournament"]')
+    .click({ force: true });
+});

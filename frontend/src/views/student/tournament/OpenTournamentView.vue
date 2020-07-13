@@ -319,12 +319,16 @@ export default class OpenTournamentView extends Vue {
   }
 
   async joinPublicTournament(tournamentToJoin: Tournament) {
+    const participants = tournamentToJoin.participants;
+    tournamentToJoin.participants = [];
     try {
       await RemoteServices.joinTournament(tournamentToJoin, this.password);
     } catch (error) {
       await this.$store.dispatch('error', error);
+      tournamentToJoin.participants = participants;
       return;
     }
+    tournamentToJoin.participants = participants;
   }
 
   async solveQuiz(tournament: Tournament) {
@@ -341,6 +345,20 @@ export default class OpenTournamentView extends Vue {
       await this.$store.dispatch('error', error);
     }
     tournament.participants = participants;
+  }
+
+  async leaveTournament(tournamentToLeave: Tournament) {
+    const participants = tournamentToLeave.participants;
+    tournamentToLeave.participants = [];
+    try {
+      await RemoteServices.leaveTournament(tournamentToLeave);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+      tournamentToLeave.participants = participants;
+      return;
+    }
+    tournamentToLeave.enrolled = false;
+    tournamentToLeave.participants = participants;
   }
 }
 </script>

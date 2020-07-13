@@ -46,4 +46,11 @@ describe('Student walkthrough', () => {
     cy.joinTournament('-1');
     cy.solveTournament('-1');
   });
+
+  it('login creates, joins and leaves tournament', () => {
+    cy.createTournament('3');
+    cy.wait(100);
+    cy.joinTournament('0');
+    cy.leaveTournament('0');
+  });
 });
