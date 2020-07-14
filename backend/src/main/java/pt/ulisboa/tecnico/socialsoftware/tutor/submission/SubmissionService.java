@@ -92,6 +92,23 @@ public class SubmissionService {
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
+        Submission submission = getSubmission(submissionId);
+
+        if (submissionDto.getArgument() == null || submissionDto.getArgument().isBlank()) {
+            throw new TutorException(ARGUMENT_MISSING_EDIT_SUBMISSION);
+        } else if (submission.getArgument() != null && submission.getArgument().equals(submissionDto.getArgument())) {
+            throw new TutorException(INVALID_ARGUMENT_FOR_SUBMISSION);
+        } else {
+            submission.setArgument(submissionDto.getArgument());
+        }
+
+        this.questionService.updateQuestion(submissionDto.getQuestion().getId(), submissionDto.getQuestion());
+        return new SubmissionDto(submission);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleInReviewStatus(int questionId, boolean inReview) {
         String status = inReview ? "IN_REVIEW" : "SUBMITTED";
         updateQuestionStatus(status, questionId);
@@ -142,7 +159,7 @@ public class SubmissionService {
     }
 
     private void checkIfConsistentReview(ReviewDto reviewDto) {
-        if (reviewDto.getJustification() == null || reviewDto.getJustification().isBlank())
+        if (reviewDto.getJustification() == null || reviewDto.getJustification().isEmpty())
             throw new TutorException(REVIEW_MISSING_JUSTIFICATION);
         else if (reviewDto.getSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_SUBMISSION);
