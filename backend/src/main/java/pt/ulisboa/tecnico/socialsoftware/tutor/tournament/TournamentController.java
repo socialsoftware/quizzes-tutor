@@ -97,6 +97,17 @@ public class TournamentController {
         tournamentService.updateTournament(user.getId(), topicsId, tournamentDto);
     }
 
+    @PutMapping(value = "/tournaments/cancelTournament")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void cancelTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        tournamentService.cancelTournament(user.getId(), tournamentDto);
+    }
+
     private User checkUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
