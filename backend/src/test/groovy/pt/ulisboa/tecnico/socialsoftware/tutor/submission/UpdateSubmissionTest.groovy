@@ -4,7 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -12,6 +11,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import spock.lang.Unroll
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ARGUMENT_MISSING_EDIT_SUBMISSION
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_ARGUMENT_FOR_SUBMISSION
 
 @DataJpaTest
 class UpdateSubmissionTest extends SpockTest{
@@ -77,7 +80,8 @@ class UpdateSubmissionTest extends SpockTest{
         result.getArgument() == SUBMISSION_2_ARGUMENT
     }
 
-    def "edit a submission with invalid argument"(){
+    @Unroll
+    def "invalid arguments: argument=#argument || errorMessage"(){
         given: "an edited questionDto"
         def questionDto = new QuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)
@@ -85,53 +89,20 @@ class UpdateSubmissionTest extends SpockTest{
         and: "a submissionDto"
         def submissionDto = new SubmissionDto(submission)
         submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(SUBMISSION_1_ARGUMENT)
+        submissionDto.setArgument(argument)
 
         when:
         submissionService.updateSubmission(submission.getId(), submissionDto)
 
         then: "exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.INVALID_ARGUMENT_FOR_SUBMISSION
+        exception.errorMessage == errorMessage
 
-    }
-
-    def "edit a submission with argument null"(){
-        given: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
-        questionDto.setTitle(QUESTION_2_TITLE)
-        questionDto.setContent(QUESTION_2_CONTENT)
-        and: "a submissionDto"
-        def submissionDto = new SubmissionDto(submission)
-        submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(null);
-
-        when:
-        submissionService.updateSubmission(submission.getId(), submissionDto)
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.ARGUMENT_MISSING_EDIT_SUBMISSION
-
-    }
-
-    def "edit a submission with empty argument"(){
-        given: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
-        questionDto.setTitle(QUESTION_2_TITLE)
-        questionDto.setContent(QUESTION_2_CONTENT)
-        and: "a submissionDto"
-        def submissionDto = new SubmissionDto(submission)
-        submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument('');
-
-        when:
-        submissionService.updateSubmission(submission.getId(), submissionDto)
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.ARGUMENT_MISSING_EDIT_SUBMISSION
-
+        where:
+        argument              || errorMessage
+        null                  || ARGUMENT_MISSING_EDIT_SUBMISSION
+        ' '                   || ARGUMENT_MISSING_EDIT_SUBMISSION
+        SUBMISSION_1_ARGUMENT || INVALID_ARGUMENT_FOR_SUBMISSION
     }
 
     @TestConfiguration
