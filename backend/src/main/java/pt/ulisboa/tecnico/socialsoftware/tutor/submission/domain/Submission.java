@@ -19,6 +19,9 @@ public class Submission {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Question question;
 
+    @Column(columnDefinition = "TEXT")
+    private String argument;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -69,4 +72,8 @@ public class Submission {
     public Set<Review> getReviews() { return reviews; }
 
     public void addReview(Review review) { this.reviews.add(review); }
+
+    public String getArgument() { return argument; }
+
+    public void setArgument(String argument) { this.argument = argument; }
 }

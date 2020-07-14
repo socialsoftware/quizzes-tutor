@@ -192,6 +192,7 @@ public class SubmissionService {
     private Submission createSubmission(SubmissionDto submissionDto, CourseExecution courseExecution, Question question, User user) {
         Submission submission = new Submission(courseExecution, question, user);
         submission.setAnonymous(submissionDto.isAnonymous());
+        submission.setArgument(submissionDto.getArgument());
         return submission;
     }
 
