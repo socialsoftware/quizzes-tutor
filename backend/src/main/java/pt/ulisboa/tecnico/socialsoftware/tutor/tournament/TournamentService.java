@@ -17,7 +17,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
@@ -33,6 +35,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -47,6 +50,9 @@ public class TournamentService {
 
     @Autowired
     private AssessmentRepository assessmentRepository;
+
+    @Autowired
+    private QuizService quizService;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -207,16 +213,62 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void leaveTournament(Integer userId, TournamentDto tournamentDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        Tournament tournament = tournamentRepository.findById(tournamentDto.getId())
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
+        User user = checkUser(userId);
+        Tournament tournament = checkTournament(tournamentDto);
 
         if (!tournament.getParticipants().contains(user)) {
             throw new TutorException(USER_NOT_JOINED, user.getUsername());
         }
 
         tournament.removeParticipant(user);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TournamentDto updateTournament(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
+        User user = checkUser(userId);
+        Tournament tournament = checkTournament(tournamentDto);
+
+        if (tournament.getCreator() != user) {
+            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
+        }
+
+        tournament.checkCanChange();
+
+        // change
+        if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
+            DateHandler.toISOString(tournament.getStartTime());
+            tournament.setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
+        }
+
+        if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {
+            DateHandler.toISOString(tournament.getEndTime());
+            tournament.setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
+        }
+
+        if (tournament.hasQuiz()) { // update current Quiz
+            Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
+                    .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, tournamentDto.getQuizId()));
+
+            QuizDto quizDto = quizService.findById(tournamentDto.getQuizId());
+            quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+
+            quizService.updateQuiz(quiz.getId(), quizDto);
+        }
+        tournament.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+
+        Set<Topic> topics = new HashSet<>();
+        for (Integer topicId : topicsId) {
+            Topic topic = topicRepository.findById(topicId)
+                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+            tournament.checkTopicCourse(topic);
+            topics.add(topic);
+        }
+
+        tournament.updateTopics(topics);
+        return new TournamentDto(tournament);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

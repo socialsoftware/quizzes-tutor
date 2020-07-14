@@ -20,7 +20,6 @@ class LeaveTournamentTest extends SpockTest {
     def topic1
     def topic2
     def tournamentDto
-    def privateTournamentDto
     def topics = new HashSet<Integer>()
     def user1
     def user2
@@ -56,7 +55,7 @@ class LeaveTournamentTest extends SpockTest {
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentDto.setState(Tournament.Status.NOT_CANCELED)
         tournamentDto = tournamentService.createTournament(user1.getId(), topics, tournamentDto)
-        
+
         question1 = new Question()
         question1.setKey(1)
         question1.setCreationDate(LOCAL_DATE_TODAY)

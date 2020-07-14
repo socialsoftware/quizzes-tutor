@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
@@ -59,6 +60,8 @@ public class TournamentDto implements Serializable {
     public void setState(Tournament.Status state) { this.state = state; }
 
     public TopicConjunctionDto getTopicConjunction() { return topicConjunction; }
+
+    public void setTopicConjunction(TopicConjunctionDto topicConjunction) { this.topicConjunction = topicConjunction; }
 
     public Set<StudentDto> getParticipants() { return participants; }
 

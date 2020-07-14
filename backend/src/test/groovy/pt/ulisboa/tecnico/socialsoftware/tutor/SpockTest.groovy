@@ -61,8 +61,11 @@ class SpockTest extends Specification {
     public static final String STRING_DATE_BEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2))
     public static final String STRING_DATE_YESTERDAY = DateHandler.toISOString(DateHandler.now().minusDays(1))
     public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+    public static final String STRING_DATE_TODAY_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusMinutes(10))
     public static final String STRING_DATE_TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    public static final String STRING_DATE_TOMORROW_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(1).plusMinutes(10))
     public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_LATER_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(2).plusMinutes(10))
 
     public static final String QUESTION_1_CONTENT = "Question 1 Content\n ![image][image]\n question content"
     public static final String QUESTION_2_CONTENT = "Question 2 Content\n ![image][image]\n question content"

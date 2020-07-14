@@ -63,6 +63,9 @@ public enum ErrorMessage {
 
     DUPLICATE_TOURNAMENT_PARTICIPANT("Duplicate tournament participant: %s"),
     STUDENT_NO_COURSE_EXECUTION("Student has no matching course execution : %s"),
+    TOURNAMENT_ALREADY_CLOSED("Tournament %s has already ended. You can not change it now"),
+    TOURNAMENT_CREATOR("User %s can not cancel this tournament"),
+    TOURNAMENT_IS_OPEN("Tournament %s is live. You can not change it now"),
     TOURNAMENT_MUST_HAVE_ONE_TOPIC("Tournament must have at least one topic"),
     TOURNAMENT_MISSING_USER("Missing user for tournament"),
     TOURNAMENT_MISSING_START_TIME("Missing start time for tournament"),

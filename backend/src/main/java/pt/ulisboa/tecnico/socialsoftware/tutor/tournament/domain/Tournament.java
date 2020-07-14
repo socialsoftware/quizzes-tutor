@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
@@ -180,6 +181,14 @@ public class Tournament  {
 
         getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
+    }
+
+    public void checkCanChange() {
+        if (this.getStartTime().isBefore(DateHandler.now())) {
+            if (this.getEndTime().isBefore(DateHandler.now()))
+                throw new TutorException(TOURNAMENT_ALREADY_CLOSED, getId());
+            throw new TutorException(TOURNAMENT_IS_OPEN, getId());
+        }
     }
 
     public boolean isPrivateTournament() { return privateTournament; }
