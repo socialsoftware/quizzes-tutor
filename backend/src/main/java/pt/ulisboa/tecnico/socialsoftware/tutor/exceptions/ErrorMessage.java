@@ -37,8 +37,10 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
+    INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
