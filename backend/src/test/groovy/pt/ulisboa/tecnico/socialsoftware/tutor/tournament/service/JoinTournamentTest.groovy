@@ -91,11 +91,13 @@ class JoinTournamentTest extends SpockTest {
         def resTournamentParticipant1 = result.get(0)
         def resTournamentParticipant2 = result.get(1)
 
-        resTournamentParticipant1.getName() == USER_1_NAME
-        resTournamentParticipant1.getUsername() == USER_1_USERNAME
+        resTournamentParticipant1.getName() == USER_1_NAME || USER_2_NAME
+        resTournamentParticipant1.getUsername() == USER_1_USERNAME || USER_2_USERNAME
 
-        resTournamentParticipant2.getName() == USER_2_NAME
-        resTournamentParticipant2.getUsername() == USER_2_USERNAME
+        resTournamentParticipant2.getName() == USER_1_NAME || USER_2_NAME
+        resTournamentParticipant2.getUsername() == USER_1_USERNAME || USER_2_USERNAME
+
+        resTournamentParticipant1 != resTournamentParticipant2
     }
 
     def "1 student and 1 teacher join an open tournament and get participants" () {
