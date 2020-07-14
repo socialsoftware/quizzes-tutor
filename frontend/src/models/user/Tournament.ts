@@ -1,6 +1,7 @@
 import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
+import TopicConjunction from '@/models/management/TopicConjunction';
 
 export default class Tournament {
   id!: number;
@@ -10,6 +11,7 @@ export default class Tournament {
   state!: string;
   courseAcronym!: string;
   enrolled!: boolean;
+  topicConjunction!: TopicConjunction;
   topics!: String[];
   participants!: User[];
   quizId!: number;
@@ -26,14 +28,13 @@ export default class Tournament {
       this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 
-      if (jsonObj.topics) {
-        // @ts-ignore
-        jsonObj.topics.forEach((topic: Topic) => {
+      this.topicConjunction = jsonObj.topicConjunction;
+      if (this.topicConjunction)
+        this.topicConjunction.topics.forEach((topic: Topic) => {
           if (!this.topics!.includes(topic.name)) {
             this.topics!.push(topic.name);
           }
         });
-      }
 
       this.participants = jsonObj.participants;
       this.enrolled = false;

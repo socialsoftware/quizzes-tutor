@@ -202,3 +202,25 @@ Cypress.Commands.add('leaveTournament', tournament => {
     .find('[data-cy="LeaveTournament"]')
     .click({ force: true });
 });
+
+Cypress.Commands.add('editTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="EditTournament"]')
+    .click({ force: true });
+
+  cy.time('Start Time', 20, 0);
+  cy.wait(100);
+  cy.time('End Time', 22, 1);
+  cy.get('[data-cy="NumberOfQuestions"]')
+    .clear()
+    .type(5, {
+      force: true
+    });
+  cy.selectTopic('Allocation viewtype');
+  cy.get('[data-cy="saveButton"]').click();
+});

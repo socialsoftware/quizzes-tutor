@@ -127,6 +127,13 @@
       v-on:new-tournament="onCreateTournament"
       v-on:close-dialog="onCloseDialog"
     />
+    <edit-tournament-dialog
+      v-if="currentTournament"
+      v-model="editTournamentDialog"
+      :tournament="currentTournament"
+      v-on:edit-tournament="onEditTournament"
+      v-on:close-edit-dialog="onCloseEditDialog"
+    />
   </v-card>
 </template>
 
@@ -135,11 +142,13 @@ import { Component, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
+import EditTournamentDialog from '@/views/student/tournament/EditTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 
 @Component({
   components: {
     'create-tournament-dialog': CreateTournamentDialog,
+    'edit-tournament-dialog': EditTournamentDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
 })
