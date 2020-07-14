@@ -10,9 +10,9 @@
             <v-card-title>
         <span class="headline">
           {{
-            editSubmission.question && editSubmission.question.id === null
-              ? 'New Submission'
-              : 'Edit Submission'
+            editMode(editSubmission)
+              ? 'Edit Submission'
+              : 'New Submission'
           }}
         </span>
             </v-card-title>
@@ -43,7 +43,7 @@
                         outline
                         rows="5"
                         v-model="editSubmission.argument"
-                        label="Argument (Optional)"
+                        :label="editMode(editSubmission) ? 'Argument' : 'Argument (Optional)'"
                 ></v-textarea>
             </v-card-text>
 
@@ -100,13 +100,17 @@
       try {
         const result =
           this.editSubmission.question.id != null
-            ? await RemoteServices.updateQuestion(this.editSubmission.question)
+            ? await RemoteServices.updateSubmission(this.editSubmission)
             : await RemoteServices.createSubmission(this.editSubmission);
 
         this.$emit('save-submission', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
+    }
+
+    editMode(editSubmission: Submission) {
+      return editSubmission.question && editSubmission.question.id !== null;
     }
   }
 </script>

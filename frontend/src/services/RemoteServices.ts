@@ -604,6 +604,17 @@ export default class RemoteServices {
       });
   }
 
+  static async updateSubmission(submission: Submission): Promise<Submission> {
+    return httpClient
+      .put(`/submissions/${submission.id}`, submission)
+      .then(response => {
+        return new Submission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async toggleInReviewStatus(questionId: number, inReview: boolean){
     return httpClient
       .put(`/management/reviews/${questionId}?inReview=${inReview}`)

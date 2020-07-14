@@ -21,7 +21,9 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="submitQuestion"
+          <v-btn color="primary" dark @click="getSubmissions"
+            >Refresh List</v-btn
+          ><v-btn color="primary" dark @click="submitQuestion"
             >Submit Question</v-btn
           >
         </v-card-title>
@@ -173,6 +175,10 @@ export default class SubmissionView extends Vue {
   }
 
   async created() {
+    await this.getSubmissions();
+  }
+
+  async getSubmissions() {
     await this.$store.dispatch('loading');
     try {
       [this.submissions, this.topics] = await Promise.all([
@@ -215,6 +221,7 @@ export default class SubmissionView extends Vue {
   editSubmission(submission: Submission, e?: Event) {
     if (e) e.preventDefault();
     this.currentSubmission = submission;
+    this.currentSubmission.argument = null;
     this.editSubmissionDialog = true;
   }
 
