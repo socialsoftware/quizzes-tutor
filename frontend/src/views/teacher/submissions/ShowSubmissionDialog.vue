@@ -12,9 +12,13 @@
 
       <v-card-text class="text-left">
         <show-question :question="submission.question" />
+        <div v-if="submission.argument !== null">
+          <h3 style="display: inline">Argument: </h3>
+          <p style="display: inline">{{ submission.argument }}</p>
+        </div>
       </v-card-text>
       <v-card-title>
-        <span class="headline">{{ 'Reviews History' }}</span>
+        <span class="headline">{{ 'Reviews' }}</span>
       </v-card-title>
       <div class="text-left">
         <show-reviews
@@ -23,26 +27,20 @@
           :submission="submission"
         />
       </div>
-      <v-container
-        v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+      <div class="text-left"
+           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
       >
         <v-card-title>
           <span class="headline">{{ 'New Review' }}</span>
         </v-card-title>
-        <v-card-text
-          class="text-left"
-          v-if="
-            submission.question.status === 'SUBMITTED' ||
-              submission.question.status === 'IN_REVIEW'
-          "
-        >
+        <v-card-text class="text-left">
           <v-textarea
             rows="1"
             v-model="justification"
             label="Justification"
           ></v-textarea>
         </v-card-text>
-      </v-container>
+      </div>
       <v-card-actions>
         <v-spacer />
         <v-btn
