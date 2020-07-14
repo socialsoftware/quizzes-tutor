@@ -39,9 +39,26 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
             <build>
                 <plugins>
+                    <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>pre-integration-test</id>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>post-integration-test</id>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <!-- The gmavenplus plugin is used to compile Groovy code. To learn
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
@@ -58,16 +75,22 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.0</version>
-                                <configuration>
-                                    <excludes>
-                                        <exclude>none</exclude>
-                                    </excludes>
-                                    <includes>
-                                        <include>**/*IntegrationTest</include>
-                                    </includes>
-                                </configuration>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.22.2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>**/*IT</include>
+                            </includes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -89,7 +112,6 @@
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
                     </plugin>
-
                     <plugin>
                         <!-- The gmavenplus plugin is used to compile Groovy code. To learn
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
@@ -113,12 +135,8 @@
                         <configuration>
                             <useFile>false</useFile>
                             <excludes>
-                                <exclude>**/*IntegrationTest</exclude>
+                                <exclude>**/*IT</exclude>
                             </excludes>
-                            <includes>
-                                <include>**/*Test.java</include>
-                                <include>**/*Spec.java</include>
-                            </includes>
                         </configuration>
                     </plugin>
 
