@@ -21,6 +21,12 @@
                     />
 
                     <v-spacer />
+                    <v-btn
+                            color="primary"
+                            dark
+                            @click="toggleOwnSubmissions">
+                        {{ filterLabel }}
+                    </v-btn>
                     <v-btn-toggle
                             dense
                             borderless
@@ -107,12 +113,15 @@
   import { Component, Vue, Watch } from 'vue-property-decorator';
   import RemoteServices from '@/services/RemoteServices';
   import ShowSubmissionDialog from '@/views/student/submissions/ShowSubmissionDialog.vue';
-  import EditSubmissionTopics from '@/views/student/submissions/EditSubmissionTopics.vue';
   import ViewSubmissionTopics from '@/views/student/submissions/ViewSubmissionTopics.vue';
-  import EditSubmissionDialog from '@/views/student/submissions/EditSubmissionDialog.vue';
   import Question from '@/models/management/Question';
   import Submission from '@/models/management/Submission';
-  import Topic from '@/models/management/Topic';
+
+  enum FilterState {
+    SHOW = 'Show my submissions',
+    HIDE = 'Hide my submissions'
+  }
+
 
   @Component({
     components: {
@@ -121,6 +130,8 @@
     }
   })
   export default class AllSubmissionsView extends Vue {
+    filterLabel: FilterState = FilterState.HIDE;
+    currentStatus: string = 'ALL';
     submissions: Submission[] = [];
     allSubmissions: Submission[] = [];
     currentSubmission: Submission | null = null;
@@ -203,12 +214,23 @@
       this.submissionDialog = false;
     }
 
+    toggleOwnSubmissions() {
+      this.filterLabel = this.filterLabel === FilterState.HIDE ? FilterState.SHOW : FilterState.HIDE;
+      this.filterSubmissions(this.currentStatus);
+    }
+
     filterSubmissions(status: string) {
-      this.submissions = status === 'ALL' ?
+      this.currentStatus = status;
+      let aux = status === 'ALL' ?
         this.allSubmissions :
         this.allSubmissions.filter(s => {
         return s.question.status === status;
       });
+      this.submissions = this.filterLabel === FilterState.HIDE ?
+        aux :
+        aux.filter( s => {
+          return s.name !== this.$store.getters.getUser.name;
+        });
     }
   }
 </script>

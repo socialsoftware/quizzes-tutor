@@ -12,9 +12,13 @@
 
             <v-card-text class="text-left">
                 <show-question :question="submission.question" />
+                <div v-if="submission.argument !== null && submission.name === $store.getters.getUser.name">
+                    <h3 style="display: inline">Argument: </h3>
+                    <p style="display: inline">{{ submission.argument }}</p>
+                </div>
             </v-card-text>
             <v-card-title>
-                <span class="headline">{{ 'Reviews History' }}</span>
+                <span class="headline">{{ 'Reviews' }}</span>
             </v-card-title>
             <div class="text-left">
                 <show-reviews

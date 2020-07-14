@@ -5,6 +5,8 @@
       :custom-filter="customFilter"
       :items="submissions"
       :search="search"
+      :sort-by="['question.creationDate']"
+      sort-desc
       item-key="id"
       :mobile-breakpoint="0"
       :items-per-page="15"

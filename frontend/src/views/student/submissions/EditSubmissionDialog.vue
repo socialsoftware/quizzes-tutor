@@ -33,11 +33,18 @@
                     />
                     <v-textarea
                             outline
-                            rows="10"
+                            rows="3"
                             v-model="editSubmission.question.options[index - 1].content"
                             :label="`Option ${index}`"
                     ></v-textarea>
                 </div>
+                <br><br>
+                <v-textarea
+                        outline
+                        rows="5"
+                        v-model="editSubmission.argument"
+                        label="Argument (Optional)"
+                ></v-textarea>
             </v-card-text>
 
             <v-card-actions>

@@ -1,5 +1,6 @@
 <template>
     <v-container>
+        <p v-if="reviews.length === 0" style="text-align: center; color: lightgrey"> No reviews available </p>
         <v-container v-for="review in reviews" :key="review.id" class="review">
             <p>
                 {{ review.creationDate + ': ' }}
