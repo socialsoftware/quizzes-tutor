@@ -301,6 +301,22 @@ export default class MyTournamentsView extends Vue {
   isNotCanceled(tournamentToCancel: Tournament) {
     return tournamentToCancel.state === 'NOT_CANCELED';
   }
+
+  async cancelTournament(tournamentToCancel: Tournament) {
+    if (confirm('Are you sure you want to cancel this tournament?')) {
+      const participants = tournamentToCancel.participants;
+      tournamentToCancel.participants = [];
+      try {
+        await RemoteServices.cancelTournament(tournamentToCancel);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        tournamentToCancel.participants = participants;
+        return;
+      }
+      tournamentToCancel.state = 'CANCELED';
+      tournamentToCancel.participants = participants;
+    }
+  }
 }
 </script>
 

@@ -224,3 +224,14 @@ Cypress.Commands.add('editTournament', tournament => {
   cy.selectTopic('Allocation viewtype');
   cy.get('[data-cy="saveButton"]').click();
 });
+
+Cypress.Commands.add('cancelTournament', tournament => {
+  cy.get('tbody')
+    .children()
+    .eq(tournament)
+    .children()
+    .should('have.length', 9)
+    .eq(0)
+    .find('[data-cy="CancelTournament"]')
+    .click({ force: true });
+});

@@ -734,4 +734,12 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  static cancelTournament(tournament: Tournament) {
+    return httpClient
+      .put('tournaments/cancelTournament', tournament)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
 }

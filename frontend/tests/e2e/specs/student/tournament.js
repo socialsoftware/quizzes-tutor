@@ -58,4 +58,9 @@ describe('Student walkthrough', () => {
     cy.seeTournamentsLists('My');
     cy.editTournament('-1');
   });
+
+  it('login cancel tournament', () => {
+    cy.seeTournamentsLists('My');
+    cy.cancelTournament('-1');
+  });
 });
