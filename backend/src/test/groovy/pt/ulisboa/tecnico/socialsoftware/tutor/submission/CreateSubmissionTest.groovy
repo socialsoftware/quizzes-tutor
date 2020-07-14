@@ -88,6 +88,7 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion().getStatus() == Question.Status.SUBMITTED
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
+        result.getArgument() == SUBMISSION_ARGUMENT
     }
 
     def "create an anonymous submission with question not null"() {
