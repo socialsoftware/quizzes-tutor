@@ -317,6 +317,22 @@ export default class MyTournamentsView extends Vue {
       tournamentToCancel.participants = participants;
     }
   }
+
+  async removeTournament(tournamentToRemove: Tournament) {
+    if (confirm('Are you sure you want to delete this tournament?')) {
+      const participants = tournamentToRemove.participants;
+      tournamentToRemove.participants = [];
+      try {
+        if (tournamentToRemove.id)
+          await RemoteServices.removeTournament(tournamentToRemove.id);
+        this.tournaments = await RemoteServices.getUserTournaments();
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        tournamentToRemove.participants = participants;
+        return;
+      }
+    }
+  }
 }
 </script>
 
