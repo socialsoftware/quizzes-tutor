@@ -147,7 +147,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, TournamentDto tournamentDto, String password) {
         User user = checkUser(userId);
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         if (DateHandler.now().isAfter(tournament.getEndTime())) {
             throw new TutorException(TOURNAMENT_NOT_OPEN, tournament.getId());
@@ -197,7 +197,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto solveQuiz(Integer userId, TournamentDto tournamentDto) {
         User user = checkUser(userId);
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         if (!tournament.getParticipants().contains(user)) {
             throw new TutorException(USER_NOT_JOINED, userId);
@@ -214,7 +214,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void leaveTournament(Integer userId, TournamentDto tournamentDto) {
         User user = checkUser(userId);
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         if (!tournament.getParticipants().contains(user)) {
             throw new TutorException(USER_NOT_JOINED, user.getUsername());
@@ -229,7 +229,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TournamentDto updateTournament(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         User user = checkUser(userId);
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         if (tournament.getCreator() != user) {
             throw new TutorException(TOURNAMENT_CREATOR, user.getId());
@@ -275,7 +275,7 @@ public class TournamentService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void cancelTournament(Integer userId, TournamentDto tournamentDto) {
         User user = checkUser(userId);
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         if (tournament.getCreator() != user) {
             throw new TutorException(TOURNAMENT_CREATOR, user.getId());
@@ -287,8 +287,23 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeTournament(Integer userId, Integer tournamentId) {
+        User user = checkUser(userId);
+        Tournament tournament = checkTournament(tournamentId);
+
+        if (tournament.getCreator() != user) {
+            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
+        }
+
+        tournament.checkCanChange();
+        tournament.remove();
+        tournamentRepository.delete(tournament);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> getTournamentParticipants(TournamentDto tournamentDto) {
-        Tournament tournament = checkTournament(tournamentDto);
+        Tournament tournament = checkTournament(tournamentDto.getId());
 
         return tournament.getParticipants().stream().map(StudentDto::new).collect(Collectors.toList());
     }
@@ -321,8 +336,8 @@ public class TournamentService {
         return user;
     }
 
-    private Tournament checkTournament(TournamentDto tournamentDto) {
-        return tournamentRepository.findById(tournamentDto.getId())
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentDto.getId()));
+    private Tournament checkTournament(Integer tournamentId) {
+        return tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 }

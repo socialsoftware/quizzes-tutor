@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CancelTournamentTest extends SpockTest {
+class RemoveTournamentTest extends SpockTest {
     def topic1
     def topic2
     def tournamentDto
@@ -47,26 +47,24 @@ class CancelTournamentTest extends SpockTest {
         tournamentDto.setState(Tournament.Status.NOT_CANCELED)
     }
 
-    def "user that created tournament cancels it"() {
-        given:
+    def "user that created tournament removes it"() {
+        given: "a tournament"
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.cancelTournament(user.getId(), tournamentDto)
+        tournamentService.removeTournament(user.getId(), tournamentDto.getId())
 
         then:
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        result.getState() == Tournament.Status.CANCELED
+        tournamentRepository.count() == 0L
     }
 
-    def "user that created an open tournament tries to cancel it"() {
+    def "user that created an open tournament tries to remove it"() {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.cancelTournament(user.getId(), tournamentDto)
+        tournamentService.removeTournament(user.getId(), tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -74,14 +72,14 @@ class CancelTournamentTest extends SpockTest {
         tournamentRepository.count() == 1L
     }
 
-    def "user that created tournament tries to cancel it after has ended"() {
+    def "user that created tournament tries to remove it after has ended"() {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_TODAY)
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.cancelTournament(user.getId(), tournamentDto)
+        tournamentService.removeTournament(user.getId(), tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -89,20 +87,18 @@ class CancelTournamentTest extends SpockTest {
         tournamentRepository.count() == 1L
     }
 
-    def "user that did not created tournament cancels it"() {
-        given:
+    def "user that did not created tournament removes it"() {
+        given: "a tournament"
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         and: "a new user"
         def user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         courseExecution.addUser(user2)
         courseExecutionRepository.save(courseExecution)
-
-        user2.addCourse(courseExecution)
         userRepository.save(user2)
 
         when:
-        tournamentService.cancelTournament(user2.getId(), tournamentDto)
+        tournamentService.removeTournament(user2.getId(), tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -110,8 +106,6 @@ class CancelTournamentTest extends SpockTest {
 
         and:
         tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        result.getState() == Tournament.Status.NOT_CANCELED
     }
 
     @TestConfiguration
