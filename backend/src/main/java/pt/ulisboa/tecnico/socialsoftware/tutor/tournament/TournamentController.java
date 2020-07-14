@@ -108,6 +108,17 @@ public class TournamentController {
         tournamentService.cancelTournament(user.getId(), tournamentDto);
     }
 
+    @DeleteMapping(value = "/tournaments/removeTournament/{tournamentId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void removeTournament(Principal principal, @PathVariable Integer tournamentId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(AUTHENTICATION_ERROR);
+        }
+        tournamentService.removeTournament(user.getId(), tournamentId);
+    }
+
     private User checkUser(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
