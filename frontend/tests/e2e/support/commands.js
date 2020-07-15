@@ -65,3 +65,18 @@ Cypress.Commands.add(
     cy.get('[data-cy="saveButton"]').click();
   }
 );
+
+Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
+  cy.contains(acronym)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 11)
+    .find('[data-cy="addExternalUser"]')
+    .click();
+
+  cy.get('[data-cy="userNameInput"]').type(name);
+  cy.get('[data-cy="userEmailInput"]').type(email);
+  cy.get('[data-cy="userRoleSelect"]').click();
+  
+});

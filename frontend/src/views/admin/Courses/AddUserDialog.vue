@@ -32,6 +32,7 @@
 						v-model="user.role"
 						:items="roles"
 						required
+						data-cy="userRoleSelect"
 						label="Role"
 					></v-select>
 				</v-card-text>
@@ -65,7 +66,7 @@ export default class AddUserDialog extends Vue {
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
 	roles = ['TEACHER', 'STUDENT'];
-  user : ExternalUser;
+  user !: ExternalUser;
 
   created() {
 		this.user = new ExternalUser();

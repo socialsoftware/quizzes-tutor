@@ -41,8 +41,8 @@
             <v-icon
               class="mr-2"
               v-on="on"
-              @click="createExternalUser(item)"
-              data-cy="deleteCourse"
+              @click="addExternalUser(item)"
+              data-cy="addExternalUser"
               >person_add</v-icon
             >
           </template>
@@ -202,13 +202,13 @@ export default class CoursesView extends Vue {
     this.addUserDialog = false;
   }
 
-  createExternalUser(course: Course) {
+  addExternalUser(course: Course) {
     this.addUserDialog = true;
     this.currentCourse = course;
   }
 
   isExternalCourse(course: Course) {
-    return course.courseType == 'EXTERNAL';
+    return course.courseExecutionType == 'EXTERNAL';
   }
 
   async deleteCourse(courseToDelete: Course) {
