@@ -41,7 +41,7 @@ public class User implements UserDetails, DomainEntity {
     private String enrolledCoursesAcronyms;
     private String password;
 
-    private String confirmationToken;
+    private String confirmationToken = "";
 
     private String email;
 
