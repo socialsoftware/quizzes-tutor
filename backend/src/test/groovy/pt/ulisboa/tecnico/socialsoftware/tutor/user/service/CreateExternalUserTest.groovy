@@ -1,17 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
-
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
+import spock.mock.DetachedMockFactory
 
 @DataJpaTest
 class CreateExternalUserTest extends SpockTest {
@@ -20,6 +23,8 @@ class CreateExternalUserTest extends SpockTest {
 
     ExternalUserDto externalUserDto
 
+    @Autowired
+    Mailer mailerMock
 
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -44,7 +49,8 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
         userRepository.count() == 3
-
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
     }
 
     def "the course execution exists, but it is not external" (){
@@ -63,7 +69,8 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
         userRepository.count() == 3
-
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
     }
 
     def "the course execution exists, the username does not exist, create the user and associate the user with the course execution" (){
@@ -88,7 +95,8 @@ class CreateExternalUserTest extends SpockTest {
         result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
-
+        and: "a mail is sent"
+        1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', EMAIL,_,_)
     }
 
     def "the course execution exists, the username exists and associate the user with the course execution" (){
@@ -119,7 +127,8 @@ class CreateExternalUserTest extends SpockTest {
         result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
-
+        and: "a mail is sent"
+        1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', EMAIL,_,_)
     }
 
     @Unroll
@@ -136,7 +145,8 @@ class CreateExternalUserTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
-
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
 
         where:
         email       | role                     || errorMessage
@@ -147,5 +157,12 @@ class CreateExternalUserTest extends SpockTest {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration { }
+    static class LocalBeanConfiguration extends BeanConfiguration {
+        def mockFactory = new DetachedMockFactory()
+
+        @Bean
+        Mailer mailer(){
+            return mockFactory.Mock(Mailer)
+        }
+    }
 }

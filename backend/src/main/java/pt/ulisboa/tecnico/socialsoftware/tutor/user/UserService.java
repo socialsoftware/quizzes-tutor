@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.io.BufferedReader;
@@ -47,6 +48,9 @@ public class UserService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+     @Autowired
+     private Mailer mailer;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -206,6 +210,7 @@ public class UserService {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
         User user1 = getUser(externalUserDto, courseExecution);
         associateUserWithExecution(courseExecution, user1);
+        mailer.sendSimpleMail(Mailer.MAIL_USER, user1.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, User.PASSWORD_CONFIRMATION_MAIL_BODY);
         return new ExternalUserDto(user1);
     }
 

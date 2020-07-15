@@ -11,6 +11,8 @@ public class Mailer {
     @Autowired
     private JavaMailSender mailSender;
 
+    public static final String MAIL_USER = "pedro.test99@gmail.com";
+
 
     public void sendSimpleMail(String from, String to, String subject, String body){
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
@@ -20,4 +22,5 @@ public class Mailer {
         simpleMailMessage.setText(body);
         mailSender.send(simpleMailMessage);
     }
+
 }

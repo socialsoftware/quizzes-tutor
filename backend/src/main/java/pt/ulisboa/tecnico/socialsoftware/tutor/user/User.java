@@ -24,6 +24,10 @@ import java.util.stream.Collectors;
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
+
+    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
