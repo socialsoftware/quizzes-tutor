@@ -17,13 +17,14 @@
             v-model="search"
             append-icon="search"
             label="Search"
+            data-cy="Search"
             class="mx-2"
           />
 
           <v-spacer />
           <v-btn color="primary" dark @click="getSubmissions"
             >Refresh List</v-btn
-          ><v-btn color="primary" dark @click="submitQuestion"
+          ><v-btn color="primary" dark @click="submitQuestion" data-cy="SubmitQuestion"
             >Submit Question</v-btn
           >
         </v-card-title>
@@ -57,7 +58,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showSubmissionDialog(item)"
+            <v-icon class="mr-2" v-on="on" @click="showSubmissionDialog(item)" data-cy="viewQuestion"
               >visibility</v-icon
             >
           </template>
@@ -78,6 +79,7 @@
               v-on="on"
               color="red"
               @click="deleteSubmission(item)"
+              data-cy="deleteSubmission"
               >delete</v-icon
             >
           </template>
