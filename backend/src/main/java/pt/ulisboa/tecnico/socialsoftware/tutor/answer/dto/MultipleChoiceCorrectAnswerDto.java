@@ -1,14 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 
-public class MultipleChoiceCorrectAnswerDto extends CorrectAnswerDto {
+public class MultipleChoiceCorrectAnswerDto extends CorrectAnswerTypeDto {
     private Integer correctOptionId;
 
-    public MultipleChoiceCorrectAnswerDto(MultipleChoiceQuestionAnswer questionAnswer) {
-        super(questionAnswer);
-        this.correctOptionId = questionAnswer.getQuestion().getCorrectOptionId();
+    public MultipleChoiceCorrectAnswerDto(MultipleChoiceQuestion question) {
+        this.correctOptionId = question.getCorrectOptionId();
     }
 
     public Integer getCorrectOptionId() {
@@ -19,11 +17,12 @@ public class MultipleChoiceCorrectAnswerDto extends CorrectAnswerDto {
         this.correctOptionId = correctOptionId;
     }
 
-    @Override
+    // TODO[is->has]: update to string.
+    /*@Override
     public String toString() {
         return "CorrectAnswerDto{" +
                 "correctOptionId=" + getCorrectOptionId() +
                 ", sequence=" + getSequence() +
                 '}';
-    }
+    }*/
 }

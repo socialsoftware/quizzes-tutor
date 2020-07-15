@@ -10,14 +10,15 @@ import org.jdom2.xpath.XPathFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerTypeRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
@@ -39,25 +40,28 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Component
 public class AnswersXmlImport {
-	public static final String SEQUENCE = "sequence";
-	public static final String OPTION = "option";
+    public static final String SEQUENCE = "sequence";
+    public static final String OPTION = "option";
 
-	@Autowired
-	private AnswerService answerService;
+    @Autowired
+    private AnswerService answerService;
 
-	@Autowired
-	private QuestionRepository questionRepository;
+    @Autowired
+    private QuestionRepository questionRepository;
 
-	@Autowired
-	private QuizRepository quizRepository;
+    @Autowired
+    private QuizRepository quizRepository;
 
-	@Autowired
-	private QuizAnswerRepository quizAnswerRepository;
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
-	@Autowired
-	private UserService userService;
+    @Autowired
+    private AnswerTypeRepository answerTypeRepository;
 
-	@Autowired
+    @Autowired
+    private UserService userService;
+
+    @Autowired
     private QuizQuestionRepository quizQuestionRepository;
 
     @Autowired
@@ -66,129 +70,135 @@ public class AnswersXmlImport {
     @Autowired
     private QuestionAnswerRepository questionAnswerRepository;
 
-	private Map<Integer, Map<Integer,Integer>> questionMap;
+    private Map<Integer, Map<Integer, Integer>> questionMap;
 
-	public void importAnswers(InputStream inputStream) {
+    public void importAnswers(InputStream inputStream) {
 
-		SAXBuilder builder = new SAXBuilder();
-		builder.setIgnoringElementContentWhitespace(true);
+        SAXBuilder builder = new SAXBuilder();
+        builder.setIgnoringElementContentWhitespace(true);
 
-		Document doc;
-		try {
-			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
-			doc = builder.build(reader);
-		} catch (FileNotFoundException e) {
-			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found");
-		} catch (JDOMException e) {
-			throw new TutorException(ANSWERS_IMPORT_ERROR, "Coding problem");
-		} catch (IOException e) {
-			throw new TutorException(ANSWERS_IMPORT_ERROR, "File type or format");
-		}
+        Document doc;
+        try {
+            Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
+            doc = builder.build(reader);
+        } catch (FileNotFoundException e) {
+            throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found");
+        } catch (JDOMException e) {
+            throw new TutorException(ANSWERS_IMPORT_ERROR, "Coding problem");
+        } catch (IOException e) {
+            throw new TutorException(ANSWERS_IMPORT_ERROR, "File type or format");
+        }
 
-		if (doc == null) {
-			throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found ot format error");
-		}
+        if (doc == null) {
+            throw new TutorException(ANSWERS_IMPORT_ERROR, "File not found ot format error");
+        }
 
-		loadQuestionMap();
+        loadQuestionMap();
 
-		importQuizAnswers(doc);
-	}
+        importQuizAnswers(doc);
+    }
 
-	private void loadQuestionMap() {
-		questionMap = questionRepository.findAllMultipleChoiceQuestions().stream()
-				.collect(Collectors.toMap(Question::getKey,
-						question -> question.getOptions().stream()
-								.collect(Collectors.toMap(Option::getSequence,Option::getId))));
-	}
+    private void loadQuestionMap() {
+        questionMap = questionRepository.findAllMultipleChoiceQuestions().stream()
+                .collect(Collectors.toMap(Question::getKey,
+                        question -> question.getOptions().stream()
+                                .collect(Collectors.toMap(Option::getSequence, Option::getId))));
+    }
 
-	public void importAnswers(String answersXml) {
-		SAXBuilder builder = new SAXBuilder();
-		builder.setIgnoringElementContentWhitespace(true);
+    public void importAnswers(String answersXml) {
+        SAXBuilder builder = new SAXBuilder();
+        builder.setIgnoringElementContentWhitespace(true);
 
-		InputStream stream = new ByteArrayInputStream(answersXml.getBytes());
+        InputStream stream = new ByteArrayInputStream(answersXml.getBytes());
 
-		importAnswers(stream);
-	}
+        importAnswers(stream);
+    }
 
-	private void importQuizAnswers(Document doc) {
-		XPathFactory xpfac = XPathFactory.instance();
-		XPathExpression<Element> xp = xpfac.compile("//quizAnswers/quizAnswer", Filters.element());
-		for (Element element : xp.evaluate(doc)) {
-			importQuizAnswer(element);
-		}
-	}
+    private void importQuizAnswers(Document doc) {
+        XPathFactory xpfac = XPathFactory.instance();
+        XPathExpression<Element> xp = xpfac.compile("//quizAnswers/quizAnswer", Filters.element());
+        for (Element element : xp.evaluate(doc)) {
+            importQuizAnswer(element);
+        }
+    }
 
-	private void importQuizAnswer(Element answerElement) {
-		LocalDateTime answerDate = null;
-		if (answerElement.getAttributeValue("answerDate") != null) {
-			answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
-		}
+    private void importQuizAnswer(Element answerElement) {
+        LocalDateTime answerDate = null;
+        if (answerElement.getAttributeValue("answerDate") != null) {
+            answerDate = LocalDateTime.parse(answerElement.getAttributeValue("answerDate"));
+        }
 
-		boolean completed = false;
-		if (answerElement.getAttributeValue("completed") != null) {
-			completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
-		}
+        boolean completed = false;
+        if (answerElement.getAttributeValue("completed") != null) {
+            completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
+        }
 
-		Integer quizKey = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("key"));
-		Quiz quiz = quizRepository.findByKey(quizKey)
-				.orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
-						"quiz id does not exist " + quizKey));
+        Integer quizKey = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("key"));
+        Quiz quiz = quizRepository.findByKey(quizKey)
+                .orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
+                        "quiz id does not exist " + quizKey));
 
-		Integer key = Integer.valueOf(answerElement.getChild("user").getAttributeValue("key"));
-		User user = userService.findByKey(key);
+        Integer key = Integer.valueOf(answerElement.getChild("user").getAttributeValue("key"));
+        User user = userService.findByKey(key);
 
-		QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
-		QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId())
+        QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerDto.getId()));
-		quizAnswer.setAnswerDate(answerDate);
-		quizAnswer.setCompleted(completed);
+        quizAnswer.setAnswerDate(answerDate);
+        quizAnswer.setCompleted(completed);
 
-		importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
-	}
+        importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
+    }
 
-	private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
-		for (Element questionAnswerElement: questionAnswersElement.getChildren("questionAnswer")) {
-			Integer timeTaken = null;
-			if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
-				timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
-			}
+    private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
+        for (Element questionAnswerElement : questionAnswersElement.getChildren("questionAnswer")) {
+            Integer timeTaken = null;
+            if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
+                timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
+            }
 
-			int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
+            int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
 
-            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream().filter(qa -> qa.getSequence().equals(answerSequence)).findFirst().orElseThrow(() ->
-                    new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
+            QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
+                    .filter(qa -> qa.getSequence().equals(answerSequence)).findFirst()
+                    .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
-			questionAnswer.setTimeTaken(timeTaken);
+            questionAnswer.setTimeTaken(timeTaken);
 
 
-			String questionType = Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
-			if(questionAnswerElement.getChild("quizQuestion") != null){
-				questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
-			}
+            String questionType = Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+            if (questionAnswerElement.getChild("quizQuestion") != null) {
+                questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
+            }
 
-			switch (questionType){
-				case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
-					importMultipleChoiceXmlImport(questionAnswerElement, (MultipleChoiceQuestionAnswer)questionAnswer);
-					break;
-				default:
-					throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
-			}
+            switch (questionType) {
+                case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+                    importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
+                    break;
+                default:
+                    throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+            }
 
-			questionAnswerRepository.save(questionAnswer);
-		}
-	}
+            questionAnswerRepository.save(questionAnswer);
+        }
+    }
 
-	private void importMultipleChoiceXmlImport(Element questionAnswerElement, MultipleChoiceQuestionAnswer questionAnswer) {
-		Integer optionId = null;
-		if (questionAnswerElement.getChild(OPTION) != null) {
-			Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
-			Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
-			optionId = questionMap.get(questionKey).get(optionSequence);
-		}
-		if (optionId == null) {
-			questionAnswer.setOption(null);
-		} else {
-			questionAnswer.setOption(optionRepository.findById(optionId).orElse(null));
-		}
-	}
+    private void importMultipleChoiceXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
+        Integer optionId = null;
+        if (questionAnswerElement.getChild(OPTION) != null) {
+            Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
+            Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
+            optionId = questionMap.get(questionKey).get(optionSequence);
+        }
+
+        if (optionId == null) {
+            questionAnswer.setAnswer((AnswerType) null);
+        } else {
+            MultipleChoiceAnswer answerType
+                    = new MultipleChoiceAnswer(questionAnswer, optionRepository.findById(optionId).orElse(null));
+            questionAnswer.setAnswer(answerType);
+            answerTypeRepository.save(answerType);
+        }
+
+    }
 }

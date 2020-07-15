@@ -5,14 +5,21 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import java.io.Serializable;
 
-public abstract class QuestionAnswerDto implements Serializable {
+public class QuestionAnswerDto implements Serializable {
     private QuestionDto question;
 
+    private AnswerTypeDto answer;
 
-    public QuestionAnswerDto() {}
+    public QuestionAnswerDto() {
+    }
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
         this.question = questionAnswer.getQuizQuestion().getQuestion().getQuestionDto();
+        if (questionAnswer.getAnswer() == null) {
+            this.answer = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerTypeDto();
+        } else {
+            this.answer = questionAnswer.getAnswer().getAnswerTypeDto();
+        }
     }
 
     public QuestionDto getQuestion() {
@@ -21,5 +28,13 @@ public abstract class QuestionAnswerDto implements Serializable {
 
     public void setQuestion(QuestionDto question) {
         this.question = question;
+    }
+
+    public AnswerTypeDto getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(AnswerTypeDto answer) {
+        this.answer = answer;
     }
 }

@@ -4,14 +4,14 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
 
-public class AnswersXmlExportVisitor implements Visitor{
+public class AnswersXmlExportVisitor implements Visitor {
     private static final String SEQUENCE = "sequence";
 
     private Element rootElement;
@@ -44,7 +44,7 @@ public class AnswersXmlExportVisitor implements Visitor{
     private void exportQuestionAnswers(List<QuestionAnswer> questionAnswers) {
         this.currentElement = new Element("questionAnswers");
 
-        for (QuestionAnswer questionAnswer: questionAnswers) {
+        for (QuestionAnswer questionAnswer : questionAnswers) {
             questionAnswer.accept(this);
         }
     }
@@ -74,7 +74,7 @@ public class AnswersXmlExportVisitor implements Visitor{
     }
 
     @Override
-    public void visitQuestionAnswer(MultipleChoiceQuestionAnswer questionAnswer) {
+    public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
         Element questionAnswerElement = new Element("questionAnswer");
 
         if (questionAnswer.getTimeTaken() != null) {
@@ -89,13 +89,26 @@ public class AnswersXmlExportVisitor implements Visitor{
         quizQuestionElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         questionAnswerElement.addContent(quizQuestionElement);
 
-        if ( questionAnswer.getOption() != null) {
-            Element optionElement = new Element("option");
-            optionElement.setAttribute("questionKey", String.valueOf(questionAnswer.getOption().getQuestion().getKey()));
-            optionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getOption().getSequence()));
-            questionAnswerElement.addContent(optionElement);
+        if (questionAnswer.getAnswer() != null) {
+            Element tmp = this.currentElement;
+            this.currentElement = questionAnswerElement;
+
+            questionAnswer.getAnswer().accept(this);
+
+            this.currentElement = tmp;
         }
 
+
         this.currentElement.addContent(questionAnswerElement);
+    }
+
+    @Override
+    public void visitAnswerType(MultipleChoiceAnswer answer) {
+        if (answer.getOption() != null) {
+            Element optionElement = new Element("option");
+            optionElement.setAttribute("questionKey", String.valueOf(answer.getOption().getQuestion().getKey()));
+            optionElement.setAttribute(SEQUENCE, String.valueOf(answer.getOption().getSequence()));
+            this.currentElement.addContent(optionElement);
+        }
     }
 }

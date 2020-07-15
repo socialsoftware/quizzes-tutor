@@ -2,26 +2,23 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 
 import java.io.Serializable;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        defaultImpl = MultipleChoiceStatementAnswerDto.class,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDto.class, name = MULTIPLE_CHOICE_QUESTION)
-})
-public abstract class StatementAnswerDto implements Serializable {
+public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
     private Integer questionAnswerId;
     private Integer quizQuestionId;
     private Integer timeToSubmission;
+
+    private StatementAnswerDetailsDto answerDetails;
 
     public StatementAnswerDto() {
     }
@@ -31,6 +28,8 @@ public abstract class StatementAnswerDto implements Serializable {
         this.sequence = questionAnswer.getSequence();
         this.questionAnswerId = questionAnswer.getId();
         this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
+
+        this.answerDetails = questionAnswer.getStatementAnswerDetailsDto();
     }
 
     public Integer getTimeTaken() {
@@ -73,4 +72,15 @@ public abstract class StatementAnswerDto implements Serializable {
         this.timeToSubmission = timeToSubmission;
     }
 
+    public AnswerType getAnswerType(QuestionAnswer questionAnswer){
+        return this.getAnswerDetails() != null ? this.getAnswerDetails().getAnswerType(questionAnswer) : null;
+    }
+
+    public StatementAnswerDetailsDto getAnswerDetails() {
+        return answerDetails;
+    }
+
+    public void setAnswerDetails(StatementAnswerDetailsDto answerDetails) {
+        this.answerDetails = answerDetails;
+    }
 }

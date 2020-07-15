@@ -3,16 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -61,25 +56,22 @@ class ImportExportAnswersTest extends SpockTest {
 
         User user = userService.createUser(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
 
-        quizAnswer = new QuizAnswer()
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setUser(user)
+        quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setAnswerDate(LOCAL_DATE_TODAY)
         quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
 
-        questionAnswer = new MultipleChoiceQuestionAnswer()
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setTimeTaken(1)
-        questionAnswer.setOption(option)
-        questionAnswer.setSequence(0)
-        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 0)
+        def answer = new MultipleChoiceAnswer(questionAnswer, option);
+        questionAnswer.setAnswer(answer)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answer)
     }
 
     def 'export and import answers'() {
         given: 'a xml with a quiz'
         def answersXml = answerService.exportAnswers()
+        print(answersXml)
         and: 'delete answers'
         answerService.deleteQuizAnswer(quizAnswer)
 

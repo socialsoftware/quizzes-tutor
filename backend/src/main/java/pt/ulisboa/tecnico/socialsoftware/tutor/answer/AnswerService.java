@@ -6,10 +6,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerTypeRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
@@ -48,6 +50,9 @@ public class AnswerService {
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private AnswerTypeRepository answerTypeRepository;
 
     @Autowired
     private QuizAnswerItemRepository quizAnswerItemRepository;
@@ -100,7 +105,7 @@ public class AnswerService {
                 }
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                        .map(QuestionAnswer::getCorrectAnswerDto)
+                        .map(CorrectAnswerDto::new)
                         .collect(Collectors.toList());
             }
         }
@@ -138,7 +143,10 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-        questionAnswer.setResponse(statementAnswerDto);
+        AnswerType answer = questionAnswer.setAnswer(statementAnswerDto);
+        if (answer != null){
+            answerTypeRepository.save(answer);
+        }
     }
 
     @Retryable(
@@ -167,6 +175,10 @@ public class AnswerService {
         List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
         questionAnswers.forEach(questionAnswer ->
         {
+            AnswerType answerType = questionAnswer.getAnswer();
+            if(answerType != null){
+                answerTypeRepository.delete(answerType);
+            }
             questionAnswer.remove();
             questionAnswerRepository.delete(questionAnswer);
         });

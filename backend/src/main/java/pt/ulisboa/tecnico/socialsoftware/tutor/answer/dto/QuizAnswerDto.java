@@ -31,7 +31,7 @@ public class QuizAnswerDto implements Serializable {
 
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(qa -> qa.getQuizQuestion().getSequence()))
-                .map(QuestionAnswer::getQuestionAnswerDto)
+                .map(QuestionAnswerDto::new)
                 .collect(Collectors.toList());
     }
 

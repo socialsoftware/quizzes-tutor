@@ -7,10 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -74,7 +71,7 @@ public class StatementController {
 
     @PostMapping("/quizzes/{quizId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody MultipleChoiceStatementAnswerDto answer) {
+    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         statementService.submitAnswer(user.getUsername(), quizId, answer);

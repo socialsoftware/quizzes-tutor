@@ -2,8 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
@@ -78,17 +77,21 @@ class FindQuestionsTest extends SpockTest {
         quizAnswer.setQuiz(quiz)
         quizAnswerRepository.save(quizAnswer)
 
-        def questionAnswer = new MultipleChoiceQuestionAnswer()
-        questionAnswer.setOption(optionOK)
+        def questionAnswer = new QuestionAnswer()
+        def answerType = new MultipleChoiceAnswer(questionAnswer, optionOK)
+        questionAnswer.setAnswer(answerType)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
 
-        questionAnswer = new MultipleChoiceQuestionAnswer()
-        questionAnswer.setOption(optionKO)
+        questionAnswer = new QuestionAnswer()
+        answerType = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        questionAnswer.setAnswer(answerType)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
 
         when:
         def result = questionService.findQuestions(course.getId())

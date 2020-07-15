@@ -2,8 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
@@ -16,7 +15,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -165,17 +163,22 @@ class UpdateQuestionTest extends SpockTest {
         quizAnswer.setQuiz(quiz)
         quizAnswerRepository.save(quizAnswer)
 
-        def questionAnswer = new MultipleChoiceQuestionAnswer()
-        questionAnswer.setOption(optionOK)
+        def questionAnswer = new QuestionAnswer()
+        def answerType = new MultipleChoiceAnswer(questionAnswer, optionOK)
+        questionAnswer.setAnswer(answerType)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
 
-        questionAnswer = new MultipleChoiceQuestionAnswer()
-        questionAnswer.setOption(optionKO)
+        questionAnswer = new QuestionAnswer()
+        answerType = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        questionAnswer.setAnswer(answerType)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
+
 
         def questionDto = new MultipleChoiceQuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)

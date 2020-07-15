@@ -195,17 +195,19 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_UNCOMMITTED)
-    public void submitAnswer(String username, int quizId, MultipleChoiceStatementAnswerDto answer) {
+    public void submitAnswer(String username, int quizId, StatementAnswerDto answer) {
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
         }
-        if (answer.getOptionId() == null) {
+        // TODO[is->has]: He knows how to save himself :thinking:?
+        // -> answer.saveQuestionAnswer(username, quizId, questionAnswerItemRepository);
+        /*if (answer.getOptionId() == null) {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {
             questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission(), answer.getOptionId());
-        }
+        }*/
     }
 
     @Retryable(

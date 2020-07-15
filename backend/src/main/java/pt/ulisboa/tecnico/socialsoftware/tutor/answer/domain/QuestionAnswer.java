@@ -8,24 +8,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 
 import javax.persistence.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "question_answers",
         indexes = {
                 @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
         }
 )
-@DiscriminatorColumn(name = "question_answer_type",
-        columnDefinition = "varchar(32) not null default 'multiple_choice'",
-        discriminatorType = DiscriminatorType.STRING)
-public abstract class QuestionAnswer implements DomainEntity {
+public class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -42,6 +38,10 @@ public abstract class QuestionAnswer implements DomainEntity {
     private QuizAnswer quizAnswer;
 
     private Integer sequence;
+
+    @OneToOne(fetch=FetchType.EAGER)
+    @JoinColumn(name = "answer_id")
+    private AnswerType answer;
 
     public QuestionAnswer() {
     }
@@ -104,17 +104,27 @@ public abstract class QuestionAnswer implements DomainEntity {
         this.sequence = sequence;
     }
 
-    public abstract boolean isCorrect();
+    public AnswerType getAnswer() {
+        return answer;
+    }
 
-    public abstract void setResponse(StatementAnswerDto statementAnswerDto);
+    public void setAnswer(AnswerType answer) {
+        this.answer = answer;
+        if(this.answer != null) {
+            this.answer.setQuestionAnswer(this);
+        }
+    }
+    public AnswerType setAnswer(StatementAnswerDto statementAnswerDto) {
+        this.answer = statementAnswerDto.getAnswerType(this);
+        if(this.answer != null) {
+            this.answer.setQuestionAnswer(this);
+        }
+        return this.answer;
+    }
 
-    public abstract QuestionAnswerDto getQuestionAnswerDto();
-
-    public abstract CorrectAnswerDto getCorrectAnswerDto();
-
-    public abstract StatementAnswerDto getStatementAnswerDto();
-
-    public abstract StatementQuestionDto getStatementQuestionDto();
+    public boolean isCorrect(){
+        return getAnswer().isCorrect();
+    }
 
     public void remove() {
         quizAnswer.getQuestionAnswers().remove(this);
@@ -122,5 +132,20 @@ public abstract class QuestionAnswer implements DomainEntity {
 
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
+
+        if(answer != null) {
+            answer.remove();
+            answer.setQuestionAnswer(null);
+            answer = null;
+        }
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+       visitor.visitQuestionAnswer(this);
+    }
+
+    public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
+        return this.getAnswer() != null ? this.getAnswer().getStatementAnswerDetailsDto() : null;
     }
 }

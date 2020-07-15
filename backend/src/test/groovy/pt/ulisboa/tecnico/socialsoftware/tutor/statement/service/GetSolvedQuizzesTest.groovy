@@ -3,19 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -76,15 +72,17 @@ class GetSolvedQuizzesTest extends SpockTest {
         quizAnswer.setUser(user)
         quizAnswer.setQuiz(quiz)
 
-        def questionAnswer = new MultipleChoiceQuestionAnswer()
+        def questionAnswer = new QuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswer.setOption(option)
+        def answerType = new MultipleChoiceAnswer(questionAnswer, option);
+        questionAnswer.setAnswer(answerType);
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
 
         when:
         def solvedQuizDtos = statementService.getSolvedQuizzes(user.getId(), courseDto.getCourseExecutionId())
@@ -97,11 +95,11 @@ class GetSolvedQuizzesTest extends SpockTest {
         solvedQuizDto.statementQuiz.getAnswers().size() == 1
         def answer = solvedQuizDto.statementQuiz.getAnswers().get(0)
         answer.getSequence() == 0
-        answer.getOptionId() == option.getId()
+        answer.getAnswerDetails().getOptionId() == option.getId()
         solvedQuizDto.getCorrectAnswers().size() == 1
         def correct = solvedQuizDto.getCorrectAnswers().get(0)
         correct.getSequence() == 0
-        correct.getCorrectOptionId() == option.getId()
+        correct.getCorrectAnswer().getCorrectOptionId() == option.getId()
 
         where:
         quizType                 | conclusionDate    | resultsDate
@@ -134,15 +132,18 @@ class GetSolvedQuizzesTest extends SpockTest {
         quizAnswer.setUser(user)
         quizAnswer.setQuiz(quiz)
 
-        def questionAnswer = new MultipleChoiceQuestionAnswer()
+        def questionAnswer = new QuestionAnswer()
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswer.setOption(option)
+        def answerType = new MultipleChoiceAnswer(questionAnswer, option);
+        questionAnswer.setAnswer(answerType)
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        answerTypeRepository.save(answerType)
+
 
         when:
         def solvedQuizDtos = statementService.getSolvedQuizzes(user.getId(), courseDto.getCourseExecutionId())

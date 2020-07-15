@@ -1,40 +1,30 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceQuestionAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 
 import java.io.Serializable;
-import java.util.List;
-import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        defaultImpl = MultipleChoiceStatementQuestionDto.class,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceStatementQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION),
-})
-public abstract class StatementQuestionDto implements Serializable {
+public class StatementQuestionDto implements Serializable {
     private String content;
     private ImageDto image;
     private Integer sequence;
 
-    public StatementQuestionDto() {}
+    private StatementQuestionDetailsDto questionDetails;
+
+    public StatementQuestionDto() {
+    }
 
     public StatementQuestionDto(QuestionAnswer questionAnswer) {
-        this.content = questionAnswer.getQuizQuestion().getQuestion().getContent();
-        if (questionAnswer.getQuizQuestion().getQuestion().getImage() != null) {
-            this.image = new ImageDto(questionAnswer.getQuizQuestion().getQuestion().getImage());
+        Question question = questionAnswer.getQuizQuestion().getQuestion();
+        this.content = question.getContent();
+        if (question.getImage() != null) {
+            this.image = new ImageDto(question.getImage());
         }
         this.sequence = questionAnswer.getSequence();
+        this.questionDetails = question.getStatementQuestionDetailsDto();
     }
 
     public String getContent() {
@@ -59,5 +49,13 @@ public abstract class StatementQuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public StatementQuestionDetailsDto getQuestionDetails() {
+        return questionDetails;
+    }
+
+    public void setQuestionDetails(StatementQuestionDetailsDto questionDetails) {
+        this.questionDetails = questionDetails;
     }
 }

@@ -64,7 +64,7 @@ public class QuizAnswer implements DomainEntity {
         }
 
         for (int i = 0; i < quizQuestions.size(); i++) {
-            quizQuestions.get(i).getQuestion().createAnswerForQuestion(this, quizQuestions.get(i), i);
+            new QuestionAnswer(this, quizQuestions.get(i), i);
         }
     }
 

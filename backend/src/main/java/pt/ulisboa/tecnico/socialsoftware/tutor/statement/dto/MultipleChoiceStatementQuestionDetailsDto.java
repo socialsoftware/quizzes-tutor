@@ -1,20 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
 
-import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MultipleChoiceStatementQuestionDto extends StatementQuestionDto {
+public class MultipleChoiceStatementQuestionDetailsDto extends StatementQuestionDetailsDto {
     private List<StatementOptionDto> options;
 
-    public MultipleChoiceStatementQuestionDto(MultipleChoiceQuestionAnswer questionAnswer) {
-        super(questionAnswer);
-        this.options = ((MultipleChoiceQuestion)questionAnswer.getQuizQuestion().getQuestion()).getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
+    public MultipleChoiceStatementQuestionDetailsDto(MultipleChoiceQuestion question) {
+        this.options = question.getOptions().stream()
+                .map(StatementOptionDto::new)
+                .collect(Collectors.toList());
     }
 
     public List<StatementOptionDto> getOptions() {
@@ -25,6 +22,8 @@ public class MultipleChoiceStatementQuestionDto extends StatementQuestionDto {
         this.options = options;
     }
 
+    // TODO[is->has]: update to string
+    /*
     @Override
     public String toString() {
         return "StatementMultipleChoiceQuestionDto{" +
@@ -34,4 +33,5 @@ public class MultipleChoiceStatementQuestionDto extends StatementQuestionDto {
                 ", sequence=" + getSequence() +
                 '}';
     }
+    */
 }

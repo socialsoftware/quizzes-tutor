@@ -1,15 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 
-public class MultipleChoiceStatementAnswerDto extends StatementAnswerDto {
+public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto {
     private Integer optionId;
 
     public MultipleChoiceStatementAnswerDto() {
     }
 
-    public MultipleChoiceStatementAnswerDto(MultipleChoiceQuestionAnswer questionAnswer) {
-        super(questionAnswer);
+    public MultipleChoiceStatementAnswerDto(MultipleChoiceAnswer questionAnswer) {
         if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
         }
@@ -24,6 +27,15 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDto {
     }
 
     @Override
+    public AnswerType getAnswerType(QuestionAnswer questionAnswer) {
+        MultipleChoiceAnswer multipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
+        multipleChoiceAnswer.setOption(this);
+        return multipleChoiceAnswer;
+    }
+
+    // TODO[is->has]: update to string
+    /*
+    @Override
     public String toString() {
         return "StatementAnswerDto{" +
                 "timeTaken=" + getTimeTaken() +
@@ -31,5 +43,5 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDto {
                 ", questionAnswerId=" + getQuestionAnswerId() +
                 ", optionId=" + getOptionId() +
                 '}';
-    }
+    }*/
 }

@@ -1,7 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceQuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -9,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuesti
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -94,8 +100,18 @@ public class MultipleChoiceQuestion extends Question {
     }
 
     @Override
-    public void createAnswerForQuestion(QuizAnswer quizAnswer, QuizQuestion quizQuestion, int i) {
-        new MultipleChoiceQuestionAnswer(quizAnswer, quizQuestion, i);
+    public CorrectAnswerTypeDto getCorrectAnswerDto() {
+        return new MultipleChoiceCorrectAnswerDto(this);
+    }
+
+    @Override
+    public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
+        return new MultipleChoiceStatementQuestionDetailsDto(this);
+    }
+
+    @Override
+    public AnswerTypeDto getEmptyAnswerTypeDto() {
+        return new MultipleChoiceAnswerDto();
     }
 
     @Override

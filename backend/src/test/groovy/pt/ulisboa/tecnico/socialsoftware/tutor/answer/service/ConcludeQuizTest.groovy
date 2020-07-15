@@ -83,8 +83,7 @@ class ConcludeQuizTest extends SpockTest {
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
-        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
-        statementAnswerDto.setOptionId(null)
+        def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
@@ -102,12 +101,12 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getOption() == null
+        questionAnswer.getAnswer() == null
         and: 'the return value is OK'
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
         correctAnswerDto.getSequence() == 0
-        correctAnswerDto.getCorrectOptionId() == optionOk.getId()
+        correctAnswerDto.getCorrectAnswer().getCorrectOptionId() == optionOk.getId()
     }
 
     def 'conclude quiz IN_CLASS without answering, before conclusionDate'() {
@@ -118,8 +117,7 @@ class ConcludeQuizTest extends SpockTest {
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
-        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
-        statementAnswerDto.setOptionId(null)
+        def statementAnswerDto = new StatementAnswerDto()
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
@@ -138,7 +136,7 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswerItem.getAnswerDate() != null
         quizAnswerItem.getAnswersList().size() == 1
         def resStatementAnswerDto = quizAnswerItem.getAnswersList().get(0)
-        resStatementAnswerDto.getOptionId() == null
+        resStatementAnswerDto.getAnswerDetails() == null
         resStatementAnswerDto.getSequence() == 0
         resStatementAnswerDto.getTimeTaken() == 100
         and: 'does not return answers'
@@ -152,8 +150,10 @@ class ConcludeQuizTest extends SpockTest {
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
-        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
-        statementAnswerDto.setOptionId(optionOk.getId())
+        def statementAnswerDto = new StatementAnswerDto()
+        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDto()
+        multipleChoiceAnswerDto.setOptionId(optionOk.getId())
+        statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
@@ -170,13 +170,13 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getOption() == optionOk
+        questionAnswer.getAnswer().getOption() == optionOk
         optionOk.getQuestionAnswers().contains(questionAnswer)
         and: 'the return value is OK'
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
         correctAnswerDto.getSequence() == 0
-        correctAnswerDto.getCorrectOptionId() == optionOk.getId()
+        correctAnswerDto.getCorrectAnswer().getCorrectOptionId() == optionOk.getId()
     }
 
     def 'conclude quiz without answering, before availableDate'() {
@@ -239,8 +239,10 @@ class ConcludeQuizTest extends SpockTest {
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
-        def statementAnswerDto = new MultipleChoiceStatementAnswerDto()
-        statementAnswerDto.setOptionId(optionOk.getId())
+        def statementAnswerDto = new StatementAnswerDto()
+        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDto()
+        multipleChoiceAnswerDto.setOptionId(optionOk.getId())
+        statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
         statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
@@ -257,7 +259,7 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getOption() == null
+        questionAnswer.getAnswer() == null
         and: 'the return value is OK'
         correctAnswers.size() == 0
     }
