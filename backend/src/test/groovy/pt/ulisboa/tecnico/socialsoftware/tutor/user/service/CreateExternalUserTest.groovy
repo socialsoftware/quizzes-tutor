@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
+
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -15,24 +16,15 @@ import spock.lang.Unroll
 @DataJpaTest
 class CreateExternalUserTest extends SpockTest {
 
-    static final String COURSE_NAME = "Course1"
+    static final String EMAIL = "pedro.pereira2909@gmail.com"
 
-    static final String ACRONYM = "Execution Acronym"
-    static final String TERM = "19-20 Spring"
-
-    static final String EMAIL = "test@mail.com"
-
-
-    Course course
-    CourseExecution courseExecution
     ExternalUserDto externalUserDto
 
 
-
     def setup(){
-        course = new Course(COURSE_NAME, Course.Type.EXTERNAL)
+        course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, ACRONYM, TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
     }
 
@@ -52,6 +44,7 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
         userRepository.count() == 3
+
     }
 
     def "the course execution exists, but it is not external" (){
@@ -70,6 +63,7 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
         userRepository.count() == 3
+
     }
 
     def "the course execution exists, the username does not exist, create the user and associate the user with the course execution" (){
@@ -90,10 +84,11 @@ class CreateExternalUserTest extends SpockTest {
         result.getEmail() == EMAIL
         and:"checks if the user and the course execution are associated"
         result.getCourseExecutions().size() == 1
-        result.getCourseExecutions().get(0).getAcronym() == ACRONYM
-        result.getCourseExecutions().get(0).getAcademicTerm() == TERM
+        result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
+        result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
+
     }
 
     def "the course execution exists, the username exists and associate the user with the course execution" (){
@@ -120,10 +115,11 @@ class CreateExternalUserTest extends SpockTest {
         result.getEmail() == EMAIL
         and:"checks if the user and the course execution are associated"
         result.getCourseExecutions().size() == 1
-        result.getCourseExecutions().get(0).getAcronym() == ACRONYM
-        result.getCourseExecutions().get(0).getAcademicTerm() == TERM
+        result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
+        result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
+
     }
 
     @Unroll
@@ -141,6 +137,7 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
 
+
         where:
         email       | role                     || errorMessage
         null        | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
@@ -150,5 +147,5 @@ class CreateExternalUserTest extends SpockTest {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {}
+    static class LocalBeanConfiguration extends BeanConfiguration { }
 }

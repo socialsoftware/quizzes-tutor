@@ -71,4 +71,7 @@ class BeanConfiguration {
     AssessmentService assessmentService() {
         return new AssessmentService()
     }
+
+
+
 }

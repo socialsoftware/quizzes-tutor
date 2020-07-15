@@ -61,7 +61,7 @@ class CreateExternalUserWebServiceIT extends Specification {
                 path: '/courses/executions/'+courseExecution.getId()+'/users',
                 body: [
                         admin: false,
-                        email: 'test@mail.com',
+                        email: 'pedro.pereira2909@gmail.com',
                         role: 'STUDENT'
                 ],
                 requestContentType: 'application/json'
@@ -71,8 +71,8 @@ class CreateExternalUserWebServiceIT extends Specification {
         response != null
         response.status == 200
         response.data != null
-        response.data.username == "test@mail.com"
-        response.data.email == "test@mail.com"
+        response.data.username == "pedro.pereira2909@gmail.com"
+        response.data.email == "pedro.pereira2909@gmail.com"
         response.data.admin == false
         response.data.role == "STUDENT"
 
