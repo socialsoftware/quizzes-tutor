@@ -10,8 +10,10 @@ describe('Administration walkthrough', () => {
     cy.logout();
   });
 
-  it('login creates and deletes a course execution', () => {
+  it('login creates a course execution adds a teacher though the form and deletes the course execution', () => {
     cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
+
+    cy.addTeacherThroughForm('TEST-AO3', 'User1', 'test@mail.com');
 
     cy.deleteCourseExecution('TEST-AO3');
   });

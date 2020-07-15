@@ -28,6 +28,7 @@ class ConfirmRegistrationTest extends SpockTest {
 
     static final String EMAIL = "test@mail.com"
     static final String PASSWORD = "123456abc"
+    static final String TOKEN = "12345"
 
     Course course
     CourseExecution courseExecution
@@ -44,9 +45,13 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(EMAIL)
         externalUserDto.setUsername(EMAIL)
+        externalUserDto.setConfirmationToken(TOKEN)
         externalUserDto.setRole(User.Role.STUDENT)
 
         userService.createExternalUser(executionId, externalUserDto)
+
+        User user = userService.findByUsername(EMAIL)
+        user.setConfirmationToken(TOKEN)
     }
 
 	def "user confirms registration successfully" () {
@@ -79,6 +84,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(email)
         externalUserDto.setUsername(email)
+        externalUserDto.setConfirmationToken(token)
         externalUserDto.setPassword(password)
 
         when:
@@ -89,10 +95,11 @@ class ConfirmRegistrationTest extends SpockTest {
         error.getErrorMessage() == errorMessage
 
         where:
-        email       | password      || errorMessage
-        null        | PASSWORD      || ErrorMessage.USERNAME_NOT_FOUND
-        EMAIL       | null          || ErrorMessage.INVALID_PASSWORD
-        EMAIL       | ""            || ErrorMessage.INVALID_PASSWORD
+        email       | password  | token     || errorMessage
+        null        | PASSWORD  | TOKEN     || ErrorMessage.EXTERNAL_USER_NOT_FOUND
+        EMAIL       | null      | TOKEN     || ErrorMessage.INVALID_PASSWORD
+        EMAIL       | ""        | TOKEN     || ErrorMessage.INVALID_PASSWORD
+        EMAIL       | PASSWORD  | ""        || ErrorMessage.INVALID_CONFIRMATION_TOKEN
 	}
 
     @TestConfiguration

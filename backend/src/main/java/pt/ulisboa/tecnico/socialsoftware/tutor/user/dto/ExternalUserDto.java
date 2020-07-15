@@ -18,6 +18,7 @@ public class ExternalUserDto implements Serializable {
     private User.Role role;
     private boolean isAdmin;
     private List<CourseDto> courseExecutions;
+    private String confirmationToken;
 
     public ExternalUserDto(){
 
@@ -31,6 +32,7 @@ public class ExternalUserDto implements Serializable {
         this.password = user.getPassword();
         this.role = user.getRole();
         this.isAdmin = user.isAdmin();
+        this.confirmationToken = user.getConfirmationToken();
         this.courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
     }
 
@@ -100,5 +102,13 @@ public class ExternalUserDto implements Serializable {
 
     public void setCourseExecutions(List<CourseDto> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
     }
 }

@@ -259,13 +259,16 @@ public class UserService {
         User user = findByUsername(externalUserDto.getUsername());
 
         if (user == null)
-            throw new TutorException(USERNAME_NOT_FOUND, externalUserDto.getUsername());
-
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
         if (user.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
 
+        if (!externalUserDto.getConfirmationToken().equals(user.getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
+
 
         user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
 
