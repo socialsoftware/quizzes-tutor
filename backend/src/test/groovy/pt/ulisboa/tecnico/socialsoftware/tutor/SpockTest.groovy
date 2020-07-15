@@ -27,12 +27,14 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@DataJpaTest
+
 class SpockTest extends Specification {
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_1_EMAIL = "user1@mail.com"
+    public static final String USER_2_EMAIL = "user2@mail.com"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
