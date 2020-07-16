@@ -77,6 +77,16 @@ Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
 
   cy.get('[data-cy="userNameInput"]').type(name);
   cy.get('[data-cy="userEmailInput"]').type(email);
-  cy.get('[data-cy="userRoleSelect"]').click();
+  cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
+  cy.get('.v-menu__content .v-list').children().contains("TEACHER").first().click();
+  cy.get('[data-cy="saveButton"]').click();
+  cy.get('[data-cy="cancelButton"]').click();
+
+  cy.get('[data-cy="homeLink"]').click();
+  cy.wait(2000);
+  cy.get('[data-cy="administrationMenuButton"]').click();
+  cy.get('[data-cy="manageCoursesMenuButton"]').click();
+
+  cy.contains(acronym).parent().children().eq(6).contains("1");
   
 });
