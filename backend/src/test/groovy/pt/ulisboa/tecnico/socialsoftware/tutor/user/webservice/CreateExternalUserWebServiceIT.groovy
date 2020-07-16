@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
@@ -14,38 +15,17 @@ import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
-class CreateExternalUserWebServiceIT extends Specification {
-    public static final String USER_1_NAME = "User 1 Name"
-    public static final String USER_1_USERNAME = "User 1 Username"
-    public static final String COURSE_1_NAME = "Course 1 Name"
-    public static final String COURSE_1_ACADEMIC_TERM = "1º Semestre 2019/2020"
-    public static final String COURSE_1_ACRONYM = "C12"
+class CreateExternalUserWebServiceIT extends SpockTest {
 
     @LocalServerPort private int port
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    UserRepository userRepository
 
     def client
 
     def loginResponse
     def response
 
-    def course
-    def courseExecution
-
     def setup(){
         client = new RESTClient("http://localhost:" + port)
-    }
-
-    def "login as demo admin, and create an external user" () {
-        given:
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
@@ -55,7 +35,9 @@ class CreateExternalUserWebServiceIT extends Specification {
                 path: '/auth/demo/admin'
         )
         client.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
 
+    def "login as demo admin, and create an external user" () {
         when:
         response = client.post(
                 path: '/courses/executions/'+courseExecution.getId()+'/users',

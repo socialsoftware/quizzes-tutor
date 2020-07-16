@@ -6,6 +6,7 @@ export default class ExternalUser {
   password!: string;
   role!: string;
   admin!: boolean;
+  confirmationToken!: string;
 
   constructor(jsonObj?: ExternalUser) {
     if (jsonObj) {
@@ -15,6 +16,8 @@ export default class ExternalUser {
 			this.password = jsonObj.password;
       this.role = jsonObj.role;
       this.admin = jsonObj.admin;
+      this.confirmationToken = jsonObj.confirmationToken;
+
     }
   }
 }
