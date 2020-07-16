@@ -38,6 +38,12 @@ public class CourseController {
         return courseService.getCourseExecutions(role);
     }
 
+    @GetMapping("/courses/executions/{courseExecutionId}")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    public CourseDto getSpecificCourseExecution(@PathVariable Integer courseExecutionId) {
+        return courseService.getCourseExecutionById(courseExecutionId);
+    }
+
     @PostMapping("/courses/activate")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'EXECUTION.CREATE')")
     public CourseDto activateCourseExecution(@RequestBody CourseDto courseDto) {

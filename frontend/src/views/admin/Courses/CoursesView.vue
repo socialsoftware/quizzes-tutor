@@ -36,6 +36,7 @@
           </template>
           <span>Create from Course</span>
         </v-tooltip>
+
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -49,6 +50,18 @@
           </template>
           <span>Delete Course</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="uploadUsersHandler(item)"
+              data-cy="uploadUsersHandler"
+            >attach_file</v-icon
+            >
+          </template>
+          <span>Upload Users</span>
+        </v-tooltip>
       </template>
     </v-data-table>
 
@@ -59,6 +72,13 @@
       v-on:new-course="onCreateCourse"
       v-on:close-dialog="onCloseDialog"
     />
+    <upload-users-dialog
+      v-if="uploadUsersCourse"
+      v-model="uploadUsersDialog"
+      :course="uploadUsersCourse"
+      v-on:users-uploaded="updateSpecificCourse"
+      v-on:close-dialog="onCloseDialog"
+    />
   </v-card>
 </template>
 
@@ -67,16 +87,20 @@ import { Component, Vue } from 'vue-property-decorator';
 import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
+import UploadUsersDialog from '@/views/admin/Courses/uploadUsersDialog.vue';
 
 @Component({
   components: {
+    'upload-users-dialog': UploadUsersDialog,
     'edit-course-dialog': EditCourseDialog
   }
 })
 export default class CoursesView extends Vue {
   courses: Course[] = [];
+  uploadUsersCourse: Course | null = null;
   currentCourse: Course | null = null;
   editCourseDialog: boolean = false;
+  uploadUsersDialog: boolean = false;
   search: string = '';
   headers: object = [
     {
@@ -84,7 +108,7 @@ export default class CoursesView extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '5px'
+      width: '25%'
     },
     {
       text: 'Course Type',
@@ -92,7 +116,7 @@ export default class CoursesView extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Name', value: 'name', align: 'left', width: '30%' },
+    { text: 'Name', value: 'name', align: 'left', width: '20%' },
     {
       text: 'Execution Type',
       value: 'courseExecutionType',
@@ -115,25 +139,25 @@ export default class CoursesView extends Vue {
       text: 'Number of Teachers',
       value: 'numberOfTeachers',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Number of Students',
       value: 'numberOfStudents',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Number of Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Number of Quizzes',
       value: 'numberOfQuizzes',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Status',
@@ -190,6 +214,28 @@ export default class CoursesView extends Vue {
       }
     }
   }
+
+  uploadUsersHandler(course: Course) {
+    this.uploadUsersCourse = course;
+    this.uploadUsersDialog = true;
+  }
+
+
+  async updateSpecificCourse(executionId: number) {
+    this.uploadUsersDialog = false;
+    await this.$store.dispatch('loading');
+    try {
+      let updatedCourse = await RemoteServices.getCourse(executionId);
+      this.courses = this.courses.filter(
+              course => course.courseExecutionId !== executionId
+      );
+      this.courses.unshift(updatedCourse)
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
 }
 </script>
 
