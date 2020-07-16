@@ -72,6 +72,7 @@ public class UserService {
 
         User user = new User(name, username, role);
         userRepository.save(user);
+        user.setState(User.State.ACTIVE);
         user.setKey(user.getId());
         return user;
     }
@@ -231,6 +232,7 @@ public class UserService {
         }
         user1.setAdmin(false);
         user1.setEmail(externalUserDto.getEmail());
+        user1.setState(User.State.INACTIVE);
         return user1;
     }
 
@@ -271,7 +273,7 @@ public class UserService {
 
 
         user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-
+        user.setState(User.State.ACTIVE);
         return new ExternalUserDto(user);
     }
 
