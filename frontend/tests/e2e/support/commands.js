@@ -121,14 +121,14 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, argume
   cy.get('[data-cy="close"]').click();
 });
 
-Cypress.Commands.add('deleteSubmission', (title=null) => {
+Cypress.Commands.add('deleteSubmission', (title=null, size=null) => {
   if(title != null) {
     cy.contains(title)
       .parent()
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 6)
+      .should('have.length', size)
       .find('[data-cy="deleteSubmission"]')
       .click();
   } else {
@@ -156,4 +156,33 @@ Cypress.Commands.add('addReview', title => {
     title +
     '\') insert into reviews(creation_date, justification, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
   );
+});
+
+Cypress.Commands.add('reviewSubmission', (status, title, justification=null) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  if (justification != null){
+    cy.get('[data-cy="Justification"]').type(justification);
+  }
+  cy.get('[data-cy="'+ status +'Button"]').click();
+});
+
+Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  cy.contains(title);
+  cy.contains(status);
+  cy.get('[data-cy="CloseButton"]').click();
 });

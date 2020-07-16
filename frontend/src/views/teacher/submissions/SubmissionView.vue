@@ -24,7 +24,7 @@
       </template>
 
       <template v-slot:item.question.title="{ item }">
-        <div @click="showSubmissionDialog(item)" class="clickableTitle">
+        <div @click="showSubmissionDialog(item)" class="clickableTitle" data-cy="ViewSubmission">
           {{ item.question.title }}
         </div>
       </template>
@@ -64,6 +64,7 @@
               v-on="on"
               color="red"
               @click="deleteSubmission(item)"
+              data-cy="deleteSubmission"
               >delete</v-icon
             >
           </template>

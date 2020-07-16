@@ -9,7 +9,7 @@ describe('Student walkthrough', () => {
   afterEach(() => {
     cy.contains('Logout').click();
   });
-  
+
   it('login submits a question', () => {
     cy.submitQuestion(
       true,
@@ -29,7 +29,7 @@ describe('Student walkthrough', () => {
       'C',
       'D'
     );
-    cy.deleteSubmission('Test');
+    cy.deleteSubmission('Test', 6);
   });
 
   it('login submits a question with argument', () => {
@@ -53,7 +53,7 @@ describe('Student walkthrough', () => {
       'D',
       'Argument'
     );
-    cy.deleteSubmission('Test');
+    cy.deleteSubmission('Test', 6);
   });
 
   it('login submits an invalid question', () => {
