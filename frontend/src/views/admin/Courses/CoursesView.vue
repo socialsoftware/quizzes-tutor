@@ -36,7 +36,18 @@
           </template>
           <span>Create from Course</span>
         </v-tooltip>
-
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="addExternalUser(item)"
+              data-cy="addExternalUser"
+              >person_add</v-icon
+            >
+          </template>
+          <span>Add Student/Teacher</span>
+        </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -57,8 +68,7 @@
               v-on="on"
               @click="uploadUsersHandler(item)"
               data-cy="uploadUsersHandler"
-            >attach_file</v-icon
-            >
+            >attach_file</v-icon>
           </template>
           <span>Upload Users</span>
         </v-tooltip>
@@ -77,6 +87,12 @@
       v-model="uploadUsersDialog"
       :course="uploadUsersCourse"
       v-on:users-uploaded="updateSpecificCourse"
+    />
+    <add-user-dialog
+      v-if="currentCourse"
+      v-model="addUserDialog"
+      :course="currentCourse"
+      v-on:new-course="onCreateCourse"
       v-on:close-dialog="onCloseDialog"
     />
   </v-card>
@@ -87,12 +103,15 @@ import { Component, Vue } from 'vue-property-decorator';
 import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
+import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/uploadUsersDialog.vue';
+
 
 @Component({
   components: {
     'upload-users-dialog': UploadUsersDialog,
-    'edit-course-dialog': EditCourseDialog
+    'edit-course-dialog': EditCourseDialog,
+    'add-user-dialog': AddUserDialog
   }
 })
 export default class CoursesView extends Vue {
@@ -101,6 +120,7 @@ export default class CoursesView extends Vue {
   currentCourse: Course | null = null;
   editCourseDialog: boolean = false;
   uploadUsersDialog: boolean = false;
+  addUserDialog: boolean = false;
   search: string = '';
   headers: object = [
     {
@@ -200,6 +220,16 @@ export default class CoursesView extends Vue {
   onCloseDialog() {
     this.editCourseDialog = false;
     this.currentCourse = null;
+    this.addUserDialog = false;
+  }
+
+  addExternalUser(course: Course) {
+    this.addUserDialog = true;
+    this.currentCourse = course;
+  }
+
+  isExternalCourse(course: Course) {
+    return course.courseExecutionType == 'EXTERNAL';
   }
 
   async deleteCourse(courseToDelete: Course) {

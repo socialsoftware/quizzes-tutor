@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.io.*;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -47,6 +49,9 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+     @Autowired
+     private Mailer mailer;
+
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
     }
@@ -67,6 +72,7 @@ public class UserService {
 
         User user = new User(name, username, role);
         userRepository.save(user);
+        user.setState(User.State.ACTIVE);
         user.setKey(user.getId());
         return user;
     }
@@ -205,6 +211,7 @@ public class UserService {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
         User user1 = getUser(externalUserDto, courseExecution);
         associateUserWithExecution(courseExecution, user1);
+        mailer.sendSimpleMail(Mailer.MAIL_USER, user1.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, User.PASSWORD_CONFIRMATION_MAIL_BODY);
         return new ExternalUserDto(user1);
     }
 
@@ -225,6 +232,7 @@ public class UserService {
         }
         user1.setAdmin(false);
         user1.setEmail(externalUserDto.getEmail());
+        user1.setState(User.State.INACTIVE);
         return user1;
     }
 
@@ -253,17 +261,25 @@ public class UserService {
         User user = findByUsername(externalUserDto.getUsername());
 
         if (user == null)
-            throw new TutorException(USERNAME_NOT_FOUND, externalUserDto.getUsername());
-
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
         if (user.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
+
+        if (!externalUserDto.getConfirmationToken().equals(user.getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
 
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
 
-        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
 
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+        user.setState(User.State.ACTIVE);
         return new ExternalUserDto(user);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteExternalInactiveUsers(List<Integer> usersId){
+
     }
 
 }

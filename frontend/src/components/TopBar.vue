@@ -7,7 +7,7 @@
         aria-label="Menu"
       />
 
-      <v-toolbar-title>
+      <v-toolbar-title data-cy="homeLink">
         <v-btn
           dark
           active-class="no-active"

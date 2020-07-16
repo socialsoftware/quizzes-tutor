@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
@@ -27,12 +28,14 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@DataJpaTest
+
 class SpockTest extends Specification {
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_1_EMAIL = "user1@mail.com"
+    public static final String USER_2_EMAIL = "user2@mail.com"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
@@ -147,6 +150,9 @@ class SpockTest extends Specification {
 
     @Autowired
     UserService userService
+
+    @Autowired
+    Mailer mailer
 
     Course course
     CourseExecution courseExecution

@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if='email !== undefined && email !== ""'>
+  <v-card v-if='valid'>
     <v-card-title>{{title}}</v-card-title>
     <v-card-text v-if="!success">
       <form>
@@ -49,8 +49,10 @@ export default class PasswordCard extends Vue {
   title: string | undefined;
   @Prop({ required: true })
   email: string | undefined;
+  @Prop({ required: true})
+  valid: boolean = false;
 
-  success = false
+  success = false;
 
   password = '';
   confirmPassword = '';

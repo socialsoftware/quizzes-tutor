@@ -80,9 +80,20 @@ export default class RemoteServices {
       });
   }
 
+  static async createExternalUser(executionId: number, externalUser: ExternalUser): Promise<ExternalUser> {
+    return httpClient
+      .post(`/courses/executions/${executionId}/users`, externalUser)
+      .then(response => {
+        return new ExternalUser(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async confirmRegistration(externalUser: ExternalUser): Promise<ExternalUser> {
     return httpClient
-      .post('/users/registration/confirm', externalUser)
+      .post('/auth/registration/confirm', externalUser)
       .then(response => {
         return new ExternalUser(response.data);
       })

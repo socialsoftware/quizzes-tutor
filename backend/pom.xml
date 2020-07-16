@@ -75,18 +75,21 @@
                         </executions>
                     </plugin>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.22.2</version>
                         <executions>
                             <execution>
+                                <phase>integration-test</phase>
                                 <goals>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
+                                    <goal>test</goal>
                                 </goals>
                             </execution>
                         </executions>
                         <configuration>
+                            <excludes>
+                                <exclude>**/*Test</exclude>
+                                <exclude>**/*Spec</exclude>
+                            </excludes>
                             <includes>
                                 <include>**/*IT</include>
                             </includes>
@@ -127,19 +130,11 @@
                             </execution>
                         </executions>
                     </plugin>
-
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <version>2.22.2</version>
-                        <configuration>
-                            <useFile>false</useFile>
-                            <excludes>
-                                <exclude>**/*IT</exclude>
-                            </excludes>
-                        </configuration>
                     </plugin>
-
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
@@ -330,10 +325,14 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>2.6</version>
+            <version>3.1</version>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <version>2.3.1.RELEASE</version>
+        </dependency>
     </dependencies>
 
     <build>

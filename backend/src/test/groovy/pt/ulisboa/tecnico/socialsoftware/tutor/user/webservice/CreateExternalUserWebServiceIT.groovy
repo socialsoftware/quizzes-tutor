@@ -1,80 +1,49 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
-import org.hibernate.Transaction
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
-import javax.transaction.Transactional
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
-class CreateExternalUserWebServiceIT extends Specification{
-    public static final String USER_1_NAME = "User 1 Name"
-    public static final String USER_1_USERNAME = "User 1 Username"
-    public static final String COURSE_1_NAME = "Course 1 Name"
-    public static final String COURSE_1_ACADEMIC_TERM = "1º Semestre 2019/2020"
-    public static final String COURSE_1_ACRONYM = "C12"
+class CreateExternalUserWebServiceIT extends SpockTest {
 
     @LocalServerPort private int port
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    UserRepository userRepository
 
     def client
 
     def loginResponse
     def response
 
-    def course
-    def courseExecution
-
     def setup(){
         client = new RESTClient("http://localhost:" + port)
-    }
-
-    def "login as demo admin, and create an external user" (){
-        given:
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        System.out.println(port + " jhgghjkkghjghkj")
-
         loginResponse = client.get(
                 path: '/auth/demo/admin'
         )
-        client.headers['Authorization']  = "Bearer "+loginResponse.data.token
+        client.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
 
+    def "login as demo admin, and create an external user" () {
         when:
         response = client.post(
                 path: '/courses/executions/'+courseExecution.getId()+'/users',
                 body: [
                         admin: false,
-                        email: 'test@mail.com',
+                        email: 'pedro.pereira2909@gmail.com',
                         role: 'STUDENT'
                 ],
                 requestContentType: 'application/json'
@@ -84,8 +53,8 @@ class CreateExternalUserWebServiceIT extends Specification{
         response != null
         response.status == 200
         response.data != null
-        response.data.username == "test@mail.com"
-        response.data.email == "test@mail.com"
+        response.data.username == "pedro.pereira2909@gmail.com"
+        response.data.email == "pedro.pereira2909@gmail.com"
         response.data.admin == false
         response.data.role == "STUDENT"
 

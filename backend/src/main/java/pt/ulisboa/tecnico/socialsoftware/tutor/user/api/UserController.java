@@ -30,8 +30,8 @@ public class UserController {
         return userService.createExternalUser(executionId,externalUserDto);
     }
 
-    @PostMapping ("/users/registration/confirm")
-    public ExternalUserDto confirmRegistration(@Valid @RequestBody ExternalUserDto externalUserDto){
+    @PostMapping ("/auth/registration/confirm")
+    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
         return userService.confirmRegistration(externalUserDto);
     }
 

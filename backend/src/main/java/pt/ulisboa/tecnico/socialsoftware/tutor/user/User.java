@@ -23,6 +23,11 @@ import java.util.stream.Collectors;
         })
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
+    public enum State {ACTIVE, INACTIVE}
+
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
+
+    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,6 +38,9 @@ public class User implements UserDetails, DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated
+    private State state;
     
     @Column(unique=true)
     private String username;
@@ -40,6 +48,8 @@ public class User implements UserDetails, DomainEntity {
     private String name;
     private String enrolledCoursesAcronyms;
     private String password;
+
+    private String confirmationToken = "";
 
     private String email;
 
@@ -185,8 +195,24 @@ public class User implements UserDetails, DomainEntity {
         this.email = email;
     }
 
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
     public boolean isActive() {
         return !(getPassword() == null || getPassword().isBlank());
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
