@@ -31,28 +31,11 @@ public class MultipleChoiceQuestionDto extends QuestionTypeDto {
         return new MultipleChoiceQuestion(this);
     }
 
-    //TODO[is->has]: to string
-    /*
     @Override
     public String toString() {
-        return "QuestionDto{" +
-                "id=" + getId() +
-                ", key=" + getKey() +
-                ", title='" + getTitle() + '\'' +
-                ", content='" + getContent() + '\'' +
-                ", difficulty=" + getDifficulty() +
-                ", numberOfAnswers=" + getNumberOfAnswers() +
-                ", numberOfGeneratedQuizzes=" + getNumberOfGeneratedQuizzes() +
-                ", numberOfNonGeneratedQuizzes=" + getNumberOfNonGeneratedQuizzes() +
-                ", numberOfCorrect=" + getNumberOfCorrect() +
-                ", creationDate='" + getCreationDate() + '\'' +
-                ", status='" + getStatus() + '\'' +
-                ", options=" + getOptions() +
-                ", image=" + getImage() +
-                ", topics=" + getTopics() +
-                ", sequence=" + getSequence() +
+        return "MultipleChoiceQuestionDto{" +
+                "options=" + options +
                 '}';
     }
-    */
 
 }

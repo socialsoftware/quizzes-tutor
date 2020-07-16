@@ -178,4 +178,25 @@ public class QuestionDto implements Serializable {
     public void setQuestion(QuestionTypeDto question) {
         this.question = question;
     }
+
+    @Override
+    public String toString() {
+        return "QuestionDto{" +
+                "id=" + id +
+                ", key=" + key +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", difficulty=" + difficulty +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfGeneratedQuizzes=" + numberOfGeneratedQuizzes +
+                ", numberOfNonGeneratedQuizzes=" + numberOfNonGeneratedQuizzes +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", creationDate='" + creationDate + '\'' +
+                ", status='" + status + '\'' +
+                ", image=" + image +
+                ", topics=" + topics +
+                ", sequence=" + sequence +
+                ", question=" + question +
+                '}';
+    }
 }

@@ -278,7 +278,7 @@ public class QuestionService {
         questionRepository.delete(question);
     }
 
-    // TODO[is->has] FIX QUESTION DELETEION
+    // TODO[is->has] FIX QUESTION DELETION
     public void deleteQuestion(MultipleChoiceQuestion question) {
         for (Option option : question.getOptions()) {
             option.remove();

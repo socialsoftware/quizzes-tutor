@@ -83,4 +83,16 @@ public class StatementAnswerDto implements Serializable {
     public void setAnswerDetails(StatementAnswerDetailsDto answerDetails) {
         this.answerDetails = answerDetails;
     }
+
+    @Override
+    public String toString() {
+        return "StatementAnswerDto{" +
+                "timeTaken=" + timeTaken +
+                ", sequence=" + sequence +
+                ", questionAnswerId=" + questionAnswerId +
+                ", quizQuestionId=" + quizQuestionId +
+                ", timeToSubmission=" + timeToSubmission +
+                ", answerDetails=" + answerDetails +
+                '}';
+    }
 }

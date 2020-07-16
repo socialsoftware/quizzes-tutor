@@ -124,20 +124,10 @@ public class MultipleChoiceQuestion extends QuestionType {
         questionService.deleteQuestion(this);
     }
 
-    //TODO[is->has]: Update toString()
-    /*@Override
+    @Override
     public String toString() {
-        return "Question{" +
-                "id=" + getId() +
-                ", key=" + getKey() +
-                ", content='" + getContent() + '\'' +
-                ", title='" + getTitle() + '\'' +
-                ", numberOfAnswers=" + getNumberOfAnswers() +
-                ", numberOfCorrect=" + getNumberOfAnswers() +
-                ", status=" + getStatus() +
-                ", image=" + getImage() +
-                ", options=" + getOptions() +
-                ", topics=" + getTopics() +
+        return "MultipleChoiceQuestion{" +
+                "options=" + options +
                 '}';
-    }*/
+    }
 }

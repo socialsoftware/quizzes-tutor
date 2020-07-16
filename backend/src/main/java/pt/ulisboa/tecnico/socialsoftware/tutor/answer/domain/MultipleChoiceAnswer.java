@@ -49,8 +49,6 @@ public class MultipleChoiceAnswer extends AnswerType {
 
     public void setOption(MultipleChoiceStatementAnswerDto multipleChoiceStatementAnswerDto) {
         if (multipleChoiceStatementAnswerDto.getOptionId() != null) {
-
-            // TODO[is->has]: Question stuff
             Option option = this.getQuestion().getOptions().stream()
                     .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDto.getOptionId()))
                     .findAny()

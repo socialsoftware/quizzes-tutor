@@ -297,4 +297,22 @@ public class Question implements DomainEntity {
         return this.getQuestion().getQuestionTypeDto();
     }
 
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", key=" + key +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", status=" + status +
+                ", creationDate=" + creationDate +
+                ", image=" + image +
+                ", quizQuestions=" + quizQuestions +
+                ", topics=" + topics +
+                ", course=" + course +
+                ", question=" + question +
+                '}';
+    }
 }

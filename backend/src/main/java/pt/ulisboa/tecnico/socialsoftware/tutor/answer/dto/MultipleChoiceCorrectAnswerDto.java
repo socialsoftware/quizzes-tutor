@@ -17,12 +17,10 @@ public class MultipleChoiceCorrectAnswerDto extends CorrectAnswerTypeDto {
         this.correctOptionId = correctOptionId;
     }
 
-    // TODO[is->has]: update to string.
-    /*@Override
+    @Override
     public String toString() {
-        return "CorrectAnswerDto{" +
-                "correctOptionId=" + getCorrectOptionId() +
-                ", sequence=" + getSequence() +
+        return "MultipleChoiceCorrectAnswerDto{" +
+                "correctOptionId=" + correctOptionId +
                 '}';
-    }*/
+    }
 }

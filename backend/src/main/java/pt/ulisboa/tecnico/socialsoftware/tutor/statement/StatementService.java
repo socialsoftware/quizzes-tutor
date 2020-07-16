@@ -200,6 +200,7 @@ public class StatementService {
             answer.setTimeToSubmission(0);
         }
         // TODO[is->has]: He knows how to save himself :thinking:?
+        // VISITOR?
         // -> answer.saveQuestionAnswer(username, quizId, questionAnswerItemRepository);
         /*if (answer.getOptionId() == null) {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),

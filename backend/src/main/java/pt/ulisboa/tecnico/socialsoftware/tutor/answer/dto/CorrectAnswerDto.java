@@ -29,4 +29,12 @@ public class CorrectAnswerDto implements Serializable {
     public void setCorrectAnswer(CorrectAnswerTypeDto correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
+
+    @Override
+    public String toString() {
+        return "CorrectAnswerDto{" +
+                "sequence=" + sequence +
+                ", correctAnswer=" + correctAnswer +
+                '}';
+    }
 }

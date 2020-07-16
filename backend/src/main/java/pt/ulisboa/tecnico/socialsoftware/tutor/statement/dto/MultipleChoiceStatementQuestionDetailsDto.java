@@ -22,16 +22,10 @@ public class MultipleChoiceStatementQuestionDetailsDto extends StatementQuestion
         this.options = options;
     }
 
-    // TODO[is->has]: update to string
-    /*
     @Override
     public String toString() {
-        return "StatementMultipleChoiceQuestionDto{" +
-                ", content='" + getContent() + '\'' +
-                ", options=" + getOptions() +
-                ", image=" + getImage() +
-                ", sequence=" + getSequence() +
+        return "MultipleChoiceStatementQuestionDetailsDto{" +
+                "options=" + options +
                 '}';
     }
-    */
 }

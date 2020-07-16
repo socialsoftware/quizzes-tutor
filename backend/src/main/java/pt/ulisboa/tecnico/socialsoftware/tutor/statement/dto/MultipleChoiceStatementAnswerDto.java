@@ -33,15 +33,10 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto 
         return multipleChoiceAnswer;
     }
 
-    // TODO[is->has]: update to string
-    /*
     @Override
     public String toString() {
-        return "StatementAnswerDto{" +
-                "timeTaken=" + getTimeTaken() +
-                ", sequence=" + getSequence() +
-                ", questionAnswerId=" + getQuestionAnswerId() +
-                ", optionId=" + getOptionId() +
+        return "MultipleChoiceStatementAnswerDto{" +
+                "optionId=" + optionId +
                 '}';
-    }*/
+    }
 }
