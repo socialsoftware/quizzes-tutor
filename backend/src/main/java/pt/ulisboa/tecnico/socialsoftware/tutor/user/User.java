@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
         })
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
+    public enum State {ACTIVE, INACTIVE}
 
     public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
 
@@ -37,6 +38,9 @@ public class User implements UserDetails, DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Enumerated
+    private State state;
     
     @Column(unique=true)
     private String username;
@@ -187,6 +191,14 @@ public class User implements UserDetails, DomainEntity {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 
     public boolean isActive() {
