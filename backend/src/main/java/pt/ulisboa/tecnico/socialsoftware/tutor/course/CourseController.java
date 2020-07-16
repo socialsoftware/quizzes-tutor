@@ -27,7 +27,15 @@ public class CourseController {
         if (user == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
-        return courseService.getCourseExecutions(user.getRole());
+
+        User.Role role;
+        if (user.isAdmin()) {
+            role = User.Role.ADMIN;
+        } else {
+            role = user.getRole();
+        }
+
+        return courseService.getCourseExecutions(role);
     }
 
     @PostMapping("/courses/activate")
