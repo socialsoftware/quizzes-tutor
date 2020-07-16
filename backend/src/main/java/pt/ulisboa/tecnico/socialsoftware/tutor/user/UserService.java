@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -272,6 +273,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
         user.setState(User.State.ACTIVE);
         return new ExternalUserDto(user);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteExternalInactiveUsers(List<Integer> usersId){
+
     }
 
 }
