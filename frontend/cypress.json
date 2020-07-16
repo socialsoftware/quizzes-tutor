@@ -4,5 +4,10 @@
   "integrationFolder": "tests/e2e/specs",
   "pluginsFile": "tests/e2e/plugins/index.js",
   "supportFile": "tests/e2e/support/index.js",
-  "projectId": "ou7bhq"
+  "projectId": "ou7bhq",
+  "env": {
+    "USER": "tf",
+    "PASS": "123",
+    "DBNAME": "tutordb"
+  }
 }

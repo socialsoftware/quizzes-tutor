@@ -68,14 +68,33 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('seeTournamentsLists', type => {
   cy.get('[data-cy="Tournament"]').click();
-  cy.get('[data-cy="' + type + '"]').click();
+  cy.get(`[data-cy="${type}"]`).click();
   cy.wait(100);
 });
 
 Cypress.Commands.add('createTournament', numberOfQuestions => {
   cy.get('[data-cy="createButton"]')
     .should('be.visible')
+    .click();
+  cy.tournamentCreation(numberOfQuestions);
+  cy.get('[data-cy="saveButton"]').click();
+  cy.wait(100);
+});
+
+Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
+  cy.get('[data-cy="createButton"]')
+    .should('be.visible')
     .click({ force: true });
+
+  cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
+  cy.wait(500);
+  cy.get('[data-cy="Password"]').type('123', { force: true });
+  cy.tournamentCreation(numberOfQuestions);
+  cy.get('[data-cy="saveButton"]').click();
+  cy.wait(100);
+});
+
+Cypress.Commands.add('tournamentCreation', numberOfQuestions => {
   cy.time('Start Time', 16, 0);
   cy.wait(100);
   cy.time('End Time', 18, 1);
@@ -83,18 +102,19 @@ Cypress.Commands.add('createTournament', numberOfQuestions => {
     force: true
   });
   cy.selectTopic('Architectural Style');
-  cy.selectTopic('Case Studies');
-  cy.get('[data-cy="saveButton"]').click();
 });
 
-Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
+Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
   cy.createTournament(numberOfQuestions);
-  cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
-  cy.wait(500);
-  cy.get('[data-cy="Password"]').type('123', { force: true });
-  cy.selectTopic('Architectural Style');
-  cy.selectTopic('Case Studies');
-  cy.get('[data-cy="saveButton"]').click();
+  cy.exec(
+    'PGPASSWORD=' +
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
+    ' -h localhost -c "UPDATE tournaments SET start_time = \'2020-07-16 07:57:00\';" '
+  );
 });
 
 Cypress.Commands.add('time', (date, day, type) => {
@@ -158,91 +178,62 @@ Cypress.Commands.add('selectTopic', topic => {
 });
 
 Cypress.Commands.add('joinTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="JoinTournament"]')
-    .click({ force: true });
+  cy.selectTournamentWithAction(tournament, "JoinTournament");
 });
 
 Cypress.Commands.add('joinPrivateTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="JoinTournament"]')
-    .click({ force: true });
-
+  cy.joinTournament(tournament);
   cy.get('[data-cy="Password"]').type('123');
+  cy.get('[data-cy="joinPrivateTournament"]').click();
 });
 
 Cypress.Commands.add('solveTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="SolveQuiz"]')
-    .click({ force: true });
+  cy.selectTournamentWithAction(tournament, "SolveQuiz");
 });
 
 Cypress.Commands.add('leaveTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="LeaveTournament"]')
-    .click({ force: true });
+  cy.selectTournamentWithAction(tournament, "LeaveTournament");
 });
 
 Cypress.Commands.add('editTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="EditTournament"]')
-    .click({ force: true });
+  cy.selectTournamentWithAction(tournament, "EditTournament");
 
   cy.time('Start Time', 20, 0);
   cy.wait(100);
   cy.time('End Time', 22, 1);
   cy.get('[data-cy="NumberOfQuestions"]')
-    .clear()
+    .clear({
+      force: true
+    })
     .type(5, {
       force: true
     });
-  cy.selectTopic('Allocation viewtype');
+  cy.selectTopic('Case Studies');
   cy.get('[data-cy="saveButton"]').click();
 });
 
 Cypress.Commands.add('cancelTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="CancelTournament"]')
-    .click({ force: true });
+  cy.selectTournamentWithAction(tournament, "CancelTournament");
 });
 
 Cypress.Commands.add('removeTournament', tournament => {
-  cy.get('tbody')
-    .children()
-    .eq(tournament)
-    .children()
-    .should('have.length', 9)
-    .eq(0)
-    .find('[data-cy="RemoveTournament"]')
+  cy.selectTournamentWithAction(tournament, "RemoveTournament");
+});
+
+Cypress.Commands.add('selectTournamentWithAction', (tournament, action) => {
+
+  cy.get(`:nth-child(${tournament}) > :nth-child(1) > [data-cy="${action}"]`)
     .click({ force: true });
+});
+
+Cypress.Commands.add('addQuestionTopic', () => {
+  cy.exec(
+    'PGPASSWORD=' +
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
+    ' -h localhost -c "INSERT INTO topics_questions (topics_id, questions_id) VALUES (83, 1389);"'
+  );
 });

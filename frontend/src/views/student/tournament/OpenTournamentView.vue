@@ -20,7 +20,7 @@
             class="mx-2"
           />
           <v-spacer />
-          <v-btn to="/student/all" color="primary" dark data-cy="createButton"
+          <v-btn to="/student/all" color="primary" dark data-cy="changeButton"
             >See All Tournaments
           </v-btn>
           <v-btn
@@ -41,6 +41,11 @@
         </v-chip>
         <v-chip x-small>
           {{ item.endTime }}
+        </v-chip>
+      </template>
+      <template v-slot:item.id="{ item }">
+        <v-chip color="primary">
+          {{ item.id }}
         </v-chip>
       </template>
       <template v-slot:item.state="{ item }">
@@ -154,7 +159,6 @@ import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
-import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementManager from '@/models/statement/StatementManager';
 
 @Component({
@@ -328,6 +332,7 @@ export default class OpenTournamentView extends Vue {
       tournamentToJoin.participants = participants;
       return;
     }
+    tournamentToJoin.enrolled = true;
     tournamentToJoin.participants = participants;
   }
 

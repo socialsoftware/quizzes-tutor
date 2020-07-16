@@ -340,6 +340,7 @@ export default class AllTournamentView extends Vue {
       tournamentToJoin.participants = participants;
       return;
     }
+    tournamentToJoin.enrolled = true;
     tournamentToJoin.participants = participants;
   }
 

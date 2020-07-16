@@ -1,11 +1,30 @@
 describe('Student walkthrough', () => {
+
   beforeEach(() => {
     cy.demoStudentLogin();
-    cy.seeTournamentsLists('All');
+    cy.addQuestionTopic();
   });
 
   afterEach(() => {
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "DELETE FROM topics_questions WHERE questions_id = 1389;' +
+      ' DELETE FROM tournaments_participants;' +
+      ' DELETE FROM tournaments;' +
+      ' ALTER SEQUENCE tournaments_id_seq RESTART WITH 1;' +
+      ' UPDATE tournaments SET id=nextval(\'tournaments_id_seq\');" '
+    );
+    cy.contains('Demo Course').click();
     cy.logout();
+  });
+
+  it('login sees all tournaments', () => {
+    cy.seeTournamentsLists('All');
   });
 
   it('login sees open tournaments', () => {
@@ -21,51 +40,58 @@ describe('Student walkthrough', () => {
   });
 
   it('login creates a tournament', () => {
-    cy.createTournament('3');
+    cy.seeTournamentsLists('All');
+    cy.createTournament('1');
   });
 
   it('login creates private tournament', () => {
-    cy.createPrivateTournament('3');
+    cy.seeTournamentsLists('All');
+    cy.createPrivateTournament('1');
   });
 
   it('login creates a tournament and joins', () => {
-    cy.createTournament('3');
-    cy.wait(100);
-    cy.joinTournament('-1');
+    cy.seeTournamentsLists('All');
+    cy.createTournament('1');
+    cy.joinTournament('1');
   });
 
   it('login creates a private tournament and joins', () => {
-    cy.createPrivateTournament('3');
-    cy.wait(100);
-    cy.joinPrivateTournament('-1');
+    cy.seeTournamentsLists('All');
+    cy.createPrivateTournament('1');
+    cy.joinPrivateTournament('1');
   });
 
   it('login creates, joins and solves tournament', () => {
-    cy.createTournament('3');
+    cy.seeTournamentsLists('Open');
+    cy.createOpenTournament('1');
+    cy.joinTournament('1');
     cy.wait(100);
-    cy.joinTournament('-1');
-    cy.solveTournament('-1');
+    cy.solveTournament('1');
   });
 
   it('login creates, joins and leaves tournament', () => {
-    cy.createTournament('3');
+    cy.seeTournamentsLists('All');
+    cy.createTournament('1');
+    cy.joinTournament('1');
     cy.wait(100);
-    cy.joinTournament('0');
-    cy.leaveTournament('0');
+    cy.leaveTournament('1');
   });
 
-  it('login edits tournament', () => {
+  it('login creates and edits tournament', () => {
     cy.seeTournamentsLists('My');
-    cy.editTournament('-1');
+    cy.createTournament('1');
+    cy.editTournament('1');
   });
 
-  it('login cancel tournament', () => {
+  it('login creates and cancel tournament', () => {
     cy.seeTournamentsLists('My');
-    cy.cancelTournament('-1');
+    cy.createTournament('1');
+    cy.cancelTournament('1');
   });
 
-  it('login remove tournament', () => {
+  it('login creates and remove tournament', () => {
     cy.seeTournamentsLists('My');
-    cy.removeTournament('-1');
+    cy.createTournament('1');
+    cy.removeTournament('1');
   });
 });

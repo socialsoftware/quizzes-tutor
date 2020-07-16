@@ -36,7 +36,12 @@
               <v-btn color="primary" @click="$emit('close-password-dialog')"
                 >Cancel</v-btn
               >
-              <v-btn color="primary" @click="passwordEmit">Join</v-btn>
+              <v-btn
+                color="primary"
+                @click="passwordEmit"
+                data-cy="joinPrivateTournament"
+                >Join</v-btn
+              >
             </v-card-actions>
           </v-layout>
         </v-container>
