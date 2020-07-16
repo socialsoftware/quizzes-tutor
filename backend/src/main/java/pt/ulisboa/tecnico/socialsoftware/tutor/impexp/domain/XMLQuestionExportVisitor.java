@@ -5,10 +5,7 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 
 import java.util.List;
 
@@ -42,7 +39,7 @@ public class XMLQuestionExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestion(MultipleChoiceQuestion question) {
+    public void visitQuestion(Question question) {
         Element questionElement = new Element("question");
         questionElement.setAttribute("courseType", question.getCourse().getType().name());
         questionElement.setAttribute("courseName", question.getCourse().getName());
@@ -50,6 +47,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         questionElement.setAttribute("content", question.getContent());
         questionElement.setAttribute("title", question.getTitle());
         questionElement.setAttribute("status", question.getStatus().name());
+
         if (question.getCreationDate() != null)
             questionElement.setAttribute("creationDate", DateHandler.toISOString(question.getCreationDate()));
         this.currentElement.addContent(questionElement);
@@ -59,13 +57,20 @@ public class XMLQuestionExportVisitor implements Visitor {
         if (question.getImage() != null)
             question.getImage().accept(this);
 
+        question.getQuestion().accept(this);
+
+        this.currentElement = this.rootElement;
+    }
+
+    @Override
+    public void visitQuestionType(MultipleChoiceQuestion question) {
+        this.currentElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
+
         Element optionsElement = new Element("options");
         this.currentElement.addContent(optionsElement);
 
         this.currentElement = optionsElement;
         question.visitOptions(this);
-
-        this.currentElement = this.rootElement;
     }
 
     @Override
@@ -85,7 +90,7 @@ public class XMLQuestionExportVisitor implements Visitor {
 
         optionElement.setAttribute("sequence", String.valueOf(option.getSequence()));
         optionElement.setAttribute("content", option.getContent());
-        optionElement.setAttribute("correct", String.valueOf(option.getCorrect()));
+        optionElement.setAttribute("correct", String.valueOf(option.isCorrect()));
 
         this.currentElement.addContent(optionElement);
     }

@@ -36,7 +36,7 @@ class RemoveTopicTest extends SpockTest {
         topicThree.setCourse(course)
         topicRepository.save(topicThree)
 
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setCourse(course)
         question.setTitle("Question Title")
         question.setContent("Question Content")

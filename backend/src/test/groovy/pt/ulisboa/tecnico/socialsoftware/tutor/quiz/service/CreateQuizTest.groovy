@@ -33,13 +33,16 @@ class CreateQuizTest extends SpockTest {
         quizDto.setConclusionDate(STRING_DATE_TOMORROW)
         quizDto.setResultsDate(STRING_DATE_LATER)
 
-        Question question = new MultipleChoiceQuestion()
+        Question question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle(QUESTION_1_TITLE)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
 
-        questionDto = new MultipleChoiceQuestionDto(question)
+        questionDto = new QuestionDto(question)
         questionDto.setKey(1)
         questionDto.setSequence(1)
 

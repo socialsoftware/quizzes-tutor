@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -34,18 +35,22 @@ class GetSolvedQuizzesTest extends SpockTest {
         userRepository.save(user)
         user.setKey(user.getId())
 
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setContent("Question Content")
         question.setTitle("Question Title")
         questionRepository.save(question)
 
+        def questionType = new MultipleChoiceQuestion();
+        question.setQuestion(questionType);
+        questionTypeRepository.save(questionType)
+
         option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        option.setQuestion(question)
+        option.setQuestion(questionType)
         optionRepository.save(option)
     }
 

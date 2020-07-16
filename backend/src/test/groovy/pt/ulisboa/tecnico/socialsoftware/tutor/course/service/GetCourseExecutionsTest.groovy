@@ -56,7 +56,7 @@ class GetCourseExecutionsTest extends SpockTest {
         def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         student.addCourse(courseExecution)
 
-        Question question = new MultipleChoiceQuestion()
+        Question question = new Question()
         question.setTitle("Title")
         question.setCourse(course)
 

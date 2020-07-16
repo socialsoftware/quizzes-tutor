@@ -23,7 +23,7 @@ class UpdateTopicsTest extends SpockTest {
     def topicThree
 
     def setup() {
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent("Question Content")

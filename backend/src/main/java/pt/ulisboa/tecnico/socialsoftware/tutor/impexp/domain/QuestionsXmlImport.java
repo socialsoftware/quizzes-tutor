@@ -9,12 +9,13 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -79,8 +80,9 @@ public class QuestionsXmlImport {
 		String title = questionElement.getAttributeValue("title");
 		String status = questionElement.getAttributeValue("status");
 		String creationDate = questionElement.getAttributeValue("creationDate");
+		String type = questionElement.getAttributeValue("type");
 
-		MultipleChoiceQuestionDto questionDto = new MultipleChoiceQuestionDto();
+		QuestionDto questionDto = new QuestionDto();
 		questionDto.setKey(key);
 		questionDto.setContent(content);
 		questionDto.setTitle(title);
@@ -100,6 +102,22 @@ public class QuestionsXmlImport {
 			questionDto.setImage(imageDto);
 		}
 
+		QuestionTypeDto questionTypeDto;
+		switch (type){
+			case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+				questionTypeDto = importMultipleChoiceQuestion(questionElement);
+				break;
+			default:
+				throw new TutorException(ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED, type);
+		}
+
+		questionDto.setQuestion(questionTypeDto);
+
+		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
+		questionService.createQuestion(course.getId(), questionDto);
+	}
+
+	private QuestionTypeDto importMultipleChoiceQuestion(Element questionElement) {
 		List<OptionDto> optionDtos = new ArrayList<>();
 		for (Element optionElement : questionElement.getChild("options").getChildren("option")) {
 			Integer optionSequence = Integer.valueOf( optionElement.getAttributeValue("sequence"));
@@ -113,9 +131,8 @@ public class QuestionsXmlImport {
 
 			optionDtos.add(optionDto);
 		}
-		questionDto.setOptions(optionDtos);
-
-		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
-		questionService.createQuestion(course.getId(), questionDto);
+		MultipleChoiceQuestionDto multipleChoiceQuestionDto = new MultipleChoiceQuestionDto();
+		multipleChoiceQuestionDto.setOptions(optionDtos);
+		return multipleChoiceQuestionDto;
 	}
 }

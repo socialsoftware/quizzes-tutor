@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -40,7 +41,7 @@ class UpdateQuestionTest extends SpockTest {
         imageRepository.save(image)
 
         given: "create a question"
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setCourse(course)
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
@@ -49,6 +50,9 @@ class UpdateQuestionTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setImage(image)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
 
         and: 'two options'
@@ -56,22 +60,23 @@ class UpdateQuestionTest extends SpockTest {
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(question)
+        optionOK.setQuestion(questionType)
         optionRepository.save(optionOK)
 
         optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
-        optionKO.setQuestion(question)
+        optionKO.setQuestion(questionType)
         optionRepository.save(optionKO)
     }
 
     def "update a question"() {
         given: "a changed question"
-        def questionDto = new MultipleChoiceQuestionDto(question)
+        def questionDto = new QuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
         and: '2 changed options'
         def options = new ArrayList<OptionDto>()
         def optionDto = new OptionDto(optionOK)
@@ -81,7 +86,7 @@ class UpdateQuestionTest extends SpockTest {
         optionDto = new OptionDto(optionKO)
         optionDto.setCorrect(true)
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)
@@ -99,18 +104,18 @@ class UpdateQuestionTest extends SpockTest {
         result.getDifficulty() == 50
         result.getImage() != null
         and: 'an option is changed'
-        result.getOptions().size() == 2
-        def resOptionOne = result.getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
+        result.getQuestion().getOptions().size() == 2
+        def resOptionOne = result.getQuestion().getOptions().stream().filter({option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
         resOptionOne.getContent() == OPTION_2_CONTENT
-        !resOptionOne.getCorrect()
-        def resOptionTwo = result.getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
+        !resOptionOne.isCorrect()
+        def resOptionTwo = result.getQuestion().getOptions().stream().filter({option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
         resOptionTwo.getContent() == OPTION_1_CONTENT
-        resOptionTwo.getCorrect()
+        resOptionTwo.isCorrect()
     }
 
     def "update question with missing data"() {
         given: 'a question'
-        def questionDto = new MultipleChoiceQuestionDto(question)
+        def questionDto = new QuestionDto(question)
         questionDto.setTitle('     ')
 
         when:
@@ -123,7 +128,8 @@ class UpdateQuestionTest extends SpockTest {
 
     def "update question with two options true"() {
         given: 'a question'
-        def questionDto = new MultipleChoiceQuestionDto(question)
+        def questionDto = new QuestionDto(question)
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
 
         def optionDto = new OptionDto(optionOK)
         optionDto.setContent(OPTION_2_CONTENT)
@@ -134,7 +140,7 @@ class UpdateQuestionTest extends SpockTest {
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)
@@ -180,12 +186,13 @@ class UpdateQuestionTest extends SpockTest {
         answerTypeRepository.save(answerType)
 
 
-        def questionDto = new MultipleChoiceQuestionDto(question)
+        def questionDto = new QuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
         questionDto.setStatus(Question.Status.DISABLED.name())
         questionDto.setNumberOfAnswers(4)
         questionDto.setNumberOfCorrect(2)
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
 
         and: 'a optionId'
         def optionDto = new OptionDto(optionOK)
@@ -198,7 +205,7 @@ class UpdateQuestionTest extends SpockTest {
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)

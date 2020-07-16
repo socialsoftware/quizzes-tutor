@@ -15,18 +15,19 @@ class CreateQuestionTest extends SpockTest {
 
     def "create a question with no image and one option"() {
         given: "a questionDto"
-        def questionDto = new MultipleChoiceQuestionDto()
+        def questionDto = new QuestionDto()
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
         and: 'a optionId'
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when:
         questionService.createQuestion(course.getId(), questionDto)
@@ -40,22 +41,23 @@ class CreateQuestionTest extends SpockTest {
         result.getTitle() == QUESTION_1_TITLE
         result.getContent() == QUESTION_1_CONTENT
         result.getImage() == null
-        result.getOptions().size() == 1
+        result.getQuestion().getOptions().size() == 1
         result.getCourse().getName() == COURSE_1_NAME
         course.getQuestions().contains(result)
-        def resOption = result.getOptions().get(0)
+        def resOption = result.getQuestion().getOptions().get(0)
         resOption.getContent() == OPTION_1_CONTENT
-        resOption.getCorrect()
+        resOption.isCorrect()
 
     }
 
     def "create a question with image and two options"() {
         given: "a questionDto"
-        def questionDto = new MultipleChoiceQuestionDto()
+        def questionDto = new QuestionDto()
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
 
         and: 'an image'
         def image = new ImageDto()
@@ -72,7 +74,7 @@ class CreateQuestionTest extends SpockTest {
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when:
         questionService.createQuestion(course.getId(), questionDto)
@@ -88,22 +90,23 @@ class CreateQuestionTest extends SpockTest {
         result.getImage().getId() != null
         result.getImage().getUrl() == IMAGE_1_URL
         result.getImage().getWidth() == 20
-        result.getOptions().size() == 2
+        result.getQuestion().getOptions().size() == 2
     }
 
     def "create two questions"() {
         given: "a questionDto"
-        def questionDto = new MultipleChoiceQuestionDto()
+        def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
         and: 'a optionId'
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         when: 'are created two questions'
         questionService.createQuestion(course.getId(), questionDto)

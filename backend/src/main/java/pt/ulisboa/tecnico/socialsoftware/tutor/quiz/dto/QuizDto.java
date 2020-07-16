@@ -55,7 +55,7 @@ public class QuizDto implements Serializable {
             this.questions = quiz.getQuizQuestions().stream()
                     .sorted(Comparator.comparing(QuizQuestion::getSequence))
                     .map(quizQuestion -> {
-                       QuestionDto questionDto = quizQuestion.getQuestion().getQuestionDto();
+                       QuestionDto questionDto = new QuestionDto(quizQuestion.getQuestion());
                        questionDto.setSequence(quizQuestion.getSequence());
                        return questionDto;
                     })

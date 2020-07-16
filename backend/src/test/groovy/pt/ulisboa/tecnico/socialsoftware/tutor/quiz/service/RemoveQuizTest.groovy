@@ -28,7 +28,7 @@ class RemoveQuizTest extends SpockTest {
         userRepository.save(user)
         user.setKey(user.getId())
 
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle("Question Title")

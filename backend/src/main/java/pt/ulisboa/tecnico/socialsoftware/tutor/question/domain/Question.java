@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
@@ -23,11 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "questions")
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "question_type",
-        columnDefinition = "varchar(32) not null default 'multiple_choice'",
-        discriminatorType = DiscriminatorType.STRING)
-public abstract class Question implements DomainEntity {
+public class Question implements DomainEntity {
     public static class QuestionTypes{
         public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
     }
@@ -73,6 +70,9 @@ public abstract class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval=true)
+    private QuestionType question;
+
     public Question() {
     }
 
@@ -86,6 +86,8 @@ public abstract class Question implements DomainEntity {
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
+
+        setQuestion(questionDto.getQuestion().getQuestionType());
     }
 
     public Integer getId() {
@@ -237,6 +239,8 @@ public abstract class Question implements DomainEntity {
 
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
+
+        getQuestion().update(questionDto);
     }
 
     public void updateTopics(Set<Topic> newTopics) {
@@ -262,15 +266,35 @@ public abstract class Question implements DomainEntity {
         getTopics().clear();
     }
 
-    public abstract void visitOptions(Visitor visitor);
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuestion(this);
+    }
 
-    public abstract Integer getCorrectAnswer();
 
-    public abstract QuestionDto getQuestionDto();
+    public QuestionType getQuestion() {
+        return question;
+    }
 
-    public abstract CorrectAnswerTypeDto getCorrectAnswerDto();
+    public void setQuestion(QuestionType question) {
+        this.question = question;
+        this.question.setQuestion(this);
+    }
 
-    public abstract StatementQuestionDetailsDto getStatementQuestionDetailsDto();
+    public CorrectAnswerTypeDto getCorrectAnswerDto(){
+        return this.getQuestion().getCorrectAnswerDto();
+    }
 
-    public abstract AnswerTypeDto getEmptyAnswerTypeDto();
+    public StatementQuestionDetailsDto getStatementQuestionDetailsDto(){
+        return this.getQuestion().getStatementQuestionDetailsDto();
+    }
+
+    public AnswerTypeDto getEmptyAnswerTypeDto(){
+        return this.getQuestion().getEmptyAnswerTypeDto();
+    }
+
+    public QuestionTypeDto getQuestionTypeDto() {
+        return this.getQuestion().getQuestionTypeDto();
+    }
+
 }

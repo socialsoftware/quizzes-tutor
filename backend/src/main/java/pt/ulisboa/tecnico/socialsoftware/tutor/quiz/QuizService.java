@@ -237,7 +237,7 @@ public class QuizService {
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
                         .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswer()
+                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerDto()
                 ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
@@ -359,9 +359,7 @@ public class QuizService {
                 .stream()
                 .filter(question -> question.getQuizQuestions().isEmpty())
                 .collect(Collectors.toList())) {
-            if (question instanceof MultipleChoiceQuestion) {
-                questionService.deleteQuestion((MultipleChoiceQuestion) question);
-            }
+                questionService.deleteQuestion(question);
         }
     }
 

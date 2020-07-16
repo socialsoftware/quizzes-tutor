@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 public interface Visitor {
-    default void visitQuestion(MultipleChoiceQuestion question) {}
+    default void visitQuestion(Question question) {}
 
     default void visitImage(Image image) {}
 
@@ -51,4 +51,6 @@ public interface Visitor {
     }
 
     default void visitAnswerType(MultipleChoiceAnswer answer){}
+
+    default void visitQuestionType(MultipleChoiceQuestion question) {}
 }

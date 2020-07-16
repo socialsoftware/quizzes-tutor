@@ -49,10 +49,13 @@ class ConcludeQuizTest extends SpockTest {
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
 
-        def question = new MultipleChoiceQuestion()
+        def question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setCourse(course)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
 
         quizQuestion = new QuizQuestion(quiz, question, 0)
@@ -62,14 +65,14 @@ class ConcludeQuizTest extends SpockTest {
         optionKO.setContent("Option Content")
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(question)
+        optionKO.setQuestion(questionType)
         optionRepository.save(optionKO)
 
         optionOk = new Option()
         optionOk.setContent("Option Content")
         optionOk.setCorrect(true)
         optionOk.setSequence(1)
-        optionOk.setQuestion(question)
+        optionOk.setQuestion(questionType)
         optionRepository.save(optionOk)
 
         date = DateHandler.now()

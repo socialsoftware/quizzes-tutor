@@ -109,6 +109,9 @@ class SpockTest extends Specification {
     QuestionRepository questionRepository
 
     @Autowired
+    QuestionRepository questionTypeRepository
+
+    @Autowired
     QuestionService questionService
 
     @Autowired

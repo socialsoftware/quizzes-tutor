@@ -106,7 +106,7 @@ public class AnswersXmlExportVisitor implements Visitor {
     public void visitAnswerType(MultipleChoiceAnswer answer) {
         if (answer.getOption() != null) {
             Element optionElement = new Element("option");
-            optionElement.setAttribute("questionKey", String.valueOf(answer.getOption().getQuestion().getKey()));
+            optionElement.setAttribute("questionKey", String.valueOf(answer.getOption().getQuestion().getQuestion().getKey()));
             optionElement.setAttribute(SEQUENCE, String.valueOf(answer.getOption().getSequence()));
             this.currentElement.addContent(optionElement);
         }

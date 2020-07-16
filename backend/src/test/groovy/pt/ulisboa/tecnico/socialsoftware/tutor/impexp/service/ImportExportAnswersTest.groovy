@@ -21,19 +21,22 @@ class ImportExportAnswersTest extends SpockTest {
     def questionAnswer
 
     def setup() {
-        Question question = new MultipleChoiceQuestion()
+        Question question = new Question()
         question.setCourse(course)
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
 
         Option option = new Option()
         option.setContent(OPTION_1_CONTENT)
         option.setCorrect(true)
         option.setSequence(0)
-        option.setQuestion(question)
+        option.setQuestion(questionType)
         optionRepository.save(option)
 
         Quiz quiz = new Quiz()

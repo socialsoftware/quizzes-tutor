@@ -1,13 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import org.h2.command.ddl.CreateTrigger;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 
 import javax.persistence.DiscriminatorValue;
@@ -52,6 +50,7 @@ public class MultipleChoiceAnswer extends AnswerType {
     public void setOption(MultipleChoiceStatementAnswerDto multipleChoiceStatementAnswerDto) {
         if (multipleChoiceStatementAnswerDto.getOptionId() != null) {
 
+            // TODO[is->has]: Question stuff
             Option option = this.getQuestion().getOptions().stream()
                     .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDto.getOptionId()))
                     .findAny()
@@ -67,13 +66,14 @@ public class MultipleChoiceAnswer extends AnswerType {
         }
     }
 
-    private MultipleChoiceQuestion getQuestion() {
-        return (MultipleChoiceQuestion) this.getQuestionAnswer().getQuestion();
+    // TODO[is->has] -> Understand how to remove this.
+    private MultipleChoiceQuestion getQuestion(){
+        return (MultipleChoiceQuestion)this.getQuestionAnswer().getQuestion().getQuestion();
     }
 
     @Override
     public boolean isCorrect() {
-        return getOption() != null && getOption().getCorrect();
+        return getOption() != null && getOption().isCorrect();
     }
 
 

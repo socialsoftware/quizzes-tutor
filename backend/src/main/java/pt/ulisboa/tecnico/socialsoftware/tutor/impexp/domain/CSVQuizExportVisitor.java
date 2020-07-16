@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
@@ -31,6 +32,7 @@ public class CSVQuizExportVisitor implements Visitor {
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
         Map<Integer, Option> options = quiz.getQuizQuestions().stream()
                 .map(QuizQuestion::getQuestion)
+                .map(Question::getQuestion)
                 .filter(q -> q instanceof MultipleChoiceQuestion)
                 .flatMap(question -> ((MultipleChoiceQuestion)question).getOptions().stream())
                 .collect(Collectors.toMap(Option::getId, Function.identity()));
@@ -151,16 +153,20 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestion(MultipleChoiceQuestion question){
+    public void visitQuestion(Question question){
+        question.getQuestion().accept(this);
+    }
+
+    @Override
+    public void visitQuestionType(MultipleChoiceQuestion question) {
         line[column++] = question.getOptions().stream()
-                .filter(Option::getCorrect)
+                .filter(Option::isCorrect)
                 .findAny()
                 .map(option -> convertSequenceToLetter(option.getSequence())).orElse("");
     }
 
     private String convertToCSV(String[] data) {
-        return Stream.of(data)
-                .collect(Collectors.joining(","));
+        return String.join(",", data);
     }
 
 

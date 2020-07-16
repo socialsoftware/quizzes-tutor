@@ -15,10 +15,11 @@ class ImportExportQuestionsTest extends SpockTest {
     def questionId
 
     def setup() {
-        def questionDto = new MultipleChoiceQuestionDto()
+        def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setQuestion(new MultipleChoiceQuestionDto())
 
         def image = new ImageDto()
         image.setUrl(IMAGE_1_URL)
@@ -36,7 +37,7 @@ class ImportExportQuestionsTest extends SpockTest {
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestion().setOptions(options)
 
         questionId = questionService.createQuestion(course.getId(), questionDto).getId()
     }
@@ -61,14 +62,14 @@ class ImportExportQuestionsTest extends SpockTest {
         def imageResult = questionResult.getImage()
         imageResult.getWidth() == 20
         imageResult.getUrl() == IMAGE_1_URL
-        questionResult.getOptions().size() == 2
-        def optionOneResult = questionResult.getOptions().get(0)
-        def optionTwoResult = questionResult.getOptions().get(1)
+        questionResult.getQuestion().getOptions().size() == 2
+        def optionOneResult = questionResult.getQuestion().getOptions().get(0)
+        def optionTwoResult = questionResult.getQuestion().getOptions().get(1)
         optionOneResult.getSequence() + optionTwoResult.getSequence() == 1
         optionOneResult.getContent() == OPTION_1_CONTENT
         optionTwoResult.getContent() == OPTION_1_CONTENT
-        !(optionOneResult.getCorrect() && optionTwoResult.getCorrect())
-        optionOneResult.getCorrect() || optionTwoResult.getCorrect()
+        !(optionOneResult.isCorrect() && optionTwoResult.isCorrect())
+        optionOneResult.isCorrect() || optionTwoResult.isCorrect()
     }
 
     def 'export to latex'() {

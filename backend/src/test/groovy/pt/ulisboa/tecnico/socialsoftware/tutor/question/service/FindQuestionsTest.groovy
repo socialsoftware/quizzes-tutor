@@ -28,7 +28,7 @@ class FindQuestionsTest extends SpockTest {
 
     def "create a question with image and two options and a quiz questions with two answers"() {
         given: "createQuestion a question"
-        Question question = new MultipleChoiceQuestion()
+        Question question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent(QUESTION_1_CONTENT)
@@ -36,6 +36,9 @@ class FindQuestionsTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(course)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
 
         and: 'an image'
@@ -50,14 +53,14 @@ class FindQuestionsTest extends SpockTest {
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(question)
+        optionOK.setQuestion(questionType)
         optionRepository.save(optionOK)
 
         def optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(question)
+        optionKO.setQuestion(questionType)
         optionRepository.save(optionKO)
 
         Quiz quiz = new Quiz()
@@ -108,7 +111,7 @@ class FindQuestionsTest extends SpockTest {
         resQuestion.getImage().getId() != null
         resQuestion.getImage().getUrl() == IMAGE_1_URL
         resQuestion.getImage().getWidth() == 20
-        resQuestion.getOptions().size() == 2
+        resQuestion.getQuestion().getOptions().size() == 2
     }
 
     @TestConfiguration

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -28,12 +29,12 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
     def quizQuestionSix
 
     def setup() {
-        questionOne = new MultipleChoiceQuestion()
-        questionTwo = new MultipleChoiceQuestion()
-        def questionThree = new MultipleChoiceQuestion()
-        def questionFour = new MultipleChoiceQuestion()
-        def questionFive = new MultipleChoiceQuestion()
-        def questionSix = new MultipleChoiceQuestion()
+        questionOne = new Question()
+        questionTwo = new Question()
+        def questionThree = new Question()
+        def questionFour = new Question()
+        def questionFive = new Question()
+        def questionSix = new Question()
         quiz = new Quiz()
         quiz.setKey(1)
         quizQuestionOne = new QuizQuestion(quiz, questionOne, 0)

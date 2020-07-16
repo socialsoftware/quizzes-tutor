@@ -41,7 +41,7 @@ class FilterByAssessmentTest extends SpockTest {
 
         questionList = new ArrayList<>()
 
-        questionTopic1 = new MultipleChoiceQuestion()
+        questionTopic1 = new Question()
         questionTopic1.setCourse(course)
         questionTopic1.setTitle(QUESTION_1_TITLE)
         questionTopic1.setContent(QUESTION_1_CONTENT)
@@ -49,7 +49,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionTopic1.addTopic(topic1)
         questionList.add(questionTopic1)
 
-        questionTopic2 = new MultipleChoiceQuestion()
+        questionTopic2 = new Question()
         questionTopic2.setCourse(course)
         questionTopic2.setTitle(QUESTION_2_TITLE)
         questionTopic2.setContent(QUESTION_2_CONTENT)
@@ -57,7 +57,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionTopic2.addTopic(topic2)
         questionList.add(questionTopic2)
 
-        questionTopic1_2 = new MultipleChoiceQuestion()
+        questionTopic1_2 = new Question()
         questionTopic1_2.setCourse(course)
         questionTopic1_2.setTitle(QUESTION_3_TITLE)
         questionTopic1_2.setContent(QUESTION_3_CONTENT)
@@ -66,14 +66,14 @@ class FilterByAssessmentTest extends SpockTest {
         questionTopic1_2.addTopic(topic2)
         questionList.add(questionTopic1_2)
 
-        questionNoTopic = new MultipleChoiceQuestion()
+        questionNoTopic = new Question()
         questionNoTopic.setCourse(course)
         questionNoTopic.setTitle(QUESTION_4_TITLE)
         questionNoTopic.setContent(QUESTION_4_CONTENT)
         questionNoTopic.setKey(4)
         questionList.add(questionNoTopic)
 
-        questionTopic1Again = new MultipleChoiceQuestion()
+        questionTopic1Again = new Question()
         questionTopic1Again.setCourse(course)
         questionTopic1Again.setTitle(QUESTION_5_TITLE)
         questionTopic1Again.setContent(QUESTION_5_CONTENT)

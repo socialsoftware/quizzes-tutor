@@ -14,7 +14,7 @@ public class QuestionAnswerDto implements Serializable {
     }
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
-        this.question = questionAnswer.getQuizQuestion().getQuestion().getQuestionDto();
+        this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
         if (questionAnswer.getAnswer() == null) {
             this.answer = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerTypeDto();
         } else {

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -43,7 +42,7 @@ public class Option implements DomainEntity {
     public Option(OptionDto option) {
         setSequence(option.getSequence());
         setContent(option.getContent());
-        setCorrect(option.getCorrect());
+        setCorrect(option.isCorrect());
     }
 
     @Override
@@ -66,7 +65,7 @@ public class Option implements DomainEntity {
         this.sequence = sequence;
     }
 
-    public boolean getCorrect() {
+    public boolean isCorrect() {
         return correct;
     }
 

@@ -26,7 +26,7 @@ class AddQuestionToQuizTest extends SpockTest {
         quiz.setOneWay(true)
         quizRepository.save(quiz)
 
-        Question question = new MultipleChoiceQuestion()
+        Question question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle("Question title")

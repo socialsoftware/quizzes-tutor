@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -16,15 +17,7 @@ import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        include = JsonTypeInfo.As.PROPERTY,
-        defaultImpl = MultipleChoiceQuestionDto.class,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION)
-})
-public abstract class QuestionDto implements Serializable {
+public class QuestionDto implements Serializable {
     private Integer id;
     private Integer key;
     private String title;
@@ -39,6 +32,8 @@ public abstract class QuestionDto implements Serializable {
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
+
+    private QuestionTypeDto question;
 
     public QuestionDto() {
     }
@@ -64,6 +59,8 @@ public abstract class QuestionDto implements Serializable {
 
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
+
+        this.question = question.getQuestionTypeDto();
     }
 
     public Integer getId() {
@@ -172,5 +169,13 @@ public abstract class QuestionDto implements Serializable {
 
     public void setSequence(Integer sequence) {
         this.sequence = sequence;
+    }
+
+    public QuestionTypeDto getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(QuestionTypeDto question) {
+        this.question = question;
     }
 }

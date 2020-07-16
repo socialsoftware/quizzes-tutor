@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
@@ -28,7 +29,7 @@ public abstract class LatexVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestion(MultipleChoiceQuestion question) {
+    public void visitQuestion(Question question) {
         this.result = this.result
                 + "\\newcommand{\\q"
                 + question.getTitle().replaceAll("\\s+","")
@@ -44,12 +45,19 @@ public abstract class LatexVisitor implements Visitor {
 
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
+        question.getQuestion().accept(this);
+
+
+    }
+
+    @Override
+    public void visitQuestionType(MultipleChoiceQuestion question) {
         question.visitOptions(this);
 
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
-            convertSequenceToLetter(question.getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
+                convertSequenceToLetter(question.getOptions().stream().filter(Option::isCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }

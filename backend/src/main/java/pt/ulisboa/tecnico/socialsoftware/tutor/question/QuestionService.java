@@ -18,13 +18,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 
@@ -53,6 +49,9 @@ public class QuestionService {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private QuestionTypeRepository questionTypeRepository;
+
+    @Autowired
     private TopicRepository topicRepository;
 
     @Autowired
@@ -65,68 +64,69 @@ public class QuestionService {
     private OptionRepository optionRepository;
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionById(Integer questionId) {
-        return questionRepository.findById(questionId).map(Question::getQuestionDto)
+        return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionByKey(Integer key) {
-        return questionRepository.findByKey(key).map(Question::getQuestionDto)
+        return questionRepository.findByKey(key).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(Question::getQuestionDto).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
-        return questionRepository.findAvailableQuestions(courseId).stream().map(Question::getQuestionDto).collect(Collectors.toList());
+        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public QuestionDto createQuestion(int courseId, MultipleChoiceQuestionDto questionDto) {
+    public QuestionDto createQuestion(int courseId, QuestionDto questionDto) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        MultipleChoiceQuestion question = new MultipleChoiceQuestion(course, questionDto);
+        Question question = new Question(course, questionDto);
+        questionTypeRepository.save(question.getQuestion());
         questionRepository.save(question);
-        return new MultipleChoiceQuestionDto(question);
+        return new QuestionDto(question);
     }
 
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public QuestionDto updateQuestion(Integer questionId, MultipleChoiceQuestionDto questionDto) {
-        MultipleChoiceQuestion question = (MultipleChoiceQuestion) questionRepository
+    public QuestionDto updateQuestion(Integer questionId, QuestionDto questionDto) {
+        Question question = questionRepository
                 .findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
-        return new MultipleChoiceQuestionDto(question);
+        return new QuestionDto(question);
     }
 
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -135,8 +135,8 @@ public class QuestionService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void questionSetStatus(Integer questionId, Question.Status status) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -145,8 +145,8 @@ public class QuestionService {
 
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void uploadImage(Integer questionId, String type) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -168,8 +168,8 @@ public class QuestionService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateQuestionTopics(Integer questionId, TopicDto[] topics) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -184,7 +184,7 @@ public class QuestionService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importQuestionsFromXml(String questionsXML) {
@@ -195,7 +195,7 @@ public class QuestionService {
 
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportQuestionsToLatex() {
@@ -205,7 +205,7 @@ public class QuestionService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ByteArrayOutputStream exportCourseQuestions(int courseId) {
@@ -248,7 +248,7 @@ public class QuestionService {
 
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuizQuestion(QuizQuestion quizQuestion) {
@@ -262,18 +262,12 @@ public class QuestionService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteQuestion(MultipleChoiceQuestion question) {
-        for (Option option : question.getOptions()) {
-            option.remove();
-            optionRepository.delete(option);
-        }
-        deleteQuestion((Question) question);
-    }
+    public void deleteQuestion(Question question) {
+        question.getQuestion().delete(this);
 
-    private void deleteQuestion(Question question){
         if (question.getImage() != null) {
             imageRepository.delete(question.getImage());
         }
@@ -282,6 +276,15 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
+    }
+
+    // TODO[is->has] FIX QUESTION DELETEION
+    public void deleteQuestion(MultipleChoiceQuestion question) {
+        for (Option option : question.getOptions()) {
+            option.remove();
+            optionRepository.delete(option);
+        }
+        questionTypeRepository.delete(question);
     }
 }
 

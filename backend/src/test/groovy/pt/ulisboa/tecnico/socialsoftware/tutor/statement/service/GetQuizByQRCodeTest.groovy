@@ -31,11 +31,14 @@ class GetQuizByQRCodeTest extends SpockTest {
         userRepository.save(user)
         user.setKey(user.getId())
 
-        question = new MultipleChoiceQuestion()
+        question = new Question()
         question.setKey(1)
         question.setCourse(course)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
+        def questionType = new MultipleChoiceQuestion()
+        question.setQuestion(questionType)
+        questionTypeRepository.save(questionType)
         questionRepository.save(question)
     }
 

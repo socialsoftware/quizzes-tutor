@@ -6,7 +6,7 @@ import java.util.List;
 
 public class QuizAnswersDto implements Serializable {
     private Long timeToSubmission;
-    private List<Integer> correctSequence;
+    private List<CorrectAnswerTypeDto> correctSequence;
     private List<QuizAnswerDto> quizAnswers = new ArrayList<>();
 
     public Long getTimeToSubmission() {
@@ -17,14 +17,23 @@ public class QuizAnswersDto implements Serializable {
         this.timeToSubmission = timeToSubmission;
     }
 
-    public List<Integer> getCorrectSequence() {
+    public List<CorrectAnswerTypeDto> getCorrectSequence() {
         return correctSequence;
     }
 
-    public void setCorrectSequence(List<Integer> correctSequence) {
+    public void setCorrectSequence(List<CorrectAnswerTypeDto> correctSequence) {
         this.correctSequence = correctSequence;
     }
 
+    /*
+        public List<Integer> getCorrectSequence() {
+            return correctSequence;
+        }
+
+        public void setCorrectSequence(List<Integer> correctSequence) {
+            this.correctSequence = correctSequence;
+        }
+    */
     public List<QuizAnswerDto> getQuizAnswers() {
         return quizAnswers;
     }

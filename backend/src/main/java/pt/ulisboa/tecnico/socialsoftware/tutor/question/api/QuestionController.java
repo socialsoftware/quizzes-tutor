@@ -59,7 +59,7 @@ public class QuestionController {
 
     @PostMapping("/courses/{courseId}/questions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
+    public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
         return this.questionService.createQuestion(courseId, question);
     }
@@ -72,7 +72,7 @@ public class QuestionController {
 
     @PutMapping("/questions/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
-    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody MultipleChoiceQuestionDto question) {
+    public QuestionDto updateQuestion(@PathVariable Integer questionId, @Valid @RequestBody QuestionDto question) {
         return this.questionService.updateQuestion(questionId, question);
     }
 
