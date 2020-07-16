@@ -38,6 +38,8 @@ public class User implements UserDetails, DomainEntity {
     private String username;
 
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
 
     @Column(columnDefinition = "boolean default false")
