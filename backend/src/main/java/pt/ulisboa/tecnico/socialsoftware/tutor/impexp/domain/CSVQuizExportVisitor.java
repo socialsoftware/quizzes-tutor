@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CSVQuizExportVisitor implements Visitor {
     private String[] line;
@@ -137,8 +136,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
-        if(questionAnswer.getAnswer() !=null){
-            questionAnswer.getAnswer().accept(this);
+        if(questionAnswer.getAnswerDetails() !=null){
+            questionAnswer.getAnswerDetails().accept(this);
         }
     }
 

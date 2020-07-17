@@ -10,12 +10,12 @@ import org.jdom2.xpath.XPathFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerTypeRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -57,7 +57,7 @@ public class AnswersXmlImport {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
-    private AnswerTypeRepository answerTypeRepository;
+    private AnswerDetailsRepository answerDetailsRepository;
 
     @Autowired
     private UserService userService;
@@ -195,12 +195,12 @@ public class AnswersXmlImport {
         }
 
         if (optionId == null) {
-            questionAnswer.setAnswer((AnswerType) null);
+            questionAnswer.setAnswerDetails((AnswerDetails) null);
         } else {
             MultipleChoiceAnswer answerType
                     = new MultipleChoiceAnswer(questionAnswer, optionRepository.findById(optionId).orElse(null));
-            questionAnswer.setAnswer(answerType);
-            answerTypeRepository.save(answerType);
+            questionAnswer.setAnswerDetails(answerType);
+            answerDetailsRepository.save(answerType);
         }
 
     }

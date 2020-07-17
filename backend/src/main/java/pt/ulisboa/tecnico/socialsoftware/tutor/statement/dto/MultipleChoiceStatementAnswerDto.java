@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 
 public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto {
     private Integer optionId;
@@ -29,7 +28,7 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto 
     private MultipleChoiceAnswer createdMultipleChoiceAnswer;
 
     @Override
-    public AnswerType getAnswerType(QuestionAnswer questionAnswer) {
+    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
         createdMultipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
         questionAnswer.getQuestion().getQuestion().update(this);
         return createdMultipleChoiceAnswer;

@@ -171,7 +171,7 @@ class UpdateQuestionTest extends SpockTest {
 
         def questionAnswer = new QuestionAnswer()
         def answerType = new MultipleChoiceAnswer(questionAnswer, optionOK)
-        questionAnswer.setAnswer(answerType)
+        questionAnswer.setAnswerDetails(answerType)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
@@ -179,7 +179,7 @@ class UpdateQuestionTest extends SpockTest {
 
         questionAnswer = new QuestionAnswer()
         answerType = new MultipleChoiceAnswer(questionAnswer, optionKO)
-        questionAnswer.setAnswer(answerType)
+        questionAnswer.setAnswerDetails(answerType)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)

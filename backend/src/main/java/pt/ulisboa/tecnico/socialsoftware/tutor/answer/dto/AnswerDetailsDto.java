@@ -15,6 +15,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MultipleChoiceAnswerDto.class, name = MULTIPLE_CHOICE_QUESTION)
 })
-public abstract class AnswerTypeDto {
+public abstract class AnswerDetailsDto {
 
 }

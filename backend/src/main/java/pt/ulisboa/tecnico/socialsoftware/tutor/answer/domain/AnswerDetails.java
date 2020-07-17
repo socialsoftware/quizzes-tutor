@@ -1,19 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "answer_type")
+@Table(name = "answer_details")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_answer_type",
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
-public abstract class AnswerType implements DomainEntity {
+public abstract class AnswerDetails implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -22,11 +22,11 @@ public abstract class AnswerType implements DomainEntity {
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
-    public AnswerType() {
+    public AnswerDetails() {
 
     }
 
-    public AnswerType(QuestionAnswer questionAnswer) {
+    public AnswerDetails(QuestionAnswer questionAnswer) {
         setQuestionAnswer(questionAnswer);
     }
 
@@ -46,7 +46,7 @@ public abstract class AnswerType implements DomainEntity {
 
     public abstract void remove();
 
-    public abstract AnswerTypeDto getAnswerTypeDto();
+    public abstract AnswerDetailsDto getAnswerTypeDto();
 
     public abstract StatementAnswerDetailsDto getStatementAnswerDetailsDto();
 }

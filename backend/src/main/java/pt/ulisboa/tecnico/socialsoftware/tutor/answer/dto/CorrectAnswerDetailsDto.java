@@ -14,6 +14,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MultipleChoiceCorrectAnswerDto.class, name = MULTIPLE_CHOICE_QUESTION)
 })
-public class CorrectAnswerTypeDto {
+public class CorrectAnswerDetailsDto {
 
 }

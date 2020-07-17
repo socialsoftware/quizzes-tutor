@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -67,7 +66,7 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
         option.setCorrect(true)
         option.setSequence(0)
         def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionOne, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         when:
         def result = user.filterQuestionsByStudentModel(5, availableQuestions)
@@ -86,16 +85,16 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
         option.setCorrect(true)
         option.setSequence(0)
         def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionThree, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionFour, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionFive, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionSix, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         when:
         def result = user.filterQuestionsByStudentModel(5, availableQuestions)
@@ -115,19 +114,19 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
         option.setCorrect(true)
         option.setSequence(0)
         def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionTwo, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionThree, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionFour, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionFive, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestionSix, 10, 0)
-        questionAnswer.setAnswer(new MultipleChoiceAnswer(questionAnswer, option))
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
 
 
         when:

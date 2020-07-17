@@ -7,21 +7,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ANSWER_NOT_FOUND
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE
 
 @DataJpaTest
@@ -104,7 +100,7 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getAnswer() == null
+        questionAnswer.getAnswerDetails() == null
         and: 'the return value is OK'
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
@@ -173,7 +169,7 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getAnswer().getOption() == optionOk
+        questionAnswer.getAnswerDetails().getOption() == optionOk
         optionOk.getQuestionAnswers().contains(questionAnswer)
         and: 'the return value is OK'
         correctAnswers.size() == 1
@@ -262,7 +258,7 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getAnswer() == null
+        questionAnswer.getAnswerDetails() == null
         and: 'the return value is OK'
         correctAnswers.size() == 0
     }

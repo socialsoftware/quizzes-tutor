@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerTypeRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
@@ -79,7 +79,7 @@ class SpockTest extends Specification {
     AnswerService answerService
 
     @Autowired
-    AnswerTypeRepository answerTypeRepository
+    AnswerDetailsRepository answerTypeRepository
 
     @Autowired
     AssessmentRepository assessmentRepository

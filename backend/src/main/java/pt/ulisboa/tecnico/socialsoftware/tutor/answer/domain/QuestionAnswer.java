@@ -1,11 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
@@ -13,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import javax.persistence.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
 @Table(name = "question_answers",
@@ -40,8 +36,8 @@ public class QuestionAnswer implements DomainEntity {
     private Integer sequence;
 
     @OneToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name = "answer_id")
-    private AnswerType answer;
+    @JoinColumn(name = "answer_details_id")
+    private AnswerDetails answerDetails;
 
     public QuestionAnswer() {
     }
@@ -104,26 +100,26 @@ public class QuestionAnswer implements DomainEntity {
         this.sequence = sequence;
     }
 
-    public AnswerType getAnswer() {
-        return answer;
+    public AnswerDetails getAnswerDetails() {
+        return answerDetails;
     }
 
-    public void setAnswer(AnswerType answer) {
-        this.answer = answer;
-        if(this.answer != null) {
-            this.answer.setQuestionAnswer(this);
+    public void setAnswerDetails(AnswerDetails answerDetails) {
+        this.answerDetails = answerDetails;
+        if(this.answerDetails != null) {
+            this.answerDetails.setQuestionAnswer(this);
         }
     }
-    public AnswerType setAnswer(StatementAnswerDto statementAnswerDto) {
-        this.answer = statementAnswerDto.getAnswerType(this);
-        if(this.answer != null) {
-            this.answer.setQuestionAnswer(this);
+    public AnswerDetails setAnswerDetails(StatementAnswerDto statementAnswerDto) {
+        this.answerDetails = statementAnswerDto.getAnswerDetails(this);
+        if(this.answerDetails != null) {
+            this.answerDetails.setQuestionAnswer(this);
         }
-        return this.answer;
+        return this.answerDetails;
     }
 
     public boolean isCorrect(){
-        return getAnswer().isCorrect();
+        return getAnswerDetails().isCorrect();
     }
 
     public void remove() {
@@ -133,10 +129,10 @@ public class QuestionAnswer implements DomainEntity {
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
 
-        if(answer != null) {
-            answer.remove();
-            answer.setQuestionAnswer(null);
-            answer = null;
+        if(answerDetails != null) {
+            answerDetails.remove();
+            answerDetails.setQuestionAnswer(null);
+            answerDetails = null;
         }
     }
 
@@ -146,6 +142,6 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return this.getAnswer() != null ? this.getAnswer().getStatementAnswerDetailsDto() : null;
+        return this.getAnswerDetails() != null ? this.getAnswerDetails().getStatementAnswerDetailsDto() : null;
     }
 }

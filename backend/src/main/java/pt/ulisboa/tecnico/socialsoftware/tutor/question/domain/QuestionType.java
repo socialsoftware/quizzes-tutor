@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
@@ -45,11 +45,11 @@ public abstract class QuestionType implements DomainEntity {
 
     public abstract Integer getCorrectAnswer();
 
-    public abstract CorrectAnswerTypeDto getCorrectAnswerDto();
+    public abstract CorrectAnswerDetailsDto getCorrectAnswerDto();
 
     public abstract StatementQuestionDetailsDto getStatementQuestionDetailsDto();
 
-    public abstract AnswerTypeDto getEmptyAnswerTypeDto();
+    public abstract AnswerDetailsDto getEmptyAnswerTypeDto();
 
     public abstract QuestionTypeDto getQuestionTypeDto();
 

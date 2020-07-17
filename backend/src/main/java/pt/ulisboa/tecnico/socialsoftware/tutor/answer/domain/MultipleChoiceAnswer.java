@@ -17,7 +17,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
-public class MultipleChoiceAnswer extends AnswerType {
+public class MultipleChoiceAnswer extends AnswerDetails {
 
     @ManyToOne
     @JoinColumn(name = "option_id")
@@ -78,7 +78,7 @@ public class MultipleChoiceAnswer extends AnswerType {
     }
 
     @Override
-    public AnswerTypeDto getAnswerTypeDto() {
+    public AnswerDetailsDto getAnswerTypeDto() {
         return new MultipleChoiceAnswerDto(this);
     }
 

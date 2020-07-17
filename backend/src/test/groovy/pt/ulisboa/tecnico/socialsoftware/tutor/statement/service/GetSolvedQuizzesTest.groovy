@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
@@ -82,7 +81,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         def answerType = new MultipleChoiceAnswer(questionAnswer, option);
-        questionAnswer.setAnswer(answerType);
+        questionAnswer.setAnswerDetails(answerType);
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)
@@ -142,7 +141,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         def answerType = new MultipleChoiceAnswer(questionAnswer, option);
-        questionAnswer.setAnswer(answerType)
+        questionAnswer.setAnswerDetails(answerType)
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)

@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -95,7 +95,7 @@ public class MultipleChoiceQuestion extends QuestionType {
     }
 
     @Override
-    public CorrectAnswerTypeDto getCorrectAnswerDto() {
+    public CorrectAnswerDetailsDto getCorrectAnswerDto() {
         return new MultipleChoiceCorrectAnswerDto(this);
     }
 
@@ -105,7 +105,7 @@ public class MultipleChoiceQuestion extends QuestionType {
     }
 
     @Override
-    public AnswerTypeDto getEmptyAnswerTypeDto() {
+    public AnswerDetailsDto getEmptyAnswerTypeDto() {
         return new MultipleChoiceAnswerDto();
     }
 

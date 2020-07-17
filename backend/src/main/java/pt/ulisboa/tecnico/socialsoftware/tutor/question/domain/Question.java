@@ -1,15 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -285,7 +283,7 @@ public class Question implements DomainEntity {
         }
     }
 
-    public CorrectAnswerTypeDto getCorrectAnswerDto(){
+    public CorrectAnswerDetailsDto getCorrectAnswerDto(){
         return this.getQuestion().getCorrectAnswerDto();
     }
 
@@ -293,7 +291,7 @@ public class Question implements DomainEntity {
         return this.getQuestion().getStatementQuestionDetailsDto();
     }
 
-    public AnswerTypeDto getEmptyAnswerTypeDto(){
+    public AnswerDetailsDto getEmptyAnswerTypeDto(){
         return this.getQuestion().getEmptyAnswerTypeDto();
     }
 

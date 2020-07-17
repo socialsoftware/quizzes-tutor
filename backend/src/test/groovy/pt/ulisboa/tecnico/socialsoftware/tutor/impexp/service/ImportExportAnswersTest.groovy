@@ -66,7 +66,7 @@ class ImportExportAnswersTest extends SpockTest {
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 0)
         def answer = new MultipleChoiceAnswer(questionAnswer, option);
-        questionAnswer.setAnswer(answer)
+        questionAnswer.setAnswerDetails(answer)
         questionAnswerRepository.save(questionAnswer)
         answerTypeRepository.save(answer)
     }

@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class CorrectAnswerDto implements Serializable {
     private Integer sequence;
 
-    private CorrectAnswerTypeDto correctAnswer;
+    private CorrectAnswerDetailsDto correctAnswer;
 
     public CorrectAnswerDto(QuestionAnswer questionAnswer) {
         this.sequence = questionAnswer.getSequence();
@@ -22,11 +22,11 @@ public class CorrectAnswerDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public CorrectAnswerTypeDto getCorrectAnswer() {
+    public CorrectAnswerDetailsDto getCorrectAnswer() {
         return correctAnswer;
     }
 
-    public void setCorrectAnswer(CorrectAnswerTypeDto correctAnswer) {
+    public void setCorrectAnswer(CorrectAnswerDetailsDto correctAnswer) {
         this.correctAnswer = correctAnswer;
     }
 

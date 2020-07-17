@@ -89,11 +89,11 @@ public class AnswersXmlExportVisitor implements Visitor {
         quizQuestionElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         questionAnswerElement.addContent(quizQuestionElement);
 
-        if (questionAnswer.getAnswer() != null) {
+        if (questionAnswer.getAnswerDetails() != null) {
             Element tmp = this.currentElement;
             this.currentElement = questionAnswerElement;
 
-            questionAnswer.getAnswer().accept(this);
+            questionAnswer.getAnswerDetails().accept(this);
 
             this.currentElement = tmp;
         }

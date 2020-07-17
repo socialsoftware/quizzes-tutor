@@ -6,12 +6,12 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerTypeRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
@@ -52,7 +52,7 @@ public class AnswerService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
-    private AnswerTypeRepository answerTypeRepository;
+    private AnswerDetailsRepository answerDetailsRepository;
 
     @Autowired
     private QuizAnswerItemRepository quizAnswerItemRepository;
@@ -143,9 +143,9 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-        AnswerType answer = questionAnswer.setAnswer(statementAnswerDto);
+        AnswerDetails answer = questionAnswer.setAnswerDetails(statementAnswerDto);
         if (answer != null){
-            answerTypeRepository.save(answer);
+            answerDetailsRepository.save(answer);
         }
     }
 
@@ -175,9 +175,9 @@ public class AnswerService {
         List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
         questionAnswers.forEach(questionAnswer ->
         {
-            AnswerType answerType = questionAnswer.getAnswer();
-            if(answerType != null){
-                answerTypeRepository.delete(answerType);
+            AnswerDetails answerDetails = questionAnswer.getAnswerDetails();
+            if(answerDetails != null){
+                answerDetailsRepository.delete(answerDetails);
             }
             questionAnswer.remove();
             questionAnswerRepository.delete(questionAnswer);
