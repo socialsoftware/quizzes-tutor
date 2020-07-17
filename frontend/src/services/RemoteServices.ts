@@ -625,6 +625,36 @@ export default class RemoteServices {
       });
   }
 
+
+  static async uploadCSVFile(file: File, executionId: number): Promise<string> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .post(`/courses/executions/${executionId}/csv`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return response.data as string;
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static getCourse( executionId: number): Promise<Course> {
+    return httpClient
+      .get(`/courses/executions/${executionId}`)
+      .then(response => {
+          return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';

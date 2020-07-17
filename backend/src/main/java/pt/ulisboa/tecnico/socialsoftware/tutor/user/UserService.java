@@ -21,9 +21,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -172,18 +171,19 @@ public class UserService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void importListOfUsers(String fileName, int courseExecutionId) {
+    public void importListOfUsers(InputStream stream, int courseExecutionId) {
         String line = "";
         String cvsSplitBy = ",";
         User.Role auxRole;
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);
+        try (BufferedReader br = new BufferedReader(isr)) {
             while ((line = br.readLine()) != null) {
                 String[] userInfo = line.split(cvsSplitBy);
                 if (userInfo.length == 2) {
                     auxRole = User.Role.STUDENT;
                 }
                 else if (userInfo.length > 2) {
-                    if (userInfo[2] == "student") {
+                    if (userInfo[2].equals("STUDENT")) {
                         auxRole = User.Role.STUDENT;
                     }
                     else {
@@ -197,7 +197,6 @@ public class UserService {
                 userDto.setEmail(userInfo[0]);
                 userDto.setName(userInfo[1]);
                 userDto.setRole(auxRole);
-                //this.createUser(userInfo[0], userInfo[1], auxRole);
                 createExternalUser(courseExecutionId, userDto);
             }
         } catch (IOException ex) {

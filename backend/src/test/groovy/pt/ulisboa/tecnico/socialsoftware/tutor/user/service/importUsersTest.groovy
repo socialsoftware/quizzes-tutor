@@ -20,28 +20,26 @@ class ImportUsersTest extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
+
+
     }
 
     def 'Import users from csv file' () {
         given: "number of users in dataBase"
         def usersInDataBase = userRepository.count()
+        and: "inputStream"
+        InputStream csvFile = new FileInputStream(CSVFILE);
         when:
-        userService.importListOfUsers(CSVFILE, courseExecution.getId())
+        userService.importListOfUsers(csvFile, courseExecution.getId())
         then:
         userRepository.count() == usersInDataBase + noOfUsersInFile;
     }
 
-    def 'Csv file cant be opened' () {
-        when:
-        userService.importListOfUsers(WRONGCSVFILENAME, courseExecution.getId())
-        then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.CANNOT_OPEN_FILE
-    }
-
     def 'Csv file has wrong format' () {
+        given: "wrong formatted InputStream"
+        InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE);
         when:
-        userService.importListOfUsers(CSVBADFORMATFILE, courseExecution.getId())
+        userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
@@ -50,8 +48,10 @@ class ImportUsersTest extends SpockTest {
     def 'The course execution does not exist' () {
         given: "a invalid course execution id"
         def executionId = -1
+        and: "inputStream"
+        InputStream csvFile = new FileInputStream(CSVFILE);
         when:
-        userService.importListOfUsers(CSVFILE, executionId)
+        userService.importListOfUsers(csvFile, executionId)
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
