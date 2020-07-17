@@ -89,6 +89,7 @@ class CreateExternalUserTest extends SpockTest {
         and: "checks if user data is correct"
         result.getUsername() == EMAIL
         result.getEmail() == EMAIL
+        result.getState() == User.State.INACTIVE
         and:"checks if the user and the course execution are associated"
         result.getCourseExecutions().size() == 1
         result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM

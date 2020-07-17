@@ -33,9 +33,10 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
     def "tries to delete an active user" () {
         given: "one active users"
         user1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user1.setState(User.State.INACTIVE)
+        user1.setState(User.State.ACTIVE)
         userRepository.save(user1)
         courseExecution.addUser(user1)
+        user1.addCourse(courseExecution)
 
         and: "a userId list"
         userIdList << user1.getId()
@@ -59,11 +60,13 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
         user1.setState(User.State.INACTIVE)
         userRepository.save(user1)
         courseExecution.addUser(user1)
+        user1.addCourse(courseExecution)
 
         user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         user2.setState(User.State.INACTIVE)
         userRepository.save(user2)
         courseExecution.addUser(user2)
+        user2.addCourse(courseExecution)
 
         and: "a userId list"
 
@@ -78,6 +81,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
 
         and: "there are no external users in the database"
         userRepository.count() == 3 // The 3 Demo-Users
+
+
     }
 
     @TestConfiguration

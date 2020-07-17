@@ -517,4 +517,9 @@ public class User implements UserDetails, DomainEntity {
                 .findAny()
                 .orElse(null);
     }
+
+    public void removeFromCourseExecutions(){
+        for(CourseExecution ce : courseExecutions)
+            ce.getUsers().remove(this);
+    }
 }

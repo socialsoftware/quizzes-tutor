@@ -230,10 +230,10 @@ public class UserService {
         }else{
             user1 = new User("", externalUserDto.getEmail(), externalUserDto.getRole());
             userRepository.save(user1);
+            user1.setState(User.State.INACTIVE);
         }
         user1.setAdmin(false);
         user1.setEmail(externalUserDto.getEmail());
-        user1.setState(User.State.INACTIVE);
         return user1;
     }
 
@@ -280,7 +280,14 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteExternalInactiveUsers(List<Integer> usersId){
-
+        Optional<User> userOp;
+        for(Integer id : usersId){
+            userOp = userRepository.findById(id);
+            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
+                userOp.ifPresent(User::removeFromCourseExecutions);
+                userOp.ifPresent(userRepository::delete);
+            }
+        }
     }
 
 }
