@@ -46,7 +46,7 @@ public class QuestionService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private QuestionTypeRepository questionTypeRepository;
+    private QuestionDetailsRepository questionDetailsRepository;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -262,7 +262,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        question.getQuestion().delete();
+        question.getQuestionDetails().delete();
 
         if (question.getImage() != null) {
             imageRepository.delete(question.getImage());

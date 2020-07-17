@@ -50,7 +50,7 @@ public interface Visitor {
         }
     }
 
-    default void visitAnswerType(MultipleChoiceAnswer answer){}
+    default void visitAnswerDetails(MultipleChoiceAnswer answer){}
 
-    default void visitQuestionType(MultipleChoiceQuestion question) {}
+    default void visitQuestionDetails(MultipleChoiceQuestion question) {}
 }

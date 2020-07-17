@@ -1,10 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -14,8 +11,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
 public class QuestionDto implements Serializable {
     private Integer id;
@@ -33,7 +28,7 @@ public class QuestionDto implements Serializable {
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
 
-    private QuestionTypeDto question;
+    private QuestionDetailsDto questionDetails;
 
     public QuestionDto() {
     }
@@ -60,7 +55,7 @@ public class QuestionDto implements Serializable {
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
 
-        this.question = question.getQuestionTypeDto();
+        this.questionDetails = question.getQuestionDetailsDto();
     }
 
     public Integer getId() {
@@ -171,12 +166,12 @@ public class QuestionDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public QuestionTypeDto getQuestion() {
-        return question;
+    public QuestionDetailsDto getQuestionDetails() {
+        return questionDetails;
     }
 
-    public void setQuestion(QuestionTypeDto question) {
-        this.question = question;
+    public void setQuestionDetails(QuestionDetailsDto questionDetails) {
+        this.questionDetails = questionDetails;
     }
 
     @Override
@@ -196,7 +191,7 @@ public class QuestionDto implements Serializable {
                 ", image=" + image +
                 ", topics=" + topics +
                 ", sequence=" + sequence +
-                ", question=" + question +
+                ", question=" + questionDetails +
                 '}';
     }
 }

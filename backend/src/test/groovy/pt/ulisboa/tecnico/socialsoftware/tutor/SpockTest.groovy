@@ -79,7 +79,7 @@ class SpockTest extends Specification {
     AnswerService answerService
 
     @Autowired
-    AnswerDetailsRepository answerTypeRepository
+    AnswerDetailsRepository answerDetailsRepository
 
     @Autowired
     AssessmentRepository assessmentRepository
@@ -109,7 +109,7 @@ class SpockTest extends Specification {
     QuestionRepository questionRepository
 
     @Autowired
-    QuestionRepository questionTypeRepository
+    QuestionRepository questionDetailsRepository
 
     @Autowired
     QuestionService questionService

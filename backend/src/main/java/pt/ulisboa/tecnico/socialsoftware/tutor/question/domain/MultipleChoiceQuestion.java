@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
@@ -21,7 +21,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
-public class MultipleChoiceQuestion extends QuestionType {
+public class MultipleChoiceQuestion extends QuestionDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
@@ -85,7 +85,7 @@ public class MultipleChoiceQuestion extends QuestionType {
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitQuestionType(this);
+        visitor.visitQuestionDetails(this);
     }
 
     public void visitOptions(Visitor visitor) {
@@ -95,7 +95,7 @@ public class MultipleChoiceQuestion extends QuestionType {
     }
 
     @Override
-    public CorrectAnswerDetailsDto getCorrectAnswerDto() {
+    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
         return new MultipleChoiceCorrectAnswerDto(this);
     }
 
@@ -105,12 +105,12 @@ public class MultipleChoiceQuestion extends QuestionType {
     }
 
     @Override
-    public AnswerDetailsDto getEmptyAnswerTypeDto() {
+    public AnswerDetailsDto getEmptyAnswerDetailsDto() {
         return new MultipleChoiceAnswerDto();
     }
 
     @Override
-    public QuestionTypeDto getQuestionTypeDto() {
+    public QuestionDetailsDto getQuestionDetailsDto() {
         return new MultipleChoiceQuestionDto(this);
     }
 

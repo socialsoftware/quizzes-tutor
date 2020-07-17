@@ -41,15 +41,15 @@ class GetSolvedQuizzesTest extends SpockTest {
         question.setTitle("Question Title")
         questionRepository.save(question)
 
-        def questionType = new MultipleChoiceQuestion();
-        question.setQuestion(questionType);
-        questionTypeRepository.save(questionType)
+        def questionDetails = new MultipleChoiceQuestion();
+        question.setQuestionDetails(questionDetails);
+        questionDetailsRepository.save(questionDetails)
 
         option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        option.setQuestion(questionType)
+        option.setQuestion(questionDetails)
         optionRepository.save(option)
     }
 
@@ -80,13 +80,13 @@ class GetSolvedQuizzesTest extends SpockTest {
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        def answerType = new MultipleChoiceAnswer(questionAnswer, option);
-        questionAnswer.setAnswerDetails(answerType);
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, option);
+        questionAnswer.setAnswerDetails(answerDetails);
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        answerTypeRepository.save(answerType)
+        answerDetailsRepository.save(answerDetails)
 
         when:
         def solvedQuizDtos = statementService.getSolvedQuizzes(user.getId(), courseDto.getCourseExecutionId())
@@ -103,7 +103,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         solvedQuizDto.getCorrectAnswers().size() == 1
         def correct = solvedQuizDto.getCorrectAnswers().get(0)
         correct.getSequence() == 0
-        correct.getCorrectAnswer().getCorrectOptionId() == option.getId()
+        correct.getCorrectAnswerDetails().getCorrectOptionId() == option.getId()
 
         where:
         quizType                 | conclusionDate    | resultsDate
@@ -140,13 +140,13 @@ class GetSolvedQuizzesTest extends SpockTest {
         questionAnswer.setSequence(0)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
-        def answerType = new MultipleChoiceAnswer(questionAnswer, option);
-        questionAnswer.setAnswerDetails(answerType)
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, option);
+        questionAnswer.setAnswerDetails(answerDetails)
 
         quizRepository.save(quiz)
         quizAnswerRepository.save(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
-        answerTypeRepository.save(answerType)
+        answerDetailsRepository.save(answerDetails)
 
 
         when:

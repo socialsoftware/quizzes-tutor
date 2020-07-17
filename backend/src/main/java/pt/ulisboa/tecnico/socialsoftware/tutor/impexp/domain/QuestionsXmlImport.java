@@ -12,9 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
 import java.io.*;
@@ -102,22 +100,22 @@ public class QuestionsXmlImport {
 			questionDto.setImage(imageDto);
 		}
 
-		QuestionTypeDto questionTypeDto;
+		QuestionDetailsDto questionDetailsDto;
 		switch (type){
 			case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
-				questionTypeDto = importMultipleChoiceQuestion(questionElement);
+				questionDetailsDto = importMultipleChoiceQuestion(questionElement);
 				break;
 			default:
 				throw new TutorException(ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED, type);
 		}
 
-		questionDto.setQuestion(questionTypeDto);
+		questionDto.setQuestionDetails(questionDetailsDto);
 
 		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 		questionService.createQuestion(course.getId(), questionDto);
 	}
 
-	private QuestionTypeDto importMultipleChoiceQuestion(Element questionElement) {
+	private QuestionDetailsDto importMultipleChoiceQuestion(Element questionElement) {
 		List<OptionDto> optionDtos = new ArrayList<>();
 		for (Element optionElement : questionElement.getChild("options").getChildren("option")) {
 			Integer optionSequence = Integer.valueOf( optionElement.getAttributeValue("sequence"));

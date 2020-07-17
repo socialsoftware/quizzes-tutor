@@ -45,13 +45,13 @@ public abstract class LatexVisitor implements Visitor {
 
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
-        question.getQuestion().accept(this);
+        question.getQuestionDetails().accept(this);
 
 
     }
 
     @Override
-    public void visitQuestionType(MultipleChoiceQuestion question) {
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
         question.visitOptions(this);
 
         this.result = this.result + "\\putOptions\n";

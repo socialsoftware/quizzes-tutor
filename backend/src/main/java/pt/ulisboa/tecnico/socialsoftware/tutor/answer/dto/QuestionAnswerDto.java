@@ -8,7 +8,7 @@ import java.io.Serializable;
 public class QuestionAnswerDto implements Serializable {
     private QuestionDto question;
 
-    private AnswerDetailsDto answer;
+    private AnswerDetailsDto answerDetails;
 
     public QuestionAnswerDto() {
     }
@@ -16,9 +16,9 @@ public class QuestionAnswerDto implements Serializable {
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
         this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
         if (questionAnswer.getAnswerDetails() == null) {
-            this.answer = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerTypeDto();
+            this.answerDetails = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerDetailsDto();
         } else {
-            this.answer = questionAnswer.getAnswerDetails().getAnswerTypeDto();
+            this.answerDetails = questionAnswer.getAnswerDetails().getAnswerDetailsDto();
         }
     }
 
@@ -30,11 +30,11 @@ public class QuestionAnswerDto implements Serializable {
         this.question = question;
     }
 
-    public AnswerDetailsDto getAnswer() {
-        return answer;
+    public AnswerDetailsDto getAnswerDetails() {
+        return answerDetails;
     }
 
-    public void setAnswer(AnswerDetailsDto answer) {
-        this.answer = answer;
+    public void setAnswerDetails(AnswerDetailsDto answerDetails) {
+        this.answerDetails = answerDetails;
     }
 }

@@ -78,7 +78,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
     }
 
     @Override
-    public AnswerDetailsDto getAnswerTypeDto() {
+    public AnswerDetailsDto getAnswerDetailsDto() {
         return new MultipleChoiceAnswerDto(this);
     }
 
@@ -89,6 +89,6 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
     @Override
     public void accept(Visitor visitor) {
-        visitor.visitAnswerType(this);
+        visitor.visitAnswerDetails(this);
     }
 }

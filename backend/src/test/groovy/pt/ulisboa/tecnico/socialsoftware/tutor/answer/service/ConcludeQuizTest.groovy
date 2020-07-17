@@ -49,9 +49,9 @@ class ConcludeQuizTest extends SpockTest {
         question.setKey(1)
         question.setTitle("Question Title")
         question.setCourse(course)
-        def questionType = new MultipleChoiceQuestion()
-        question.setQuestion(questionType)
-        questionTypeRepository.save(questionType)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         quizQuestion = new QuizQuestion(quiz, question, 0)
@@ -61,14 +61,14 @@ class ConcludeQuizTest extends SpockTest {
         optionKO.setContent("Option Content")
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(questionType)
+        optionKO.setQuestion(questionDetails)
         optionRepository.save(optionKO)
 
         optionOk = new Option()
         optionOk.setContent("Option Content")
         optionOk.setCorrect(true)
         optionOk.setSequence(1)
-        optionOk.setQuestion(questionType)
+        optionOk.setQuestion(questionDetails)
         optionRepository.save(optionOk)
 
         date = DateHandler.now()
@@ -105,7 +105,7 @@ class ConcludeQuizTest extends SpockTest {
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
         correctAnswerDto.getSequence() == 0
-        correctAnswerDto.getCorrectAnswer().getCorrectOptionId() == optionOk.getId()
+        correctAnswerDto.getCorrectAnswerDetails().getCorrectOptionId() == optionOk.getId()
     }
 
     def 'conclude quiz IN_CLASS without answering, before conclusionDate'() {
@@ -175,7 +175,7 @@ class ConcludeQuizTest extends SpockTest {
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
         correctAnswerDto.getSequence() == 0
-        correctAnswerDto.getCorrectAnswer().getCorrectOptionId() == optionOk.getId()
+        correctAnswerDto.getCorrectAnswerDetails().getCorrectOptionId() == optionOk.getId()
     }
 
     def 'conclude quiz without answering, before availableDate'() {

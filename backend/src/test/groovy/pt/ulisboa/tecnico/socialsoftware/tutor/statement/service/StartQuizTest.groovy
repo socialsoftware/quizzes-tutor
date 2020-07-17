@@ -4,7 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -12,8 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Unroll
 
@@ -42,9 +39,9 @@ class StartQuizTest extends SpockTest {
         question.setCourse(course)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
-        def questionType = new MultipleChoiceQuestion()
-        question.setQuestion(questionType)
-        questionTypeRepository.save(questionType)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
     }
 

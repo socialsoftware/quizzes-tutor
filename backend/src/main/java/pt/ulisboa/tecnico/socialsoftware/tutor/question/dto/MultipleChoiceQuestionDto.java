@@ -2,13 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class MultipleChoiceQuestionDto extends QuestionTypeDto {
+public class MultipleChoiceQuestionDto extends QuestionDetailsDto {
     private List<OptionDto> options = new ArrayList<>();
 
     public MultipleChoiceQuestionDto() {
@@ -27,7 +27,7 @@ public class MultipleChoiceQuestionDto extends QuestionTypeDto {
     }
 
     @Override
-    public QuestionType getQuestionType(Question question) {
+    public QuestionDetails getQuestionDetails(Question question) {
         return new MultipleChoiceQuestion(question, this);
     }
 

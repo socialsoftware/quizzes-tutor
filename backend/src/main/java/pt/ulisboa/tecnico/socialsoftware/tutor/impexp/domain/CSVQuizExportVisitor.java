@@ -31,7 +31,7 @@ public class CSVQuizExportVisitor implements Visitor {
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
         Map<Integer, Option> options = quiz.getQuizQuestions().stream()
                 .map(QuizQuestion::getQuestion)
-                .map(Question::getQuestion)
+                .map(Question::getQuestionDetails)
                 .filter(q -> q instanceof MultipleChoiceQuestion)
                 .flatMap(question -> ((MultipleChoiceQuestion)question).getOptions().stream())
                 .collect(Collectors.toMap(Option::getId, Function.identity()));
@@ -142,7 +142,7 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitAnswerType(MultipleChoiceAnswer answer) {
+    public void visitAnswerDetails(MultipleChoiceAnswer answer) {
         line[column++] = answer.getOption() != null ? convertSequenceToLetter(answer.getOption().getSequence()) : "X";
     }
 
@@ -153,11 +153,11 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuestion(Question question){
-        question.getQuestion().accept(this);
+        question.getQuestionDetails().accept(this);
     }
 
     @Override
-    public void visitQuestionType(MultipleChoiceQuestion question) {
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
         line[column++] = question.getOptions().stream()
                 .filter(Option::isCorrect)
                 .findAny()

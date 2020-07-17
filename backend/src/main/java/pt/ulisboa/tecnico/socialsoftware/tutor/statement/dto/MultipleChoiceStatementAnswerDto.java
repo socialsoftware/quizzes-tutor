@@ -30,7 +30,7 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto 
     @Override
     public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
         createdMultipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
-        questionAnswer.getQuestion().getQuestion().update(this);
+        questionAnswer.getQuestion().getQuestionDetails().update(this);
         return createdMultipleChoiceAnswer;
     }
 

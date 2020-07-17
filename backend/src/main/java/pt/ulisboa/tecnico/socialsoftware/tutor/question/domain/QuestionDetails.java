@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
@@ -15,7 +15,7 @@ import javax.persistence.*;
 @DiscriminatorColumn(name = "question_type",
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
-public abstract class QuestionType implements DomainEntity {
+public abstract class QuestionDetails implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -23,11 +23,11 @@ public abstract class QuestionType implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private Question question;
 
-    public QuestionType(Question question) {
+    public QuestionDetails(Question question) {
         this.question = question;
     }
 
-    public QuestionType() {
+    public QuestionDetails() {
 
     }
 
@@ -45,16 +45,16 @@ public abstract class QuestionType implements DomainEntity {
 
     public abstract Integer getCorrectAnswer();
 
-    public abstract CorrectAnswerDetailsDto getCorrectAnswerDto();
+    public abstract CorrectAnswerDetailsDto getCorrectAnswerDetailsDto();
 
     public abstract StatementQuestionDetailsDto getStatementQuestionDetailsDto();
 
-    public abstract AnswerDetailsDto getEmptyAnswerTypeDto();
+    public abstract AnswerDetailsDto getEmptyAnswerDetailsDto();
 
-    public abstract QuestionTypeDto getQuestionTypeDto();
+    public abstract QuestionDetailsDto getQuestionDetailsDto();
 
     public void delete(){
-        this.question.setQuestion(null);
+        this.question.setQuestionDetails(null);
         this.question = null;
     }
 

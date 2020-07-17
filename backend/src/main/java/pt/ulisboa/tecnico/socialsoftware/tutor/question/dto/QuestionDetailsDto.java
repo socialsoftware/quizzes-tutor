@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.io.Serializable;
 
@@ -18,7 +18,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION)
 })
-public abstract class QuestionTypeDto implements Serializable, Updator {
+public abstract class QuestionDetailsDto implements Serializable, Updator {
 
-    public abstract QuestionType getQuestionType(Question question);
+    public abstract QuestionDetails getQuestionDetails(Question question);
 }

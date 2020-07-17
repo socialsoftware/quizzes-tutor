@@ -36,23 +36,23 @@ class RemoveQuestionTest extends SpockTest {
         question.setNumberOfCorrect(1)
         question.setCourse(course)
         question.setImage(image)
-        def questionType = new MultipleChoiceQuestion()
-        question.setQuestion(questionType)
-        questionTypeRepository.save(questionType)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         optionOK = new Option()
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(questionType)
+        optionOK.setQuestion(questionDetails)
         optionRepository.save(optionOK)
 
         optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
-        optionKO.setQuestion(questionType)
+        optionKO.setQuestion(questionDetails)
         optionRepository.save(optionKO)
     }
 

@@ -103,7 +103,7 @@ public class AnswersXmlExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitAnswerType(MultipleChoiceAnswer answer) {
+    public void visitAnswerDetails(MultipleChoiceAnswer answer) {
         if (answer.getOption() != null) {
             Element optionElement = new Element("option");
             optionElement.setAttribute("questionKey", String.valueOf(answer.getOption().getQuestion().getQuestion().getKey()));

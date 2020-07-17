@@ -22,7 +22,7 @@ class GenerateStudentQuizTest extends SpockTest {
     def questionOne
     def questionTwo
     def assessment
-    def questionType
+    def questionDetails
 
     def setup() {
         user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
@@ -42,9 +42,9 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(course)
         questionOne.addTopic(topic)
-        questionType = new MultipleChoiceQuestion()
-        questionOne.setQuestion(questionType)
-        questionTypeRepository.save(questionType)
+        questionDetails = new MultipleChoiceQuestion()
+        questionOne.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionOne)
 
         questionTwo = new Question()
@@ -54,9 +54,9 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(course)
         questionTwo.addTopic(topic)
-        questionType = new MultipleChoiceQuestion()
-        questionTwo.setQuestion(questionType)
-        questionTypeRepository.save(questionType)
+        questionDetails = new MultipleChoiceQuestion()
+        questionTwo.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionTwo)
 
         assessment = new Assessment()

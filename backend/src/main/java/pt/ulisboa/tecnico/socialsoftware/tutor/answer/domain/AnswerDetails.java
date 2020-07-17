@@ -46,7 +46,7 @@ public abstract class AnswerDetails implements DomainEntity {
 
     public abstract void remove();
 
-    public abstract AnswerDetailsDto getAnswerTypeDto();
+    public abstract AnswerDetailsDto getAnswerDetailsDto();
 
     public abstract StatementAnswerDetailsDto getStatementAnswerDetailsDto();
 }

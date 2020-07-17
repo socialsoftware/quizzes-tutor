@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
@@ -68,9 +68,8 @@ public class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    // TODO[is->has] Type -> Details
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval=true)
-    private QuestionType question;
+    private QuestionDetails questionDetails;
 
     public Question() {
     }
@@ -86,8 +85,7 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        QuestionType questionType = questionDto.getQuestion().getQuestionType(this);
-        setQuestion(questionType);
+        setQuestionDetails(questionDto.getQuestionDetails().getQuestionDetails(this));
     }
 
     public Integer getId() {
@@ -240,7 +238,7 @@ public class Question implements DomainEntity {
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
 
-        getQuestion().update(questionDto.getQuestion());
+        getQuestionDetails().update(questionDto.getQuestionDetails());
     }
 
     public void updateTopics(Set<Topic> newTopics) {
@@ -272,31 +270,31 @@ public class Question implements DomainEntity {
     }
 
 
-    public QuestionType getQuestion() {
-        return question;
+    public QuestionDetails getQuestionDetails() {
+        return questionDetails;
     }
 
-    public void setQuestion(QuestionType question) {
-        this.question = question;
-        if(this.question != null) {
-            this.question.setQuestion(this);
+    public void setQuestionDetails(QuestionDetails question) {
+        this.questionDetails = question;
+        if(this.questionDetails != null) {
+            this.questionDetails.setQuestion(this);
         }
     }
 
-    public CorrectAnswerDetailsDto getCorrectAnswerDto(){
-        return this.getQuestion().getCorrectAnswerDto();
+    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto(){
+        return this.getQuestionDetails().getCorrectAnswerDetailsDto();
     }
 
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto(){
-        return this.getQuestion().getStatementQuestionDetailsDto();
+        return this.getQuestionDetails().getStatementQuestionDetailsDto();
     }
 
-    public AnswerDetailsDto getEmptyAnswerTypeDto(){
-        return this.getQuestion().getEmptyAnswerTypeDto();
+    public AnswerDetailsDto getEmptyAnswerDetailsDto(){
+        return this.getQuestionDetails().getEmptyAnswerDetailsDto();
     }
 
-    public QuestionTypeDto getQuestionTypeDto() {
-        return this.getQuestion().getQuestionTypeDto();
+    public QuestionDetailsDto getQuestionDetailsDto() {
+        return this.getQuestionDetails().getQuestionDetailsDto();
     }
 
     @Override
@@ -314,7 +312,7 @@ public class Question implements DomainEntity {
                 ", quizQuestions=" + quizQuestions +
                 ", topics=" + topics +
                 ", course=" + course +
-                ", question=" + question +
+                ", question=" + questionDetails +
                 '}';
     }
 }

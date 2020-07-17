@@ -57,13 +57,13 @@ public class XMLQuestionExportVisitor implements Visitor {
         if (question.getImage() != null)
             question.getImage().accept(this);
 
-        question.getQuestion().accept(this);
+        question.getQuestionDetails().accept(this);
 
         this.currentElement = this.rootElement;
     }
 
     @Override
-    public void visitQuestionType(MultipleChoiceQuestion question) {
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
         this.currentElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
 
         Element optionsElement = new Element("options");

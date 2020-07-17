@@ -26,8 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuizExportVisi
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
@@ -237,7 +235,7 @@ public class QuizService {
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
                         .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerDto()
+                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerDetailsDto()
                 ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));

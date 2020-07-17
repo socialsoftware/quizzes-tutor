@@ -102,9 +102,9 @@ public class AnswersXmlImport {
     private void loadQuestionMap() {
         // TODO[is->has]: questionMap XML
         questionMap = questionRepository.findAll().stream()
-                .filter(x -> x.getQuestion() instanceof MultipleChoiceQuestion)
+                .filter(x -> x.getQuestionDetails() instanceof MultipleChoiceQuestion)
                 .collect(Collectors.toMap(Question::getKey,
-                        question -> ((MultipleChoiceQuestion)question.getQuestion()).getOptions().stream()
+                        question -> ((MultipleChoiceQuestion)question.getQuestionDetails()).getOptions().stream()
                                 .collect(Collectors.toMap(Option::getSequence, Option::getId))));
     }
 
@@ -197,10 +197,10 @@ public class AnswersXmlImport {
         if (optionId == null) {
             questionAnswer.setAnswerDetails((AnswerDetails) null);
         } else {
-            MultipleChoiceAnswer answerType
+            MultipleChoiceAnswer answer
                     = new MultipleChoiceAnswer(questionAnswer, optionRepository.findById(optionId).orElse(null));
-            questionAnswer.setAnswerDetails(answerType);
-            answerDetailsRepository.save(answerType);
+            questionAnswer.setAnswerDetails(answer);
+            answerDetailsRepository.save(answer);
         }
 
     }

@@ -7,11 +7,11 @@ import java.io.Serializable;
 public class CorrectAnswerDto implements Serializable {
     private Integer sequence;
 
-    private CorrectAnswerDetailsDto correctAnswer;
+    private CorrectAnswerDetailsDto correctAnswerDetails;
 
     public CorrectAnswerDto(QuestionAnswer questionAnswer) {
         this.sequence = questionAnswer.getSequence();
-        this.correctAnswer = questionAnswer.getQuestion().getCorrectAnswerDto();
+        this.correctAnswerDetails = questionAnswer.getQuestion().getCorrectAnswerDetailsDto();
     }
 
     public Integer getSequence() {
@@ -22,19 +22,19 @@ public class CorrectAnswerDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public CorrectAnswerDetailsDto getCorrectAnswer() {
-        return correctAnswer;
+    public CorrectAnswerDetailsDto getCorrectAnswerDetails() {
+        return correctAnswerDetails;
     }
 
-    public void setCorrectAnswer(CorrectAnswerDetailsDto correctAnswer) {
-        this.correctAnswer = correctAnswer;
+    public void setCorrectAnswerDetails(CorrectAnswerDetailsDto correctAnswerDetails) {
+        this.correctAnswerDetails = correctAnswerDetails;
     }
 
     @Override
     public String toString() {
         return "CorrectAnswerDto{" +
                 "sequence=" + sequence +
-                ", correctAnswer=" + correctAnswer +
+                ", correctAnswer=" + correctAnswerDetails +
                 '}';
     }
 }
