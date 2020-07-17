@@ -88,7 +88,7 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        QuestionType questionType = questionDto.getQuestion().getQuestionType();
+        QuestionType questionType = questionDto.getQuestion().getQuestionType(this);
         setQuestion(questionType);
     }
 
@@ -280,7 +280,9 @@ public class Question implements DomainEntity {
 
     public void setQuestion(QuestionType question) {
         this.question = question;
-        this.question.setQuestion(this);
+        if(this.question != null) {
+            this.question.setQuestion(this);
+        }
     }
 
     public CorrectAnswerTypeDto getCorrectAnswerDto(){

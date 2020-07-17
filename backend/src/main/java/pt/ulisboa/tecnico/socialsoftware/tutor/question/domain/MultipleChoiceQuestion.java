@@ -6,11 +6,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDt
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
@@ -29,10 +27,11 @@ public class MultipleChoiceQuestion extends QuestionType {
 
 
     public MultipleChoiceQuestion() {
-
+        super();
     }
 
-    public MultipleChoiceQuestion(MultipleChoiceQuestionDto questionDto) {
+    public MultipleChoiceQuestion(Question question, MultipleChoiceQuestionDto questionDto) {
+        super(question);
         setOptions(questionDto.getOptions());
     }
 
@@ -125,8 +124,12 @@ public class MultipleChoiceQuestion extends QuestionType {
     }
 
     @Override
-    public void delete(QuestionService questionService) {
-        questionService.deleteQuestion(this);
+    public void delete() {
+        super.delete();
+        for (Option option : this.options) {
+            option.remove();
+        }
+        this.options.clear();
     }
 
     @Override

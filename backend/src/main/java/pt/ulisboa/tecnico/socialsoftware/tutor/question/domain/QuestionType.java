@@ -3,10 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
@@ -25,6 +22,14 @@ public abstract class QuestionType implements DomainEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private Question question;
+
+    public QuestionType(Question question) {
+        this.question = question;
+    }
+
+    public QuestionType() {
+
+    }
 
     public Integer getId() {
         return id;
@@ -48,7 +53,10 @@ public abstract class QuestionType implements DomainEntity {
 
     public abstract QuestionTypeDto getQuestionTypeDto();
 
-    public abstract void delete(QuestionService questionService);
+    public void delete(){
+        this.question.setQuestion(null);
+        this.question = null;
+    }
 
     public abstract void update(Updator updator);
 }

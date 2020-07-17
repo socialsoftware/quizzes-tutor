@@ -27,8 +27,8 @@ public class MultipleChoiceQuestionDto extends QuestionTypeDto {
     }
 
     @Override
-    public QuestionType getQuestionType() {
-        return new MultipleChoiceQuestion(this);
+    public QuestionType getQuestionType(Question question) {
+        return new MultipleChoiceQuestion(question, this);
     }
 
     @Override

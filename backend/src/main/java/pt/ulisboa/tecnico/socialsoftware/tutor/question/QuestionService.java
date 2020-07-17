@@ -262,7 +262,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        question.getQuestion().delete(this);
+        question.getQuestion().delete();
 
         if (question.getImage() != null) {
             imageRepository.delete(question.getImage());
@@ -272,15 +272,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-    }
-
-    // TODO[is->has] FIX QUESTION DELETION
-    public void deleteQuestion(MultipleChoiceQuestion question) {
-        for (Option option : question.getOptions()) {
-            option.remove();
-            optionRepository.delete(option);
-        }
-        questionTypeRepository.delete(question);
     }
 }
 
