@@ -70,7 +70,7 @@ public class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval=true)
     private QuestionType question;
 
     public Question() {
@@ -87,7 +87,8 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        setQuestion(questionDto.getQuestion().getQuestionType());
+        QuestionType questionType = questionDto.getQuestion().getQuestionType();
+        setQuestion(questionType);
     }
 
     public Integer getId() {

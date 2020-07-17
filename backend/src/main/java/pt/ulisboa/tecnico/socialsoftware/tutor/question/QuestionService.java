@@ -14,10 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
@@ -105,7 +102,6 @@ public class QuestionService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         Question question = new Question(course, questionDto);
-        questionTypeRepository.save(question.getQuestion());
         questionRepository.save(question);
         return new QuestionDto(question);
     }

@@ -1,7 +1,9 @@
-import Option from '@/models/management/Option';
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
+import QuestionType from '@/models/management/questions/QuestionType';
+import { createQuestionType } from '@/models/management/questions/Helpers';
 import { ISOtoString } from '@/services/ConvertDateService';
+import MultipleChoiceQuestionType from './questions/MultipleChoiceQuestionType';
 
 export default class Question {
   id: number | null = null;
@@ -17,7 +19,8 @@ export default class Question {
   image: Image | null = null;
   sequence: number | null = null;
 
-  options: Option[] = [new Option(), new Option(), new Option(), new Option()];
+  question: QuestionType = new MultipleChoiceQuestionType();
+
   topics: Topic[] = [];
 
   constructor(jsonObj?: Question) {
@@ -34,9 +37,7 @@ export default class Question {
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.image = jsonObj.image;
 
-      this.options = jsonObj.options.map(
-        (option: Option) => new Option(option)
-      );
+      this.question = createQuestionType(jsonObj.question);
 
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }

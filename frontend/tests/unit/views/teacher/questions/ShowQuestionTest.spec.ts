@@ -7,6 +7,7 @@ import {
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import Option from '@/models/management/Option';
+import MultipleChoiceQuestionType from '@/models/management/questions/MultipleChoiceQuestionType';
 
 describe('ShowQuestion.vue with question', () => {
   let wrapper: Wrapper<ShowQuestion>;
@@ -24,7 +25,8 @@ describe('ShowQuestion.vue with question', () => {
     expect(wrapper.find('div span').text()).toMatch(
       questionWithoutFigure.content
     );
-    questionWithoutFigure.options.forEach((option: Option) => {
+    var question = questionWithoutFigure.question as MultipleChoiceQuestionType;
+    question.options.forEach((option: Option) => {
       expect(wrapper.html()).toContain(option.content);
     });
   });
