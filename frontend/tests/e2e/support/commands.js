@@ -65,3 +65,177 @@ Cypress.Commands.add(
     cy.get('[data-cy="saveButton"]').click();
   }
 );
+
+Cypress.Commands.add(
+  'submitQuestion',
+  (valid, title, content, opt1, opt2, opt3, opt4, argument=null, anonymous=false) => {
+    cy.get('[data-cy="SubmitQuestion"]').click();
+    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').type(content);
+    cy.get('[data-cy="Switch1"]').click({ force: true });
+    if(valid) {
+      cy.get('[data-cy="Option1"]').type(opt1);
+      cy.get('[data-cy="Option2"]').type(opt2);
+      cy.get('[data-cy="Option3"]').type(opt3);
+      cy.get('[data-cy="Option4"]').type(opt4);
+      if (argument != null){
+        cy.get('[data-cy="Argument"]').type(argument);
+      }
+      if (anonymous) {
+        cy.get('[data-cy="Anonymous"]').click({ force: true });
+      }
+      cy.get('[data-cy="SubmitButton"]').click();
+      cy.contains(title)
+        .parent()
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 6);
+    } else {
+      cy.get('[data-cy="SubmitButton"]').click();
+    }
+  }
+);
+
+Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, argument=null, status=null) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 6)
+    .find('[data-cy="viewQuestion"]')
+    .click();
+  cy.contains(title);
+  cy.contains(content);
+  cy.contains(op1);
+  cy.contains(op2);
+  cy.contains(op3);
+  cy.contains(op4);
+  if (argument != null){
+    cy.contains(argument);
+  }
+  if (status != null) {
+    cy.contains(status);
+  }
+  cy.get('[data-cy="close"]').click();
+});
+
+Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) => {
+  if(title != null) {
+    cy.contains(title)
+      .parent()
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', size)
+      .find('[data-cy="deleteSubmission"]')
+      .click();
+  } else if (reviews) {
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING submission_id), sub AS (DELETE FROM submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
+     );
+  }else {
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "WITH sub AS (DELETE FROM submissions WHERE id IN (SELECT max(id) FROM submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
+    );
+  }
+});
+
+Cypress.Commands.add('addReview', title => {
+  cy.exec(
+    'PGPASSWORD=' +
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
+    ' -h localhost -c "with sub as (select s.id from submissions s join questions q on s.question_id=q.id where q.title=\'' +
+    title +
+    '\') insert into reviews(creation_date, justification, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
+  );
+});
+
+Cypress.Commands.add('reviewSubmission', (status, title, justification=null) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  if (justification != null){
+    cy.get('[data-cy="Justification"]').type(justification);
+  }
+  cy.get('[data-cy="'+ status +'Button"]').click();
+});
+
+Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 7)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  cy.contains(title);
+  cy.contains(status);
+  cy.get('[data-cy="CloseButton"]').click();
+});
+
+Cypress.Commands.add('addSubmission', (title, questionStatus, userId, anon = false) => {
+  cy.exec(
+    'PGPASSWORD=' +
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
+    ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
+    title +
+    '\', \'Question?\', \'' +
+    questionStatus +
+    '\', 2, current_timestamp) RETURNING id) INSERT INTO submissions (question_id, user_id, anonymous, course_execution_id) VALUES ((SELECT id from quest), ' +
+    userId +
+    ', ' +
+    anon +
+    ', 11);" '
+  );
+  //add options
+  for (let content in [0, 1, 2, 3]) {
+    let correct = content === 'A' ? 't' : 'f';
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "WITH quest AS (SELECT * FROM questions WHERE title=\'' +
+      title +
+      '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
+    );
+  }
+});
+
+Cypress.Commands.add('checkAllStudentsSubmissions', (title1, title2, title3, title4, title5) => {
+    cy.contains(title1);
+    cy.contains(title2);
+    cy.contains(title3);
+    cy.contains(title4);
+    cy.contains(title5);
+});

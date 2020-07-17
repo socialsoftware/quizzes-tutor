@@ -47,7 +47,7 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="managementMenuButton">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -61,7 +61,7 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/submissions">
+            <v-list-item to="/management/submissions" data-cy="submissionTeacherMenuButton">
               <v-list-item-action>
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
@@ -157,13 +157,13 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="submissionMenuButton">
               Submissions
               <v-icon>question_answer</v-icon>
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/submissions">
+            <v-list-item to="/student/submissions" data-cy="mySubmissionsMenuButton">
               <v-list-item-action>
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
@@ -171,7 +171,7 @@
                 <v-list-item-title>My Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/all-submissions">
+            <v-list-item to="/student/all-submissions" data-cy="allSubmissionsMenuButton">
               <v-list-item-action>
                 <v-icon>fas fa-users</v-icon>
               </v-list-item-action>

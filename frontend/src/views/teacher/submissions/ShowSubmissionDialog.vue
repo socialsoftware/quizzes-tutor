@@ -38,13 +38,13 @@
             rows="1"
             v-model="justification"
             label="Justification"
+            data-cy="Justification"
           ></v-textarea>
         </v-card-text>
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn
-          data-cy="close"
+        <v-btn data-cy="CloseButton"
           color="blue darken-1"
           @click="$emit('dialog', false)"
           >close</v-btn
@@ -53,30 +53,35 @@
           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('IN_REVIEW')"
+          data-cy="InReviewButton"
           >request further review</v-btn
         >
         <v-btn
           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('SUBMITTED')"
-          >request changes</v-btn
+          data-cy="SubmittedButton"
+        >request changes</v-btn
         >
         <v-btn
           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('REJECTED')"
-          >rejected</v-btn
+          data-cy="RejectedButton"
+        >rejected</v-btn
         >
         <v-btn
           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('DISABLED')"
+          data-cy="DisabledButton"
           >disabled</v-btn
         >
         <v-btn
           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('AVAILABLE')"
+          data-cy="AvailableButton"
           >available</v-btn
         >
       </v-card-actions>

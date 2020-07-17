@@ -18,24 +18,27 @@
             </v-card-title>
 
             <v-card-text class="text-left" v-if="editSubmission">
-                <v-text-field v-model="editSubmission.question.title" label="Title" />
+                <v-text-field v-model="editSubmission.question.title" label="Title" data-cy="QuestionTitle" />
                 <v-textarea
                         outline
                         rows="10"
                         v-model="editSubmission.question.content"
                         label="Question"
+                        data-cy="QuestionContent"
                 ></v-textarea>
                 <div v-for="index in editSubmission.question.options.length" :key="index">
                     <v-switch
                             v-model="editSubmission.question.options[index - 1].correct"
                             class="ma-4"
                             label="Correct"
+                            v-bind:data-cy="'Switch' + index"
                     />
                     <v-textarea
                             outline
                             rows="3"
                             v-model="editSubmission.question.options[index - 1].content"
                             :label="`Option ${index}`"
+                            v-bind:data-cy="'Option' + index"
                     ></v-textarea>
                 </div>
                 <br><br>
@@ -44,6 +47,7 @@
                         rows="5"
                         v-model="editSubmission.argument"
                         :label="editMode(editSubmission) ? 'Argument' : 'Argument (Optional)'"
+                        data-cy="Argument"
                 ></v-textarea>
             </v-card-text>
 
@@ -52,12 +56,13 @@
                         v-model="editSubmission.anonymous"
                         class="ma-4"
                         label="Anonymous"
+                        data="Anonymous"
+                        v-if="!editMode(editSubmission)"
                 />
                 <v-spacer />
-                <v-btn color="blue darken-1" @click="$emit('dialog', false)"
-                >Cancel</v-btn
+                <v-btn color="blue darken-1" @click="$emit('dialog', false)" data-cy="CancelButton">Cancel</v-btn
                 >
-                <v-btn color="blue darken-1" @click="saveSubmission">Save</v-btn>
+                <v-btn color="blue darken-1" @click="saveSubmission" data-cy="SubmitButton"> {{ editMode(editSubmission) ? 'Save' : 'Submit' }}</v-btn>
             </v-card-actions>
         </v-card>
     </v-dialog>
