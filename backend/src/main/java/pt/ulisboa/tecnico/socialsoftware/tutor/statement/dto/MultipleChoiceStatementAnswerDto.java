@@ -26,11 +26,18 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto 
         this.optionId = optionId;
     }
 
+    private MultipleChoiceAnswer createdMultipleChoiceAnswer;
+
     @Override
     public AnswerType getAnswerType(QuestionAnswer questionAnswer) {
-        MultipleChoiceAnswer multipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
-        multipleChoiceAnswer.setOption(this);
-        return multipleChoiceAnswer;
+        createdMultipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
+        questionAnswer.getQuestion().getQuestion().update(this);
+        return createdMultipleChoiceAnswer;
+    }
+
+    @Override
+    public void update(MultipleChoiceQuestion question) {
+        createdMultipleChoiceAnswer.setOption(question, this);
     }
 
     @Override

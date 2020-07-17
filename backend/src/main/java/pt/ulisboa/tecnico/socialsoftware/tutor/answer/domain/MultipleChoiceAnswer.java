@@ -47,9 +47,9 @@ public class MultipleChoiceAnswer extends AnswerType {
             option.addQuestionAnswer(this.getQuestionAnswer());
     }
 
-    public void setOption(MultipleChoiceStatementAnswerDto multipleChoiceStatementAnswerDto) {
+    public void setOption(MultipleChoiceQuestion question, MultipleChoiceStatementAnswerDto multipleChoiceStatementAnswerDto) {
         if (multipleChoiceStatementAnswerDto.getOptionId() != null) {
-            Option option = this.getQuestion().getOptions().stream()
+            Option option = question.getOptions().stream()
                     .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDto.getOptionId()))
                     .findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, multipleChoiceStatementAnswerDto.getOptionId()));
@@ -60,13 +60,8 @@ public class MultipleChoiceAnswer extends AnswerType {
 
             this.setOption(option);
         } else {
-            this.setOption((Option) null);
+            this.setOption(null);
         }
-    }
-
-    // TODO[is->has] -> Understand how to remove this.
-    private MultipleChoiceQuestion getQuestion(){
-        return (MultipleChoiceQuestion)this.getQuestionAnswer().getQuestion().getQuestion();
     }
 
     @Override

@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectA
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -74,9 +75,13 @@ public class MultipleChoiceQuestion extends QuestionType {
                 .orElse(null);
     }
 
-    // TODO[is-has]: fix cast!
-    public void update(QuestionDto questionDto) {
-        setOptions(((MultipleChoiceQuestionDto)questionDto.getQuestion()).getOptions());
+    public void update(MultipleChoiceQuestionDto questionDetails) {
+        setOptions(questionDetails.getOptions());
+    }
+
+    @Override
+    public void update(Updator updator) {
+        updator.update(this);
     }
 
     @Override

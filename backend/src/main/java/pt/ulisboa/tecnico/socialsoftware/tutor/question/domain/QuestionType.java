@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionTypeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
@@ -49,5 +50,5 @@ public abstract class QuestionType implements DomainEntity {
 
     public abstract void delete(QuestionService questionService);
 
-    public abstract void update(QuestionDto questionDto);
+    public abstract void update(Updator updator);
 }

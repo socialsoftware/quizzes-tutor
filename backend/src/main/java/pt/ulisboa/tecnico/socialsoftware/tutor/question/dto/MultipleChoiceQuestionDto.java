@@ -32,6 +32,11 @@ public class MultipleChoiceQuestionDto extends QuestionTypeDto {
     }
 
     @Override
+    public void update(MultipleChoiceQuestion question) {
+        question.update(this);
+    }
+
+    @Override
     public String toString() {
         return "MultipleChoiceQuestionDto{" +
                 "options=" + options +

@@ -70,6 +70,7 @@ public class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    // TODO[is->has] Type -> Details
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval=true)
     private QuestionType question;
 
@@ -241,7 +242,7 @@ public class Question implements DomainEntity {
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
 
-        getQuestion().update(questionDto);
+        getQuestion().update(questionDto.getQuestion());
     }
 
     public void updateTopics(Set<Topic> newTopics) {
