@@ -2,15 +2,7 @@ describe('Teacher walkthrough', () => {
   beforeEach(() => {
     cy.demoTeacherLogin();
     cy.log('student submits a question');
-    cy.exec(
-      'PGPASSWORD=' +
-      Cypress.env('PASS') +
-      ' psql -d ' +
-      Cypress.env('DBNAME') +
-      ' -U ' +
-      Cypress.env('USER') +
-      ' -h localhost -c "WITH quest AS (insert into questions (creation_date, content, title, status, course_id, key) VALUES (current_timestamp, \'Test Question\', \'Test\', \'SUBMITTED\', 2, 200) returning id) insert into submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), 676, 11);" '
-    );
+    cy.addSubmission('Test', 'SUBMITTED', 676);
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="submissionTeacherMenuButton"]').click();
   });

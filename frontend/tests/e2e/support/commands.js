@@ -121,7 +121,7 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, argume
   cy.get('[data-cy="close"]').click();
 });
 
-Cypress.Commands.add('deleteSubmission', (title=null, size=null) => {
+Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) => {
   if(title != null) {
     cy.contains(title)
       .parent()
@@ -131,7 +131,7 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null) => {
       .should('have.length', size)
       .find('[data-cy="deleteSubmission"]')
       .click();
-  } else {
+  } else if (reviews) {
     cy.exec(
       'PGPASSWORD=' +
       Cypress.env('PASS') +
@@ -140,6 +140,16 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null) => {
       ' -U ' +
       Cypress.env('USER') +
       ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING submission_id), sub AS (DELETE FROM submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
+     );
+  }else {
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "WITH sub AS (DELETE FROM submissions WHERE id IN (SELECT max(id) FROM submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
     );
   }
 });
@@ -185,4 +195,47 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
   cy.contains(title);
   cy.contains(status);
   cy.get('[data-cy="CloseButton"]').click();
+});
+
+Cypress.Commands.add('addSubmission', (title, questionStatus, userId, anon = false) => {
+  cy.exec(
+    'PGPASSWORD=' +
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
+    ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
+    title +
+    '\', \'Question?\', \'' +
+    questionStatus +
+    '\', 2, current_timestamp) RETURNING id) INSERT INTO submissions (question_id, user_id, anonymous, course_execution_id) VALUES ((SELECT id from quest), ' +
+    userId +
+    ', ' +
+    anon +
+    ', 11);" '
+  );
+  //add options
+  for (let content in [0, 1, 2, 3]) {
+    let correct = content === 'A' ? 't' : 'f';
+    cy.exec(
+      'PGPASSWORD=' +
+      Cypress.env('PASS') +
+      ' psql -d ' +
+      Cypress.env('DBNAME') +
+      ' -U ' +
+      Cypress.env('USER') +
+      ' -h localhost -c "WITH quest AS (SELECT * FROM questions WHERE title=\'' +
+      title +
+      '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
+    );
+  }
+});
+
+Cypress.Commands.add('checkAllStudentsSubmissions', (title1, title2, title3, title4, title5) => {
+    cy.contains(title1);
+    cy.contains(title2);
+    cy.contains(title3);
+    cy.contains(title4);
+    cy.contains(title5);
 });
