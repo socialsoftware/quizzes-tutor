@@ -95,9 +95,9 @@ Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
 });
 
 Cypress.Commands.add('tournamentCreation', numberOfQuestions => {
-  cy.time('Start Time', 16, 0);
+  cy.time('Start Time', 22, 0);
   cy.wait(100);
-  cy.time('End Time', 18, 1);
+  cy.time('End Time', 25, 1);
   cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
     force: true
   });
@@ -118,48 +118,22 @@ Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
 });
 
 Cypress.Commands.add('time', (date, day, type) => {
-  let get1 = '';
-  let get2 = '';
+  let get = '';
   if (type === 0) {
-    get1 = '#startTimeInput-picker-container-DatePicker';
-    get2 = '#startTimeInput-wrapper';
+    get = '#startTimeInput-picker-container-DatePicker';
   } else {
-    get1 = '#endTimeInput-picker-container-DatePicker';
-    get2 = '#endTimeInput-wrapper';
+    get = '#endTimeInput-picker-container-DatePicker';
   }
 
   cy.get('label')
     .contains(date)
     .click({force: true});
 
-  cy.get(get1)
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 3)
-    .eq(0)
-    .children()
-    .should('have.length', 3)
-    .eq(2)
-    .click({force: true})
+  cy.get(get + ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path')
+    .click({force: true});
 
   cy.wait(500);
-
-  cy.get(get1)
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 3)
-    .eq(2)
-    .children()
-    .contains(day)
-    .click()
-    .get(get2)
-    .children()
-    .should('have.length', 2)
-    .eq(1)
+  cy.get(get + ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' + day + ') > .datepicker-day-text')
     .click({force: true});
 });
 
@@ -198,9 +172,9 @@ Cypress.Commands.add('leaveTournament', tournament => {
 Cypress.Commands.add('editTournament', tournament => {
   cy.selectTournamentWithAction(tournament, "EditTournament");
 
-  cy.time('Start Time', 20, 0);
+  cy.time('Start Time', 24, 0);
   cy.wait(100);
-  cy.time('End Time', 22, 1);
+  cy.time('End Time', 26, 1);
   cy.get('[data-cy="NumberOfQuestions"]')
     .clear({
       force: true
