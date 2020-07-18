@@ -17,6 +17,7 @@ public class ExternalUserDto implements Serializable {
     private String email;
     private String password;
     private User.Role role;
+    private User.State state;
     private boolean isAdmin;
     private List<CourseDto> courseExecutions;
     private String confirmationToken;
@@ -33,6 +34,7 @@ public class ExternalUserDto implements Serializable {
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getRole();
+        this.state = user.getState();
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
         this.courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
