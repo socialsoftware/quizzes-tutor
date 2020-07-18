@@ -223,7 +223,6 @@ export default class SubmissionView extends Vue {
   editSubmission(submission: Submission, e?: Event) {
     if (e) e.preventDefault();
     this.currentSubmission = submission;
-    this.currentSubmission.argument = null;
     this.editSubmissionDialog = true;
   }
 

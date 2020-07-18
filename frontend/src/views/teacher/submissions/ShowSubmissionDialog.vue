@@ -12,10 +12,6 @@
 
       <v-card-text class="text-left">
         <show-question :question="submission.question" />
-        <div v-if="submission.argument !== null">
-          <h3 style="display: inline">Argument: </h3>
-          <p style="display: inline">{{ submission.argument }}</p>
-        </div>
       </v-card-text>
       <v-card-title>
         <span class="headline">{{ 'Reviews' }}</span>

@@ -4,17 +4,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Unroll
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ARGUMENT_MISSING_EDIT_SUBMISSION
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_ARGUMENT_FOR_SUBMISSION
 
 @DataJpaTest
 class UpdateSubmissionTest extends SpockTest{
@@ -47,13 +42,12 @@ class UpdateSubmissionTest extends SpockTest{
         submission.setQuestion(question)
         submission.setUser(student)
         submission.setCourseExecution(courseExecution)
-        submission.setArgument(SUBMISSION_1_ARGUMENT)
         courseExecution.addSubmission(submission)
         student.addSubmission(submission)
         submissionRepository.save(submission)
     }
 
-    def "edit a submission with valid argument"(){
+    def "edit a submission"(){
         given: "an edited questionDto"
         def questionDto = new QuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)
@@ -61,7 +55,6 @@ class UpdateSubmissionTest extends SpockTest{
         and: "a submissionDto"
         def submissionDto = new SubmissionDto(submission)
         submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(SUBMISSION_2_ARGUMENT)
 
         when:
         submissionService.updateSubmission(submission.getId(), submissionDto)
@@ -77,32 +70,6 @@ class UpdateSubmissionTest extends SpockTest{
         result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
-        result.getArgument() == SUBMISSION_2_ARGUMENT
-    }
-
-    @Unroll
-    def "invalid arguments: argument=#argument || errorMessage"(){
-        given: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
-        questionDto.setTitle(QUESTION_2_TITLE)
-        questionDto.setContent(QUESTION_2_CONTENT)
-        and: "a submissionDto"
-        def submissionDto = new SubmissionDto(submission)
-        submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(argument)
-
-        when:
-        submissionService.updateSubmission(submission.getId(), submissionDto)
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.errorMessage == errorMessage
-
-        where:
-        argument              || errorMessage
-        null                  || ARGUMENT_MISSING_EDIT_SUBMISSION
-        ' '                   || ARGUMENT_MISSING_EDIT_SUBMISSION
-        SUBMISSION_1_ARGUMENT || INVALID_ARGUMENT_FOR_SUBMISSION
     }
 
     @TestConfiguration

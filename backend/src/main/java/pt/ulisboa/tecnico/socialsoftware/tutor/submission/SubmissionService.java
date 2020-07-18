@@ -95,8 +95,6 @@ public class SubmissionService {
     public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
         Submission submission = getSubmission(submissionId);
 
-        setArgument(submissionDto, submission);
-
         this.questionService.updateQuestion(submissionDto.getQuestion().getId(), submissionDto.getQuestion());
         return new SubmissionDto(submission);
     }
@@ -203,18 +201,7 @@ public class SubmissionService {
     private Submission createSubmission(SubmissionDto submissionDto, CourseExecution courseExecution, Question question, User user) {
         Submission submission = new Submission(courseExecution, question, user);
         submission.setAnonymous(submissionDto.isAnonymous());
-        submission.setArgument(submissionDto.getArgument());
         return submission;
-    }
-
-    private void setArgument(SubmissionDto submissionDto, Submission submission) {
-        if (submissionDto.getArgument() == null || submissionDto.getArgument().isBlank()) {
-            throw new TutorException(ARGUMENT_MISSING_EDIT_SUBMISSION);
-        } else if (submission.getArgument() != null && submission.getArgument().equals(submissionDto.getArgument())) {
-            throw new TutorException(INVALID_ARGUMENT_FOR_SUBMISSION);
-        } else {
-            submission.setArgument(submissionDto.getArgument());
-        }
     }
 
     private void updateQuestionStatus(String status, Integer questionId) {
