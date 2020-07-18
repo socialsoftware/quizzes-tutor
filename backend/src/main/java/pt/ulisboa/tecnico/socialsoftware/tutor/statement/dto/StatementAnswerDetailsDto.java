@@ -11,11 +11,13 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
         include = JsonTypeInfo.As.PROPERTY,
-        defaultImpl = MultipleChoiceStatementAnswerDto.class,
+        defaultImpl = MultipleChoiceStatementAnswerDetailsDto.class,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDto.class, name = MULTIPLE_CHOICE_QUESTION)
+        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDetailsDto.class, name = MULTIPLE_CHOICE_QUESTION)
 })
 public abstract class StatementAnswerDetailsDto implements Updator {
     public abstract AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer);
+
+    public abstract boolean noAnswer();
 }

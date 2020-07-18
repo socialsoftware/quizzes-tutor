@@ -47,12 +47,12 @@ public class MultipleChoiceAnswer extends AnswerDetails {
             option.addQuestionAnswer(this.getQuestionAnswer());
     }
 
-    public void setOption(MultipleChoiceQuestion question, MultipleChoiceStatementAnswerDto multipleChoiceStatementAnswerDto) {
-        if (multipleChoiceStatementAnswerDto.getOptionId() != null) {
+    public void setOption(MultipleChoiceQuestion question, MultipleChoiceStatementAnswerDetailsDto multipleChoiceStatementAnswerDetailsDto) {
+        if (multipleChoiceStatementAnswerDetailsDto.getOptionId() != null) {
             Option option = question.getOptions().stream()
-                    .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDto.getOptionId()))
+                    .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDetailsDto.getOptionId()))
                     .findAny()
-                    .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, multipleChoiceStatementAnswerDto.getOptionId()));
+                    .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, multipleChoiceStatementAnswerDetailsDto.getOptionId()));
 
             if (this.getOption() != null) {
                 this.getOption().getQuestionAnswers().remove(this.getQuestionAnswer());
@@ -84,7 +84,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return new MultipleChoiceStatementAnswerDto(this);
+        return new MultipleChoiceStatementAnswerDetailsDto(this);
     }
 
     @Override

@@ -25,27 +25,13 @@
         />
       </div>
     </div>
-    <ul class="option-list">
-      <li
-        v-for="(n, index) in question.questionDetails.options.length"
-        :key="index"
-        v-bind:class="[
-          'option',
-          optionId === question.questionDetails.options[index].optionId
-            ? 'selected'
-            : ''
-        ]"
-        @click="selectOption(question.questionDetails.options[index].optionId)"
+    <component 
+      :is="question.questionDetails.type" 
+      :questionDetails="question.questionDetails"
+      :answerDetails="answer.answerDetails"
+      v-on="$listeners"
       >
-        <span class="option-letter">{{ optionLetters[index] }}</span>
-        <span
-          class="option-content"
-          v-html="
-            convertMarkDown(question.questionDetails.options[index].content)
-          "
-        />
-      </li>
-    </ul>
+    </component>
   </div>
 </template>
 
@@ -54,16 +40,21 @@ import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import OptionsList from '@/components/multiple-choice/OptionsList.vue';
+import StatementAnswer from '@/models/statement/StatementAnswer';
 
-@Component
+@Component({
+  components: {
+    'multiple_choice': OptionsList
+  }
+})
 export default class QuestionComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
   @Prop(StatementQuestion) readonly question: StatementQuestion | undefined;
-  @Prop(Number) optionId: number | undefined;
+  @Prop(StatementAnswer) answer: StatementAnswer | undefined;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {
@@ -73,11 +64,6 @@ export default class QuestionComponent extends Vue {
   @Emit()
   decreaseOrder() {
     return 1;
-  }
-
-  @Emit()
-  selectOption(optionId: number) {
-    return optionId;
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

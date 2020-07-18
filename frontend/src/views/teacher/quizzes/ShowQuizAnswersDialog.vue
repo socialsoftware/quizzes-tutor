@@ -80,7 +80,7 @@
               :key="index"
               style="border: 0"
             >
-              {{ convertToLetter(sequence) }}
+              {{ sequence }}
             </td>
           </div>
         </tr>

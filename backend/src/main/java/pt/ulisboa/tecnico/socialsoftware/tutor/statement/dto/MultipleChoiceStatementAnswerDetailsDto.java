@@ -5,13 +5,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 
-public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto {
+public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
     private Integer optionId;
 
-    public MultipleChoiceStatementAnswerDto() {
+    public MultipleChoiceStatementAnswerDetailsDto() {
     }
 
-    public MultipleChoiceStatementAnswerDto(MultipleChoiceAnswer questionAnswer) {
+    public MultipleChoiceStatementAnswerDetailsDto(MultipleChoiceAnswer questionAnswer) {
         if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
         }
@@ -32,6 +32,11 @@ public class MultipleChoiceStatementAnswerDto extends StatementAnswerDetailsDto 
         createdMultipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);
         questionAnswer.getQuestion().getQuestionDetails().update(this);
         return createdMultipleChoiceAnswer;
+    }
+
+    @Override
+    public boolean noAnswer() {
+        return optionId == null;
     }
 
     @Override

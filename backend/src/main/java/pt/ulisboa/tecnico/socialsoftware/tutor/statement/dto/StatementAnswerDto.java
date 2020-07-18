@@ -89,4 +89,8 @@ public class StatementAnswerDto implements Serializable {
                 ", answerDetails=" + answerDetails +
                 '}';
     }
+
+    public boolean noAnswer() {
+        return this.answerDetails.noAnswer();
+    }
 }

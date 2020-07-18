@@ -27,6 +27,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
+    public enum Status {
+        DISABLED, REMOVED, AVAILABLE
+    }
+
+    public static class QuestionTypes {
+        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
+    }
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
     @ManyToMany(mappedBy = "questions")
@@ -292,6 +300,10 @@ public class Question implements DomainEntity {
         return this.getQuestionDetails().getQuestionDetailsDto();
     }
 
+    public String getCorrectAnswerText() {
+        return this.questionDetails.getCorrectAnswerText();
+    }
+
     @Override
     public String toString() {
         return "Question{" +
@@ -311,11 +323,4 @@ public class Question implements DomainEntity {
                 '}';
     }
 
-    public enum Status {
-        DISABLED, REMOVED, AVAILABLE
-    }
-
-    public static class QuestionTypes {
-        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
-    }
 }

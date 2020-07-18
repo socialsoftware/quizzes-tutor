@@ -232,12 +232,10 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         QuizAnswersDto quizAnswersDto = new QuizAnswersDto();
 
-        // TODO[is->has] -> need to add sequence
-        // TODO[is->has] -> FIX presentation on /management/quizzes -> see answers.
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
                         .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerDetailsDto()
+                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerText()
                 ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));

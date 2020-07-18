@@ -21,4 +21,8 @@ export default class StatementAnswer {
       this.answerDetails = createStatementAnswerDetails(jsonObj.answerDetails);
     }
   }
+
+  isQuestionAnswered(): boolean {
+    return this.answerDetails.isQuestionAnswered();
+  }
 }

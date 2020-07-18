@@ -10,4 +10,8 @@ export default class MultipleChoiceStatementAnswerDetails extends StatementAnswe
       this.optionId = jsonObj.optionId;
     }
   }
+
+  isQuestionAnswered(): boolean {
+    return this.optionId != null;
+  }
 }

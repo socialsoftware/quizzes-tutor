@@ -6,6 +6,7 @@ import StatementQuestionDetails from '@/models/statement/questions/StatementQues
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
+import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 
 // TODO: MOVE TO SERVICES
 // TODO: CREATE A BETTER FACTORY, USE POLYMORPHISM
@@ -48,7 +49,7 @@ export function createStatementAnswerDetails(
 ): StatementAnswerDetails {
   switch (question.type) {
     case QuestionTypes.MultipleChoice:
-      return new MultipleChoiceStatementQuestionDetails(question);
+      return new MultipleChoiceStatementAnswerDetails(question);
     default:
       throw new Error('Unknown question type.');
   }

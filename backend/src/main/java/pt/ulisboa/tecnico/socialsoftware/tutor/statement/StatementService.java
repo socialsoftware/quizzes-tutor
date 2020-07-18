@@ -199,16 +199,15 @@ public class StatementService {
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
         }
-        // TODO[is->has]: He knows how to save himself :thinking:?
-        // VISITOR?
-        // -> answer.saveQuestionAnswer(username, quizId, questionAnswerItemRepository);
-        /*if (answer.getOptionId() == null) {
+
+        if (answer.noAnswer()) {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {
+            // TODO: UPDATE question_answer_items so that it has answer details as well.
             questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
-                    answer.getTimeTaken(), answer.getTimeToSubmission(), answer.getOptionId());
-        }*/
+                    answer.getTimeTaken(), answer.getTimeToSubmission(), ((MultipleChoiceStatementAnswerDetailsDto) answer.getAnswerDetails()).getOptionId());
+        }
     }
 
     @Retryable(

@@ -4,4 +4,6 @@ export default abstract class StatementAnswerDetails {
   constructor(type: string) {
     this.type = type;
   }
+
+  abstract isQuestionAnswered(): boolean;
 }

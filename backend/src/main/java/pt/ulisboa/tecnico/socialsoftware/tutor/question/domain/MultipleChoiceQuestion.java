@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
@@ -86,6 +86,26 @@ public class MultipleChoiceQuestion extends QuestionDetails {
     }
 
     @Override
+    public String getCorrectAnswerText() {
+        return convertSequenceToLetter(this.getCorrectAnswer());
+    }
+
+    private String convertSequenceToLetter(Integer correctAnswer) {
+        switch (correctAnswer) {
+            case 0:
+                return "A";
+            case 1:
+                return "B";
+            case 2:
+                return "C";
+            case 3:
+                return "D";
+            default:
+                return "X";
+        }
+    }
+
+    @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestionDetails(this);
     }
@@ -108,7 +128,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
 
     @Override
     public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
-        return new MultipleChoiceStatementAnswerDto();
+        return new MultipleChoiceStatementAnswerDetailsDto();
     }
 
     @Override

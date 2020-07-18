@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -150,7 +150,7 @@ class ConcludeQuizTest extends SpockTest {
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new StatementAnswerDto()
-        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDto()
+        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
         multipleChoiceAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
@@ -239,7 +239,7 @@ class ConcludeQuizTest extends SpockTest {
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
         def statementAnswerDto = new StatementAnswerDto()
-        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDto()
+        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
         multipleChoiceAnswerDto.setOptionId(optionOk.getId())
         statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
