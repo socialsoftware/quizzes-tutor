@@ -8,9 +8,6 @@ import StatementAnswerDetails from '@/models/statement/questions/StatementAnswer
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 
-// TODO: MOVE TO SERVICES
-// TODO: CREATE A BETTER FACTORY, USE POLYMORPHISM
-
 export const enum QuestionTypes {
   MultipleChoice = 'multiple_choice'
 }

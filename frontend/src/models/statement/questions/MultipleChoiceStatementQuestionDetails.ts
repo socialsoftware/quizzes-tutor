@@ -1,5 +1,5 @@
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
-import { QuestionTypes } from '@/models/management/questions/Helpers';
+import { QuestionTypes } from '@/services/QuestionHelpers';
 import StatementOption from '@/models/statement/StatementOption';
 import { _ } from 'vue-underscore';
 

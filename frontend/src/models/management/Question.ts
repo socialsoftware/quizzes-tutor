@@ -1,7 +1,7 @@
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
-import { createQuestionDetails } from '@/models/management/questions/Helpers';
+import { createQuestionDetails } from '@/services/QuestionHelpers';
 import { ISOtoString } from '@/services/ConvertDateService';
 import MultipleChoiceQuestionType from './questions/MultipleChoiceQuestionDetails';
 

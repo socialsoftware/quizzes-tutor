@@ -1,6 +1,6 @@
 import StatementCorrectAnswerDetails from './questions/StatementCorrectAnswerDetails';
 import StatementAnswerDetails from './questions/StatementAnswerDetails';
-import { createStatementCorrectAnswerDetails } from '../management/questions/Helpers';
+import { createStatementCorrectAnswerDetails } from '../../services/QuestionHelpers';
 
 export default class StatementCorrectAnswer {
   quizQuestionId!: number;

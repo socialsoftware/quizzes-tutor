@@ -2,7 +2,7 @@ import Question from '@/models/management/Question';
 import Option from '@/models/management/Option';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 import MultipleChoiceAnswerType from '@/models/management/questions/MultipleChoiceAnswerDetails';
-import { createAnswerDetails } from '@/models/management/questions/Helpers';
+import { createAnswerDetails } from '@/services/QuestionHelpers';
 
 export class QuestionAnswer {
   question!: Question;

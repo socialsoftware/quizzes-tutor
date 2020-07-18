@@ -1,5 +1,5 @@
 import StatementCorrectAnswerDetails from '@/models/statement/questions/StatementCorrectAnswerDetails';
-import { QuestionTypes } from '@/models/management/questions/Helpers';
+import { QuestionTypes } from '@/services/QuestionHelpers';
 
 export default class MultipleChoiceStatementCorrectAnswerDetails extends StatementCorrectAnswerDetails {
   public correctOptionId: number | null = null;

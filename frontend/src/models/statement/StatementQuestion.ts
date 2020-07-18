@@ -1,7 +1,7 @@
 import Image from '@/models/management/Image';
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
-import { createStatementQuestionDetails } from '@/models/management/questions/Helpers';
+import { createStatementQuestionDetails } from '@/services/QuestionHelpers';
 
 export default class StatementQuestion {
   quizQuestionId!: number;

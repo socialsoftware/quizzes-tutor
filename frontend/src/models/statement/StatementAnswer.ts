@@ -1,6 +1,6 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
-import { createStatementAnswerDetails } from '@/models/management/questions/Helpers';
+import { createStatementAnswerDetails } from '@/services/QuestionHelpers';
 
 export default class StatementAnswer {
   public timeTaken: number = 0;

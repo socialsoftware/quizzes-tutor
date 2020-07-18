@@ -1,6 +1,6 @@
 import Option from '@/models/management/Option';
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
-import { QuestionTypes } from '@/models/management/questions/Helpers';
+import { QuestionTypes } from '@/services/QuestionHelpers';
 
 export default class MultipleChoiceQuestionType extends QuestionDetails {
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
