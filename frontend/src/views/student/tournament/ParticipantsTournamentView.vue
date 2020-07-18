@@ -32,8 +32,11 @@
                 </span>
               </template>
               <template v-slot:item.score="{ item }">
-                <v-chip :color="getPercentageColor(item.score)">
+                <v-chip v-if="isClosed" :color="getPercentageColor(item.score)">
                   {{ item.score === '' ? 'NOT SOLVED' : item.score }}
+                </v-chip>
+                <v-chip v-else>
+                  {{ 'NOT AVAILABLE YET' }}
                 </v-chip>
               </template>
             </v-data-table>
@@ -57,7 +60,9 @@ export default class ParticipantsTournament extends Vue {
   @Prop({ type: String, required: true }) id!: number;
 
   tournaments: Tournament[] = [];
+  closedTournaments: Tournament[] = [];
   selectedTournament: Tournament | null = null;
+  isClosed: Boolean = false;
   quizzes: SolvedQuiz[] = [];
   tournamentScores: TournamentScore[] = [];
   correctAnswers: number = 0;
@@ -73,17 +78,24 @@ export default class ParticipantsTournament extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.tournaments = await RemoteServices.getAllTournaments();
+      this.closedTournaments = await RemoteServices.getClosedTournaments();
       this.tournaments.map(tournament => {
         if (tournament.id == this.id) this.selectedTournament = tournament;
       });
+      this.closedTournaments.map(tournament => {
+        if (tournament.id == this.id) this.isClosed = true;
+      });
       if (this.selectedTournament)
         for (const participant of this.selectedTournament.participants) {
-          const score = await this.getScore(participant);
+          let score;
+          if (this.isClosed) score = await this.getScore(participant);
+          else score = '';
           this.tournamentScores.push(
             new TournamentScore(participant, score, this.correctAnswers)
           );
         }
-      this.tournamentScores.sort((a, b) => this.sortByScore(a, b));
+      if (this.isClosed)
+        this.tournamentScores.sort((a, b) => this.sortByScore(a, b));
       this.setRankings();
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -102,6 +114,7 @@ export default class ParticipantsTournament extends Vue {
       this.tournamentScores[i - 1].ranking = i;
     }
   }
+
   calculateScore(quiz: SolvedQuiz) {
     let correct = 0;
     for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {

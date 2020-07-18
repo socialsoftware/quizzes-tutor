@@ -186,6 +186,7 @@ public class TournamentService {
                 quiz.setAvailableDate(tournament.getStartTime());
             }
             quiz.setConclusionDate(tournament.getEndTime());
+            quiz.setResultsDate(tournament.getEndTime());
             quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
             quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
 
