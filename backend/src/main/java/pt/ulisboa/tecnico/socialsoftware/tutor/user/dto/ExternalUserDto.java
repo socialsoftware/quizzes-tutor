@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 public class ExternalUserDto implements Serializable {
     private Integer id;
-    private User.State state;
     private String name;
     private String username;
     private String email;
