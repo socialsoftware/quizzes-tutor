@@ -12,10 +12,6 @@
 
       <v-card-text class="text-left">
         <show-question :question="submission.question" />
-        <div v-if="submission.argument !== null">
-          <h3 style="display: inline">Argument: </h3>
-          <p style="display: inline">{{ submission.argument }}</p>
-        </div>
       </v-card-text>
       <v-card-title>
         <span class="headline">{{ 'Reviews' }}</span>
@@ -28,7 +24,7 @@
         />
       </div>
       <div class="text-left"
-           v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+           v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
       >
         <v-card-title>
           <span class="headline">{{ 'New Review' }}</span>
@@ -50,35 +46,35 @@
           >close</v-btn
         >
         <v-btn
-          v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('IN_REVIEW')"
           data-cy="InReviewButton"
           >request further review</v-btn
         >
         <v-btn
-          v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
-          @click="reviewSubmission('SUBMITTED')"
-          data-cy="SubmittedButton"
+          @click="reviewSubmission('IN_REVISION')"
+          data-cy="InRevisionButton"
         >request changes</v-btn
         >
         <v-btn
-          v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('REJECTED')"
           data-cy="RejectedButton"
         >rejected</v-btn
         >
         <v-btn
-          v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('DISABLED')"
           data-cy="DisabledButton"
           >disabled</v-btn
         >
         <v-btn
-          v-if="this.status === 'SUBMITTED' || this.status === 'IN_REVIEW'"
+          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
           @click="reviewSubmission('AVAILABLE')"
           data-cy="AvailableButton"

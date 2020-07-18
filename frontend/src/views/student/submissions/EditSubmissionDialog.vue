@@ -41,14 +41,6 @@
                             v-bind:data-cy="'Option' + index"
                     ></v-textarea>
                 </div>
-                <br><br>
-                <v-textarea
-                        outline
-                        rows="5"
-                        v-model="editSubmission.argument"
-                        :label="editMode(editSubmission) ? 'Argument' : 'Argument (Optional)'"
-                        data-cy="Argument"
-                ></v-textarea>
             </v-card-text>
 
             <v-card-actions>

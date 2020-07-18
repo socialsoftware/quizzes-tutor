@@ -36,7 +36,7 @@ class CreateSubmissionTest extends SpockTest{
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.SUBMITTED.name())
+        questionDto.setStatus(Question.Status.IN_REVISION.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -62,33 +62,9 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
-    }
-
-    def "create submission with question not null and an argument"() {
-        given: "a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setCourseExecutionId(courseExecution.getId())
-        submissionDto.setUserId(student.getId())
-        submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(SUBMISSION_ARGUMENT);
-
-        when: submissionService.createSubmission(submissionDto)
-
-        then: "the correct submission is in the repository"
-        submissionRepository.count() == 1L
-        def result = submissionRepository.findAll().get(0)
-        result.getId() != null
-        result.getUser() == student
-        result.getQuestion() != null
-        result.getQuestion().getTitle() == questionDto.getTitle()
-        result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
-        result.getCourseExecution() == courseExecution
-        !result.isAnonymous()
-        result.getArgument() == SUBMISSION_ARGUMENT
     }
 
     def "create an anonymous submission with question not null"() {
@@ -109,7 +85,7 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         result.isAnonymous()
     }

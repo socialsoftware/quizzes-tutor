@@ -173,7 +173,7 @@ export default class SubmissionView extends Vue {
     if (status === 'AVAILABLE') return 'green';
     else if (status === 'DISABLED') return 'orange';
     else if (status === 'REJECTED') return 'red';
-    else if (status === 'SUBMITTED') return 'yellow';
+    else if (status === 'IN_REVISION') return 'yellow';
     else if (status === 'IN_REVIEW') return 'blue';
   }
 
@@ -238,7 +238,7 @@ export default class SubmissionView extends Vue {
 
   isReviewable(submission: Submission) {
     return (
-      submission.question.status == 'SUBMITTED' ||
+      submission.question.status == 'IN_REVISION' ||
       submission.question.status == 'IN_REVIEW'
     );
   }

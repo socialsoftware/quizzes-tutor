@@ -40,8 +40,7 @@ describe('Student walkthrough', () => {
       'A',
       'B',
       'C',
-      'D',
-      'Argument'
+      'D'
     );
 
     cy.viewQuestion(
@@ -50,8 +49,7 @@ describe('Student walkthrough', () => {
       'A',
       'B',
       'C',
-      'D',
-      'Argument'
+      'D'
     );
     cy.deleteSubmission('Test', 6);
   });
@@ -78,8 +76,7 @@ describe('Student walkthrough', () => {
       'A',
       'B',
       'C',
-      'D',
-      'Argument'
+      'D'
     );
 
     cy.addReview('Test');
@@ -91,7 +88,6 @@ describe('Student walkthrough', () => {
       'B',
       'C',
       'D',
-      'Argument',
       'APPROVED'
     );
     cy.deleteSubmission();

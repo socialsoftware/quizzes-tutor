@@ -5,7 +5,7 @@ describe('Student walkthrough', () => {
     cy.addSubmission('Test 2', 'DISABLED', 679, true);
     cy.addSubmission('Test 3', 'REJECTED', 676 , false);
     cy.addSubmission('Test 4', 'IN_REVIEW', 676, false);
-    cy.addSubmission('Test 5', 'SUBMITTED', 676, false);
+    cy.addSubmission('Test 5', 'IN_REVISION', 676, false);
     cy.get('[data-cy="submissionMenuButton"]').click();
     cy.get('[data-cy="allSubmissionsMenuButton"]').click();
   });

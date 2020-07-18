@@ -7,7 +7,6 @@ export default class Submission {
   userId: number | null = null;
   name: string | null = null;
   anonymous!: boolean;
-  argument: string | null = null;
 
   constructor(jsonObj?: Submission) {
     if (jsonObj) {
@@ -17,7 +16,6 @@ export default class Submission {
       this.userId = jsonObj.userId;
       this.name = jsonObj.name;
       this.anonymous = jsonObj.anonymous;
-      this.argument = jsonObj.argument;
     }
   }
 }

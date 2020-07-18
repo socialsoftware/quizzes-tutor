@@ -28,8 +28,8 @@ class ToggleInReviewStatusTest extends SpockTest{
     }
 
     def "open review status for a submitted question"(){
-        given: "the question's status is SUBMITTED"
-        question.setStatus(Question.Status.SUBMITTED)
+        given: "the question's status is IN_REVISION"
+        question.setStatus(Question.Status.IN_REVISION)
         questionRepository.save(question)
 
         when:
@@ -63,7 +63,7 @@ class ToggleInReviewStatusTest extends SpockTest{
 
         then: "question is not in review anymore"
         def question = questionRepository.findAll().get(0)
-        question.getStatus() == Question.Status.SUBMITTED
+        question.getStatus() == Question.Status.IN_REVISION
     }
 
 

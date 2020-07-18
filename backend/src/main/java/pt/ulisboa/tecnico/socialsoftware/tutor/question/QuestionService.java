@@ -152,7 +152,7 @@ public class QuestionService {
 
     private void removeSubmission(User user, Submission submission) {
         if(user.isStudent() && !submission.getReviews().isEmpty()) {
-            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
+            throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
         }
         deleteSubmission(submission);
     }

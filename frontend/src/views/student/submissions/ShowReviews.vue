@@ -52,7 +52,7 @@
         return 'APPROVED';
       } else if (status === 'REJECTED') {
         return status;
-      } else if (status === 'SUBMITTED') {
+      } else if (status === 'IN_REVISION') {
         return 'CHANGES REQUESTED';
       } else if (status === 'IN_REVIEW') {
         return 'FURTHER REVIEW REQUESTED';
@@ -68,7 +68,7 @@
     getStatusColor(status: string) {
       if (status === 'AVAILABLE' || status === 'DISABLED') return 'green';
       else if (status === 'REJECTED') return 'red';
-      else if (status === 'SUBMITTED') return 'yellow';
+      else if (status === 'IN_REVISION') return 'yellow';
       else if (status === 'IN_REVIEW') return 'blue';
     }
   }

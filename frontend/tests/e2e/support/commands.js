@@ -68,7 +68,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'submitQuestion',
-  (valid, title, content, opt1, opt2, opt3, opt4, argument=null, anonymous=false) => {
+  (valid, title, content, opt1, opt2, opt3, opt4, anonymous=false) => {
     cy.get('[data-cy="SubmitQuestion"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
@@ -78,9 +78,6 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      if (argument != null){
-        cy.get('[data-cy="Argument"]').type(argument);
-      }
       if (anonymous) {
         cy.get('[data-cy="Anonymous"]').click({ force: true });
       }
@@ -97,7 +94,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, argument=null, status=null) => {
+Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status=null) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -112,9 +109,6 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, argume
   cy.contains(op2);
   cy.contains(op3);
   cy.contains(op4);
-  if (argument != null){
-    cy.contains(argument);
-  }
   if (status != null) {
     cy.contains(status);
   }
