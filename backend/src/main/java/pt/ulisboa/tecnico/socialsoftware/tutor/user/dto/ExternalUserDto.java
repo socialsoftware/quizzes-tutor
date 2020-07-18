@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 public class ExternalUserDto implements Serializable {
     private Integer id;
+    private User.State state;
     private String name;
     private String username;
     private String email;
@@ -26,6 +27,7 @@ public class ExternalUserDto implements Serializable {
 
     public ExternalUserDto(User user){
         this.id = user.getId();
+        this.state = user.getState();
         this.name = user.getName();
         this.username = user.getUsername();
         this.email = user.getEmail();
@@ -84,8 +86,16 @@ public class ExternalUserDto implements Serializable {
         this.role = role;
     }
 
+    public User.State getState() {
+        return state;
+    }
+
+    public void setState(User.State state) {
+        this.state = state;
+    }
+
     public boolean isActive() {
-        return !(password == null || password.isEmpty());
+        return getState() == User.State.ACTIVE;
     }
 
     public boolean isAdmin() {

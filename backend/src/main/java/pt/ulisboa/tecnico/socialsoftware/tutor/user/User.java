@@ -50,6 +50,7 @@ public class User implements UserDetails, DomainEntity {
     private String password;
 
     private String confirmationToken = "";
+    private LocalDateTime tokenGenerationDate;
 
     private String email;
 
@@ -204,7 +205,15 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public boolean isActive() {
-        return !(getPassword() == null || getPassword().isBlank());
+        return state == State.ACTIVE;
+    }
+
+    public LocalDateTime getTokenGenerationDate() {
+        return tokenGenerationDate;
+    }
+
+    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
+        this.tokenGenerationDate = tokenGenerationDate;
     }
 
     public void setConfirmationToken(String confirmationToken) {
