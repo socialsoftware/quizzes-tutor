@@ -1,13 +1,14 @@
-import StatementOption from '@/models/statement/StatementOption';
 import Image from '@/models/management/Image';
-import { _ } from 'vue-underscore';
+import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
+import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
+import {createStatementQuestionDetails} from '@/models/management/questions/Helpers'
 
 export default class StatementQuestion {
   quizQuestionId!: number;
   content!: string;
   image: Image | null = null;
 
-  options: StatementOption[] = [];
+  questionDetails: StatementQuestionDetails = new MultipleChoiceStatementQuestionDetails();
 
   constructor(jsonObj?: StatementQuestion) {
     if (jsonObj) {
@@ -15,13 +16,7 @@ export default class StatementQuestion {
       this.content = jsonObj.content;
       this.image = jsonObj.image;
 
-      if (jsonObj.options) {
-        this.options = _.shuffle(
-          jsonObj.options.map(
-            (option: StatementOption) => new StatementOption(option)
-          )
-        );
-      }
+      this.questionDetails = createStatementQuestionDetails(jsonObj.questionDetails);
     }
   }
 }

@@ -1,8 +1,8 @@
 import Option from '@/models/management/Option';
-import QuestionType from '@/models/management/questions/QuestionType';
+import QuestionDetails from '@/models/management/questions/QuestionDetails';
 import { QuestionTypes } from '@/models/management/questions/Helpers';
 
-export default class MultipleChoiceQuestionType extends QuestionType {
+export default class MultipleChoiceQuestionType extends QuestionDetails {
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
 
   constructor(jsonObj?: MultipleChoiceQuestionType) {

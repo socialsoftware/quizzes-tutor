@@ -1,4 +1,4 @@
-export default abstract class QuestionType {
+export default abstract class QuestionDetails {
   type!: string;
 
   constructor(type: string) {

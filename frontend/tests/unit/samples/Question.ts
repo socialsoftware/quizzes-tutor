@@ -1,6 +1,6 @@
 import Question from '@/models/management/Question';
 import { QuestionTypes } from '@/models/management/questions/Helpers';
-import MultipleChoiceQuestionType from '@/models/management/questions/MultipleChoiceQuestionType';
+import MultipleChoiceQuestionType from '@/models/management/questions/MultipleChoiceQuestionDetails';
 
 export const questionWithFigure = new Question({
   id: 395,
@@ -14,7 +14,7 @@ export const questionWithFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
-  question: {
+  questionDetails: {
     type: QuestionTypes.MultipleChoice,
     options: [
       {
@@ -78,7 +78,7 @@ export const questionWithoutFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
-  question: {
+  questionDetails: {
     type: QuestionTypes.MultipleChoice,
     options: [
       {
