@@ -68,10 +68,26 @@
           <span> {{ item.id }} </span>
         </v-chip>
       </template>
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom v-if="!isNotEnrolled(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="openSolvedQuiz()"
+              data-cy="SeeSolvedQuiz"
+              >fas fa-file-alt</v-icon
+            >
+          </template>
+          <span>See Solved Quiz</span>
+        </v-tooltip>
+      </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's number to
-      view the winners.
+      Press <v-icon class="mr-2">fas fa-file-alt</v-icon> to see tournament quiz
+      answers. <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's
+      number to view the winners.
     </footer>
     <edit-tournament-dialog
       v-if="currentTournament"
@@ -102,6 +118,13 @@ export default class ClosedTournamentView extends Vue {
   createTournamentDialog: boolean = false;
   search: string = '';
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'center',
+      sortable: false,
+      width: '20%'
+    },
     {
       text: 'Course Acronym',
       value: 'courseAcronym',
@@ -161,6 +184,10 @@ export default class ClosedTournamentView extends Vue {
     if (tournament) return '/student/tournament?id=' + tournament.id;
   }
 
+  async openSolvedQuiz() {
+    await this.$router.push({ name: 'solved-quizzes' });
+  }
+
   newTournament() {
     this.currentTournament = new Tournament();
     this.createTournamentDialog = true;
@@ -195,6 +222,10 @@ export default class ClosedTournamentView extends Vue {
   getPrivateName(privateTournament: boolean) {
     if (privateTournament) return 'PRIVATE';
     else return 'PUBLIC';
+  }
+
+  isNotEnrolled(tournamentToJoin: Tournament) {
+    return !tournamentToJoin.enrolled;
   }
 }
 </script>

@@ -109,6 +109,19 @@
           </template>
           <span>Leave Tournament</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="!isNotEnrolled(item) && isClosed(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="openSolvedQuiz()"
+              data-cy="SeeSolvedQuiz"
+              >fas fa-file-alt</v-icon
+            >
+          </template>
+          <span>See Solved Quiz</span>
+        </v-tooltip>
       </template>
       <template v-slot:item.id="{ item }">
         <v-chip
@@ -122,8 +135,9 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's number to
-      view the current ranking.
+      Press <v-icon class="mr-2">fas fa-file-alt</v-icon> to see tournament quiz
+      answers. <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's
+      number to view the current ranking.
     </footer>
     <edit-tournament-dialog
       v-if="currentTournament"
@@ -246,6 +260,10 @@ export default class AllTournamentView extends Vue {
 
   openTournamentDashboard(tournament: Tournament) {
     if (tournament) return '/student/tournament?id=' + tournament.id;
+  }
+
+  async openSolvedQuiz() {
+    await this.$router.push({ name: 'solved-quizzes' });
   }
 
   newTournament() {
