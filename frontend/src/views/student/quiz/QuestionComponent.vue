@@ -1,5 +1,8 @@
 <template>
-  <div class="question-container" v-if="question && question.options">
+  <div
+    class="question-container"
+    v-if="question && question.questionDetails.options"
+  >
     <div class="question">
       <span
         v-if="backsies"
@@ -24,18 +27,22 @@
     </div>
     <ul class="option-list">
       <li
-        v-for="(n, index) in question.options.length"
+        v-for="(n, index) in question.questionDetails.options.length"
         :key="index"
         v-bind:class="[
           'option',
-          optionId === question.options[index].optionId ? 'selected' : ''
+          optionId === question.questionDetails.options[index].optionId
+            ? 'selected'
+            : ''
         ]"
-        @click="selectOption(question.options[index].optionId)"
+        @click="selectOption(question.questionDetails.options[index].optionId)"
       >
         <span class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
-          v-html="convertMarkDown(question.options[index].content)"
+          v-html="
+            convertMarkDown(question.questionDetails.options[index].content)
+          "
         />
       </li>
     </ul>

@@ -3,9 +3,10 @@
     v-if="question"
     v-bind:class="[
       'question-container',
-      answer.optionId === null ? 'unanswered' : '',
-      answer.optionId !== null &&
-      correctAnswer.correctOptionId === answer.optionId
+      answer.answerDetails.optionId === null ? 'unanswered' : '',
+      answer.answerDetails.optionId !== null &&
+      correctAnswer.correctAnswerDetails.correctOptionId ===
+        answer.answerDetails.optionId
         ? 'correct-question'
         : 'incorrect-question'
     ]"
@@ -33,11 +34,15 @@
     </div>
     <ul class="option-list">
       <li
-        v-for="(n, index) in question.options.length"
+        v-for="(n, index) in question.questionDetails.options.length"
         :key="index"
         v-bind:class="[
-          answer.optionId === question.options[index].optionId ? 'wrong' : '',
-          correctAnswer.correctOptionId === question.options[index].optionId
+          answer.answerDetails.optionId ===
+          question.questionDetails.options[index].optionId
+            ? 'wrong'
+            : '',
+          correctAnswer.correctAnswerDetails.correctOptionId ===
+          question.questionDetails.options[index].optionId
             ? 'correct'
             : '',
           'option'
@@ -45,18 +50,24 @@
       >
         <i
           v-if="
-            correctAnswer.correctOptionId === question.options[index].optionId
+            correctAnswer.correctAnswerDetails.correctOptionId ===
+              question.questionDetails.options[index].optionId
           "
           class="fas fa-check option-letter"
         />
         <i
-          v-else-if="answer.optionId === question.options[index].optionId"
+          v-else-if="
+            answer.answerDetails.optionId ===
+              question.questionDetails.options[index].optionId
+          "
           class="fas fa-times option-letter"
         />
         <span v-else class="option-letter">{{ optionLetters[index] }}</span>
         <span
           class="option-content"
-          v-html="convertMarkDown(question.options[index].content)"
+          v-html="
+            convertMarkDown(question.questionDetails.options[index].content)
+          "
         />
       </li>
     </ul>

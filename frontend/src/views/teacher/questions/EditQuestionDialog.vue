@@ -25,16 +25,19 @@
           v-model="editQuestion.content"
           label="Question"
         ></v-textarea>
-        <div v-for="index in editQuestion.question.options.length" :key="index">
+        <div
+          v-for="index in editQuestion.questionDetails.options.length"
+          :key="index"
+        >
           <v-switch
-            v-model="editQuestion.question.options[index - 1].correct"
+            v-model="editQuestion.questionDetails.options[index - 1].correct"
             class="ma-4"
             label="Correct"
           />
           <v-textarea
             outline
             rows="10"
-            v-model="editQuestion.question.options[index - 1].content"
+            v-model="editQuestion.questionDetails.options[index - 1].content"
             :label="`Option ${index}`"
           ></v-textarea>
         </div>

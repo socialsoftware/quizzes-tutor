@@ -25,6 +25,7 @@ public class QuizAnswersDto implements Serializable {
         this.correctSequence = correctSequence;
     }
 
+    // TODO[is->has]: FIX THIS
     /*
         public List<Integer> getCorrectSequence() {
             return correctSequence;

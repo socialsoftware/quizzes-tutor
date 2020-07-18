@@ -1,13 +1,21 @@
+import StatementCorrectAnswerDetails from './questions/StatementCorrectAnswerDetails';
+import StatementAnswerDetails from './questions/StatementAnswerDetails';
+import { createStatementCorrectAnswerDetails } from '../management/questions/Helpers';
+
 export default class StatementCorrectAnswer {
   quizQuestionId!: number;
-  correctOptionId!: number;
   sequence!: number;
+
+  correctAnswerDetails!: StatementAnswerDetails;
 
   constructor(jsonObj?: StatementCorrectAnswer) {
     if (jsonObj) {
       this.quizQuestionId = jsonObj.quizQuestionId;
-      this.correctOptionId = jsonObj.correctOptionId;
       this.sequence = jsonObj.sequence;
+
+      this.correctAnswerDetails = createStatementCorrectAnswerDetails(
+        jsonObj.correctAnswerDetails
+      );
     }
   }
 }

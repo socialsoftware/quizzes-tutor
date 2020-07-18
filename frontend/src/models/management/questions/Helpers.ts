@@ -5,10 +5,10 @@ import AnswerDetails from '@/models/management/questions/AnswerDetails';
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
+import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 
 // TODO: MOVE TO SERVICES
 // TODO: CREATE A BETTER FACTORY, USE POLYMORPHISM
-
 
 export const enum QuestionTypes {
   MultipleChoice = 'multiple_choice'
@@ -32,7 +32,9 @@ export function createAnswerDetails(question: any): AnswerDetails {
   }
 }
 
-export function createStatementQuestionDetails(question: any): StatementQuestionDetails {
+export function createStatementQuestionDetails(
+  question: any
+): StatementQuestionDetails {
   switch (question.type) {
     case QuestionTypes.MultipleChoice:
       return new MultipleChoiceStatementQuestionDetails(question);
@@ -41,10 +43,23 @@ export function createStatementQuestionDetails(question: any): StatementQuestion
   }
 }
 
-export function createStatementAnswerDetails(question: any): StatementAnswerDetails {
+export function createStatementAnswerDetails(
+  question: any
+): StatementAnswerDetails {
   switch (question.type) {
     case QuestionTypes.MultipleChoice:
       return new MultipleChoiceStatementQuestionDetails(question);
+    default:
+      throw new Error('Unknown question type.');
+  }
+}
+
+export function createStatementCorrectAnswerDetails(
+  details: any
+): StatementAnswerDetails {
+  switch (details.type) {
+    case QuestionTypes.MultipleChoice:
+      return new MultipleChoiceStatementCorrectAnswerDetails(details);
     default:
       throw new Error('Unknown question type.');
   }

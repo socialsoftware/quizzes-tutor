@@ -10,7 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
@@ -102,6 +104,11 @@ public class MultipleChoiceQuestion extends QuestionDetails {
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
         return new MultipleChoiceStatementQuestionDetailsDto(this);
+    }
+
+    @Override
+    public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
+        return new MultipleChoiceStatementAnswerDto();
     }
 
     @Override

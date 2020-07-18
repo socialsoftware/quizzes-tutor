@@ -48,7 +48,7 @@
     <question-component
       v-model="questionOrder"
       v-if="statementQuiz.answers[questionOrder]"
-      :optionId="statementQuiz.answers[questionOrder].optionId"
+      :optionId="statementQuiz.answers[questionOrder].answerDetails.optionId"
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
       :backsies="!statementQuiz.oneWay"
@@ -67,10 +67,11 @@
           <br />
           Are you sure you want to finish?
           <br />
+          <!-- TODO: Move the validation inside answerDetails -->
           <span
             v-if="
               statementQuiz.answers
-                .map(answer => answer.optionId)
+                .map(answer => answer.answerDetails.optionId)
                 .filter(optionId => optionId == null).length
             "
           >
@@ -195,10 +196,10 @@ export default class QuizView extends Vue {
         this.calculateTime();
         let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
 
-        if (newAnswer.optionId === optionId) {
-          newAnswer.optionId = null;
+        if (newAnswer.answerDetails.optionId === optionId) {
+          newAnswer.answerDetails.optionId = null;
         } else {
-          newAnswer.optionId = optionId;
+          newAnswer.answerDetails.optionId = optionId;
         }
 
         if (!!this.statementQuiz && this.statementQuiz.timed) {
@@ -206,8 +207,8 @@ export default class QuizView extends Vue {
           RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
         }
 
-        this.statementQuiz.answers[this.questionOrder].optionId =
-          newAnswer.optionId;
+        this.statementQuiz.answers[this.questionOrder].answerDetails.optionId =
+          newAnswer.answerDetails.optionId;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

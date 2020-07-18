@@ -8,14 +8,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -23,14 +27,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "questions")
 public class Question implements DomainEntity {
-    public static class QuestionTypes{
-        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
-    }
-
-    public enum Status {
-        DISABLED, REMOVED, AVAILABLE
-    }
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
+    @ManyToMany(mappedBy = "questions")
+    private final Set<Topic> topics = new HashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -55,20 +55,12 @@ public class Question implements DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private Image image;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=true)
-    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
-
-    @ManyToMany(mappedBy = "questions")
-    private final Set<Topic> topics = new HashSet<>();
-
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id")
     private Course course;
-
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval = true)
     private QuestionDetails questionDetails;
 
     public Question() {
@@ -269,28 +261,31 @@ public class Question implements DomainEntity {
         visitor.visitQuestion(this);
     }
 
-
     public QuestionDetails getQuestionDetails() {
         return questionDetails;
     }
 
     public void setQuestionDetails(QuestionDetails question) {
         this.questionDetails = question;
-        if(this.questionDetails != null) {
+        if (this.questionDetails != null) {
             this.questionDetails.setQuestion(this);
         }
     }
 
-    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto(){
+    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
         return this.getQuestionDetails().getCorrectAnswerDetailsDto();
     }
 
-    public StatementQuestionDetailsDto getStatementQuestionDetailsDto(){
+    public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
         return this.getQuestionDetails().getStatementQuestionDetailsDto();
     }
 
-    public AnswerDetailsDto getEmptyAnswerDetailsDto(){
+    public AnswerDetailsDto getEmptyAnswerDetailsDto() {
         return this.getQuestionDetails().getEmptyAnswerDetailsDto();
+    }
+
+    public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
+        return this.getQuestionDetails().getEmptyStatementAnswerDetailsDto();
     }
 
     public QuestionDetailsDto getQuestionDetailsDto() {
@@ -314,5 +309,13 @@ public class Question implements DomainEntity {
                 ", course=" + course +
                 ", question=" + questionDetails +
                 '}';
+    }
+
+    public enum Status {
+        DISABLED, REMOVED, AVAILABLE
+    }
+
+    public static class QuestionTypes {
+        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
     }
 }

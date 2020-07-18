@@ -6,7 +6,6 @@
   background-image: linear-gradient(to top, rgba(0, 0, 0, 0), white 20%);
   outline: none;
 
-
   header {
     bottom: 0;
     box-sizing: border-box;
@@ -35,7 +34,7 @@
       sans-serif;
     outline: rgb(255, 255, 255) none 0;
 
-    >span {
+    > span {
       width: 170px;
       bottom: 0;
       cursor: pointer;
@@ -45,7 +44,7 @@
       text-size-adjust: 100%;
       text-transform: uppercase;
       background: rgb(90, 103, 115) none repeat scroll 0 0 / auto padding-box
-      border-box;
+        border-box;
 
       &.timer {
         left: 0;

@@ -1,4 +1,4 @@
-export default abstract class StatementAnswerDetails {
+export default abstract class StatementCorrectAnswerDetails {
   type!: string;
 
   constructor(type: string) {

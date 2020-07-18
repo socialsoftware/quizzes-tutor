@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDt
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
@@ -20,7 +21,7 @@ public abstract class QuestionDetails implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Question question;
 
     public QuestionDetails(Question question) {
@@ -49,14 +50,17 @@ public abstract class QuestionDetails implements DomainEntity {
 
     public abstract StatementQuestionDetailsDto getStatementQuestionDetailsDto();
 
+    public abstract StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto();
+
     public abstract AnswerDetailsDto getEmptyAnswerDetailsDto();
 
     public abstract QuestionDetailsDto getQuestionDetailsDto();
 
-    public void delete(){
+    public void delete() {
         this.question.setQuestionDetails(null);
         this.question = null;
     }
 
     public abstract void update(Updator updator);
+
 }
