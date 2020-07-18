@@ -36,7 +36,7 @@ class CreateSubmissionTest extends SpockTest{
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.SUBMITTED.name())
+        questionDto.setStatus(Question.Status.IN_REVISION.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -62,7 +62,7 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
     }
@@ -73,7 +73,7 @@ class CreateSubmissionTest extends SpockTest{
         submissionDto.setCourseExecutionId(courseExecution.getId())
         submissionDto.setUserId(student.getId())
         submissionDto.setQuestion(questionDto)
-        submissionDto.setArgument(SUBMISSION_ARGUMENT);
+        submissionDto.setArgument(SUBMISSION_1_ARGUMENT);
 
         when: submissionService.createSubmission(submissionDto)
 
@@ -85,10 +85,10 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
-        result.getArgument() == SUBMISSION_ARGUMENT
+        result.getArgument() == SUBMISSION_1_ARGUMENT
     }
 
     def "create an anonymous submission with question not null"() {
@@ -109,7 +109,7 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         result.isAnonymous()
     }

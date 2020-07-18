@@ -82,7 +82,7 @@ public enum ErrorMessage {
     REVIEW_MISSING_TEACHER("Review is missing associated teacher"),
     INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
-    CANNOT_DELETE_SUBMITTED_QUESTION("Submission already reviewed by teacher cannot be deleted"),
+    CANNOT_DELETE_REVIEWED_QUESTION("Submission already reviewed by teacher cannot be deleted"),
     CANNOT_REVIEW_SUBMISSION("Submission already reviewed by teacher cannot be reviewed again"),
     ARGUMENT_MISSING_EDIT_SUBMISSION("Edited submission requires an argument"),
     INVALID_ARGUMENT_FOR_SUBMISSION("Argument can't be the same as previous argument"),

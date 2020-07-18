@@ -104,7 +104,7 @@ public class SubmissionService {
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleInReviewStatus(int questionId, boolean inReview) {
-        String status = inReview ? "IN_REVIEW" : "SUBMITTED";
+        String status = inReview ? "IN_REVIEW" : "IN_REVISION";
         updateQuestionStatus(status, questionId);
     }
 
@@ -194,7 +194,7 @@ public class SubmissionService {
     }
 
     private Question createQuestion(Course course, QuestionDto questionDto) {
-        questionDto.setStatus("SUBMITTED");
+        questionDto.setStatus("IN_REVISION");
         QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
         return questionRepository.findById(question.getId())
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
@@ -219,7 +219,7 @@ public class SubmissionService {
 
     private void updateQuestionStatus(String status, Integer questionId) {
         Question question = getQuestion(questionId);
-        if(question.getStatus() == Question.Status.SUBMITTED || question.getStatus() == Question.Status.IN_REVIEW)
+        if(question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW)
             question.setStatus(Question.Status.valueOf(status));
         else
             throw new TutorException(CANNOT_REVIEW_SUBMISSION);

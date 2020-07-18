@@ -57,8 +57,8 @@
                         >
                         <v-btn
                                 color="primary"
-                                @click="filterSubmissions('SUBMITTED')"
-                        >{{ 'Submitted' }}</v-btn
+                                @click="filterSubmissions('IN_REVISION')"
+                        >{{ 'In Revision' }}</v-btn
                         >
                         <v-btn
                                 color="primary"
@@ -202,7 +202,7 @@
       if (status === 'AVAILABLE') return 'green';
       else if (status === 'DISABLED') return 'orange';
       else if (status === 'REJECTED') return 'red';
-      else if (status === 'SUBMITTED') return 'yellow';
+      else if (status === 'IN_REVISION') return 'yellow';
       else if (status === 'IN_REVIEW') return 'blue';
     }
 

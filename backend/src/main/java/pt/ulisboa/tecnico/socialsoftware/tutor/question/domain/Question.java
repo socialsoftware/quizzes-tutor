@@ -21,7 +21,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 public class Question implements DomainEntity {
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE, SUBMITTED, IN_REVIEW, REJECTED
+        DISABLED, REMOVED, AVAILABLE, IN_REVISION, IN_REVIEW, REJECTED
     }
 
     @Id

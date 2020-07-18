@@ -45,7 +45,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         review.setJustification(REVIEW_1_JUSTIFICATION)
         review.setUser(teacher)
         review.setSubmission(submission)
-        review.setStatus("SUBMITTED")
+        review.setStatus("IN_REVISION")
         submission.addReview(review)
         reviewRepository.save(review)
 
@@ -65,7 +65,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         review1.setJustification(REVIEW_1_JUSTIFICATION)
         review1.setUser(teacher)
         review1.setSubmission(submission)
-        review1.setStatus("SUBMITTED")
+        review1.setStatus("IN_REVISION")
         submission.addReview(review1)
         reviewRepository.save(review1)
         and: "another review"
@@ -73,7 +73,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         review2.setJustification(REVIEW_2_JUSTIFICATION)
         review2.setUser(teacher)
         review2.setSubmission(submission)
-        review2.setStatus("SUBMITTED")
+        review2.setStatus("IN_REVISION")
         submission.addReview(review2)
         reviewRepository.save(review2)
         and: "another review"
@@ -81,7 +81,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         review3.setJustification(REVIEW_3_JUSTIFICATION)
         review3.setUser(teacher)
         review3.setSubmission(submission)
-        review3.setStatus("SUBMITTED")
+        review3.setStatus("IN_REVISION")
         submission.addReview(review3)
         reviewRepository.save(review3)
 
@@ -112,7 +112,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         review.setJustification(REVIEW_1_JUSTIFICATION)
         review.setUser(teacher)
         review.setSubmission(submission)
-        review.setStatus("SUBMITTED")
+        review.setStatus("IN_REVISION")
         submission.addReview(review)
         reviewRepository.save(review)
 
@@ -121,7 +121,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
 
         then: "exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_SUBMITTED_QUESTION
+        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_REVIEWED_QUESTION
     }
 
     @TestConfiguration

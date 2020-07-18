@@ -48,7 +48,7 @@
       </template>
       <template v-slot:item.question.topics="{ item }">
         <edit-submission-topics
-          v-if="item.question.status === 'SUBMITTED'"
+          v-if="item.question.status === 'IN_REVISION'"
           :submission="item"
           :topics="topics"
           v-on:submission-changed-topics="onSubmissionChangedTopics"
@@ -64,7 +64,7 @@
           </template>
           <span>Show Submission</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.question.status === 'SUBMITTED'">
+        <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
           <template v-slot:activator="{ on }">
             <v-icon class="mr-2" v-on="on" @click="editSubmission(item)"
               >edit</v-icon
@@ -72,7 +72,7 @@
           </template>
           <span>Edit Submission</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.question.status === 'SUBMITTED'">
+        <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
@@ -207,13 +207,13 @@ export default class SubmissionView extends Vue {
     if (status === 'AVAILABLE') return 'green';
     else if (status === 'DISABLED') return 'orange';
     else if (status === 'REJECTED') return 'red';
-    else if (status === 'SUBMITTED') return 'yellow';
+    else if (status === 'IN_REVISION') return 'yellow';
     else if (status === 'IN_REVIEW') return 'blue';
   }
 
   submitQuestion() {
     let question = new Question();
-    question.status = 'SUBMITTED';
+    question.status = 'IN_REVISION';
     this.currentSubmission = new Submission();
     this.currentSubmission.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
     this.currentSubmission.question = question;

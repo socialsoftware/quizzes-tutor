@@ -35,7 +35,7 @@ class UpdateSubmissionTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(course)
-        question.setStatus(Question.Status.SUBMITTED)
+        question.setStatus(Question.Status.IN_REVISION)
         questionRepository.save(question)
         optionOK = new Option()
         optionOK.setContent(OPTION_1_CONTENT)
@@ -74,7 +74,7 @@ class UpdateSubmissionTest extends SpockTest{
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.SUBMITTED
+        result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
         !result.isAnonymous()
         result.getArgument() == SUBMISSION_2_ARGUMENT

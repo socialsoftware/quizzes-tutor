@@ -115,7 +115,7 @@ class CreateReviewTest extends SpockTest{
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
-        reviewDto.setStatus('SUBMITTED')
+        reviewDto.setStatus('IN_REVISION')
 
         when:
         submissionService.createReview(reviewDto)
@@ -128,8 +128,8 @@ class CreateReviewTest extends SpockTest{
         result.getJustification() == REVIEW_1_JUSTIFICATION
         result.getSubmission() == submission
         result.getUser() == teacher
-        result.getStatus().equals("SUBMITTED")
-        question.getStatus() == Question.Status.SUBMITTED
+        result.getStatus().equals("IN_REVISION")
+        question.getStatus() == Question.Status.IN_REVISION
     }
 
     def "create review for submission that has already been reviewed"() {
