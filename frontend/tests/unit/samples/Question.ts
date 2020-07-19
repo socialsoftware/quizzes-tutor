@@ -1,6 +1,6 @@
 import Question from '@/models/management/Question';
 import { QuestionTypes } from '@/services/QuestionHelpers';
-import MultipleChoiceQuestionType from '@/models/management/questions/MultipleChoiceQuestionDetails';
+import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 
 export const questionWithFigure = new Question({
   id: 395,
@@ -45,8 +45,8 @@ export const questionWithFigure = new Question({
           'Memcached can be considered a sub-module of the Store Graphs module.'
       }
     ],
-    duplicate: MultipleChoiceQuestionType.prototype.duplicate
-  } as MultipleChoiceQuestionType,
+    duplicate: MultipleChoiceQuestionDetails.prototype.duplicate
+  } as MultipleChoiceQuestionDetails,
   image: {
     url: '395.png',
     width: 100
@@ -109,8 +109,8 @@ export const questionWithoutFigure = new Question({
           'Memcached can be considered a sub-module of the Store Graphs module.'
       }
     ],
-    duplicate: MultipleChoiceQuestionType.prototype.duplicate
-  } as MultipleChoiceQuestionType,
+    duplicate: MultipleChoiceQuestionDetails.prototype.duplicate
+  } as MultipleChoiceQuestionDetails,
   image: null,
   topics: [
     {

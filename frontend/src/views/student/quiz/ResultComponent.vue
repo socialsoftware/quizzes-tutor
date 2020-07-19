@@ -3,10 +3,8 @@
     v-if="question"
     v-bind:class="[
       'question-container',
-      answer.answerDetails.optionId === null ? 'unanswered' : '',
-      answer.answerDetails.optionId !== null &&
-      correctAnswer.correctAnswerDetails.correctOptionId ===
-        answer.answerDetails.optionId
+      !answer.isQuestionAnswered() ? 'unanswered' : '',
+      answer.isQuestionAnswered() && answer.isAnswerCorrect(correctAnswer)
         ? 'correct-question'
         : 'incorrect-question'
     ]"
@@ -49,11 +47,11 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
-import OptionsList from '@/components/multiple-choice/OptionsList.vue';
+import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 
 @Component({
   components: {
-    'multiple_choice': OptionsList
+    'multiple_choice': MultipleChoiceAnswer
   }
 })
 export default class ResultComponent extends Vue {
@@ -63,7 +61,6 @@ export default class ResultComponent extends Vue {
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;
   @Prop() readonly questionNumber!: number;
   hover: boolean = false;
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {

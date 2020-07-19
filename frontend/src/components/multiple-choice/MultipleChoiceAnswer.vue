@@ -47,7 +47,7 @@ import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/M
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 
 @Component
-export default class OptionsList extends Vue {
+export default class MultipleChoiceAnswer extends Vue {
   @Prop(MultipleChoiceStatementQuestionDetails)
   readonly questionDetails!: MultipleChoiceStatementQuestionDetails;
   @Prop(MultipleChoiceStatementAnswerDetails)

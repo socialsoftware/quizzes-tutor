@@ -179,7 +179,7 @@ export default class QuizView extends Vue {
     }
   }
 
-  async changeAnswer(optionId: number) {
+  async changeAnswer() {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
       try {
         this.calculateTime();

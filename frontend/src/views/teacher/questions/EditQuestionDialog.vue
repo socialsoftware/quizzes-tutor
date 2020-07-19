@@ -25,22 +25,10 @@
           v-model="editQuestion.content"
           label="Question"
         ></v-textarea>
-        <div
-          v-for="index in editQuestion.questionDetails.options.length"
-          :key="index"
-        >
-          <v-switch
-            v-model="editQuestion.questionDetails.options[index - 1].correct"
-            class="ma-4"
-            label="Correct"
-          />
-          <v-textarea
-            outline
-            rows="10"
-            v-model="editQuestion.questionDetails.options[index - 1].content"
-            :label="`Option ${index}`"
-          ></v-textarea>
-        </div>
+        <component
+          :is="editQuestion.questionDetails.type"
+          :questionDetails.sync="editQuestion.questionDetails"
+        />
       </v-card-text>
 
       <v-card-actions>
@@ -58,8 +46,13 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
+import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 
-@Component
+@Component({
+  components: {
+    'multiple_choice': MultipleChoiceCreate
+  }
+})
 export default class EditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;

@@ -1,7 +1,7 @@
 <template>
   <div
     class="question-container"
-    v-if="question && question.questionDetails.options"
+    v-if="question && question.questionDetails"
   >
     <div class="question">
       <span
@@ -40,12 +40,12 @@ import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import OptionsList from '@/components/multiple-choice/OptionsList.vue';
+import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 
 @Component({
   components: {
-    'multiple_choice': OptionsList
+    'multiple_choice': MultipleChoiceAnswer
   }
 })
 export default class QuestionComponent extends Vue {

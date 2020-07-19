@@ -2,10 +2,10 @@ import Option from '@/models/management/Option';
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
 import { QuestionTypes } from '@/services/QuestionHelpers';
 
-export default class MultipleChoiceQuestionType extends QuestionDetails {
+export default class MultipleChoiceQuestionDetails extends QuestionDetails {
   options: Option[] = [new Option(), new Option(), new Option(), new Option()];
 
-  constructor(jsonObj?: MultipleChoiceQuestionType) {
+  constructor(jsonObj?: MultipleChoiceQuestionDetails) {
     super(QuestionTypes.MultipleChoice);
     if (jsonObj) {
       this.options = jsonObj.options.map(

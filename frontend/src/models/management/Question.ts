@@ -3,7 +3,7 @@ import Topic from '@/models/management/Topic';
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
 import { createQuestionDetails } from '@/services/QuestionHelpers';
 import { ISOtoString } from '@/services/ConvertDateService';
-import MultipleChoiceQuestionType from './questions/MultipleChoiceQuestionDetails';
+import MultipleChoiceQuestionDetails from './questions/MultipleChoiceQuestionDetails';
 
 export default class Question {
   id: number | null = null;
@@ -19,7 +19,7 @@ export default class Question {
   image: Image | null = null;
   sequence: number | null = null;
 
-  questionDetails: QuestionDetails = new MultipleChoiceQuestionType();
+  questionDetails: QuestionDetails = new MultipleChoiceQuestionDetails();
 
   topics: Topic[] = [];
 
