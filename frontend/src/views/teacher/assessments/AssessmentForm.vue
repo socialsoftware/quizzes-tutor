@@ -199,18 +199,7 @@
               :key="question.id"
               class="text-left"
             >
-              <span
-                v-html="convertMarkDown(question.content, question.image)"
-              ></span>
-              <ul>
-                <li v-for="option in question.options" :key="option.number">
-                  <span
-                    v-html="convertMarkDown(option.content)"
-                    v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  ></span>
-                </li>
-              </ul>
-              <br />
+              <show-question :question="question"/>
             </li>
           </ol>
         </v-card-text>
@@ -236,8 +225,13 @@ import Image from '@/models/management/Image';
 import TopicConjunction from '@/models/management/TopicConjunction';
 import { _ } from 'vue-underscore';
 import Topic from '@/models/management/Topic';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
-@Component
+@Component({
+  components:{
+    'show-question': ShowQuestion
+  }
+})
 export default class AssessmentForm extends Vue {
   @Prop(Assessment) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;

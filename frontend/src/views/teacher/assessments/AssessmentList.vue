@@ -97,18 +97,7 @@
               :key="question.sequence"
               class="text-left"
             >
-              <span
-                v-html="convertMarkDown(question.content, question.image)"
-              />
-              <ul>
-                <li v-for="option in question.options" :key="option.number">
-                  <span
-                    v-html="convertMarkDown(option.content)"
-                    v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  />
-                </li>
-              </ul>
-              <br />
+              <show-question :question="question"/>
             </li>
           </ol>
         </v-card-text>
@@ -128,8 +117,13 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Assessment from '@/models/management/Assessment';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
-@Component
+@Component({
+  components:{
+    'show-question': ShowQuestion
+  }
+})
 export default class AssessmentList extends Vue {
   @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
   assessment: Assessment | null = null;
