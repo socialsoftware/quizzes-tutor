@@ -1,5 +1,5 @@
-import StatementCorrectAnswerDetails from './questions/StatementCorrectAnswerDetails';
-import { createStatementCorrectAnswerDetails } from '../../services/QuestionHelpers';
+import StatementCorrectAnswerDetails from '@/models/statement/questions/StatementCorrectAnswerDetails';
+import { QuestionFactory } from '@/services/QuestionHelpers';
 
 export default class StatementCorrectAnswer {
   quizQuestionId!: number;
@@ -12,9 +12,9 @@ export default class StatementCorrectAnswer {
       this.quizQuestionId = jsonObj.quizQuestionId;
       this.sequence = jsonObj.sequence;
 
-      this.correctAnswerDetails = createStatementCorrectAnswerDetails(
-        jsonObj.correctAnswerDetails
-      );
+      this.correctAnswerDetails = QuestionFactory.getFactory(
+        jsonObj.correctAnswerDetails.type
+      ).createStatementCorrectAnswerDetails(jsonObj.correctAnswerDetails);
     }
   }
 }

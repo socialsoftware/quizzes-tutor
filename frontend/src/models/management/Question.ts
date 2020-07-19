@@ -1,7 +1,7 @@
 import Image from '@/models/management/Image';
 import Topic from '@/models/management/Topic';
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
-import { createQuestionDetails } from '@/services/QuestionHelpers';
+import { QuestionFactory } from '@/services/QuestionHelpers';
 import { ISOtoString } from '@/services/ConvertDateService';
 import MultipleChoiceQuestionDetails from './questions/MultipleChoiceQuestionDetails';
 
@@ -37,7 +37,9 @@ export default class Question {
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.image = jsonObj.image;
 
-      this.questionDetails = createQuestionDetails(jsonObj.questionDetails);
+      this.questionDetails = QuestionFactory.getFactory(
+        jsonObj.questionDetails.type
+      ).createQuestionDetails(jsonObj.questionDetails);
 
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }

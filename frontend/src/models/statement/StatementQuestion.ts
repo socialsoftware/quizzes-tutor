@@ -1,7 +1,7 @@
 import Image from '@/models/management/Image';
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
-import { createStatementQuestionDetails } from '@/services/QuestionHelpers';
+import { QuestionFactory } from '@/services/QuestionHelpers';
 
 export default class StatementQuestion {
   quizQuestionId!: number;
@@ -16,9 +16,9 @@ export default class StatementQuestion {
       this.content = jsonObj.content;
       this.image = jsonObj.image;
 
-      this.questionDetails = createStatementQuestionDetails(
-        jsonObj.questionDetails
-      );
+      this.questionDetails = QuestionFactory.getFactory(
+        jsonObj.questionDetails.type
+      ).createStatementQuestionDetails(jsonObj.questionDetails);
     }
   }
 }

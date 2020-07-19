@@ -1,7 +1,7 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
-import { createStatementAnswerDetails } from '@/services/QuestionHelpers';
-import StatementCorrectAnswer from './StatementCorrectAnswer';
+import { QuestionFactory } from '@/services/QuestionHelpers';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
 export default class StatementAnswer {
   public timeTaken: number = 0;
@@ -19,7 +19,9 @@ export default class StatementAnswer {
       this.questionAnswerId = jsonObj.questionAnswerId;
       this.quizQuestionId = jsonObj.quizQuestionId;
 
-      this.answerDetails = createStatementAnswerDetails(jsonObj.answerDetails);
+      this.answerDetails = QuestionFactory.getFactory(
+        jsonObj.answerDetails.type
+      ).createStatementAnswerDetails(jsonObj.answerDetails);
     }
   }
 
