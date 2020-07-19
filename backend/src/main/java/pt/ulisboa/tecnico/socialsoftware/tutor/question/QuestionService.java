@@ -148,19 +148,20 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         Image image = question.getImage();
+        String imageName = question.getCourse().getName().replaceAll("\\s", "") +
+                question.getCourse().getType() +
+                question.getKey() +
+                "." + type;
 
         if (image == null) {
-            image = new Image();
+            image = new Image(imageName);
 
             question.setImage(image);
 
             imageRepository.save(image);
+        } else {
+            question.getImage().setUrl(imageName);
         }
-
-        question.getImage().setUrl(question.getCourse().getName().replaceAll("\\s", "") +
-                question.getCourse().getType() +
-                question.getKey() +
-                "." + type);
     }
 
     @Retryable(

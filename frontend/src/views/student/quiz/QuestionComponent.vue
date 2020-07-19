@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="question-container"
-    v-if="question && question.questionDetails"
-  >
+  <div class="question-container" v-if="question && question.questionDetails">
     <div class="question">
       <span
         v-if="backsies"
@@ -25,12 +22,12 @@
         />
       </div>
     </div>
-    <component 
-      :is="question.questionDetails.type" 
+    <component
+      :is="question.questionDetails.type"
       :questionDetails="question.questionDetails"
       :answerDetails="answer.answerDetails"
       v-on="$listeners"
-      >
+    >
     </component>
   </div>
 </template>
@@ -45,7 +42,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 
 @Component({
   components: {
-    'multiple_choice': MultipleChoiceAnswer
+    multiple_choice: MultipleChoiceAnswer
   }
 })
 export default class QuestionComponent extends Vue {

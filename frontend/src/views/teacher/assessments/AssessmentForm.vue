@@ -199,7 +199,7 @@
               :key="question.id"
               class="text-left"
             >
-              <show-question :question="question"/>
+              <show-question :question="question" />
             </li>
           </ol>
         </v-card-text>
@@ -228,7 +228,7 @@ import Topic from '@/models/management/Topic';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
-  components:{
+  components: {
     'show-question': ShowQuestion
   }
 })

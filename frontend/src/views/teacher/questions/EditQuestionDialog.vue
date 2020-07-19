@@ -18,17 +18,26 @@
       </v-card-title>
 
       <v-card-text class="text-left" v-if="editQuestion">
-        <v-text-field v-model="editQuestion.title" label="Title" />
-        <v-textarea
-          outline
-          rows="10"
-          v-model="editQuestion.content"
-          label="Question"
-        ></v-textarea>
-        <component
-          :is="editQuestion.questionDetails.type"
-          :questionDetails.sync="editQuestion.questionDetails"
-        />
+        <v-form ref="form" lazy-validation>
+          <v-text-field
+            v-model="editQuestion.title"
+            :rules="[v => !!v || 'Question title is required']"
+            label="Title"
+            required
+          />
+          <v-textarea
+            v-model="editQuestion.content"
+            label="Question"
+            :rules="[v => !!v || 'Question content is required']"
+            auto-grow
+            required
+            rows="5"
+          ></v-textarea>
+          <component
+            :is="editQuestion.questionDetails.type"
+            :questionDetails.sync="editQuestion.questionDetails"
+          />
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
@@ -50,7 +59,7 @@ import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCre
 
 @Component({
   components: {
-    'multiple_choice': MultipleChoiceCreate
+    multiple_choice: MultipleChoiceCreate
   }
 })
 export default class EditQuestionDialog extends Vue {
@@ -77,15 +86,12 @@ export default class EditQuestionDialog extends Vue {
   //   }
   // };
 
+  get questionForm(): Vue & { validate: () => boolean } {
+    return this.$refs.form as Vue & { validate: () => boolean };
+  }
+
   async saveQuestion() {
-    if (
-      this.editQuestion &&
-      (!this.editQuestion.title || !this.editQuestion.content)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Question must have title and content'
-      );
+    if (!this.questionForm.validate()) {
       return;
     }
 

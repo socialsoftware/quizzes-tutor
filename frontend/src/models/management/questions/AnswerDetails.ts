@@ -5,7 +5,7 @@ export default abstract class AnswerDetails {
     this.type = type;
   }
 
-  abstract isCorrect() : boolean;
+  abstract isCorrect(): boolean;
 
-  abstract answerRepresentation() : string;
+  abstract answerRepresentation(): string;
 }

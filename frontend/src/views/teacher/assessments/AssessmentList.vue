@@ -97,7 +97,7 @@
               :key="question.sequence"
               class="text-left"
             >
-              <show-question :question="question"/>
+              <show-question :question="question" />
             </li>
           </ol>
         </v-card-text>
@@ -120,7 +120,7 @@ import Assessment from '@/models/management/Assessment';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
-  components:{
+  components: {
     'show-question': ShowQuestion
   }
 })

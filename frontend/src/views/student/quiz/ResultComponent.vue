@@ -30,12 +30,12 @@
         />
       </div>
     </div>
-    <component 
-      :is="question.questionDetails.type" 
+    <component
+      :is="question.questionDetails.type"
       :questionDetails="question.questionDetails"
       :answerDetails="answer.answerDetails"
       :correctAnswerDetails="correctAnswer.correctAnswerDetails"
-      >
+    >
     </component>
   </div>
 </template>
@@ -51,7 +51,7 @@ import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAns
 
 @Component({
   components: {
-    'multiple_choice': MultipleChoiceAnswer
+    multiple_choice: MultipleChoiceAnswer
   }
 })
 export default class ResultComponent extends Vue {
@@ -77,7 +77,6 @@ export default class ResultComponent extends Vue {
   }
 }
 </script>
-
 
 <style lang="scss" scoped>
 .unanswered {

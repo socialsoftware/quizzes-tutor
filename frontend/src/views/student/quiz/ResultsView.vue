@@ -8,10 +8,14 @@
             'question-button',
             index === questionOrder + 1 ? 'current-question-button' : '',
             index === questionOrder + 1 &&
-              !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(statementManager.correctAnswers[index - 1])
+            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
+              statementManager.correctAnswers[index - 1]
+            )
               ? 'incorrect-current'
               : '',
-              !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(statementManager.correctAnswers[index - 1])
+            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
+              statementManager.correctAnswers[index - 1]
+            )
               ? 'incorrect'
               : ''
           ]"
