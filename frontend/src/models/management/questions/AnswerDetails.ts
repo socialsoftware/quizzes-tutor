@@ -4,4 +4,8 @@ export default abstract class AnswerDetails {
   constructor(type: string) {
     this.type = type;
   }
+
+  abstract isCorrect() : boolean;
+
+  abstract answerRepresentation() : string;
 }

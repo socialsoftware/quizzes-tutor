@@ -76,7 +76,7 @@ export default class StatementQuiz {
     }
   }
 
-  unansweredQuestions() : number {
-    return this.answers.filter(x => !x.isQuestionAnswered()).length
+  unansweredQuestions(): number {
+    return this.answers.filter(x => !x.isQuestionAnswered()).length;
   }
 }

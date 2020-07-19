@@ -1,3 +1,5 @@
+import StatementCorrectAnswerDetails from './StatementCorrectAnswerDetails';
+
 export default abstract class StatementAnswerDetails {
   type!: string;
 
@@ -6,4 +8,8 @@ export default abstract class StatementAnswerDetails {
   }
 
   abstract isQuestionAnswered(): boolean;
+
+  abstract isAnswerCorrect(
+    correctAnswerDetails: StatementCorrectAnswerDetails
+  ): boolean;
 }

@@ -7,11 +7,21 @@ import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
+import StatementCorrectAnswerDetails from '@/models/statement/questions/StatementCorrectAnswerDetails';
 
 // TODO: Better to make use of polymorphism
 
 export const enum QuestionTypes {
   MultipleChoice = 'multiple_choice'
+}
+
+export function convertToLetter(number: number | null) {
+  console.log(number);
+  if (number === null) {
+    return 'X';
+  } else {
+    return String.fromCharCode(65 + number);
+  }
 }
 
 export function createQuestionDetails(question: any): QuestionDetails {
@@ -56,7 +66,7 @@ export function createStatementAnswerDetails(
 
 export function createStatementCorrectAnswerDetails(
   details: any
-): StatementAnswerDetails {
+): StatementCorrectAnswerDetails {
   switch (details.type) {
     case QuestionTypes.MultipleChoice:
       return new MultipleChoiceStatementCorrectAnswerDetails(details);

@@ -2,7 +2,7 @@ export default class Option {
   id: number | null = null;
   sequence!: number | null;
   content: string = '';
-  correct: Boolean = false;
+  correct: boolean = false;
 
   constructor(jsonObj?: Option) {
     if (jsonObj) {

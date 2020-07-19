@@ -1,12 +1,11 @@
 import StatementCorrectAnswerDetails from './questions/StatementCorrectAnswerDetails';
-import StatementAnswerDetails from './questions/StatementAnswerDetails';
 import { createStatementCorrectAnswerDetails } from '../../services/QuestionHelpers';
 
 export default class StatementCorrectAnswer {
   quizQuestionId!: number;
   sequence!: number;
 
-  correctAnswerDetails!: StatementAnswerDetails;
+  correctAnswerDetails!: StatementCorrectAnswerDetails;
 
   constructor(jsonObj?: StatementCorrectAnswer) {
     if (jsonObj) {

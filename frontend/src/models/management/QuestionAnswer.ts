@@ -1,5 +1,4 @@
 import Question from '@/models/management/Question';
-import Option from '@/models/management/Option';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 import MultipleChoiceAnswerType from '@/models/management/questions/MultipleChoiceAnswerDetails';
 import { createAnswerDetails } from '@/services/QuestionHelpers';
@@ -11,7 +10,7 @@ export class QuestionAnswer {
   constructor(jsonObj?: QuestionAnswer) {
     if (jsonObj) {
       this.question = new Question(jsonObj.question);
-      this.answerDetails = createAnswerDetails(jsonObj);
+      this.answerDetails = createAnswerDetails(jsonObj.answerDetails);
     }
   }
 }

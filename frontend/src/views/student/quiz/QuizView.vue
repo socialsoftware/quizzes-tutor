@@ -67,13 +67,9 @@
           <br />
           Are you sure you want to finish?
           <br />
-          <span
-            v-if="statementQuiz.unansweredQuestions()"
-          >
+          <span v-if="statementQuiz.unansweredQuestions()">
             You still have
-            {{
-              statementQuiz.unansweredQuestions()
-            }}
+            {{ statementQuiz.unansweredQuestions() }}
             unanswered questions!
           </span>
         </v-card-text>

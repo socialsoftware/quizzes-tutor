@@ -1,6 +1,7 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 import { createStatementAnswerDetails } from '@/services/QuestionHelpers';
+import StatementCorrectAnswer from './StatementCorrectAnswer';
 
 export default class StatementAnswer {
   public timeTaken: number = 0;
@@ -24,5 +25,11 @@ export default class StatementAnswer {
 
   isQuestionAnswered(): boolean {
     return this.answerDetails.isQuestionAnswered();
+  }
+
+  isAnswerCorrect(correctAnswer: StatementCorrectAnswer): boolean {
+    return this.answerDetails.isAnswerCorrect(
+      correctAnswer.correctAnswerDetails
+    );
   }
 }

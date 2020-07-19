@@ -51,11 +51,11 @@
           v-for="questionAnswer in item.questionAnswers"
           :key="questionAnswer.question.id"
           v-bind:class="[
-            questionAnswer.option.correct ? 'green' : 'red darken-4'
+            questionAnswer.answerDetails.isCorrect() ? 'green' : 'red darken-4'
           ]"
           style="border: 0"
         >
-          {{ convertToLetter(questionAnswer.option.sequence) }}
+          {{ questionAnswer.answerDetails.answerRepresentation() }}
         </td>
         <template v-if="item.questionAnswers.length === 0">
           <td
@@ -133,14 +133,6 @@ export default class ShowStudentAnswersDialog extends Vue {
 
   convertToHHMMSS(time: number | undefined | null): string {
     return milisecondsToHHMMSS(time);
-  }
-
-  convertToLetter(number: number) {
-    if (number === undefined) {
-      return 'X';
-    } else {
-      return String.fromCharCode(65 + number);
-    }
   }
 }
 </script>

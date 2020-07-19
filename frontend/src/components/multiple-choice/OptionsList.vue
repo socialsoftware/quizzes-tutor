@@ -10,14 +10,25 @@ Used on:
       v-for="(n, index) in questionDetails.options.length"
       :key="index"
       v-bind:class="['option', optionClass(index)]"
-      @click="!isReadonly && selectOption(questionDetails.options[index].optionId)"
+      @click="
+        !isReadonly && selectOption(questionDetails.options[index].optionId)
+      "
     >
-      <i v-if="isReadonly &&
-            correctAnswerDetails.correctOptionId === questionDetails.options[index].optionId"
-          class="fas fa-check option-letter"/>
-      <i v-else-if="isReadonly &&
-            answerDetails.optionId === questionDetails.options[index].optionId"
-          class="fas fa-times option-letter"/>
+      <i
+        v-if="
+          isReadonly &&
+            correctAnswerDetails.correctOptionId ===
+              questionDetails.options[index].optionId
+        "
+        class="fas fa-check option-letter"
+      />
+      <i
+        v-else-if="
+          isReadonly &&
+            answerDetails.optionId === questionDetails.options[index].optionId
+        "
+        class="fas fa-times option-letter"
+      />
       <span v-else class="option-letter">{{ optionLetters[index] }}</span>
       <span
         class="option-content"
@@ -52,10 +63,16 @@ export default class OptionsList extends Vue {
 
   optionClass(index: number) {
     if (this.isReadonly) {
-      if (!!this.correctAnswerDetails &&
-        this.correctAnswerDetails.correctOptionId === this.questionDetails.options[index].optionId) {
+      if (
+        !!this.correctAnswerDetails &&
+        this.correctAnswerDetails.correctOptionId ===
+          this.questionDetails.options[index].optionId
+      ) {
         return 'correct';
-      } else if (this.answerDetails.optionId === this.questionDetails.options[index].optionId) {
+      } else if (
+        this.answerDetails.optionId ===
+        this.questionDetails.options[index].optionId
+      ) {
         return 'wrong';
       } else {
         return '';

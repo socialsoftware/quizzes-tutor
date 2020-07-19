@@ -1,5 +1,6 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import { QuestionTypes } from '@/services/QuestionHelpers';
+import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 
 export default class MultipleChoiceStatementAnswerDetails extends StatementAnswerDetails {
   public optionId: number | null = null;
@@ -13,5 +14,14 @@ export default class MultipleChoiceStatementAnswerDetails extends StatementAnswe
 
   isQuestionAnswered(): boolean {
     return this.optionId != null;
+  }
+
+  isAnswerCorrect(
+    correctAnswerDetails: MultipleChoiceStatementCorrectAnswerDetails
+  ): boolean {
+    return (
+      !!correctAnswerDetails &&
+      this.optionId === correctAnswerDetails.correctOptionId
+    );
   }
 }
