@@ -36,6 +36,11 @@
             label="Comment"
             data-cy="Comment"
           ></v-textarea>
+          <select v-model="selected" style="border: solid 1px black">
+            <option v-for="option in statusOptions" v-bind:value="option.value">
+              {{ option.text }}
+            </option>
+          </select>
         </v-card-text>
       </div>
       <v-card-actions>
@@ -48,37 +53,9 @@
         <v-btn
           v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
           color="blue darken-1"
-          @click="reviewSubmission('IN_REVIEW')"
-          data-cy="InReviewButton"
-          >request further review</v-btn
-        >
-        <v-btn
-          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
-          color="blue darken-1"
-          @click="reviewSubmission('IN_REVISION')"
-          data-cy="InRevisionButton"
-        >request changes</v-btn
-        >
-        <v-btn
-          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
-          color="blue darken-1"
-          @click="reviewSubmission('REJECTED')"
-          data-cy="RejectedButton"
-        >rejected</v-btn
-        >
-        <v-btn
-          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
-          color="blue darken-1"
-          @click="reviewSubmission('DISABLED')"
-          data-cy="DisabledButton"
-          >disabled</v-btn
-        >
-        <v-btn
-          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
-          color="blue darken-1"
-          @click="reviewSubmission('AVAILABLE')"
-          data-cy="AvailableButton"
-          >available</v-btn
+          @click="reviewSubmission(selected)"
+          data-cy="SubmitButton"
+          >submit</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -106,6 +83,15 @@ export default class ShowSubmissionDialog extends Vue {
   reviewsComponentKey: number = 0;
   status: string = '';
   comment: string = '';
+  selected = 'COMMENT';
+  statusOptions = [
+    { text: 'Comment', value: 'COMMENT' },
+    { text: 'Request Changes', value: 'IN_REVISION' },
+    { text: 'Request Further Review', value: 'IN_REVIEW' },
+    { text: 'Approve (AVAILABLE)', value: 'AVAILABLE' },
+    { text: 'Approve (DISABLED)', value: 'DISABLED' },
+    { text: 'Reject', value: 'REJECT' }
+  ]
 
   @Watch('dialog')
   forceRerender() {
@@ -113,6 +99,7 @@ export default class ShowSubmissionDialog extends Vue {
       this.reviewsComponentKey += 1;
       this.status = this.submission.question.status;
       this.comment = '';
+      this.selected = 'COMMENT';
     }
   }
 
@@ -134,6 +121,7 @@ export default class ShowSubmissionDialog extends Vue {
     review.comment = this.comment;
     return review;
   }
+
 }
 </script>
 

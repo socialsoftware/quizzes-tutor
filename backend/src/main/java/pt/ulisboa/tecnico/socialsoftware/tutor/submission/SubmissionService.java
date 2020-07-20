@@ -82,7 +82,9 @@ public class SubmissionService {
 
         User user = getTeacher(reviewDto.getUserId());
 
-        updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+        if (!reviewDto.getStatus().equals("COMMENT")) {
+            updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+        }
 
         Review review = new Review(user, submission, reviewDto);
 
@@ -157,8 +159,10 @@ public class SubmissionService {
             throw new TutorException(REVIEW_MISSING_SUBMISSION);
         else if (reviewDto.getUserId() == null)
             throw new TutorException(REVIEW_MISSING_TEACHER);
-        else if (!Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) ||
-                reviewDto.getStatus() == null || reviewDto.getStatus().isBlank())
+        else if (reviewDto.getStatus() == null
+                || reviewDto.getStatus().isBlank()
+                || !Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) && !reviewDto.getStatus().equals("COMMENT")
+        )
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
     }
 
