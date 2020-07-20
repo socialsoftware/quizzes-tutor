@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.annotation.Bean
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import spock.lang.Unroll
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -13,6 +15,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import spock.mock.DetachedMockFactory
+
+import java.time.LocalDateTime;
 
 @DataJpaTest
 class ConfirmRegistrationTest extends SpockTest {
@@ -20,6 +25,9 @@ class ConfirmRegistrationTest extends SpockTest {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Mailer mailerMock;
 
     static final String COURSE_NAME = "Course1"
 
@@ -63,7 +71,9 @@ class ConfirmRegistrationTest extends SpockTest {
         then:"the user has a new password and matches"
         passwordEncoder.matches(PASSWORD, result.getPassword())
         and: "and is active"
-        result.isActive() == true
+        result.isActive()
+        and: "no email is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
 	}
 
     def "user is already active" () {
@@ -77,6 +87,26 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.USER_ALREADY_ACTIVE
+        and: "no email is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
+    }
+
+    def "user token expired" () {
+        given: "a new password"
+        externalUserDto.setPassword(PASSWORD)
+        and: "and an expired token generation date"
+        User user = userService.findByUsername(EMAIL)
+        user.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
+
+        when:
+        def result = userService.confirmRegistration(externalUserDto)
+
+        then:
+        result.state == User.State.INACTIVE
+        and: "a new token is created"
+        result.confirmationToken != TOKEN
+        and: "a new email is sent"
+        1 * mailerMock.sendSimpleMail(_, EMAIL,_,_)
     }
 
 	def "registration confirmation unsuccessful" () {
@@ -93,6 +123,8 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
+        and: "no email is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
 
         where:
         email       | password  | token     || errorMessage
@@ -102,7 +134,14 @@ class ConfirmRegistrationTest extends SpockTest {
         EMAIL       | PASSWORD  | ""        || ErrorMessage.INVALID_CONFIRMATION_TOKEN
 	}
 
-    @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration {}
 
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration {
+        def mockFactory = new DetachedMockFactory()
+
+        @Bean
+        Mailer mailer(){
+            return mockFactory.Mock(Mailer)
+        }
+    }
 }

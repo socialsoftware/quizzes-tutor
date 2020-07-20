@@ -27,6 +27,7 @@ public class ExternalUserDto implements Serializable {
 
     public ExternalUserDto(User user){
         this.id = user.getId();
+        this.state = user.getState();
         this.name = user.getName();
         this.username = user.getUsername();
         this.email = user.getEmail();
@@ -95,7 +96,7 @@ public class ExternalUserDto implements Serializable {
     }
 
     public boolean isActive() {
-        return !(password == null || password.isEmpty());
+        return getState() == User.State.ACTIVE;
     }
 
     public boolean isAdmin() {

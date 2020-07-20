@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.security.crypto.keygen.StringKeyGenerator;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -50,8 +52,8 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-     @Autowired
-     private Mailer mailer;
+    @Autowired
+    private Mailer mailer;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -212,8 +214,29 @@ public class UserService {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
         User user1 = getUser(externalUserDto, courseExecution);
         associateUserWithExecution(courseExecution, user1);
-        mailer.sendSimpleMail(Mailer.MAIL_USER, user1.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, User.PASSWORD_CONFIRMATION_MAIL_BODY);
+        sendConfirmationEmailTo(user1);
         return new ExternalUserDto(user1);
+    }
+
+    public String generateConfirmationToken(User user) {
+        String token = KeyGenerators.string().generateKey();
+        user.setTokenGenerationDate(LocalDateTime.now());
+        user.setConfirmationToken(token);
+        return token;
+    }
+
+    private void sendConfirmationEmailTo(User user) {
+        generateConfirmationToken(user);
+        mailer.sendSimpleMail(Mailer.MAIL_USER, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
+    }
+
+    private String createConfirmationLink(String email, String token) {
+        return "https://quizzes-tutor.tecnico.ulisboa.pt/registration/confirmation?email=" + email + "&token=" + token;
+    }
+
+    private String buildMailBody(User user) {
+        String msg = "To confirm your registration click the following link";
+        return String.format("%s: %s", msg, createConfirmationLink(user.getEmail(), user.getConfirmationToken()));
     }
 
     private void associateUserWithExecution(CourseExecution courseExecution, User user1) {
@@ -263,18 +286,23 @@ public class UserService {
 
         if (user == null)
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
+
         if (user.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
 
         if (!externalUserDto.getConfirmationToken().equals(user.getConfirmationToken()))
             throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-
+            
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
+        
+        if (user.getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            sendConfirmationEmailTo(user);
+        else {
+            user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+            user.setState(User.State.ACTIVE);
+        }
 
-
-        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-        user.setState(User.State.ACTIVE);
         return new ExternalUserDto(user);
     }
 
