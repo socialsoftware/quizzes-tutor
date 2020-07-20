@@ -34,7 +34,7 @@ public class SubmissionController {
     }
 
     @PostMapping("/executions/{executionId}/reviews")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public ReviewDto createReview(Principal principal, @PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

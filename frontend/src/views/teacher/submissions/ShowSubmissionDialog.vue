@@ -23,8 +23,9 @@
           :submission="submission"
         />
       </div>
-      <div class="text-left"
-           v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
+      <div
+        class="text-left"
+        v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
       >
         <v-card-title>
           <span class="headline">{{ 'New Review' }}</span>
@@ -37,7 +38,11 @@
             data-cy="Comment"
           ></v-textarea>
           <select v-model="selected" style="border: solid 1px black">
-            <option v-for="option in statusOptions" v-bind:value="option.value">
+            <option
+              v-for="option in statusOptions"
+              v-bind:value="option.value"
+              v-bind:key="option.value"
+            >
               {{ option.text }}
             </option>
           </select>
@@ -45,7 +50,8 @@
       </div>
       <v-card-actions>
         <v-spacer />
-        <v-btn data-cy="CloseButton"
+        <v-btn
+          data-cy="CloseButton"
           color="blue darken-1"
           @click="$emit('dialog', false)"
           >close</v-btn
@@ -91,7 +97,7 @@ export default class ShowSubmissionDialog extends Vue {
     { text: 'Approve (AVAILABLE)', value: 'AVAILABLE' },
     { text: 'Approve (DISABLED)', value: 'DISABLED' },
     { text: 'Reject', value: 'REJECT' }
-  ]
+  ];
 
   @Watch('dialog')
   forceRerender() {
@@ -121,7 +127,6 @@ export default class ShowSubmissionDialog extends Vue {
     review.comment = this.comment;
     return review;
   }
-
 }
 </script>
 

@@ -151,21 +151,6 @@ class CreateReviewTest extends SpockTest{
         exception.getErrorMessage() == CANNOT_REVIEW_SUBMISSION
     }
 
-    def "user is not a teacher"() {
-        given: "a reviewDto"
-        def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
-        reviewDto.setUserId(student.getId())
-        reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setStatus('AVAILABLE')
-
-        when:
-        submissionService.createReview(reviewDto)
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == USER_NOT_TEACHER
-    }
-
     @Unroll
     def "invalid arguments: comment=#comment | submissionId=#submissionId | userId=#userId | status=#status || errorMessage"(){
 

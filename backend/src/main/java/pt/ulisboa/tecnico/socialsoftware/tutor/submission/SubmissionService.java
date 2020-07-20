@@ -80,7 +80,7 @@ public class SubmissionService {
 
         Submission submission = getSubmission(reviewDto.getSubmissionId());
 
-        User user = getTeacher(reviewDto.getUserId());
+        User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));;
 
         if (!reviewDto.getStatus().equals("COMMENT")) {
             updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
@@ -185,13 +185,6 @@ public class SubmissionService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         if (!user.isStudent())
             throw new TutorException(USER_NOT_STUDENT, user.getUsername());
-        return user;
-    }
-
-    private User getTeacher(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        if (!user.isTeacher())
-            throw new TutorException(USER_NOT_TEACHER, user.getUsername());
         return user;
     }
 
