@@ -42,7 +42,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
     def "teacher removes a submitted question with an associated review"(){
         given: "a review"
         def review = new Review()
-        review.setJustification(REVIEW_1_JUSTIFICATION)
+        review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setSubmission(submission)
         review.setStatus("IN_REVISION")
@@ -62,7 +62,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
     def "teacher removes a submitted question with 3 associated reviews"(){
         given: "a review"
         def review1 = new Review()
-        review1.setJustification(REVIEW_1_JUSTIFICATION)
+        review1.setComment(REVIEW_1_COMMENT)
         review1.setUser(teacher)
         review1.setSubmission(submission)
         review1.setStatus("IN_REVISION")
@@ -70,7 +70,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         reviewRepository.save(review1)
         and: "another review"
         def review2 = new Review()
-        review2.setJustification(REVIEW_2_JUSTIFICATION)
+        review2.setComment(REVIEW_2_COMMENT)
         review2.setUser(teacher)
         review2.setSubmission(submission)
         review2.setStatus("IN_REVISION")
@@ -78,7 +78,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         reviewRepository.save(review2)
         and: "another review"
         def review3 = new Review()
-        review3.setJustification(REVIEW_3_JUSTIFICATION)
+        review3.setComment(REVIEW_3_COMMENT)
         review3.setUser(teacher)
         review3.setSubmission(submission)
         review3.setStatus("IN_REVISION")
@@ -109,7 +109,7 @@ class RemoveSubmittedQuestionTest extends SpockTest{
     def "student tries to remove a submitted question with an associated review"(){
         given: "a review"
         def review = new Review()
-        review.setJustification(REVIEW_1_JUSTIFICATION)
+        review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setSubmission(submission)
         review.setStatus("IN_REVISION")

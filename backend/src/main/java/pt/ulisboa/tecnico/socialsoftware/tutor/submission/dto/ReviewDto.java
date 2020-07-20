@@ -9,7 +9,7 @@ public class ReviewDto implements Serializable {
     private Integer id;
     private Integer userId;
     private Integer submissionId;
-    private String justification;
+    private String comment;
     private String status;
     private String creationDate;
     private String name;
@@ -20,7 +20,7 @@ public class ReviewDto implements Serializable {
         this.id = review.getId();
         this.userId = review.getUser().getId();
         this.submissionId = review.getSubmission().getId();
-        this.justification = review.getJustification();
+        this.comment = review.getComment();
         this.status = review.getStatus();
         if (review.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(review.getCreationDate());
@@ -39,9 +39,9 @@ public class ReviewDto implements Serializable {
 
     public void setSubmissionId(Integer submissionId) { this.submissionId = submissionId; }
 
-    public String getJustification() { return justification; }
+    public String getComment() { return comment; }
 
-    public void setJustification(String justification) { this.justification = justification; }
+    public void setComment(String comment) { this.comment = comment; }
 
     public String getStatus() { return status; }
 

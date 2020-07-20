@@ -77,7 +77,7 @@ public enum ErrorMessage {
     SUBMISSION_MISSING_COURSE("Submission is not assigned to a course"),
     USER_NOT_STUDENT("User %s is not a student"),
     USER_NOT_TEACHER("User %s is not a teacher"),
-    REVIEW_MISSING_JUSTIFICATION("Review must have justification"),
+    REVIEW_MISSING_COMMENT("Review must have comment"),
     REVIEW_MISSING_SUBMISSION("Review is missing associated submission"),
     REVIEW_MISSING_TEACHER("Review is missing associated teacher"),
     INVALID_STATUS_FOR_QUESTION("Invalid status for question"),

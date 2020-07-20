@@ -13,7 +13,6 @@ class GetCourseExecutionSubmissionsPerformanceTest extends SpockTest{
     def student
     def question
     def teacher
-    def submission
 
     def setup() {
         student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)

@@ -32,9 +32,9 @@
         <v-card-text class="text-left">
           <v-textarea
             rows="1"
-            v-model="justification"
-            label="Justification"
-            data-cy="Justification"
+            v-model="comment"
+            label="Comment"
+            data-cy="Comment"
           ></v-textarea>
         </v-card-text>
       </div>
@@ -105,14 +105,14 @@ export default class ShowSubmissionDialog extends Vue {
 
   reviewsComponentKey: number = 0;
   status: string = '';
-  justification: string = '';
+  comment: string = '';
 
   @Watch('dialog')
   forceRerender() {
     if (this.dialog) {
       this.reviewsComponentKey += 1;
       this.status = this.submission.question.status;
-      this.justification = '';
+      this.comment = '';
     }
   }
 
@@ -131,7 +131,7 @@ export default class ShowSubmissionDialog extends Vue {
     let review = new Review();
     review.submissionId = this.submission.id!;
     review.status = status;
-    review.justification = this.justification;
+    review.comment = this.comment;
     return review;
   }
 }

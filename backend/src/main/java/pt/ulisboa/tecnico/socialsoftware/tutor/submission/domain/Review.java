@@ -17,7 +17,7 @@ public class Review {
     private Integer id;
 
     @Column(columnDefinition = "TEXT", nullable = false)
-    private String justification;
+    private String comment;
 
     @Column(columnDefinition = "TEXT")
     private String status;
@@ -37,7 +37,7 @@ public class Review {
     }
 
     public Review(User user, Submission submission, ReviewDto reviewDto) {
-        setJustification(reviewDto.getJustification());
+        setComment(reviewDto.getComment());
         setUser(user);
         setSubmission(submission);
         setStatus(reviewDto.getStatus());
@@ -46,14 +46,14 @@ public class Review {
 
     @Override
     public String toString() {
-        return "Review{" + "id=" + id + "', user=" + user + ", justification='" + justification + ", submission=" + submission.getQuestion() + "}";
+        return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", submission=" + submission.getQuestion() + "}";
     }
 
     public Integer getId() { return id; }
 
-    public String getJustification() { return justification; }
+    public String getComment() { return comment; }
 
-    public void setJustification(String justification) { this.justification = justification; }
+    public void setComment(String comment) { this.comment = comment; }
 
     public LocalDateTime getCreationDate() { return creationDate; }
 

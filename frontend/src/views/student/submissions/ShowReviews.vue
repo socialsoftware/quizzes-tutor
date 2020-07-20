@@ -10,7 +10,7 @@
                 {{ ' by ' + review.name }}
             </p>
             <p>
-                {{ "'" + review.justification + "'" }}
+                {{ "'" + review.comment + "'" }}
             </p>
             <hr />
         </v-container>

@@ -151,8 +151,8 @@ public class SubmissionService {
     }
 
     private void checkIfConsistentReview(ReviewDto reviewDto) {
-        if (reviewDto.getJustification() == null || reviewDto.getJustification().isEmpty())
-            throw new TutorException(REVIEW_MISSING_JUSTIFICATION);
+        if (reviewDto.getComment() == null || reviewDto.getComment().isEmpty())
+            throw new TutorException(REVIEW_MISSING_COMMENT);
         else if (reviewDto.getSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_SUBMISSION);
         else if (reviewDto.getUserId() == null)

@@ -158,11 +158,11 @@ Cypress.Commands.add('addReview', title => {
     Cypress.env('USER') +
     ' -h localhost -c "with sub as (select s.id from submissions s join questions q on s.question_id=q.id where q.title=\'' +
     title +
-    '\') insert into reviews(creation_date, justification, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
+    '\') insert into reviews(creation_date, comment, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
   );
 });
 
-Cypress.Commands.add('reviewSubmission', (status, title, justification=null) => {
+Cypress.Commands.add('reviewSubmission', (status, title, comment=null) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -171,8 +171,8 @@ Cypress.Commands.add('reviewSubmission', (status, title, justification=null) => 
     .should('have.length', 7)
     .find('[data-cy="ViewSubmission"]')
     .click();
-  if (justification != null){
-    cy.get('[data-cy="Justification"]').type(justification);
+  if (comment != null){
+    cy.get('[data-cy="Comment"]').type(comment);
   }
   cy.get('[data-cy="'+ status +'Button"]').click();
 });
