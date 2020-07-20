@@ -1,22 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.util.Objects;
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @RestController
 public class UserController {
@@ -40,6 +36,12 @@ public class UserController {
     public String uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
         userService.importListOfUsers(file.getInputStream(), executionId);
         return file.getOriginalFilename();
+    }
+
+    @PostMapping("/users/delete/inactive")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    public void deleteExternalInactiveUsers(@Valid @RequestBody UsersIdsDto usersIdsDto) {
+        userService.deleteExternalInactiveUsers(usersIdsDto);
     }
 
 

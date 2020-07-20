@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto
 
 @DataJpaTest
 class DeleteExternalInactiveUsersTest extends SpockTest{
@@ -17,6 +18,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
     def user2
 
     List userIdList
+    UsersIdsDto usersIdsDto
 
     def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -40,9 +42,11 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
 
         and: "a userId list"
         userIdList << user1.getId()
+        usersIdsDto = new UsersIdsDto()
+        usersIdsDto.setUsersIds(userIdList)
 
         when:
-        userService.deleteExternalInactiveUsers(userIdList)
+        userService.deleteExternalInactiveUsers(usersIdsDto);
 
         then: "the user is not removed from his course execution"
         courseExecution.getStudents().size() == 1
@@ -68,13 +72,15 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
         courseExecution.addUser(user2)
         user2.addCourse(courseExecution)
 
-        and: "a userId list"
+        and: "a userIds dto"
 
         userIdList << user1.getId()
         userIdList << user2.getId()
+        usersIdsDto = new UsersIdsDto()
+        usersIdsDto.setUsersIds(userIdList)
 
         when:
-        userService.deleteExternalInactiveUsers(userIdList);
+        userService.deleteExternalInactiveUsers(usersIdsDto);
 
         then: "check that that no user was removed from the course execution"
         courseExecution.getStudents().size() == 0
@@ -83,6 +89,12 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
         userRepository.count() == 3 // The 3 Demo-Users
 
 
+    }
+
+    def cleanup() {
+        courseExecutionRepository.deleteUserCourseExecution(courseExecution.getId())
+        courseExecutionRepository.delete(courseExecution)
+        courseRepository.delete(course)
     }
 
     @TestConfiguration

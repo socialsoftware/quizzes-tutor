@@ -17,33 +17,33 @@ import spock.lang.Specification
 @ActiveProfiles("dev")
 class CreateExternalUserWebServiceIT extends SpockTest {
 
-    @LocalServerPort private int port
+    @LocalServerPort
+    private int port
 
-    def client
-
-    def loginResponse
     def response
 
-    def setup(){
-        client = new RESTClient("http://localhost:" + port)
-        course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
-        courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
-        courseExecutionRepository.save(courseExecution)
+    Course course1
+    CourseExecution courseExecution1
 
-        loginResponse = client.get(
-                path: '/auth/demo/admin'
-        )
-        client.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    final static String EMAIL = "pedro.pereira2909@gmail.com"
+
+    @Override
+    def setup(){
+        restClient = new RESTClient("http://localhost:" + port)
+        course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
+        courseRepository.save(course1)
+        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecutionRepository.save(courseExecution1)
+        demoAdminLogin()
     }
 
     def "login as demo admin, and create an external user" () {
         when:
-        response = client.post(
-                path: '/courses/executions/'+courseExecution.getId()+'/users',
+        response = restClient.post(
+                path: '/courses/executions/'+courseExecution1.getId()+'/users',
                 body: [
                         admin: false,
-                        email: 'pedro.pereira2909@gmail.com',
+                        email: EMAIL,
                         role: 'STUDENT'
                 ],
                 requestContentType: 'application/json'
@@ -53,18 +53,23 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         response != null
         response.status == 200
         response.data != null
-        response.data.username == "pedro.pereira2909@gmail.com"
-        response.data.email == "pedro.pereira2909@gmail.com"
+        response.data.username == EMAIL
+        response.data.email == EMAIL
         response.data.admin == false
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById(response.data.id).get())
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution.getId())
-        courseExecution.remove()
-        courseExecutionRepository.delete(courseExecution)
-        courseRepository.delete(course)
+        courseExecution1.getUsers().remove(userRepository.findById(response.data.id).get())
+        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
+        courseExecution1.remove()
+        courseExecutionRepository.delete(courseExecution1)
+        courseRepository.delete(course1)
         userRepository.delete(userRepository.findById(response.data.id).get())
+
+    }
+
+    def cleanup() {
+
     }
 
 }

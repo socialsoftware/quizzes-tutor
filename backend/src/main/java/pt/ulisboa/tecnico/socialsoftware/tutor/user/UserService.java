@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -278,9 +279,9 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteExternalInactiveUsers(List<Integer> usersId){
+    public void deleteExternalInactiveUsers(UsersIdsDto usersId){
         Optional<User> userOp;
-        for(Integer id : usersId){
+        for(Integer id : usersId.getUsersIds()){
             userOp = userRepository.findById(id);
             if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
                 userOp.ifPresent(User::removeFromCourseExecutions);

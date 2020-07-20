@@ -1,7 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
+import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -157,6 +159,7 @@ class SpockTest extends Specification {
     Course course
     CourseExecution courseExecution
 
+    RESTClient restClient
 
     def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
@@ -164,5 +167,28 @@ class SpockTest extends Specification {
 
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
+    }
+
+
+
+    def demoAdminLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/admin'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def demoStudentLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/student'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def demoTeacherLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/teacher'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
     }
 }
