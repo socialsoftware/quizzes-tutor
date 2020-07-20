@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ public class CSVQuizExportVisitor implements Visitor {
         int lineSize = numberOfQuestions + 5;
         Map<Integer, QuizQuestion> quizQuestions = quiz.getQuizQuestions().stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
+        // TODO[is->has]: questionMap XML
         Map<Integer, Option> options = quiz.getQuizQuestions().stream()
                 .map(QuizQuestion::getQuestion)
                 .map(Question::getQuestionDetails)
@@ -104,7 +105,7 @@ public class CSVQuizExportVisitor implements Visitor {
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
             line[1] = quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence().toString();
-            line[2] = questionAnswerItem.getOptionId() != null ? convertSequenceToLetter(options.get(questionAnswerItem.getOptionId()).getSequence()) : "X";
+            line[2] = questionAnswerItem.getAnswerRepresentation(options);
             line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? questionAnswerItem.getTimeToSubmission().toString() : "";
             line[5] = questionAnswerItem.getTimeTaken().toString();

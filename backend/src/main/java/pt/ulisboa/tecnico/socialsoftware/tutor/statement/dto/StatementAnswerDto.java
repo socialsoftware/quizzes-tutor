@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 
 import java.io.Serializable;
 
@@ -92,5 +93,9 @@ public class StatementAnswerDto implements Serializable {
 
     public boolean noAnswer() {
         return this.answerDetails.noAnswer();
+    }
+
+    public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId) {
+        return this.answerDetails.getQuestionAnswerItem(username, quizId, this);
     }
 }

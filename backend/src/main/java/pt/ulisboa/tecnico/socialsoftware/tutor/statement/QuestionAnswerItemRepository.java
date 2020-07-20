@@ -3,15 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Repository
-public interface QuestionAnswerItemRepository extends JpaRepository<QuizAnswerItem, Integer> {
+public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnswerItem, Integer> {
     @Query(value = "SELECT qai FROM QuestionAnswerItem qai WHERE qai.quizId = :quizId")
     List<QuestionAnswerItem> findQuestionAnswerItemsByQuizId(Integer quizId);
 

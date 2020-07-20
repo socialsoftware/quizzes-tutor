@@ -204,9 +204,7 @@ public class StatementService {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {
-            // TODO: UPDATE question_answer_items so that it has answer details as well.
-            questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
-                    answer.getTimeTaken(), answer.getTimeToSubmission(), ((MultipleChoiceStatementAnswerDetailsDto) answer.getAnswerDetails()).getOptionId());
+            questionAnswerItemRepository.save(answer.getQuestionAnswerItem(username, quizId));
         }
     }
 

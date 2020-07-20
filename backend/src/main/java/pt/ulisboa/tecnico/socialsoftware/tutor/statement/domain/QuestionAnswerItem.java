@@ -1,23 +1,23 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
+package pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 
 import javax.persistence.*;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "question_answer_items",
         indexes = {
                 @Index(name = "question_answer_items_indx_0", columnList = "quiz_id"),
         })
-public class QuestionAnswerItem {
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "question_answer_type",
+        columnDefinition = "varchar(32) not null default 'multiple_choice'",
+        discriminatorType = DiscriminatorType.STRING)
+public abstract class QuestionAnswerItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +28,18 @@ public class QuestionAnswerItem {
     private LocalDateTime answerDate;
     private Integer timeTaken;
     private Integer timeToSubmission;
-    private Integer optionId;
+
+    public QuestionAnswerItem() {
+    }
+
+    public QuestionAnswerItem(String username, int quizId, StatementAnswerDto answer) {
+        this.username = username;
+        this.quizId = quizId;
+        this.quizQuestionId = answer.getQuizQuestionId();
+        this.answerDate = DateHandler.now();
+        this.timeTaken = answer.getTimeTaken();
+        this.timeToSubmission = answer.getTimeToSubmission();
+    }
 
     public Integer getId() {
         return id;
@@ -86,11 +97,5 @@ public class QuestionAnswerItem {
         this.timeToSubmission = timeToSubmission;
     }
 
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
-    }
+    public abstract String getAnswerRepresentation(Map<Integer, Option> options);
 }

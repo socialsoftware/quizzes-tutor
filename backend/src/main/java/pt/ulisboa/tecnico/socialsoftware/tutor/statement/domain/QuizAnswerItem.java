@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
+package pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
