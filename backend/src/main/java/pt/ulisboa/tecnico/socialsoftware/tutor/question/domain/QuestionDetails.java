@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDe
 import javax.persistence.*;
 
 @Entity
-@Table(name = "question_type")
+@Table(name = "question_details")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_type",
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
