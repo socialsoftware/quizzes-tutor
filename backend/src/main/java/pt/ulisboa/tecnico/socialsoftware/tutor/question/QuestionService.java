@@ -263,7 +263,9 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        question.getQuestionDetails().delete();
+        if(question.getQuestionDetails()!= null) {
+            question.getQuestionDetails().delete();
+        }
 
         if (question.getImage() != null) {
             imageRepository.delete(question.getImage());
