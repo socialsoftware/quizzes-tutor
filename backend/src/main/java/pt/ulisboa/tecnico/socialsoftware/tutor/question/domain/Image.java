@@ -32,6 +32,10 @@ public class Image implements DomainEntity {
         setWidth(imageDto.getWidth());
     }
 
+    public Image(String url) {
+        setUrl(url);
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitImage(this);
