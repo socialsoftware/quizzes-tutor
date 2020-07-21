@@ -18,7 +18,7 @@ export default class RegistrationConfirmationView extends Vue {
 
   email: string = '';
   token: string = '';
-  errorMsg: string;
+  errorMsg: string = '';
 
   async created() {
     this.email = this.$route.query.email as string;
