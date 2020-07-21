@@ -37,11 +37,12 @@
             label="Comment"
             data-cy="Comment"
           ></v-textarea>
-          <select v-model="selected" style="border: solid 1px black">
+          <select v-model="selected" class="select">
             <option
               v-for="option in statusOptions"
               v-bind:value="option.value"
               v-bind:key="option.value"
+              class="option"
             >
               {{ option.text }}
             </option>
@@ -131,8 +132,18 @@ export default class ShowSubmissionDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.history {
-  max-height: 235px;
-  overflow-y: auto;
-}
+  .history {
+    max-height: 220px;
+    overflow-y: auto;
+  }
+
+  .select {
+    border: 1px solid blue;
+  }
+
+  .option {
+    text-align: center;
+    border: 1px solid red;
+
+  }
 </style>

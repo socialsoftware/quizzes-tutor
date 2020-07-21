@@ -110,7 +110,7 @@ export default class ShowSubmissionDialog extends Vue {
 </script>
 <style lang="scss" scoped>
 .history {
-  max-height: 235px;
+  max-height: 220px;
   overflow-y: auto;
 }
 </style>
