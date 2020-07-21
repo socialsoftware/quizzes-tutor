@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -230,13 +231,9 @@ public class UserService {
         mailer.sendSimpleMail(Mailer.MAIL_USER, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
     }
 
-    private String createConfirmationLink(String email, String token) {
-        return "https://quizzes-tutor.tecnico.ulisboa.pt/registration/confirmation?email=" + email + "&token=" + token;
-    }
-
     private String buildMailBody(User user) {
         String msg = "To confirm your registration click the following link";
-        return String.format("%s: %s", msg, createConfirmationLink(user.getEmail(), user.getConfirmationToken()));
+        return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(user.getEmail(), user.getConfirmationToken()));
     }
 
     private void associateUserWithExecution(CourseExecution courseExecution, User user1) {
