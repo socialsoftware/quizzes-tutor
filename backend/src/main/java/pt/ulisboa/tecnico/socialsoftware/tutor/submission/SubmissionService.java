@@ -80,7 +80,7 @@ public class SubmissionService {
 
         Submission submission = getSubmission(reviewDto.getSubmissionId());
 
-        User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));;
+        User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));
 
         if (!reviewDto.getStatus().equals("COMMENT")) {
             updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
@@ -96,6 +96,12 @@ public class SubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
         Submission submission = getSubmission(submissionId);
+
+        User user = userRepository.findById(submissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, submissionDto.getUserId()));
+
+        if(user.isStudent() && submission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
+            throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
+        }
 
         this.questionService.updateQuestion(submissionDto.getQuestion().getId(), submissionDto.getQuestion());
         return new SubmissionDto(submission);

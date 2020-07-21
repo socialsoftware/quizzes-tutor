@@ -96,6 +96,12 @@ class RemoveSubmittedQuestionTest extends SpockTest{
     }
 
     def "student removes a submitted question with no reviews"(){
+        given: "submission is IN_REVISION"
+        question.setStatus(Question.Status.IN_REVISION)
+        questionRepository.save(question)
+        submission.setQuestion(question)
+        submissionRepository.save(submission)
+
         when:
         questionService.removeQuestion(student.getId(), question.getId())
 
@@ -104,6 +110,15 @@ class RemoveSubmittedQuestionTest extends SpockTest{
         optionRepository.count() == 0L
         submissionRepository.count() == 0L
         reviewRepository.count() == 0L
+    }
+
+    def "student tries to remove a submitted question already in review"(){
+        when:
+        questionService.removeQuestion(student.getId(), question.getId())
+
+        then: "exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_REVIEWED_QUESTION
     }
 
     def "student tries to remove a submitted question with an associated review"(){

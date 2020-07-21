@@ -82,7 +82,8 @@ public enum ErrorMessage {
     REVIEW_MISSING_TEACHER("Review is missing associated teacher"),
     INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
     SUBMISSION_NOT_FOUND("Submission not found with id %d"),
-    CANNOT_DELETE_REVIEWED_QUESTION("Submission already reviewed by teacher cannot be deleted"),
+    CANNOT_DELETE_REVIEWED_QUESTION("Submission already in review or reviewed by teacher cannot be deleted"),
+    CANNOT_EDIT_REVIEWED_QUESTION("Submission already in review by teacher cannot be edited"),
     CANNOT_REVIEW_SUBMISSION("Submission already reviewed by teacher cannot be reviewed again"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),

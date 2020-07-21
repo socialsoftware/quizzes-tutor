@@ -47,8 +47,14 @@ public class SubmissionController {
 
     @PutMapping("/submissions/{submissionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public SubmissionDto updateSubmission(@PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
-        return this.submissionService.updateSubmission(submissionId, submission);
+    public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submissionDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        submissionDto.setUserId(user.getId());
+        return this.submissionService.updateSubmission(submissionId, submissionDto);
     }
 
     @PutMapping("/management/reviews/{questionId}")
