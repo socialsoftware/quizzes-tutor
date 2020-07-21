@@ -121,7 +121,7 @@ export default new Vuex.Store({
       return (
         !!state.token &&
         state.user !== null &&
-        (state.user.role == 'ADMIN' || state.user.role == 'DEMO_ADMIN')
+        (state.user.admin || state.user.role == 'DEMO_ADMIN')
       );
     },
     isTeacher(state): boolean {

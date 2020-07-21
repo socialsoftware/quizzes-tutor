@@ -162,6 +162,10 @@ public class CourseExecution implements DomainEntity {
     }
 
     public void remove() {
+        if (getCourse().getCourseExecutions().size() == 1 && (!getCourse().getQuestions().isEmpty() || !getCourse().getTopics().isEmpty())) {
+            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
+        }
+
         if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {
             throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);
         }
