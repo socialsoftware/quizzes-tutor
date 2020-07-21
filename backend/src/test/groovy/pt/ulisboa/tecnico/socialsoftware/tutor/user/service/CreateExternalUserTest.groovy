@@ -94,6 +94,7 @@ class CreateExternalUserTest extends SpockTest {
         result.getCourseExecutions().size() == 1
         result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
         result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
+        result.getConfirmationToken() != ""
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
         and: "a mail is sent"
@@ -126,6 +127,7 @@ class CreateExternalUserTest extends SpockTest {
         result.getCourseExecutions().size() == 1
         result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
         result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
+        result.getConfirmationToken() != ""
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
         and: "a mail is sent"
