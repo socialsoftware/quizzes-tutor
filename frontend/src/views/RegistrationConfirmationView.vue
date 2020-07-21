@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <password-card :title="TITLE" :email="email" :valid="valid" @onSubmit="confirmRegistration"></password-card>
+    <password-card :title="TITLE" :email="email" :error="errorMsg" @onSubmit="confirmRegistration"></password-card>
   </div>
 </template>
 
@@ -18,16 +18,13 @@ export default class RegistrationConfirmationView extends Vue {
 
   email: string = '';
   token: string = '';
-  valid = false;
+  errorMsg: string;
 
   async created() {
     this.email = this.$route.query.email as string;
     this.token = this.$route.query.token as string;
-    this.valid =
-      this.email !== undefined &&
-      this.email !== '' &&
-      this.token !== undefined &&
-      this.token !== '';
+    console.log(this.token);
+    this.errorMsg = (this.email && this.token) ? '' : 'Invalid query';
   }
 
   async confirmRegistration(password: string) {
@@ -36,6 +33,9 @@ export default class RegistrationConfirmationView extends Vue {
     externalUser.password = password;
     externalUser.confirmationToken = this.token;
     const res = await RemoteServices.confirmRegistration(externalUser);
+    if (res.state == 'INACTIVE') {
+      this.errorMsg = 'Confirmation link has expired. A new email was sent';
+    }
   }
 }
 </script>
