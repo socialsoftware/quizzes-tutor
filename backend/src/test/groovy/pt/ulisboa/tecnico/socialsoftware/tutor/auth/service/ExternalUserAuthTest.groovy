@@ -36,28 +36,19 @@ class ExternalUserAuthTest extends SpockTest {
         courseExecution.addUser(user)
         userRepository.save(user)
 
-        externalUserDto = new ExternalUserDto()
-        externalUserDto.setUsername(USER_1_EMAIL)
     }
 
     def "user logins successfully" () {
-        given: "an user with a correct password"
-        externalUserDto.setPassword(PASSWORD)
-
         when:
-        def result = authService.externalUserAuth(externalUserDto)
+        def result = authService.externalUserAuth(USER_1_EMAIL, PASSWORD)
 
         then:
         result.user.username == USER_1_EMAIL
     }
 
     def "login fails, given values are invalid" () {
-        given: "an user with a correct password"
-        externalUserDto.setUsername(username)
-        externalUserDto.setPassword(password)
-
         when:
-        authService.externalUserAuth(externalUserDto)
+        authService.externalUserAuth(username, password)
 
         then:
         def error = thrown(TutorException)

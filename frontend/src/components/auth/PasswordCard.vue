@@ -50,7 +50,7 @@ export default class PasswordCard extends Vue {
   @Prop({ required: true })
   email: string | undefined;
   @Prop({ required: true})
-  error: string;
+  error: string | undefined;
 
   success = false;
 

@@ -120,14 +120,14 @@ public class AuthService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto externalUserAuth(ExternalUserDto userDto) {
-        User user = userService.findByUsername(userDto.getUsername());
+    public AuthDto externalUserAuth(String email, String password) {
+        User user = userService.findByUsername(email);
 
-        if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, userDto.getUsername());
+        if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
 
-        if (userDto.getPassword() == null ||
-                !passwordEncoder.matches(userDto.getPassword(), user.getPassword()))
-            throw new TutorException(INVALID_PASSWORD, userDto.getPassword());
+        if (password== null ||
+                !passwordEncoder.matches(password, user.getPassword()))
+            throw new TutorException(INVALID_PASSWORD, password);
 
         user.setLastAccess(DateHandler.now());
 

@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Store from '@/store';
 
 import LoginView from '@/views/LoginView.vue';
+import ExternalLoginView from '@/views/ExternalLoginView.vue';
 import RegistrationConfirmationView from '@/views/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
@@ -46,8 +47,17 @@ let router = new Router({
       name: 'login',
       component: LoginView,
       meta: {
-        title: APP_NAME + ' - Login',
-        requiredAuth: 'None'
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login Fenix',
+      }
+    },
+    {
+      path: '/login/external',
+      name: 'external-login',
+      component: ExternalLoginView,
+      meta: {
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login External',
       }
     },
     {
