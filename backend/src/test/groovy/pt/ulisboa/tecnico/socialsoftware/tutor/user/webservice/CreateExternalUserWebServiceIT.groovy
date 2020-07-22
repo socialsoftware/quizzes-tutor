@@ -69,9 +69,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
     }
 
     def cleanup() {
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution.getId())
-        courseExecutionRepository.delete(courseExecution)
-        courseRepository.delete(course)
+        persistentCourseCleanup()
     }
 
 }

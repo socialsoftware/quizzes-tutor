@@ -120,6 +120,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
     }
 
     def cleanup() {
+        persistentCourseCleanup()
         courseExecutionRepository.deleteUserCourseExecution(courseExecution.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
         courseRepository.deleteById(course.getId())
