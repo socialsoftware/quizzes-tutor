@@ -9,16 +9,17 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class CourseService {
@@ -157,5 +158,60 @@ public class CourseService {
             courseExecution.setStatus(CourseExecution.Status.ACTIVE);
             return courseExecutionRepository.save(courseExecution);
         });
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ExternalUserDto> getExternalUsers(String requestParameter){
+        int executionId;
+        CourseExecution execution;
+
+        checkRequestParemeter(requestParameter);
+
+        if(requestParameter.equals("ALL")){
+            return courseExecutionRepository.findAll().stream()
+                    .filter(ce -> ce.getType().equals(Course.Type.EXTERNAL))
+                    .map(CourseExecution::getUsers)
+                    .flatMap(Collection::stream)
+                    .sorted(Comparator.comparing(User::getUsername))
+                    .distinct()
+                    .map(ExternalUserDto::new)
+                    .collect(Collectors.toList());
+        }else {
+            executionId = getExecutionId(requestParameter);
+            execution = getCourseExecution(executionId);
+            return execution.getStudents().stream()
+                    .sorted(Comparator.comparing(User::getUsername))
+                    .distinct()
+                    .map(ExternalUserDto::new)
+                    .collect(Collectors.toList());
+        }
+    }
+
+    private int getExecutionId(String requestParameter) {
+        int executionId;
+        try{
+            executionId = Integer.parseInt(requestParameter);
+        }catch (NumberFormatException e){
+            throw new TutorException(INVALID_COURSE_EXECUTION_REQUEST_PARAMETER, requestParameter);
+        }
+        return executionId;
+    }
+
+    private CourseExecution getCourseExecution(int executionId) {
+        CourseExecution execution;
+        execution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        if (!execution.getType().equals(Course.Type.EXTERNAL))
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, execution.getId());
+        return execution;
+    }
+
+    private void checkRequestParemeter(String requestParameter) {
+        if(requestParameter == null)
+            throw new TutorException(INVALID_COURSE_EXECUTION_REQUEST_PARAMETER, null);
     }
 }

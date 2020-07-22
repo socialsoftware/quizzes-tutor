@@ -69,7 +69,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
     }
 
     def cleanup() {
-
+        persistentCourseCleanup()
     }
 
 }
