@@ -164,7 +164,7 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<ExternalUserDto> getExternalStudents(String requestParameter){
+    public List<ExternalUserDto> getExternalUsers(String requestParameter){
         int executionId;
         CourseExecution execution;
 

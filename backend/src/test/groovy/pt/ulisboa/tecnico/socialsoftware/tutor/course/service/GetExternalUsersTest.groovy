@@ -49,7 +49,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = -1
 
         when:
-        courseService.getExternalStudents(executionId as String)
+        courseService.getExternalUsers(executionId as String)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -61,7 +61,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = courseExecution.getId()
 
         when:
-        courseService.getExternalStudents(executionId as String)
+        courseService.getExternalUsers(executionId as String)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -73,7 +73,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = courseExecution1.getId()
 
         when:
-        List<ExternalUserDto> result = courseService.getExternalStudents(executionId as String)
+        List<ExternalUserDto> result = courseService.getExternalUsers(executionId as String)
 
         then: "check if the list contains one user"
         result.size() == 1
@@ -88,7 +88,7 @@ class GetExternalUsersTest extends SpockTest{
         def requestParameter = "ALL"
 
         when:
-        List<ExternalUserDto> result = courseService.getExternalStudents(requestParameter)
+        List<ExternalUserDto> result = courseService.getExternalUsers(requestParameter)
 
         then: "check if the list contains the 2 users from the 2 course executions"
         result.size() == 2
@@ -102,7 +102,7 @@ class GetExternalUsersTest extends SpockTest{
     @Unroll
     def "invalid arguments: requestParamter=#requestParamter"() {
         when:
-        courseService.getExternalStudents(requestParamter)
+        courseService.getExternalUsers(requestParamter)
 
         then:
         def error = thrown(TutorException)

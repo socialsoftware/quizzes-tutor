@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.security.Principal;
@@ -72,5 +73,11 @@ public class CourseController {
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))")
     public void removeCourseExecution(@PathVariable Integer courseExecutionId) {
         courseService.removeCourseExecution(courseExecutionId);
+    }
+
+    @GetMapping("/executions/{executionParameter}/students/external")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    public List<ExternalUserDto> getExternalUsers(@PathVariable String executionParameter) {
+        return courseService.getExternalUsers(executionParameter);
     }
 }
