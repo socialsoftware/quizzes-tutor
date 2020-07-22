@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -30,14 +30,15 @@ public class Option implements DomainEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
-    @JoinColumn(name = "question_id")
-    private MultipleChoiceQuestion question;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "question_details_id")
+    private MultipleChoiceQuestion questionDetails;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval=true)
-    private final Set<QuestionAnswer> questionAnswers = new HashSet<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "option", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<MultipleChoiceAnswer> questionAnswers = new HashSet<>();
 
-    public Option() {}
+    public Option() {
+    }
 
     public Option(OptionDto option) {
         setSequence(option.getSequence());
@@ -84,20 +85,20 @@ public class Option implements DomainEntity {
         this.content = content;
     }
 
-    public MultipleChoiceQuestion getQuestion() {
-        return question;
+    public MultipleChoiceQuestion getQuestionDetails() {
+        return questionDetails;
     }
 
-    public void setQuestion(MultipleChoiceQuestion question) {
-        this.question = question;
+    public void setQuestionDetails(MultipleChoiceQuestion question) {
+        this.questionDetails = question;
         question.addOption(this);
     }
 
-    public Set<QuestionAnswer> getQuestionAnswers() {
+    public Set<MultipleChoiceAnswer> getQuestionAnswers() {
         return questionAnswers;
     }
 
-    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+    public void addQuestionAnswer(MultipleChoiceAnswer questionAnswer) {
         questionAnswers.add(questionAnswer);
     }
 
@@ -108,13 +109,13 @@ public class Option implements DomainEntity {
                 ", sequence=" + sequence +
                 ", correct=" + correct +
                 ", content='" + content + '\'' +
-                ", question=" + question.getId() +
+                ", question=" + questionDetails.getId() +
                 ", questionAnswers=" + questionAnswers +
                 '}';
     }
 
     public void remove() {
-        this.question = null;
+        this.questionDetails = null;
         this.questionAnswers.clear();
     }
 }

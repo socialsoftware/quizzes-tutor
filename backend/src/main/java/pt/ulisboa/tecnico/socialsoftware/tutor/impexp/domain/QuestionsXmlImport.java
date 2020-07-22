@@ -109,7 +109,7 @@ public class QuestionsXmlImport {
 				throw new TutorException(ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED, type);
 		}
 
-		questionDto.setQuestionDetails(questionDetailsDto);
+		questionDto.setQuestionDetailsDto(questionDetailsDto);
 
 		Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
 		questionService.createQuestion(course.getId(), questionDto);

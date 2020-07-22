@@ -53,14 +53,14 @@ class FindQuestionsTest extends SpockTest {
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(questionDetails)
+        optionOK.setQuestionDetails(questionDetails)
         optionRepository.save(optionOK)
 
         def optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(questionDetails)
+        optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
 
         Quiz quiz = new Quiz()
@@ -111,7 +111,7 @@ class FindQuestionsTest extends SpockTest {
         resQuestion.getImage().getId() != null
         resQuestion.getImage().getUrl() == IMAGE_1_URL
         resQuestion.getImage().getWidth() == 20
-        resQuestion.getQuestionDetails().getOptions().size() == 2
+        resQuestion.getQuestionDetailsDto().getOptions().size() == 2
     }
 
     @TestConfiguration

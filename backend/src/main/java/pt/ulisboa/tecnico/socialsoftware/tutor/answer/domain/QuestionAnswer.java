@@ -133,8 +133,6 @@ public class QuestionAnswer implements DomainEntity {
 
         if (answerDetails != null) {
             answerDetails.remove();
-            answerDetails.setQuestionAnswer(null);
-            answerDetails = null;
         }
     }
 

@@ -21,14 +21,14 @@ class ImportExportTopicsTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
-        questionDto.setQuestionDetails(new MultipleChoiceQuestionDto())
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.getQuestionDetails().setOptions(options)
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         questionDto = questionService.createQuestion(course.id, questionDto)
 

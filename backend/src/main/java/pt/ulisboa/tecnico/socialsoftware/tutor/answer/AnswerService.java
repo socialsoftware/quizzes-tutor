@@ -20,8 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExportVis
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -144,7 +144,7 @@ public class AnswerService {
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
         AnswerDetails answer = questionAnswer.setAnswerDetails(statementAnswerDto);
-        if (answer != null){
+        if (answer != null) {
             answerDetailsRepository.save(answer);
         }
     }
@@ -176,7 +176,7 @@ public class AnswerService {
         questionAnswers.forEach(questionAnswer ->
         {
             AnswerDetails answerDetails = questionAnswer.getAnswerDetails();
-            if(answerDetails != null){
+            if (answerDetails != null) {
                 answerDetailsRepository.delete(answerDetails);
             }
             questionAnswer.remove();

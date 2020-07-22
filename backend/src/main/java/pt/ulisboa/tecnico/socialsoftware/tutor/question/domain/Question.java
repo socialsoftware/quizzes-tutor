@@ -34,11 +34,6 @@ public class Question implements DomainEntity {
     public static class QuestionTypes {
         public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
     }
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
-    @ManyToMany(mappedBy = "questions")
-    private final Set<Topic> topics = new HashSet<>();
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -65,11 +60,21 @@ public class Question implements DomainEntity {
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private Image image;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_id")
     private Course course;
+
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval = true)
     private QuestionDetails questionDetails;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
+
+    @ManyToMany(mappedBy = "questions")
+    private final Set<Topic> topics = new HashSet<>();
+
 
     public Question() {
     }
@@ -85,7 +90,7 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        setQuestionDetails(questionDto.getQuestionDetails().getQuestionDetails(this));
+        setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
     }
 
     public Integer getId() {
@@ -238,7 +243,7 @@ public class Question implements DomainEntity {
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
 
-        getQuestionDetails().update(questionDto.getQuestionDetails());
+        getQuestionDetails().update(questionDto.getQuestionDetailsDto());
     }
 
     public void updateTopics(Set<Topic> newTopics) {

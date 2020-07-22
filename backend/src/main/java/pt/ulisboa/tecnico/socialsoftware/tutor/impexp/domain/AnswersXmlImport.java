@@ -104,7 +104,7 @@ public class AnswersXmlImport {
         questionMap = questionRepository.findAll().stream()
                 .filter(x -> x.getQuestionDetails() instanceof MultipleChoiceQuestion)
                 .collect(Collectors.toMap(Question::getKey,
-                        question -> ((MultipleChoiceQuestion)question.getQuestionDetails()).getOptions().stream()
+                        question -> ((MultipleChoiceQuestion) question.getQuestionDetails()).getOptions().stream()
                                 .collect(Collectors.toMap(Option::getSequence, Option::getId))));
     }
 
@@ -163,7 +163,7 @@ public class AnswersXmlImport {
             int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
 
             QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
-                    .filter(qa -> qa.getSequence().equals(answerSequence)).findFirst()
+                    .filter(qa -> qa.getSequence().equals(answerSequence)).findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
             questionAnswer.setTimeTaken(timeTaken);

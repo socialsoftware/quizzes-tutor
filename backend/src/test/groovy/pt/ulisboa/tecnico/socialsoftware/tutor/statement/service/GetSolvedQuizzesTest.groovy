@@ -49,7 +49,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
-        option.setQuestion(questionDetails)
+        option.setQuestionDetails(questionDetails)
         optionRepository.save(option)
     }
 

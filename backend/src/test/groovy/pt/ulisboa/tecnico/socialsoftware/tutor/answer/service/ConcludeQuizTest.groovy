@@ -61,14 +61,14 @@ class ConcludeQuizTest extends SpockTest {
         optionKO.setContent("Option Content")
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(questionDetails)
+        optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
 
         optionOk = new Option()
         optionOk.setContent("Option Content")
         optionOk.setCorrect(true)
         optionOk.setSequence(1)
-        optionOk.setQuestion(questionDetails)
+        optionOk.setQuestionDetails(questionDetails)
         optionRepository.save(optionOk)
 
         date = DateHandler.now()

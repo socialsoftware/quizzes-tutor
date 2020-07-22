@@ -166,11 +166,11 @@ public class QuestionDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public QuestionDetailsDto getQuestionDetails() {
+    public QuestionDetailsDto getQuestionDetailsDto() {
         return questionDetails;
     }
 
-    public void setQuestionDetails(QuestionDetailsDto questionDetails) {
+    public void setQuestionDetailsDto(QuestionDetailsDto questionDetails) {
         this.questionDetails = questionDetails;
     }
 

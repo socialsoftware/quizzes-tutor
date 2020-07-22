@@ -20,14 +20,14 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
-        questionDto.setQuestionDetails(new MultipleChoiceQuestionDto())
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         and: 'a optionId'
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.getQuestionDetails().setOptions(options)
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         when:
         questionService.createQuestion(course.getId(), questionDto)
@@ -57,7 +57,7 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
-        questionDto.setQuestionDetails(new MultipleChoiceQuestionDto())
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
         and: 'an image'
         def image = new ImageDto()
@@ -74,7 +74,7 @@ class CreateQuestionTest extends SpockTest {
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
-        questionDto.getQuestionDetails().setOptions(options)
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         when:
         questionService.createQuestion(course.getId(), questionDto)
@@ -99,14 +99,14 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
-        questionDto.setQuestionDetails(new MultipleChoiceQuestionDto())
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         and: 'a optionId'
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.getQuestionDetails().setOptions(options)
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         when: 'are created two questions'
         questionService.createQuestion(course.getId(), questionDto)

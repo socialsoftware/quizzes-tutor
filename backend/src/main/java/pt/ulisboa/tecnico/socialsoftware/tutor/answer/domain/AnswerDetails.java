@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Entity
 @Table(name = "answer_details")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "question_answer_type",
+@DiscriminatorColumn(name = "answer_details_type",
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AnswerDetails implements DomainEntity {
@@ -44,7 +44,10 @@ public abstract class AnswerDetails implements DomainEntity {
 
     public abstract boolean isCorrect();
 
-    public abstract void remove();
+    public void remove(){
+        this.questionAnswer.setAnswerDetails((AnswerDetails)null);
+        this.questionAnswer = null;
+    }
 
     public abstract AnswerDetailsDto getAnswerDetailsDto();
 

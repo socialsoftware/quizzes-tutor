@@ -36,7 +36,7 @@ class ImportExportAnswersTest extends SpockTest {
         option.setContent(OPTION_1_CONTENT)
         option.setCorrect(true)
         option.setSequence(0)
-        option.setQuestion(questionDetails)
+        option.setQuestionDetails(questionDetails)
         optionRepository.save(option)
 
         Quiz quiz = new Quiz()

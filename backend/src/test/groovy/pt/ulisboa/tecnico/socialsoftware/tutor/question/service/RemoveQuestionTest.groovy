@@ -45,14 +45,14 @@ class RemoveQuestionTest extends SpockTest {
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(questionDetails)
+        optionOK.setQuestionDetails(questionDetails)
         optionRepository.save(optionOK)
 
         optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
-        optionKO.setQuestion(questionDetails)
+        optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
     }
 

@@ -24,7 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceQuestion extends QuestionDetails {
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
 
 
@@ -50,7 +50,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         for (OptionDto optionDto : options) {
             if (optionDto.getId() == null) {
                 optionDto.setSequence(index++);
-                new Option(optionDto).setQuestion(this);
+                new Option(optionDto).setQuestionDetails(this);
             } else {
                 Option option = getOptions()
                         .stream()
@@ -146,7 +146,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return this.getOptions()
                 .stream()
                 .filter(Option::isCorrect)
-                .findFirst().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
+                .findAny().orElseThrow(() -> new TutorException(NO_CORRECT_OPTION))
                 .getSequence();
     }
 

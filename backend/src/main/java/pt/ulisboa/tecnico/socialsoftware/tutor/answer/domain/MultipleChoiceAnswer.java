@@ -44,7 +44,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
         this.option = option;
 
         if (option != null)
-            option.addQuestionAnswer(this.getQuestionAnswer());
+            option.addQuestionAnswer(this);
     }
 
     public void setOption(MultipleChoiceQuestion question, MultipleChoiceStatementAnswerDetailsDto multipleChoiceStatementAnswerDetailsDto) {
@@ -55,7 +55,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
                     .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, multipleChoiceStatementAnswerDetailsDto.getOptionId()));
 
             if (this.getOption() != null) {
-                this.getOption().getQuestionAnswers().remove(this.getQuestionAnswer());
+                this.getOption().getQuestionAnswers().remove(this);
             }
 
             this.setOption(option);
@@ -71,8 +71,9 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
 
     public void remove() {
+        super.remove();
         if (option != null) {
-            option.getQuestionAnswers().remove(this.getQuestionAnswer());
+            option.getQuestionAnswers().remove(this);
             option = null;
         }
     }
