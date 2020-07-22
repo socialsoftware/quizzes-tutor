@@ -8,37 +8,37 @@ describe('Teacher walkthrough', () => {
   });
 
   afterEach(() => {
-    cy.deleteSubmission('Test', 7);
+    cy.deleteSubmission('Test', 6);
     cy.contains('Logout').click();
   });
 
   it('login approves a submission (AVAILABLE)', () => {
-    cy.reviewSubmission('Available', 'Test', 'Comment');
+    cy.reviewSubmission('Approve (AVAILABLE)', 'Test', 'Comment');
     cy.checkSubmissionStatus('Test', 'APPROVED');
   });
 
   it('login approves a submission (DISABLED)', () => {
-    cy.reviewSubmission('Disabled', 'Test', 'Comment');
+    cy.reviewSubmission('Approve (DISABLED)', 'Test', 'Comment');
     cy.checkSubmissionStatus('Test', 'APPROVED');
   });
 
   it('login rejects a submission', () => {
-    cy.reviewSubmission('Rejected', 'Test', 'Comment');
+    cy.reviewSubmission('Reject', 'Test', 'Comment');
     cy.checkSubmissionStatus('Test', 'REJECTED');
   });
 
   it('login requests changes for a submission', () => {
-      cy.reviewSubmission('InRevision', 'Test', 'Comment');
+      cy.reviewSubmission('Request Changes', 'Test', 'Comment');
       cy.checkSubmissionStatus('Test', 'CHANGES REQUESTED');
   });
 
   it('login requests further review', () => {
-      cy.reviewSubmission('InReview', 'Test', 'Comment');
+      cy.reviewSubmission('Request Further Review', 'Test', 'Comment');
       cy.checkSubmissionStatus('Test', 'FURTHER REVIEW REQUESTED');
   });
 
   it('login reviews submisssion without comment', () => {
-    cy.reviewSubmission('Available', 'Test');
+    cy.reviewSubmission('Approve (AVAILABLE)', 'Test');
 
     cy.closeErrorMessage('Review must have comment');
 

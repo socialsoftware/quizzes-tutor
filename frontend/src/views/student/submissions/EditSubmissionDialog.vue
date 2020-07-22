@@ -44,13 +44,6 @@
             </v-card-text>
 
             <v-card-actions>
-                <v-switch
-                        v-model="editSubmission.anonymous"
-                        class="ma-4"
-                        label="Anonymous"
-                        data="Anonymous"
-                        v-if="!editMode(editSubmission)"
-                />
                 <v-spacer />
                 <v-btn color="blue darken-1" @click="$emit('dialog', false)" data-cy="CancelButton">Cancel</v-btn
                 >

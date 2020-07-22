@@ -68,7 +68,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'submitQuestion',
-  (valid, title, content, opt1, opt2, opt3, opt4, anonymous=false) => {
+  (valid, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="SubmitQuestion"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
@@ -78,16 +78,13 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      if (anonymous) {
-        cy.get('[data-cy="Anonymous"]').click({ force: true });
-      }
       cy.get('[data-cy="SubmitButton"]').click();
       cy.contains(title)
         .parent()
         .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 6);
+        .should('have.length', 5);
     } else {
       cy.get('[data-cy="SubmitButton"]').click();
     }
@@ -100,7 +97,7 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 6)
+    .should('have.length', 5)
     .find('[data-cy="viewQuestion"]')
     .click();
   cy.contains(title);
@@ -162,19 +159,20 @@ Cypress.Commands.add('addReview', title => {
   );
 });
 
-Cypress.Commands.add('reviewSubmission', (status, title, comment=null) => {
+Cypress.Commands.add('reviewSubmission', (select, title, comment=null) => {
   cy.contains(title)
     .parent()
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 7)
+    .should('have.length', 6)
     .find('[data-cy="ViewSubmission"]')
     .click();
   if (comment != null){
     cy.get('[data-cy="Comment"]').type(comment);
   }
-  cy.get('[data-cy="'+ status +'Button"]').click();
+  cy.get('[data-cy="SelectMenu"]').select(select);
+  cy.get('[data-cy="SubmitButton"]').click();
 });
 
 Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
@@ -183,7 +181,7 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 7)
+    .should('have.length', 6)
     .find('[data-cy="ViewSubmission"]')
     .click();
   cy.contains(title);
@@ -191,7 +189,7 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
   cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('addSubmission', (title, questionStatus, userId, anon = false) => {
+Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
   cy.exec(
     'PGPASSWORD=' +
     Cypress.env('PASS') +
@@ -203,10 +201,8 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId, anon = fal
     title +
     '\', \'Question?\', \'' +
     questionStatus +
-    '\', 2, current_timestamp) RETURNING id) INSERT INTO submissions (question_id, user_id, anonymous, course_execution_id) VALUES ((SELECT id from quest), ' +
+    '\', 2, current_timestamp) RETURNING id) INSERT INTO submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), ' +
     userId +
-    ', ' +
-    anon +
     ', 11);" '
   );
   //add options
@@ -226,10 +222,3 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId, anon = fal
   }
 });
 
-Cypress.Commands.add('checkAllStudentsSubmissions', (title1, title2, title3, title4, title5) => {
-    cy.contains(title1);
-    cy.contains(title2);
-    cy.contains(title3);
-    cy.contains(title4);
-    cy.contains(title5);
-});

@@ -64,30 +64,6 @@ class CreateSubmissionTest extends SpockTest{
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
-        !result.isAnonymous()
-    }
-
-    def "create an anonymous submission with question not null"() {
-        given: "a submissionDto"
-        def submissionDto = new SubmissionDto()
-        submissionDto.setCourseExecutionId(courseExecution.getId())
-        submissionDto.setUserId(student.getId())
-        submissionDto.setQuestion(questionDto)
-        submissionDto.setAnonymous(true)
-
-        when: submissionService.createSubmission(submissionDto)
-
-        then: "the correct submission is in the repository"
-        submissionRepository.count() == 1L
-        def result = submissionRepository.findAll().get(0)
-        result.getId() != null
-        result.getUser() == student
-        result.getQuestion() != null
-        result.getQuestion().getTitle() == questionDto.getTitle()
-        result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.IN_REVISION
-        result.getCourseExecution() == courseExecution
-        result.isAnonymous()
     }
 
     def "user is not a student"(){

@@ -69,7 +69,6 @@ class UpdateSubmissionTest extends SpockTest{
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
-        !result.isAnonymous()
     }
 
     @TestConfiguration

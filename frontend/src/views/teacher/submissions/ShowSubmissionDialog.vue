@@ -37,12 +37,13 @@
             label="Comment"
             data-cy="Comment"
           ></v-textarea>
-          <select v-model="selected" class="select">
+          <select v-model="selected" class="select" data-cy="SelectMenu">
             <option
               v-for="option in statusOptions"
               v-bind:value="option.value"
               v-bind:key="option.value"
               class="option"
+              :data-cy="`${option.value}`"
             >
               {{ option.text }}
             </option>
@@ -97,7 +98,7 @@ export default class ShowSubmissionDialog extends Vue {
     { text: 'Request Further Review', value: 'IN_REVIEW' },
     { text: 'Approve (AVAILABLE)', value: 'AVAILABLE' },
     { text: 'Approve (DISABLED)', value: 'DISABLED' },
-    { text: 'Reject', value: 'REJECT' }
+    { text: 'Reject', value: 'REJECTED' }
   ];
 
   @Watch('dialog')

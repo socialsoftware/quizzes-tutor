@@ -67,7 +67,7 @@ public class SubmissionService {
 
         User user = getStudent(submissionDto.getUserId());
 
-        Submission submission = createSubmission(submissionDto, courseExecution, question, user);
+        Submission submission = new Submission(courseExecution, question, user);
 
         entityManager.persist(submission);
         return new SubmissionDto(submission);
@@ -141,11 +141,6 @@ public class SubmissionService {
         List<SubmissionDto> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId).stream()
                 .map(SubmissionDto::new).collect(Collectors.toList());
 
-        for (SubmissionDto submission : submissions) {
-            if (submission.isAnonymous())
-                submission.setName(null);
-        }
-
         return submissions;
     }
 
@@ -199,12 +194,6 @@ public class SubmissionService {
         QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
         return questionRepository.findById(question.getId())
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
-    }
-
-    private Submission createSubmission(SubmissionDto submissionDto, CourseExecution courseExecution, Question question, User user) {
-        Submission submission = new Submission(courseExecution, question, user);
-        submission.setAnonymous(submissionDto.isAnonymous());
-        return submission;
     }
 
     private void updateQuestionStatus(String status, Integer questionId) {
