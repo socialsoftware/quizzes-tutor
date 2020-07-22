@@ -4,6 +4,7 @@ import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
@@ -155,6 +156,9 @@ class SpockTest extends Specification {
 
     @Autowired
     Mailer mailer
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     Course course
     CourseExecution courseExecution
