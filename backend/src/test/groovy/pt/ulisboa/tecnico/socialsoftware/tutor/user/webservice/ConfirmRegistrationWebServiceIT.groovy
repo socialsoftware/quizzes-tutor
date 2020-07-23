@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
 class ConfirmRegistrationWebServiceIT extends SpockTest{
+    
     @LocalServerPort
     private int port
 
