@@ -19,7 +19,7 @@ export default class Question {
   image: Image | null = null;
   sequence: number | null = null;
 
-  questionDetails: QuestionDetails = new MultipleChoiceQuestionDetails();
+  questionDetailsDto: QuestionDetails = new MultipleChoiceQuestionDetails();
 
   topics: Topic[] = [];
 
@@ -37,9 +37,9 @@ export default class Question {
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.image = jsonObj.image;
 
-      this.questionDetails = QuestionFactory.getFactory(
-        jsonObj.questionDetails.type
-      ).createQuestionDetails(jsonObj.questionDetails);
+      this.questionDetailsDto = QuestionFactory.getFactory(
+        jsonObj.questionDetailsDto.type
+      ).createQuestionDetails(jsonObj.questionDetailsDto);
 
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }

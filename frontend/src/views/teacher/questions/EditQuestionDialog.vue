@@ -34,8 +34,8 @@
             rows="5"
           ></v-textarea>
           <component
-            :is="editQuestion.questionDetails.type"
-            :questionDetails.sync="editQuestion.questionDetails"
+            :is="editQuestion.questionDetailsDto.type"
+            :questionDetails.sync="editQuestion.questionDetailsDto"
           />
         </v-form>
       </v-card-text>

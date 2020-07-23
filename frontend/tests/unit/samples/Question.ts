@@ -14,7 +14,7 @@ export const questionWithFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
-  questionDetails: {
+  questionDetailsDto: {
     type: QuestionTypes.MultipleChoice,
     options: [
       {
@@ -78,7 +78,7 @@ export const questionWithoutFigure = new Question({
   numberOfCorrect: 51,
   creationDate: null,
   status: 'AVAILABLE',
-  questionDetails: {
+  questionDetailsDto: {
     type: QuestionTypes.MultipleChoice,
     options: [
       {

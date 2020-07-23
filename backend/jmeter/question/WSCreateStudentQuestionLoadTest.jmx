@@ -155,9 +155,12 @@
                     <stringProp name="Argument.value">{&#xd;
 	&quot;title&quot;: &quot;${title}&quot;,&#xd;
 	&quot;content&quot;: &quot;${content}&quot;,&#xd;
-	&quot;options&quot; : [{&#xd;
-		&quot;content&quot;: &quot;${optionsContent}&quot;,&#xd;
-		&quot;correct&quot;: &quot;${correct}&quot;}]&#xd;
+	&quot;questionDetailsDto&quot;: {&#xd;
+		&quot;type&quot;: &quot;multiple_choice&quot;,&#xd;
+		&quot;options&quot; : [{&#xd;
+			&quot;content&quot;: &quot;${optionsContent}&quot;,&#xd;
+			&quot;correct&quot;: &quot;${correct}&quot;}]&#xd;
+	}&#xd;
 }&#xd;
 </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>

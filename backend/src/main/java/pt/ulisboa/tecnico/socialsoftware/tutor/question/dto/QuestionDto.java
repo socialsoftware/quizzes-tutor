@@ -27,8 +27,7 @@ public class QuestionDto implements Serializable {
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
-
-    private QuestionDetailsDto questionDetails;
+    private QuestionDetailsDto questionDetailsDto;
 
     public QuestionDto() {
     }
@@ -55,7 +54,7 @@ public class QuestionDto implements Serializable {
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
 
-        this.questionDetails = question.getQuestionDetailsDto();
+        this.questionDetailsDto = question.getQuestionDetailsDto();
     }
 
     public Integer getId() {
@@ -167,11 +166,11 @@ public class QuestionDto implements Serializable {
     }
 
     public QuestionDetailsDto getQuestionDetailsDto() {
-        return questionDetails;
+        return questionDetailsDto;
     }
 
     public void setQuestionDetailsDto(QuestionDetailsDto questionDetails) {
-        this.questionDetails = questionDetails;
+        this.questionDetailsDto = questionDetails;
     }
 
     @Override
@@ -191,7 +190,7 @@ public class QuestionDto implements Serializable {
                 ", image=" + image +
                 ", topics=" + topics +
                 ", sequence=" + sequence +
-                ", question=" + questionDetails +
+                ", question=" + questionDetailsDto +
                 '}';
     }
 }

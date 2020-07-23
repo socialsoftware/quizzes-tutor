@@ -3,8 +3,8 @@
     <span v-html="convertMarkDown(question.content, question.image)" />
     <br />
     <component
-      :is="question.questionDetails.type"
-      :questionDetails="question.questionDetails"
+      :is="question.questionDetailsDto.type"
+      :questionDetails="question.questionDetailsDto"
     />
     <br />
   </div>

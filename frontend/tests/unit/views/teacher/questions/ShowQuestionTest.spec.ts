@@ -25,7 +25,7 @@ describe('ShowQuestion.vue with question', () => {
     expect(wrapper.find('div span').text()).toMatch(
       questionWithoutFigure.content
     );
-    var question = questionWithoutFigure.questionDetails as MultipleChoiceQuestionDetails;
+    var question = questionWithoutFigure.questionDetailsDto as MultipleChoiceQuestionDetails;
     question.options.forEach((option: Option) => {
       expect(wrapper.html()).toContain(option.content);
     });
