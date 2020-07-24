@@ -15,6 +15,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import Submission from '@/models/management/Submission';
 import Review from '@/models/management/Review';
+import UserSubmissionInfo from '@/models/management/UserSubmissionInfo';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -668,14 +669,14 @@ export default class RemoteServices {
       });
   }
 
-  static async getAllStudentsSubmissions(): Promise<Submission[]> {
+  static async getAllStudentsSubmissionsInfo(): Promise<UserSubmissionInfo[]> {
     return httpClient
       .get(
         `/student/submissions/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
-        return response.data.map((submission: any) => {
-          return new Submission(submission);
+        return response.data.map((userSubmissionsInfo: any) => {
+          return new UserSubmissionInfo(userSubmissionsInfo);
         });
       })
       .catch(async error => {

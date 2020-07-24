@@ -40,7 +40,7 @@ class GetSubmissionReviewsTest extends SpockTest{
     def "get submission reviews with 1 review"(){
         given: "a review"
         def review = new Review()
-        review.setJustification(REVIEW_1_JUSTIFICATION)
+        review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setSubmission(submission)
         review.setStatus("AVAILABLE")
@@ -56,21 +56,21 @@ class GetSubmissionReviewsTest extends SpockTest{
     def "get submission reviews with 3 review"(){
         given: "a review"
         def review1 = new Review()
-        review1.setJustification(REVIEW_1_JUSTIFICATION)
+        review1.setComment(REVIEW_1_COMMENT)
         review1.setUser(teacher)
         review1.setSubmission(submission)
         review1.setStatus("AVAILABLE")
         submission.addReview(review1)
         and: "another review"
         def review2 = new Review()
-        review2.setJustification(REVIEW_2_JUSTIFICATION)
+        review2.setComment(REVIEW_2_COMMENT)
         review2.setUser(teacher)
         review2.setSubmission(submission)
         review2.setStatus("AVAILABLE")
         submission.addReview(review2)
         and: "another review"
         def review3 = new Review()
-        review3.setJustification(REVIEW_3_JUSTIFICATION)
+        review3.setComment(REVIEW_3_COMMENT)
         review3.setUser(teacher)
         review3.setSubmission(submission)
         review3.setStatus("AVAILABLE")

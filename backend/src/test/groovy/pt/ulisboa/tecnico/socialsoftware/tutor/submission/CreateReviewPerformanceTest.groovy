@@ -42,7 +42,7 @@ class CreateReviewPerformanceTest extends SpockTest{
         def reviewDto = new ReviewDto()
         reviewDto.setSubmissionId(submission.getId())
         reviewDto.setUserId(teacher.getId())
-        reviewDto.setJustification(REVIEW_1_JUSTIFICATION)
+        reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('AVAILABLE')
 
         when:

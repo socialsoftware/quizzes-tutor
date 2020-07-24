@@ -24,19 +24,17 @@
       </template>
 
       <template v-slot:item.question.title="{ item }">
-        <div @click="showSubmissionDialog(item)" class="clickableTitle" data-cy="ViewSubmission">
+        <div
+          @click="showSubmissionDialog(item)"
+          class="clickableTitle"
+          data-cy="ViewSubmission"
+        >
           {{ item.question.title }}
         </div>
       </template>
-      <template v-slot:item.anonymous="{ item }">
-          <span v-if="item.anonymous">
-            <v-icon color="green">fa-check</v-icon>
-          </span>
-        <span v-else> <v-icon color="red">fa-times</v-icon> </span>
-      </template>
       <template v-slot:item.question.status="{ item }">
         <v-chip :color="getStatusColor(item.question.status)" small>
-          <span>{{ item.question.status }}</span>
+          <span>{{ item.question.status.replace('_', ' ') }}</span>
         </v-chip>
       </template>
       <template v-slot:item.question.topics="{ item }">
@@ -79,7 +77,7 @@
     />
     <footer>
       <v-icon class="mr-2">mouse</v-icon>Left-click on question's title to view
-      it.
+      submitted question and submission status.
     </footer>
   </v-card>
 </template>
@@ -120,12 +118,6 @@ export default class SubmissionView extends Vue {
     },
     { text: 'Title', value: 'question.title', align: 'center', width: '50%' },
     { text: 'Submitted by', value: 'name', align: 'center', width: '10%' },
-    {
-      text: 'Anonymous',
-      value: 'anonymous',
-      align: 'center',
-      width: '150px'
-    },
     {
       text: 'Status',
       value: 'question.status',

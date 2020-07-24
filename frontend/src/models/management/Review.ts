@@ -4,7 +4,7 @@ export default class Review {
   id!: number;
   userId: number | null = null;
   submissionId: number | null = null;
-  justification!: string;
+  comment!: string;
   status!: string;
   creationDate!: string;
   name!: string;
@@ -14,7 +14,7 @@ export default class Review {
       this.id = jsonObj.id;
       this.userId = jsonObj.userId;
       this.submissionId = jsonObj.submissionId;
-      this.justification = jsonObj.justification;
+      this.comment = jsonObj.comment;
       this.status = jsonObj.status;
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.name = jsonObj.name;

@@ -27,9 +27,6 @@ public class Submission {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @Column(columnDefinition = "boolean default false", nullable = false)
-    private boolean anonymous;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "submission", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
@@ -45,7 +42,7 @@ public class Submission {
     }
 
     public String toString() {
-        return "Submission{" + "id=" + id + ", question=" + question + ", user=" + user + ", anonymous="+ anonymous +", courseExecution=" + courseExecution + "}";
+        return "Submission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
     }
 
     public Integer getId() { return id; }
@@ -61,10 +58,6 @@ public class Submission {
     public CourseExecution getCourseExecution() { return courseExecution; }
 
     public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
-
-    public boolean isAnonymous() { return anonymous; }
-
-    public void setAnonymous(boolean anonymous) { this.anonymous = anonymous; }
 
     public Set<Review> getReviews() { return reviews; }
 

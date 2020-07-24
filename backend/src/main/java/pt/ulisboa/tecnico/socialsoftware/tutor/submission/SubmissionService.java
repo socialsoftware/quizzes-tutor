@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.UserSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -26,7 +27,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,7 +71,7 @@ public class SubmissionService {
 
         User user = getStudent(submissionDto.getUserId());
 
-        Submission submission = createSubmission(submissionDto, courseExecution, question, user);
+        Submission submission = new Submission(courseExecution, question, user);
 
         entityManager.persist(submission);
         return new SubmissionDto(submission);
@@ -80,9 +84,11 @@ public class SubmissionService {
 
         Submission submission = getSubmission(reviewDto.getSubmissionId());
 
-        User user = getTeacher(reviewDto.getUserId());
+        User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));
 
-        updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+        if (!reviewDto.getStatus().equals("COMMENT")) {
+            updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+        }
 
         Review review = new Review(user, submission, reviewDto);
 
@@ -94,6 +100,12 @@ public class SubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public SubmissionDto updateSubmission(Integer submissionId, SubmissionDto submissionDto) {
         Submission submission = getSubmission(submissionId);
+
+        User user = userRepository.findById(submissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, submissionDto.getUserId()));
+
+        if(user.isStudent() && submission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
+            throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
+        }
 
         this.questionService.updateQuestion(submissionDto.getQuestion().getId(), submissionDto.getQuestion());
         return new SubmissionDto(submission);
@@ -129,16 +141,20 @@ public class SubmissionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<SubmissionDto> getAllStudentsSubmissions(Integer courseExecutionId) {
-        List<SubmissionDto> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId).stream()
-                .map(SubmissionDto::new).collect(Collectors.toList());
+    public List<UserSubmissionInfoDto> getAllStudentsSubmissionsInfo(Integer courseExecutionId) {
+        Map<Integer, UserSubmissionInfoDto> userSubmissionInfoDtos = new HashMap<>();
+        List<Submission> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId);
 
-        for (SubmissionDto submission : submissions) {
-            if (submission.isAnonymous())
-                submission.setName(null);
+        for (Submission submission: submissions) {
+            User user = submission.getUser();
+            if (userSubmissionInfoDtos.containsKey(user.getId())) {
+                userSubmissionInfoDtos.get(user.getId()).addSubmission();
+            } else {
+                userSubmissionInfoDtos.put(user.getId(), new UserSubmissionInfoDto(user, 1));
+            }
         }
 
-        return submissions;
+        return new ArrayList<>(userSubmissionInfoDtos.values());
     }
 
     private void checkIfConsistentSubmission(SubmissionDto submissionDto) {
@@ -151,14 +167,16 @@ public class SubmissionService {
     }
 
     private void checkIfConsistentReview(ReviewDto reviewDto) {
-        if (reviewDto.getJustification() == null || reviewDto.getJustification().isEmpty())
-            throw new TutorException(REVIEW_MISSING_JUSTIFICATION);
+        if (reviewDto.getComment() == null || reviewDto.getComment().isEmpty())
+            throw new TutorException(REVIEW_MISSING_COMMENT);
         else if (reviewDto.getSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_SUBMISSION);
         else if (reviewDto.getUserId() == null)
             throw new TutorException(REVIEW_MISSING_TEACHER);
-        else if (!Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) ||
-                reviewDto.getStatus() == null || reviewDto.getStatus().isBlank())
+        else if (reviewDto.getStatus() == null
+                || reviewDto.getStatus().isBlank()
+                || !Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) && !reviewDto.getStatus().equals("COMMENT")
+        )
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
     }
 
@@ -184,24 +202,11 @@ public class SubmissionService {
         return user;
     }
 
-    private User getTeacher(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        if (!user.isTeacher())
-            throw new TutorException(USER_NOT_TEACHER, user.getUsername());
-        return user;
-    }
-
     private Question createQuestion(Course course, QuestionDto questionDto) {
         questionDto.setStatus("IN_REVISION");
         QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
         return questionRepository.findById(question.getId())
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
-    }
-
-    private Submission createSubmission(SubmissionDto submissionDto, CourseExecution courseExecution, Question question, User user) {
-        Submission submission = new Submission(courseExecution, question, user);
-        submission.setAnonymous(submissionDto.isAnonymous());
-        return submission;
     }
 
     private void updateQuestionStatus(String status, Integer questionId) {

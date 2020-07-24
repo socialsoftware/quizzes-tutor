@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.UserSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
@@ -34,7 +35,7 @@ public class SubmissionController {
     }
 
     @PostMapping("/executions/{executionId}/reviews")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public ReviewDto createReview(Principal principal, @PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -47,8 +48,14 @@ public class SubmissionController {
 
     @PutMapping("/submissions/{submissionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public SubmissionDto updateSubmission(@PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submission) {
-        return this.submissionService.updateSubmission(submissionId, submission);
+    public SubmissionDto updateSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody SubmissionDto submissionDto) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
+
+        submissionDto.setUserId(user.getId());
+        return this.submissionService.updateSubmission(submissionId, submissionDto);
     }
 
     @PutMapping("/management/reviews/{questionId}")
@@ -69,7 +76,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/executions/{executionId}/submissions")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<SubmissionDto> getCourseExecutionSubmissions(@PathVariable int executionId) {
         return submissionService.getCourseExecutionSubmissions(executionId);
     }
@@ -82,7 +89,7 @@ public class SubmissionController {
 
     @GetMapping(value = "/student/submissions/all")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<SubmissionDto> getAllStudentsSubmissions(@Valid @RequestParam int executionId) {
-        return submissionService.getAllStudentsSubmissions(executionId);
+    public List<UserSubmissionInfoDto> getAllStudentsSubmissionsInfo(@Valid @RequestParam int executionId) {
+        return submissionService.getAllStudentsSubmissionsInfo(executionId);
     }
 }

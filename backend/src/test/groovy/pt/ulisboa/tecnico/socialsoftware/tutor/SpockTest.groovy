@@ -81,9 +81,9 @@ class SpockTest extends Specification {
 
     public static final String QUIZ_TITLE = "Quiz title"
 
-    public static final String REVIEW_1_JUSTIFICATION = "Review Justification 1"
-    public static final String REVIEW_2_JUSTIFICATION = "Review Justification 2"
-    public static final String REVIEW_3_JUSTIFICATION = "Review Justification 3"
+    public static final String REVIEW_1_COMMENT = "Review Comment 1"
+    public static final String REVIEW_2_COMMENT = "Review Comment 2"
+    public static final String REVIEW_3_COMMENT = "Review Comment 3"
 
     @Autowired
     AuthService authService

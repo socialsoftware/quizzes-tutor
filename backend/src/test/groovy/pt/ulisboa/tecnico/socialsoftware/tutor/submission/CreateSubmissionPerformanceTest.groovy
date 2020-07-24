@@ -14,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 class CreateSubmissionPerformanceTest extends SpockTest{
     def student
     def questionDto
-    def teacher
 
     def setup() {
         student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)

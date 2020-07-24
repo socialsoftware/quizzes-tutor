@@ -29,29 +29,7 @@ describe('Student walkthrough', () => {
       'C',
       'D'
     );
-    cy.deleteSubmission('Test', 6);
-  });
-
-  it('login submits a question with argument', () => {
-    cy.submitQuestion(
-      true,
-      'Test',
-      'Test Question',
-      'A',
-      'B',
-      'C',
-      'D'
-    );
-
-    cy.viewQuestion(
-      'Test',
-      'Test Question',
-      'A',
-      'B',
-      'C',
-      'D'
-    );
-    cy.deleteSubmission('Test', 6);
+    cy.deleteSubmission('Test', 5);
   });
 
   it('login submits an invalid question', () => {

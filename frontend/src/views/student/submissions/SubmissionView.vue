@@ -24,7 +24,11 @@
           <v-spacer />
           <v-btn color="primary" dark @click="getSubmissions"
             >Refresh List</v-btn
-          ><v-btn color="primary" dark @click="submitQuestion" data-cy="SubmitQuestion"
+          ><v-btn
+            color="primary"
+            dark
+            @click="submitQuestion"
+            data-cy="SubmitQuestion"
             >Submit Question</v-btn
           >
         </v-card-title>
@@ -35,15 +39,9 @@
           {{ item.question.title }}
         </div>
       </template>
-      <template v-slot:item.anonymous="{ item }">
-          <span v-if="item.anonymous">
-            <v-icon color="green">fa-check</v-icon>
-          </span>
-        <span v-else> <v-icon color="red">fa-times</v-icon> </span>
-      </template>
       <template v-slot:item.question.status="{ item }">
         <v-chip :color="getStatusColor(item.question.status)" small>
-          <span>{{ item.question.status }}</span>
+          <span>{{ item.question.status.replace('_', ' ') }}</span>
         </v-chip>
       </template>
       <template v-slot:item.question.topics="{ item }">
@@ -58,7 +56,11 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showSubmissionDialog(item)" data-cy="viewQuestion"
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="showSubmissionDialog(item)"
+              data-cy="viewQuestion"
               >visibility</v-icon
             >
           </template>
@@ -142,12 +144,6 @@ export default class SubmissionView extends Vue {
       sortable: false
     },
     { text: 'Title', value: 'question.title', align: 'center', width: '50%' },
-    {
-      text: 'Anonymous',
-      value: 'anonymous',
-      align: 'center',
-      width: '150px'
-    },
     {
       text: 'Status',
       value: 'question.status',
@@ -264,6 +260,17 @@ export default class SubmissionView extends Vue {
       confirm('Are you sure you want to delete this submission?')
     ) {
       try {
+        let [reviews] = await Promise.all([
+          RemoteServices.getSubmissionReviews(toDeleteSubmission.id!)
+        ]);
+        if (reviews.length > 0) {
+          console.log(reviews);
+          await this.$store.dispatch(
+            'error',
+            'Error: Cannot delete submission that already has reviews'
+          );
+          return;
+        }
         let questionId = toDeleteSubmission.question.id;
         if (questionId != null) await RemoteServices.deleteQuestion(questionId);
         this.submissions = this.submissions.filter(
