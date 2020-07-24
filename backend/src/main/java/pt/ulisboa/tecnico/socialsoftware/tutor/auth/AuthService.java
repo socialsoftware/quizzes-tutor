@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -19,6 +21,9 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EXTERNAL_USER_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_INACTIVE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_PASSWORD;
 
 @Service
 public class AuthService {
@@ -30,6 +35,9 @@ public class AuthService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Retryable(
             value = { SQLException.class },
@@ -106,6 +114,26 @@ public class AuthService {
 
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
+
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthDto externalUserAuth(String email, String password) {
+        User user = userService.findByUsername(email);
+
+        if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
+
+        if (password== null ||
+                !passwordEncoder.matches(password, user.getPassword()))
+            throw new TutorException(INVALID_PASSWORD, password);
+
+        user.setLastAccess(DateHandler.now());
+
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
+
 
     @Retryable(
             value = { SQLException.class },

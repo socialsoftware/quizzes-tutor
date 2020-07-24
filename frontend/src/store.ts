@@ -4,6 +4,7 @@ import RemoteServices from '@/services/RemoteServices';
 import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
+import ExternalUser from '@/models/user/ExternalUser';
 
 interface State {
   token: string;
@@ -71,6 +72,12 @@ export default new Vuex.Store({
     },
     async fenixLogin({ commit }, code) {
       const authResponse = await RemoteServices.fenixLogin(code);
+      commit('login', authResponse);
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
+    async externalLogin({ commit }, user : ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(user.email, user.password);
       commit('login', authResponse);
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);

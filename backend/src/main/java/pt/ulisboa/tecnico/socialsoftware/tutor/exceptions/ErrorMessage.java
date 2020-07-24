@@ -41,7 +41,9 @@ public enum ErrorMessage {
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
+    USER_IS_INACTIVE("User state is inactive: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
+    INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),

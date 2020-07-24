@@ -182,9 +182,30 @@
           <v-icon>fas fa-sign-out-alt</v-icon>
         </v-btn>
 
-        <v-btn v-else :href="fenixUrl" text dark>
+        <v-menu offset-y v-else open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Login
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item :href="fenixUrl">
+              <v-list-item-content>
+                <v-list-item-title>Login in with Fenix</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/login/external">
+              <v-list-item-content>
+                <v-list-item-title>Login in as External</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <!-- <v-btn v-else :href="fenixUrl" text dark>
           Login <v-icon>fas fa-sign-in-alt</v-icon>
-        </v-btn>
+        </v-btn> -->
       </v-toolbar-items>
     </v-app-bar>
 

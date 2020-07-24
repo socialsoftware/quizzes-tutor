@@ -22,10 +22,6 @@ import java.time.LocalDateTime;
 @DataJpaTest
 class ConfirmRegistrationTest extends SpockTest {
 
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     @Autowired
     private Mailer mailerMock;
 

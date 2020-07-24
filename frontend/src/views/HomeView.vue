@@ -4,11 +4,17 @@
       {{ appName }}
     </h1>
 
-    <v-btn v-if="!isLoggedIn" :href="fenixUrl" depressed color="primary">
-      Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
-    </v-btn>
+    <div class="horizontal-btn-container" v-if="!isLoggedIn">
+      <v-btn :href="fenixUrl" depressed color="primary">
+        Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
+      </v-btn>
 
-    <div class="demo-buttons" v-if="!isLoggedIn">
+      <v-btn href="./login/external" depressed color="primary">
+        Log in as External <v-icon>fas fa-sign-in-alt</v-icon>
+      </v-btn>
+    </div>
+
+    <div class="horizontal-btn-container" v-if="!isLoggedIn">
       <v-btn
         depressed
         small
@@ -151,12 +157,12 @@ export default class HomeView extends Vue {
     padding: 10px 20px;
   }
 
-  .demo-buttons {
+  .horizontal-btn-container {
     margin-top: 40px;
     padding-bottom: 30px;
 
-    button {
-      margin: 10px;
+    button, a {
+      margin: 0 10px;
     }
   }
 

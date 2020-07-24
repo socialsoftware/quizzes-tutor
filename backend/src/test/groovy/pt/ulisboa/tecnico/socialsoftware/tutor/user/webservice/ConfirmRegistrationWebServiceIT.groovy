@@ -16,14 +16,10 @@ import java.time.LocalDateTime;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
 class ConfirmRegistrationWebServiceIT extends SpockTest{
+    
     @LocalServerPort
     private int port
 
-    final static String COURSE_NAME = "Course 1"
-    final static String COURSE_ACRONYM = "C1"
-    final static String COURSE_ACADEMIC_TERM = "Spring 2020"
-
-    final static String NAME = "User"
     final static String EMAIL = "placeholder@mail.com"
     final static String PASSWORD = "1234"
     final static String TOKEN = "1234abc"
@@ -34,20 +30,18 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     Course course
     CourseExecution courseExecution
-    List<Integer> usersIdsList
 
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
-        usersIdsList = new ArrayList<>()
-        course = new Course(COURSE_NAME, Course.Type.EXTERNAL)
+        course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_ACRONYM, COURSE_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
     }
 
     def "user confirms registration"() {
         given: "one inactive user with an expired "
-        user = new User(NAME, EMAIL, User.Role.STUDENT)
+        user = new User(USER_1_NAME, EMAIL, User.Role.STUDENT)
         user.setEmail(EMAIL)
         user.addCourse(courseExecution)
         user.setState(User.State.INACTIVE)
