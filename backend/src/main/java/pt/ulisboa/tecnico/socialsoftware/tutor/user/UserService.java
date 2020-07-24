@@ -304,9 +304,9 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteExternalInactiveUsers(UsersIdsDto usersId){
+    public void deleteExternalInactiveUsers(List<Integer> usersId){
         Optional<User> userOp;
-        for(Integer id : usersId.getUsersIds()){
+        for(Integer id : usersId){
             userOp = userRepository.findById(id);
             if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
                 userOp.ifPresent(User::removeFromCourseExecutions);

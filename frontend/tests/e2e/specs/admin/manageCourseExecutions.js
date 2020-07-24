@@ -3,7 +3,7 @@ describe('Administration walkthrough', () => {
     cy.demoAdminLogin();
 
     cy.get('[data-cy="administrationMenuButton"]').click();
-    cy.get('[data-cy="manageCoursesMenuButton"]').click();
+    cy.get('[data-cy="manageCoursesMenuButton"]').click({force: true});
   });
 
   afterEach(() => {

@@ -1,5 +1,5 @@
 export default class ExternalUser {
-
+  id!: number;
   name!: string;
   username!: string;
   email!: string;
@@ -11,7 +11,7 @@ export default class ExternalUser {
 
   constructor(jsonObj?: ExternalUser) {
     if (jsonObj) {
-      this.name = jsonObj.name;
+      this.id = jsonObj.id;
 			this.username = jsonObj.username;
 			this.email = jsonObj.email;
 			this.password = jsonObj.password;

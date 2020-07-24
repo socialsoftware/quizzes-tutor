@@ -26,7 +26,7 @@
 /// <reference types="Cypress" />
 
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
-  cy.get('[data-cy="createButton"]').click();
+  cy.get('[data-cy="createButton"]').click({force: true});
   cy.get('[data-cy="courseExecutionNameInput"]').type(name);
   cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
   cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
@@ -88,5 +88,29 @@ Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
   cy.get('[data-cy="manageCoursesMenuButton"]').click();
 
   cy.contains(acronym).parent().children().eq(6).contains("1");
+  
+});
+
+Cypress.Commands.add('addStudentThroughForm', (acronym, name, email) => {
+  cy.contains(acronym)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 11)
+    .find('[data-cy="addExternalUser"]')
+    .click();
+
+  cy.get('[data-cy="userNameInput"]').type(name);
+  cy.get('[data-cy="userEmailInput"]').type(email);
+  cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
+  cy.get('.v-menu__content .v-list').children().contains("STUDENT").first().click();
+  cy.get('[data-cy="saveButton"]').click();
+  cy.get('[data-cy="cancelButton"]').click();
+
+  cy.get('[data-cy="homeLink"]').click();
+  cy.wait(2000);
+  cy.get('[data-cy="administrationMenuButton"]').click();
+  cy.get('[data-cy="manageCoursesMenuButton"]').click();
+
   
 });

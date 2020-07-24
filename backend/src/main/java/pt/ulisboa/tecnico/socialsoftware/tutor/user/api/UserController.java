@@ -40,8 +40,8 @@ public class UserController {
 
     @PostMapping("/users/delete/inactive")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public void deleteExternalInactiveUsers(@Valid @RequestBody UsersIdsDto usersIdsDto) {
-        userService.deleteExternalInactiveUsers(usersIdsDto);
+    public void deleteExternalInactiveUsers(@Valid @RequestBody List<Integer> usersIds) {
+        userService.deleteExternalInactiveUsers(usersIds);
     }
 
 

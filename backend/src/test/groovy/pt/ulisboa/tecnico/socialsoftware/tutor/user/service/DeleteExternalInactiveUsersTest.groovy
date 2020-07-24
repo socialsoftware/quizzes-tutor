@@ -18,7 +18,6 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
     def user2
 
     List userIdList
-    UsersIdsDto usersIdsDto
 
     def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -42,11 +41,9 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
 
         and: "a userId list"
         userIdList << user1.getId()
-        usersIdsDto = new UsersIdsDto()
-        usersIdsDto.setUsersIds(userIdList)
 
         when:
-        userService.deleteExternalInactiveUsers(usersIdsDto);
+        userService.deleteExternalInactiveUsers(userIdList);
 
         then: "the user is not removed from his course execution"
         courseExecution.getStudents().size() == 1
@@ -76,11 +73,9 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
 
         userIdList << user1.getId()
         userIdList << user2.getId()
-        usersIdsDto = new UsersIdsDto()
-        usersIdsDto.setUsersIds(userIdList)
 
         when:
-        userService.deleteExternalInactiveUsers(usersIdsDto);
+        userService.deleteExternalInactiveUsers(userIdList);
 
         then: "check that that no user was removed from the course execution"
         courseExecution.getStudents().size() == 0
