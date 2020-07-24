@@ -54,6 +54,7 @@ public class AssessmentService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<AssessmentDto> findAssessments(int courseExecutionId) {
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
+                .filter(assessment -> assessment.getStatus() != Assessment.Status.TOURNAMENT)
                 .map(AssessmentDto::new)
                 .collect(Collectors.toList());
     }
@@ -65,6 +66,7 @@ public class AssessmentService {
     public List<AssessmentDto> findAvailableAssessments(int courseExecutionId) {
         return assessmentRepository.findByExecutionCourseId(courseExecutionId).stream()
                 .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
+                .filter(assessment -> assessment.getStatus() != Assessment.Status.TOURNAMENT)
                 .map(AssessmentDto::new)
                 .sorted(Comparator.comparing(AssessmentDto::getSequence, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
