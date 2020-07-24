@@ -39,8 +39,53 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <activatedProperties>prod</activatedProperties>
+            </properties>
+        </profile>
+        <profile>
+            <id>test</id>
+            <properties>
+                <activatedProperties>test</activatedProperties>
+            </properties>
             <build>
                 <plugins>
+                    <plugin>
+                        <!-- The gmavenplus plugin is used to compile Groovy code. To learn
+                            more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
+                        <groupId>org.codehaus.gmavenplus</groupId>
+                        <artifactId>gmavenplus-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>addTestSources</goal>
+                                    <goal>testCompile</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.2</version>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.22.2</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
@@ -59,6 +104,40 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.5</version>
+                        <configuration>
+                            <excludes>
+                                <exclude>/static/export/*</exclude>
+                            </excludes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>test-int</id>
+            <properties>
+                <activatedProperties>test-int</activatedProperties>
+            </properties>
+            <build>
+                <plugins>
                     <plugin>
                         <!-- The gmavenplus plugin is used to compile Groovy code. To learn
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
@@ -95,66 +174,20 @@
                             </includes>
                         </configuration>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>prod</id>
-            <properties>
-                <activatedProperties>prod</activatedProperties>
-            </properties>
-        </profile>
-        <profile>
-            <id>test</id>
-            <properties>
-                <activatedProperties>test</activatedProperties>
-            </properties>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <!-- The gmavenplus plugin is used to compile Groovy code. To learn
-                            more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
-                        <groupId>org.codehaus.gmavenplus</groupId>
-                        <artifactId>gmavenplus-plugin</artifactId>
-                        <version>1.5</version>
                         <executions>
                             <execution>
+                                <id>pre-integration-test</id>
                                 <goals>
-                                    <goal>addTestSources</goal>
-                                    <goal>testCompile</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.22.2</version>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.5</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>/static/export/*</exclude>
-                            </excludes>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <goals>
-                                    <goal>prepare-agent</goal>
+                                    <goal>start</goal>
                                 </goals>
                             </execution>
                             <execution>
-                                <id>report</id>
-                                <phase>test</phase>
+                                <id>post-integration-test</id>
                                 <goals>
-                                    <goal>report</goal>
+                                    <goal>stop</goal>
                                 </goals>
                             </execution>
                         </executions>
