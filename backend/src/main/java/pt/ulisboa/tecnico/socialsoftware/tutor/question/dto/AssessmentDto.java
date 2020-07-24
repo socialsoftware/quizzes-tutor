@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
 import java.util.List;
@@ -72,6 +73,12 @@ public class AssessmentDto implements Serializable {
 
     public void addTopicConjunction(TopicConjunctionDto topicConjunctionDto) {
         this.topicConjunctions.add(topicConjunctionDto);
+    }
+
+    public List<TopicDto> getTopics() {
+        return this.topicConjunctions.stream()
+                .flatMap(topicConjunction -> topicConjunction.getTopics().stream())
+                .collect(Collectors.toList());
     }
 
     @Override

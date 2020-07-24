@@ -244,7 +244,9 @@ export default class EditTournamentDialog extends Vue {
     this.oldTopics = this.editTournament.topics!;
     await this.$store.dispatch('loading');
     try {
-      [this.allTopics] = await Promise.all([RemoteServices.getTopics()]);
+      [this.allTopics] = await Promise.all([
+        RemoteServices.getTournamentTopics()
+      ]);
       this.availableTopics = this.allTopics;
       if (this.editTournament.topics !== undefined) {
         this.editTournament.topics!.forEach(topicName => {

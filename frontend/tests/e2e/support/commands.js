@@ -101,7 +101,7 @@ Cypress.Commands.add('tournamentCreation', numberOfQuestions => {
   cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
     force: true
   });
-  cy.selectTopic('Architectural Style');
+  cy.selectTopic('Software Architecture');
 });
 
 Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
@@ -182,7 +182,7 @@ Cypress.Commands.add('editTournament', tournament => {
     .type(5, {
       force: true
     });
-  cy.selectTopic('Case Studies');
+  cy.selectTopic('Web Application');
   cy.get('[data-cy="saveButton"]').click();
 });
 
@@ -208,6 +208,6 @@ Cypress.Commands.add('addQuestionTopic', () => {
     Cypress.env('DBNAME') +
     ' -U ' +
     Cypress.env('USER') +
-    ' -h localhost -c "INSERT INTO topics_questions (topics_id, questions_id) VALUES (83, 1389);"'
+    ' -h localhost -c "INSERT INTO topics_questions (topics_id, questions_id) VALUES (82, 1389);"'
   );
 });
