@@ -30,9 +30,9 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
-    - name: Run Spock tests
+    - name: Run unit and integration tests
       working-directory: ./backend
-      run: mvn clean -Ptest test
+      run: mvn clean -Ptest integration-test
         
     - name: Register code coverage
       uses: codecov/codecov-action@v1.0.5
