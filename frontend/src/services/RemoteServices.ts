@@ -503,6 +503,15 @@ export default class RemoteServices {
       });
   }
 
+  static async deleteExternalInactiveUsers(userIdList: number[]) {
+    return httpClient
+      .post('/users/delete/inactive', userIdList)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+
+  }
+
   static async getAssessments(): Promise<Assessment[]> {
     return httpClient
       .get(

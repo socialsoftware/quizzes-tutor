@@ -1,12 +1,14 @@
 <template>
   <v-card class="table">
     <v-data-table
+      v-model="selectedUsers"
       :headers="headers"
       :items="users"
       :search="search"
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
+      show-select
     >
       <template v-slot:top>
         <v-card-title>
@@ -16,7 +18,7 @@
             label="Search"
             class="mx-2"
           />
-          <v-spacer />
+         
           <v-spacer />
 
 
@@ -26,8 +28,10 @@
             label="Select a Course Execution"
             outlined
             clearable
+            value="acronym"
             v-on:change="updateCurrentExecution"
             class="ml-auto"
+            data-cy="courseSelectionDropDown"
           >
             <template slot="selection" slot-scope="data">
               {{ data.item.name }} - {{ data.item.acronym }}
@@ -36,6 +40,10 @@
               {{ data.item.name }} - {{ data.item.acronym }}
             </template>
           </v-select>
+           <v-spacer />
+           <v-btn color="primary" dark @click="deleteSelectedUsers" data-cy="deleteSelectedUsersButton"
+            >Delete Selected Users</v-btn
+          >
         </v-card-title>
       </template>
     </v-data-table>
@@ -55,14 +63,15 @@ export default class ExternalUsersView extends Vue {
     courses : Course[] = [];
     users : ExternalUser[] = [];
     search : String = '';
+    selectedUsers : ExternalUser [] = [];
 
     headers: object = [
-        { text: 'Username', value: 'username', align: 'left', width: '40%' },
+        { text: 'Username', value: 'username', align: 'left', width: '80%' },
         {
         text: 'State',
         value: 'state',
         align: 'center',
-        width: '20%'
+        width: '15%'
         },
     ];
 
@@ -98,8 +107,20 @@ export default class ExternalUsersView extends Vue {
         await this.$store.dispatch('error', error);
       }
       await this.$store.dispatch('clearLoading');
+    }
 
-    
+    async deleteSelectedUsers(){
+      await this.$store.dispatch('loading');
+      try {
+        console.log(this.selectedUsers.map(eu => eu.id))
+        await RemoteServices.deleteExternalInactiveUsers(this.selectedUsers.map(eu => eu.id));
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+
+      this.updateCurrentExecution()
+
+      await this.$store.dispatch('clearLoading');
     }
 }
 </script>
