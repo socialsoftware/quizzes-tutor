@@ -42,6 +42,14 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/admin/externalUsers" data-cy="">
+              <v-list-item-action>
+                <v-icon>fas fa-user</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage External Students</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 

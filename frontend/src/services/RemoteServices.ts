@@ -479,6 +479,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getExternalUsers(requestParamter: String): Promise<ExternalUser[]>{
+    return httpClient
+      .get('/executions/'+requestParamter+'/students/external')
+      .then(response => {
+        return response.data.map((user: any) => {
+          return new ExternalUser(user);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAssessments(): Promise<Assessment[]> {
     return httpClient
       .get(
