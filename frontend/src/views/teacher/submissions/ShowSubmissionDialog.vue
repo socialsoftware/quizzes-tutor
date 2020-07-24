@@ -133,18 +133,17 @@ export default class ShowSubmissionDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-  .history {
-    max-height: 220px;
-    overflow-y: auto;
-  }
+.history {
+  max-height: 220px;
+  overflow-y: auto;
+}
 
-  .select {
-    border: 1px solid blue;
-  }
+.select {
+  border: 1px solid blue;
+}
 
-  .option {
-    text-align: center;
-    border: 1px solid red;
-
-  }
+.option {
+  text-align: center;
+  border: 1px solid red;
+}
 </style>

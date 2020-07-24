@@ -9,12 +9,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
-class GetAllStudentsSubmissionsTest extends SpockTest{
+class GetAllStudentsSubmissionsInfoTest extends SpockTest{
     def student1
     def student2
     def student3
     def question
-    def submission
 
     def setup() {
         student1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
@@ -35,7 +34,41 @@ class GetAllStudentsSubmissionsTest extends SpockTest{
         questionRepository.save(question)
     }
 
-    @TestConfiguration
+    def "get all student submissions info"() {
+        given: "submissions"
+        def submission1 = new Submission()
+        submission1.setQuestion(question)
+        submission1.setUser(student1)
+        submission1.setCourseExecution(courseExecution)
+        submissionRepository.save(submission1)
+        def submission2 = new Submission()
+        submission2.setQuestion(question)
+        submission2.setUser(student2)
+        submission2.setCourseExecution(courseExecution)
+        submissionRepository.save(submission2)
+        def submission3 = new Submission()
+        submission3.setQuestion(question)
+        submission3.setUser(student3)
+        submission3.setCourseExecution(courseExecution)
+        submissionRepository.save(submission3)
+
+        when: def result = submissionService.getAllStudentsSubmissionsInfo(courseExecution.getId())
+
+        then:
+        result.size() == 3
+
+    }
+
+    def "get all student submissions info with no submissions"() {
+
+        when: def result = submissionService.getAllStudentsSubmissionsInfo(courseExecution.getId())
+
+        then:
+        result.size() == 0
+
+    }
+
+        @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
 

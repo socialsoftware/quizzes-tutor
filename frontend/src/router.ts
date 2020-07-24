@@ -28,7 +28,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import StudentSubmissionView from '@/views/student/submissions/SubmissionView.vue'
 import TeacherSubmissionView from '@/views/teacher/submissions/SubmissionView.vue'
-import AllSubmissionsView from '@/views/student/submissions/AllSubmissionsView.vue'
+import AllSubmissionsView from '@/views/student/submissions/AllUserSubmissionInfoView.vue'
 
 Vue.use(Router);
 

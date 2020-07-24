@@ -220,5 +220,10 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
       '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
     );
   }
+
+  Cypress.Commands.add('checkUserSubmissionInfo', (username, num) => {
+    cy.contains(username);
+    cy.contains(num);
+  });
 });
 

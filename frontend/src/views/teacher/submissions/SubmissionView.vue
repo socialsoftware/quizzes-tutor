@@ -24,13 +24,17 @@
       </template>
 
       <template v-slot:item.question.title="{ item }">
-        <div @click="showSubmissionDialog(item)" class="clickableTitle" data-cy="ViewSubmission">
+        <div
+          @click="showSubmissionDialog(item)"
+          class="clickableTitle"
+          data-cy="ViewSubmission"
+        >
           {{ item.question.title }}
         </div>
       </template>
       <template v-slot:item.question.status="{ item }">
         <v-chip :color="getStatusColor(item.question.status)" small>
-          <span>{{ item.question.status }}</span>
+          <span>{{ item.question.status.replace('_', ' ') }}</span>
         </v-chip>
       </template>
       <template v-slot:item.question.topics="{ item }">
@@ -73,7 +77,7 @@
     />
     <footer>
       <v-icon class="mr-2">mouse</v-icon>Left-click on question's title to view
-      it.
+      submitted question and submission status.
     </footer>
   </v-card>
 </template>

@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.SubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.UserSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -26,7 +27,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -137,11 +141,20 @@ public class SubmissionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<SubmissionDto> getAllStudentsSubmissions(Integer courseExecutionId) {
-        List<SubmissionDto> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId).stream()
-                .map(SubmissionDto::new).collect(Collectors.toList());
+    public List<UserSubmissionInfoDto> getAllStudentsSubmissionsInfo(Integer courseExecutionId) {
+        Map<Integer, UserSubmissionInfoDto> userSubmissionInfoDtos = new HashMap<>();
+        List<Submission> submissions = submissionRepository.getCourseExecutionSubmissions(courseExecutionId);
 
-        return submissions;
+        for (Submission submission: submissions) {
+            User user = submission.getUser();
+            if (userSubmissionInfoDtos.containsKey(user.getId())) {
+                userSubmissionInfoDtos.get(user.getId()).addSubmission();
+            } else {
+                userSubmissionInfoDtos.put(user.getId(), new UserSubmissionInfoDto(user, 1));
+            }
+        }
+
+        return new ArrayList<>(userSubmissionInfoDtos.values());
     }
 
     private void checkIfConsistentSubmission(SubmissionDto submissionDto) {
