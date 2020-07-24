@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
-import io.swagger.models.auth.In
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
@@ -9,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
@@ -24,7 +22,6 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
     Course course1
     CourseExecution courseExecution1
     List<Integer> usersIdsList
-    UsersIdsDto usersIdsDto
 
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)

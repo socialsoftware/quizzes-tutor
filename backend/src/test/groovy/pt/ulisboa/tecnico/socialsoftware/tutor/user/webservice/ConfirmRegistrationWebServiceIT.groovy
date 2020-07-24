@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
-import io.swagger.models.auth.In
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
@@ -9,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UsersIdsDto
 
 import java.time.LocalDateTime;
 
