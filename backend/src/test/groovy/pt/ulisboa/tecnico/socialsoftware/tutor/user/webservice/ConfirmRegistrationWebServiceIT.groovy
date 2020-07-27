@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
-import java.time.LocalDateTime;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("dev")
@@ -17,11 +16,6 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
     
     @LocalServerPort
     private int port
-
-    final static String EMAIL = "placeholder@mail.com"
-    final static String PASSWORD = "1234"
-    final static String TOKEN = "1234abc"
-    final static LocalDateTime TOKEN_DATE = LocalDateTime.now()
 
     def response
     User user
@@ -39,12 +33,12 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def "user confirms registration"() {
         given: "one inactive user with an expired "
-        user = new User(USER_1_NAME, EMAIL, User.Role.STUDENT)
-        user.setEmail(EMAIL)
+        user = new User(USER_1_NAME, USER_1_EMAIL, User.Role.STUDENT)
+        user.setEmail(USER_1_EMAIL)
         user.addCourse(courseExecution)
         user.setState(User.State.INACTIVE)
-        user.setConfirmationToken(TOKEN)
-        user.setTokenGenerationDate(TOKEN_DATE)
+        user.setConfirmationToken(USER_1_TOKEN)
+        user.setTokenGenerationDate(LOCAL_DATE_TODAY)
         courseExecution.addUser(user)
         userRepository.save(user)
 
@@ -52,9 +46,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response = restClient.post(
                 path: '/auth/registration/confirm',
                 body: [
-                        username: EMAIL,
-                        password: PASSWORD,
-                        confirmationToken: TOKEN
+                        username: USER_1_EMAIL,
+                        password: USER_1_PASSWORD,
+                        confirmationToken: USER_1_TOKEN
                 ],
                 requestContentType: 'application/json'
         )
@@ -63,8 +57,8 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         then: "check response status"
         response.status == 200
         response.data != null
-        response.data.email == EMAIL
-        response.data.username == EMAIL
+        response.data.email == USER_1_EMAIL
+        response.data.username == USER_1_EMAIL
         response.data.state == "ACTIVE"
         response.data.role == "STUDENT"
         
@@ -76,12 +70,12 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new User(USER_1_NAME, EMAIL, User.Role.STUDENT)
-        user.setEmail(EMAIL)
+        user = new User(USER_1_NAME, USER_1_EMAIL, User.Role.STUDENT)
+        user.setEmail(USER_1_EMAIL)
         user.addCourse(courseExecution)
         user.setState(User.State.INACTIVE)
-        user.setConfirmationToken(TOKEN)
-        user.setTokenGenerationDate(LocalDateTime.now().minusDays(2))
+        user.setConfirmationToken(USER_1_TOKEN)
+        user.setTokenGenerationDate(LOCAL_DATE_BEFORE)
         courseExecution.addUser(user)
         userRepository.save(user)
 
@@ -89,9 +83,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response = restClient.post(
                 path: '/auth/registration/confirm',
                 body: [
-                        username: EMAIL,
-                        password: PASSWORD,
-                        confirmationToken: TOKEN
+                        username: USER_1_EMAIL,
+                        password: USER_1_PASSWORD,
+                        confirmationToken: USER_1_TOKEN
                 ],
                 requestContentType: 'application/json'
         )
@@ -100,8 +94,8 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         then: "check response status"
         response.status == 200
         response.data != null
-        response.data.email == EMAIL
-        response.data.username == EMAIL
+        response.data.email == USER_1_EMAIL
+        response.data.username == USER_1_EMAIL
         response.data.state == "INACTIVE"
         response.data.role == "STUDENT"
 
