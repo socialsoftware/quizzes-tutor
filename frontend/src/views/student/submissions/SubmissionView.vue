@@ -264,7 +264,6 @@ export default class SubmissionView extends Vue {
           RemoteServices.getSubmissionReviews(toDeleteSubmission.id!)
         ]);
         if (reviews.length > 0) {
-          console.log(reviews);
           await this.$store.dispatch(
             'error',
             'Error: Cannot delete submission that already has reviews'

@@ -31,23 +31,24 @@
           <span class="headline">{{ 'New Review' }}</span>
         </v-card-title>
         <v-card-text class="text-left">
-          <v-textarea
-            rows="1"
-            v-model="comment"
-            label="Comment"
-            data-cy="Comment"
-          ></v-textarea>
-          <select v-model="selected" class="select" data-cy="SelectMenu">
-            <option
-              v-for="option in statusOptions"
-              v-bind:value="option.value"
-              v-bind:key="option.value"
-              class="option"
-              :data-cy="`${option.value}`"
-            >
-              {{ option.text }}
-            </option>
-          </select>
+          <v-row align="center">
+            <v-col cols="9">
+              <v-textarea
+                      rows="1"
+                      v-model="comment"
+                      label="Comment"
+                      data-cy="Comment"
+              ></v-textarea>
+            </v-col>
+            <v-col cols="3">
+              <v-select
+                      v-model="selected"
+                      :items="statusOptions"
+                      label="Status"
+              >
+              </v-select>
+            </v-col>
+          </v-row>
         </v-card-text>
       </div>
       <v-card-actions>
@@ -96,9 +97,9 @@ export default class ShowSubmissionDialog extends Vue {
     { text: 'Comment', value: 'COMMENT' },
     { text: 'Request Changes', value: 'IN_REVISION' },
     { text: 'Request Further Review', value: 'IN_REVIEW' },
-    { text: 'Approve (AVAILABLE)', value: 'AVAILABLE' },
-    { text: 'Approve (DISABLED)', value: 'DISABLED' },
-    { text: 'Reject', value: 'REJECTED' }
+    { text: 'Available', value: 'AVAILABLE' },
+    { text: 'Disabled', value: 'DISABLED' },
+    { text: 'Rejected', value: 'REJECTED' }
   ];
 
   @Watch('dialog')
@@ -134,16 +135,7 @@ export default class ShowSubmissionDialog extends Vue {
 
 <style lang="scss" scoped>
 .history {
-  max-height: 220px;
+  max-height: 225px;
   overflow-y: auto;
-}
-
-.select {
-  border: 1px solid blue;
-}
-
-.option {
-  text-align: center;
-  border: 1px solid red;
 }
 </style>
