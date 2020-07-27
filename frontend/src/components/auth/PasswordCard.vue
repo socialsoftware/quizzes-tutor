@@ -11,27 +11,29 @@
         ></v-text-field>
         <v-text-field
           v-model="password"
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-          :type="show1 ? 'text' : 'password'"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="showPassword ? 'text' : 'password'"
           label="Password"
           required
-          @click:append="show1 = !show1"
+          @click:append="showPassword = !showPassword"
 
         ></v-text-field>
         <v-text-field
           v-model="confirmPassword"
-          :append-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
-          :type="show2 ? 'text' : 'password'"
+          :append-icon="showConfirmPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="showConfirmPassword ? 'text' : 'password'"
           label="Confirm Password"
           required
           :rules="[v => v == password || 'Passwords don\'t match']"
-          @click:append="show2 = !show2"
+          @click:append="showConfirmPassword = !showConfirmPassword"
         ></v-text-field>
         <v-btn color="blue darken-1" class="white--text" :disabled='!(password === confirmPassword && password != "")' @click="submit">submit</v-btn>
       </form>
     </v-card-text>
     <v-card-text v-if="success">
+      <span class="password-success">
       Success
+      </span>
     </v-card-text>
   </v-card>
   <v-card v-else>
@@ -51,14 +53,14 @@ export default class PasswordCard extends Vue {
   email: string | undefined;
   @Prop({ required: true})
   error: string | undefined;
-
-  success = false;
+  @Prop({ required: true})
+  success: boolean | undefined;
 
   password = '';
   confirmPassword = '';
 
-  show1 = false;
-  show2 = false;
+  showPassword = false;
+  showConfirmPassword = false;
 
   created() {}
 
@@ -73,5 +75,10 @@ export default class PasswordCard extends Vue {
 .v-card {
   width: 650px;
   margin: auto;
+}
+.password-success {
+  display: block;
+  font-size: 1.5rem;
+  margin: 20px 0;
 }
 </style>

@@ -18,23 +18,23 @@ describe('Administration walkthrough', () => {
     cy.deleteCourseExecution('TEST-AO3');
   });
 
-  // it('login creates two course executions and deletes it', () => {
-  //   cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
+  it('login creates two course executions and deletes it', () => {
+    cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
 
-  //   cy.log('try to create with the same name');
-  //   cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
+    cy.log('try to create with the same name');
+    cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
 
-  //   cy.closeErrorMessage();
+    cy.closeErrorMessage();
 
-  //   cy.log('close dialog');
-  //   cy.get('[data-cy="cancelButton"]').click();
+    cy.log('close dialog');
+    cy.get('[data-cy="cancelButton"]').click();
 
-  //   cy.deleteCourseExecution('TEST-AO3');
-  // });
+    cy.deleteCourseExecution('TEST-AO3');
+  });
 
-  // it('login creates FROM a course execution and deletes it', () => {
-  //   cy.createFromCourseExecution('Demo Course', 'TEST-AO3', 'Winter Semester');
+  it('login creates FROM a course execution and deletes it', () => {
+    cy.createFromCourseExecution('Demo Course', 'TEST-AO3', 'Winter Semester');
 
-  //   cy.deleteCourseExecution('TEST-AO3');
-  // });
+    cy.deleteCourseExecution('TEST-AO3');
+  });
 });
