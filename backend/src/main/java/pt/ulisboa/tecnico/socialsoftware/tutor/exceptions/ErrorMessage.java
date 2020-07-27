@@ -43,6 +43,7 @@ public enum ErrorMessage {
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     USER_IS_INACTIVE("User state is inactive: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
+    EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
     INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),

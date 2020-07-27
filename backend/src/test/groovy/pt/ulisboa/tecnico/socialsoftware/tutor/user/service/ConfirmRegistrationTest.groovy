@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -19,9 +18,6 @@ import java.time.LocalDateTime;
 
 @DataJpaTest
 class ConfirmRegistrationTest extends SpockTest {
-
-    @Autowired
-    private Mailer mailerMock;
 
     Course course
     CourseExecution courseExecution
@@ -57,8 +53,6 @@ class ConfirmRegistrationTest extends SpockTest {
         passwordEncoder.matches(USER_1_PASSWORD, result.getPassword())
         and: "and is active"
         result.isActive()
-        and: "no email is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)
 	}
 
     def "user is already active" () {
@@ -72,8 +66,6 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.USER_ALREADY_ACTIVE
-        and: "no email is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)
     }
 
     def "user token expired" () {
@@ -90,8 +82,6 @@ class ConfirmRegistrationTest extends SpockTest {
         result.state == User.State.INACTIVE
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
-        and: "a new email is sent"
-        1 * mailerMock.sendSimpleMail(_, USER_1_EMAIL,_,_)
     }
 
 	def "registration confirmation unsuccessful" () {
@@ -108,8 +98,6 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
-        and: "no email is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)
 
         where:
         email        | password         | token           || errorMessage
