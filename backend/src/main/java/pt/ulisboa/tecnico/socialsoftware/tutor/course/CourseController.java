@@ -75,9 +75,9 @@ public class CourseController {
         courseService.removeCourseExecution(courseExecutionId);
     }
 
-    @GetMapping("/executions/{executionParameter}/students/external")
+    @GetMapping("/executions/{courseExecutionId}/users/external")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public List<ExternalUserDto> getExternalUsers(@PathVariable String executionParameter) {
-        return courseService.getExternalUsers(executionParameter);
+    public List<ExternalUserDto> getExternalUsers(@PathVariable Integer courseExecutionId) {
+        return courseService.getExternalUsers(courseExecutionId);
     }
 }

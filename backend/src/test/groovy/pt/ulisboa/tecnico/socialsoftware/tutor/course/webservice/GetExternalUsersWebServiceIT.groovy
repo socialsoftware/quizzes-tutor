@@ -41,7 +41,6 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         courseExecution1.addUser(user1)
         userRepository.save(user1)
 
-
         course2 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course2)
         courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
@@ -59,7 +58,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
     def "get users from courseExecution1" (){
         when:
         response = restClient.get(
-            path: '/executions/'+courseExecution1.getId()+'/students/external',
+            path: '/executions/'+courseExecution1.getId()+'/users/external',
             requestContentType: 'application/json'
         )
 
@@ -71,25 +70,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         userList.size() == 1
         userList.get(0).id == user1.getId()
     }
-
-    def "get users from all course executions" (){
-        when:
-        response = restClient.get(
-                path: '/executions/ALL/students/external',
-                requestContentType: 'application/json'
-        )
-
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and:"if the list contains the two correct users"
-        def userList = response.data
-        userList.size() == 2
-        userList.get(0).id == user1.getId()
-        userList.get(1).id == user2.getId()
-    }
-
-
+    
 
     def cleanup() {
         persistentCourseCleanup()
@@ -103,7 +84,5 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         userRepository.deleteById(user2.getId())
         courseExecutionRepository.deleteById(courseExecution2.getId())
         courseRepository.deleteById(course2.getId())
-
-
     }
 }
