@@ -5,8 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
@@ -48,6 +50,18 @@ class LeaveTournamentTest extends SpockTest {
 
         topics.add(topic1.getId())
         topics.add(topic2.getId())
+
+        def assessment = new Assessment()
+        assessment.setTitle(ASSESSMENT_1_TITLE)
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+        assessment.setCourseExecution(courseExecution)
+
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic1)
+        topicConjunction.addTopic(topic2)
+
+        assessment.addTopicConjunction(topicConjunction)
+        assessmentRepository.save(assessment)
 
         tournamentDto = new TournamentDto()
         tournamentDto.setStartTime(STRING_DATE_TODAY)

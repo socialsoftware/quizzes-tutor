@@ -50,8 +50,8 @@ public class Tournament  {
     private CourseExecution courseExecution;
 
     @ManyToOne
-    @JoinColumn(name = "assessment_id")
-    private Assessment assessment;
+    @JoinColumn(name = "topicConjunction_id")
+    private TopicConjunction topicConjunction;
 
     @Column(name = "quizID")
     private Integer quizId;
@@ -65,15 +65,15 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(User user, Assessment assessment, TournamentDto tournamentDto) {
+    public Tournament(User user, TopicConjunction topicConjunction, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
         this.state = tournamentDto.getState();
         this.creator = user;
         setCourseExecution(user);
-        setAssessment(assessment);
-        for (Topic topic: assessment.getTopicConjunctions().get(0).getTopics())
+        setTopicConjunction(topicConjunction);
+        for (Topic topic: topicConjunction.getTopics())
             checkTopicCourse(topic);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
@@ -134,17 +134,9 @@ public class Tournament  {
 
     public void setQuizId(Integer quizId) { this.quizId = quizId; }
 
-    public Assessment getAssessment() { return assessment; }
+    public TopicConjunction getTopicConjunction() { return topicConjunction; }
 
-    public void setAssessment(Assessment assessment) { this.assessment = assessment; }
-
-    public TopicConjunction getTopicConjunction() { return assessment.getTopicConjunctions().get(0); }
-
-    public void setTopicConjunction(TopicConjunction topicConjunction) {
-        List<TopicConjunction> topicConjunctions = new ArrayList<>();
-        topicConjunctions.add(topicConjunction);
-        this.assessment.setTopicConjunctions(topicConjunctions);
-    }
+    public void setTopicConjunction(TopicConjunction topicConjunction) { this.topicConjunction = topicConjunction; }
 
     public void updateTopics(Set<Topic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);

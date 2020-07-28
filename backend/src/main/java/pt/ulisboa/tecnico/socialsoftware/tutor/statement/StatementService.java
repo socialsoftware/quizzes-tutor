@@ -14,18 +14,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -71,6 +71,9 @@ public class StatementService {
     @Autowired
     private AnswerService answerService;
 
+    @Autowired
+    private TopicService topicService;
+
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
@@ -95,6 +98,46 @@ public class StatementService {
 
         if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS);
+        }
+
+        availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
+
+        quiz.generate(availableQuestions);
+
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+
+        quiz.setCourseExecution(courseExecution);
+
+        quizRepository.save(quiz);
+        quizAnswerRepository.save(quizAnswer);
+
+        return new StatementQuizDto(quizAnswer);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        Quiz quiz = new Quiz();
+        quiz.setKey(quizService.getMaxQuizKey() + 1);
+        quiz.setType(Quiz.QuizType.GENERATED.toString());
+        quiz.setCreationDate(DateHandler.now());
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        if (quizDetails.getTopicConjunction() != null) {
+            availableQuestions = filterByTopicConjunctionTournament(availableQuestions, quizDetails, courseExecution);
+        } else {
+            availableQuestions = new ArrayList<>();
+        }
+
+        if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);
         }
 
         availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
@@ -320,5 +363,18 @@ public class StatementService {
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+    }
+
+    public List<Question> filterByTopicConjunctionTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, CourseExecution courseExecution) {
+        List<TopicConjunction> topicConjunctions = new ArrayList<>();
+        topicConjunctions.add(quizDetails.getTopicConjunction());
+
+        List<Integer> availableTopics = topicService.findTournamentTopics(courseExecution.getCourse().getId(), courseExecution.getId())
+                .stream().map(topic -> topic.getId()).collect(Collectors.toList());
+
+        return availableQuestions.stream()
+                .filter(question -> question.belongsToTopicConjunction(topicConjunctions))
+                .filter(question -> availableTopics.containsAll(question.getTopics().stream().map(topic -> topic.getId()).collect(Collectors.toList())))
+                .collect(Collectors.toList());
     }
 }

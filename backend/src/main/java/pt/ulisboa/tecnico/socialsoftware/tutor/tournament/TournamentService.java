@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -24,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
@@ -78,36 +80,23 @@ public class TournamentService {
         checkInput(userId, topicsId, tournamentDto);
         User user = checkUser(userId);
 
-        List<TopicDto> topicDtos = new ArrayList<>();
+        Set<Topic> topics = new HashSet<>();
         for (Integer topicId : topicsId) {
             Topic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-            TopicDto topicDto = new TopicDto(topic);
-            topicDtos.add(topicDto);
+            topics.add(topic);
         }
 
-        if (topicDtos.isEmpty()) {
+        if (topics.isEmpty()) {
             throw new TutorException(TOURNAMENT_MISSING_TOPICS);
         }
 
-        List<TopicConjunctionDto> topicConjunctions = new ArrayList<>();
-        TopicConjunctionDto topicConjunctionDto = new TopicConjunctionDto();
-        topicConjunctionDto.setTopics(topicDtos);
-        topicConjunctions.add(topicConjunctionDto);
+        TopicConjunction topicConjunction = new TopicConjunction();
+        topicConjunction.updateTopics(topics);
 
-        AssessmentDto assessmentDto = new AssessmentDto();
-        assessmentDto.setTitle("Tournament");
-        assessmentDto.setStatus(Assessment.Status.TOURNAMENT.name());
-        assessmentDto.setTopicConjunctions(topicConjunctions);
-        assessmentService.createAssessment(user.getCourseExecutions().iterator().next().getId(), assessmentDto);
-
-        Assessment assessment = assessmentRepository.findTournamentAssessment();
-
-        Tournament tournament = new Tournament(user, assessment, tournamentDto);
+        Tournament tournament = new Tournament(user, topicConjunction, tournamentDto);
         this.entityManager.persist(tournament);
-
-        tournament.getAssessment().setTitle("Tournament " + tournament.getId() + " Assessment");
 
         return new TournamentDto(tournament);
     }
@@ -172,11 +161,11 @@ public class TournamentService {
         tournament.addParticipant(user);
 
         if (!tournament.hasQuiz()) {
-            StatementCreationDto quizForm = new StatementCreationDto();
+            StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto();
             quizForm.setNumberOfQuestions(tournament.getNumberOfQuestions());
-            quizForm.setAssessment(tournament.getAssessment().getId());
+            quizForm.setTopicConjunction(tournament.getTopicConjunction());
 
-            StatementQuizDto statementQuizDto = statementService.generateStudentQuiz(tournament.getCreator().getId(),
+            StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
                     tournament.getCourseExecution().getId(), quizForm);
 
             Quiz quiz = quizRepository.findById(statementQuizDto.getId())
