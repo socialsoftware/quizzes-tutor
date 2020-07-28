@@ -35,12 +35,4 @@ public class UserController {
         userService.importListOfUsers(file.getInputStream(), executionId);
         return file.getOriginalFilename();
     }
-
-    @PostMapping("/users/delete/inactive")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public void deleteExternalInactiveUsers(@Valid @RequestBody List<Integer> usersIds) {
-        userService.deleteExternalInactiveUsers(usersIds);
-    }
-
-
 }

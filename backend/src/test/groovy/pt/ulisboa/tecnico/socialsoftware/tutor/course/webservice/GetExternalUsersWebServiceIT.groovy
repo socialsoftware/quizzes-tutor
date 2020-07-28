@@ -70,7 +70,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         userList.size() == 1
         userList.get(0).id == user1.getId()
     }
-    
+
 
     def cleanup() {
         persistentCourseCleanup()

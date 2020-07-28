@@ -301,16 +301,4 @@ public class UserService {
         return new ExternalUserDto(user);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteExternalInactiveUsers(List<Integer> usersId){
-        Optional<User> userOp;
-        for(Integer id : usersId){
-            userOp = userRepository.findById(id);
-            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
-                userOp.ifPresent(User::removeFromCourseExecutions);
-                userOp.ifPresent(userRepository::delete);
-            }
-        }
-    }
-
 }

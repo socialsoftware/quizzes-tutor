@@ -9,14 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -28,6 +26,9 @@ public class CourseService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Retryable(
             value = { SQLException.class },
@@ -181,8 +182,39 @@ public class CourseService {
         execution = courseExecutionRepository.findById(courseExecutionId)
             .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if(!execution.getType().equals(Course.Type.EXTERNAL))
-            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        checkExternalExecution(execution);
         return execution;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public CourseDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
+        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+
+        checkExternalExecution(courseExecution);
+
+        Optional<User> userOp;
+        User user;
+
+        usersId = usersId.stream()
+                .filter(uid -> courseExecution.getUsers().stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList())
+                    .contains(uid))
+                .collect(Collectors.toList());
+
+        for(Integer id : usersId){
+            userOp = userRepository.findById(id);
+            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
+                user = userOp.get();
+                user.removeFromCourseExecutions();
+                userRepository.delete(user);
+            }
+        }
+        return new CourseDto(courseExecution);
+    }
+
+    private void checkExternalExecution(CourseExecution courseExecution) {
+        if(!courseExecution.getType().equals(Course.Type.EXTERNAL))
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);
     }
 }

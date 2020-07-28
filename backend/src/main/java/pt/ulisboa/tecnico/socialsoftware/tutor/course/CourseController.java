@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -75,9 +76,15 @@ public class CourseController {
         courseService.removeCourseExecution(courseExecutionId);
     }
 
-    @GetMapping("/executions/{courseExecutionId}/users/external")
+    @GetMapping("/executions/{executionId}/users/external")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public List<ExternalUserDto> getExternalUsers(@PathVariable Integer courseExecutionId) {
-        return courseService.getExternalUsers(courseExecutionId);
+    public List<ExternalUserDto> getExternalUsers(@PathVariable Integer executionId) {
+        return courseService.getExternalUsers(executionId);
+    }
+
+    @PostMapping("/executions/{executionId}/users/delete/")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    public CourseDto deleteExternalInactiveUsers(@PathVariable Integer executionId, @Valid @RequestBody List<Integer> usersIds) {
+        return courseService.deleteExternalInactiveUsers(executionId, usersIds);
     }
 }

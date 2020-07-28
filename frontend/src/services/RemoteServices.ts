@@ -490,9 +490,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getExternalUsers(requestParamter: String): Promise<ExternalUser[]>{
+  static async getExternalUsers(courseExecutionId: number): Promise<ExternalUser[]>{
     return httpClient
-      .get('/executions/'+requestParamter+'/students/external')
+      .get('/executions/'+courseExecutionId+'/users/external')
       .then(response => {
         return response.data.map((user: any) => {
           return new ExternalUser(user);
@@ -503,9 +503,9 @@ export default class RemoteServices {
       });
   }
 
-  static async deleteExternalInactiveUsers(userIdList: number[]) {
+  static async deleteExternalInactiveUsers(courseExecution: Course, userIdList: number[]) {
     return httpClient
-      .post('/users/delete/inactive', userIdList)
+      .post('/executions/'+courseExecution.courseExecutionId+'/users/delete/', userIdList)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
