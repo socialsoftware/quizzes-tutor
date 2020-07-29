@@ -9,19 +9,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 
 @DataJpaTest
 class ExternalUserAuthTest extends SpockTest {
 
-    final static String PASSWORD = "1234"
-    final static String WRONG_PASSWORD = "4321"
-
     User user
     Course course
     CourseExecution courseExecution
-    ExternalUserDto externalUserDto
 
 	def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -32,7 +27,7 @@ class ExternalUserAuthTest extends SpockTest {
         user = new User(USER_1_NAME, USER_1_EMAIL, User.Role.STUDENT)
         user.addCourse(courseExecution)
         user.setState(User.State.ACTIVE)
-        user.setPassword(passwordEncoder.encode(PASSWORD))
+        user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         courseExecution.addUser(user)
         userRepository.save(user)
 
@@ -40,7 +35,7 @@ class ExternalUserAuthTest extends SpockTest {
 
     def "user logins successfully" () {
         when:
-        def result = authService.externalUserAuth(USER_1_EMAIL, PASSWORD)
+        def result = authService.externalUserAuth(USER_1_EMAIL, USER_1_PASSWORD)
 
         then:
         result.user.username == USER_1_EMAIL
@@ -55,10 +50,11 @@ class ExternalUserAuthTest extends SpockTest {
         error.getErrorMessage() == errorMessage
 
         where:
-        username    | password        || errorMessage
-        USER_2_EMAIL | PASSWORD       || ErrorMessage.EXTERNAL_USER_NOT_FOUND
-        USER_1_EMAIL | WRONG_PASSWORD || ErrorMessage.INVALID_PASSWORD
-        USER_1_EMAIL | null           || ErrorMessage.INVALID_PASSWORD
+        username     | password        || errorMessage
+        null         | USER_1_PASSWORD || ErrorMessage.EXTERNAL_USER_NOT_FOUND
+        USER_2_EMAIL | USER_1_PASSWORD || ErrorMessage.EXTERNAL_USER_NOT_FOUND
+        USER_1_EMAIL | USER_2_PASSWORD || ErrorMessage.INVALID_PASSWORD
+        USER_1_EMAIL | null            || ErrorMessage.INVALID_PASSWORD
     }
     
 

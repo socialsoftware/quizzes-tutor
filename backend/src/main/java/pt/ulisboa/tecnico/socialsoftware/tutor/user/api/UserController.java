@@ -26,7 +26,11 @@ public class UserController {
 
     @PostMapping ("/auth/registration/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        return userService.confirmRegistration(externalUserDto);
+        ExternalUserDto user = userService.confirmRegistration(externalUserDto);
+        if (!user.isActive()) {
+            userService.sendConfirmationEmailTo(user);
+        }
+        return user;
     }
 
     @PostMapping("/courses/executions/{executionId}/csv")

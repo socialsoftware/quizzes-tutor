@@ -10,7 +10,7 @@
       </v-btn>
 
       <v-btn href="./login/external" depressed color="primary">
-        Log in as External <v-icon>fas fa-sign-in-alt</v-icon>
+        External User Login <v-icon>fas fa-sign-in-alt</v-icon>
       </v-btn>
     </div>
 

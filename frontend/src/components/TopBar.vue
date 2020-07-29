@@ -184,12 +184,12 @@
           <v-list>
             <v-list-item :href="fenixUrl">
               <v-list-item-content>
-                <v-list-item-title>Login in with Fenix</v-list-item-title>
+                <v-list-item-title>Fenix Login</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/login/external">
               <v-list-item-content>
-                <v-list-item-title>Login in as External</v-list-item-title>
+                <v-list-item-title>External Login</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>

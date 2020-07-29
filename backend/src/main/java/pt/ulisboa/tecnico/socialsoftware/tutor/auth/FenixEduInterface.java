@@ -75,6 +75,10 @@ public class FenixEduInterface {
         return getCourses(courses.get("teaching").getAsJsonArray());
     }
 
+    public String getPersonEmail() {
+        return String.valueOf(person.get("email")).replaceAll("^\"|\"$", "");
+    }
+
     private List<CourseDto> getCourses(JsonArray coursesJson) {
         List<CourseDto> result = new ArrayList<>();
         for (JsonElement courseJson : coursesJson) {

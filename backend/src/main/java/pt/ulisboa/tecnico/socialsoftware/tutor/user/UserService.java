@@ -213,7 +213,7 @@ public class UserService {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
         User user1 = getUser(externalUserDto, courseExecution);
         associateUserWithExecution(courseExecution, user1);
-        sendConfirmationEmailTo(user1);
+        generateConfirmationToken(user1);
         return new ExternalUserDto(user1);
     }
 
@@ -224,12 +224,12 @@ public class UserService {
         return token;
     }
 
-    private void sendConfirmationEmailTo(User user) {
-        generateConfirmationToken(user);
+    public void sendConfirmationEmailTo(ExternalUserDto user) {
         mailer.sendSimpleMail(Mailer.MAIL_USER, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
     }
 
-    private String buildMailBody(User user) {
+
+    private String buildMailBody(ExternalUserDto user) {
         String msg = "To confirm your registration click the following link";
         return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(user.getEmail(), user.getConfirmationToken()));
     }
@@ -285,18 +285,22 @@ public class UserService {
         if (user.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
 
-        if (!externalUserDto.getConfirmationToken().equals(user.getConfirmationToken()))
-            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-            
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
-        
-        if (user.getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
-            sendConfirmationEmailTo(user);
-        else {
-            user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-            user.setState(User.State.ACTIVE);
+
+        try {
+            user.checkConfirmationToken(externalUserDto.getConfirmationToken());
         }
+        catch (TutorException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
+                generateConfirmationToken(user);
+                return new ExternalUserDto(user);
+            }
+            else throw new TutorException(e.getErrorMessage());
+        }
+
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+        user.setState(User.State.ACTIVE);
 
         return new ExternalUserDto(user);
     }

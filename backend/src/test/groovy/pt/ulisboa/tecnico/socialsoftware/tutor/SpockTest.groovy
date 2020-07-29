@@ -39,6 +39,9 @@ class SpockTest extends Specification {
     public static final String USER_2_USERNAME = "User 2 Username"
     public static final String USER_1_EMAIL = "user1@mail.com"
     public static final String USER_2_EMAIL = "user2@mail.com"
+    public final static String USER_1_PASSWORD = "1234"
+    public final static String USER_2_PASSWORD = "4321"
+    public static final String USER_1_TOKEN = "1a2b3c"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"

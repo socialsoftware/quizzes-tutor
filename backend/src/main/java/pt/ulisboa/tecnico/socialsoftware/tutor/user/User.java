@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -15,6 +16,9 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EXPIRED_CONFIRMATION_TOKEN;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_CONFIRMATION_TOKEN;
 
 @Entity
 @Table(name = "users",
@@ -46,6 +50,8 @@ public class User implements UserDetails, DomainEntity {
     private String username;
 
     private String name;
+
+    @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
     private String password;
 
@@ -222,6 +228,13 @@ public class User implements UserDetails, DomainEntity {
 
     public String getConfirmationToken() {
         return confirmationToken;
+    }
+
+    public void checkConfirmationToken(String token) {
+        if (!token.equals(getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
     public Integer getNumberOfTeacherQuizzes() {

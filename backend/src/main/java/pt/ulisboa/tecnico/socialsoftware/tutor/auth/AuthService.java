@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -22,7 +21,6 @@ import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EXTERNAL_USER_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_IS_INACTIVE;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_PASSWORD;
 
 @Service
@@ -66,6 +64,9 @@ public class AuthService {
         if (user == null) {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
+
+        if (user.getEmail() == null)
+            user.setEmail(fenix.getPersonEmail());
 
         user.setLastAccess(DateHandler.now());
 

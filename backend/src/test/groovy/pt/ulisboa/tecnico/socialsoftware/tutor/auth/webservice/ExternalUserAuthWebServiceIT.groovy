@@ -17,10 +17,6 @@ class ExternalUserAuthWebServiceIT extends SpockTest{
     @LocalServerPort
     private int port
 
-    final static String EMAIL = "placeholder@mail.com"
-    final static String PASSWORD = "1234"
-
-    def response
     User user
 
     Course course
@@ -36,20 +32,20 @@ class ExternalUserAuthWebServiceIT extends SpockTest{
 
     def "user confirms registration"() {
         given: "one inactive user with an expired "
-        user = new User(USER_1_NAME, EMAIL, User.Role.STUDENT)
-        user.setEmail(EMAIL)
-        user.setPassword(passwordEncoder.encode(PASSWORD))
+        user = new User(USER_1_NAME, USER_1_EMAIL, User.Role.STUDENT)
+        user.setEmail(USER_1_EMAIL)
+        user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         user.addCourse(courseExecution)
         user.setState(User.State.ACTIVE)
         courseExecution.addUser(user)
         userRepository.save(user)
 
         when:
-        response = restClient.get(
+        def response = restClient.get(
                 path: '/auth/external',
                 query: [
-                        email: EMAIL,
-                        password: PASSWORD,
+                        email: USER_1_EMAIL,
+                        password: USER_1_PASSWORD,
                 ],
                 requestContentType: 'application/json'
         )
@@ -58,7 +54,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest{
         then: "check response status"
         response.status == 200
         response.data.token != ""
-        response.data.user.username == EMAIL
+        response.data.user.username == USER_1_EMAIL
         
         cleanup:
 
