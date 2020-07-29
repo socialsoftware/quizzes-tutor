@@ -61,6 +61,18 @@
           </template>
           <span>Delete Course</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="viewCourseExecutionUsers(item)"
+              data-cy="viewUsersButton"
+              >fas fa-user</v-icon
+            >
+          </template>
+          <span>View Users</span>
+        </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -92,7 +104,14 @@
       v-if="currentCourse"
       v-model="addUserDialog"
       :course="currentCourse"
-      v-on:new-course="onCreateCourse"
+      v-on:user-created="onCreateUser"
+      v-on:close-dialog="onCloseDialog"
+    />
+    <view-users-dialog
+      v-if="currentCourse"
+      v-model="viewUsersDialog"
+      :course="currentCourse"
+      v-on:delete-users="onDeleteUsers"
       v-on:close-dialog="onCloseDialog"
     />
   </v-card>
@@ -105,13 +124,16 @@ import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
 import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/uploadUsersDialog.vue';
+import ViewUsersDialog from '@/views/admin/Courses/viewUsersDialog.vue';
+import ExternalUser from '../../../models/user/ExternalUser';
 
 
 @Component({
   components: {
     'upload-users-dialog': UploadUsersDialog,
     'edit-course-dialog': EditCourseDialog,
-    'add-user-dialog': AddUserDialog
+    'add-user-dialog': AddUserDialog,
+    'view-users-dialog': ViewUsersDialog 
   }
 })
 export default class CoursesView extends Vue {
@@ -121,6 +143,7 @@ export default class CoursesView extends Vue {
   editCourseDialog: boolean = false;
   uploadUsersDialog: boolean = false;
   addUserDialog: boolean = false;
+  viewUsersDialog: boolean = false;
   search: string = '';
   headers: object = [
     {
@@ -211,6 +234,11 @@ export default class CoursesView extends Vue {
     this.editCourseDialog = true;
   }
 
+  viewCourseExecutionUsers(course: Course) {
+    this.currentCourse = course;
+    this.viewUsersDialog = true;
+  }
+
   async onCreateCourse(course: Course) {
     this.courses.unshift(course);
     this.editCourseDialog = false;
@@ -221,11 +249,24 @@ export default class CoursesView extends Vue {
     this.editCourseDialog = false;
     this.currentCourse = null;
     this.addUserDialog = false;
+    this.viewUsersDialog = false;
   }
 
   addExternalUser(course: Course) {
     this.addUserDialog = true;
     this.currentCourse = course;
+  }
+
+  onCreateUser(user: ExternalUser) {
+    if(!!this.currentCourse && !!this.currentCourse.courseExecutionUsers){
+      this.currentCourse.courseExecutionUsers.unshift(user);
+
+      let index: number = this.courses
+        .indexOf(this.courses
+          .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
+        
+      this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+    }
   }
 
   isExternalCourse(course: Course) {
@@ -264,6 +305,25 @@ export default class CoursesView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async onDeleteUsers(users: ExternalUser[]) {
+    var course: Course;
+      await this.$store.dispatch('loading');
+      if(!!this.currentCourse){
+        try {
+          course = await RemoteServices.deleteExternalInactiveUsers(this.currentCourse, users.map(user => user.id));
+          let index: number = this.courses
+            .indexOf(this.courses
+              .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
+
+          this.currentCourse = course;
+          this.courses[index].courseExecutionUsers = course.courseExecutionUsers;
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
+      }
+      await this.$store.dispatch('clearLoading');
   }
 
 }

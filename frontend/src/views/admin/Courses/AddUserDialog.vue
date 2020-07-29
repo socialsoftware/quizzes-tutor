@@ -65,7 +65,7 @@ export default class AddUserDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
-	roles = ['TEACHER', 'STUDENT'];
+  roles = ['TEACHER', 'STUDENT'];
   user !: ExternalUser;
 
   created() {
@@ -73,7 +73,14 @@ export default class AddUserDialog extends Vue {
 	}
 
   async addUser() {
-	 const user = await RemoteServices.createExternalUser(this.course.courseExecutionId as number, this.user);
+    var user: ExternalUser;
+    try {
+      user = await RemoteServices.createExternalUser(this.course.courseExecutionId as number, this.user);
+      this.$emit('user-created', user);
+
+    } catch(error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

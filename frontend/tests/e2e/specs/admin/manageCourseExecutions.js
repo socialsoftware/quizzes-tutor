@@ -15,6 +15,8 @@ describe('Administration walkthrough', () => {
 
     cy.addTeacherThroughForm('TEST-AO3', 'User1', 'test@mail.com');
 
+    cy.deleteUser('test@mail.com', 'TEST-AO3');
+
     cy.deleteCourseExecution('TEST-AO3');
   });
 

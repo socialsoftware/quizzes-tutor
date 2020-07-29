@@ -114,3 +114,16 @@ Cypress.Commands.add('addStudentThroughForm', (acronym, name, email) => {
 
   
 });
+
+Cypress.Commands.add('deleteUser', (mail, acronym) => {
+  cy.contains(acronym)
+    .parent()
+    .children()
+    .find('[data-cy="viewUsersButton"]')
+    .click();
+
+  cy.contains(mail).parent().children().eq(0).click();
+  cy.get('[data-cy="deleteSelectedUsersButton"').click();
+  cy.contains('No data available');
+  cy.get('[data-cy="cancelButton"').click()
+});

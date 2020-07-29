@@ -36,7 +36,7 @@ public class ExternalUserDto implements Serializable {
         this.state = user.getState();
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
-        this.courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+        //this.courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {
