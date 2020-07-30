@@ -171,7 +171,9 @@ Cypress.Commands.add('reviewSubmission', (select, title, comment=null) => {
   if (comment != null){
     cy.get('[data-cy="Comment"]').type(comment);
   }
-  cy.get('[data-cy="SelectMenu"]').select(select);
+  cy.log(select);
+  let option = select === 'Request Further Review' ? '{downarrow}{downarrow}{downarrow}' : select;
+  cy.get('[data-cy=SelectMenu]').type(option + '{enter}', {force: true})
   cy.get('[data-cy="SubmitButton"]').click();
 });
 
@@ -192,7 +194,11 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
 Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
   cy.exec(
     'PGPASSWORD=' +
-    sh
+    Cypress.env('PASS') +
+    ' psql -d ' +
+    Cypress.env('DBNAME') +
+    ' -U ' +
+    Cypress.env('USER') +
     ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
     title +
     '\', \'Question?\', \'' +

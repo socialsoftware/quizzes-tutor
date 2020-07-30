@@ -45,6 +45,7 @@
                       v-model="selected"
                       :items="statusOptions"
                       label="Status"
+                      data-cy="SelectMenu"
               >
               </v-select>
             </v-col>

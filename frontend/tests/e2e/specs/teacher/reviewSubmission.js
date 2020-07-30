@@ -29,7 +29,7 @@ describe('Teacher walkthrough', () => {
 
   it('login requests changes for a submission', () => {
       cy.reviewSubmission('Request Changes', 'Test', 'Comment');
-      cy.checkSubmissionStatus('Test', 'CHANGES REQUESTED');
+      cy.checkSubmissionStatus('Test', 'QUESTION STATUS');
   });
 
   it('login requests further review', () => {
