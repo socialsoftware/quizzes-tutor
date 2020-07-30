@@ -19,10 +19,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
@@ -51,6 +51,9 @@ public class AnswersXmlImport {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private QuestionDetailsRepository questionDetailsRepository;
+
+    @Autowired
     private QuizRepository quizRepository;
 
     @Autowired
@@ -71,7 +74,7 @@ public class AnswersXmlImport {
     @Autowired
     private QuestionAnswerRepository questionAnswerRepository;
 
-    private Map<Integer, Map<Integer, Integer>> questionMap;
+    private Map<Integer, Map<Integer, Integer>> multipleChoiceQuestionMap;
 
     public void importAnswers(InputStream inputStream) {
 
@@ -100,11 +103,9 @@ public class AnswersXmlImport {
     }
 
     private void loadQuestionMap() {
-        // TODO[is->has]: questionMap XML
-        questionMap = questionRepository.findAll().stream()
-                .filter(x -> x.getQuestionDetails() instanceof MultipleChoiceQuestion)
-                .collect(Collectors.toMap(Question::getKey,
-                        question -> ((MultipleChoiceQuestion) question.getQuestionDetails()).getOptions().stream()
+        multipleChoiceQuestionMap = questionDetailsRepository.findMultipleChoiceQuestionDetails().stream()
+                .collect(Collectors.toMap(questionDetails -> questionDetails.getQuestion().getKey(),
+                        questionDetails -> questionDetails.getOptions().stream()
                                 .collect(Collectors.toMap(Option::getSequence, Option::getId))));
     }
 
@@ -191,7 +192,7 @@ public class AnswersXmlImport {
         if (questionAnswerElement.getChild(OPTION) != null) {
             Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
             Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
-            optionId = questionMap.get(questionKey).get(optionSequence);
+            optionId = multipleChoiceQuestionMap.get(questionKey).get(optionSequence);
         }
 
         if (optionId == null) {

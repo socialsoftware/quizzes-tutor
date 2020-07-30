@@ -55,7 +55,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
                 Option option = getOptions()
                         .stream()
                         .filter(op -> op.getId().equals(optionDto.getId()))
-                        .findFirst()
+                        .findAny()
                         .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
 
                 option.setContent(optionDto.getContent());
@@ -90,7 +90,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return convertSequenceToLetter(this.getCorrectAnswer());
     }
 
-    private String convertSequenceToLetter(Integer correctAnswer) {
+    public static String convertSequenceToLetter(Integer correctAnswer) {
         switch (correctAnswer) {
             case 0:
                 return "A";

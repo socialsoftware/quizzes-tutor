@@ -1,11 +1,10 @@
 import Question from '@/models/management/Question';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
-import MultipleChoiceAnswerType from '@/models/management/questions/MultipleChoiceAnswerDetails';
 import { QuestionFactory } from '@/services/QuestionHelpers';
 
 export class QuestionAnswer {
   question!: Question;
-  answerDetails: AnswerDetails = new MultipleChoiceAnswerType();
+  answerDetails!: AnswerDetails;
 
   constructor(jsonObj?: QuestionAnswer) {
     if (jsonObj) {

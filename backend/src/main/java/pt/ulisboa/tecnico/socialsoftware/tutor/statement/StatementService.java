@@ -30,7 +30,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -200,7 +199,7 @@ public class StatementService {
             answer.setTimeToSubmission(0);
         }
 
-        if (answer.noAnswer()) {
+        if (answer.emptyAnswer()) {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {

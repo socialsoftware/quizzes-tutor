@@ -5,5 +5,5 @@ export default abstract class QuestionDetails {
     this.type = type;
   }
 
-  abstract duplicate(): void;
+  abstract setAsNew(): void;
 }

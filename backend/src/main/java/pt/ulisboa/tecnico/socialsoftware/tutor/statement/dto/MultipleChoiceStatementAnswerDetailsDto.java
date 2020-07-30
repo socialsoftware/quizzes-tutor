@@ -37,7 +37,7 @@ public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDeta
     }
 
     @Override
-    public boolean noAnswer() {
+    public boolean emptyAnswer() {
         return optionId == null;
     }
 

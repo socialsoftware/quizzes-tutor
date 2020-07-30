@@ -45,7 +45,7 @@ export const questionWithFigure = new Question({
           'Memcached can be considered a sub-module of the Store Graphs module.'
       }
     ],
-    duplicate: MultipleChoiceQuestionDetails.prototype.duplicate
+    setAsNew: MultipleChoiceQuestionDetails.prototype.setAsNew
   } as MultipleChoiceQuestionDetails,
   image: {
     url: '395.png',
@@ -109,7 +109,7 @@ export const questionWithoutFigure = new Question({
           'Memcached can be considered a sub-module of the Store Graphs module.'
       }
     ],
-    duplicate: MultipleChoiceQuestionDetails.prototype.duplicate
+    setAsNew: MultipleChoiceQuestionDetails.prototype.setAsNew
   } as MultipleChoiceQuestionDetails,
   image: null,
   topics: [

@@ -320,7 +320,7 @@ export default class QuestionsView extends Vue {
   duplicateQuestion(question: Question) {
     this.currentQuestion = new Question(question);
     this.currentQuestion.id = null;
-    this.currentQuestion.questionDetailsDto.duplicate();
+    this.currentQuestion.questionDetailsDto.setAsNew();
     this.currentQuestion.image = null;
     this.editQuestionDialog = true;
   }

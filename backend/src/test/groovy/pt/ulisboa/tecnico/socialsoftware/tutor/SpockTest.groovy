@@ -147,7 +147,6 @@ class SpockTest extends Specification {
     @Autowired
     UserService userService
 
-
     Course course
     CourseExecution courseExecution
 

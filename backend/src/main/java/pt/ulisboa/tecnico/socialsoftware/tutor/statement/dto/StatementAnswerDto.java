@@ -91,8 +91,8 @@ public class StatementAnswerDto implements Serializable {
                 '}';
     }
 
-    public boolean noAnswer() {
-        return this.answerDetails.noAnswer();
+    public boolean emptyAnswer() {
+        return this.answerDetails.emptyAnswer();
     }
 
     public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId) {

@@ -20,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 public abstract class StatementAnswerDetailsDto implements Updator {
     public abstract AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer);
 
-    public abstract boolean noAnswer();
+    public abstract boolean emptyAnswer();
 
     public abstract QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto);
 }

@@ -35,21 +35,6 @@ public interface Visitor {
 
     default void visitCourseExecution(CourseExecution courseExecution) {}
 
-    default String convertSequenceToLetter(Integer value) {
-        switch (value) {
-            case 0:
-                return "A";
-            case 1:
-                return "B";
-            case 2:
-                return "C";
-            case 3:
-                return "D";
-            default:
-                return "X";
-        }
-    }
-
     default void visitAnswerDetails(MultipleChoiceAnswer answer){}
 
     default void visitQuestionDetails(MultipleChoiceQuestion question) {}

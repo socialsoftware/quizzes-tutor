@@ -144,7 +144,7 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitAnswerDetails(MultipleChoiceAnswer answer) {
-        line[column++] = answer.getOption() != null ? convertSequenceToLetter(answer.getOption().getSequence()) : "X";
+        line[column++] = answer.getOption() != null ? MultipleChoiceQuestion.convertSequenceToLetter(answer.getOption().getSequence()) : "X";
     }
 
     @Override
@@ -162,7 +162,7 @@ public class CSVQuizExportVisitor implements Visitor {
         line[column++] = question.getOptions().stream()
                 .filter(Option::isCorrect)
                 .findAny()
-                .map(option -> convertSequenceToLetter(option.getSequence())).orElse("");
+                .map(option -> MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence())).orElse("");
     }
 
     private String convertToCSV(String[] data) {

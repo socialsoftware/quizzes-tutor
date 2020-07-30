@@ -57,7 +57,7 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
-                convertSequenceToLetter(question.getOptions().stream().filter(Option::isCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
+                MultipleChoiceQuestion.convertSequenceToLetter(question.getOptions().stream().filter(Option::isCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
@@ -73,7 +73,7 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitOption(Option option) {
-        this.result = this.result + "\t\\option" + convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
+        this.result = this.result + "\t\\option" + MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
     }
 
 }
