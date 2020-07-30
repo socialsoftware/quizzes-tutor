@@ -40,7 +40,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
     def "login as demo admin, and create an external user" () {
         when:
         response = restClient.post(
-                path: '/courses/executions/'+courseExecution1.getId()+'/users',
+                path: '/users/create/'+courseExecution1.getId(),
                 body: [
                         admin: false,
                         email: EMAIL,

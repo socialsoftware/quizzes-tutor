@@ -18,7 +18,7 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping ("/courses/executions/{executionId}/users")
+    @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
         return userService.createExternalUser(executionId,externalUserDto);

@@ -30,6 +30,7 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
 
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
@@ -206,7 +207,7 @@ public class CourseService {
             userOp = userRepository.findById(id);
             if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
                 user = userOp.get();
-                user.removeFromCourseExecutions();
+                user.remove();
                 userRepository.delete(user);
             }
         }
