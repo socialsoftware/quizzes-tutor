@@ -91,9 +91,6 @@ class CreateExternalUserTest extends SpockTest {
         result.getEmail() == EMAIL
         result.getState() == User.State.INACTIVE
         and:"checks if the user and the course execution are associated"
-        result.getCourseExecutions().size() == 1
-        result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
-        result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         result.getConfirmationToken() != ""
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
@@ -118,18 +115,15 @@ class CreateExternalUserTest extends SpockTest {
         def result = userService.createExternalUser(executionId, externalUserDto)
 
         then:"the user is saved in the database"
-        System.out.println(userRepository.findAll())
         userRepository.count() == 4
         and: "checks if user data is correct"
         result.getUsername() == EMAIL
         result.getEmail() == EMAIL
         and:"checks if the user and the course execution are associated"
-        result.getCourseExecutions().size() == 1
-        result.getCourseExecutions().get(0).getAcronym() == COURSE_1_ACRONYM
-        result.getCourseExecutions().get(0).getAcademicTerm() == COURSE_1_ACADEMIC_TERM
         result.getConfirmationToken() != ""
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
+
         and: "a mail is sent"
         1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', EMAIL,_,_)
     }

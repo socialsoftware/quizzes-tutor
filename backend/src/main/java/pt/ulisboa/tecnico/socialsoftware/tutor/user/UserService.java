@@ -211,10 +211,11 @@ public class UserService {
         verifyEmail(externalUserDto);
         verifyRole(externalUserDto);
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        User user1 = getUser(externalUserDto, courseExecution);
-        associateUserWithExecution(courseExecution, user1);
-        generateConfirmationToken(user1);
-        return new ExternalUserDto(user1);
+        User user = getUser(externalUserDto, courseExecution);
+        associateUserWithExecution(courseExecution, user);
+        generateConfirmationToken(user);
+        sendConfirmationEmailTo(new ExternalUserDto(user));
+        return new ExternalUserDto(user);
     }
 
     public String generateConfirmationToken(User user) {

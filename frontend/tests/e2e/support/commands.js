@@ -31,6 +31,7 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
   cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
   cy.get('[data-cy="saveButton"]').click();
+  cy.wait(1000);
 });
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
