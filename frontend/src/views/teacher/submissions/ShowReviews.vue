@@ -65,7 +65,7 @@ export default class ShowReviews extends Vue {
     } else if (status === 'REJECTED') {
       return status;
     } else if (status === 'IN_REVISION') {
-      return 'CHANGES REQUESTED';
+      return 'QUESTION STATUS';
     } else if (status === 'IN_REVIEW') {
       return 'FURTHER REVIEW REQUESTED';
     }

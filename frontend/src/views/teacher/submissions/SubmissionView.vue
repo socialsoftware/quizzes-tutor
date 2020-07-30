@@ -93,6 +93,7 @@ import Topic from '@/models/management/Topic';
 import RemoteServices from '@/services/RemoteServices';
 import EditSubmissionTopics from '@/views/teacher/submissions/EditSubmissionTopics.vue';
 import ViewSubmissionTopics from '@/views/teacher/submissions/ViewSubmissionTopics.vue';
+import Review from '@/models/management/Review';
 
 @Component({
   components: {
@@ -183,10 +184,14 @@ export default class SubmissionView extends Vue {
     try {
       this.currentSubmission = submission;
       if (this.isReviewable(this.currentSubmission)) {
-        await RemoteServices.toggleInReviewStatus(
-          submission!.question.id!,
-          true
-        );
+        try {
+          await RemoteServices.toggleInReviewStatus(
+            submission!.question.id!,
+            true
+          );
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
       }
       this.submissionDialog = true;
     } catch (error) {

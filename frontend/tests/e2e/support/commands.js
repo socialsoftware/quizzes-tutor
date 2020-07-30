@@ -192,11 +192,7 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
 Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
   cy.exec(
     'PGPASSWORD=' +
-    Cypress.env('PASS') +
-    ' psql -d ' +
-    Cypress.env('DBNAME') +
-    ' -U ' +
-    Cypress.env('USER') +
+    sh
     ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
     title +
     '\', \'Question?\', \'' +

@@ -112,8 +112,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import ShowSubmissionDialog from '@/views/student/submissions/ShowSubmissionDialog.vue';
-import EditSubmissionTopics from '@/views/student/submissions/EditSubmissionTopics.vue';
-import ViewSubmissionTopics from '@/views/student/submissions/ViewSubmissionTopics.vue';
+import EditSubmissionTopics from '@/views/teacher/submissions/EditSubmissionTopics.vue';
+import ViewSubmissionTopics from '@/views/teacher/submissions/ViewSubmissionTopics.vue';
 import EditSubmissionDialog from '@/views/student/submissions/EditSubmissionDialog.vue';
 import Question from '@/models/management/Question';
 import Submission from '@/models/management/Submission';
