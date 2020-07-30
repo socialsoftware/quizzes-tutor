@@ -7,7 +7,7 @@
       v-for="review in reviews"
       :key="review.id"
       v-bind:class="[
-        $store.getters.getUser.name === review.name
+        $store.getters.getUser.username === review.username
           ? 'review-left'
           : 'review-right'
       ]"
