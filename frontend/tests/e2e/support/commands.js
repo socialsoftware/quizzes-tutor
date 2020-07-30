@@ -91,6 +91,25 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add(
+  'editSubmission',
+  (valid, title, content, opt1, opt2, opt3, opt4) => {
+    cy.get('[data-cy="EditSubmission"]').click();
+    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').type(content);
+    if(valid) {
+      cy.get('[data-cy="Option1"]').type(opt1);
+      cy.get('[data-cy="Option2"]').type(opt2);
+      cy.get('[data-cy="Option3"]').type(opt3);
+      cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="SubmitButton"]').click();
+    } else {
+      cy.get('[data-cy="Option1"]').clear();
+      cy.get('[data-cy="SubmitButton"]').click();
+    }
+  }
+);
+
 Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status=null) => {
   cy.contains(title)
     .parent()

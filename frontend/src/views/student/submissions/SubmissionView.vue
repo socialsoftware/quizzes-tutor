@@ -68,7 +68,11 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editSubmission(item)"
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="editSubmission(item)"
+              data-cy="EditSubmission"
               >edit</v-icon
             >
           </template>
