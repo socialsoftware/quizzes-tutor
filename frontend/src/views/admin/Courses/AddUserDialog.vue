@@ -7,7 +7,11 @@
     max-height="80%"
   >
     <v-card>
-			<v-form>
+			<v-form
+				ref="form"
+    		v-model="valid"
+    		lazy-validation
+			>
 				<v-card-title>
 					<span class="headline">
 						Add user to External Course
@@ -20,12 +24,17 @@
 						v-model="user.name"
 						label="Name"
 						data-cy="userNameInput"
+						:rules="[value => !!value || 'Name is required']"
 						required
 					/>
 					<v-text-field
 						v-model="user.email"
 						label="Email"
 						data-cy="userEmailInput"
+						:rules="[
+							value => !!value || 'E-mail is required', 
+							value => validateEmail(value) || 'E-mail must be valid'
+						]"
 						required
 					/>
 					<v-select
@@ -35,6 +44,9 @@
 						data-cy="userRoleSelect"
 						label="Role"
 					></v-select>
+					<div class="add-user-feedback-container">
+					<span class="add-user-feedback" v-if="success">{{user.role}} {{user.name}} added</span>
+					</div>
 				</v-card-text>
 
 				<v-card-actions>
@@ -65,15 +77,43 @@ export default class AddUserDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
-	roles = ['TEACHER', 'STUDENT'];
-  user !: ExternalUser;
+  roles = ['TEACHER', 'STUDENT'];
+	user !: ExternalUser;
+	valid = true;
+	success = false;
 
   created() {
 		this.user = new ExternalUser();
 	}
 
+	validateEmail(email: string) {
+		return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email)
+	} 
+
   async addUser() {
-	 const user = await RemoteServices.createExternalUser(this.course.courseExecutionId as number, this.user);
+		let user: ExternalUser;
+		this.success = false;
+		
+		if (!(this.$refs.form as Vue & { validate: () => boolean }).validate()) return;
+
+    try {
+      user = await RemoteServices.createExternalUser(this.course.courseExecutionId as number, this.user);
+      this.$emit('user-created', user);
+			this.success = true;
+    } catch(error) {
+      await this.$store.dispatch('error', error);
+		}
   }
 }
 </script>
+
+<style scoped>
+.add-user-feedback-container {
+	height: 25px;
+}
+.add-user-feedback {
+	font-size: 1.05rem;
+	color: #1B5E20;
+	text-transform: uppercase;
+}
+</style>

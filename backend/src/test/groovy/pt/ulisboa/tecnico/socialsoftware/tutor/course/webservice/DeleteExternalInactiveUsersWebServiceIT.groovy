@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -53,7 +53,7 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
 
         when:
         response = restClient.post(
-                path: '/users/delete/inactive',
+                path: '/executions/'+courseExecution1.getId()+'/users/delete/',
                 body:
                         usersIdsList,
                 requestContentType: 'application/json'

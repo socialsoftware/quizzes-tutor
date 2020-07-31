@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.keygen.KeyGenerators;
@@ -50,6 +51,9 @@ public class UserService {
 
     @Autowired
     private Mailer mailer;
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
 
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
@@ -203,13 +207,11 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        verifyEmail(externalUserDto);
-        verifyRole(externalUserDto);
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        User user1 = getUser(externalUserDto, courseExecution);
-        associateUserWithExecution(courseExecution, user1);
-        generateConfirmationToken(user1);
-        return new ExternalUserDto(user1);
+        User user = getUser(externalUserDto, courseExecution);
+        associateUserWithExecution(courseExecution, user);
+        generateConfirmationToken(user);
+        return new ExternalUserDto(user);
     }
 
     public String generateConfirmationToken(User user) {
@@ -220,7 +222,7 @@ public class UserService {
     }
 
     public void sendConfirmationEmailTo(ExternalUserDto user) {
-        mailer.sendSimpleMail(Mailer.MAIL_USER, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
+        mailer.sendSimpleMail(mailUsername, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
     }
 
 
@@ -229,25 +231,22 @@ public class UserService {
         return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(user.getEmail(), user.getConfirmationToken()));
     }
 
-    private void associateUserWithExecution(CourseExecution courseExecution, User user1) {
-        courseExecution.addUser(user1);
-        user1.addCourse(courseExecution);
+    private void associateUserWithExecution(CourseExecution courseExecution, User user) {
+        courseExecution.addUser(user);
+        user.addCourse(courseExecution);
     }
 
     private User getUser(ExternalUserDto externalUserDto, CourseExecution courseExecution) {
-        Optional<User> user = userRepository.findByUsername(externalUserDto.getEmail());
-        User user1;
-        if(user.isPresent()){
-            user.get().addCourse(courseExecution);
-            user1 = user.get();
+        Optional<User> userOp = userRepository.findByUsername(externalUserDto.getEmail());
+        User user;
+        if(userOp.isPresent()){
+            userOp.get().addCourse(courseExecution);
+            user = userOp.get();
         }else{
-            user1 = new User("", externalUserDto.getEmail(), externalUserDto.getRole());
-            userRepository.save(user1);
-            user1.setState(User.State.INACTIVE);
+            user = new User("", externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
+            userRepository.save(user);
         }
-        user1.setAdmin(false);
-        user1.setEmail(externalUserDto.getEmail());
-        return user1;
+        return user;
     }
 
     private CourseExecution getCourseExecution(Integer courseExecutionId) {
@@ -258,16 +257,6 @@ public class UserService {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
         }
         return courseExecution;
-    }
-
-    private void verifyRole(ExternalUserDto externalUserDto) {
-        if(externalUserDto.getRole() == null)
-            throw new TutorException(INVALID_ROLE);
-    }
-
-    private void verifyEmail(ExternalUserDto externalUserDto) {
-        if(externalUserDto.getEmail() == null || externalUserDto.getEmail().trim().equals(""))
-            throw new TutorException(INVALID_EMAIL, externalUserDto.getEmail());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -298,18 +287,6 @@ public class UserService {
         user.setState(User.State.ACTIVE);
 
         return new ExternalUserDto(user);
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteExternalInactiveUsers(List<Integer> usersId){
-        Optional<User> userOp;
-        for(Integer id : usersId){
-            userOp = userRepository.findById(id);
-            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
-                userOp.ifPresent(User::removeFromCourseExecutions);
-                userOp.ifPresent(userRepository::delete);
-            }
-        }
     }
 
 }

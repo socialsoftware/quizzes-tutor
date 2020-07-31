@@ -98,6 +98,4 @@ class BeanConfiguration {
         return mailSender;
     }
 
-
-
 }

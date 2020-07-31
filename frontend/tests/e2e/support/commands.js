@@ -31,6 +31,7 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
   cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
   cy.get('[data-cy="saveButton"]').click();
+  cy.wait(1000);
 });
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
@@ -113,4 +114,17 @@ Cypress.Commands.add('addStudentThroughForm', (acronym, name, email) => {
   cy.get('[data-cy="manageCoursesMenuButton"]').click();
 
   
+});
+
+Cypress.Commands.add('deleteUser', (mail, acronym) => {
+  cy.contains(acronym)
+    .parent()
+    .children()
+    .find('[data-cy="viewUsersButton"]')
+    .click();
+
+  cy.contains(mail).parent().children().eq(0).click();
+  cy.get('[data-cy="deleteSelectedUsersButton"').click();
+  cy.contains('No data available');
+  cy.get('[data-cy="cancelButton"').click()
 });

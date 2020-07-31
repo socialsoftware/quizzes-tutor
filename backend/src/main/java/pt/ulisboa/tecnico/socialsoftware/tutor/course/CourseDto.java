@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+
 import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class CourseDto implements Serializable {
     private Course.Type courseExecutionType;
@@ -15,6 +19,7 @@ public class CourseDto implements Serializable {
     private int numberOfQuizzes;
     private int numberOfStudents;
     private int numberOfTeachers;
+    private List<ExternalUserDto> courseExecutionUsers;
 
     public CourseDto() {}
 
@@ -37,6 +42,10 @@ public class CourseDto implements Serializable {
         this.numberOfStudents = courseExecution.getNumberOfStudents();
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
+        if(courseExecution.getType().equals(Course.Type.EXTERNAL))
+            this.courseExecutionUsers = courseExecution.getUsers().stream()
+                    .map(ExternalUserDto::new)
+                    .collect(Collectors.toList());
     }
 
     public CourseDto(String name, String acronym, String academicTerm) {
@@ -139,6 +148,14 @@ public class CourseDto implements Serializable {
 
     public void setStatus(CourseExecution.Status status) {
         this.status = status;
+    }
+
+    public List<ExternalUserDto> getCourseExecutionUsers() {
+        return courseExecutionUsers;
+    }
+
+    public void setCourseExecutionUsers(List<ExternalUserDto> courseExecutionUsers) {
+        this.courseExecutionUsers = courseExecutionUsers;
     }
 
     @Override

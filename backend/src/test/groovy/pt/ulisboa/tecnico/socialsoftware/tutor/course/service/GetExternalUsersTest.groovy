@@ -49,7 +49,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = -1
 
         when:
-        courseService.getExternalUsers(executionId as String)
+        courseService.getExternalUsers(executionId)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -61,7 +61,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = courseExecution.getId()
 
         when:
-        courseService.getExternalUsers(executionId as String)
+        courseService.getExternalUsers(executionId)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -73,7 +73,7 @@ class GetExternalUsersTest extends SpockTest{
         def executionId = courseExecution1.getId()
 
         when:
-        List<ExternalUserDto> result = courseService.getExternalUsers(executionId as String)
+        List<ExternalUserDto> result = courseService.getExternalUsers(executionId)
 
         then: "check if the list contains one user"
         result.size() == 1
@@ -83,37 +83,7 @@ class GetExternalUsersTest extends SpockTest{
 
     }
 
-    def "receives no course id, and returns a list of all external users"() {
-        given: "a valid request parameter"
-        def requestParameter = "ALL"
-
-        when:
-        List<ExternalUserDto> result = courseService.getExternalUsers(requestParameter)
-
-        then: "check if the list contains the 2 users from the 2 course executions"
-        result.size() == 2
-
-        and: "it contains the correct users"
-        result.get(0).getId() == user1.getId()
-        result.get(1).getId() == user2.getId()
-
-    }
-
-    @Unroll
-    def "invalid arguments: requestParamter=#requestParamter"() {
-        when:
-        courseService.getExternalUsers(requestParamter)
-
-        then:
-        def error = thrown(TutorException)
-
-        where:
-        requestParamter         || errorMessage
-        null                    || ErrorMessage.INVALID_COURSE_EXECUTION_REQUEST_PARAMETER
-        "Not ALL"               || ErrorMessage.INVALID_COURSE_EXECUTION_REQUEST_PARAMETER
-
-    }
-
+    
     @TestConfiguration
     static class LocalTestConfiguration extends BeanConfiguration { }
 }

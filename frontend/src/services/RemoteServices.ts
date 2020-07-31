@@ -93,7 +93,7 @@ export default class RemoteServices {
 
   static async createExternalUser(executionId: number, externalUser: ExternalUser): Promise<ExternalUser> {
     return httpClient
-      .post(`/courses/executions/${executionId}/users`, externalUser)
+      .post(`/users/create/${executionId}`, externalUser)
       .then(response => {
         return new ExternalUser(response.data);
       })
@@ -490,9 +490,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getExternalUsers(requestParamter: String): Promise<ExternalUser[]>{
+  static async getExternalUsers(courseExecutionId: number): Promise<ExternalUser[]>{
     return httpClient
-      .get('/executions/'+requestParamter+'/students/external')
+      .get('/executions/'+courseExecutionId+'/users/external')
       .then(response => {
         return response.data.map((user: any) => {
           return new ExternalUser(user);
@@ -503,9 +503,12 @@ export default class RemoteServices {
       });
   }
 
-  static async deleteExternalInactiveUsers(userIdList: number[]) {
+  static async deleteExternalInactiveUsers(courseExecution: Course, userIdList: number[]):Promise<Course> {
     return httpClient
-      .post('/users/delete/inactive', userIdList)
+      .post('/executions/'+courseExecution.courseExecutionId+'/users/delete/', userIdList)
+      .then(response => {
+        return new Course(response.data)
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

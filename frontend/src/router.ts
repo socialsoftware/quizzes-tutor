@@ -27,7 +27,6 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
-import ExternalUsersView from '@/views/admin/Users/ExternalUsersView.vue';
 
 Vue.use(Router);
 
@@ -221,15 +220,6 @@ let router = new Router({
           component: CoursesView,
           meta: {
             title: APP_NAME + ' - Manage Courses',
-            requiredAuth: 'Admin'
-          }
-        },
-        {
-          path: 'externalUsers',
-          name: 'externalUsersAdmin',
-          component: ExternalUsersView,
-          meta: {
-            title: APP_NAME + ' - Manage External Users',
             requiredAuth: 'Admin'
           }
         }

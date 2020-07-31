@@ -9,14 +9,12 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -28,6 +26,10 @@ public class CourseService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Retryable(
             value = { SQLException.class },
@@ -164,54 +166,56 @@ public class CourseService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<ExternalUserDto> getExternalUsers(String requestParameter){
-        int executionId;
+    public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
         CourseExecution execution;
 
-        checkRequestParemeter(requestParameter);
+        execution = getCourseExecution(courseExecutionId);
 
-        if(requestParameter.equals("ALL")){
-            return courseExecutionRepository.findAll().stream()
-                    .filter(ce -> ce.getType().equals(Course.Type.EXTERNAL))
-                    .map(CourseExecution::getUsers)
-                    .flatMap(Collection::stream)
-                    .sorted(Comparator.comparing(User::getUsername))
-                    .distinct()
-                    .map(ExternalUserDto::new)
-                    .collect(Collectors.toList());
-        }else {
-            executionId = getExecutionId(requestParameter);
-            execution = getCourseExecution(executionId);
-            return execution.getStudents().stream()
-                    .sorted(Comparator.comparing(User::getUsername))
-                    .distinct()
-                    .map(ExternalUserDto::new)
-                    .collect(Collectors.toList());
-        }
+        return execution.getStudents().stream()
+                .sorted(Comparator.comparing(User::getUsername))
+                .distinct()
+                .map(ExternalUserDto::new)
+                .collect(Collectors.toList());
     }
 
-    private int getExecutionId(String requestParameter) {
-        int executionId;
-        try{
-            executionId = Integer.parseInt(requestParameter);
-        }catch (NumberFormatException e){
-            throw new TutorException(INVALID_COURSE_EXECUTION_REQUEST_PARAMETER, requestParameter);
-        }
-        return executionId;
-    }
-
-    private CourseExecution getCourseExecution(int executionId) {
+    private CourseExecution getCourseExecution(Integer courseExecutionId) {
         CourseExecution execution;
-        execution = courseExecutionRepository.findById(executionId)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        execution = courseExecutionRepository.findById(courseExecutionId)
+            .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (!execution.getType().equals(Course.Type.EXTERNAL))
-            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, execution.getId());
+        checkExternalExecution(execution);
         return execution;
     }
 
-    private void checkRequestParemeter(String requestParameter) {
-        if(requestParameter == null)
-            throw new TutorException(INVALID_COURSE_EXECUTION_REQUEST_PARAMETER, null);
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public CourseDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
+        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+
+        checkExternalExecution(courseExecution);
+
+        Optional<User> userOp;
+        User user;
+
+        usersId = usersId.stream()
+                .filter(uid -> courseExecution.getUsers().stream()
+                    .map(User::getId)
+                    .collect(Collectors.toList())
+                    .contains(uid))
+                .collect(Collectors.toList());
+
+        for(Integer id : usersId){
+            userOp = userRepository.findById(id);
+            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
+                user = userOp.get();
+                user.remove();
+                userRepository.delete(user);
+            }
+        }
+        return new CourseDto(courseExecution);
+    }
+
+    private void checkExternalExecution(CourseExecution courseExecution) {
+        if(!courseExecution.getType().equals(Course.Type.EXTERNAL))
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);
     }
 }

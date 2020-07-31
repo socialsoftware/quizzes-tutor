@@ -19,7 +19,7 @@ public class UserController {
     private UserService userService;
 
 
-    @PostMapping ("/courses/executions/{executionId}/users")
+    @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
         return userService.createExternalUser(executionId,externalUserDto);
@@ -40,12 +40,4 @@ public class UserController {
         return userService.importListOfUsers(file.getInputStream(), executionId);
 
     }
-
-    @PostMapping("/users/delete/inactive")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public void deleteExternalInactiveUsers(@Valid @RequestBody List<Integer> usersIds) {
-        userService.deleteExternalInactiveUsers(usersIds);
-    }
-
-
 }

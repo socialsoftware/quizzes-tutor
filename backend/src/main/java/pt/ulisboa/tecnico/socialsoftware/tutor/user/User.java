@@ -15,10 +15,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EXPIRED_CONFIRMATION_TOKEN;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_CONFIRMATION_TOKEN;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "users",
@@ -85,6 +85,9 @@ public class User implements UserDetails, DomainEntity {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
+
+    private static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
     public User() {
     }
 
@@ -95,13 +98,11 @@ public class User implements UserDetails, DomainEntity {
         setCreationDate(DateHandler.now());
     }
 
-    public User(String name, String username, String email, String password, User.Role role){
-        this.name = name;
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.creationDate = DateHandler.now();
+    public User(String name, String username, String email, User.Role role, State state, boolean isAdmin){
+        this(name, username, role);
+        setEmail(email);
+        setState(state);
+        setAdmin(isAdmin);
     }
 
     @Override
@@ -159,6 +160,9 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void setRole(Role role) {
+        if(role == null)
+            throw new TutorException(INVALID_ROLE);
+
         this.role = role;
     }
 
@@ -194,11 +198,20 @@ public class User implements UserDetails, DomainEntity {
         this.password = password;
     }
 
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
+
+        if(email == null || !email.matches(MAIL_FORMAT))
+            throw new TutorException(INVALID_EMAIL, email);
+
         this.email = email;
     }
 
@@ -468,11 +481,6 @@ public class User implements UserDetails, DomainEntity {
     }
 
     @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
     public boolean isAccountNonExpired() {
         return true;
     }
@@ -540,7 +548,11 @@ public class User implements UserDetails, DomainEntity {
                 .orElse(null);
     }
 
-    public void removeFromCourseExecutions(){
+    public void remove() {
+        removeFromCourseExecutions();
+    }
+
+    private void removeFromCourseExecutions() {
         for(CourseExecution ce : courseExecutions)
             ce.getUsers().remove(this);
     }
