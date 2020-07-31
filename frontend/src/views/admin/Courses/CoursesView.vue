@@ -61,7 +61,7 @@
           </template>
           <span>Delete Course</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
@@ -70,7 +70,7 @@
               data-cy="uploadUsersHandler"
             >attach_file</v-icon>
           </template>
-          <span>Upload Users</span>
+          <span>Upload External Users</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -86,7 +86,8 @@
       v-if="uploadUsersCourse"
       v-model="uploadUsersDialog"
       :course="uploadUsersCourse"
-      v-on:users-uploaded="updateSpecificCourse"
+      v-on:users-uploaded="closeUploadUsersDialog"
+      v-on:close-dialog="onCloseDialog"
     />
     <add-user-dialog
       v-if="currentCourse"
@@ -128,7 +129,7 @@ export default class CoursesView extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '25%'
+      width: '30%'
     },
     {
       text: 'Course Type',
@@ -183,7 +184,7 @@ export default class CoursesView extends Vue {
       text: 'Status',
       value: 'status',
       align: 'center',
-      width: '10%'
+      width: '5%'
     }
   ];
 
@@ -220,6 +221,7 @@ export default class CoursesView extends Vue {
   onCloseDialog() {
     this.editCourseDialog = false;
     this.currentCourse = null;
+    this.uploadUsersCourse = null;
     this.addUserDialog = false;
   }
 
@@ -229,7 +231,7 @@ export default class CoursesView extends Vue {
   }
 
   isExternalCourse(course: Course) {
-    return course.courseExecutionType == 'EXTERNAL';
+    return course.courseExecutionType === 'EXTERNAL';
   }
 
   async deleteCourse(courseToDelete: Course) {
@@ -251,18 +253,13 @@ export default class CoursesView extends Vue {
   }
 
 
-  async updateSpecificCourse(executionId: number) {
+  async closeUploadUsersDialog(updatedCourse: Course) {
     this.uploadUsersDialog = false;
     await this.$store.dispatch('loading');
-    try {
-      let updatedCourse = await RemoteServices.getCourse(executionId);
-      this.courses = this.courses.filter(
-              course => course.courseExecutionId !== executionId
-      );
-      this.courses.unshift(updatedCourse)
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    this.courses = this.courses.filter(
+        course => course.courseExecutionId !== updatedCourse.courseExecutionId
+    );
+    this.courses.unshift(updatedCourse)
     await this.$store.dispatch('clearLoading');
   }
 

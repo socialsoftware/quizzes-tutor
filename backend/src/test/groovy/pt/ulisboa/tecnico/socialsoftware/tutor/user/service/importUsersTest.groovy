@@ -19,9 +19,6 @@ class ImportUsersTest extends SpockTest {
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
-
-
-
     }
 
     def 'Import users from csv file' () {
@@ -32,21 +29,27 @@ class ImportUsersTest extends SpockTest {
         when:
         userService.importListOfUsers(csvFile, courseExecution.getId())
         then:
-        userRepository.count() == usersInDataBase + noOfUsersInFile;
+        userRepository.count() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
     }
 
-    def 'Csv file has wrong format' () {
-        given: "wrong formatted InputStream"
+    def 'Csv file has wrong format on some lines, no users are added' () {
+        given: "number of users in dataBase"
+        def usersInDataBase = userRepository.count()
+        and: "wrong formatted InputStream"
         InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE);
         when:
         userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
+        and:
+        userRepository.count() == usersInDataBase
     }
 
     def 'The course execution does not exist' () {
-        given: "a invalid course execution id"
+        given: "number of users in dataBase"
+        def usersInDataBase = userRepository.count()
+        and: "a invalid course execution id"
         def executionId = -1
         and: "inputStream"
         InputStream csvFile = new FileInputStream(CSVFILE);
@@ -55,6 +58,22 @@ class ImportUsersTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
+        and:
+        userRepository.count() == usersInDataBase
+    }
+
+    def 'Csv file has wrong format for roles' () {
+        given: "number of users in dataBase"
+        def usersInDataBase = userRepository.count()
+        and: "wrong role formatted InputStream"
+        InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT);
+        when:
+        userService.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
+        then:
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
+        and:
+        userRepository.count() == usersInDataBase
     }
 
 

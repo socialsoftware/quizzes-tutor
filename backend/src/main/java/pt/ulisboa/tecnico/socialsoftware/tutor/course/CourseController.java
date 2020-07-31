@@ -39,9 +39,9 @@ public class CourseController {
         return courseService.getCourseExecutions(role);
     }
 
-    @GetMapping("/courses/executions/{courseExecutionId}")
+    @GetMapping("/executions/{courseExecutionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
-    public CourseDto getSpecificCourseExecution(@PathVariable Integer courseExecutionId) {
+    public CourseDto getCourseExecutionById(@PathVariable Integer courseExecutionId) {
         return courseService.getCourseExecutionById(courseExecutionId);
     }
 

@@ -11,7 +11,27 @@
         <span class="headline">
           Upload Users
         </span>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on, attrs }">
+            <v-icon
+              color="blue darken-1"
+              dark
+              v-bind="attrs"
+              v-on="on"
+            >info</v-icon>
+          </template>
+          <v-card-text>
+            <div>The file to upload must follow the rule: </div>
+            <div>email,name,student|teacher</div>
+            <div>If the third camp is omitted, it will be considered as a Student</div>
+         </v-card-text>
+        </v-tooltip>
+
+
       </v-card-title>
+
+
+
 
       <v-file-input
         show-size
@@ -53,9 +73,13 @@ export default class UploadUsersDialog extends Vue {
   async uploadUsers(course: Course) {
     try {
       if (course.courseExecutionId != null && this.chosenFile != null) {
-        const fileURL = await RemoteServices.uploadCSVFile(this.chosenFile, course.courseExecutionId);
-        confirm('File ' + fileURL + ' was uploaded!');
-        this.$emit('users-uploaded', course.courseExecutionId);
+        let updatedCourse = await RemoteServices.uploadCSVFile(this.chosenFile, course.courseExecutionId);
+        confirm('File was uploaded!');
+
+        this.$emit('users-uploaded', updatedCourse);
+      }
+      else {
+        await this.$store.dispatch('error','In order to upload users, it must be selected a file');
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

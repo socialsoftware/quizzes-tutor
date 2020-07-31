@@ -11,10 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
@@ -172,8 +169,8 @@ public class UserService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void importListOfUsers(InputStream stream, int courseExecutionId) {
+    @Transactional(rollbackFor=Exception.class, isolation = Isolation.READ_COMMITTED)
+    public CourseDto importListOfUsers(InputStream stream, int courseExecutionId) {
         String line = "";
         String cvsSplitBy = ",";
         User.Role auxRole;
@@ -184,13 +181,8 @@ public class UserService {
                 if (userInfo.length == 2) {
                     auxRole = User.Role.STUDENT;
                 }
-                else if (userInfo.length > 2) {
-                    if (userInfo[2].equals("STUDENT")) {
-                        auxRole = User.Role.STUDENT;
-                    }
-                    else {
-                        auxRole = User.Role.TEACHER;
-                    }
+                else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") || userInfo[2].equalsIgnoreCase("teacher"))) {
+                    auxRole = User.Role.valueOf(userInfo[2].toUpperCase());
                 }
                 else {
                     throw new TutorException(INVALID_CSV_FILE_FORMAT);
@@ -201,6 +193,9 @@ public class UserService {
                 userDto.setRole(auxRole);
                 createExternalUser(courseExecutionId, userDto);
             }
+            return courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
         } catch (IOException ex) {
             throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
