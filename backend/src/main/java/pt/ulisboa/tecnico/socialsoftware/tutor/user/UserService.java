@@ -208,10 +208,19 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        User user = getUser(externalUserDto, courseExecution);
+        checkRole(externalUserDto);
+        User user = getUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
         generateConfirmationToken(user);
         return new ExternalUserDto(user);
+    }
+
+    private void checkRole(ExternalUserDto externalUserDto) {
+        if(externalUserDto.getRole() == null)
+            throw new TutorException(INVALID_ROLE);
+
+        if(!(externalUserDto.getRole().equals(User.Role.STUDENT) || externalUserDto.getRole().equals(User.Role.TEACHER)))
+            throw new TutorException(INVALID_ROLE, externalUserDto.getRole().toString());
     }
 
     public String generateConfirmationToken(User user) {
@@ -236,17 +245,13 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
-    private User getUser(ExternalUserDto externalUserDto, CourseExecution courseExecution) {
-        Optional<User> userOp = userRepository.findByUsername(externalUserDto.getEmail());
-        User user;
-        if(userOp.isPresent()){
-            userOp.get().addCourse(courseExecution);
-            user = userOp.get();
-        }else{
-            user = new User("", externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
-            userRepository.save(user);
-        }
-        return user;
+    private User getUser(ExternalUserDto externalUserDto) {
+        return userRepository.findByUsername(externalUserDto.getEmail())
+                .orElseGet(() -> {
+                    User createdUser = new User("", externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
+                    userRepository.save(createdUser);
+                    return createdUser;
+                });
     }
 
     private CourseExecution getCourseExecution(Integer courseExecutionId) {
