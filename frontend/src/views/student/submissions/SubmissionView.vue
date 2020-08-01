@@ -68,7 +68,11 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editSubmission(item)"
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="editSubmission(item)"
+              data-cy="EditSubmission"
               >edit</v-icon
             >
           </template>
@@ -112,8 +116,8 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import ShowSubmissionDialog from '@/views/student/submissions/ShowSubmissionDialog.vue';
-import EditSubmissionTopics from '@/views/student/submissions/EditSubmissionTopics.vue';
-import ViewSubmissionTopics from '@/views/student/submissions/ViewSubmissionTopics.vue';
+import EditSubmissionTopics from '@/views/teacher/submissions/EditSubmissionTopics.vue';
+import ViewSubmissionTopics from '@/views/teacher/submissions/ViewSubmissionTopics.vue';
 import EditSubmissionDialog from '@/views/student/submissions/EditSubmissionDialog.vue';
 import Question from '@/models/management/Question';
 import Submission from '@/models/management/Submission';
@@ -264,7 +268,6 @@ export default class SubmissionView extends Vue {
           RemoteServices.getSubmissionReviews(toDeleteSubmission.id!)
         ]);
         if (reviews.length > 0) {
-          console.log(reviews);
           await this.$store.dispatch(
             'error',
             'Error: Cannot delete submission that already has reviews'

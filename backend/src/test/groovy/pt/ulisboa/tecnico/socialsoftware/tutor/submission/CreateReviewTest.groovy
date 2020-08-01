@@ -9,8 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
 import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Shared
-import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -19,7 +17,6 @@ class CreateReviewTest extends SpockTest{
     def student
     def teacher
     def question
-    @Shared
     def submission
 
     def setup() {
@@ -150,35 +147,6 @@ class CreateReviewTest extends SpockTest{
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_REVIEW_SUBMISSION
     }
-
-    @Unroll
-    def "invalid arguments: comment=#comment | submissionId=#submissionId | userId=#userId | status=#status || errorMessage"(){
-
-        given: "a reviewDto"
-        def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submissionId)
-        reviewDto.setUserId(userId)
-        reviewDto.setComment(comment)
-        reviewDto.setStatus(status)
-
-        when: submissionService.createReview(reviewDto)
-
-        then: "a TutorException is thrown"
-        def exception = thrown(TutorException)
-        exception.errorMessage == errorMessage
-
-        where:
-        comment                | submissionId       | userId                          | status        || errorMessage
-        null                   | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_COMMENT
-        ' '                    | submission.getId() | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_COMMENT
-        REVIEW_1_COMMENT       | null               | submission.getUser().getId()    | 'AVAILABLE'   || REVIEW_MISSING_SUBMISSION
-        REVIEW_1_COMMENT       | submission.getId() | null                            | 'AVAILABLE'   || REVIEW_MISSING_TEACHER
-        REVIEW_1_COMMENT       | submission.getId() | submission.getUser().getId()    | null          || INVALID_STATUS_FOR_QUESTION
-        REVIEW_1_COMMENT       | submission.getId() | submission.getUser().getId()    | ' '           || INVALID_STATUS_FOR_QUESTION
-        REVIEW_1_COMMENT       | submission.getId() | submission.getUser().getId()    | 'INVALID'     || INVALID_STATUS_FOR_QUESTION
-
-    }
-
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

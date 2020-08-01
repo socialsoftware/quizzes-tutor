@@ -7,7 +7,7 @@
       v-for="review in reviews"
       :key="review.id"
       v-bind:class="[
-        $store.getters.getUser.name === review.name
+        $store.getters.getUser.username === review.username
           ? 'review-left'
           : 'review-right'
       ]"
@@ -65,7 +65,7 @@ export default class ShowReviews extends Vue {
     } else if (status === 'REJECTED') {
       return status;
     } else if (status === 'IN_REVISION') {
-      return 'CHANGES REQUESTED';
+      return 'QUESTION STATUS';
     } else if (status === 'IN_REVIEW') {
       return 'FURTHER REVIEW REQUESTED';
     }

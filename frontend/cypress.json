@@ -6,7 +6,7 @@
   "supportFile": "tests/e2e/support/index.js",
   "projectId": "ou7bhq",
   "env": {
-    "USER": "dserafim1999",
+    "USER": "test",
     "PASS": "",
     "DBNAME": "tutordb"
   }

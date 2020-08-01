@@ -13,6 +13,7 @@ public class ReviewDto implements Serializable {
     private String status;
     private String creationDate;
     private String name;
+    private String username;
 
     public ReviewDto() {}
 
@@ -25,6 +26,7 @@ public class ReviewDto implements Serializable {
         if (review.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(review.getCreationDate());
         this.name = review.getUser().getName();
+        this.username = review.getUser().getUsername();
     }
 
     public Integer getId() { return id; }
@@ -54,4 +56,8 @@ public class ReviewDto implements Serializable {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
+
+    public String getUsername() { return username; }
+
+    public void setUsername(String username) { this.username = username; }
 }

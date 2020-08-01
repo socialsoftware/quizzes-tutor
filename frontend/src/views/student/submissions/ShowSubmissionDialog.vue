@@ -64,8 +64,8 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
-import ShowReviews from '@/views/student/submissions/ShowReviews.vue';
-import ShowQuestion from '@/views/student/submissions/ShowQuestion.vue';
+import ShowReviews from '@/views/teacher/submissions/ShowReviews.vue';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 import Submission from '@/models/management/Submission';
 import RemoteServices from '@/services/RemoteServices';
 import Review from '@/models/management/Review';
@@ -110,7 +110,7 @@ export default class ShowSubmissionDialog extends Vue {
 </script>
 <style lang="scss" scoped>
 .history {
-  max-height: 220px;
+  max-height: 225px;
   overflow-y: auto;
 }
 </style>

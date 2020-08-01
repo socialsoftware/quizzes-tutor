@@ -43,7 +43,13 @@ jobs:
 
     - name: Run backend server
       working-directory: ./backend
-      run: mvn clean -Ptest spring-boot:run &
+      run: mvn clean spring-boot:run &
+
+    - name: Run Postgres DB
+      uses: harmon758/postgresql-action@v1
+      with:
+        postgresql db: 'tutordb'
+        postgresql user: 'test'
       
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
