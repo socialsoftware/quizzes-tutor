@@ -29,7 +29,7 @@ class ImportUsersTest extends SpockTest {
         when:
         userService.importListOfUsers(csvFile, courseExecution.getId())
         then:
-        userRepository.count() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
+        userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
     }
 
     def 'Csv file has wrong format on some lines, no users are added' () {
@@ -43,7 +43,7 @@ class ImportUsersTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
         and:
-        userRepository.count() == usersInDataBase
+        userRepository.findAll().size() == usersInDataBase
     }
 
     def 'The course execution does not exist' () {
@@ -59,7 +59,7 @@ class ImportUsersTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
         and:
-        userRepository.count() == usersInDataBase
+        userRepository.findAll().size() == usersInDataBase
     }
 
     def 'Csv file has wrong format for roles' () {
@@ -73,7 +73,7 @@ class ImportUsersTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
         and:
-        userRepository.count() == usersInDataBase
+        userRepository.findAll().size() == usersInDataBase
     }
 
 
