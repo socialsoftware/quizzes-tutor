@@ -151,7 +151,7 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) =
       Cypress.env('USER') +
       ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING submission_id), sub AS (DELETE FROM submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
      );
-  }else {
+  } else {
     cy.exec(
       'PGPASSWORD=' +
       Cypress.env('PASS') +

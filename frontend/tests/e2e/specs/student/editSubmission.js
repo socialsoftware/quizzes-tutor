@@ -39,7 +39,7 @@ describe('Student walkthrough', () => {
       'C3',
       'D4'
     );
-    cy.deleteSubmission('Test 2', 5);
+    cy.deleteSubmission();
   });
 
   it('login edits an invalid question', () => {
@@ -60,10 +60,10 @@ describe('Student walkthrough', () => {
     );
 
     cy.closeErrorMessage('Error: Invalid content for option');
-
     cy.log('close dialog');
-
     cy.get('[data-cy="CancelButton"]').click();
+  
     cy.deleteSubmission('Test', 5);
   });
+  
 });
