@@ -43,11 +43,13 @@ class SpockTest extends Specification {
     public final static String USER_1_PASSWORD = "1234"
     public final static String USER_2_PASSWORD = "4321"
     public static final String USER_1_TOKEN = "1a2b3c"
+    public static final String USER_2_TOKEN = "c3b2a1"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
 
     public static final String COURSE_1_NAME = "Course 1 Name"
+    public static final String COURSE_2_NAME = "Course 2 Name"
     public static final String COURSE_1_ACADEMIC_TERM = "1º Semestre 2019/2020"
     public static final String COURSE_2_ACADEMIC_TERM = "2º Semestre 2019/2020"
     public static final String COURSE_1_ACRONYM = "C12"
@@ -82,6 +84,11 @@ class SpockTest extends Specification {
 
     public static final String OPTION_1_CONTENT = "Option 1 Content"
     public static final String OPTION_2_CONTENT = "Option 2 Content"
+
+    public static final String ROLE_STUDENT = "ROLE_STUDENT"
+    public static final String ROLE_TEACHER = "ROLE_TEACHER"
+    public static final String ROLE_ADMIN = "ROLE_ADMIN"
+    public static final String ROLE_DEMO_ADMIN = "ROLE_DEMO_ADMIN"
 
     public static final String QUIZ_TITLE = "Quiz title"
     public static final String CSVFILE = System.getProperty("user.dir") + "/src/test/resources/importUsers.csv"
