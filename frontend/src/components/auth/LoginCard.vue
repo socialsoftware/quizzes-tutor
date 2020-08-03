@@ -31,7 +31,7 @@ export default class LoginCard extends Vue {
 	email = '';
   password = '';
 
-  show1 = false;
+  show = false;
 
   created() {}
 

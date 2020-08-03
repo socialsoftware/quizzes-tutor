@@ -245,6 +245,22 @@ export default class CoursesView extends Vue {
     this.currentCourse = null;
   }
 
+  updateUserNumbers(userType: String) {
+    if(!!this.currentCourse && !!this.currentCourse) {
+      let index: number = this.courses
+          .indexOf(this.courses
+            .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
+    
+      if(!!this.courses && !!this.courses[index]) {
+        if(userType === 'TEACHER')
+          this.courses[index].numberOfTeachers++;
+
+        if(userType === 'STUDENT')
+          this.courses[index].numberOfStudents++;
+      }
+    }
+  }
+
   onCloseDialog() {
     this.editCourseDialog = false;
     this.currentCourse = null;
@@ -267,6 +283,8 @@ export default class CoursesView extends Vue {
           .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
         
       this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+      this.updateUserNumbers(user.role);
+
     }
   }
 

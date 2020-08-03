@@ -67,7 +67,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
+Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.contains(acronym)
     .parent()
     .should('have.length', 1)
@@ -79,42 +79,24 @@ Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
   cy.get('[data-cy="userNameInput"]').type(name);
   cy.get('[data-cy="userEmailInput"]').type(email);
   cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
-  cy.get('.v-menu__content .v-list').children().contains("TEACHER").first().click();
+  cy.get('.v-menu__content .v-list').children().contains(type).first().click();
   cy.get('[data-cy="saveButton"]').click();
   cy.get('[data-cy="cancelButton"]').click();
 
-  cy.get('[data-cy="homeLink"]').click();
+  /*cy.get('[data-cy="homeLink"]').click();
   cy.wait(2000);
   cy.get('[data-cy="administrationMenuButton"]').click();
-  cy.get('[data-cy="manageCoursesMenuButton"]').click();
+  cy.get('[data-cy="manageCoursesMenuButton"]').click();*/
 
-  cy.contains(acronym).parent().children().eq(6).contains("1");
+  if(email == 'TEACHER') {
+    cy.contains(acronym).parent().children().eq(6).contains("1");
+  } else {} 
+    if(email == 'STUDENT') { 
+      cy.contains(acronym).parent().children().eq(5).contains("1");
+    }
   
 });
 
-Cypress.Commands.add('addStudentThroughForm', (acronym, name, email) => {
-  cy.contains(acronym)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 11)
-    .find('[data-cy="addExternalUser"]')
-    .click();
-
-  cy.get('[data-cy="userNameInput"]').type(name);
-  cy.get('[data-cy="userEmailInput"]').type(email);
-  cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
-  cy.get('.v-menu__content .v-list').children().contains("STUDENT").first().click();
-  cy.get('[data-cy="saveButton"]').click();
-  cy.get('[data-cy="cancelButton"]').click();
-
-  cy.get('[data-cy="homeLink"]').click();
-  cy.wait(2000);
-  cy.get('[data-cy="administrationMenuButton"]').click();
-  cy.get('[data-cy="manageCoursesMenuButton"]').click();
-
-  
-});
 
 Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains(acronym)

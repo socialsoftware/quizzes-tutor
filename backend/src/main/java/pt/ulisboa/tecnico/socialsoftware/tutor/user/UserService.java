@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -251,6 +253,9 @@ public class UserService {
     }
 
     private void associateUserWithExecution(CourseExecution courseExecution, User user) {
+        if(courseExecution.getUsers().stream().map(User::getId).collect(Collectors.toList()).contains(user.getId()))
+            throw new TutorException(DUPLICATE_USER, user.getUsername());
+
         courseExecution.addUser(user);
         user.addCourse(courseExecution);
     }
