@@ -1,66 +1,57 @@
 name: build
 
 on:
-  push:
-    branches:
-    - master
-    - develop
-  pull_request:
-    branches:
-    - master
-    - develop
+push:
+  branches:
+  - master
+  - develop
+pull_request:
+  branches:
+  - master
+  - develop
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
+test:
+  runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v2
+  steps:
+  - uses: actions/checkout@v2
 
-    - name: Set up JDK 11
-      uses: actions/setup-java@v1
-      with:
-        java-version: 1.11
+  - name: Set up JDK 11
+    uses: actions/setup-java@v1
+    with:
+      java-version: 1.11
 
-    - name: Cache Maven dependencies
-      uses: actions/cache@v1
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven-
-          
-    - name: Run Spock tests
-      working-directory: ./backend
-      run: mvn clean -Ptest test
+  - name: Cache Maven dependencies
+    uses: actions/cache@v1
+    with:
+      path: ~/.m2/repository
+      key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+      restore-keys: |
+        ${{ runner.os }}-maven-
         
-    - name: Register code coverage
-      uses: codecov/codecov-action@v1.0.5
-      with:
-        token: ${{secrets.CODECOV_TOKEN}}
-        file: ./backend/target/site/jacoco/jacoco.xml
-        yml: ./backend/codecov.yml
+  - name: Run Spock tests
+    working-directory: ./backend
+    run: mvn clean -Ptest test
+      
+  - name: Register code coverage
+    uses: codecov/codecov-action@v1.0.5
+    with:
+      token: ${{secrets.CODECOV_TOKEN}}
+      file: ./backend/target/site/jacoco/jacoco.xml
+      yml: ./backend/codecov.yml
 
-    - name: Run Postgres DB
-      uses: harmon758/postgresql-action@v1
-      with:
-        postgresql db: 'tutortestdb'
-      working-directory: ./frontend/tests/resources/cypress
-      run: psql tutortestdb < demo.sql
-          
-          
-    - name: Run backend server
-      working-directory: ./backend
-      run: mvn clean -Ptest-int spring-boot:run &
-
-    - name: Run Cypress tests
-      uses: cypress-io/github-action@v1
-      with:
-        record: true
-        working-directory: frontend
-        start: npm start
-        wait-on: http://localhost:8081
-      env:
-        CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+  - name: Run backend server
+    working-directory: ./backend
+    run: mvn clean -Ptest spring-boot:run &
+    
+  - name: Run Cypress tests
+    uses: cypress-io/github-action@v1
+    with:
+      record: true
+      working-directory: frontend
+      start: npm start
+      wait-on: http://localhost:8081
+    env:
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
