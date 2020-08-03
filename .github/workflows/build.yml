@@ -13,6 +13,16 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: tutortestdb
+        ports:
+          - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
@@ -40,11 +50,6 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
-
-    - name: Run Postgres DB
-      uses: harmon758/postgresql-action@v1
-      with:
-        postgresql db: 'tutortestdb'
         
     - name: Populate DB
       working-directory: ./frontend/tests/resources/cypress
