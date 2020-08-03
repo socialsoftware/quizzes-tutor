@@ -18,6 +18,7 @@ jobs:
       postgres:
         image: postgres:latest
         env:
+          POSTGRES_PASSWORD: test 
           POSTGRES_DB: tutortestdb
         ports:
           - 5432:5432

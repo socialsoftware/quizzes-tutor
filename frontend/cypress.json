@@ -7,7 +7,7 @@
   "projectId": "ou7bhq",
   "env": {
     "USER": "",
-    "PASS": "",
+    "PASS": "test",
     "DBNAME": "tutortestdb"
   }
 }
