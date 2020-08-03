@@ -147,8 +147,6 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) =
       Cypress.env('PASS') +
       ' psql -d ' +
       Cypress.env('DBNAME') +
-      ' -U ' +
-      Cypress.env('USER') +
       ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING submission_id), sub AS (DELETE FROM submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
      );
   } else {
@@ -157,8 +155,6 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) =
       Cypress.env('PASS') +
       ' psql -d ' +
       Cypress.env('DBNAME') +
-      ' -U ' +
-      Cypress.env('USER') +
       ' -h localhost -c "WITH sub AS (DELETE FROM submissions WHERE id IN (SELECT max(id) FROM submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
     );
   }
@@ -170,8 +166,6 @@ Cypress.Commands.add('addReview', title => {
     Cypress.env('PASS') +
     ' psql -d ' +
     Cypress.env('DBNAME') +
-    ' -U ' +
-    Cypress.env('USER') +
     ' -h localhost -c "with sub as (select s.id from submissions s join questions q on s.question_id=q.id where q.title=\'' +
     title +
     '\') insert into reviews(creation_date, comment, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
@@ -216,8 +210,6 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
     Cypress.env('PASS') +
     ' psql -d ' +
     Cypress.env('DBNAME') +
-    ' -U ' +
-    Cypress.env('USER') +
     ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
     title +
     '\', \'Question?\', \'' +
@@ -234,8 +226,6 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
       Cypress.env('PASS') +
       ' psql -d ' +
       Cypress.env('DBNAME') +
-      ' -U ' +
-      Cypress.env('USER') +
       ' -h localhost -c "WITH quest AS (SELECT * FROM questions WHERE title=\'' +
       title +
       '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
