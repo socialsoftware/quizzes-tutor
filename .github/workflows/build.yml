@@ -41,16 +41,19 @@ jobs:
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
 
-    - name: Run backend server
-      working-directory: ./backend
-      run: mvn clean spring-boot:run &
-
     - name: Run Postgres DB
       uses: harmon758/postgresql-action@v1
       with:
         postgresql db: 'tutordb'
         postgresql user: 'test'
-      
+      working-directory: ./frontend/tests/resources/cypress
+      run: psql tutordb < demo.sql
+          
+          
+    - name: Run backend server
+      working-directory: ./backend
+      run: mvn clean spring-boot:run &
+
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
       with:
