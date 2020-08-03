@@ -54,7 +54,7 @@ jobs:
         
     - name: Populate DB
       working-directory: ./frontend/tests/resources/cypress
-      run: psql tutortestdb < demo.sql
+      run: sudo service postgresql start && createdb tutortestdb && psql tutortestdb < demo.sql
           
     - name: Run backend server
       working-directory: ./backend
