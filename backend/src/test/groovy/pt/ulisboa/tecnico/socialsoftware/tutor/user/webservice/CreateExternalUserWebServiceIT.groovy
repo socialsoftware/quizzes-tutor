@@ -14,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 class CreateExternalUserWebServiceIT extends SpockTest {
 
     @LocalServerPort
