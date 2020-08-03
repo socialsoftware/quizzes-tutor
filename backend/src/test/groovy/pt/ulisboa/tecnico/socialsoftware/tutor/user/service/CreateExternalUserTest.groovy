@@ -128,7 +128,7 @@ class CreateExternalUserTest extends SpockTest {
     }
 
     @Unroll
-    def "invalid arguments: email=#email | password=#password | role=#role"(){
+    def "invalid arguments: email=#email | role=#role"(){
         given: "a invalid course execution id"
         def executionId = courseExecution.getId()
         and: "a external user dto"
@@ -152,6 +152,10 @@ class CreateExternalUserTest extends SpockTest {
         "test.mail.com"             | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
         "test@"                     | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
         USER_1_EMAIL                | null                     || ErrorMessage.INVALID_ROLE
+        USER_1_EMAIL                | User.Role.ADMIN          || ErrorMessage.INVALID_ROLE
+        USER_1_EMAIL                | User.Role.DEMO_ADMIN     || ErrorMessage.INVALID_ROLE
+
+
 
     }
 

@@ -27,6 +27,8 @@ public enum ErrorMessage {
     COURSE_EXECUTION_NOT_EXTERNAL("The course execution with id %d is not external"),
     INVALID_COURSE_EXECUTION_REQUEST_PARAMETER("The received course execution parameter \"%s\" is invalid"),
     INVALID_EMAIL("The mail %s is invalid."),
+    NO_USER_NAME("User requires a name"),
+    NO_USER_USERNAME("User requires a username"),
     INVALID_PASSWORD("The password %s is invalid."),
     INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),

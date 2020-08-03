@@ -8,14 +8,12 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
@@ -173,11 +171,18 @@ public class UserService {
                 });
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void importListOfUsers(InputStream stream, int courseExecutionId) {
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public CourseDto importListOfUsers(InputStream stream, int courseExecutionId) {
+        extractUserDtos(stream).forEach(userDto -> createExternalUser(courseExecutionId, userDto));
+
+        return courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+    }
+
+    private List<ExternalUserDto> extractUserDtos(InputStream stream) {
+        List<ExternalUserDto> userDtos = new ArrayList<>();
         String line = "";
         String cvsSplitBy = ",";
         User.Role auxRole;
@@ -187,36 +192,46 @@ public class UserService {
                 String[] userInfo = line.split(cvsSplitBy);
                 if (userInfo.length == 2) {
                     auxRole = User.Role.STUDENT;
-                }
-                else if (userInfo.length > 2) {
-                    if (userInfo[2].equals("STUDENT")) {
-                        auxRole = User.Role.STUDENT;
-                    }
-                    else {
-                        auxRole = User.Role.TEACHER;
-                    }
-                }
-                else {
+                } else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") || userInfo[2].equalsIgnoreCase("teacher"))) {
+                    auxRole = User.Role.valueOf(userInfo[2].toUpperCase());
+                } else {
                     throw new TutorException(INVALID_CSV_FILE_FORMAT);
                 }
+
+                if (userInfo[0].length() == 0 || !userInfo[0].matches(User.MAIL_FORMAT) || userInfo[1].length() == 0) {
+                    throw new TutorException(INVALID_CSV_FILE_FORMAT);
+                }
+
                 ExternalUserDto userDto = new ExternalUserDto();
                 userDto.setEmail(userInfo[0]);
                 userDto.setName(userInfo[1]);
                 userDto.setRole(auxRole);
-                createExternalUser(courseExecutionId, userDto);
+                userDtos.add(userDto);
             }
         } catch (IOException ex) {
             throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
+
+        return userDtos;
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        User user = getUser(externalUserDto, courseExecution);
+        checkRole(externalUserDto);
+        User user = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
         generateConfirmationToken(user);
         return new ExternalUserDto(user);
+    }
+
+    private void checkRole(ExternalUserDto externalUserDto) {
+        if (externalUserDto.getRole() == null)
+            throw new TutorException(INVALID_ROLE);
+
+        if (!(externalUserDto.getRole().equals(User.Role.STUDENT) || externalUserDto.getRole().equals(User.Role.TEACHER)))
+            throw new TutorException(INVALID_ROLE, externalUserDto.getRole().toString());
     }
 
     public String generateConfirmationToken(User user) {
@@ -230,7 +245,6 @@ public class UserService {
         mailer.sendSimpleMail(mailUsername, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
     }
 
-
     private String buildMailBody(ExternalUserDto user) {
         String msg = "To confirm your registration click the following link";
         return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(user.getEmail(), user.getConfirmationToken()));
@@ -241,17 +255,13 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
-    private User getUser(ExternalUserDto externalUserDto, CourseExecution courseExecution) {
-        Optional<User> userOp = userRepository.findByUsername(externalUserDto.getEmail());
-        User user;
-        if(userOp.isPresent()){
-            userOp.get().addCourse(courseExecution);
-            user = userOp.get();
-        }else{
-            user = new User("", externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
-            userRepository.save(user);
-        }
-        return user;
+    private User getOrCreateUser(ExternalUserDto externalUserDto) {
+        return userRepository.findByUsername(externalUserDto.getEmail())
+                .orElseGet(() -> {
+                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
+                    userRepository.save(createdUser);
+                    return createdUser;
+                });
     }
 
     private CourseExecution getCourseExecution(Integer courseExecutionId) {

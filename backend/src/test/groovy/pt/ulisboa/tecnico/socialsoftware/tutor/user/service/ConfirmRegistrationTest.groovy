@@ -45,6 +45,7 @@ class ConfirmRegistrationTest extends SpockTest {
     }
 
 	def "user confirms registration successfully" () {
+        given: "a password"
         externalUserDto.setPassword(USER_1_PASSWORD)
 
         when:
@@ -103,6 +104,7 @@ class ConfirmRegistrationTest extends SpockTest {
 
         where:
         email        | password         | token           || errorMessage
+        ""           | USER_1_PASSWORD  | USER_1_TOKEN    || ErrorMessage.EXTERNAL_USER_NOT_FOUND
         null         | USER_1_PASSWORD  | USER_1_TOKEN    || ErrorMessage.EXTERNAL_USER_NOT_FOUND
         USER_1_EMAIL | null             | USER_1_TOKEN    || ErrorMessage.INVALID_PASSWORD
         USER_1_EMAIL | ""               | USER_1_TOKEN    || ErrorMessage.INVALID_PASSWORD

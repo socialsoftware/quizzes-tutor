@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 
 @DataJpaTest
-class GetExternalUsersTest extends SpockTest{
+class GetExternalUsersTest extends SpockTest {
 
     Course course1
     CourseExecution courseExecution1

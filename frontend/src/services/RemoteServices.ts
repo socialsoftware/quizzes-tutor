@@ -662,7 +662,7 @@ export default class RemoteServices {
   }
 
 
-  static async uploadCSVFile(file: File, executionId: number): Promise<string> {
+  static async uploadCSVFile(file: File, executionId: number): Promise<Course> {
     let formData = new FormData();
     formData.append('file', file);
     return httpClient
@@ -672,18 +672,7 @@ export default class RemoteServices {
         }
       })
       .then(response => {
-        return response.data as string;
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getCourse( executionId: number): Promise<Course> {
-    return httpClient
-      .get(`/courses/executions/${executionId}`)
-      .then(response => {
-          return new Course(response.data);
+        return new Course(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
