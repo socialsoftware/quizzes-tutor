@@ -4,11 +4,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -42,6 +44,11 @@ class UserTest extends SpockTest {
         question.setTitle(QUESTION_1_TITLE)
         questionRepository.save(question)
 
+        Option option = new Option()
+        option.setSequence(1)
+        option.setCorrect(true)
+        question.addOption(option)
+
         QuestionDto questionDto = new QuestionDto(question)
         questionDto.setKey(1)
         questionDto.setSequence(1)
@@ -54,10 +61,12 @@ class UserTest extends SpockTest {
         quiz.setCourseExecution(courseExecution);
         quizRepository.save(quiz)
 
-        new QuizQuestion(quiz, question, 1)
+        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, 1)
 
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setCompleted(true)
+
+        QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
     }
 
     def "create User: name, username, role" (){
@@ -174,6 +183,34 @@ class UserTest extends SpockTest {
         "TEST"      || 0         | 0         | 0
         "EXAM"      || 0         | 0         | 0
     }
+
+    @Unroll
+    def "get number of correct answers" () {
+        given:
+        user.numberOfCorrectTeacherAnswers = null
+        user.numberOfCorrectStudentAnswers = null
+        user.numberOfCorrectInClassAnswers = null
+        quiz.setType(type)
+
+        when:
+        def nTeacherAnswers = user.getNumberOfCorrectTeacherAnswers()
+        def nStudentAnswers = user.getNumberOfCorrectStudentAnswers()
+        def nInClassAnswers = user.getNumberOfCorrectInClassAnswers()
+
+        then:
+        nTeacherAnswers == nAnswers1
+        nStudentAnswers == nAnswers2
+        nInClassAnswers == nAnswers3
+
+        where:
+        type        || nAnswers1 | nAnswers2 | nAnswers3
+        "PROPOSED"  || 1         | 0         | 0
+        "GENERATED" || 0         | 1         | 0
+        "IN_CLASS"  || 0         | 0         | 1
+        "TEST"      || 0         | 0         | 0
+        "EXAM"      || 0         | 0         | 0
+    }
+
 
     def "addCourse" (){
         given:
