@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
 import java.time.LocalDateTime;
@@ -85,6 +86,7 @@ class ConfirmRegistrationTest extends SpockTest {
         result.confirmationToken != USER_1_TOKEN
     }
 
+    @Unroll
 	def "registration confirmation unsuccessful" () {
         given: "a user"
         externalUserDto = new ExternalUserDto()
