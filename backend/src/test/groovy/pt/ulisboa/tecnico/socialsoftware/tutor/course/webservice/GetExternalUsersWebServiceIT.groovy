@@ -54,7 +54,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         demoAdminLogin()
     }
 
-    def "get users from courseExecution1" (){
+    def "get users from courseExecution1" () {
         when:
         response = restClient.get(
             path: '/executions/'+courseExecution1.getId()+'/users/external',

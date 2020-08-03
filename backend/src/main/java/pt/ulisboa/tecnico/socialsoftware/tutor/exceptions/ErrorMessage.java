@@ -44,6 +44,7 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     USER_IS_INACTIVE("User state is inactive: username %s"),
+    USER_IS_ACTIVE("User state is active: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
     EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
     INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),

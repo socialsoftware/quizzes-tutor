@@ -545,6 +545,9 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void remove() {
+        if(getState() == User.State.ACTIVE)
+            throw new TutorException(USER_IS_ACTIVE, getUsername());
+
         removeFromCourseExecutions();
     }
 

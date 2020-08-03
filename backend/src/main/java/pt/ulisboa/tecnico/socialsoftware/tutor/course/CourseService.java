@@ -190,28 +190,29 @@ public class CourseService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public CourseDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-
         checkExternalExecution(courseExecution);
+        usersId = getExecutionFilteredIds(usersId, courseExecution);
+        deleteUsers(usersId);
+        return new CourseDto(courseExecution);
+    }
 
-        Optional<User> userOp;
+    private void deleteUsers(List<Integer> usersId) {
         User user;
+        for(Integer id : usersId){
+            user = userRepository.findById(id).orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
+            user.remove();
+            userRepository.delete(user);
+        }
+    }
 
+    private List<Integer> getExecutionFilteredIds(List<Integer> usersId, CourseExecution courseExecution) {
         usersId = usersId.stream()
                 .filter(uid -> courseExecution.getUsers().stream()
                     .map(User::getId)
                     .collect(Collectors.toList())
                     .contains(uid))
                 .collect(Collectors.toList());
-
-        for(Integer id : usersId){
-            userOp = userRepository.findById(id);
-            if(userOp.isPresent() && userOp.get().getState() == User.State.INACTIVE) {
-                user = userOp.get();
-                user.remove();
-                userRepository.delete(user);
-            }
-        }
-        return new CourseDto(courseExecution);
+        return usersId;
     }
 
     private void checkExternalExecution(CourseExecution courseExecution) {
