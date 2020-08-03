@@ -44,15 +44,14 @@ jobs:
     - name: Run Postgres DB
       uses: harmon758/postgresql-action@v1
       with:
-        postgresql db: 'tutordb'
-        postgresql user: 'test'
+        postgresql db: 'tutortestdb'
       working-directory: ./frontend/tests/resources/cypress
-      run: psql tutordb < demo.sql
+      run: psql tutortestdb < demo.sql
           
           
     - name: Run backend server
       working-directory: ./backend
-      run: mvn clean spring-boot:run &
+      run: mvn clean -Ptest-int spring-boot:run &
 
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
