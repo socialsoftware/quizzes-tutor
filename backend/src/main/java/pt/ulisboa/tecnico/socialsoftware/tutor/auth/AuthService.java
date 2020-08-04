@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.EXTERNAL_USER_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_PASSWORD;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class AuthService {
@@ -141,9 +139,16 @@ public class AuthService {
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto demoStudentAuth() {
-//         User user = this.userService.getDemoStudent();
-        User user = this.userService.createDemoStudent();
+    public AuthDto demoStudentAuth(Boolean createNew) {
+        User user;
+
+        if (createNew == null)
+            throw new TutorException(INVALID_PARAMETERS);
+
+        if (createNew) 
+            user = this.userService.createDemoStudent();
+        else
+            user = this.userService.getDemoStudent();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }

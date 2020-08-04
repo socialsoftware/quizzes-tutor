@@ -19,10 +19,19 @@
         depressed
         small
         color="primary"
-        @click="demoStudent"
+        @click="demoStudent(false)"
         data-cy="demoStudentLoginButton"
       >
         <i class="fa fa-graduation-cap" />Demo as student
+      </v-btn>
+      <v-btn
+        depressed
+        small
+        color="primary"
+        @click="demoStudent(true)"
+        data-cy="demoNewStudentLoginButton"
+      >
+        <i class="fa fa-graduation-cap" />Demo as new student
       </v-btn>
       <v-btn
         depressed
@@ -94,10 +103,13 @@ export default class HomeView extends Vue {
     return Store.state.token;
   }
 
-  async demoStudent() {
+  async demoStudent(createNew: boolean) {
     await this.$store.dispatch('loading');
     try {
-      await this.$store.dispatch('demoStudentLogin');
+      if (createNew)
+        await this.$store.dispatch('demoNewStudentLogin');
+      else  
+        await this.$store.dispatch('demoStudentLogin');
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

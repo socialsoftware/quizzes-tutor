@@ -48,6 +48,7 @@ public enum ErrorMessage {
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
     EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
     INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
+    INVALID_PARAMETERS("Invalid parameters"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),

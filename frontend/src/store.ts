@@ -83,7 +83,17 @@ export default new Vuex.Store({
       // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoStudentLogin({ commit }) {
-      const authResponse = await RemoteServices.demoStudentLogin();
+      const authResponse = await RemoteServices.demoStudentLogin(false);
+      commit('login', authResponse);
+      commit(
+        'currentCourse',
+        (Object.values(authResponse.user.courses)[0] as Course[])[0]
+      );
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
+    async demoNewStudentLogin({ commit }) {
+      const authResponse = await RemoteServices.demoStudentLogin(true);
       commit('login', authResponse);
       commit(
         'currentCourse',
