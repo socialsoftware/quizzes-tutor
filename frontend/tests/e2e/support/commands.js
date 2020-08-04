@@ -81,20 +81,7 @@ Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
   cy.get('.v-menu__content .v-list').children().contains(type).first().click();
   cy.get('[data-cy="saveButton"]').click();
-  cy.get('[data-cy="cancelButton"]').click();
-
-  /*cy.get('[data-cy="homeLink"]').click();
-  cy.wait(2000);
-  cy.get('[data-cy="administrationMenuButton"]').click();
-  cy.get('[data-cy="manageCoursesMenuButton"]').click();*/
-
-  if(email == 'TEACHER') {
-    cy.contains(acronym).parent().children().eq(6).contains("1");
-  } else {} 
-    if(email == 'STUDENT') { 
-      cy.contains(acronym).parent().children().eq(5).contains("1");
-    }
-  
+  cy.wait(3000);
 });
 
 
@@ -109,4 +96,16 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.get('[data-cy="deleteSelectedUsersButton"').click();
   cy.contains('No data available');
   cy.get('[data-cy="cancelButton"').click()
+});
+
+Cypress.Commands.add('checkStudentCount', (acronym, count) => {
+  cy.contains(acronym).parent().children().eq(7).contains(count);
+});
+
+Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
+  cy.contains(acronym).parent().children().eq(6).contains(count);
+});
+
+Cypress.Commands.add('closeUserCreationDialog', () => {
+  cy.get('[data-cy="cancelButton"]').click();
 });
