@@ -11,8 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("dev")
-class ExternalUserAuthWebServiceIT extends SpockTest{
+@ActiveProfiles("test")
+class ExternalUserAuthWebServiceIT extends SpockTest {
 
     @LocalServerPort
     private int port
@@ -22,7 +22,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest{
     Course course
     CourseExecution courseExecution
 
-    def setup(){
+    def setup() {
         restClient = new RESTClient("http://localhost:" + port)
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)

@@ -58,9 +58,9 @@ export default class RemoteServices {
       });
   }
 
-  static async demoStudentLogin(): Promise<AuthDto> {
+  static async demoStudentLogin(createNew: boolean): Promise<AuthDto> {
     return httpClient
-      .get('/auth/demo/student')
+      .get(`/auth/demo/student?createNew=${createNew}`)
       .then(response => {
         return new AuthDto(response.data);
       })
