@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -176,18 +177,20 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
     public CourseDto importListOfUsers(InputStream stream, int courseExecutionId) {
-        extractUserDtos(stream).forEach(userDto -> createExternalUser(courseExecutionId, userDto));
+        Notification notification = new Notification();
+        extractUserDtos(stream, notification).forEach(userDto -> createExternalUser(courseExecutionId, userDto));
 
         return courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseDto::new)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
     }
 
-    private List<ExternalUserDto> extractUserDtos(InputStream stream) {
+    private List<ExternalUserDto> extractUserDtos(InputStream stream, Notification notification) {
         List<ExternalUserDto> userDtos = new ArrayList<>();
         String line = "";
         String cvsSplitBy = ",";
         User.Role auxRole;
+        int lineNumber = 1;
         InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);
         try (BufferedReader br = new BufferedReader(isr)) {
             while ((line = br.readLine()) != null) {
@@ -197,11 +200,15 @@ public class UserService {
                 } else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") || userInfo[2].equalsIgnoreCase("teacher"))) {
                     auxRole = User.Role.valueOf(userInfo[2].toUpperCase());
                 } else {
-                    throw new TutorException(INVALID_CSV_FILE_FORMAT);
+                    notification.addError(String.valueOf(lineNumber), new TutorException(INVALID_CSV_FILE_FORMAT));
+                    lineNumber++;
+                    continue;
                 }
 
                 if (userInfo[0].length() == 0 || !userInfo[0].matches(User.MAIL_FORMAT) || userInfo[1].length() == 0) {
-                    throw new TutorException(INVALID_CSV_FILE_FORMAT);
+                    notification.addError(String.valueOf(lineNumber), new TutorException(INVALID_CSV_FILE_FORMAT));
+                    lineNumber++;
+                    continue;
                 }
 
                 ExternalUserDto userDto = new ExternalUserDto();
@@ -209,11 +216,14 @@ public class UserService {
                 userDto.setName(userInfo[1]);
                 userDto.setRole(auxRole);
                 userDtos.add(userDto);
+                lineNumber++;
             }
         } catch (IOException ex) {
             throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
-
+        if (notification.hasErrors()) {
+            throw new TutorException(WRONG_FORMAT_ON_CSV_LINE, notification.errorMessage());
+        }
         return userDtos;
     }
 

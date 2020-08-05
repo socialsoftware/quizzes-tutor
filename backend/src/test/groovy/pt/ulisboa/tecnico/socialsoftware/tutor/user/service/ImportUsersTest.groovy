@@ -41,7 +41,7 @@ class ImportUsersTest extends SpockTest {
         userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
         then:
         def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
+        error.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
     }
@@ -71,7 +71,7 @@ class ImportUsersTest extends SpockTest {
         userService.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
         then:
         def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.INVALID_CSV_FILE_FORMAT
+        error.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
     }
