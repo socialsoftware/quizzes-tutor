@@ -9,21 +9,14 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -36,7 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -46,12 +38,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class TournamentService {
-
-    @Autowired
-    private AssessmentService assessmentService;
-
-    @Autowired
-    private AssessmentRepository assessmentRepository;
 
     @Autowired
     private QuizService quizService;
@@ -199,10 +185,7 @@ public class TournamentService {
         User user = checkUser(userId);
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        if (tournament.getCreator() != user) {
-            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
-        }
-
+        tournament.checkCreator(user);
         tournament.checkCanChange();
 
         // change
@@ -245,10 +228,7 @@ public class TournamentService {
         User user = checkUser(userId);
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        if (tournament.getCreator() != user) {
-            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
-        }
-
+        tournament.checkCreator(user);
         tournament.checkCanChange();
         tournament.setState(Tournament.Status.CANCELED);
     }
@@ -259,10 +239,7 @@ public class TournamentService {
         User user = checkUser(userId);
         Tournament tournament = checkTournament(tournamentId);
 
-        if (tournament.getCreator() != user) {
-            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
-        }
-
+        tournament.checkCreator(user);
         tournament.checkCanChange();
         tournament.remove();
         tournamentRepository.delete(tournament);

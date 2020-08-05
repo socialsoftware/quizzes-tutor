@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -82,12 +83,12 @@ class QuizTournamentGenerateTest extends SpockTest {
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
-        def result = statementService.getTournamentQuizzes(user1.getId(), courseExecution.getId()).get(0)
+        def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT.name()
-        result.getConclusionDate() == STRING_DATE_LATER
-        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+        result.getType() == Quiz.QuizType.TOURNAMENT
+        DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
+        result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
     }
 
     def "2 student join a tournament" () {
@@ -108,12 +109,12 @@ class QuizTournamentGenerateTest extends SpockTest {
         quizRepository.count() == 1L
 
         and: "the correct quiz is inside the repository"
-        def result = statementService.getTournamentQuizzes(user1.getId(), courseExecution.getId()).get(0)
+        def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT.name()
-        result.getConclusionDate() == STRING_DATE_LATER
-        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
+        result.getType() == Quiz.QuizType.TOURNAMENT
+        DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
+        result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
     }
 
     @TestConfiguration

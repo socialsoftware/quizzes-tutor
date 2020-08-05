@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -40,6 +42,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -89,6 +94,23 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return false;
                 case "QUIZ.ACCESS":
                     courseExecutionId = quizRepository.findCourseExecutionIdById(id).orElse(null);
+                    if (courseExecutionId != null) {
+                        return userHasThisExecution(userId, courseExecutionId);
+                    }
+                    return false;
+                case "TOURNAMENT.ACCESS":
+                    courseExecutionId = tournamentRepository.findCourseExecutionIdById(id).orElse(null);
+                    if (courseExecutionId != null) {
+                        return userHasThisExecution(userId, courseExecutionId);
+                    }
+                    return false;
+                case "TOURNAMENT.OWNER":
+                    Tournament tournament = tournamentRepository.findById(id).orElse(null);
+                    User user = ((User) authentication.getPrincipal());
+                    if (tournament != null) {
+                        tournament.checkCreator(user);
+                    }
+                    courseExecutionId = tournamentRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
                         return userHasThisExecution(userId, courseExecutionId);
                     }

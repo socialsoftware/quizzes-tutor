@@ -177,6 +177,12 @@ public class Tournament  {
         topicConjunction = null;
     }
 
+    public void checkCreator(User user) {
+        if (this.getCreator() != user) {
+            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
+        }
+    }
+
     public void checkCanChange() {
         if (this.getStartTime().isBefore(DateHandler.now())) {
             if (this.getEndTime().isBefore(DateHandler.now()))

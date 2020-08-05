@@ -22,7 +22,7 @@ public class TournamentController {
     private TournamentService tournamentService;
 
     @PostMapping(value = "/tournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.ACCESS')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam Set<Integer> topicsId) {
         User user = (User) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
@@ -31,7 +31,7 @@ public class TournamentController {
     }
 
     @GetMapping(value = "/tournaments/getAllTournaments")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getAllTournaments(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -39,7 +39,7 @@ public class TournamentController {
     }
 
     @GetMapping(value = "/tournaments/getOpenTournaments")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getOpenTournaments(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -47,7 +47,7 @@ public class TournamentController {
     }
 
     @GetMapping(value = "/tournaments/getClosedTournaments")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getClosedTournaments(Principal principal) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -63,7 +63,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/joinTournament")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.ACCESS')")
     public void joinTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam String password) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -71,7 +71,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/solveQuiz")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.ACCESS')")
     public StatementQuizDto solveQuiz(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -79,7 +79,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/leaveTournament")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.ACCESS')")
     public void leaveTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -87,7 +87,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/updateTournament")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.OWNER')")
     public void updateTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam Set<Integer> topicsId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -95,7 +95,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/cancelTournament")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(tournamentDto.getId(), 'TOURNAMENT.OWNER')")
     public void cancelTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -103,7 +103,7 @@ public class TournamentController {
     }
 
     @DeleteMapping(value = "/tournaments/removeTournament/{tournamentId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.OWNER')")
     public void removeTournament(Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

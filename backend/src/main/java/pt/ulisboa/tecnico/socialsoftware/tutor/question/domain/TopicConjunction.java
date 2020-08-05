@@ -49,8 +49,10 @@ public class TopicConjunction {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
-        this.assessment.getTopicConjunctions().remove(this);
-        this.assessment = null;
+        if (this.assessment != null) {
+            this.assessment.getTopicConjunctions().remove(this);
+            this.assessment = null;
+        }
     }
 
     @Override
