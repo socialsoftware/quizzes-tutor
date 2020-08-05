@@ -52,7 +52,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
         tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         and: 'a user'
         user.setRole(userRole)
@@ -68,7 +68,7 @@ class CreateTournamentTest extends SpockTest {
         DateHandler.toISOString(result.getEndTime()) == endTime
         result.getTopicConjunction().getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
-        result.getState() == Tournament.Status.NOT_CANCELED
+        result.isCanceled() == false
         result.getCreator() == user
         result.getCourseExecution() == courseExecution
 
@@ -83,7 +83,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
         tournamentDto.setPrivateTournament(true)
         tournamentDto.setPassword('123')
 
@@ -98,7 +98,7 @@ class CreateTournamentTest extends SpockTest {
         DateHandler.toISOString(result.getEndTime()) == STRING_DATE_LATER
         result.getTopicConjunction().getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
-        result.getState() == Tournament.Status.NOT_CANCELED
+        result.isCanceled() == false
         result.getCreator() == user
         result.getCourseExecution() == courseExecution
         result.isPrivateTournament() == true
@@ -111,7 +111,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
         tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         and: 'a user'
         user.setRole(userRole)
@@ -147,7 +147,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         when:
         tournamentService.createTournament(null, topics, tournamentDto)
@@ -163,7 +163,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         and:
         def fakeUserId = 99
@@ -182,7 +182,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         when:
         tournamentService.createTournament(user.getId(), null, tournamentDto)
@@ -198,7 +198,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         when:
         tournamentService.createTournament(user.getId(), [] as Set, tournamentDto)
@@ -214,7 +214,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         when:
         tournamentService.createTournament(user.getId(), [-1] as Set, tournamentDto)
@@ -230,7 +230,7 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
 
         and: "new course"
         def differentCourse = new Course(COURSE_2_NAME, Course.Type.TECNICO)

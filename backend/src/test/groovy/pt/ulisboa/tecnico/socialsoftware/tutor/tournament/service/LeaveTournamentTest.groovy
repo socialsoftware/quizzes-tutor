@@ -67,7 +67,7 @@ class LeaveTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
         tournamentDto = tournamentService.createTournament(user1.getId(), topics, tournamentDto)
 
         question1 = new Question()

@@ -68,14 +68,14 @@ class JoinTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
         tournamentDto = tournamentService.createTournament(user1.getId(), topics, tournamentDto)
 
         privateTournamentDto = new TournamentDto()
         privateTournamentDto.setStartTime(STRING_DATE_TODAY)
         privateTournamentDto.setEndTime(STRING_DATE_LATER)
         privateTournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        privateTournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        privateTournamentDto.setState(false)
         privateTournamentDto.setPrivateTournament(true)
         privateTournamentDto.setPassword('123')
         privateTournamentDto = tournamentService.createTournament(user1.getId(), topics, privateTournamentDto)
@@ -199,7 +199,7 @@ class JoinTournamentTest extends SpockTest {
         canceledTournamentDto.setStartTime(STRING_DATE_TODAY)
         canceledTournamentDto.setEndTime(STRING_DATE_LATER)
         canceledTournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        canceledTournamentDto.setState(Tournament.Status.CANCELED)
+        canceledTournamentDto.setState(true)
         canceledTournamentDto = tournamentService.createTournament(user1.getId(), topics, canceledTournamentDto)
 
         when:
@@ -220,7 +220,7 @@ class JoinTournamentTest extends SpockTest {
         notOpenTournamentDto.setStartTime(STRING_DATE_TODAY)
         notOpenTournamentDto.setEndTime(STRING_DATE_TODAY)
         notOpenTournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        notOpenTournamentDto.setState(Tournament.Status.CANCELED)
+        notOpenTournamentDto.setState(true)
         notOpenTournamentDto = tournamentService.createTournament(user1.getId(), topics, notOpenTournamentDto)
 
         when:

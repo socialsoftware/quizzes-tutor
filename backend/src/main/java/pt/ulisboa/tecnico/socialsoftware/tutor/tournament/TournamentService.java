@@ -128,7 +128,7 @@ public class TournamentService {
             throw new TutorException(TOURNAMENT_NOT_OPEN, tournament.getId());
         }
 
-        if (tournament.getState() == Tournament.Status.CANCELED) {
+        if (tournament.isCanceled()) {
             throw new TutorException(TOURNAMENT_CANCELED, tournament.getId());
         }
 
@@ -224,13 +224,14 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void cancelTournament(Integer userId, TournamentDto tournamentDto) {
+    public TournamentDto cancelTournament(Integer userId, TournamentDto tournamentDto) {
         User user = checkUser(userId);
         Tournament tournament = checkTournament(tournamentDto.getId());
 
         tournament.checkCreator(user);
         tournament.checkCanChange();
-        tournament.setState(Tournament.Status.CANCELED);
+        tournament.cancel();
+        return new TournamentDto(tournament);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

@@ -16,10 +16,10 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id IN :set", nativeQuery = true)
     List<Tournament> getAllTournaments(Set set);
 
-    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.state = 'NOT_CANCELED' AND t.course_execution_id IN :set", nativeQuery = true)
+    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :set", nativeQuery = true)
     List<Tournament> getOpenedTournaments(Set set);
 
-    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.state = 'NOT_CANCELED' AND t.course_execution_id IN :set", nativeQuery = true)
+    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :set", nativeQuery = true)
     List<Tournament> getClosedTournaments(Set set);
 
     @Query(value = "SELECT * FROM tournaments t WHERE t.user_id = :user_id", nativeQuery = true)

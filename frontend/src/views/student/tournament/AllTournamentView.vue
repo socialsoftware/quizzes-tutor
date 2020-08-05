@@ -48,7 +48,7 @@
           {{ item.id }}
         </v-chip>
       </template>
-      <template v-slot:item.state="{ item }">
+      <template v-slot:item.isCanceled="{ item }">
         <v-chip :color="getStateColor(item)">
           {{ getStateName(item) }}
         </v-chip>
@@ -207,7 +207,7 @@ export default class AllTournamentView extends Vue {
     },
     {
       text: 'State',
-      value: 'state',
+      value: 'isCanceled',
       align: 'center',
       width: '10%'
     },
@@ -295,14 +295,14 @@ export default class AllTournamentView extends Vue {
   getStateColor(tournament: Tournament) {
     if (tournament.id && this.closedTournamentsId.includes(tournament.id))
       return 'orange';
-    else if (tournament.state === 'NOT_CANCELED') return 'green';
+    else if (!tournament.isCanceled) return 'green';
     else return 'red';
   }
 
   getStateName(tournament: Tournament) {
     if (tournament.id && this.closedTournamentsId.includes(tournament.id))
       return 'FINISHED';
-    else if (tournament.state === 'NOT_CANCELED') return 'AVAILABLE';
+    else if (!tournament.isCanceled) return 'AVAILABLE';
     else return 'CANCELLED';
   }
 

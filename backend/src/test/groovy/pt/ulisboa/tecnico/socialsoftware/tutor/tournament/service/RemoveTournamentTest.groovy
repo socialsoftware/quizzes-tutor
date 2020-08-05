@@ -44,7 +44,7 @@ class RemoveTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
     }
 
     def "user that created tournament removes it"() {

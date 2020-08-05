@@ -8,7 +8,8 @@ export default class Tournament {
   startTime!: string;
   endTime!: string;
   numberOfQuestions!: number;
-  state!: string;
+  canceled!: boolean;
+  isCanceled!: boolean;
   courseAcronym!: string;
   enrolled!: boolean;
   topicConjunction!: TopicConjunction;
@@ -24,7 +25,7 @@ export default class Tournament {
       this.startTime = ISOtoString(jsonObj.startTime);
       this.endTime = ISOtoString(jsonObj.endTime);
       this.numberOfQuestions = jsonObj.numberOfQuestions;
-      this.state = jsonObj.state;
+      this.isCanceled = jsonObj.canceled;
       this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 

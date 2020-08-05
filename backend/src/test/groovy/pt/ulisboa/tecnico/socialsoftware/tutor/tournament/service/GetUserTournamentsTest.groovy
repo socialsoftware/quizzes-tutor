@@ -50,7 +50,7 @@ class GetUserTournamentsTest extends SpockTest {
         tournamentDto1.setStartTime(STRING_DATE_TODAY)
         tournamentDto1.setEndTime(STRING_DATE_LATER)
         tournamentDto1.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto1.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto1.setState(false)
         tournamentService.createTournament(user1.getId(), topics, tournamentDto1)
 
         and: "another tournament"
@@ -58,7 +58,7 @@ class GetUserTournamentsTest extends SpockTest {
         tournamentDto2.setStartTime(STRING_DATE_TODAY)
         tournamentDto2.setEndTime(STRING_DATE_LATER)
         tournamentDto2.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto2.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto2.setState(false)
         tournamentService.createTournament(user1.getId(), topics, tournamentDto2)
 
         when:
@@ -75,7 +75,7 @@ class GetUserTournamentsTest extends SpockTest {
         tournamentDto1.setStartTime(STRING_DATE_TODAY)
         tournamentDto1.setEndTime(STRING_DATE_LATER)
         tournamentDto1.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto1.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto1.setState(false)
         tournamentService.createTournament(user1.getId(), topics, tournamentDto1)
 
         and: "another tournament"
@@ -83,7 +83,7 @@ class GetUserTournamentsTest extends SpockTest {
         tournamentDto2.setStartTime(STRING_DATE_TODAY)
         tournamentDto2.setEndTime(STRING_DATE_LATER)
         tournamentDto2.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto2.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto2.setState(false)
         tournamentService.createTournament(user1.getId(), topics, tournamentDto2)
 
         and: "new user creates another tournament"
@@ -91,7 +91,7 @@ class GetUserTournamentsTest extends SpockTest {
         tournamentDto3.setStartTime(STRING_DATE_TODAY)
         tournamentDto3.setEndTime(STRING_DATE_LATER)
         tournamentDto3.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto3.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto3.setState(false)
         tournamentService.createTournament(user2.getId(), topics, tournamentDto3)
 
         when:

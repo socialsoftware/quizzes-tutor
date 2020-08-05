@@ -44,7 +44,7 @@ class CancelTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(Tournament.Status.NOT_CANCELED)
+        tournamentDto.setState(false)
     }
 
     def "user that created tournament cancels it"() {
@@ -57,7 +57,7 @@ class CancelTournamentTest extends SpockTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getState() == Tournament.Status.CANCELED
+        result.isCanceled()
     }
 
     def "user that created an open tournament tries to cancel it"() {
@@ -111,7 +111,7 @@ class CancelTournamentTest extends SpockTest {
         and:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getState() == Tournament.Status.NOT_CANCELED
+        !result.isCanceled()
     }
 
     @TestConfiguration

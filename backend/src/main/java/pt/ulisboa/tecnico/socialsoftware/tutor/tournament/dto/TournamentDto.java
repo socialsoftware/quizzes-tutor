@@ -15,7 +15,7 @@ public class TournamentDto implements Serializable {
     private String startTime = null;
     private String endTime = null;
     private Integer numberOfQuestions;
-    private Tournament.Status state;
+    private boolean isCanceled;
     private TopicConjunctionDto topicConjunction;
     private Set<StudentDto> participants = new HashSet<>();
     private String courseAcronym = null;
@@ -31,7 +31,7 @@ public class TournamentDto implements Serializable {
         this.startTime = DateHandler.toISOString(tournament.getStartTime());
         this.endTime = DateHandler.toISOString(tournament.getEndTime());
         this.numberOfQuestions = tournament.getNumberOfQuestions();
-        this.state = tournament.getState();
+        this.isCanceled = tournament.isCanceled();
         this.topicConjunction = new TopicConjunctionDto(tournament.getTopicConjunction());
         this.participants = tournament.getParticipants().stream().map(StudentDto::new).collect(Collectors.toSet());
         this.courseAcronym = tournament.getCourseExecution().getAcronym();
@@ -54,9 +54,9 @@ public class TournamentDto implements Serializable {
 
     public void setNumberOfQuestions(Integer numberOfQuestions) { this.numberOfQuestions = numberOfQuestions; }
 
-    public Tournament.Status getState() { return state; }
+    public boolean isCanceled() { return isCanceled; }
 
-    public void setState(Tournament.Status state) { this.state = state; }
+    public void setState(boolean state) { this.isCanceled = state; }
 
     public TopicConjunctionDto getTopicConjunction() { return topicConjunction; }
 

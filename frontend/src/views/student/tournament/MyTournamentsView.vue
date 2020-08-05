@@ -48,9 +48,9 @@
           {{ item.id }}
         </v-chip>
       </template>
-      <template v-slot:item.state="{ item }">
-        <v-chip :color="getStateColor(item.state)">
-          {{ getStateName(item.state) }}
+      <template v-slot:item.isCanceled="{ item }">
+        <v-chip :color="getStateColor(item.isCanceled)">
+          {{ getStateName(item.isCanceled) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
@@ -180,7 +180,7 @@ export default class MyTournamentsView extends Vue {
     },
     {
       text: 'State',
-      value: 'state',
+      value: 'isCanceled',
       align: 'center',
       width: '10%'
     },
@@ -268,13 +268,13 @@ export default class MyTournamentsView extends Vue {
     this.currentTournament = null;
   }
 
-  getStateColor(state: string) {
-    if (state === 'NOT_CANCELED') return 'green';
+  getStateColor(isCanceled: string) {
+    if (!isCanceled) return 'green';
     else return 'red';
   }
 
-  getStateName(state: string) {
-    if (state === 'NOT_CANCELED') return 'AVAILABLE';
+  getStateName(isCanceled: string) {
+    if (!isCanceled) return 'AVAILABLE';
     else return 'CANCELLED';
   }
 
@@ -299,7 +299,7 @@ export default class MyTournamentsView extends Vue {
   }
 
   isNotCanceled(tournamentToCancel: Tournament) {
-    return tournamentToCancel.state === 'NOT_CANCELED';
+    return !tournamentToCancel.isCanceled;
   }
 
   async cancelTournament(tournamentToCancel: Tournament) {
@@ -313,7 +313,7 @@ export default class MyTournamentsView extends Vue {
         tournamentToCancel.participants = participants;
         return;
       }
-      tournamentToCancel.state = 'CANCELED';
+      tournamentToCancel.isCanceled = true;
       tournamentToCancel.participants = participants;
     }
   }

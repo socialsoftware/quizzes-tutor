@@ -48,9 +48,9 @@
           {{ item.id }}
         </v-chip>
       </template>
-      <template v-slot:item.state="{ item }">
-        <v-chip :color="getStateColor(item.state)">
-          {{ getStateName(item.state) }}
+      <template v-slot:item.isCanceled="{ item }">
+        <v-chip :color="getStateColor(item.isCanceled)">
+          {{ getStateName(item.isCanceled) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
@@ -198,7 +198,7 @@ export default class OpenTournamentView extends Vue {
     },
     {
       text: 'State',
-      value: 'state',
+      value: 'isCanceled',
       align: 'center',
       width: '10%'
     },
@@ -275,13 +275,13 @@ export default class OpenTournamentView extends Vue {
     this.editPasswordDialog = false;
   }
 
-  getStateColor(state: string) {
-    if (state === 'NOT_CANCELED') return 'green';
+  getStateColor(isCanceled: string) {
+    if (!isCanceled) return 'green';
     else return 'red';
   }
 
-  getStateName(state: string) {
-    if (state === 'NOT_CANCELED') return 'AVAILABLE';
+  getStateName(isCanceled: string) {
+    if (!isCanceled) return 'AVAILABLE';
     else return 'CANCELLED';
   }
 

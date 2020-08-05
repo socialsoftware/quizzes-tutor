@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
@@ -18,10 +17,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "tournaments")
 public class Tournament  {
-    public enum Status {
-        NOT_CANCELED, CANCELED
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -39,8 +34,8 @@ public class Tournament  {
     @JoinColumn(name = "user_id")
     private User creator;
 
-    @Enumerated(EnumType.STRING)
-    private Status state;
+    @Column(name = "is_canceled")
+    private boolean isCanceled;
 
     @ManyToMany(fetch = FetchType.LAZY)
     private Set<User> participants = new HashSet<>();
@@ -69,7 +64,10 @@ public class Tournament  {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        this.state = tournamentDto.getState();
+        if (tournamentDto.isCanceled())
+            this.isCanceled = tournamentDto.isCanceled();
+        else
+            this.isCanceled = false;
         this.creator = user;
         setCourseExecution(user);
         setTopicConjunction(topicConjunction);
@@ -120,9 +118,9 @@ public class Tournament  {
 
     public User getCreator() { return creator; }
 
-    public Status getState() { return state; }
+    public boolean isCanceled() { return isCanceled; }
 
-    public void setState(Status status) { this.state = status; }
+    public void cancel() { this.isCanceled = true; }
 
     public Set<User> getParticipants() { return participants; }
 
