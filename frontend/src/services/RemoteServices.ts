@@ -638,7 +638,7 @@ export default class RemoteServices {
     topicsID: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
-    let path: string = '/tournaments?';
+    let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}?`;
     for (let topicID of topicsID) {
       path += 'topicsId=' + topicID + '&';
     }
@@ -655,7 +655,9 @@ export default class RemoteServices {
 
   static getAllTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/tournaments/getAllTournaments')
+      .get(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getAllTournaments`
+      )
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
@@ -668,7 +670,9 @@ export default class RemoteServices {
 
   static getOpenTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/tournaments/getOpenTournaments')
+      .get(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getOpenTournaments`
+      )
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
@@ -681,7 +685,9 @@ export default class RemoteServices {
 
   static getClosedTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/tournaments/getClosedTournaments')
+      .get(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
+      )
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
@@ -694,7 +700,9 @@ export default class RemoteServices {
 
   static getUserTournaments(): Promise<Tournament[]> {
     return httpClient
-      .get('/tournaments/getUserTournaments')
+      .get(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getUserTournaments`
+      )
       .then(response => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
@@ -706,7 +714,9 @@ export default class RemoteServices {
   }
 
   static joinTournament(tournament: Tournament, password: String) {
-    let path: string = 'tournaments/joinTournament?password=' + password;
+    let path: string =
+      `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament?password=` +
+      password;
     return httpClient.put(path, tournament).catch(async error => {
       throw Error(await this.errorMessage(error));
     });
@@ -714,7 +724,10 @@ export default class RemoteServices {
 
   static solveTournament(tournament: Tournament): Promise<StatementQuiz> {
     return httpClient
-      .put('tournaments/solveQuiz', tournament)
+      .put(
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/solveQuiz`,
+        tournament
+      )
       .then(response => {
         return new StatementQuiz(response.data);
       })
@@ -725,7 +738,10 @@ export default class RemoteServices {
 
   static leaveTournament(tournament: Tournament) {
     return httpClient
-      .put('tournaments/leaveTournament', tournament)
+      .put(
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/leaveTournament`,
+        tournament
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -735,7 +751,7 @@ export default class RemoteServices {
     topicsID: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
-    let path: string = '/tournaments/updateTournament?';
+    let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/updateTournament?`;
     for (let topicID of topicsID) {
       path += 'topicsId=' + topicID + '&';
     }
@@ -752,7 +768,10 @@ export default class RemoteServices {
 
   static cancelTournament(tournament: Tournament) {
     return httpClient
-      .put('tournaments/cancelTournament', tournament)
+      .put(
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/cancelTournament`,
+        tournament
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -760,7 +779,9 @@ export default class RemoteServices {
 
   static removeTournament(tournamentId: number) {
     return httpClient
-      .delete(`/tournaments/removeTournament/${tournamentId}`)
+      .delete(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/removeTournament/${tournamentId}`
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
