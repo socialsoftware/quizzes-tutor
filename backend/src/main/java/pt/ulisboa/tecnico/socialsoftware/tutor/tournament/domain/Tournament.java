@@ -178,7 +178,7 @@ public class Tournament  {
     }
 
     public void checkCreator(User user) {
-        if (this.getCreator() != user) {
+        if (!this.getCreator().getId().equals(user.getId())) {
             throw new TutorException(TOURNAMENT_CREATOR, user.getId());
         }
     }
