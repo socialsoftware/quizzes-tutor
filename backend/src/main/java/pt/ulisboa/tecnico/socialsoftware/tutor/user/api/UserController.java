@@ -22,15 +22,17 @@ public class UserController {
     @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
-        return userService.createExternalUser(executionId,externalUserDto);
+        ExternalUserDto user = userService.createExternalUser(executionId,externalUserDto);
+        if (!user.isActive()) {
+            userService.sendConfirmationEmailTo(user);
+        }
+        return user;
     }
 
     @PostMapping ("/auth/registration/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
         ExternalUserDto user = userService.confirmRegistration(externalUserDto);
-        if (!user.isActive()) {
-            userService.sendConfirmationEmailTo(user);
-        }
+        userService.sendConfirmationEmailTo(user);
         return user;
     }
 

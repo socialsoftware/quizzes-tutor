@@ -245,19 +245,10 @@ export default class CoursesView extends Vue {
     this.currentCourse = null;
   }
 
-  updateUserNumbers(userType: String) {
-    if(!!this.currentCourse && !!this.currentCourse) {
-      let index: number = this.courses
-          .indexOf(this.courses
-            .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
-    
-      if(!!this.courses && !!this.courses[index]) {
-        if(userType === 'TEACHER')
-          this.courses[index].numberOfTeachers++;
-
-        if(userType === 'STUDENT')
-          this.courses[index].numberOfStudents++;
-      }
+  updateUserNumbers(course: Course) {
+    if(!!course && !!course.courseExecutionUsers) {
+          course.numberOfTeachers = course.courseExecutionUsers.filter(user => user.role === 'TEACHER').length;
+          course.numberOfStudents = course.courseExecutionUsers.filter(user => user.role === 'STUDENT').length;
     }
   }
 
@@ -283,7 +274,8 @@ export default class CoursesView extends Vue {
           .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
         
       this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
-      this.updateUserNumbers(user.role);
+      this.updateUserNumbers(this.courses[index]);
+
 
     }
   }
@@ -332,7 +324,10 @@ export default class CoursesView extends Vue {
               .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
 
           this.currentCourse = course;
-          this.courses[index].courseExecutionUsers = course.courseExecutionUsers;
+          this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+          this.updateUserNumbers(this.courses[index]);
+
+
         } catch (error) {
           await this.$store.dispatch('error', error);
         }
