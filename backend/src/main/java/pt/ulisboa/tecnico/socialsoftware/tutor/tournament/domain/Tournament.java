@@ -172,6 +172,9 @@ public class Tournament  {
 
         getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
+
+        getTopicConjunction().remove();
+        topicConjunction = null;
     }
 
     public void checkCanChange() {

@@ -15,8 +15,6 @@ import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
-
 @RestController
 public class TournamentController {
 
@@ -26,7 +24,7 @@ public class TournamentController {
     @PostMapping(value = "/tournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam Set<Integer> topicsId) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
 
         return tournamentService.createTournament(user.getId(), topicsId, tournamentDto);
@@ -35,7 +33,7 @@ public class TournamentController {
     @GetMapping(value = "/tournaments/getAllTournaments")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public List<TournamentDto> getAllTournaments(Principal principal) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         return tournamentService.getAllTournaments(user);
     }
@@ -43,7 +41,7 @@ public class TournamentController {
     @GetMapping(value = "/tournaments/getOpenTournaments")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public List<TournamentDto> getOpenTournaments(Principal principal) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         return tournamentService.getOpenedTournaments(user);
     }
@@ -51,7 +49,7 @@ public class TournamentController {
     @GetMapping(value = "/tournaments/getClosedTournaments")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public List<TournamentDto> getClosedTournaments(Principal principal) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         return tournamentService.getClosedTournaments(user);
     }
@@ -59,7 +57,7 @@ public class TournamentController {
     @GetMapping(value = "/tournaments/getUserTournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<TournamentDto> getUserTournaments(Principal principal) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         return tournamentService.getUserTournaments(user);
     }
@@ -67,7 +65,7 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/joinTournament")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public void joinTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam String password) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         tournamentService.joinTournament(user.getId(), tournamentDto, password);
     }
@@ -75,7 +73,7 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/solveQuiz")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public StatementQuizDto solveQuiz(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         return tournamentService.solveQuiz(user.getId(), tournamentDto);
     }
@@ -83,7 +81,7 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/leaveTournament")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT') or hasRole('ROLE_ADMIN')")
     public void leaveTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         tournamentService.leaveTournament(user.getId(), tournamentDto);
     }
@@ -91,7 +89,7 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/updateTournament")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public void updateTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @RequestParam Set<Integer> topicsId) {
-        User user = checkUser(principal);
+        User user = (User) ((Authentication) principal).getPrincipal();
 
         tournamentService.updateTournament(user.getId(), topicsId, tournamentDto);
     }
@@ -101,9 +99,6 @@ public class TournamentController {
     public void cancelTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if(user == null){
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
         tournamentService.cancelTournament(user.getId(), tournamentDto);
     }
 
@@ -112,20 +107,7 @@ public class TournamentController {
     public void removeTournament(Principal principal, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        if(user == null){
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
         tournamentService.removeTournament(user.getId(), tournamentId);
-    }
-
-    private User checkUser(Principal principal) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if (user == null){
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
-
-        return user;
     }
 
     private void formatDates(TournamentDto tournamentDto) {

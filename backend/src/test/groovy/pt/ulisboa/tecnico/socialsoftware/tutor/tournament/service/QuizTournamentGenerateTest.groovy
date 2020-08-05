@@ -75,9 +75,10 @@ class QuizTournamentGenerateTest extends SpockTest {
 
     def "1 student join a tournament" () {
         given:
+        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
 
         when:
-        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
+        tournamentService.solveQuiz(user1.getId(), tournamentDto)
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
@@ -95,9 +96,13 @@ class QuizTournamentGenerateTest extends SpockTest {
         user2.addCourse(courseExecution)
         userRepository.save(user2)
 
-        when: 'both students join the tournament'
+        and:
         tournamentService.joinTournament(user1.getId(), tournamentDto, "")
         tournamentService.joinTournament(user2.getId(), tournamentDto, "")
+
+        when: 'both students solve the quiz'
+        tournamentService.solveQuiz(user1.getId(), tournamentDto)
+        tournamentService.solveQuiz(user2.getId(), tournamentDto)
 
         then: 'there is only one quiz generated'
         quizRepository.count() == 1L

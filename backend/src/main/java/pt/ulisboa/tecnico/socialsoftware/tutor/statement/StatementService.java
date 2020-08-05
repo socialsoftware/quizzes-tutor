@@ -254,24 +254,6 @@ public class StatementService {
     }
 
     @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
-    public List<QuizDto> getTournamentQuizzes(int userId, int executionId) {
-        LocalDateTime now = DateHandler.now();
-        Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId, now);
-
-        Stream<Quiz> availableQuizzes = quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
-                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
-
-        return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
-                .map(quiz -> new QuizDto(quiz, false))
-                .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
-                .filter(quiz -> quiz.getType().equals(Quiz.QuizType.TOURNAMENT.name()))
-                .collect(Collectors.toList());
-    }
-
-    @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)

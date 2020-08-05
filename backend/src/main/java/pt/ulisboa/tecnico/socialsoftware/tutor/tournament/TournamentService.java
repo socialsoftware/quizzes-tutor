@@ -159,28 +159,6 @@ public class TournamentService {
         }
 
         tournament.addParticipant(user);
-
-        if (!tournament.hasQuiz()) {
-            StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto();
-            quizForm.setNumberOfQuestions(tournament.getNumberOfQuestions());
-            quizForm.setTopicConjunction(tournament.getTopicConjunction());
-
-            StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
-                    tournament.getCourseExecution().getId(), quizForm);
-
-            Quiz quiz = quizRepository.findById(statementQuizDto.getId())
-                    .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
-
-            if (DateHandler.now().isBefore(tournament.getStartTime())) {
-                quiz.setAvailableDate(tournament.getStartTime());
-            }
-            quiz.setConclusionDate(tournament.getEndTime());
-            quiz.setResultsDate(tournament.getEndTime());
-            quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
-            quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
-
-            tournament.setQuizId(statementQuizDto.getId());
-        }
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -194,7 +172,7 @@ public class TournamentService {
         }
 
         if (!tournament.hasQuiz()) {
-            throw new TutorException(TOURNAMENT_NO_QUIZ, tournamentDto.getId());
+            createQuiz(tournament);
         }
 
         return statementService.startQuiz(userId, tournament.getQuizId());
@@ -329,5 +307,27 @@ public class TournamentService {
     private Tournament checkTournament(Integer tournamentId) {
         return tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+    }
+
+    private void createQuiz(Tournament tournament) {
+        StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto();
+        quizForm.setNumberOfQuestions(tournament.getNumberOfQuestions());
+        quizForm.setTopicConjunction(tournament.getTopicConjunction());
+
+        StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
+                tournament.getCourseExecution().getId(), quizForm);
+
+        Quiz quiz = quizRepository.findById(statementQuizDto.getId())
+                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, statementQuizDto.getId()));
+
+        if (DateHandler.now().isBefore(tournament.getStartTime())) {
+            quiz.setAvailableDate(tournament.getStartTime());
+        }
+        quiz.setConclusionDate(tournament.getEndTime());
+        quiz.setResultsDate(tournament.getEndTime());
+        quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
+        quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
+
+        tournament.setQuizId(statementQuizDto.getId());
     }
 }
