@@ -102,6 +102,7 @@ class FenixAuthTest extends SpockTest {
     def "teacher has courses"() {
         given: 'a teacher'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        user.setState(User.State.ACTIVE)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -158,6 +159,7 @@ class FenixAuthTest extends SpockTest {
     def "teacher has course and is in database, then add"() {
         given: 'a teacher'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        user.setState(User.State.ACTIVE)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -304,6 +306,7 @@ class FenixAuthTest extends SpockTest {
     def "student has courses and in the database, add course"() {
         given: 'a student'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.setState(User.State.ACTIVE)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -331,6 +334,7 @@ class FenixAuthTest extends SpockTest {
     def "student has teaching courses, throw exception"() {
         given: 'a student'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user.setState(User.State.ACTIVE)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -381,6 +385,7 @@ class FenixAuthTest extends SpockTest {
     def "student has attending and teaching courses, add attending course"() {
         given: 'a teacher'
         def user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        user.setState(User.State.ACTIVE)
         userRepository.save(user)
         user.setKey(user.getId())
 

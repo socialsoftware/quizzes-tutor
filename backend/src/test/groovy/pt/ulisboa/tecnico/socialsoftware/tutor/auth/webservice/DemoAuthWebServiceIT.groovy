@@ -35,4 +35,8 @@ class DemoAuthWebServiceIT extends SpockTest {
         response.data.user.role == "STUDENT"
     }
 
+    def cleanup() {
+        persistentCourseCleanup()
+    }
+
 }

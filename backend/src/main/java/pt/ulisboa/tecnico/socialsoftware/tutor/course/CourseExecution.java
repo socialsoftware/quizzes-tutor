@@ -166,12 +166,20 @@ public class CourseExecution implements DomainEntity {
         users.forEach(user -> user.getCourseExecutions().remove(this));
     }
 
-    public int getNumberOfTeachers() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER)).count();
+    public int getNumberOfActiveTeachers() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER) && user.getState().equals(User.State.ACTIVE)).count();
     }
 
-    public int getNumberOfStudents() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT)).count();
+    public int getNumberofInactiveTeachers() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER) && user.getState().equals(User.State.INACTIVE)).count();
+    }
+
+    public int getNumberOfActiveStudents() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT) && user.getState().equals(User.State.ACTIVE)).count();
+    }
+
+    public int getNumberOfInactiveStudents() {
+        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT) && user.getState().equals(User.State.INACTIVE)).count();
     }
 
     public int getNumberOfQuizzes() {

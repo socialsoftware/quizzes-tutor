@@ -59,9 +59,8 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution1.getUsers().remove(userRepository.findById(response.data.id).get())
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
         courseExecution1.remove()
+        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
         userRepository.delete(userRepository.findById(response.data.id).get())

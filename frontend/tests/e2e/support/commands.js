@@ -46,7 +46,7 @@ Cypress.Commands.add('deleteCourseExecution', acronym => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 11)
+    .should('have.length', 13)
     .find('[data-cy="deleteCourse"]')
     .click();
 });
@@ -58,7 +58,7 @@ Cypress.Commands.add(
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 11)
+      .should('have.length', 13)
       .find('[data-cy="createFromCourse"]')
       .click();
     cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
@@ -72,7 +72,7 @@ Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 11)
+    .should('have.length', 13)
     .find('[data-cy="addExternalUser"]')
     .click();
 
@@ -99,11 +99,11 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
 });
 
 Cypress.Commands.add('checkStudentCount', (acronym, count) => {
-  cy.contains(acronym).parent().children().eq(7).contains(count);
+  cy.contains(acronym).parent().children().eq(9).contains(count);
 });
 
 Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
-  cy.contains(acronym).parent().children().eq(6).contains(count);
+  cy.contains(acronym).parent().children().eq(7).contains(count);
 });
 
 Cypress.Commands.add('closeUserCreationDialog', () => {

@@ -34,8 +34,10 @@ class GetCourseExecutionsTest extends SpockTest {
         tecnicoCourse.courseExecutionType == Course.Type.TECNICO
         tecnicoCourse.numberOfQuestions == 0
         tecnicoCourse.numberOfQuizzes == 0
-        tecnicoCourse.numberOfTeachers == 0
-        tecnicoCourse.numberOfStudents == 0
+        tecnicoCourse.numberOfActiveTeachers == 0
+        tecnicoCourse.numberOfInactiveTeachers == 0
+        tecnicoCourse.numberOfActiveStudents == 0
+        tecnicoCourse.numberOfInactiveStudents == 0
     }
 
     def "returned an external course with more info"() {
@@ -50,10 +52,13 @@ class GetCourseExecutionsTest extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         def teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        teacher.setState(User.State.ACTIVE)
         teacher.addCourse(courseExecution)
 
         def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        student.setState(User.State.ACTIVE)
         student.addCourse(courseExecution)
+        System.out.println("\n\n\n\n"+student.getState()+"\n\n\n")
 
         Question question = new Question()
         question.setTitle("Title")
@@ -76,8 +81,10 @@ class GetCourseExecutionsTest extends SpockTest {
         externalCourse.courseExecutionType == Course.Type.EXTERNAL
         externalCourse.numberOfQuestions == 1
         externalCourse.numberOfQuizzes == 1
-        externalCourse.numberOfTeachers == 1
-        externalCourse.numberOfStudents == 1
+        externalCourse.numberOfActiveTeachers == 1
+        externalCourse.numberOfInactiveTeachers == 0
+        externalCourse.numberOfActiveStudents == 1
+        externalCourse.numberOfInactiveStudents == 0
     }
 
     @TestConfiguration

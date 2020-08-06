@@ -43,7 +43,7 @@ public class User implements UserDetails, DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private State state;
     
     @Column(unique=true)

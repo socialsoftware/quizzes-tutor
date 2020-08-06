@@ -28,6 +28,8 @@ class GetExternalUsersWebServiceIT extends SpockTest{
     def response
 
     def setup() {
+        System.out.println("\n\n\n\n\n\n\n\n\n\n"+courseExecutionRepository.findAll()+"\n\n\n\n\n\n\n")
+
         restClient = new RESTClient("http://localhost:" + port)
 
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
