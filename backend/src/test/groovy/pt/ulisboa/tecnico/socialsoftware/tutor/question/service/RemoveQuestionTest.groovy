@@ -59,7 +59,7 @@ class RemoveQuestionTest extends SpockTest {
 
     def "remove a question"() {
         when:
-        questionService.removeQuestion(teacher.getId(), question.getId())
+        questionService.removeQuestion(question.getId())
 
         then: "the question is removeQuestion"
         questionRepository.count() == 0L
@@ -84,7 +84,7 @@ class RemoveQuestionTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        questionService.removeQuestion(teacher.getId(), question.getId())
+        questionService.removeQuestion(question.getId())
 
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
@@ -106,7 +106,7 @@ class RemoveQuestionTest extends SpockTest {
         topicRepository.save(topicTwo)
 
         when:
-        questionService.removeQuestion(teacher.getId(), question.getId())
+        questionService.removeQuestion(question.getId())
 
         then:
         questionRepository.count() == 0L

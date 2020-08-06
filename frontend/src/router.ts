@@ -26,9 +26,9 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
-import StudentQuestionSubmissionView from '@/views/student/question-submissions/QuestionSubmissionView.vue'
-import TeacherQuestionSubmissionView from '@/views/teacher/question-submissions/QuestionSubmissionView.vue'
-import AllQuestionSubmissionsView from '@/views/student/question-submissions/AllUserQuestionSubmissionInfoView.vue'
+import StudentQuestionSubmissionView from '@/views/student/question-submissions/QuestionSubmissionView.vue';
+import TeacherQuestionSubmissionView from '@/views/teacher/question-submissions/QuestionSubmissionView.vue';
+import AllQuestionSubmissionsView from '@/views/student/question-submissions/AllUserQuestionSubmissionInfoView.vue';
 
 Vue.use(Router);
 
@@ -218,7 +218,6 @@ let router = new Router({
             requiredAuth: 'Student'
           }
         }
-
       ]
     },
     {

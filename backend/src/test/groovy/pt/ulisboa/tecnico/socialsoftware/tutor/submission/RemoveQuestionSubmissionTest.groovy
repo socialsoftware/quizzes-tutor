@@ -50,7 +50,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         reviewRepository.save(review)
 
         when:
-        questionService.removeQuestion(teacher.getId(), question.getId())
+        questionService.removeQuestion(question.getId())
 
         then: "the submitted question and associated reviews are removed"
         questionRepository.count() == 0L
@@ -86,7 +86,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         reviewRepository.save(review3)
 
         when:
-        questionService.removeQuestion(teacher.getId(), question.getId())
+        questionService.removeQuestion(question.getId())
 
         then: "the submitted question and associated reviews are removed"
         questionRepository.count() == 0L
@@ -103,7 +103,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         questionSubmissionRepository.save(questionSubmission)
 
         when:
-        questionService.removeQuestion(student.getId(), question.getId())
+        questionService.removeSubmittedQuestion(question.getId())
 
         then: "the submitted question and associated reviews are removed"
         questionRepository.count() == 0L
@@ -114,7 +114,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
 
     def "student tries to remove a submitted question already in review"(){
         when:
-        questionService.removeQuestion(student.getId(), question.getId())
+        questionService.removeSubmittedQuestion(question.getId())
 
         then: "exception is thrown"
         def exception = thrown(TutorException)
@@ -132,7 +132,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         reviewRepository.save(review)
 
         when:
-        questionService.removeQuestion(student.getId(), question.getId())
+        questionService.removeSubmittedQuestion(question.getId())
 
         then: "exception is thrown"
         def exception = thrown(TutorException)

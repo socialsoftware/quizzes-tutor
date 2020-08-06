@@ -287,7 +287,7 @@ export default class QuestionSubmissionView extends Vue {
           return;
         }
         let questionId = toDeleteQuestionSubmission.question.id;
-        if (questionId != null) await RemoteServices.deleteQuestion(questionId);
+        if (questionId != null) await RemoteServices.deleteSubmittedQuestion(questionId);
         this.questionSubmissions = this.questionSubmissions.filter(
           questionSubmission => questionSubmission.question.id != questionId
         );

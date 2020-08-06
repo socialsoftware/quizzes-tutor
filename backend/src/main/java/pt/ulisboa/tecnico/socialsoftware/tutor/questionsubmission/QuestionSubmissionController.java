@@ -19,19 +19,19 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 @RestController
 public class QuestionSubmissionController {
     @Autowired
-    private QuestionSubmissionService submissionService;
+    private QuestionSubmissionService questionSubmissionService;
 
     @PostMapping(value = "/student/submissions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public QuestionSubmissionDto createQuestionSubmission(Principal principal, @Valid @RequestBody QuestionSubmissionDto submissionDto) {
+    public QuestionSubmissionDto createQuestionSubmission(Principal principal, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
         
-        submissionDto.setUserId(user.getId());
+        questionSubmissionDto.setUserId(user.getId());
 
-        return submissionService.createQuestionSubmission(submissionDto);
+        return questionSubmissionService.createQuestionSubmission(questionSubmissionDto);
     }
 
     @PostMapping("/executions/{executionId}/reviews")
@@ -43,25 +43,25 @@ public class QuestionSubmissionController {
             throw new TutorException(AUTHENTICATION_ERROR);
 
         reviewDto.setUserId(user.getId());
-        return submissionService.createReview(reviewDto);
+        return questionSubmissionService.createReview(reviewDto);
     }
 
     @PutMapping("/submissions/{submissionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public QuestionSubmissionDto updateQuestionSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody QuestionSubmissionDto submissionDto) {
+    public QuestionSubmissionDto updateQuestionSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
-        submissionDto.setUserId(user.getId());
-        return this.submissionService.updateQuestionSubmission(submissionId, submissionDto);
+        questionSubmissionDto.setUserId(user.getId());
+        return this.questionSubmissionService.updateQuestionSubmission(submissionId, questionSubmissionDto);
     }
 
     @PutMapping("/management/reviews/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public void toggleInReviewStatus(@PathVariable int questionId, @Valid @RequestParam boolean inReview) {
-        submissionService.toggleInReviewStatus(questionId, inReview);
+        questionSubmissionService.toggleInReviewStatus(questionId, inReview);
     }
 
     @GetMapping(value = "/student/submissions")
@@ -72,24 +72,24 @@ public class QuestionSubmissionController {
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
-        return submissionService.getStudentQuestionSubmissions(user.getId(), executionId);
+        return questionSubmissionService.getStudentQuestionSubmissions(user.getId(), executionId);
     }
 
     @GetMapping("/executions/{executionId}/submissions")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(@PathVariable int executionId) {
-        return submissionService.getCourseExecutionQuestionSubmissions(executionId);
+        return questionSubmissionService.getCourseExecutionQuestionSubmissions(executionId);
     }
 
     @GetMapping("/submissions/{submissionId}/reviews")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
     public List<ReviewDto> getQuestionSubmissionReviews(@PathVariable int submissionId) {
-        return submissionService.getQuestionSubmissionReviews(submissionId);
+        return questionSubmissionService.getQuestionSubmissionReviews(submissionId);
     }
 
     @GetMapping(value = "/student/submissions/all")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(@Valid @RequestParam int executionId) {
-        return submissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
+        return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
     }
 }

@@ -393,6 +393,10 @@ public class User implements UserDetails, DomainEntity {
         questionSubmissions.add(questionSubmission);
     }
 
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Review> getReviews() { return reviews; }
+
     public boolean isStudent() { return this.role == User.Role.STUDENT; }
 
     public boolean isTeacher() { return this.role == User.Role.TEACHER; }

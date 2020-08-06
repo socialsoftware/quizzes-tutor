@@ -150,6 +150,8 @@ public class CourseExecution implements DomainEntity {
         questionSubmissions.add(questionSubmission);
     }
 
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
     @Override
     public String toString() {
         return "CourseExecution{" +
@@ -172,6 +174,7 @@ public class CourseExecution implements DomainEntity {
 
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
+        questionSubmissions.forEach(submission -> submission.getCourseExecution().remove());
     }
 
     public int getNumberOfTeachers() {

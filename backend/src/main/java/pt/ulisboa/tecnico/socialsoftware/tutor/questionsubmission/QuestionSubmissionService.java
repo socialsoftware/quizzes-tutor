@@ -49,7 +49,7 @@ public class QuestionSubmissionService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private QuestionSubmissionRepository submissionRepository;
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -113,6 +113,38 @@ public class QuestionSubmissionService {
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeSubmittedQuestion(Integer submissionId) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(submissionId);
+
+        removeReviews(questionSubmission);
+
+        questionSubmission.remove();
+        questionSubmissionRepository.delete(questionSubmission);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeQuestionSubmission(Integer submissionId) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(submissionId);
+
+        removeReviews(questionSubmission);
+
+        questionSubmission.remove();
+        questionSubmissionRepository.delete(questionSubmission);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeReviews(QuestionSubmission questionSubmission) {
+        List<Review> reviews = new ArrayList<>(reviewRepository.findByQuestionSubmissionId(questionSubmission.getId()));
+        for (Review review : reviews) {
+            review.remove();
+            reviewRepository.delete(review);
+        }
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleInReviewStatus(int questionId, boolean inReview) {
         String status = inReview ? "IN_REVIEW" : "IN_REVISION";
         updateQuestionStatus(status, questionId);
@@ -121,14 +153,14 @@ public class QuestionSubmissionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {
-        return submissionRepository.getQuestionSubmissions(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.getQuestionSubmissions(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId) {
-        return submissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -143,7 +175,7 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
         Map<Integer, UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new HashMap<>();
-        List<QuestionSubmission> submissions = submissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId);
+        List<QuestionSubmission> submissions = questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId);
 
         for (QuestionSubmission submission: submissions) {
             User user = submission.getUser();
@@ -186,7 +218,7 @@ public class QuestionSubmissionService {
     }
 
     private QuestionSubmission getQuestionSubmission(Integer submissionId) {
-        return submissionRepository.findById(submissionId)
+        return questionSubmissionRepository.findById(submissionId)
                 .orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, submissionId));
     }
 

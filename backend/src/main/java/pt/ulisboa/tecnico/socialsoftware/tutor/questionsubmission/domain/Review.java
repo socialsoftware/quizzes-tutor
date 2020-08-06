@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "reviews")
-
 public class Review {
 
     @Id
@@ -73,4 +72,11 @@ public class Review {
     public String getStatus() { return status; }
 
     public void setStatus(String status) { this.status = status; }
+
+    public void remove() {
+        this.questionSubmission = null;
+
+        getUser().getReviews().remove(this);
+        this.user = null;
+    }
 }

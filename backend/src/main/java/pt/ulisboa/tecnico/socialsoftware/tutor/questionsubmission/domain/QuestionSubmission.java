@@ -62,4 +62,14 @@ public class QuestionSubmission {
     public Set<Review> getReviews() { return reviews; }
 
     public void addReview(Review review) { this.reviews.add(review); }
+
+    public void remove() {
+        getCourseExecution().getQuestionSubmissions().remove(this);
+        getUser().getQuestionSubmissions().remove(this);
+
+        this.courseExecution = null;
+        this.user = null;
+
+        getReviews().clear();
+    }
 }

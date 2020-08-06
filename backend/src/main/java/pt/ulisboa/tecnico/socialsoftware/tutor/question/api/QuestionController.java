@@ -80,20 +80,28 @@ public class QuestionController {
         return this.questionService.updateQuestion(questionId, question);
     }
 
-    @DeleteMapping("/questions/{questionId}")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')) or hasRole('ROLE_STUDENT')")
-    public void removeQuestion(Principal principal, @PathVariable Integer questionId) throws IOException {
+    @DeleteMapping("/questions/{questionId}/submission")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public void removeSubmittedQuestion(@PathVariable Integer questionId) throws IOException {
         logger.debug("removeQuestion questionId: {}: ", questionId);
         QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
 
-        User user = (User) ((Authentication) principal).getPrincipal();
+        questionService.removeSubmittedQuestion(questionId);
 
-        if (user == null) {
-            throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
+        if (url != null && Files.exists(getTargetLocation(url))) {
+            Files.delete(getTargetLocation(url));
         }
+    }
 
-        questionService.removeQuestion(user.getId(), questionId);
+    @DeleteMapping("/questions/{questionId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    public void removeQuestion(@PathVariable Integer questionId) throws IOException {
+        logger.debug("removeQuestion questionId: {}: ", questionId);
+        QuestionDto questionDto = questionService.findQuestionById(questionId);
+        String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
+
+        questionService.removeQuestion(questionId);
 
         if (url != null && Files.exists(getTargetLocation(url))) {
             Files.delete(getTargetLocation(url));

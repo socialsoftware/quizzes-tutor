@@ -314,4 +314,8 @@ public class Question implements DomainEntity {
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
     }
+
+    public boolean isSubmittedQuestion() {
+        return !Arrays.asList(Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REMOVED).contains(status);
+    }
 }

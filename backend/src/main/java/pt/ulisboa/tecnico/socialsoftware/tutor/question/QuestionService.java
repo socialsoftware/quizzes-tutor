@@ -23,14 +23,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,13 +65,10 @@ public class QuestionService {
     private OptionRepository optionRepository;
 
     @Autowired
+    private QuestionSubmissionService questionSubmissionService;
+
+    @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
-
-    @Autowired
-    private ReviewRepository reviewRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Retryable(
       value = { SQLException.class },
@@ -99,7 +93,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().filter(this::isValidQuestion).map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isSubmittedQuestion()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -137,24 +131,31 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeQuestion(Integer userId, Integer questionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    public void removeSubmittedQuestion(Integer questionId) {
+        Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findByQuestionId(question.getId());
+
+        if(!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
+            throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
+        } else {
+            removeQuestion(questionId);
+        }
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         QuestionSubmission questionSubmission = questionSubmissionRepository.findByQuestionId(question.getId());
 
         if (questionSubmission != null) {
-            removeSubmission(user, questionSubmission);
+            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
         }
 
         question.remove();
         questionRepository.delete(question);
-    }
-
-    private void removeSubmission(User user, QuestionSubmission questionSubmission) {
-        if(user.isStudent() && (!questionSubmission.getReviews().isEmpty() || !questionSubmission.getQuestion().getStatus().equals(Question.Status.IN_REVISION))) {
-            throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
-        }
-        deleteQuestionSubmission(questionSubmission);
     }
 
     @Retryable(
@@ -293,7 +294,7 @@ public class QuestionService {
         QuestionSubmission questionSubmission = questionSubmissionRepository.findByQuestionId(question.getId());
 
         if (questionSubmission != null) {
-            deleteQuestionSubmission(questionSubmission);
+            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
         }
 
         for (Option option : question.getOptions()) {
@@ -309,22 +310,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteQuestionSubmission(QuestionSubmission questionSubmission) {
-        List<Review> reviews = new ArrayList<>(reviewRepository.findByQuestionSubmissionId(questionSubmission.getId()));
-        for (Review review : reviews) {
-            reviewRepository.delete(review);
-        }
-        questionSubmissionRepository.delete(questionSubmission);
-    }
-
-    public boolean isValidQuestion(Question question) {
-        return Arrays.asList(Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REMOVED).contains(question.getStatus());
     }
 }
 

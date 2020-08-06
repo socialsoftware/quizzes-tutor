@@ -61,7 +61,10 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/submissions" data-cy="submissionTeacherMenuButton">
+            <v-list-item
+              to="/management/submissions"
+              data-cy="submissionTeacherMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
@@ -163,20 +166,26 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/submissions" data-cy="mySubmissionsMenuButton">
+            <v-list-item
+              to="/student/submissions"
+              data-cy="mySubmissionsMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>My Question Submissions</v-list-item-title>
+                <v-list-item-title>My Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/all-submissions" data-cy="allSubmissionsMenuButton">
+            <v-list-item
+              to="/student/all-submissions"
+              data-cy="allSubmissionsMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>fas fa-users</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>All Question Submissions</v-list-item-title>
+                <v-list-item-title>All Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -373,7 +382,6 @@
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
           </v-list-item>
-
         </v-list-group>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">
