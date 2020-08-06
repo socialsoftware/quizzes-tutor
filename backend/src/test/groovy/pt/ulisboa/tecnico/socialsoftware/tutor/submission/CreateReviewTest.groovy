@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.submission.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -6,8 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.dto.ReviewDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -17,7 +17,7 @@ class CreateReviewTest extends SpockTest{
     def student
     def teacher
     def question
-    def submission
+    def questionSubmission
 
     def setup() {
         student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
@@ -32,67 +32,67 @@ class CreateReviewTest extends SpockTest{
         question.setCourse(course)
         question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
-        submission = new Submission()
-        submission.setQuestion(question)
-        submission.setUser(student)
-        submission.setCourseExecution(courseExecution)
-        submissionRepository.save(submission)
+        questionSubmission = new QuestionSubmission()
+        questionSubmission.setQuestion(question)
+        questionSubmission.setUser(student)
+        questionSubmission.setCourseExecution(courseExecution)
+        questionSubmissionRepository.save(questionSubmission)
     }
 
-    def "create review that approves submission (question available)"() {
+    def "create review that approves question submission (question available)"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('AVAILABLE')
 
         when:
-        submissionService.createReview(reviewDto)
+        questionSubmissionService.createReview(reviewDto)
 
         then:
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
         result.getComment() == REVIEW_1_COMMENT
-        result.getSubmission() == submission
+        result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
         result.getStatus().equals("AVAILABLE")
         question.getStatus() == Question.Status.AVAILABLE
     }
 
-    def "create review that approves submission (question disabled)"() {
+    def "create review that approves question submission (question disabled)"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('DISABLED')
 
         when:
-        submissionService.createReview(reviewDto)
+        questionSubmissionService.createReview(reviewDto)
 
         then:
         def result = reviewRepository.findAll().get(0)
         def question = questionRepository.findAll().get(0);
         result.getId() != null
         result.getComment() == REVIEW_1_COMMENT
-        result.getSubmission() == submission
+        result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
         result.getStatus().equals("DISABLED")
         question.getStatus() == Question.Status.DISABLED
     }
 
-    def "create review that rejects submission"() {
+    def "create review that rejects question submission"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('REJECTED')
 
         when:
-        submissionService.createReview(reviewDto)
+        questionSubmissionService.createReview(reviewDto)
 
 
         then:
@@ -100,22 +100,22 @@ class CreateReviewTest extends SpockTest{
         def question = questionRepository.findAll().get(0);
         result.getId() != null
         result.getComment() == REVIEW_1_COMMENT
-        result.getSubmission() == submission
+        result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
         result.getStatus().equals("REJECTED")
         question.getStatus() == Question.Status.REJECTED
     }
 
-    def "create review to request changes to submission"() {
+    def "create review to request changes to question submission"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('IN_REVISION')
 
         when:
-        submissionService.createReview(reviewDto)
+        questionSubmissionService.createReview(reviewDto)
 
 
         then:
@@ -123,29 +123,29 @@ class CreateReviewTest extends SpockTest{
         def question = questionRepository.findAll().get(0);
         result.getId() != null
         result.getComment() == REVIEW_1_COMMENT
-        result.getSubmission() == submission
+        result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
         result.getStatus().equals("IN_REVISION")
         question.getStatus() == Question.Status.IN_REVISION
     }
 
-    def "create review for submission that has already been reviewed"() {
-        given: "a submission that has already been reviewed"
+    def "create review for question submission that has already been reviewed"() {
+        given: "a question submission that has already been reviewed"
         question.setStatus(Question.Status.AVAILABLE)
         questionRepository.save(question)
 
         and: "a reviewDto"
         def reviewDto = new ReviewDto()
-        reviewDto.setSubmissionId(submission.getId())
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
         reviewDto.setStatus('REJECTED')
 
         when:
-        submissionService.createReview(reviewDto)
+        questionSubmissionService.createReview(reviewDto)
         then: "exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == CANNOT_REVIEW_SUBMISSION
+        exception.getErrorMessage() == CANNOT_REVIEW_QUESTION_SUBMISSION
     }
 
     @TestConfiguration

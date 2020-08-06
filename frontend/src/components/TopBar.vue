@@ -66,7 +66,7 @@
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Submissions</v-list-item-title>
+                <v-list-item-title>Question Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/topics">
@@ -168,7 +168,7 @@
                 <v-icon>fas fa-user-edit</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>My Submissions</v-list-item-title>
+                <v-list-item-title>My Question Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/student/all-submissions" data-cy="allSubmissionsMenuButton">
@@ -176,7 +176,7 @@
                 <v-icon>fas fa-users</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>All Submissions</v-list-item-title>
+                <v-list-item-title>All Question Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -357,14 +357,14 @@
             <v-list-item-action>
               <v-icon>fas fa-user-edit</v-icon>
             </v-list-item-action>
-            <v-list-item-content>My Submissions</v-list-item-content>
+            <v-list-item-content>My Question Submissions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/all-submissions">
             <v-list-item-action>
               <v-icon>fas fa-users</v-icon>
             </v-list-item-action>
-            <v-list-item-content>All Submissions</v-list-item-content>
+            <v-list-item-content>All Question Submissions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

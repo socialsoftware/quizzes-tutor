@@ -10,8 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -67,7 +67,7 @@ public class User implements UserDetails, DomainEntity {
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Submission> submissions = new HashSet<>();
+    private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
@@ -389,8 +389,8 @@ public class User implements UserDetails, DomainEntity {
         course.addUser(this);
     }
 
-    public void addSubmission(Submission submission) {
-        submissions.add(submission);
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
     }
 
     public boolean isStudent() { return this.role == User.Role.STUDENT; }

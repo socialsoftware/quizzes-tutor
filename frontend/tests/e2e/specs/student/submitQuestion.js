@@ -29,7 +29,7 @@ describe('Student walkthrough', () => {
       'C',
       'D'
     );
-    cy.deleteSubmission('Test', 5);
+    cy.deleteQuestionSubmission('Test', 5);
   });
 
   it('login submits an invalid question', () => {
@@ -68,6 +68,6 @@ describe('Student walkthrough', () => {
       'D',
       'APPROVED'
     );
-    cy.deleteSubmission();
+    cy.deleteQuestionSubmission();
   });
 });

@@ -3,7 +3,7 @@ import { ISOtoString } from '@/services/ConvertDateService';
 export default class Review {
   id!: number;
   userId: number | null = null;
-  submissionId: number | null = null;
+  questionSubmissionId: number | null = null;
   comment!: string;
   status!: string;
   creationDate!: string;
@@ -14,7 +14,7 @@ export default class Review {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.userId = jsonObj.userId;
-      this.submissionId = jsonObj.submissionId;
+      this.questionSubmissionId = jsonObj.questionSubmissionId;
       this.comment = jsonObj.comment;
       this.status = jsonObj.status;
       this.creationDate = ISOtoString(jsonObj.creationDate);

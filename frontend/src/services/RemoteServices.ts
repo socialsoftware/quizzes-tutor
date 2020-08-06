@@ -13,9 +13,9 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import Submission from '@/models/management/Submission';
+import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
-import UserSubmissionInfo from '@/models/management/UserSubmissionInfo';
+import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -583,11 +583,11 @@ export default class RemoteServices {
       });
   }
 
-  static async createSubmission(submission: Submission): Promise<Submission> {
+  static async createQuestionSubmission(questionSubmission: QuestionSubmission): Promise<QuestionSubmission> {
     return httpClient
-      .post('/student/submissions', submission)
+      .post('/student/submissions', questionSubmission)
       .then(response => {
-        return new Submission(response.data);
+        return new QuestionSubmission(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -605,11 +605,11 @@ export default class RemoteServices {
       });
   }
 
-  static async updateSubmission(submission: Submission): Promise<Submission> {
+  static async updateQuestionSubmission(questionSubmission: QuestionSubmission): Promise<QuestionSubmission> {
     return httpClient
-      .put(`/submissions/${submission.id}`, submission)
+      .put(`/submissions/${questionSubmission.id}`, questionSubmission)
       .then(response => {
-        return new Submission(response.data);
+        return new QuestionSubmission(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -624,14 +624,14 @@ export default class RemoteServices {
       });
   }
 
-  static async getStudentSubmissions(): Promise<Submission[]> {
+  static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(
         `/student/submissions?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
-        return response.data.map((submission: any) => {
-          return new Submission(submission);
+        return response.data.map((questionSubmission: any) => {
+          return new QuestionSubmission(questionSubmission);
         });
       })
       .catch(async error => {
@@ -639,14 +639,14 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseExecutionSubmissions(): Promise<Submission[]> {
+  static async getCourseExecutionQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/submissions`
       )
       .then(response => {
-        return response.data.map((submission: any) => {
-          return new Submission(submission);
+        return response.data.map((questionSubmission: any) => {
+          return new QuestionSubmission(questionSubmission);
         });
       })
       .catch(async error => {
@@ -654,10 +654,10 @@ export default class RemoteServices {
       });
   }
 
-  static async getSubmissionReviews(submissionId: number): Promise<Review[]> {
+  static async getQuestionSubmissionReviews(questionSubmissionId: number): Promise<Review[]> {
     return httpClient
       .get(
-        `/submissions/${submissionId}/reviews`
+        `/submissions/${questionSubmissionId}/reviews`
       )
       .then(response => {
         return response.data.map((review: any) => {
@@ -669,14 +669,14 @@ export default class RemoteServices {
       });
   }
 
-  static async getAllStudentsSubmissionsInfo(): Promise<UserSubmissionInfo[]> {
+  static async getAllStudentsQuestionSubmissionsInfo(): Promise<UserQuestionSubmissionInfo[]> {
     return httpClient
       .get(
         `/student/submissions/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
         return response.data.map((userSubmissionsInfo: any) => {
-          return new UserSubmissionInfo(userSubmissionsInfo);
+          return new UserQuestionSubmissionInfo(userSubmissionsInfo);
         });
       })
       .catch(async error => {

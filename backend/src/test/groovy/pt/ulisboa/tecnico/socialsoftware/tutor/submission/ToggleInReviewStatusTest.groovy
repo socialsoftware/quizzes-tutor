@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.submission.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -33,7 +33,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionRepository.save(question)
 
         when:
-        submissionService.toggleInReviewStatus(question.getId(), true)
+        questionSubmissionService.toggleInReviewStatus(question.getId(), true)
 
         then: "question is in review"
         def question = questionRepository.findAll().get(0)
@@ -46,7 +46,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionRepository.save(question)
 
         when:
-        submissionService.toggleInReviewStatus(question.getId(), true)
+        questionSubmissionService.toggleInReviewStatus(question.getId(), true)
 
         then: "question is still in review"
         def question = questionRepository.findAll().get(0)
@@ -59,7 +59,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionRepository.save(question)
 
         when:
-        submissionService.toggleInReviewStatus(question.getId(), false)
+        questionSubmissionService.toggleInReviewStatus(question.getId(), false)
 
         then: "question is not in review anymore"
         def question = questionRepository.findAll().get(0)

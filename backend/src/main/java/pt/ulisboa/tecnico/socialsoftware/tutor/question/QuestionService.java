@@ -25,10 +25,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -68,7 +68,7 @@ public class QuestionService {
     private OptionRepository optionRepository;
 
     @Autowired
-    private SubmissionRepository submissionRepository;
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -140,21 +140,21 @@ public class QuestionService {
     public void removeQuestion(Integer userId, Integer questionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-        Submission submission = submissionRepository.findByQuestionId(question.getId());
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findByQuestionId(question.getId());
 
-        if (submission != null) {
-            removeSubmission(user, submission);
+        if (questionSubmission != null) {
+            removeSubmission(user, questionSubmission);
         }
 
         question.remove();
         questionRepository.delete(question);
     }
 
-    private void removeSubmission(User user, Submission submission) {
-        if(user.isStudent() && (!submission.getReviews().isEmpty() || !submission.getQuestion().getStatus().equals(Question.Status.IN_REVISION))) {
+    private void removeSubmission(User user, QuestionSubmission questionSubmission) {
+        if(user.isStudent() && (!questionSubmission.getReviews().isEmpty() || !questionSubmission.getQuestion().getStatus().equals(Question.Status.IN_REVISION))) {
             throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
         }
-        deleteSubmission(submission);
+        deleteQuestionSubmission(questionSubmission);
     }
 
     @Retryable(
@@ -290,10 +290,10 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        Submission submission = submissionRepository.findByQuestionId(question.getId());
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findByQuestionId(question.getId());
 
-        if (submission != null) {
-            deleteSubmission(submission);
+        if (questionSubmission != null) {
+            deleteQuestionSubmission(questionSubmission);
         }
 
         for (Option option : question.getOptions()) {
@@ -315,12 +315,12 @@ public class QuestionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteSubmission(Submission submission) {
-        List<Review> reviews = new ArrayList<>(reviewRepository.findBySubmissionId(submission.getId()));
+    public void deleteQuestionSubmission(QuestionSubmission questionSubmission) {
+        List<Review> reviews = new ArrayList<>(reviewRepository.findByQuestionSubmissionId(questionSubmission.getId()));
         for (Review review : reviews) {
             reviewRepository.delete(review);
         }
-        submissionRepository.delete(submission);
+        questionSubmissionRepository.delete(questionSubmission);
     }
 
     public boolean isValidQuestion(Question question) {
