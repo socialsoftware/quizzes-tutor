@@ -157,8 +157,8 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark data-cy="submissionMenuButton">
-              Submissions
+            <v-btn v-on="on" text dark data-cy="submissionStudentMenuButton">
+              Question Submissions
               <v-icon>question_answer</v-icon>
             </v-btn>
           </template>

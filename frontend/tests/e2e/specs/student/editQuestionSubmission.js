@@ -2,7 +2,7 @@ describe('Student walkthrough', () => {
   beforeEach(() => {
     cy.demoStudentLogin();
 
-    cy.get('[data-cy="submissionMenuButton"]').click();
+    cy.get('[data-cy="submissionStudentMenuButton"]').click();
     cy.get('[data-cy="mySubmissionsMenuButton"]').click();
   });
 
