@@ -2,10 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
 
@@ -13,6 +13,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 public class AuthController {
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private UserService userService;
 
     @Value("${base.url}")
     private String baseUrl;
@@ -55,5 +58,12 @@ public class AuthController {
     @GetMapping("/auth/demo/admin")
     public AuthDto demoAdminAuth() {
         return this.authService.demoAdminAuth();
+    }
+
+    @PostMapping("/auth/registration/confirm")
+    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
+        ExternalUserDto user = userService.confirmRegistration(externalUserDto);
+        userService.sendConfirmationEmailTo(user);
+        return user;
     }
 }

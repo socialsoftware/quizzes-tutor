@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
-class DeleteExternalInactiveUsersTest extends SpockTest{
+class DeleteExternalInactiveUsersTest extends SpockTest {
 
     def user1
     def user2

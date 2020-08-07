@@ -58,7 +58,6 @@ class GetCourseExecutionsTest extends SpockTest {
         def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         student.setState(User.State.ACTIVE)
         student.addCourse(courseExecution)
-        System.out.println("\n\n\n\n"+student.getState()+"\n\n\n")
 
         Question question = new Question()
         question.setTitle("Title")

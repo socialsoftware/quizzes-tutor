@@ -29,9 +29,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -230,7 +228,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         checkRole(externalUserDto);
         User user = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
@@ -279,7 +277,7 @@ public class UserService {
                 });
     }
 
-    private CourseExecution getCourseExecution(Integer courseExecutionId) {
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 

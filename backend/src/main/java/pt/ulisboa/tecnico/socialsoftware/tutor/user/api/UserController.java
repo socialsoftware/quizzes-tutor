@@ -29,13 +29,6 @@ public class UserController {
         return user;
     }
 
-    @PostMapping ("/auth/registration/confirm")
-    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = userService.confirmRegistration(externalUserDto);
-        userService.sendConfirmationEmailTo(user);
-        return user;
-    }
-
     @PostMapping("/courses/executions/{executionId}/csv")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or (hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public CourseDto uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
