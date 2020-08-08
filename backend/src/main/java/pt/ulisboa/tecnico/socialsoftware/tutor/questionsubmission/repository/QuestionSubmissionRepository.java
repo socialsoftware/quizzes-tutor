@@ -16,11 +16,11 @@ public interface QuestionSubmissionRepository extends JpaRepository<QuestionSubm
     Optional<Integer> findUserIdByQuestionSubmissionId(Integer questionSubmissionId);
 
     @Query(value = "select * from question_submissions s where s.user_id = :userId and s.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<QuestionSubmission> getQuestionSubmissions(Integer userId, Integer courseExecutionId);
+    List<QuestionSubmission> findQuestionSubmissions(Integer userId, Integer courseExecutionId);
 
     @Query(value = "select * from question_submissions s where s.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<QuestionSubmission> getCourseExecutionQuestionSubmissions(Integer courseExecutionId);
+    List<QuestionSubmission> findCourseExecutionQuestionSubmissions(Integer courseExecutionId);
 
     @Query(value = "select * from question_submissions s where s.question_id = :questionId", nativeQuery = true)
-    QuestionSubmission findByQuestionId(Integer questionId);
+    QuestionSubmission findQuestionSubmissionByQuestionId(Integer questionId);
 }

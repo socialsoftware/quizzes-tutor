@@ -125,7 +125,7 @@ public class QuestionSubmissionService {
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeReviews(QuestionSubmission questionSubmission) {
-        List<Review> reviews = new ArrayList<>(reviewRepository.findByQuestionSubmissionId(questionSubmission.getId()));
+        List<Review> reviews = new ArrayList<>(reviewRepository.findQuestionSubmissionReviews(questionSubmission.getId()));
         for (Review review : reviews) {
             review.remove();
             reviewRepository.delete(review);
@@ -143,21 +143,21 @@ public class QuestionSubmissionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {
-        return questionSubmissionRepository.getQuestionSubmissions(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.findQuestionSubmissions(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId) {
-        return questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<ReviewDto> getQuestionSubmissionReviews(Integer questionSubmissionId) {
-        return reviewRepository.getQuestionSubmissionReviews(questionSubmissionId).stream().map(ReviewDto::new)
+        return reviewRepository.findQuestionSubmissionReviews(questionSubmissionId).stream().map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -165,7 +165,7 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
         Map<Integer, UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new HashMap<>();
-        List<QuestionSubmission> questionSubmissions = questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId);
+        List<QuestionSubmission> questionSubmissions = questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseExecutionId);
 
         for (QuestionSubmission questionSubmission: questionSubmissions) {
             User user = questionSubmission.getUser();

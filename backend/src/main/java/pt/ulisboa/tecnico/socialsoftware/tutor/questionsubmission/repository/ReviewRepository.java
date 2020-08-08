@@ -12,8 +12,5 @@ import java.util.List;
 @Transactional
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value = "SELECT * FROM reviews r WHERE r.question_submission_id = :questionSubmissionId", nativeQuery = true)
-    List<Review> getQuestionSubmissionReviews(int questionSubmissionId);
-
-    @Query(value = "SELECT * FROM reviews r WHERE r.question_submission_id = :questionSubmissionId", nativeQuery = true)
-    List<Review> findByQuestionSubmissionId(int questionSubmissionId);
+    List<Review> findQuestionSubmissionReviews(int questionSubmissionId);
 }
