@@ -130,6 +130,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     review.questionSubmissionId = this.questionSubmission.id!;
     review.status = status;
     review.comment = this.comment;
+    review.userId = this.$store.getters.getUser.id;
     return review;
   }
 }

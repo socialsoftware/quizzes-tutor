@@ -595,7 +595,10 @@ export default class RemoteServices {
     questionSubmission: QuestionSubmission
   ): Promise<QuestionSubmission> {
     return httpClient
-      .post('/student/submissions', questionSubmission)
+      .post(
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+        questionSubmission
+      )
       .then(response => {
         return new QuestionSubmission(response.data);
       })
@@ -607,7 +610,7 @@ export default class RemoteServices {
   static async createReview(review: Review): Promise<Review> {
     return httpClient
       .post(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/reviews`,
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/reviews`,
         review
       )
       .then(response => {
@@ -622,7 +625,10 @@ export default class RemoteServices {
     questionSubmission: QuestionSubmission
   ): Promise<QuestionSubmission> {
     return httpClient
-      .put(`/submissions/${questionSubmission.id}`, questionSubmission)
+      .put(
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+        questionSubmission
+      )
       .then(response => {
         return new QuestionSubmission(response.data);
       })
@@ -631,9 +637,14 @@ export default class RemoteServices {
       });
   }
 
-  static async toggleInReviewStatus(questionId: number, inReview: boolean) {
+  static async toggleInReviewStatus(
+    questionSubmissionId: number,
+    inReview: boolean
+  ) {
     return httpClient
-      .put(`/management/reviews/${questionId}?inReview=${inReview}`)
+      .put(
+        `/submissions/${questionSubmissionId}/reviews?inReview=${inReview}&executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -642,7 +653,7 @@ export default class RemoteServices {
   static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(
-        `/student/submissions?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/student`
       )
       .then(response => {
         return response.data.map((questionSubmission: any) => {
@@ -659,7 +670,7 @@ export default class RemoteServices {
   > {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/submissions`
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/execution`
       )
       .then(response => {
         return response.data.map((questionSubmission: any) => {
@@ -675,7 +686,9 @@ export default class RemoteServices {
     questionSubmissionId: number
   ): Promise<Review[]> {
     return httpClient
-      .get(`/submissions/${questionSubmissionId}/reviews`)
+      .get(
+        `/submissions/${questionSubmissionId}/reviews?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
       .then(response => {
         return response.data.map((review: any) => {
           return new Review(review);
@@ -691,7 +704,7 @@ export default class RemoteServices {
   > {
     return httpClient
       .get(
-        `/student/submissions/all?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/all`
       )
       .then(response => {
         return response.data.map((userSubmissionsInfo: any) => {

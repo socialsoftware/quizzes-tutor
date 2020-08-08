@@ -62,19 +62,19 @@ public class QuestionSubmissionService {
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSubmissionDto createQuestionSubmission(QuestionSubmissionDto submissionDto) {
-        checkIfConsistentQuestionSubmission(submissionDto);
+    public QuestionSubmissionDto createQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
+        checkIfConsistentQuestionSubmission(questionSubmissionDto);
 
-        CourseExecution courseExecution = getCourseExecution(submissionDto.getCourseExecutionId());
+        CourseExecution courseExecution = getCourseExecution(questionSubmissionDto.getCourseExecutionId());
 
-        Question question = createQuestion(courseExecution.getCourse(), submissionDto.getQuestion());
+        Question question = createQuestion(courseExecution.getCourse(), questionSubmissionDto.getQuestion());
 
-        User user = getStudent(submissionDto.getUserId());
+        User user = getStudent(questionSubmissionDto.getUserId());
 
-        QuestionSubmission submission = new QuestionSubmission(courseExecution, question, user);
+        QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, user);
 
-        entityManager.persist(submission);
-        return new QuestionSubmissionDto(submission);
+        entityManager.persist(questionSubmission);
+        return new QuestionSubmissionDto(questionSubmission);
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
@@ -82,15 +82,15 @@ public class QuestionSubmissionService {
     public ReviewDto createReview(ReviewDto reviewDto) {
         checkIfConsistentReview(reviewDto);
 
-        QuestionSubmission submission = getQuestionSubmission(reviewDto.getQuestionSubmissionId());
+        QuestionSubmission questionSubmission = getQuestionSubmission(reviewDto.getQuestionSubmissionId());
 
         User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));
 
         if (!reviewDto.getStatus().equals("COMMENT")) {
-            updateQuestionStatus(reviewDto.getStatus(), submission.getQuestion().getId());
+            updateQuestionStatus(reviewDto.getStatus(), questionSubmission.getQuestion().getId());
         }
 
-        Review review = new Review(user, submission, reviewDto);
+        Review review = new Review(user, questionSubmission, reviewDto);
 
         entityManager.persist(review);
         return new ReviewDto(review);
@@ -98,34 +98,23 @@ public class QuestionSubmissionService {
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public QuestionSubmissionDto updateQuestionSubmission(Integer submissionId, QuestionSubmissionDto submissionDto) {
-        QuestionSubmission submission = getQuestionSubmission(submissionId);
+    public QuestionSubmissionDto updateQuestionSubmission(Integer questionSubmissionId, QuestionSubmissionDto questionSubmissionDto) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
-        User user = userRepository.findById(submissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, submissionDto.getUserId()));
+        User user = userRepository.findById(questionSubmissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, questionSubmissionDto.getUserId()));
 
-        if(user.isStudent() && submission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
+        if(user.isStudent() && questionSubmission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
             throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
         }
 
-        this.questionService.updateQuestion(submissionDto.getQuestion().getId(), submissionDto.getQuestion());
-        return new QuestionSubmissionDto(submission);
+        this.questionService.updateQuestion(questionSubmissionDto.getQuestion().getId(), questionSubmissionDto.getQuestion());
+        return new QuestionSubmissionDto(questionSubmission);
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeSubmittedQuestion(Integer submissionId) {
-        QuestionSubmission questionSubmission = getQuestionSubmission(submissionId);
-
-        removeReviews(questionSubmission);
-
-        questionSubmission.remove();
-        questionSubmissionRepository.delete(questionSubmission);
-    }
-
-    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeQuestionSubmission(Integer submissionId) {
-        QuestionSubmission questionSubmission = getQuestionSubmission(submissionId);
+    public void removeQuestionSubmission(Integer questionSubmissionId) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
         removeReviews(questionSubmission);
 
@@ -145,9 +134,10 @@ public class QuestionSubmissionService {
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void toggleInReviewStatus(int questionId, boolean inReview) {
+    public void toggleInReviewStatus(int questionSubmissionId, boolean inReview) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
         String status = inReview ? "IN_REVIEW" : "IN_REVISION";
-        updateQuestionStatus(status, questionId);
+        updateQuestionStatus(status, questionSubmission.getQuestion().getId());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -166,8 +156,8 @@ public class QuestionSubmissionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<ReviewDto> getQuestionSubmissionReviews(Integer submissionId) {
-        return reviewRepository.getQuestionSubmissionReviews(submissionId).stream().map(ReviewDto::new)
+    public List<ReviewDto> getQuestionSubmissionReviews(Integer questionSubmissionId) {
+        return reviewRepository.getQuestionSubmissionReviews(questionSubmissionId).stream().map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -175,10 +165,10 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
         Map<Integer, UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new HashMap<>();
-        List<QuestionSubmission> submissions = questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId);
+        List<QuestionSubmission> questionSubmissions = questionSubmissionRepository.getCourseExecutionQuestionSubmissions(courseExecutionId);
 
-        for (QuestionSubmission submission: submissions) {
-            User user = submission.getUser();
+        for (QuestionSubmission questionSubmission: questionSubmissions) {
+            User user = questionSubmission.getUser();
             if (userQuestionSubmissionInfoDtos.containsKey(user.getId())) {
                 userQuestionSubmissionInfoDtos.get(user.getId()).addQuestionSubmission();
             } else {
@@ -189,12 +179,12 @@ public class QuestionSubmissionService {
         return new ArrayList<>(userQuestionSubmissionInfoDtos.values());
     }
 
-    private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto submissionDto) {
-        if (submissionDto.getQuestion() == null)
+    private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
+        if (questionSubmissionDto.getQuestion() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_QUESTION);
-        else if (submissionDto.getUserId() == null)
+        else if (questionSubmissionDto.getUserId() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_STUDENT);
-        else if (submissionDto.getCourseExecutionId() == null)
+        else if (questionSubmissionDto.getCourseExecutionId() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_COURSE);
     }
 
@@ -217,9 +207,9 @@ public class QuestionSubmissionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
     }
 
-    private QuestionSubmission getQuestionSubmission(Integer submissionId) {
-        return questionSubmissionRepository.findById(submissionId)
-                .orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, submissionId));
+    private QuestionSubmission getQuestionSubmission(Integer questionSubmissionId) {
+        return questionSubmissionRepository.findById(questionSubmissionId)
+                .orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, questionSubmissionId));
     }
 
     private Question getQuestion(Integer questionId) {

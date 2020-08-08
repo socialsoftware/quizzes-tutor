@@ -21,52 +21,49 @@ public class QuestionSubmissionController {
     @Autowired
     private QuestionSubmissionService questionSubmissionService;
 
-    @PostMapping(value = "/student/submissions")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public QuestionSubmissionDto createQuestionSubmission(Principal principal, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
+    @PostMapping(value = "/submissions/{executionId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public QuestionSubmissionDto createQuestionSubmission(Principal principal, @PathVariable int executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
         
-        questionSubmissionDto.setUserId(user.getId());
-
         return questionSubmissionService.createQuestionSubmission(questionSubmissionDto);
     }
 
-    @PostMapping("/executions/{executionId}/reviews")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PostMapping("/submissions/{executionId}/reviews")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and hasPermission(#reviewDto.getQuestionSubmissionId(),'SUBMISSION.ACCESS'))) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public ReviewDto createReview(Principal principal, @PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
-        reviewDto.setUserId(user.getId());
         return questionSubmissionService.createReview(reviewDto);
     }
 
-    @PutMapping("/submissions/{submissionId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public QuestionSubmissionDto updateQuestionSubmission(Principal principal, @PathVariable Integer submissionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
+    @PutMapping("/submissions/{executionId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionDto.getId(),'SUBMISSION.ACCESS') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public QuestionSubmissionDto updateQuestionSubmission(Principal principal, @PathVariable Integer executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
         questionSubmissionDto.setUserId(user.getId());
-        return this.questionSubmissionService.updateQuestionSubmission(submissionId, questionSubmissionDto);
+        return this.questionSubmissionService.updateQuestionSubmission(questionSubmissionDto.getId(), questionSubmissionDto);
     }
 
-    @PutMapping("/management/reviews/{questionId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public void toggleInReviewStatus(@PathVariable int questionId, @Valid @RequestParam boolean inReview) {
-        questionSubmissionService.toggleInReviewStatus(questionId, inReview);
+    @PutMapping("/submissions/{questionSubmissionId}/reviews")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void toggleInReviewStatus(@PathVariable int questionSubmissionId, @Valid @RequestParam int executionId, @Valid @RequestParam boolean inReview) {
+        questionSubmissionService.toggleInReviewStatus(questionSubmissionId, inReview);
     }
 
-    @GetMapping(value = "/student/submissions")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @RequestParam int executionId) {
+    @GetMapping(value = "/submissions/{executionId}/student")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null)
@@ -75,21 +72,21 @@ public class QuestionSubmissionController {
         return questionSubmissionService.getStudentQuestionSubmissions(user.getId(), executionId);
     }
 
-    @GetMapping("/executions/{executionId}/submissions")
+    @GetMapping("/submissions/{executionId}/execution")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(@PathVariable int executionId) {
+    public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(@Valid @PathVariable int executionId) {
         return questionSubmissionService.getCourseExecutionQuestionSubmissions(executionId);
     }
 
-    @GetMapping("/submissions/{submissionId}/reviews")
-    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
-    public List<ReviewDto> getQuestionSubmissionReviews(@PathVariable int submissionId) {
-        return questionSubmissionService.getQuestionSubmissionReviews(submissionId);
+    @GetMapping("/submissions/{questionSubmissionId}/reviews")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS'))) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<ReviewDto> getQuestionSubmissionReviews(@PathVariable int questionSubmissionId, @Valid @RequestParam int executionId) {
+        return questionSubmissionService.getQuestionSubmissionReviews(questionSubmissionId);
     }
 
-    @GetMapping(value = "/student/submissions/all")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(@Valid @RequestParam int executionId) {
+    @GetMapping(value = "/submissions/{executionId}/all")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(@Valid @PathVariable int executionId) {
         return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
     }
 }

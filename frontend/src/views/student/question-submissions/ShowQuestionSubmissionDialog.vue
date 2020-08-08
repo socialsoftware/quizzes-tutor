@@ -98,6 +98,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     review.questionSubmissionId = this.questionSubmission.id!;
     review.status = 'COMMENT';
     review.comment = this.comment;
+    review.userId = this.$store.getters.getUser.id;
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.createReview(review);

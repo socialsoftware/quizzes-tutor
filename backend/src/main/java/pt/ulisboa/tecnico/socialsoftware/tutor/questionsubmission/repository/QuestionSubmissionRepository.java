@@ -7,10 +7,14 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @Transactional
 public interface QuestionSubmissionRepository extends JpaRepository<QuestionSubmission, Integer> {
+    @Query(value = "select user_id from question_submissions s where s.id = :questionSubmissionId", nativeQuery = true)
+    Optional<Integer> findUserIdByQuestionSubmissionId(Integer questionSubmissionId);
+
     @Query(value = "select * from question_submissions s where s.user_id = :userId and s.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<QuestionSubmission> getQuestionSubmissions(Integer userId, Integer courseExecutionId);
 

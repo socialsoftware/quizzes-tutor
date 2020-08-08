@@ -220,6 +220,7 @@ export default class QuestionSubmissionView extends Vue {
     question.status = 'IN_REVISION';
     this.currentQuestionSubmission = new QuestionSubmission();
     this.currentQuestionSubmission.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
+    this.currentQuestionSubmission.userId = this.$store.getters.getUser.id;
     this.currentQuestionSubmission.question = question;
     this.editQuestionSubmissionDialog = true;
   }

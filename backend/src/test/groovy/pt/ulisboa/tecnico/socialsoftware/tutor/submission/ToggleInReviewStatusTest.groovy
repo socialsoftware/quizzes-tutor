@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
@@ -12,6 +13,7 @@ class ToggleInReviewStatusTest extends SpockTest{
     def student
     def teacher
     def question
+    def questionSubmission
 
     def setup() {
         student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
@@ -25,15 +27,22 @@ class ToggleInReviewStatusTest extends SpockTest{
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(course)
         questionRepository.save(question)
+        questionSubmission = new QuestionSubmission()
+        questionSubmission.setQuestion(question)
+        questionSubmission.setUser(student)
+        questionSubmission.setCourseExecution(courseExecution)
+        questionSubmissionRepository.save(questionSubmission)
     }
 
     def "open review status for a submitted question"(){
         given: "the question's status is IN_REVISION"
         question.setStatus(Question.Status.IN_REVISION)
         questionRepository.save(question)
+        questionSubmission.setQuestion(question)
+        questionSubmissionRepository.save(questionSubmission)
 
         when:
-        questionSubmissionService.toggleInReviewStatus(question.getId(), true)
+        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), true)
 
         then: "question is in review"
         def question = questionRepository.findAll().get(0)
@@ -44,9 +53,11 @@ class ToggleInReviewStatusTest extends SpockTest{
         given: "the question's status is IN_REVIEW"
         question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
+        questionSubmission.setQuestion(question)
+        questionSubmissionRepository.save(questionSubmission)
 
         when:
-        questionSubmissionService.toggleInReviewStatus(question.getId(), true)
+        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), true)
 
         then: "question is still in review"
         def question = questionRepository.findAll().get(0)
@@ -57,9 +68,11 @@ class ToggleInReviewStatusTest extends SpockTest{
         given: "the question's status is IN_REVIEW"
         question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
+        questionSubmission.setQuestion(question)
+        questionSubmissionRepository.save(questionSubmission)
 
         when:
-        questionSubmissionService.toggleInReviewStatus(question.getId(), false)
+        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), false)
 
         then: "question is not in review anymore"
         def question = questionRepository.findAll().get(0)

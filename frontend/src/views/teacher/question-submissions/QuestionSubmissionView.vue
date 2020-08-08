@@ -194,7 +194,7 @@ export default class QuestionSubmissionView extends Vue {
       if (this.isReviewable(this.currentQuestionSubmission)) {
         try {
           await RemoteServices.toggleInReviewStatus(
-            questionSubmission!.question.id!,
+            questionSubmission!.id!,
             true
           );
         } catch (error) {
