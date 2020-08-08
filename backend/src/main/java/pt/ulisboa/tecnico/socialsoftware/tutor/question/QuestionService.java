@@ -80,6 +80,14 @@ public class QuestionService {
     }
 
     @Retryable(
+          value = { SQLException.class },
+          backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
+        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
+    }
+
+    @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -131,9 +139,9 @@ public class QuestionService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeSubmittedQuestion(Integer questionId) {
+    public void removeSubmittedQuestion(Integer questionSubmissionId, Integer questionId) {
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findById(questionSubmissionId).orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, questionSubmissionId));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-        QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
         if(!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
             throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);

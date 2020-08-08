@@ -80,14 +80,15 @@ public class QuestionController {
         return this.questionService.updateQuestion(questionId, question);
     }
 
-    @DeleteMapping("/questions/{questionId}/submission")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public void removeSubmittedQuestion(@PathVariable Integer questionId) throws IOException {
-        logger.debug("removeQuestion questionId: {}: ", questionId);
+    @DeleteMapping("/questions/{questionSubmissionId}/submission")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void removeSubmittedQuestion(@PathVariable Integer questionSubmissionId) throws IOException {
+        logger.debug("removeQuestionSubmission questionSubmissionId: {}: ", questionSubmissionId);
+        Integer questionId = questionService.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
         QuestionDto questionDto = questionService.findQuestionById(questionId);
         String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
 
-        questionService.removeSubmittedQuestion(questionId);
+        questionService.removeSubmittedQuestion(questionSubmissionId, questionId);
 
         if (url != null && Files.exists(getTargetLocation(url))) {
             Files.delete(getTargetLocation(url));

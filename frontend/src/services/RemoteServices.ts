@@ -172,9 +172,9 @@ export default class RemoteServices {
     });
   }
 
-  static async deleteSubmittedQuestion(questionId: number) {
+  static async deleteSubmittedQuestion(questionSubmissionId: number) {
     return httpClient
-      .delete(`/questions/${questionId}/submission`)
+      .delete(`/questions/${questionSubmissionId}/submission`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

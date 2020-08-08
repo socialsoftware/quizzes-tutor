@@ -287,10 +287,13 @@ export default class QuestionSubmissionView extends Vue {
           );
           return;
         }
-        let questionId = toDeleteQuestionSubmission.question.id;
-        if (questionId != null) await RemoteServices.deleteSubmittedQuestion(questionId);
+        await RemoteServices.deleteSubmittedQuestion(
+          toDeleteQuestionSubmission.id
+        );
         this.questionSubmissions = this.questionSubmissions.filter(
-          questionSubmission => questionSubmission.question.id != questionId
+          questionSubmission =>
+            questionSubmission.question.id !=
+            toDeleteQuestionSubmission.question.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
