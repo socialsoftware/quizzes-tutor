@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "reviews")
 public class Review {
+    public enum Status {
+        DISABLED, REMOVED, AVAILABLE, IN_REVISION, IN_REVIEW, REJECTED, COMMENT
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +22,7 @@ public class Review {
     private String comment;
 
     @Column(columnDefinition = "TEXT")
-    private String status;
+    private Status status;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -39,7 +42,7 @@ public class Review {
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionSubmission(questionSubmission);
-        setStatus(reviewDto.getStatus());
+        setStatus(Status.valueOf(reviewDto.getStatus()));
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
     }
 
@@ -69,9 +72,9 @@ public class Review {
 
     public void setQuestionSubmission(QuestionSubmission questionSubmission) { this.questionSubmission = questionSubmission; }
 
-    public String getStatus() { return status; }
+    public Status getStatus() { return status; }
 
-    public void setStatus(String status) { this.status = status; }
+    public void setStatus(Status status) { this.status = status; }
 
     public void remove() {
         this.questionSubmission = null;

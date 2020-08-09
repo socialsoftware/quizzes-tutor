@@ -45,7 +45,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setQuestionSubmission(questionSubmission)
-        review.setStatus("IN_REVISION")
+        review.setStatus(Review.Status.IN_REVISION)
         questionSubmission.addReview(review)
         reviewRepository.save(review)
 
@@ -65,7 +65,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         review1.setComment(REVIEW_1_COMMENT)
         review1.setUser(teacher)
         review1.setQuestionSubmission(questionSubmission)
-        review1.setStatus("IN_REVISION")
+        review1.setStatus(Review.Status.IN_REVISION)
         questionSubmission.addReview(review1)
         reviewRepository.save(review1)
         and: "another review"
@@ -73,7 +73,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         review2.setComment(REVIEW_2_COMMENT)
         review2.setUser(teacher)
         review2.setQuestionSubmission(questionSubmission)
-        review2.setStatus("IN_REVISION")
+        review2.setStatus(Review.Status.IN_REVISION)
         questionSubmission.addReview(review2)
         reviewRepository.save(review2)
         and: "another review"
@@ -81,7 +81,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         review3.setComment(REVIEW_3_COMMENT)
         review3.setUser(teacher)
         review3.setQuestionSubmission(questionSubmission)
-        review3.setStatus("IN_REVISION")
+        review3.setStatus(Review.Status.IN_REVISION)
         questionSubmission.addReview(review3)
         reviewRepository.save(review3)
 
@@ -127,7 +127,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setQuestionSubmission(questionSubmission)
-        review.setStatus("IN_REVISION")
+        review.setStatus(Review.Status.IN_REVISION)
         questionSubmission.addReview(review)
         reviewRepository.save(review)
 

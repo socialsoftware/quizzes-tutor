@@ -22,7 +22,7 @@ public class ReviewDto implements Serializable {
         this.userId = review.getUser().getId();
         this.questionSubmissionId = review.getQuestionSubmission().getId();
         this.comment = review.getComment();
-        this.status = review.getStatus();
+        this.status = review.getStatus().name();
         if (review.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(review.getCreationDate());
         this.name = review.getUser().getName();

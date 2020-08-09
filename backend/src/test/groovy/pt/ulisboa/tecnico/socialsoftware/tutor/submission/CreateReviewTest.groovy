@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -57,7 +58,7 @@ class CreateReviewTest extends SpockTest{
         result.getComment() == REVIEW_1_COMMENT
         result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
-        result.getStatus().equals("AVAILABLE")
+        result.getStatus() == Review.Status.AVAILABLE
         question.getStatus() == Question.Status.AVAILABLE
     }
 
@@ -79,7 +80,7 @@ class CreateReviewTest extends SpockTest{
         result.getComment() == REVIEW_1_COMMENT
         result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
-        result.getStatus().equals("DISABLED")
+        result.getStatus() == Review.Status.DISABLED
         question.getStatus() == Question.Status.DISABLED
     }
 
@@ -102,7 +103,7 @@ class CreateReviewTest extends SpockTest{
         result.getComment() == REVIEW_1_COMMENT
         result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
-        result.getStatus().equals("REJECTED")
+        result.getStatus() == Review.Status.REJECTED
         question.getStatus() == Question.Status.REJECTED
     }
 
@@ -125,7 +126,7 @@ class CreateReviewTest extends SpockTest{
         result.getComment() == REVIEW_1_COMMENT
         result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
-        result.getStatus().equals("IN_REVISION")
+        result.getStatus() == Review.Status.IN_REVISION
         question.getStatus() == Question.Status.IN_REVISION
     }
 

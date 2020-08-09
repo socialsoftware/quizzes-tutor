@@ -43,7 +43,7 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setQuestionSubmission(questionSubmission)
-        review.setStatus("AVAILABLE")
+        review.setStatus(Review.Status.AVAILABLE)
         questionSubmission.addReview(review)
 
         when:
@@ -59,21 +59,21 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         review1.setComment(REVIEW_1_COMMENT)
         review1.setUser(teacher)
         review1.setQuestionSubmission(questionSubmission)
-        review1.setStatus("AVAILABLE")
+        review1.setStatus(Review.Status.AVAILABLE)
         questionSubmission.addReview(review1)
         and: "another review"
         def review2 = new Review()
         review2.setComment(REVIEW_2_COMMENT)
         review2.setUser(teacher)
         review2.setQuestionSubmission(questionSubmission)
-        review2.setStatus("AVAILABLE")
+        review2.setStatus(Review.Status.AVAILABLE)
         questionSubmission.addReview(review2)
         and: "another review"
         def review3 = new Review()
         review3.setComment(REVIEW_3_COMMENT)
         review3.setUser(teacher)
         review3.setQuestionSubmission(questionSubmission)
-        review3.setStatus("AVAILABLE")
+        review3.setStatus(Review.Status.AVAILABLE)
         questionSubmission.addReview(review3)
 
         when:

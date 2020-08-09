@@ -84,13 +84,13 @@ public class QuestionSubmissionService {
 
         QuestionSubmission questionSubmission = getQuestionSubmission(reviewDto.getQuestionSubmissionId());
 
-        User user = userRepository.findById(reviewDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));
-
-        if (!reviewDto.getStatus().equals("COMMENT")) {
-            updateQuestionStatus(reviewDto.getStatus(), questionSubmission.getQuestion().getId());
-        }
+        User user = getUser(reviewDto.getUserId());
 
         Review review = new Review(user, questionSubmission, reviewDto);
+
+        if (review.getStatus() != Review.Status.COMMENT) {
+            updateQuestionStatus(review.getStatus(), questionSubmission.getQuestion().getId());
+        }
 
         entityManager.persist(review);
         return new ReviewDto(review);
@@ -101,7 +101,7 @@ public class QuestionSubmissionService {
     public QuestionSubmissionDto updateQuestionSubmission(Integer questionSubmissionId, QuestionSubmissionDto questionSubmissionDto) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
-        User user = userRepository.findById(questionSubmissionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, questionSubmissionDto.getUserId()));
+        User user = getStudent(questionSubmissionDto.getUserId());
 
         if(user.isStudent() && questionSubmission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
             throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
@@ -136,7 +136,7 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleInReviewStatus(int questionSubmissionId, boolean inReview) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
-        String status = inReview ? "IN_REVIEW" : "IN_REVISION";
+        Review.Status status = inReview ? Review.Status.IN_REVIEW : Review.Status.IN_REVISION;
         updateQuestionStatus(status, questionSubmission.getQuestion().getId());
     }
 
@@ -194,10 +194,10 @@ public class QuestionSubmissionService {
         else if (reviewDto.getQuestionSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_QUESTION_SUBMISSION);
         else if (reviewDto.getUserId() == null)
-            throw new TutorException(REVIEW_MISSING_TEACHER);
+            throw new TutorException(REVIEW_MISSING_USER);
         else if (reviewDto.getStatus() == null
                 || reviewDto.getStatus().isBlank()
-                || !Stream.of(Question.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus()) && !reviewDto.getStatus().equals("COMMENT")
+                || !Stream.of(Review.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus())
         )
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
     }
@@ -218,23 +218,28 @@ public class QuestionSubmissionService {
     }
 
     private User getStudent(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        User user = getUser(userId);
         if (!user.isStudent())
             throw new TutorException(USER_NOT_STUDENT, user.getUsername());
         return user;
     }
 
-    private Question createQuestion(Course course, QuestionDto questionDto) {
-        questionDto.setStatus("IN_REVISION");
-        QuestionDto question = questionService.createQuestion(course.getId(), questionDto);
-        return questionRepository.findById(question.getId())
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, question.getId()));
+    private User getUser(Integer userId) {
+        return userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
     }
 
-    private void updateQuestionStatus(String status, Integer questionId) {
+    private Question createQuestion(Course course, QuestionDto questionDto) {
+        QuestionDto newQuestionDto = questionService.createQuestion(course.getId(), questionDto);
+        Question question = questionRepository.findById(newQuestionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, newQuestionDto.getId()));
+        question.setStatus(Question.Status.IN_REVISION);
+
+        return question;
+    }
+
+    private void updateQuestionStatus(Review.Status status, Integer questionId) {
         Question question = getQuestion(questionId);
         if(question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW)
-            question.setStatus(Question.Status.valueOf(status));
+            question.setStatus(Question.Status.valueOf(status.name()));
         else
             throw new TutorException(CANNOT_REVIEW_QUESTION_SUBMISSION);
     }
