@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import spock.lang.Unroll
 
 @DataJpaTest
 class ToggleInReviewStatusTest extends SpockTest{
@@ -34,51 +35,28 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionSubmissionRepository.save(questionSubmission)
     }
 
-    def "open review status for a submitted question"(){
-        given: "the question's status is IN_REVISION"
-        question.setStatus(Question.Status.IN_REVISION)
+    @Unroll
+    def "Toggle InReview Status: Initial Status = #status | Toggle = #toggle | New Status = #newStatus"() {
+        given: "the question's status is #status"
+        question.setStatus(status)
         questionRepository.save(question)
         questionSubmission.setQuestion(question)
         questionSubmissionRepository.save(questionSubmission)
 
         when:
-        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), true)
+        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), toggle)
 
-        then: "question is in review"
+        then: "the question is now #newStatus"
         def question = questionRepository.findAll().get(0)
-        question.getStatus() == Question.Status.IN_REVIEW
+        question.getStatus() == newStatus
+
+        where:
+        status                      | toggle | newStatus
+        Question.Status.IN_REVISION | true   | Question.Status.IN_REVIEW
+        Question.Status.IN_REVISION | false  | Question.Status.IN_REVISION
+        Question.Status.IN_REVIEW   | true   | Question.Status.IN_REVIEW
+        Question.Status.IN_REVIEW   | false  | Question.Status.IN_REVISION
     }
-
-    def "open review status for a submitted question already in review"(){
-        given: "the question's status is IN_REVIEW"
-        question.setStatus(Question.Status.IN_REVIEW)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
-
-        when:
-        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), true)
-
-        then: "question is still in review"
-        def question = questionRepository.findAll().get(0)
-        question.getStatus() == Question.Status.IN_REVIEW
-    }
-
-    def "close review status for a submitted question"(){
-        given: "the question's status is IN_REVIEW"
-        question.setStatus(Question.Status.IN_REVIEW)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
-
-        when:
-        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), false)
-
-        then: "question is not in review anymore"
-        def question = questionRepository.findAll().get(0)
-        question.getStatus() == Question.Status.IN_REVISION
-    }
-
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

@@ -54,7 +54,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
 
         when: questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
 
-        then: "the correct questionSubmission is in the repository"
+        then: "the correct questionSubmission is in the repository and student is enrolled in course"
         questionSubmissionRepository.count() == 1L
         def result = questionSubmissionRepository.findAll().get(0)
         result.getId() != null
@@ -64,6 +64,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.IN_REVISION
         result.getCourseExecution() == courseExecution
+        student.getEnrolledCoursesAcronyms().contains(courseExecution.getAcronym())
     }
 
     def "user is not a student"(){
@@ -80,21 +81,8 @@ class CreateQuestionSubmissionTest extends SpockTest{
         exception.getErrorMessage() == ErrorMessage.USER_NOT_STUDENT
     }
 
-    def "student that submits a question enrolled in course"(){
-        given: "a QuestionSubmissionDto"
-        def questionSubmissionDto = new QuestionSubmissionDto()
-        questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
-        questionSubmissionDto.setUserId(student.getId())
-        questionSubmissionDto.setQuestion(questionDto)
-
-        when: questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
-
-        then:
-        student.getEnrolledCoursesAcronyms().contains(courseExecution.getAcronym())
-    }
-
     @Unroll
-    def "invalid arguments: userId=#userId | question#question | courseExecutionId=#courseExecutionId || errorMessage"(){
+    def "invalid arguments: userId=#userId | question#question | courseExecutionIdw=#courseExecutionId || errorMessage"(){
         given: "a QuestionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(courseExecutionId)

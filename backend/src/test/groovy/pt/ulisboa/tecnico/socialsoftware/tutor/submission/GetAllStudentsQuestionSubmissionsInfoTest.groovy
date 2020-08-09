@@ -56,19 +56,32 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
 
         then:
         result.size() == 3
+        def studentInfo1 = result.get(0)
+        def studentInfo2 = result.get(1)
+        def studentInfo3 = result.get(2)
 
+        studentInfo1.getUserId() == student1.getId()
+        studentInfo2.getUserId() == student2.getId()
+        studentInfo3.getUserId() == student3.getId()
+        studentInfo1.getNumQuestionSubmissions() == 1
+        studentInfo2.getNumQuestionSubmissions() == 1
+        studentInfo3.getNumQuestionSubmissions() == 1
+        studentInfo1.getUsername() == student1.getUsername()
+        studentInfo2.getUsername() == student2.getUsername()
+        studentInfo3.getUsername() == student3.getUsername()
+        studentInfo1.getName() == student1.getName()
+        studentInfo2.getName() == student2.getName()
+        studentInfo3.getName() == student3.getName()
     }
 
     def "get all student question submissions info with no question submissions"() {
-
         when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(courseExecution.getId())
 
         then:
         result.size() == 0
-
     }
 
-        @TestConfiguration
+    @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
 

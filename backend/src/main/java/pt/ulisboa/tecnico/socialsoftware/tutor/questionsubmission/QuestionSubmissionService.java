@@ -184,7 +184,7 @@ public class QuestionSubmissionService {
     }
 
     private void checkIfConsistentReview(ReviewDto reviewDto) {
-        if (reviewDto.getComment() == null || reviewDto.getComment().isEmpty())
+        if (reviewDto.getComment() == null || reviewDto.getComment().isBlank())
             throw new TutorException(REVIEW_MISSING_COMMENT);
         else if (reviewDto.getQuestionSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_QUESTION_SUBMISSION);

@@ -51,36 +51,15 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
 
         then: "returned data is correct"
         result.size() == 1
-    }
+        def rev = result.get(0)
 
-    def "get question submission reviews with 3 review"(){
-        given: "a review"
-        def review1 = new Review()
-        review1.setComment(REVIEW_1_COMMENT)
-        review1.setUser(teacher)
-        review1.setQuestionSubmission(questionSubmission)
-        review1.setStatus(Review.Status.AVAILABLE)
-        questionSubmission.addReview(review1)
-        and: "another review"
-        def review2 = new Review()
-        review2.setComment(REVIEW_2_COMMENT)
-        review2.setUser(teacher)
-        review2.setQuestionSubmission(questionSubmission)
-        review2.setStatus(Review.Status.AVAILABLE)
-        questionSubmission.addReview(review2)
-        and: "another review"
-        def review3 = new Review()
-        review3.setComment(REVIEW_3_COMMENT)
-        review3.setUser(teacher)
-        review3.setQuestionSubmission(questionSubmission)
-        review3.setStatus(Review.Status.AVAILABLE)
-        questionSubmission.addReview(review3)
-
-        when:
-        def result = questionSubmissionService.getQuestionSubmissionReviews(questionSubmission.getId())
-
-        then:"returned data is correct"
-        result.size() == 3
+        rev.getId() != null
+        rev.getUserId() == teacher.getId()
+        rev.getQuestionSubmissionId() == questionSubmission.getId()
+        rev.getComment() == REVIEW_1_COMMENT
+        rev.getStatus() == Review.Status.AVAILABLE.name()
+        rev.getName() == teacher.getName()
+        rev.getUsername() == teacher.getUsername()
     }
 
     def "get question submission reviews with no review"(){

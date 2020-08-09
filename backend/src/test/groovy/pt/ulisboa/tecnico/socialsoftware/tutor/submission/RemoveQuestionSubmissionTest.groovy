@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
-
 @DataJpaTest
 class RemoveQuestionSubmissionTest extends SpockTest{
     def student
@@ -112,24 +111,17 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         reviewRepository.count() == 0L
     }
 
-    def "student tries to remove a submitted question already in review"(){
-        when:
-        questionService.removeSubmittedQuestion(questionSubmission.getId(), question.getId())
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_REVIEWED_QUESTION
-    }
-
-    def "student tries to remove a submitted question with an associated review"(){
-        given: "a review"
-        def review = new Review()
-        review.setComment(REVIEW_1_COMMENT)
-        review.setUser(teacher)
-        review.setQuestionSubmission(questionSubmission)
-        review.setStatus(Review.Status.IN_REVISION)
-        questionSubmission.addReview(review)
-        reviewRepository.save(review)
+    def "error cases: alreadyInReview=#!hasReviews | hasReviews=#hasReviews"() {
+        given:
+        if (hasReviews) {
+            def review = new Review()
+            review.setComment(REVIEW_1_COMMENT)
+            review.setUser(teacher)
+            review.setQuestionSubmission(questionSubmission)
+            review.setStatus(Review.Status.IN_REVISION)
+            questionSubmission.addReview(review)
+            reviewRepository.save(review)
+        }
 
         when:
         questionService.removeSubmittedQuestion(questionSubmission.getId(), question.getId())
@@ -137,8 +129,10 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         then: "exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_REVIEWED_QUESTION
-    }
 
+        where:
+        hasReviews << [false, true]
+    }
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
