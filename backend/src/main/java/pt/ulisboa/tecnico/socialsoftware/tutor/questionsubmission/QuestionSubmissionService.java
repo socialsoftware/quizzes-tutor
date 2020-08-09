@@ -24,8 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.Que
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -57,9 +55,6 @@ public class QuestionSubmissionService {
     @Autowired
     private QuestionService questionService;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public QuestionSubmissionDto createQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
@@ -73,7 +68,7 @@ public class QuestionSubmissionService {
 
         QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, user);
 
-        entityManager.persist(questionSubmission);
+        questionSubmissionRepository.save(questionSubmission);
         return new QuestionSubmissionDto(questionSubmission);
     }
 
@@ -92,7 +87,7 @@ public class QuestionSubmissionService {
             updateQuestionStatus(review.getStatus(), questionSubmission.getQuestion().getId());
         }
 
-        entityManager.persist(review);
+        reviewRepository.save(review);
         return new ReviewDto(review);
     }
 
