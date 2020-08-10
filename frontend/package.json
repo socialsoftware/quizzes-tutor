@@ -26,7 +26,7 @@
     "vue-ctk-date-time-picker": "^2.5.0",
     "vue-property-decorator": "^8.5.1",
     "vue-qrcode": "^0.3.3",
-    "vue-qrcode-reader": "^2.3.3",
+    "vue-qrcode-reader": "^2.3.9",
     "vue-router": "^3.3.4",
     "vue-underscore": "^0.1.4",
     "vuetify": "^2.3.4",
