@@ -36,6 +36,8 @@ class SpockTest extends Specification {
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
     public static final String DEMO_STUDENT_NAME = "Demo Student"
+    public static final String DEMO_TEACHER_NAME = "Demo Teacher"
+    public static final String DEMO_ADMIN_NAME = "Demo Admin"
 
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
