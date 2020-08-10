@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
-class GetExternalUsersWebServiceIT extends SpockTest{
+class GetExternalUsersWebServiceIT extends SpockTest {
 
     @LocalServerPort
     private int port
@@ -54,7 +54,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         demoAdminLogin()
     }
 
-    def "get users from courseExecution1" () {
+    def "get users from courseExecution1"() {
         when:
         response = restClient.get(
             path: '/executions/'+courseExecution1.getId()+'/users/external',

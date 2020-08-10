@@ -17,8 +17,10 @@ public class CourseDto implements Serializable {
     private int courseId;
     private int numberOfQuestions;
     private int numberOfQuizzes;
-    private int numberOfStudents;
-    private int numberOfTeachers;
+    private int numberOfActiveStudents;
+    private int numberOfInactiveStudents;
+    private int numberOfActiveTeachers;
+    private int numberOfInactiveTeachers;
     private List<ExternalUserDto> courseExecutionUsers;
 
     public CourseDto() {}
@@ -38,8 +40,10 @@ public class CourseDto implements Serializable {
         this.courseType = courseExecution.getCourse().getType();
         this.name = courseExecution.getCourse().getName();
         this.status = courseExecution.getStatus();
-        this.numberOfTeachers = courseExecution.getNumberOfTeachers();
-        this.numberOfStudents = courseExecution.getNumberOfStudents();
+        this.numberOfActiveTeachers = courseExecution.getNumberOfActiveTeachers();
+        this.numberOfInactiveTeachers = courseExecution.getNumberofInactiveTeachers();
+        this.numberOfActiveStudents = courseExecution.getNumberOfActiveStudents();
+        this.numberOfInactiveStudents = courseExecution.getNumberOfInactiveStudents();
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
         if(courseExecution.getType().equals(Course.Type.EXTERNAL))
@@ -86,20 +90,36 @@ public class CourseDto implements Serializable {
         this.courseExecutionId = courseExecutionId;
     }
 
-    public int getNumberOfTeachers() {
-        return numberOfTeachers;
+    public int getNumberOfActiveStudents() {
+        return numberOfActiveStudents;
     }
 
-    public void setNumberOfTeachers(int numberOfTeachers) {
-        this.numberOfTeachers = numberOfTeachers;
+    public void setNumberOfActiveStudents(int numberOfActiveStudents) {
+        this.numberOfActiveStudents = numberOfActiveStudents;
     }
 
-    public int getNumberOfStudents() {
-        return numberOfStudents;
+    public int getNumberOfInactiveStudents() {
+        return numberOfInactiveStudents;
     }
 
-    public void setNumberOfStudents(int numberOfStudents) {
-        this.numberOfStudents = numberOfStudents;
+    public void setNumberOfInactiveStudents(int numberOfInactiveStudents) {
+        this.numberOfInactiveStudents = numberOfInactiveStudents;
+    }
+
+    public int getNumberOfActiveTeachers() {
+        return numberOfActiveTeachers;
+    }
+
+    public void setNumberOfActiveTeachers(int numberOfActiveTeachers) {
+        this.numberOfActiveTeachers = numberOfActiveTeachers;
+    }
+
+    public int getNumberOfInactiveTeachers() {
+        return numberOfInactiveTeachers;
+    }
+
+    public void setNumberOfInactiveTeachers(int numberOfInactiveTeachers) {
+        this.numberOfInactiveTeachers = numberOfInactiveTeachers;
     }
 
     public int getNumberOfQuestions() {
@@ -171,8 +191,10 @@ public class CourseDto implements Serializable {
                 ", courseId=" + courseId +
                 ", numberOfQuestions=" + numberOfQuestions +
                 ", numberOfQuizzes=" + numberOfQuizzes +
-                ", numberOfStudents=" + numberOfStudents +
-                ", numberOfTeachers=" + numberOfTeachers +
+                ", numberOfActiveStudents=" + numberOfActiveStudents +
+                ", numberOfInactiveStudents=" + numberOfInactiveStudents +
+                ", numberOfActiveTeachers=" + numberOfActiveTeachers +
+                ", numberofInactiveTeachers=" + numberOfInactiveTeachers +
                 '}';
     }
 }

@@ -187,7 +187,7 @@ class SpockTest extends Specification {
         courseExecutionRepository.save(courseExecution)
     }
 
-    def persistentCourseCleanup(){
+    def persistentCourseCleanup() {
         Course c
         CourseExecution ce
         if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).isPresent()){
