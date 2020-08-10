@@ -18,25 +18,46 @@ class DemoAuthWebServiceIT extends SpockTest {
         restClient = new RESTClient("http://localhost:" + port)
     }
 
-    def "user confirms registration"() {
+    def "demo student login"() {
         when:
         def response = restClient.get(
                 path: '/auth/demo/student',
                 query: [
                         createNew: false,
                 ],
-                requestContentType: 'application/json'
         )
 
         then: "check response status"
         response.status == 200
         response.data.token != ""
         response.data.user.name == DEMO_STUDENT_NAME
-        response.data.user.role == "STUDENT"
+        response.data.user.role == User.Role.STUDENT.toString()
     }
 
-    def cleanup() {
-        persistentCourseCleanup()
+    def "demo admin login"() {
+        when:
+        def response = restClient.get(
+                path: '/auth/demo/admin',
+        )
+
+        then: "check response status"
+        response.status == 200
+        response.data.token != ""
+        response.data.user.name == DEMO_ADMIN_NAME
+        response.data.user.role == User.Role.DEMO_ADMIN.toString()
+    }
+
+    def "demo teacher login"() {
+        when:
+        def response = restClient.get(
+                path: '/auth/demo/teacher',
+        )
+
+        then: "check response status"
+        response.status == 200
+        response.data.token != ""
+        response.data.user.name == DEMO_TEACHER_NAME
+        response.data.user.role == User.Role.TEACHER.toString()
     }
 
 }
