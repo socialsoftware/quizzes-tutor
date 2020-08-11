@@ -30,7 +30,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -184,17 +183,10 @@ public class QuestionSubmissionService {
     }
 
     private void checkIfConsistentReview(ReviewDto reviewDto) {
-        if (reviewDto.getComment() == null || reviewDto.getComment().isBlank())
-            throw new TutorException(REVIEW_MISSING_COMMENT);
-        else if (reviewDto.getQuestionSubmissionId() == null)
+        if (reviewDto.getQuestionSubmissionId() == null)
             throw new TutorException(REVIEW_MISSING_QUESTION_SUBMISSION);
         else if (reviewDto.getUserId() == null)
             throw new TutorException(REVIEW_MISSING_USER);
-        else if (reviewDto.getStatus() == null
-                || reviewDto.getStatus().isBlank()
-                || !Stream.of(Review.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(reviewDto.getStatus())
-        )
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
     }
 
     private CourseExecution getCourseExecution(Integer executionId) {

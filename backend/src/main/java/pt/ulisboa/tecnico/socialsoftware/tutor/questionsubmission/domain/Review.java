@@ -1,11 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
 
 @Entity
 @Table(name = "reviews")
@@ -42,7 +48,7 @@ public class Review {
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionSubmission(questionSubmission);
-        setStatus(Status.valueOf(reviewDto.getStatus()));
+        setStatus(reviewDto.getStatus());
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
     }
 
@@ -55,7 +61,11 @@ public class Review {
 
     public String getComment() { return comment; }
 
-    public void setComment(String comment) { this.comment = comment; }
+    public void setComment(String comment) {
+        if (comment == null || comment.isBlank())
+            throw new TutorException(REVIEW_MISSING_COMMENT);
+        this.comment = comment;
+    }
 
     public LocalDateTime getCreationDate() { return creationDate; }
 
@@ -75,6 +85,12 @@ public class Review {
     public Status getStatus() { return status; }
 
     public void setStatus(Status status) { this.status = status; }
+
+    public void setStatus(String status) {
+        if (status == null || status.isBlank() || !Stream.of(Review.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(status))
+            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+        this.status = Status.valueOf(status);
+    }
 
     public void remove() {
         this.questionSubmission = null;

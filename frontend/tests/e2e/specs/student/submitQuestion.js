@@ -45,29 +45,4 @@ describe('Student walkthrough', () => {
 
     cy.get('[data-cy="CancelButton"]').click();
   });
-
-  it('login submits a question and checks review status', () => {
-    cy.submitQuestion(
-      true,
-      'Test',
-      'Test Question',
-      'A',
-      'B',
-      'C',
-      'D'
-    );
-
-    cy.addReview('Test');
-
-    cy.viewQuestion(
-      'Test',
-      'Test Question',
-      'A',
-      'B',
-      'C',
-      'D',
-      'APPROVED'
-    );
-    cy.deleteQuestionSubmission();
-  });
 });

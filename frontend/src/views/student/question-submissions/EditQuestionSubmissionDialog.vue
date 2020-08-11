@@ -117,6 +117,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
         let review = new Review();
         review.questionSubmissionId = this.editQuestionSubmission.id!;
         review.status = 'IN_REVISION';
+        review.userId = this.$store.getters.getUser.id;
         review.comment = 'QuestionSubmission has been edited';
         await RemoteServices.createReview(review);
       } else {

@@ -160,18 +160,6 @@ Cypress.Commands.add('deleteQuestionSubmission', (title=null, size=null, reviews
   }
 });
 
-Cypress.Commands.add('addReview', title => {
-  cy.exec(
-    'PGPASSWORD=' +
-    Cypress.env('PASS') +
-    ' psql -d ' +
-    Cypress.env('DBNAME') +
-    ' -h localhost -c "with sub as (select s.id from question_submissions s join questions q on s.question_id=q.id where q.title=\'' +
-    title +
-    '\') insert into reviews(creation_date, comment, status, question_submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
-  );
-});
-
 Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) => {
   cy.contains(title)
     .parent()

@@ -62,19 +62,6 @@
           </template>
           <span>Show Question Submission</span>
         </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              color="red"
-              @click="deleteQuestionSubmission(item)"
-              data-cy="deleteSubmission"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Question Submission</span>
-        </v-tooltip>
       </template>
     </v-data-table>
     <show-question-submission-dialog

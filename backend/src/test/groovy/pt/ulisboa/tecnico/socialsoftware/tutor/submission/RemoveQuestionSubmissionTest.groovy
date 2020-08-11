@@ -29,7 +29,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(course)
-        question.setStatus(Question.Status.IN_REVIEW)
+        question.setStatus(Question.Status.IN_REVISION)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
@@ -38,69 +38,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         questionSubmissionRepository.save(questionSubmission)
     }
 
-    def "teacher removes a submitted question with an associated review"(){
-        given: "a review"
-        def review = new Review()
-        review.setComment(REVIEW_1_COMMENT)
-        review.setUser(teacher)
-        review.setQuestionSubmission(questionSubmission)
-        review.setStatus(Review.Status.IN_REVISION)
-        questionSubmission.addReview(review)
-        reviewRepository.save(review)
-
-        when:
-        questionService.removeQuestion(question.getId())
-
-        then: "the submitted question and associated reviews are removed"
-        questionRepository.count() == 0L
-        optionRepository.count() == 0L
-        questionSubmissionRepository.count() == 0L
-        reviewRepository.count() == 0L
-    }
-
-    def "teacher removes a submitted question with 3 associated reviews"(){
-        given: "a review"
-        def review1 = new Review()
-        review1.setComment(REVIEW_1_COMMENT)
-        review1.setUser(teacher)
-        review1.setQuestionSubmission(questionSubmission)
-        review1.setStatus(Review.Status.IN_REVISION)
-        questionSubmission.addReview(review1)
-        reviewRepository.save(review1)
-        and: "another review"
-        def review2 = new Review()
-        review2.setComment(REVIEW_2_COMMENT)
-        review2.setUser(teacher)
-        review2.setQuestionSubmission(questionSubmission)
-        review2.setStatus(Review.Status.IN_REVISION)
-        questionSubmission.addReview(review2)
-        reviewRepository.save(review2)
-        and: "another review"
-        def review3 = new Review()
-        review3.setComment(REVIEW_3_COMMENT)
-        review3.setUser(teacher)
-        review3.setQuestionSubmission(questionSubmission)
-        review3.setStatus(Review.Status.IN_REVISION)
-        questionSubmission.addReview(review3)
-        reviewRepository.save(review3)
-
-        when:
-        questionService.removeQuestion(question.getId())
-
-        then: "the submitted question and associated reviews are removed"
-        questionRepository.count() == 0L
-        optionRepository.count() == 0L
-        questionSubmissionRepository.count() == 0L
-        reviewRepository.count() == 0L
-    }
-
     def "student removes a submitted question with no reviews"(){
-        given: "questionSubmission is IN_REVISION"
-        question.setStatus(Question.Status.IN_REVISION)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
-
         when:
         questionService.removeSubmittedQuestion(questionSubmission.getId(), question.getId())
 
@@ -121,6 +59,8 @@ class RemoveQuestionSubmissionTest extends SpockTest{
             review.setStatus(Review.Status.IN_REVISION)
             questionSubmission.addReview(review)
             reviewRepository.save(review)
+        } else {
+            question.setStatus(Question.Status.IN_REVIEW)
         }
 
         when:

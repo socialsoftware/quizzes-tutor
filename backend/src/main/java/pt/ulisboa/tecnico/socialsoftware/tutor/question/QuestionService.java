@@ -146,7 +146,9 @@ public class QuestionService {
         if(!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
             throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
         } else {
-            removeQuestion(questionId);
+            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
+            question.remove();
+            questionRepository.delete(question);
         }
     }
 
@@ -159,7 +161,7 @@ public class QuestionService {
         QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
         if (questionSubmission != null) {
-            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
+            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
         }
 
         question.remove();

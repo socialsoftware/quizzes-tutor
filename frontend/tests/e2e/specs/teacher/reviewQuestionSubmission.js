@@ -8,7 +8,7 @@ describe('Teacher walkthrough', () => {
   });
 
   afterEach(() => {
-    cy.deleteQuestionSubmission('Test', 6);
+    cy.deleteQuestionSubmission();
     cy.contains('Logout').click();
   });
 
