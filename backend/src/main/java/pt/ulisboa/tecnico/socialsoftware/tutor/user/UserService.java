@@ -146,7 +146,6 @@ public class UserService {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);
                     }
-                    user.setQuestionSubmissions(null);
 
                     this.userRepository.delete(user);
                 });

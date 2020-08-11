@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
@@ -103,6 +104,33 @@ public class QuestionSubmissionService {
 
         this.questionService.updateQuestion(questionSubmissionDto.getQuestion().getId(), questionSubmissionDto.getQuestion());
         return new QuestionSubmissionDto(questionSubmission);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void updateQuestionSubmissionTopics(Integer questionSubmissionId, TopicDto[] topics) {
+        Integer questionId = questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
+
+        questionService.updateQuestionTopics(questionId, topics);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeSubmittedQuestion(Integer questionSubmissionId) {
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findById(questionSubmissionId).orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, questionSubmissionId));
+        Question question = questionRepository.findById(questionSubmission.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSubmission.getQuestion().getId()));
+
+        if(!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
+            throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
+        } else {
+            removeQuestionSubmission(questionSubmission.getId());
+            question.remove();
+            questionRepository.delete(question);
+        }
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))

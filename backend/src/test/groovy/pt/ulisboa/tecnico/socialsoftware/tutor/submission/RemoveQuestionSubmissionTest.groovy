@@ -40,7 +40,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
 
     def "student removes a submitted question with no reviews"(){
         when:
-        questionService.removeSubmittedQuestion(questionSubmission.getId(), question.getId())
+        questionSubmissionService.removeSubmittedQuestion(questionSubmission.getId())
 
         then: "the submitted question and associated reviews are removed"
         questionRepository.count() == 0L
@@ -64,7 +64,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         }
 
         when:
-        questionService.removeSubmittedQuestion(questionSubmission.getId(), question.getId())
+        questionSubmissionService.removeSubmittedQuestion(questionSubmission.getId())
 
         then: "exception is thrown"
         def exception = thrown(TutorException)

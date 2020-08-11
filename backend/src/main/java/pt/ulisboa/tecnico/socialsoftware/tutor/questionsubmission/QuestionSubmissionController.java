@@ -5,12 +5,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.validation.Valid;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.security.Principal;
 import java.util.List;
 
@@ -53,6 +57,18 @@ public class QuestionSubmissionController {
 
         questionSubmissionDto.setUserId(user.getId());
         return this.questionSubmissionService.updateQuestionSubmission(questionSubmissionDto.getId(), questionSubmissionDto);
+    }
+
+    @DeleteMapping("/submissions/{questionSubmissionId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void removeSubmittedQuestion(@PathVariable Integer questionSubmissionId) {
+        questionSubmissionService.removeSubmittedQuestion(questionSubmissionId);
+    }
+
+    @PutMapping("/submissions/{questionSubmissionId}/topics")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void updateQuestionSubmissionTopics(@PathVariable Integer questionSubmissionId, @RequestBody TopicDto[] topics) {
+        questionSubmissionService.updateQuestionSubmissionTopics(questionSubmissionId, topics);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/reviews")

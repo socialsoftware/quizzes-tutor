@@ -174,7 +174,7 @@ export default class RemoteServices {
 
   static async deleteSubmittedQuestion(questionSubmissionId: number) {
     return httpClient
-      .delete(`/questions/${questionSubmissionId}/submission`)
+      .delete(`/submissions/${questionSubmissionId}`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -213,6 +213,16 @@ export default class RemoteServices {
 
   static async updateQuestionTopics(questionId: number, topics: Topic[]) {
     return httpClient.put(`/questions/${questionId}/topics`, topics);
+  }
+
+  static async updateQuestionSubmissionTopics(
+    questionSubmissionId: number,
+    topics: Topic[]
+  ) {
+    return httpClient.put(
+      `/submissions/${questionSubmissionId}/topics`,
+      topics
+    );
   }
 
   static async getTopics(): Promise<Topic[]> {

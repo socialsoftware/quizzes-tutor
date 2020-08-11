@@ -80,21 +80,6 @@ public class QuestionController {
         return this.questionService.updateQuestion(questionId, question);
     }
 
-    @DeleteMapping("/questions/{questionSubmissionId}/submission")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
-    public void removeSubmittedQuestion(@PathVariable Integer questionSubmissionId) throws IOException {
-        logger.debug("removeQuestionSubmission questionSubmissionId: {}: ", questionSubmissionId);
-        Integer questionId = questionService.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
-        QuestionDto questionDto = questionService.findQuestionById(questionId);
-        String url = questionDto.getImage() != null ? questionDto.getImage().getUrl() : null;
-
-        questionService.removeSubmittedQuestion(questionSubmissionId, questionId);
-
-        if (url != null && Files.exists(getTargetLocation(url))) {
-            Files.delete(getTargetLocation(url));
-        }
-    }
-
     @DeleteMapping("/questions/{questionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public void removeQuestion(@PathVariable Integer questionId) throws IOException {
@@ -139,7 +124,7 @@ public class QuestionController {
     }
 
     @PutMapping("/questions/{questionId}/topics")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public void updateQuestionTopics(@PathVariable Integer questionId, @RequestBody TopicDto[] topics) {
         questionService.updateQuestionTopics(questionId, topics);
     }

@@ -48,10 +48,17 @@ export default class EditQuestionSubmissionTopics extends Vue {
   async saveTopics() {
     if (this.questionSubmission.question.id) {
       try {
-        await RemoteServices.updateQuestionTopics(
-          this.questionSubmission.question.id,
-          this.questionTopics
-        );
+        if (this.$store.getters.isStudent) {
+          await RemoteServices.updateQuestionSubmissionTopics(
+            this.questionSubmission.id,
+            this.questionTopics
+          );
+        } else {
+          await RemoteServices.updateQuestionTopics(
+            this.questionSubmission.question.id,
+            this.questionTopics
+          );
+        }
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
