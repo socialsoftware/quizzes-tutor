@@ -70,7 +70,13 @@ export default class ViewUsersDialog extends Vue {
     selectedUsers: ExternalUser[] = [];
     search: string = '';
     headers: object = [
-        { text: 'Username', value: 'username', align: 'left', width: '80%' },
+        { text: 'Username', value: 'username', align: 'left', width: '65%' },
+        {
+        text: 'Role',
+        value: 'role',
+        align: 'center',
+        width: '15%'
+        },
         {
         text: 'State',
         value: 'state',

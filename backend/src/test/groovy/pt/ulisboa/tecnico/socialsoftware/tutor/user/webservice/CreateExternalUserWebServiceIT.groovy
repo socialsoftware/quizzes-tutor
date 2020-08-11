@@ -1,17 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
-import spock.lang.Specification
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CreateExternalUserWebServiceIT extends SpockTest {
@@ -23,9 +18,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
 
     Course course1
     CourseExecution courseExecution1
-
-    final static String EMAIL = "pedro.pereira2909@gmail.com"
-
+    
     @Override
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
@@ -42,7 +35,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
                 path: '/users/create/'+courseExecution1.getId(),
                 body: [
                         admin: false,
-                        email: EMAIL,
+                        email: USER_1_EMAIL,
                         role: 'STUDENT'
                 ],
                 requestContentType: 'application/json'
@@ -52,15 +45,14 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         response != null
         response.status == 200
         response.data != null
-        response.data.username == EMAIL
-        response.data.email == EMAIL
+        response.data.username == USER_1_EMAIL
+        response.data.email == USER_1_EMAIL
         response.data.admin == false
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution1.getUsers().remove(userRepository.findById(response.data.id).get())
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
         courseExecution1.remove()
+        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
         userRepository.delete(userRepository.findById(response.data.id).get())

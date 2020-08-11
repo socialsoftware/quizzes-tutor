@@ -44,9 +44,11 @@ public enum ErrorMessage {
     COURSE_NOT_FOUND("Course not found with name %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     USER_IS_INACTIVE("User state is inactive: username %s"),
+    USER_IS_ACTIVE("User state is active: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
     EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
     INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
+    INVALID_PARAMETERS("Invalid parameters"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
@@ -89,7 +91,8 @@ public enum ErrorMessage {
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
 
-    INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format");
+    INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
+    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on lines: %s");
 
     public final String label;
 

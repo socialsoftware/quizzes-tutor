@@ -22,7 +22,7 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
     CourseExecution courseExecution1
     List<Integer> usersIdsList
 
-    def setup(){
+    def setup() {
         restClient = new RESTClient("http://localhost:" + port)
         usersIdsList = new ArrayList<>()
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -62,8 +62,14 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
         then: "check response status"
         response.status == 200
 
-        cleanup:
 
+        and: "the users were removed from the database"
+        userRepository.findById(user1.getId()).isEmpty()
+        userRepository.findById(user2.getId()).isEmpty()
+
+
+        cleanup:
+        courseExecution1.remove()
         courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
         courseExecutionRepository.deleteById(courseExecution1.getId())
         courseRepository.deleteById(course1.getId())

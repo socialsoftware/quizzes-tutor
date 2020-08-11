@@ -43,7 +43,7 @@ public class User implements UserDetails, DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private State state;
     
     @Column(unique=true)
@@ -545,11 +545,12 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void remove() {
+        if(getState() == User.State.ACTIVE)
+            throw new TutorException(USER_IS_ACTIVE, getUsername());
         removeFromCourseExecutions();
     }
 
     private void removeFromCourseExecutions() {
-        for(CourseExecution ce : courseExecutions)
-            ce.getUsers().remove(this);
+        courseExecutions.forEach(ce -> ce.getUsers().remove(this));
     }
 }

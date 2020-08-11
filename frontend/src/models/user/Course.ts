@@ -10,8 +10,10 @@ export default class Course {
   name: string | undefined;
   numberOfQuestions: number | undefined;
   numberOfQuizzes: number | undefined;
-  numberOfStudents: number | undefined;
-  numberOfTeachers: number | undefined;
+  numberOfActiveStudents: number | undefined;
+  numberOfInactiveStudents: number | undefined;
+  numberOfActiveTeachers: number | undefined;
+  numberOfInactiveTeachers: number | undefined;
   status: string | undefined;
   courseExecutionUsers: ExternalUser[] | undefined;
 
@@ -26,8 +28,10 @@ export default class Course {
       this.name = jsonObj.name;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfQuizzes = jsonObj.numberOfQuizzes;
-      this.numberOfStudents = jsonObj.numberOfStudents;
-      this.numberOfTeachers = jsonObj.numberOfTeachers;
+      this.numberOfActiveStudents = jsonObj.numberOfActiveStudents;
+      this.numberOfInactiveStudents = jsonObj.numberOfInactiveStudents;
+      this.numberOfActiveTeachers = jsonObj.numberOfActiveTeachers;
+      this.numberOfInactiveTeachers = jsonObj.numberOfInactiveTeachers;
       this.status = jsonObj.status;
       if(jsonObj.courseExecutionUsers){
         this.courseExecutionUsers = jsonObj.courseExecutionUsers

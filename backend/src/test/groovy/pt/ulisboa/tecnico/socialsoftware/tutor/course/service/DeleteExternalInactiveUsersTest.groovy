@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
-class DeleteExternalInactiveUsersTest extends SpockTest{
+class DeleteExternalInactiveUsersTest extends SpockTest {
 
     def user1
     def user2
@@ -97,7 +97,11 @@ class DeleteExternalInactiveUsersTest extends SpockTest{
         when:
         courseService.deleteExternalInactiveUsers(executionId, userIdList);
 
-        then: "the user is not removed from his course execution"
+        then: "an execption is thrown"
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.USER_IS_ACTIVE
+
+        and: "the user is not removed from his course execution"
         courseExecution.getStudents().size() == 2 // No student was removed
 
 

@@ -46,7 +46,7 @@ Cypress.Commands.add('deleteCourseExecution', acronym => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 11)
+    .should('have.length', 13)
     .find('[data-cy="deleteCourse"]')
     .click();
 });
@@ -58,7 +58,7 @@ Cypress.Commands.add(
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 11)
+      .should('have.length', 13)
       .find('[data-cy="createFromCourse"]')
       .click();
     cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
@@ -67,54 +67,23 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('addTeacherThroughForm', (acronym, name, email) => {
+Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.contains(acronym)
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 11)
+    .should('have.length', 13)
     .find('[data-cy="addExternalUser"]')
     .click();
 
   cy.get('[data-cy="userNameInput"]').type(name);
   cy.get('[data-cy="userEmailInput"]').type(email);
   cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
-  cy.get('.v-menu__content .v-list').children().contains("TEACHER").first().click();
+  cy.get('.v-menu__content .v-list').children().contains(type).first().click();
   cy.get('[data-cy="saveButton"]').click();
-  cy.get('[data-cy="cancelButton"]').click();
-
-  cy.get('[data-cy="homeLink"]').click();
-  cy.wait(2000);
-  cy.get('[data-cy="administrationMenuButton"]').click();
-  cy.get('[data-cy="manageCoursesMenuButton"]').click();
-
-  cy.contains(acronym).parent().children().eq(6).contains("1");
-  
+  cy.wait(3000);
 });
 
-Cypress.Commands.add('addStudentThroughForm', (acronym, name, email) => {
-  cy.contains(acronym)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 11)
-    .find('[data-cy="addExternalUser"]')
-    .click();
-
-  cy.get('[data-cy="userNameInput"]').type(name);
-  cy.get('[data-cy="userEmailInput"]').type(email);
-  cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
-  cy.get('.v-menu__content .v-list').children().contains("STUDENT").first().click();
-  cy.get('[data-cy="saveButton"]').click();
-  cy.get('[data-cy="cancelButton"]').click();
-
-  cy.get('[data-cy="homeLink"]').click();
-  cy.wait(2000);
-  cy.get('[data-cy="administrationMenuButton"]').click();
-  cy.get('[data-cy="manageCoursesMenuButton"]').click();
-
-  
-});
 
 Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains(acronym)
@@ -127,4 +96,16 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.get('[data-cy="deleteSelectedUsersButton"').click();
   cy.contains('No data available');
   cy.get('[data-cy="cancelButton"').click()
+});
+
+Cypress.Commands.add('checkStudentCount', (acronym, count) => {
+  cy.contains(acronym).parent().children().eq(9).contains(count);
+});
+
+Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
+  cy.contains(acronym).parent().children().eq(7).contains(count);
+});
+
+Cypress.Commands.add('closeUserCreationDialog', () => {
+  cy.get('[data-cy="cancelButton"]').click();
 });

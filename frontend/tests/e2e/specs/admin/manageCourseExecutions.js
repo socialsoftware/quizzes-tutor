@@ -10,9 +10,13 @@ describe('Administration walkthrough', () => {
     cy.logout();
   });
 
-  it('login creates a course execution adds a teacher though the form and deletes the course execution', () => {
+  it('login creates a course execution adds a teacher though the form and deletes the taeacher and course execution', () => {
     cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
-    cy.addTeacherThroughForm('TEST-AO3', 'User1', 'test@mail.com');
+    cy.addUserThroughForm('TEST-AO3', 'User1', 'test@mail.com', "TEACHER");
+    cy.closeUserCreationDialog();
+    cy.checkTeacherCount('TEST-AO3', '1');
+    cy.deleteUser('test@mail.com', 'TEST-AO3');
+    cy.checkTeacherCount('TEST-AO3', '0');
     cy.deleteCourseExecution('TEST-AO3');
   });
 
@@ -30,14 +34,20 @@ describe('Administration walkthrough', () => {
 
   it('login creates FROM a course execution and deletes it', () => {
     cy.createFromCourseExecution('Demo Course', 'TEST-AO3', 'Winter Semester');
-
     cy.deleteCourseExecution('TEST-AO3');
   });
 
-  it('login as admin, creates a new course execution, add one student, delete student and the course execution', () => {
+
+  it('login as admin, creates a new course execution, try to add the same student twice, delete student and the course execution', () => {
     cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
-    cy.addTeacherThroughForm('TEST-AO3', 'User1', 'test@mail.com');
+    cy.addUserThroughForm('TEST-AO3', 'User1', 'test@mail.com', "STUDENT");
+    cy.closeUserCreationDialog();
+    cy.addUserThroughForm('TEST-AO3', 'User1', 'test@mail.com', "STUDENT");
+    cy.contains('Error: Duplicate user: test@mail.com');
+    cy.closeErrorMessage();
+    cy.closeUserCreationDialog();
     cy.deleteUser('test@mail.com', 'TEST-AO3');
+    cy.checkStudentCount('TEST-AO3', '0');
     cy.deleteCourseExecution('TEST-AO3');
   });
 

@@ -151,7 +151,7 @@ export default class CoursesView extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '30%'
+      width: '25%'
     },
     {
       text: 'Course Type',
@@ -159,7 +159,7 @@ export default class CoursesView extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Name', value: 'name', align: 'left', width: '20%' },
+    { text: 'Name', value: 'name', align: 'left', width: '25%' },
     {
       text: 'Execution Type',
       value: 'courseExecutionType',
@@ -179,14 +179,26 @@ export default class CoursesView extends Vue {
       width: '10%'
     },
     {
-      text: 'Number of Teachers',
-      value: 'numberOfTeachers',
+      text: 'Number of Active Teachers',
+      value: 'numberOfActiveTeachers',
       align: 'center',
       width: '5%'
     },
     {
-      text: 'Number of Students',
-      value: 'numberOfStudents',
+      text: 'Number of Inactive Teachers',
+      value: 'numberOfInactiveTeachers',
+      align: 'center',
+      width: '5%'
+    },
+    {
+      text: 'Number of Active Students',
+      value: 'numberOfActiveStudents',
+      align: 'center',
+      width: '5%'
+    },
+    {
+      text: 'Number of Inactive Students',
+      value: 'numberOfInactiveStudents',
       align: 'center',
       width: '5%'
     },
@@ -245,6 +257,19 @@ export default class CoursesView extends Vue {
     this.currentCourse = null;
   }
 
+  updateUserNumbers(course: Course) {
+    if(!!course && !!course.courseExecutionUsers) {
+
+          course.numberOfInactiveTeachers = course.courseExecutionUsers
+            .filter(user => user.role === 'TEACHER' && user.state === 'INACTIVE')
+            .length;
+          
+           course.numberOfInactiveStudents = course.courseExecutionUsers
+            .filter(user => user.role === 'STUDENT' && user.state === 'INACTIVE')
+            .length;
+    }
+  }
+
   onCloseDialog() {
     this.editCourseDialog = false;
     this.currentCourse = null;
@@ -267,6 +292,9 @@ export default class CoursesView extends Vue {
           .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
         
       this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+      this.updateUserNumbers(this.courses[index]);
+
+
     }
   }
 
@@ -314,7 +342,10 @@ export default class CoursesView extends Vue {
               .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
 
           this.currentCourse = course;
-          this.courses[index].courseExecutionUsers = course.courseExecutionUsers;
+          this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+          this.updateUserNumbers(this.courses[index]);
+
+
         } catch (error) {
           await this.$store.dispatch('error', error);
         }

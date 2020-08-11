@@ -24,7 +24,7 @@ class CreateExternalUserTest extends SpockTest {
     @Autowired
     Mailer mailerMock
 
-    def setup(){
+    def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
@@ -32,7 +32,7 @@ class CreateExternalUserTest extends SpockTest {
     }
 
 
-    def "the course execution does not exist" (){
+    def "the course execution does not exist"() {
         given: "a invalid course execution id"
         def executionId = -1
         and: "a external user dto"
@@ -51,7 +51,7 @@ class CreateExternalUserTest extends SpockTest {
         0 * mailerMock.sendSimpleMail(_,_,_,_)*/
     }
 
-    def "the course execution exists, but it is not external" (){
+    def "the course execution exists, but it is not external"() {
         given: "a external course execution"
         courseExecution.setType(Course.Type.TECNICO)
         def executionId = courseExecution.getId()
@@ -71,7 +71,24 @@ class CreateExternalUserTest extends SpockTest {
         0 * mailerMock.sendSimpleMail(_,_,_,_)*/
     }
 
-    def "the course execution exists, the username does not exist, create the user and associate the user with the course execution" (){
+    def "the course execution exists, the external user is enrolled in it and tries to enroll again"() {
+        given: "a external course execution"
+        def executionId = courseExecution.getId()
+        and: "a external user dto"
+        externalUserDto = new ExternalUserDto()
+        externalUserDto.setEmail(USER_1_EMAIL)
+        externalUserDto.setRole(User.Role.STUDENT)
+
+        when:
+        userService.createExternalUser(executionId, externalUserDto)
+        userService.createExternalUser(executionId, externalUserDto)
+
+        then: "an exception is thrown"
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.DUPLICATE_USER
+    }
+
+    def "the course execution exists, the username does not exist, create the user and associate the user with the course execution"() {
         given: "a external course execution"
         def executionId = courseExecution.getId()
         and: "a external user dto"
@@ -96,13 +113,11 @@ class CreateExternalUserTest extends SpockTest {
         1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', USER_1_EMAIL,_,_)*/
     }
 
-    def "the course execution exists, the username exists and associate the user with the course execution" (){
+    def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
         given: "a user"
-        def user2 = new User("", USER_1_EMAIL, User.Role.STUDENT)
-        user2.setEmail(USER_1_EMAIL)
-        user2.addCourse(courseExecution)
-        courseExecution.addUser(user2)
-        userRepository.save(user2)
+        def user = new User("", USER_1_EMAIL, User.Role.STUDENT)
+        user.setEmail(USER_1_EMAIL)
+        userRepository.save(user)
         and: "a external course execution"
         def executionId = courseExecution.getId()
         and: "a external user dto"
@@ -128,7 +143,7 @@ class CreateExternalUserTest extends SpockTest {
     }
 
     @Unroll
-    def "invalid arguments: email=#email | role=#role"(){
+    def "invalid arguments: email=#email | role=#role"() {
         given: "a invalid course execution id"
         def executionId = courseExecution.getId()
         and: "a external user dto"

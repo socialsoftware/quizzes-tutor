@@ -22,7 +22,7 @@ class GetExternalUsersTest extends SpockTest {
     User user1
     User user2
 
-    def setup(){
+    def setup() {
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course1)
         courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
