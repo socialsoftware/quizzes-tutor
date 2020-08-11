@@ -171,6 +171,8 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { this.questionSubmissions = questionSubmissions; }
+
     public Integer getNumberOfTeacherQuizzes() {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
