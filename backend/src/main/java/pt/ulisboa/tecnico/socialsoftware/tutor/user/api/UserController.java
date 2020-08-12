@@ -22,17 +22,12 @@ public class UserController {
     @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = userService.createExternalUser(executionId,externalUserDto);
-        if (!user.isActive()) {
-            userService.sendConfirmationEmailTo(user);
-        }
-        return user;
+        return userService.createExternalUserApplicational(executionId,externalUserDto);
     }
 
     @PostMapping("/courses/executions/{executionId}/csv")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or (hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public CourseDto uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
         return userService.importListOfUsers(file.getInputStream(), executionId);
-
     }
 }

@@ -176,7 +176,7 @@ public class UserService {
             propagation = Propagation.REQUIRED)
     public CourseDto importListOfUsers(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
-        extractUserDtos(stream, notification).forEach(userDto -> createExternalUser(courseExecutionId, userDto));
+        extractUserDtos(stream, notification).forEach(userDto -> createExternalUserApplicational(courseExecutionId, userDto));
 
         return courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseDto::new)
@@ -225,9 +225,15 @@ public class UserService {
         return userDtos;
     }
 
+    public ExternalUserDto createExternalUserApplicational(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        ExternalUserDto user = createExternalUserTransactional(courseExecutionId, externalUserDto);
+        sendConfirmationEmailTo(user);
+        return user;
+    }
+
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+    public ExternalUserDto createExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         checkRole(externalUserDto);
         User user = getOrCreateUser(externalUserDto);

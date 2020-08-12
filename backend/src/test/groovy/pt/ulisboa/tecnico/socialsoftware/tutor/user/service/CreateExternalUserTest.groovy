@@ -13,11 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import spock.lang.Shared
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
 @DataJpaTest
-class CreateExternalUserTest extends SpockTest {
+class CreateExternalUser extends SpockTest {
 
     ExternalUserDto externalUserDto
 
@@ -31,46 +32,6 @@ class CreateExternalUserTest extends SpockTest {
         courseExecutionRepository.save(courseExecution)
     }
 
-
-    def "the course execution does not exist"() {
-        given: "a invalid course execution id"
-        def executionId = -1
-        and: "a external user dto"
-        externalUserDto = new ExternalUserDto()
-        externalUserDto.setEmail(USER_1_EMAIL)
-        externalUserDto.setRole(User.Role.STUDENT)
-
-        when:
-        userService.createExternalUser(executionId, externalUserDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
-        userRepository.count() == 3
-        /*and: "no mail is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)*/
-    }
-
-    def "the course execution exists, but it is not external"() {
-        given: "a external course execution"
-        courseExecution.setType(Course.Type.TECNICO)
-        def executionId = courseExecution.getId()
-        and: "a external user dto"
-        externalUserDto = new ExternalUserDto()
-        externalUserDto.setEmail(USER_1_EMAIL)
-        externalUserDto.setRole(User.Role.STUDENT)
-
-        when:
-        userService.createExternalUser(executionId, externalUserDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
-        userRepository.count() == 3
-        /*and: "no mail is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)*/
-    }
-
     def "the course execution exists, the external user is enrolled in it and tries to enroll again"() {
         given: "a external course execution"
         def executionId = courseExecution.getId()
@@ -80,8 +41,8 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        userService.createExternalUser(executionId, externalUserDto)
-        userService.createExternalUser(executionId, externalUserDto)
+        userService.createExternalUserApplicational(executionId, externalUserDto)
+        userService.createExternalUserApplicational(executionId, externalUserDto)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -97,7 +58,7 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userService.createExternalUser(executionId, externalUserDto)
+        def result = userService.createExternalUserApplicational(executionId, externalUserDto)
 
         then:"the user is saved in the database"
         userRepository.findAll().size() == 4
@@ -109,8 +70,8 @@ class CreateExternalUserTest extends SpockTest {
         result.getConfirmationToken() != ""
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
-        /*and: "a mail is sent"
-        1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', USER_1_EMAIL,_,_)*/
+        and: "a mail is sent"
+        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, _)
     }
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
@@ -126,7 +87,7 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userService.createExternalUser(executionId, externalUserDto)
+        def result = userService.createExternalUserApplicational(executionId, externalUserDto)
 
         then:"the user is saved in the database"
         userRepository.count() == 4
@@ -138,39 +99,42 @@ class CreateExternalUserTest extends SpockTest {
         courseExecution.getUsers().size() == 1
         courseExecution.getUsers().toList().get(0).getId() == result.getId()
 
-        /*and: "a mail is sent"
-        1 * mailerMock.sendSimpleMail('pedro.test99@gmail.com', USER_1_EMAIL,_,_)*/
+        and: "a mail is sent"
+        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
     }
 
     @Unroll
-    def "invalid arguments: email=#email | role=#role"() {
-        given: "a invalid course execution id"
+    def "invalid arguments: executionId=#executionId | executionType=#executionType | email=#email | role=#role"() {
+        given: "a course execution id"
+        courseExecution.setType(executionType)
         def executionId = courseExecution.getId()
+
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(email)
         externalUserDto.setRole(role)
 
         when:
-        userService.createExternalUser(executionId, externalUserDto)
+        userService.createExternalUserApplicational(executionId, externalUserDto)
 
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
-        /*and: "no mail is sent"
-        0 * mailerMock.sendSimpleMail(_,_,_,_)*/
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(_,_,_,_)
+        and: "no user was created"
+        userRepository.count() == 3
 
         where:
-        email                       | role                     || errorMessage
-        null                        | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        ""                          | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        "test.mail.com"             | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        "test@"                     | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        USER_1_EMAIL                | null                     || ErrorMessage.INVALID_ROLE
-        USER_1_EMAIL                | User.Role.ADMIN          || ErrorMessage.INVALID_ROLE
-        USER_1_EMAIL                | User.Role.DEMO_ADMIN     || ErrorMessage.INVALID_ROLE
-
-
+        executionType         | email             | role                     || errorMessage
+        Course.Type.TECNICO   | USER_1_EMAIL      | User.Role.STUDENT        || ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
+        Course.Type.EXTERNAL  | null              | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        Course.Type.EXTERNAL  | ""                | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        Course.Type.EXTERNAL  | "test.mail.com"   | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        Course.Type.EXTERNAL  | "test@"           | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        Course.Type.EXTERNAL  | USER_1_EMAIL      | null                     || ErrorMessage.INVALID_ROLE
+        Course.Type.EXTERNAL  | USER_1_EMAIL      | User.Role.ADMIN          || ErrorMessage.INVALID_ROLE
+        Course.Type.EXTERNAL  | USER_1_EMAIL      | User.Role.DEMO_ADMIN     || ErrorMessage.INVALID_ROLE
 
     }
 

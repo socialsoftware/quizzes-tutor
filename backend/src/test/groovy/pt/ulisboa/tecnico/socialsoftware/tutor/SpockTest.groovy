@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor
 
 import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -33,6 +34,10 @@ import java.time.LocalDateTime
 
 
 class SpockTest extends Specification {
+
+    @Value('${spring.mail.username}')
+    public String mailerUsername
+
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
     public static final String DEMO_STUDENT_NAME = "Demo Student"

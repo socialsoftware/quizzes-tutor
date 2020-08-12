@@ -38,7 +38,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setConfirmationToken(USER_1_TOKEN)
         externalUserDto.setRole(User.Role.STUDENT)
 
-        userService.createExternalUser(executionId, externalUserDto)
+        userService.createExternalUserApplicational(executionId, externalUserDto)
 
         User user = userService.findByUsername(USER_1_EMAIL)
         user.setConfirmationToken(USER_1_TOKEN)
