@@ -51,6 +51,10 @@ public class UsersXmlExport {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
+		if (user.getEmail() != null) {
+			userElement.setAttribute("email", user.getEmail());
+		}
+
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);

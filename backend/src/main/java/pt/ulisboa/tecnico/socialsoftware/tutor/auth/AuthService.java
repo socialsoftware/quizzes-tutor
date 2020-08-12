@@ -51,12 +51,12 @@ public class AuthService {
 
         // If user is student and is not in db
         if (user == null && !activeAttendingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.STUDENT);
+            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT);
         }
 
         // If user is teacher and is not in db
         if (user == null && !fenixTeachingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.TEACHER);
+            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER);
         }
 
         if (user == null) {

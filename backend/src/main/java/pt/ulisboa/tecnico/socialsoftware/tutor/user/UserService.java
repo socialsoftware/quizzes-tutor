@@ -70,12 +70,12 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    public User createUser(String name, String username, User.Role role) {
+    public User createUser(String name, String username, String email, User.Role role) {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, role);
+        User user = new User(name, username, email, role, User.State.ACTIVE, false);
         userRepository.save(user);
         user.setState(User.State.ACTIVE);
         user.setKey(user.getId());
@@ -109,7 +109,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
+            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -118,7 +118,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
+            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -127,7 +127,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
+            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -136,7 +136,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, User.Role.STUDENT);
+        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT);
         CourseExecution courseExecution = courseService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(newDemoUser);

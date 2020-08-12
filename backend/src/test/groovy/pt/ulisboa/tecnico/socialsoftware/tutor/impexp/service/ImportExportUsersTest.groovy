@@ -14,11 +14,13 @@ class ImportExportUsersTest extends SpockTest {
         existingUsers = userRepository.findAll().size()
 
         User user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
+        user.setEmail(USER_1_EMAIL)
         user.addCourse(courseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         user = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        user.setEmail(USER_2_EMAIL)
         user.addCourse(courseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
@@ -43,6 +45,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getKey() == existingUsers + 1
         userOne.getName() == USER_1_NAME
         userOne.getRole() == User.Role.TEACHER
+        userOne.getEmail() == USER_1_EMAIL
         userOne.getCourseExecutions().size() == 1
 
         def userTwo = userRepository.findByUsername(USER_2_USERNAME).orElse(null)
@@ -50,7 +53,8 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getKey() == existingUsers + 2
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
-        userOne.getCourseExecutions().size() == 1
+        userTwo.getEmail() == USER_2_EMAIL
+        userTwo.getCourseExecutions().size() == 1
     }
 
     @TestConfiguration
