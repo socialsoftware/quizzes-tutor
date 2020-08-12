@@ -3,7 +3,6 @@ describe('Student walkthrough', () => {
     cy.demoStudentLogin();
 
     cy.get('[data-cy="submissionStudentMenuButton"]').click();
-    cy.get('[data-cy="mySubmissionsMenuButton"]').click();
   });
 
   afterEach(() => {
@@ -29,7 +28,7 @@ describe('Student walkthrough', () => {
       'C',
       'D'
     );
-    cy.deleteQuestionSubmission('Test', 5);
+    cy.deleteQuestionSubmission('Test');
   });
 
   it('login submits an invalid question', () => {

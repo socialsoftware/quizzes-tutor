@@ -25,6 +25,7 @@
           <v-btn color="primary" dark @click="getQuestionSubmissions"
             >Refresh List</v-btn
           ><v-btn
+            v-if="$store.getters.isStudent"
             color="primary"
             dark
             @click="submitQuestion"
@@ -46,15 +47,9 @@
       </template>
       <template v-slot:item.question.topics="{ item }">
         <edit-question-submission-topics
-          v-if="item.question.status === 'IN_REVISION'"
           :questionSubmission="item"
           :topics="topics"
           v-on:submission-changed-topics="onQuestionSubmissionChangedTopics"
-        />
-        <view-question-submission-topics
-          v-else
-          :questionSubmission="item"
-          :topics="topics"
         />
       </template>
       <template v-slot:item.action="{ item }">
@@ -64,13 +59,18 @@
               class="mr-2"
               v-on="on"
               @click="showQuestionSubmissionDialog(item)"
-              data-cy="viewQuestion"
+              data-cy="ViewSubmission"
               >visibility</v-icon
             >
           </template>
           <span>Show Question Submission</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
+        <v-tooltip
+          bottom
+          v-if="
+            $store.getters.isStudent && item.question.status === 'IN_REVISION'
+          "
+        >
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
@@ -82,14 +82,19 @@
           </template>
           <span>Edit Question Submission</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="item.question.status === 'IN_REVISION'">
+        <v-tooltip
+          bottom
+          v-if="
+            $store.getters.isStudent && item.question.status === 'IN_REVISION'
+          "
+        >
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
               v-on="on"
               color="red"
               @click="deleteQuestionSubmission(item)"
-              data-cy="deleteSubmission"
+              data-cy="DeleteSubmission"
               >delete</v-icon
             >
           </template>
@@ -119,19 +124,17 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import ShowQuestionSubmissionDialog from '@/views/student/question-submissions/ShowQuestionSubmissionDialog.vue';
 import Question from '@/models/management/Question';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Topic from '@/models/management/Topic';
-import EditQuestionSubmissionDialog from '@/views/student/question-submissions/EditQuestionSubmissionDialog.vue';
-import EditQuestionSubmissionTopics from '@/views/teacher/question-submissions/EditQuestionSubmissionTopics.vue';
-import ViewQuestionSubmissionTopics from '@/views/teacher/question-submissions/ViewQuestionSubmissionTopics.vue';
+import ShowQuestionSubmissionDialog from '@/views/questionsubmission/ShowQuestionSubmissionDialog.vue';
+import EditQuestionSubmissionDialog from '@/views/questionsubmission/EditQuestionSubmissionDialog.vue';
+import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestionSubmissionTopics.vue';
 
 @Component({
   components: {
     'show-question-submission-dialog': ShowQuestionSubmissionDialog,
     'edit-question-submission-topics': EditQuestionSubmissionTopics,
-    'view-question-submission-topics': ViewQuestionSubmissionTopics,
     'edit-question-submission-dialog': EditQuestionSubmissionDialog
   }
 })
@@ -153,6 +156,11 @@ export default class QuestionSubmissionView extends Vue {
     },
     { text: 'Title', value: 'question.title', align: 'center', width: '50%' },
     {
+      text: 'Submitted by',
+      value: 'name',
+      align: this.$store.getters.isTeacher ? 'center' : ' d-none'
+    },
+    {
       text: 'Status',
       value: 'question.status',
       align: 'center',
@@ -163,7 +171,7 @@ export default class QuestionSubmissionView extends Vue {
       value: 'question.topics',
       align: 'center',
       sortable: false,
-      width: '50%%'
+      width: '50%'
     },
     {
       text: 'Creation Date',
@@ -187,10 +195,15 @@ export default class QuestionSubmissionView extends Vue {
   async getQuestionSubmissions() {
     await this.$store.dispatch('loading');
     try {
-      [this.questionSubmissions, this.topics] = await Promise.all([
-        RemoteServices.getStudentQuestionSubmissions(),
-        RemoteServices.getTopics()
-      ]);
+      [this.questionSubmissions, this.topics] = this.$store.getters.isStudent
+        ? await Promise.all([
+            RemoteServices.getStudentQuestionSubmissions(),
+            RemoteServices.getTopics()
+          ])
+        : await Promise.all([
+            RemoteServices.getCourseExecutionQuestionSubmissions(),
+            RemoteServices.getTopics()
+          ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -258,13 +271,48 @@ export default class QuestionSubmissionView extends Vue {
     }
   }
 
-  showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
+  async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
     this.currentQuestionSubmission = questionSubmission;
+
+    if (this.$store.getters.isTeacher) {
+      await this.$store.dispatch('loading');
+      try {
+        if (this.isReviewable(this.currentQuestionSubmission)) {
+          try {
+            await RemoteServices.toggleInReviewStatus(
+              questionSubmission!.id!,
+              true
+            );
+          } catch (error) {
+            await this.$store.dispatch('error', error);
+          }
+        }
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+      await this.$store.dispatch('clearLoading');
+    }
+
     this.questionSubmissionDialog = true;
   }
 
-  onCloseShowQuestionSubmissionDialog() {
-    this.questionSubmissionDialog = false;
+  @Watch('questionSubmissionDialog')
+  async onCloseShowQuestionSubmissionDialog() {
+    if (!this.questionSubmissionDialog) {
+      if (this.$store.getters.isTeacher) {
+        await this.$store.dispatch('loading');
+        try {
+          [this.questionSubmissions] = await Promise.all([
+            RemoteServices.getCourseExecutionQuestionSubmissions()
+          ]);
+        } catch (error) {
+          await this.$store.dispatch('error', error);
+        }
+        await this.$store.dispatch('clearLoading');
+      }
+
+      this.questionSubmissionDialog = false;
+    }
   }
 
   async deleteQuestionSubmission(
@@ -299,6 +347,13 @@ export default class QuestionSubmissionView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  isReviewable(questionSubmission: QuestionSubmission) {
+    return (
+      questionSubmission.question.status == 'IN_REVISION' ||
+      questionSubmission.question.status == 'IN_REVIEW'
+    );
   }
 }
 </script>

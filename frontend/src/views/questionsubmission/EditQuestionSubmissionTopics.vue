@@ -1,6 +1,12 @@
 <template>
   <v-form>
     <v-autocomplete
+      v-if="
+        ($store.getters.isStudent &&
+          questionSubmission.question.status === 'IN_REVISION') ||
+          ($store.getters.isTeacher &&
+            questionSubmission.question.status !== 'REJECTED')
+      "
       v-model="questionTopics"
       :items="topics"
       multiple
@@ -26,6 +32,21 @@
         </v-list-item-content>
       </template>
     </v-autocomplete>
+
+    <v-select
+      v-else
+      v-model="questionTopics"
+      :items="topics"
+      multiple
+      disabled
+      append-icon="false"
+    >
+      <template v-slot:selection="data">
+        <v-chip v-bind="data.attrs">
+          {{ data.item.name }}
+        </v-chip>
+      </template>
+    </v-select>
   </v-form>
 </template>
 

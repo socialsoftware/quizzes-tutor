@@ -84,7 +84,7 @@ Cypress.Commands.add(
         .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 5);
+        .should('have.length', 6);
     } else {
       cy.get('[data-cy="SubmitButton"]').click();
     }
@@ -116,8 +116,8 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 5)
-    .find('[data-cy="viewQuestion"]')
+    .should('have.length', 6)
+    .find('[data-cy="ViewSubmission"]')
     .click();
   cy.contains(title);
   cy.contains(content);
@@ -128,18 +128,18 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
   if (status != null) {
     cy.contains(status);
   }
-  cy.get('[data-cy="close"]').click();
+  cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('deleteQuestionSubmission', (title=null, size=null, reviews=true) => {
+Cypress.Commands.add('deleteQuestionSubmission', (title=null, reviews=true) => {
   if(title != null) {
     cy.contains(title)
       .parent()
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', size)
-      .find('[data-cy="deleteSubmission"]')
+      .should('have.length', 6)
+      .find('[data-cy="DeleteSubmission"]')
       .click();
   } else if (reviews) {
     cy.exec(
@@ -219,10 +219,5 @@ Cypress.Commands.add('addQuestionSubmission', (title, questionStatus, userId) =>
       '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
     );
   }
-
-  Cypress.Commands.add('checkUserQuestionSubmissionInfo', (username, num) => {
-    cy.contains(username);
-    cy.contains(num);
-  });
 });
 

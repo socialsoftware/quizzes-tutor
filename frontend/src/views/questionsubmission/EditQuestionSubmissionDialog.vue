@@ -73,7 +73,7 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import QuestionSubmission from '../../../models/management/QuestionSubmission';
+import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 
 @Component

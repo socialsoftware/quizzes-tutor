@@ -3,7 +3,6 @@ describe('Student walkthrough', () => {
     cy.demoStudentLogin();
 
     cy.get('[data-cy="submissionStudentMenuButton"]').click();
-    cy.get('[data-cy="mySubmissionsMenuButton"]').click();
   });
 
   afterEach(() => {
@@ -63,7 +62,7 @@ describe('Student walkthrough', () => {
     cy.log('close dialog');
     cy.get('[data-cy="CancelButton"]').click();
   
-    cy.deleteQuestionSubmission('Test', 5);
+    cy.deleteQuestionSubmission('Test');
   });
   
 });

@@ -26,9 +26,7 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
-import StudentQuestionSubmissionView from '@/views/student/question-submissions/QuestionSubmissionView.vue';
-import TeacherQuestionSubmissionView from '@/views/teacher/question-submissions/QuestionSubmissionView.vue';
-import AllQuestionSubmissionsView from '@/views/student/question-submissions/AllUserQuestionSubmissionInfoView.vue';
+import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 
 Vue.use(Router);
 
@@ -124,7 +122,7 @@ let router = new Router({
         {
           path: 'submissions',
           name: 'teacher-submissions',
-          component: TeacherQuestionSubmissionView,
+          component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
             requiredAuth: 'Teacher'
@@ -203,18 +201,9 @@ let router = new Router({
         {
           path: 'submissions',
           name: 'student-submissions',
-          component: StudentQuestionSubmissionView,
+          component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'all-submissions',
-          name: 'all-submissions',
-          component: AllQuestionSubmissionsView,
-          meta: {
-            title: process.env.VUE_APP_NAME + ' - All Submissions',
             requiredAuth: 'Student'
           }
         }
