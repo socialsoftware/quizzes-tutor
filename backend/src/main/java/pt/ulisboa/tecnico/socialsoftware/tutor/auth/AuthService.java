@@ -142,13 +142,10 @@ public class AuthService {
     public AuthDto demoStudentAuth(Boolean createNew) {
         User user;
 
-        if (createNew == null)
-            throw new TutorException(INVALID_PARAMETERS);
-
-        if (createNew) 
-            user = this.userService.createDemoStudent();
-        else
+        if (createNew == null || !createNew)
             user = this.userService.getDemoStudent();
+        else
+            user = this.userService.createDemoStudent();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }

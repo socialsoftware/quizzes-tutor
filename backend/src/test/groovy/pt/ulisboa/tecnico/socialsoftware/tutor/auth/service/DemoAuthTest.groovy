@@ -4,8 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
@@ -49,11 +47,11 @@ class DemoAuthTest extends SpockTest {
 
     def "demo student login: invalid param" (){
         when:
-        authService.demoStudentAuth(null);
+        def result = authService.demoStudentAuth(null);
 
         then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.INVALID_PARAMETERS
+        result.user.name == DEMO_STUDENT_NAME
+        result.user.role == User.Role.STUDENT
     }
 
     @TestConfiguration
