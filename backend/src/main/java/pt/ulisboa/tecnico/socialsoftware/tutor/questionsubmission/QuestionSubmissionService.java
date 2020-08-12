@@ -83,9 +83,7 @@ public class QuestionSubmissionService {
 
         Review review = new Review(user, questionSubmission, reviewDto);
 
-        if (review.getStatus() != Review.Status.COMMENT) {
-            updateQuestionStatus(review.getStatus(), questionSubmission.getQuestion().getId());
-        }
+        updateQuestionStatus(review.getStatus(), questionSubmission.getQuestion().getId());
 
         reviewRepository.save(review);
         return new ReviewDto(review);
@@ -253,9 +251,11 @@ public class QuestionSubmissionService {
 
     private void updateQuestionStatus(Review.Status status, Integer questionId) {
         Question question = getQuestion(questionId);
-        if(question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW)
-            question.setStatus(Question.Status.valueOf(status.name()));
-        else
+        if(question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW) {
+            if (status != Review.Status.COMMENT) {
+                question.setStatus(Question.Status.valueOf(status.name()));
+            }
+        } else
             throw new TutorException(CANNOT_REVIEW_QUESTION_SUBMISSION);
     }
 }
