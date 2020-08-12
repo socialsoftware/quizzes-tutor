@@ -41,7 +41,7 @@
         </div>
       </template>
       <template v-slot:item.question.status="{ item }">
-        <v-chip :color="getStatusColor(item.question.status)" small>
+        <v-chip :color="item.getStatusColor()" small>
           <span>{{ item.question.status.replace('_', ' ') }}</span>
         </v-chip>
       </template>
@@ -67,9 +67,7 @@
         </v-tooltip>
         <v-tooltip
           bottom
-          v-if="
-            $store.getters.isStudent && item.question.status === 'IN_REVISION'
-          "
+          v-if="$store.getters.isStudent && item.isInRevision()"
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -84,9 +82,7 @@
         </v-tooltip>
         <v-tooltip
           bottom
-          v-if="
-            $store.getters.isStudent && item.question.status === 'IN_REVISION'
-          "
+          v-if="$store.getters.isStudent && item.isInRevision()"
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -211,21 +207,12 @@ export default class QuestionSubmissionView extends Vue {
   }
 
   customFilter(value: string, search: string, question: Question) {
-    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
       JSON.stringify(question)
         .toLowerCase()
         .indexOf(search.toLowerCase()) !== -1
     );
-  }
-
-  getStatusColor(status: string) {
-    if (status === 'AVAILABLE') return 'green';
-    else if (status === 'DISABLED') return 'orange';
-    else if (status === 'REJECTED') return 'red';
-    else if (status === 'IN_REVISION') return 'yellow';
-    else if (status === 'IN_REVIEW') return 'blue';
   }
 
   submitQuestion() {
@@ -247,9 +234,7 @@ export default class QuestionSubmissionView extends Vue {
   async onSaveQuestionSubmission() {
     await this.$store.dispatch('loading');
     try {
-      [this.questionSubmissions] = await Promise.all([
-        RemoteServices.getStudentQuestionSubmissions()
-      ]);
+      this.questionSubmissions = await RemoteServices.getStudentQuestionSubmissions();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -277,7 +262,7 @@ export default class QuestionSubmissionView extends Vue {
     if (this.$store.getters.isTeacher) {
       await this.$store.dispatch('loading');
       try {
-        if (this.isReviewable(this.currentQuestionSubmission)) {
+        if (this.currentQuestionSubmission.isInDiscussion()) {
           try {
             await RemoteServices.toggleInReviewStatus(
               questionSubmission!.id!,
@@ -302,9 +287,7 @@ export default class QuestionSubmissionView extends Vue {
       if (this.$store.getters.isTeacher) {
         await this.$store.dispatch('loading');
         try {
-          [this.questionSubmissions] = await Promise.all([
-            RemoteServices.getCourseExecutionQuestionSubmissions()
-          ]);
+          this.questionSubmissions = await RemoteServices.getCourseExecutionQuestionSubmissions();
         } catch (error) {
           await this.$store.dispatch('error', error);
         }
@@ -323,11 +306,9 @@ export default class QuestionSubmissionView extends Vue {
       confirm('Are you sure you want to delete this submission?')
     ) {
       try {
-        let [reviews] = await Promise.all([
-          RemoteServices.getQuestionSubmissionReviews(
-            toDeleteQuestionSubmission.id!
-          )
-        ]);
+        let reviews = await RemoteServices.getQuestionSubmissionReviews(
+          toDeleteQuestionSubmission.id!
+        );
         if (reviews.length > 0) {
           await this.$store.dispatch(
             'error',
@@ -347,13 +328,6 @@ export default class QuestionSubmissionView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
-  }
-
-  isReviewable(questionSubmission: QuestionSubmission) {
-    return (
-      questionSubmission.question.status == 'IN_REVISION' ||
-      questionSubmission.question.status == 'IN_REVIEW'
-    );
   }
 }
 </script>

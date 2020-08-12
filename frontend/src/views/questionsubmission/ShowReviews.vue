@@ -14,9 +14,9 @@
     >
       <p>
         {{ review.creationDate + ': ' }}
-        <span v-if="review.status !== 'COMMENT'">
-          <v-chip small :color="getStatusColor(review.status)">
-            <span>{{ reviewStatus(review.status) }}</span>
+        <span v-if="!review.isComment()">
+          <v-chip small :color="review.getStatusColor()">
+            <span>{{ review.reviewStatus() }}</span>
           </v-chip>
           {{ ' by ' }}
         </span>
@@ -50,9 +50,9 @@ export default class ShowReviews extends Vue {
   async getReviews() {
     await this.$store.dispatch('loading');
     try {
-      [this.reviews] = await Promise.all([
-        RemoteServices.getQuestionSubmissionReviews(this.questionSubmission.id!)
-      ]);
+      this.reviews = await RemoteServices.getQuestionSubmissionReviews(
+        this.questionSubmission.id!
+      );
       this.reviews.sort((a, b) => this.sortNewestFirst(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -60,29 +60,10 @@ export default class ShowReviews extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  reviewStatus(status: string) {
-    if (status === 'AVAILABLE' || status === 'DISABLED') {
-      return 'APPROVED';
-    } else if (status === 'REJECTED') {
-      return status;
-    } else if (status === 'IN_REVISION') {
-      return 'QUESTION STATUS';
-    } else if (status === 'IN_REVIEW') {
-      return 'FURTHER REVIEW REQUESTED';
-    }
-  }
-
   sortNewestFirst(a: Review, b: Review) {
     if (a.creationDate && b.creationDate)
       return a.creationDate < b.creationDate ? 1 : -1;
     else return 0;
-  }
-
-  getStatusColor(status: string) {
-    if (status === 'AVAILABLE' || status === 'DISABLED') return 'green';
-    else if (status === 'REJECTED') return 'red';
-    else if (status === 'IN_REVISION') return 'yellow';
-    else if (status === 'IN_REVIEW') return 'blue';
   }
 }
 </script>

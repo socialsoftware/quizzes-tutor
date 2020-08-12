@@ -36,13 +36,4 @@ describe('Teacher walkthrough', () => {
       cy.reviewQuestionSubmission('Request Further Review', 'Test', 'Comment');
       cy.checkQuestionSubmissionStatus('Test', 'FURTHER REVIEW REQUESTED');
   });
-
-  it('login reviews submisssion without comment', () => {
-    cy.reviewQuestionSubmission('Approve (AVAILABLE)', 'Test');
-
-    cy.closeErrorMessage('Review must have comment');
-
-    cy.log('close dialog');
-    cy.get('[data-cy="CloseButton"]').click();
-  });
 });

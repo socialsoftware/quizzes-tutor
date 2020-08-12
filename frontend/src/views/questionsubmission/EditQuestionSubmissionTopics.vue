@@ -2,10 +2,8 @@
   <v-form>
     <v-autocomplete
       v-if="
-        ($store.getters.isStudent &&
-          questionSubmission.question.status === 'IN_REVISION') ||
-          ($store.getters.isTeacher &&
-            questionSubmission.question.status !== 'REJECTED')
+        ($store.getters.isStudent && questionSubmission.isInRevision()) ||
+          ($store.getters.isTeacher && questionSubmission.isRejected())
       "
       v-model="questionTopics"
       :items="topics"

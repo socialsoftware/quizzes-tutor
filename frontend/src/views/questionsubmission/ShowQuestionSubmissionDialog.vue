@@ -25,10 +25,7 @@
       </div>
       <div
         class="text-left"
-        v-if="
-          $store.getters.isTeacher &&
-            (this.status === 'IN_REVISION' || this.status === 'IN_REVIEW')
-        "
+        v-if="$store.getters.isTeacher && questionSubmission.isInDiscussion()"
       >
         <v-card-title>
           <span class="headline">{{ 'New Review' }}</span>
@@ -57,11 +54,7 @@
       </div>
       <div
         class="text-left"
-        v-if="
-          $store.getters.isStudent &&
-            (questionSubmission.question.status === 'IN_REVISION' ||
-              questionSubmission.question.status === 'IN_REVIEW')
-        "
+        v-if="$store.getters.isStudent && questionSubmission.isInDiscussion()"
       >
         <v-card-title>
           <span class="headline">{{ 'New Comment' }}</span>
@@ -84,7 +77,7 @@
           >close</v-btn
         >
         <v-btn
-          v-if="this.status === 'IN_REVISION' || this.status === 'IN_REVIEW'"
+          v-if="questionSubmission.isInDiscussion()"
           color="blue darken-1"
           @click="
             reviewQuestionSubmission(
@@ -119,17 +112,9 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   readonly questionSubmission!: QuestionSubmission;
 
   reviewsComponentKey: number = 0;
-  status: string = '';
   comment: string = '';
   selected = 'COMMENT';
-  statusOptions = [
-    { text: 'Comment', value: 'COMMENT' },
-    { text: 'Request Changes', value: 'IN_REVISION' },
-    { text: 'Request Further Review', value: 'IN_REVIEW' },
-    { text: 'Available', value: 'AVAILABLE' },
-    { text: 'Disabled', value: 'DISABLED' },
-    { text: 'Rejected', value: 'REJECTED' }
-  ];
+  statusOptions = Review.statusOptions;
 
   created() {
     this.forceRerender();
@@ -139,7 +124,6 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   forceRerender() {
     if (this.dialog) {
       this.reviewsComponentKey += 1;
-      this.status = this.questionSubmission.question.status;
       this.comment = '';
       this.selected = 'COMMENT';
     }
