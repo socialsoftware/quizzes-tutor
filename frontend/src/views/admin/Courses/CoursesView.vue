@@ -123,7 +123,7 @@ import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
 import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
-import UploadUsersDialog from '@/views/admin/Courses/uploadUsersDialog.vue';
+import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
 import ViewUsersDialog from '@/views/admin/Courses/viewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
 

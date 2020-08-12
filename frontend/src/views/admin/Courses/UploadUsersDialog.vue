@@ -26,12 +26,7 @@
             <div>If the third camp is omitted, it will be considered as a Student</div>
          </v-card-text>
         </v-tooltip>
-
-
       </v-card-title>
-
-
-
 
       <v-file-input
         show-size
@@ -68,7 +63,7 @@ export default class UploadUsersDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
-  chosenFile: File |null = null;
+  chosenFile: File | null = null;
 
   async uploadUsers(course: Course) {
     try {
@@ -79,14 +74,12 @@ export default class UploadUsersDialog extends Vue {
         this.$emit('users-uploaded', updatedCourse);
       }
       else {
-        await this.$store.dispatch('error','In order to upload users, it must be selected a file');
+        await this.$store.dispatch('error', 'In order to upload users, it must be selected a file');
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
 
   }
-
-
 }
 </script>

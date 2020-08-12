@@ -6,11 +6,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
+import java.util.AbstractMap;
 
 
 @RestController
@@ -31,8 +34,7 @@ public class UserController {
 
     @PostMapping("/courses/executions/{executionId}/csv")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or (hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
-    public CourseDto uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
+    public NotificationResponse<CourseDto> uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
         return userService.importListOfUsers(file.getInputStream(), executionId);
-
     }
 }

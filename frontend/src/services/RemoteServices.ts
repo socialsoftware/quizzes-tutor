@@ -34,6 +34,16 @@ httpClient.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
+httpClient.interceptors.response.use((response) => {
+  if (response.data.notification) {
+    Store.dispatch('notification', response.data.notification.errorMessage);
+    response.data = response.data.response;
+  }
+  return response;
+}, error => {
+  // handle the response error
+  return Promise.reject(error);
+});
 
 export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {

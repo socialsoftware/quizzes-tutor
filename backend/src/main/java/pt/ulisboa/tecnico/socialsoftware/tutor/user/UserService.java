@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -27,6 +28,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -174,13 +176,16 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public CourseDto importListOfUsers(InputStream stream, int courseExecutionId) {
+    public NotificationResponse<CourseDto> importListOfUsers(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
         extractUserDtos(stream, notification).forEach(userDto -> createExternalUser(courseExecutionId, userDto));
 
-        return courseExecutionRepository.findById(courseExecutionId)
+        CourseDto courseDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseDto::new)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        notification.generateErrorMessage();
+        return new NotificationResponse<>(notification, courseDto);
     }
 
     private List<ExternalUserDto> extractUserDtos(InputStream stream, Notification notification) {
@@ -195,16 +200,19 @@ public class UserService {
                 String[] userInfo = line.split(cvsSplitBy);
                 if (userInfo.length == 2) {
                     auxRole = User.Role.STUDENT;
-                } else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") || userInfo[2].equalsIgnoreCase("teacher"))) {
+                } else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") 
+                            || userInfo[2].equalsIgnoreCase("teacher"))) {
                     auxRole = User.Role.valueOf(userInfo[2].toUpperCase());
                 } else {
-                    notification.addError(String.valueOf(lineNumber), new TutorException(INVALID_CSV_FILE_FORMAT));
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber), 
+                        new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
 
                 if (userInfo[0].length() == 0 || !userInfo[0].matches(User.MAIL_FORMAT) || userInfo[1].length() == 0) {
-                    notification.addError(String.valueOf(lineNumber), new TutorException(INVALID_CSV_FILE_FORMAT));
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
+                        new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
@@ -219,9 +227,10 @@ public class UserService {
         } catch (IOException ex) {
             throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
-        if (notification.hasErrors()) {
-            throw new TutorException(WRONG_FORMAT_ON_CSV_LINE, notification.errorMessage());
-        }
+
+        if (notification.hasErrors())
+            return new ArrayList<>();
+
         return userDtos;
     }
 
