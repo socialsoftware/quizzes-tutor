@@ -31,7 +31,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
     }
 
     def "user confirms registration"() {
-        given: "one inactive user with an expired "
+        given: "one inactive user"
         user = new User(USER_1_NAME, USER_1_EMAIL, User.Role.STUDENT)
         user.setEmail(USER_1_EMAIL)
         user.addCourse(courseExecution)
