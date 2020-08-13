@@ -9,10 +9,12 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -180,5 +182,35 @@ public class AuthService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
+        User user = userService.findByUsername(externalUserDto.getUsername());
+
+        if (user == null)
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
+
+        if (user.isActive())
+            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
+
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
+            throw new TutorException(INVALID_PASSWORD);
+
+        try {
+            user.checkConfirmationToken(externalUserDto.getConfirmationToken());
+        }
+        catch (TutorException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
+                userService.generateConfirmationToken(user);
+                return new ExternalUserDto(user);
+            }
+            else throw new TutorException(e.getErrorMessage());
+        }
+
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+        user.setState(User.State.ACTIVE);
+
+        return new ExternalUserDto(user);
     }
 }

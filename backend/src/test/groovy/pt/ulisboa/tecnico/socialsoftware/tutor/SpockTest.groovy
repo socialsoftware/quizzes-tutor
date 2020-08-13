@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplcational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
@@ -28,6 +29,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -108,6 +110,9 @@ class SpockTest extends Specification {
     AuthService authService
 
     @Autowired
+    AuthServiceApplcational authServiceApplcational
+
+    @Autowired
     AnswerService answerService
 
     @Autowired
@@ -172,6 +177,9 @@ class SpockTest extends Specification {
 
     @Autowired
     UserService userService
+
+    @Autowired
+    UserServiceApplicational userServiceApplicational
 
     @Autowired
     Mailer mailer

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -24,6 +25,9 @@ class ConfirmRegistrationTest extends SpockTest {
     CourseExecution courseExecution
     ExternalUserDto externalUserDto
 
+    @Autowired
+    Mailer mailerMock
+
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
@@ -38,7 +42,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setConfirmationToken(USER_1_TOKEN)
         externalUserDto.setRole(User.Role.STUDENT)
 
-        userService.createExternalUserApplicational(executionId, externalUserDto)
+        userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         User user = userService.findByUsername(USER_1_EMAIL)
         user.setConfirmationToken(USER_1_TOKEN)
@@ -49,25 +53,30 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(USER_1_PASSWORD)
 
         when:
-        def result = userService.confirmRegistration(externalUserDto)
+        def result = authServiceApplcational.confirmRegistration(externalUserDto)
 
         then:"the user has a new password and matches"
         passwordEncoder.matches(USER_1_PASSWORD, result.getPassword())
         and: "and is active"
         result.isActive()
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
 	}
 
     def "user is already active" () {
         given: "an active user"
         externalUserDto.setPassword(USER_1_PASSWORD)
-        userService.confirmRegistration(externalUserDto)
+        authServiceApplcational.confirmRegistration(externalUserDto)
 
         when:
-        userService.confirmRegistration(externalUserDto)
+        authServiceApplcational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.USER_ALREADY_ACTIVE
+
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
     }
 
     def "user token expired" () {
@@ -78,12 +87,17 @@ class ConfirmRegistrationTest extends SpockTest {
         user.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
 
         when:
-        def result = userService.confirmRegistration(externalUserDto)
+        def result = authServiceApplcational.confirmRegistration(externalUserDto)
 
         then:
         result.state == User.State.INACTIVE
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
+
+        and: "a new confirmation mail is sent"
+        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
+
+
     }
 
     @Unroll
@@ -96,11 +110,15 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(password)
 
         when:
-        userService.confirmRegistration(externalUserDto)
+        authServiceApplcational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
+
+        and: "no mail is sent"
+        0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
+
 
         where:
         email        | password         | token           || errorMessage

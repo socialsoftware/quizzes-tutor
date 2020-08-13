@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplcational
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
@@ -21,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -76,6 +78,11 @@ class BeanConfiguration {
     }
 
     @Bean
+    UserServiceApplicational userServiceApplicational() {
+        return new UserServiceApplicational()
+    }
+
+    @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder()
     }
@@ -93,6 +100,11 @@ class BeanConfiguration {
     @Bean
     AuthService authService() {
         return new AuthService()
+    }
+
+    @Bean
+    AuthServiceApplcational authServiceApplcational() {
+        return new AuthServiceApplcational()
     }
 
     @Bean

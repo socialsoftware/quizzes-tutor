@@ -41,8 +41,8 @@ class CreateExternalUser extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        userService.createExternalUserApplicational(executionId, externalUserDto)
-        userService.createExternalUserApplicational(executionId, externalUserDto)
+        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then: "an exception is thrown"
         def error = thrown(TutorException)
@@ -58,7 +58,7 @@ class CreateExternalUser extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userService.createExternalUserApplicational(executionId, externalUserDto)
+        def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then:"the user is saved in the database"
         userRepository.findAll().size() == 4
@@ -87,7 +87,7 @@ class CreateExternalUser extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userService.createExternalUserApplicational(executionId, externalUserDto)
+        def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then:"the user is saved in the database"
         userRepository.count() == 4
@@ -115,7 +115,7 @@ class CreateExternalUser extends SpockTest {
         externalUserDto.setRole(role)
 
         when:
-        userService.createExternalUserApplicational(executionId, externalUserDto)
+        userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then:
         def error = thrown(TutorException)

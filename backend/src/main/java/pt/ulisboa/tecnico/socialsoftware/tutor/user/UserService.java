@@ -176,9 +176,9 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public NotificationResponse<CourseDto> importListOfUsers(InputStream stream, int courseExecutionId) {
+    public NotificationResponse<CourseDto> importListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
-        extractUserDtos(stream, notification).forEach(userDto -> createExternalUserApplicational(courseExecutionId, userDto));
+        extractUserDtos(stream, notification).forEach(userDto -> createExternalUserTransactional(courseExecutionId, userDto));
 
         CourseDto courseDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseDto::new)
@@ -234,11 +234,6 @@ public class UserService {
         return userDtos;
     }
 
-    public ExternalUserDto createExternalUserApplicational(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        ExternalUserDto user = createExternalUserTransactional(courseExecutionId, externalUserDto);
-        sendConfirmationEmailTo(user);
-        return user;
-    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
@@ -250,6 +245,7 @@ public class UserService {
         generateConfirmationToken(user);
         return new ExternalUserDto(user);
     }
+
 
     private void checkRole(ExternalUserDto externalUserDto) {
         if (externalUserDto.getRole() == null)
@@ -264,15 +260,6 @@ public class UserService {
         user.setTokenGenerationDate(LocalDateTime.now());
         user.setConfirmationToken(token);
         return token;
-    }
-
-    public void sendConfirmationEmailTo(ExternalUserDto user) {
-        mailer.sendSimpleMail(mailUsername, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
-    }
-
-    private String buildMailBody(ExternalUserDto user) {
-        String msg = "To confirm your registration click the following link";
-        return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(user.getEmail(), user.getConfirmationToken()));
     }
 
     private void associateUserWithExecution(CourseExecution courseExecution, User user) {
@@ -300,36 +287,6 @@ public class UserService {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
         }
         return courseExecution;
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
-        User user = findByUsername(externalUserDto.getUsername());
-
-        if (user == null)
-            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
-
-        if (user.isActive())
-            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
-
-        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
-            throw new TutorException(INVALID_PASSWORD);
-
-        try {
-            user.checkConfirmationToken(externalUserDto.getConfirmationToken());
-        }
-        catch (TutorException e) {
-            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                generateConfirmationToken(user);
-                return new ExternalUserDto(user);
-            }
-            else throw new TutorException(e.getErrorMessage());
-        }
-
-        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-        user.setState(User.State.ACTIVE);
-
-        return new ExternalUserDto(user);
     }
 
 }

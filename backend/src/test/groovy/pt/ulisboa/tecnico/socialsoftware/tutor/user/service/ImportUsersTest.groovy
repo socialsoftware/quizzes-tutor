@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -37,7 +36,7 @@ class ImportUsersTest extends SpockTest {
         and: "inputStream"
         InputStream csvFile = new FileInputStream(CSVFILE);
         when:
-        userService.importListOfUsers(csvFile, courseExecution.getId())
+        userServiceApplicational.importListOfUsers(csvFile, courseExecution.getId())
         then:
         userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
 
@@ -53,7 +52,7 @@ class ImportUsersTest extends SpockTest {
         and: "wrong formatted InputStream"
         InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE);
         when:
-        def result  = userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
+        def result  = userServiceApplicational.importListOfUsers(csvBadFormatFile, courseExecution.getId())
         then:
         result.response.name == COURSE_1_NAME
         and:
@@ -75,7 +74,7 @@ class ImportUsersTest extends SpockTest {
         and: "inputStream"
         InputStream csvFile = new FileInputStream(CSVFILE);
         when:
-        userService.importListOfUsers(csvFile, executionId)
+        userServiceApplicational.importListOfUsers(csvFile, executionId)
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
@@ -92,7 +91,7 @@ class ImportUsersTest extends SpockTest {
         and: "wrong role formatted InputStream"
         InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT);
         when:
-        def result = userService.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
+        def result = userServiceApplicational.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
         then:
         result.response.name == COURSE_1_NAME
         and:
