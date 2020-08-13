@@ -32,11 +32,17 @@ export default class RegistrationConfirmationView extends Vue {
     externalUser.username = this.email;
     externalUser.password = password;
     externalUser.confirmationToken = this.token;
-    const res = await RemoteServices.confirmRegistration(externalUser);
-    if (res.state == 'INACTIVE') {
-      this.errorMsg = 'Confirmation link has expired. A new email was sent';
-    } else {
-      this.success = true;
+
+    try {
+      const user = await RemoteServices.confirmRegistration(externalUser);
+      if (user.active) {
+        this.success = true;
+      } else {
+        this.errorMsg = 'Confirmation link has expired. A new email was sent';
+      }
+    }
+    catch(error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }

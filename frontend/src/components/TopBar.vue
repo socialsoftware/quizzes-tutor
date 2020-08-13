@@ -163,18 +163,7 @@
           <v-icon>fa fa-book</v-icon>
         </v-btn>
 
-        <v-btn
-          v-if="isLoggedIn"
-          @click="logout"
-          data-cy="logoutButton"
-          text
-          dark
-        >
-          Logout
-          <v-icon>fas fa-sign-out-alt</v-icon>
-        </v-btn>
-
-        <v-menu offset-y v-else open-on-hover>
+        <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
               Login
@@ -195,9 +184,17 @@
           </v-list>
         </v-menu>
 
-        <!-- <v-btn v-else :href="fenixUrl" text dark>
-          Login <v-icon>fas fa-sign-in-alt</v-icon>
-        </v-btn> -->
+        <v-btn
+          v-if="isLoggedIn"
+          @click="logout"
+          data-cy="logoutButton"
+          text
+          dark
+        >
+          Logout
+          <v-icon>fas fa-sign-out-alt</v-icon>
+        </v-btn>
+
       </v-toolbar-items>
     </v-app-bar>
 

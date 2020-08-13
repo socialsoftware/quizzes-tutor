@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -22,6 +23,7 @@ class ImportUsersTest extends SpockTest {
 
     Course course
     CourseExecution courseExecution
+
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
@@ -51,10 +53,13 @@ class ImportUsersTest extends SpockTest {
         and: "wrong formatted InputStream"
         InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE);
         when:
-        userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
+        def result  = userService.importListOfUsers(csvBadFormatFile, courseExecution.getId())
         then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
+        result.response.name == COURSE_1_NAME
+        and:
+        result.notification.getExceptions().size() > 0
+        for(TutorException e : result.notification.getExceptions())
+            e.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
 
@@ -87,10 +92,13 @@ class ImportUsersTest extends SpockTest {
         and: "wrong role formatted InputStream"
         InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT);
         when:
-        userService.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
+        def result = userService.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
         then:
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
+        result.response.name == COURSE_1_NAME
+        and:
+        result.notification.getExceptions().size() > 0
+        for(TutorException e : result.notification.getExceptions())
+            e.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
 
