@@ -36,8 +36,8 @@ httpClient.interceptors.request.use(
 httpClient.interceptors.response.use(
   response => {
     if (response.data.notification) {
-      if (response.data.notification.errorMessage !== "")
-        Store.dispatch('notification', response.data.notification.errorMessage);
+      if (response.data.notification.errorMessages.length)
+        Store.dispatch('notification', response.data.notification.errorMessages);
       response.data = response.data.response;
     }
     return response;
