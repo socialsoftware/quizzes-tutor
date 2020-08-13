@@ -6,6 +6,7 @@ export default class ExternalUser {
   password!: string;
   role!: string;
   state!: string;
+  active!: boolean;
   admin!: boolean;
   confirmationToken!: string;
 
@@ -17,6 +18,7 @@ export default class ExternalUser {
 			this.password = jsonObj.password;
       this.role = jsonObj.role;
       this.state = jsonObj.state;
+      this.active = jsonObj.active;
       this.admin = jsonObj.admin;
       this.confirmationToken = jsonObj.confirmationToken;
 

@@ -1,16 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 public class ExternalUserDto implements Serializable {
     private Integer id;
@@ -20,6 +14,7 @@ public class ExternalUserDto implements Serializable {
     private String password;
     private User.Role role;
     private User.State state;
+    private boolean isActive;
     private boolean isAdmin;
     private List<CourseDto> courseExecutions;
     private String confirmationToken;
@@ -37,6 +32,7 @@ public class ExternalUserDto implements Serializable {
         this.password = user.getPassword();
         this.role = user.getRole();
         this.state = user.getState();
+        this.isActive = user.getState() == User.State.ACTIVE; 
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
     }
@@ -94,11 +90,12 @@ public class ExternalUserDto implements Serializable {
     }
 
     public void setState(User.State state) {
+        this.isActive = state == User.State.ACTIVE; 
         this.state = state;
     }
 
     public boolean isActive() {
-        return getState() == User.State.ACTIVE;
+        return this.isActive;
     }
 
     public boolean isAdmin() {

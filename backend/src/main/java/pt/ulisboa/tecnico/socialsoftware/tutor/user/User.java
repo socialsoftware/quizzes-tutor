@@ -15,7 +15,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
