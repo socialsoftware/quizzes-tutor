@@ -1,14 +1,9 @@
 <template>
-  <v-card v-if='error == ""'>
+  <v-card v-if="error == ''">
     <v-card-title>{{title}}</v-card-title>
     <v-card-text v-if="!success">
       <form>
-        <v-text-field
-          v-model="email"
-          label="Email"
-          disabled
-          required
-        ></v-text-field>
+        <v-text-field v-model="email" label="Email" disabled required></v-text-field>
         <v-text-field
           v-model="password"
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -16,7 +11,6 @@
           label="Password"
           required
           @click:append="showPassword = !showPassword"
-
         ></v-text-field>
         <v-text-field
           v-model="confirmPassword"
@@ -27,19 +21,21 @@
           :rules="[v => v == password || 'Passwords don\'t match']"
           @click:append="showConfirmPassword = !showConfirmPassword"
         ></v-text-field>
-        <v-btn color="blue darken-1" class="white--text" :disabled='!(password === confirmPassword && password != "")' @click="submit">submit</v-btn>
+        <v-btn
+          color="blue darken-1"
+          class="white--text"
+          :disabled="!(password === confirmPassword && password != '')"
+          @click="submit"
+        >submit</v-btn>
       </form>
     </v-card-text>
     <v-card-text v-if="success">
-      <span class="password-success">
-      Success
-      </span>
+      <span class="password-success">Success</span>
     </v-card-text>
   </v-card>
   <v-card v-else>
-        <v-card-title>{{error}}</v-card-title>
+    <v-card-title>{{error}}</v-card-title>
   </v-card>
-
 </template>
 
 <script lang="ts">
@@ -51,9 +47,9 @@ export default class PasswordCard extends Vue {
   title: string | undefined;
   @Prop({ required: true })
   email: string | undefined;
-  @Prop({ required: true})
+  @Prop({ required: true })
   error: string | undefined;
-  @Prop({ required: true})
+  @Prop({ required: true })
   success: boolean | undefined;
 
   password = '';
