@@ -1,8 +1,12 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.course;
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.io.Serializable;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -49,6 +53,7 @@ public class CourseDto implements Serializable {
         if(courseExecution.getType().equals(Course.Type.EXTERNAL))
             this.courseExecutionUsers = courseExecution.getUsers().stream()
                     .map(ExternalUserDto::new)
+                    .sorted(Comparator.comparing(ExternalUserDto::getName))
                     .collect(Collectors.toList());
     }
 

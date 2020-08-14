@@ -33,7 +33,7 @@ public class Notification {
     }
 
     public boolean hasErrors() {
-        return ! errors.isEmpty();
+        return !errors.isEmpty();
     }
 
     public void generateErrorMessage() {

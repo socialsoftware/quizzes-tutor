@@ -4,8 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -45,10 +45,10 @@ class GetCourseExecutionsTest extends SpockTest {
         courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
 
-        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
+        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(externalCourse)
 
-        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
         def teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
@@ -61,7 +61,7 @@ class GetCourseExecutionsTest extends SpockTest {
 
         Question question = new Question()
         question.setTitle("Title")
-        question.setCourse(course)
+        question.setCourse(externalCourse)
 
         Quiz quiz = new Quiz()
         quiz.setTitle("Title")

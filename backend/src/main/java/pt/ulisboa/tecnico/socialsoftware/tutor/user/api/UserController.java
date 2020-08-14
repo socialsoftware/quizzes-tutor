@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational;
@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import javax.validation.Valid;
 import java.io.IOException;
 
-
 @RestController
 public class UserController {
     @Autowired
@@ -21,7 +20,6 @@ public class UserController {
 
     @Autowired
     private UserServiceApplicational userServiceApplicational;
-
 
     @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")

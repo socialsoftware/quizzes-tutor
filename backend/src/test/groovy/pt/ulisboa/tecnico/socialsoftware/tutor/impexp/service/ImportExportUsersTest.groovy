@@ -15,13 +15,13 @@ class ImportExportUsersTest extends SpockTest {
 
         User user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
         user.setEmail(USER_1_EMAIL)
-        user.addCourse(courseExecution)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         user = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
         user.setEmail(USER_2_EMAIL)
-        user.addCourse(courseExecution)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
     }
@@ -31,13 +31,13 @@ class ImportExportUsersTest extends SpockTest {
         def usersXml = userService.exportUsers()
         and: 'a clean database'
         userRepository.deleteAll()
-        courseExecution.getUsers().clear()
+        externalCourseExecution.getUsers().clear()
 
         when:
         userService.importUsers(usersXml)
 
         then:
-        courseExecution.getUsers().size() == 2
+        externalCourseExecution.getUsers().size() == 2
 
         userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByUsername(USER_1_USERNAME).orElse(null)

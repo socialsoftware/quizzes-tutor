@@ -33,7 +33,7 @@ class RemoveQuestionTest extends SpockTest {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setImage(image)
         questionRepository.save(question)
 
@@ -69,7 +69,7 @@ class RemoveQuestionTest extends SpockTest {
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(true)
         quizRepository.save(quiz)
 
@@ -90,9 +90,9 @@ class RemoveQuestionTest extends SpockTest {
         given: 'a question with topics'
         def topicDto = new TopicDto()
         topicDto.setName("name1")
-        def topicOne = new Topic(course, topicDto)
+        def topicOne = new Topic(externalCourse, topicDto)
         topicDto.setName("name2")
-        def topicTwo = new Topic(course, topicDto)
+        def topicTwo = new Topic(externalCourse, topicDto)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)

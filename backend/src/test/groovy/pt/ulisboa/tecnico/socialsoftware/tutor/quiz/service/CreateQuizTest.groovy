@@ -31,7 +31,7 @@ class CreateQuizTest extends SpockTest {
 
         Question question = new Question()
         question.setKey(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setTitle(QUESTION_1_TITLE)
         questionRepository.save(question)
 
@@ -54,7 +54,7 @@ class CreateQuizTest extends SpockTest {
         quizDto.setType(quizType.toString())
 
         when:
-        quizService.createQuiz(courseExecution.getId(), quizDto)
+        quizService.createQuiz(externalCourseExecution.getId(), quizDto)
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
@@ -96,7 +96,7 @@ class CreateQuizTest extends SpockTest {
         quizDto.setType(quizType.toString())
 
         when:
-        quizService.createQuiz(courseExecution.getId(), quizDto)
+        quizService.createQuiz(externalCourseExecution.getId(), quizDto)
 
         then:
         def error = thrown(TutorException)
@@ -124,7 +124,7 @@ class CreateQuizTest extends SpockTest {
         questionDto.setSequence(3)
 
         when:
-        quizService.createQuiz(courseExecution.getId(), quizDto)
+        quizService.createQuiz(externalCourseExecution.getId(), quizDto)
 
         then:
         def exception = thrown(TutorException)

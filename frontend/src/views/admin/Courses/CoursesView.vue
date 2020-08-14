@@ -124,7 +124,7 @@ import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
 import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
-import ViewUsersDialog from '@/views/admin/Courses/viewUsersDialog.vue';
+import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
 
 
@@ -259,7 +259,6 @@ export default class CoursesView extends Vue {
 
   updateUserNumbers(course: Course) {
     if(!!course && !!course.courseExecutionUsers) {
-
           course.numberOfInactiveTeachers = course.courseExecutionUsers
             .filter(user => user.role === 'TEACHER' && user.state === 'INACTIVE')
             .length;

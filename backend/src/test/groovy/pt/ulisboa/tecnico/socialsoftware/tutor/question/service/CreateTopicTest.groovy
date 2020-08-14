@@ -17,7 +17,7 @@ class CreateTopicTest extends SpockTest {
         topicDto.setName(TOPIC_1_NAME)
 
         when:
-        topicService.createTopic(course.getId(), topicDto)
+        topicService.createTopic(externalCourse.getId(), topicDto)
 
         then: "the topic is inside the repository"
         topicRepository.count() == 1L
@@ -30,15 +30,15 @@ class CreateTopicTest extends SpockTest {
         given: "createQuestion a question"
         Topic topic = new Topic()
         topic.setName(TOPIC_1_NAME)
-        topic.setCourse(course)
-        course.addTopic(topic)
+        topic.setCourse(externalCourse)
+        externalCourse.addTopic(topic)
         topicRepository.save(topic)
         and: 'topic dto'
         def topicDto = new TopicDto()
         topicDto.setName(TOPIC_1_NAME)
 
         when: 'createQuestion another with the same name'
-        topicService.createTopic(course.getId(), topicDto)
+        topicService.createTopic(externalCourse.getId(), topicDto)
 
         then: "an error occurs"
         def exception = thrown(TutorException)

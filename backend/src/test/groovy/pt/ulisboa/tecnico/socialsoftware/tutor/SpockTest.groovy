@@ -3,8 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor
 import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import org.springframework.boot.web.server.LocalServerPort
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
@@ -12,10 +10,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplcational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
@@ -187,17 +185,17 @@ class SpockTest extends Specification {
     @Autowired
     PasswordEncoder passwordEncoder;
 
-    Course course
-    CourseExecution courseExecution
+    Course externalCourse
+    CourseExecution externalCourseExecution
 
     RESTClient restClient
 
     def setup() {
-        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
+        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(externalCourse)
 
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(externalCourseExecution)
     }
 
     def persistentCourseCleanup() {
@@ -206,7 +204,7 @@ class SpockTest extends Specification {
         if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).isPresent()){
             ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).get()
             c = ce.getCourse()
-            courseExecutionRepository.deleteUserCourseExecution(ce.getId())
+            courseExecutionRepository.dissociateCourseExecutionUsers(ce.getId())
             courseExecutionRepository.deleteById(ce.getId())
             courseRepository.deleteById(c.getId())
         }

@@ -3,10 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CreateExternalUserWebServiceIT extends SpockTest {
@@ -52,7 +51,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
 
         cleanup:
         courseExecution1.remove()
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
+        courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution1.getId())
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
         userRepository.delete(userRepository.findById(response.data.id).get())

@@ -6,8 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Unroll;
 
 @DataJpaTest
-class UserTest extends SpockTest {
+class CreateUserTest extends SpockTest {
 
     def user
     def quiz
@@ -40,7 +40,7 @@ class UserTest extends SpockTest {
 
         Question question = new Question()
         question.setKey(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setTitle(QUESTION_1_TITLE)
         questionRepository.save(question)
 
@@ -58,7 +58,7 @@ class UserTest extends SpockTest {
         quizDto.setQuestions(questions)
 
         quiz = new Quiz(quizDto)
-        quiz.setCourseExecution(courseExecution);
+        quiz.setCourseExecution(externalCourseExecution);
         quizRepository.save(quiz)
 
         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, 1)
@@ -255,7 +255,7 @@ class UserTest extends SpockTest {
         def previousNumberOfUsers = courseExecution.getUsers().size()
 
         when:
-        user.removeFromCourseExecutions()
+        user.remove()
 
         then:
         courseExecution.getUsers().size() == previousNumberOfUsers - 1

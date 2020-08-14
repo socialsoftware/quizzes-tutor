@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
@@ -20,12 +20,18 @@ public class UserServiceApplicational {
     @Autowired
     private Mailer mailer;
 
+    @Autowired
+    private UserRepository userRepository;
+
     @Value("${spring.mail.username}")
     private String mailUsername;
 
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        boolean userExists = userRepository.findByUsername(externalUserDto.getEmail()).isPresent();
         ExternalUserDto user = userService.createExternalUserTransactional(courseExecutionId, externalUserDto);
-        sendConfirmationEmailTo(user);
+        if(!userExists) {
+            sendConfirmationEmailTo(user);
+        }
         return user;
     }
 

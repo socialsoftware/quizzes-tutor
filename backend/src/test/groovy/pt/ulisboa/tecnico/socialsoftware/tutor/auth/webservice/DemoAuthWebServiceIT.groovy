@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
 class DemoAuthWebServiceIT extends SpockTest {
 
     @LocalServerPort
@@ -43,7 +42,7 @@ class DemoAuthWebServiceIT extends SpockTest {
         then: "check response status"
         response.status == 200
         response.data.token != ""
-        response.data.user.name == DEMO_ADMIN_NAME
+        response.data.user.name == 'Demo-Admin'
         response.data.user.role == User.Role.DEMO_ADMIN.toString()
     }
 
@@ -58,6 +57,10 @@ class DemoAuthWebServiceIT extends SpockTest {
         response.data.token != ""
         response.data.user.name == DEMO_TEACHER_NAME
         response.data.user.role == User.Role.TEACHER.toString()
+    }
+
+    def cleanup() {
+        persistentCourseCleanup()
     }
 
 }

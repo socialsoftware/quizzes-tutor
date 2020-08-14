@@ -4,13 +4,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
-import spock.lang.Unroll
 
 @DataJpaTest
 class GetExternalUsersTest extends SpockTest {
@@ -58,7 +57,7 @@ class GetExternalUsersTest extends SpockTest {
 
     def "the course execution is not external"() {
         given: "a non-external course execution id"
-        def executionId = courseExecution.getId()
+        def executionId = externalCourseExecution.getId()
 
         when:
         courseService.getExternalUsers(executionId)

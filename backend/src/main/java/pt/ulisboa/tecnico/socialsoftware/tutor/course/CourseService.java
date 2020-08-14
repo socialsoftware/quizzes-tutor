@@ -7,6 +7,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -169,16 +174,15 @@ public class CourseService {
     public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
         CourseExecution execution;
 
-        execution = getCourseExecution(courseExecutionId);
+        execution = getExternalCourseExecution(courseExecutionId);
 
         return execution.getStudents().stream()
                 .sorted(Comparator.comparing(User::getUsername))
-                .distinct()
                 .map(ExternalUserDto::new)
                 .collect(Collectors.toList());
     }
 
-    private CourseExecution getCourseExecution(Integer courseExecutionId) {
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
         CourseExecution execution;
         execution = courseExecutionRepository.findById(courseExecutionId)
             .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
@@ -189,11 +193,14 @@ public class CourseService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public CourseDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
-        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        checkExternalExecution(courseExecution);
+        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
+        deleteUsersOfUserIds(usersId, courseExecution);
+        return new CourseDto(courseExecution);
+    }
+
+    private void deleteUsersOfUserIds(List<Integer> usersId, CourseExecution courseExecution) {
         usersId = getExecutionFilteredIds(usersId, courseExecution);
         deleteUsers(usersId);
-        return new CourseDto(courseExecution);
     }
 
     private void deleteUsers(List<Integer> usersId) {
@@ -206,13 +213,13 @@ public class CourseService {
     }
 
     private List<Integer> getExecutionFilteredIds(List<Integer> usersId, CourseExecution courseExecution) {
-        usersId = usersId.stream()
-                .filter(uid -> courseExecution.getUsers().stream()
-                    .map(User::getId)
-                    .collect(Collectors.toList())
-                    .contains(uid))
+        List<Integer> executionUserIdList = courseExecution.getUsers().stream()
+                .map(User::getId)
                 .collect(Collectors.toList());
-        return usersId;
+
+        return usersId.stream()
+                .filter(executionUserIdList::contains)
+                .collect(Collectors.toList());
     }
 
     private void checkExternalExecution(CourseExecution courseExecution) {

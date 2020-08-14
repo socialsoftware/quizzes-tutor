@@ -5,12 +5,13 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -95,10 +96,14 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public User(String name, String username, String email, User.Role role, State state, boolean isAdmin){
-        this(name, username, role);
+        setName(name);
+        setUsername(username);
+        setRole(role);
         setEmail(email);
         setState(state);
         setAdmin(isAdmin);
+        setCreationDate(DateHandler.now());
+
     }
 
     @Override
@@ -156,7 +161,7 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void setRole(Role role) {
-        if(role == null)
+        if (role == null)
             throw new TutorException(INVALID_ROLE);
 
         this.role = role;
@@ -546,10 +551,8 @@ public class User implements UserDetails, DomainEntity {
     public void remove() {
         if(getState() == User.State.ACTIVE)
             throw new TutorException(USER_IS_ACTIVE, getUsername());
-        removeFromCourseExecutions();
-    }
 
-    private void removeFromCourseExecutions() {
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
     }
+
 }

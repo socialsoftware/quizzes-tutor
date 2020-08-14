@@ -3,10 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -63,7 +62,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         then: "check the response status"
         response != null
         response.status == 200
-        and:"if the list contains the correct user"
+        and: "if the list contains the correct user"
         def userList = response.data
         userList.size() == 1
         userList.get(0).id == user1.getId()
@@ -73,12 +72,12 @@ class GetExternalUsersWebServiceIT extends SpockTest{
     def cleanup() {
         persistentCourseCleanup()
 
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution1.getId())
+        courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution1.getId())
         userRepository.deleteById(user1.getId())
         courseExecutionRepository.deleteById(courseExecution1.getId())
         courseRepository.deleteById(course1.getId())
 
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution2.getId())
+        courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution2.getId())
         userRepository.deleteById(user2.getId())
         courseExecutionRepository.deleteById(courseExecution2.getId())
         courseRepository.deleteById(course2.getId())

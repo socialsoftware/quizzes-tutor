@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -25,16 +25,16 @@ class GetSolvedQuizzesTest extends SpockTest {
     def quizQuestion
 
     def setup() {
-        courseDto = new CourseDto(courseExecution)
+        courseDto = new CourseDto(externalCourseExecution)
 
         user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         question = new Question()
         question.setKey(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setContent("Question Content")
         question.setTitle("Question Title")
         questionRepository.save(question)
@@ -57,7 +57,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
         quiz.setConclusionDate(conclusionDate)
         quiz.setResultsDate(resultsDate)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)
@@ -115,7 +115,7 @@ class GetSolvedQuizzesTest extends SpockTest {
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
         quiz.setConclusionDate(conclusionDate)
         quiz.setResultsDate(resultsDate)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
 
         quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(1)

@@ -3,16 +3,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ExternalUserAuthWebServiceIT extends SpockTest{
-
+class ExternalUserAuthWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -63,7 +61,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest{
 
     def cleanup() {
         persistentCourseCleanup()
-        courseExecutionRepository.deleteUserCourseExecution(courseExecution.getId())
+        courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
         courseRepository.deleteById(course.getId())
     }
