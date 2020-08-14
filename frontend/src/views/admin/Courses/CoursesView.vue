@@ -83,6 +83,14 @@
           </template>
           <span>Upload External Users</span>
         </v-tooltip>
+        <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon class="mr-2" v-on="on"
+                  >add_box</v-icon
+                >
+              </template>
+              <span>Add Answer</span>
+            </v-tooltip>
       </template>
     </v-data-table>
 
@@ -126,7 +134,6 @@ import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
 import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
-
 
 @Component({
   components: {
@@ -259,13 +266,12 @@ export default class CoursesView extends Vue {
 
   updateUserNumbers(course: Course) {
     if(!!course && !!course.courseExecutionUsers) {
-          course.numberOfInactiveTeachers = course.courseExecutionUsers
-            .filter(user => user.role === 'TEACHER' && user.state === 'INACTIVE')
-            .length;
-          
-           course.numberOfInactiveStudents = course.courseExecutionUsers
-            .filter(user => user.role === 'STUDENT' && user.state === 'INACTIVE')
-            .length;
+      course.numberOfInactiveTeachers = course.courseExecutionUsers
+        .filter(user => user.role === 'TEACHER' && user.state === 'INACTIVE')
+        .length;
+      course.numberOfInactiveStudents = course.courseExecutionUsers
+        .filter(user => user.role === 'STUDENT' && user.state === 'INACTIVE')
+        .length;
     }
   }
 
@@ -285,15 +291,14 @@ export default class CoursesView extends Vue {
   onCreateUser(user: ExternalUser) {
     if(!!this.currentCourse && !!this.currentCourse.courseExecutionUsers){
       this.currentCourse.courseExecutionUsers.unshift(user);
-
-      let index: number = this.courses
-        .indexOf(this.courses
-          .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
-        
+      let index: number = this.courses.indexOf(
+        this.courses.filter(
+          course =>
+            course.courseExecutionId == this.currentCourse?.courseExecutionId
+        )[0]
+      );
       this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
       this.updateUserNumbers(this.courses[index]);
-
-
     }
   }
 
@@ -338,7 +343,7 @@ export default class CoursesView extends Vue {
           course = await RemoteServices.deleteExternalInactiveUsers(this.currentCourse, users.map(user => user.id));
           let index: number = this.courses
             .indexOf(this.courses
-              .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
+              .filter(course => course.courseExecutionId == this.currentCourse?.courseExecutionId)[0]);
 
           this.currentCourse = course;
           this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;

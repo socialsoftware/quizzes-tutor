@@ -186,7 +186,6 @@ public class UserService {
                 .map(CourseDto::new)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        notification.generateErrorMessage();
         return new NotificationResponse<>(notification, courseDto);
     }
 

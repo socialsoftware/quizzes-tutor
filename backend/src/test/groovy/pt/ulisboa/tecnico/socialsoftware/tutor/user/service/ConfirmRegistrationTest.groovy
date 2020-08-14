@@ -74,7 +74,6 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.USER_ALREADY_ACTIVE
-
         and: "no mail is sent"
         0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
     }
@@ -93,11 +92,8 @@ class ConfirmRegistrationTest extends SpockTest {
         result.state == User.State.INACTIVE
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
-
         and: "a new confirmation mail is sent"
         1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
-
-
     }
 
     @Unroll
@@ -115,10 +111,8 @@ class ConfirmRegistrationTest extends SpockTest {
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
-
         and: "no mail is sent"
         0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
-
 
         where:
         email        | password         | token           || errorMessage

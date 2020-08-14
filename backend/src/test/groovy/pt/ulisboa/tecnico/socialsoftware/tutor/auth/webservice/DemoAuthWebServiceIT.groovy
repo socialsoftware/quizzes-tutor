@@ -18,6 +18,8 @@ class DemoAuthWebServiceIT extends SpockTest {
     }
 
     def "demo student login"() {
+        given:
+        System.out.println("\n\n\n\n\n"+userRepository.findAll()+"\n\n\n\n\n\n")
         when:
         def response = restClient.get(
                 path: '/auth/demo/student',
@@ -42,7 +44,7 @@ class DemoAuthWebServiceIT extends SpockTest {
         then: "check response status"
         response.status == 200
         response.data.token != ""
-        response.data.user.name == 'Demo-Admin'
+        response.data.user.name == DEMO_ADMIN_NAME
         response.data.user.role == User.Role.DEMO_ADMIN.toString()
     }
 

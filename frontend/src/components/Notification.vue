@@ -1,6 +1,6 @@
 <template>
     <v-alert v-model="dialog" type="error" close-text="Close Notification" dismissible>
-      {{ message }}
+      {{ messageList.join(", ") }}
     </v-alert>
 </template>
 
@@ -10,16 +10,16 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 @Component
 export default class Notification extends Vue {
   dialog: boolean = this.$store.getters.getNotification;
-  message: string = this.$store.getters.getNotificationMessage;
+  messageList: string = this.$store.getters.getNotificationMessageList;
 
   created() {
     this.dialog = this.$store.getters.getNotification;
-    this.message = this.$store.getters.getNotificationMessage;
+    this.messageList = this.$store.getters.getNotificationMessageList;
     this.$store.watch(
       (state, getters) => getters.getNotification,
       () => {
         this.dialog = this.$store.getters.getNotification;
-				this.message = this.$store.getters.getNotificationMessage;
+				this.messageList = this.$store.getters.getNotificationMessageList;
       }
     );
 	}

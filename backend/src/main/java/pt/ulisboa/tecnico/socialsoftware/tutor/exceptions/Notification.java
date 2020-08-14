@@ -1,10 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.ResponseStatus;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +21,6 @@ public class Notification {
     public Notification() {}
 
     private List<Error> errors = new ArrayList<>();
-    private String errorMessage = "";
 
     public void addError(String errorMessage, TutorException e) {
         errors.add(new Error(errorMessage, e));
@@ -36,21 +30,18 @@ public class Notification {
         return !errors.isEmpty();
     }
 
-    public void generateErrorMessage() {
-        errorMessage = errors.stream()
+    public String errorMessage() {
+        return errors.stream()
                 .map(e -> e.message)
                 .collect(Collectors.joining(", "));
+    }
+
+    public List<String> getErrorMessages() {
+        return errors.stream().map(error -> error.message).collect(Collectors.toList());
     }
 
     public List<TutorException> getExceptions() {
         return errors.stream().map(error -> error.cause).collect(Collectors.toList());
     }
 
-    public String getErrorMessage() {
-        return errorMessage;
-    }
-
-    public void setErrorMessage(String errorMessage) {
-        this.errorMessage = errorMessage;
-    }
 }

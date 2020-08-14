@@ -13,7 +13,7 @@ interface State {
   error: boolean;
   errorMessage: string;
   notification: boolean;
-  notificationMessage: string;
+  notificationMessageList: string[];
   loading: boolean;
 }
 
@@ -24,7 +24,7 @@ const state: State = {
   error: false,
   errorMessage: '',
   notification: false,
-  notificationMessage: '',
+  notificationMessageList: [],
   loading: false
 };
 
@@ -51,13 +51,13 @@ export default new Vuex.Store({
       state.error = false;
       state.errorMessage = '';
     },
-    notification(state, notificationMessage: string) {
+    notification(state, notificationMessageList: string[]) {
       state.notification = true;
-      state.notificationMessage = notificationMessage;
+      state.notificationMessageList = notificationMessageList;
     },
     clearNotification(state) {
       state.notification = false;
-      state.notificationMessage = '';
+      state.notificationMessageList = [];
     },
     loading(state) {
       state.loading = true;
@@ -187,8 +187,8 @@ export default new Vuex.Store({
     getNotification(state): boolean {
       return state.notification;
     },
-    getNotificationMessage(state): string {
-      return state.notificationMessage;
+    getNotificationMessageList(state): string[] {
+      return state.notificationMessageList;
     },
     getLoading(state): boolean {
       return state.loading;
