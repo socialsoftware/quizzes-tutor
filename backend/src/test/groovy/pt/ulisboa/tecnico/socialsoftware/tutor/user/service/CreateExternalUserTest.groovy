@@ -13,12 +13,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
-import spock.lang.Shared
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
 @DataJpaTest
-class CreateExternalUser extends SpockTest {
+class CreateExternalUserTest extends SpockTest {
 
     ExternalUserDto externalUserDto
 
