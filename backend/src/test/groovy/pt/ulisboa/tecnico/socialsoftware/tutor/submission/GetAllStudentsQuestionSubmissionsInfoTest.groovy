@@ -25,6 +25,9 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         student3 = new User(USER_3_NAME, USER_3_USERNAME, User.Role.STUDENT)
         student3.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
         userRepository.save(student3)
+        courseExecution.addUser(student1)
+        courseExecution.addUser(student2)
+        courseExecution.addUser(student3)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
@@ -40,45 +43,76 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         questionSubmission1.setQuestion(question)
         questionSubmission1.setUser(student1)
         questionSubmission1.setCourseExecution(courseExecution)
+        student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
         def questionSubmission2 = new QuestionSubmission()
         questionSubmission2.setQuestion(question)
         questionSubmission2.setUser(student2)
         questionSubmission2.setCourseExecution(courseExecution)
+        student2.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
         def questionSubmission3 = new QuestionSubmission()
         questionSubmission3.setQuestion(question)
         questionSubmission3.setUser(student3)
         questionSubmission3.setCourseExecution(courseExecution)
+        student3.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
+        def questionSubmission4 = new QuestionSubmission()
+        questionSubmission4.setQuestion(question)
+        questionSubmission4.setUser(student3)
+        questionSubmission4.setCourseExecution(courseExecution)
+        student3.addQuestionSubmission(questionSubmission4)
+        questionSubmissionRepository.save(questionSubmission4)
 
         when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(courseExecution.getId())
 
         then:
         result.size() == 3
-        def studentInfo1 = result.get(0)
-        def studentInfo2 = result.get(1)
-        def studentInfo3 = result.get(2)
+        def student1Info = result.get(1)
+        def student2Info = result.get(2)
+        def student3Info = result.get(0)
 
-        studentInfo1.getUserId() == student1.getId()
-        studentInfo2.getUserId() == student2.getId()
-        studentInfo3.getUserId() == student3.getId()
-        studentInfo1.getNumQuestionSubmissions() == 1
-        studentInfo2.getNumQuestionSubmissions() == 1
-        studentInfo3.getNumQuestionSubmissions() == 1
-        studentInfo1.getUsername() == student1.getUsername()
-        studentInfo2.getUsername() == student2.getUsername()
-        studentInfo3.getUsername() == student3.getUsername()
-        studentInfo1.getName() == student1.getName()
-        studentInfo2.getName() == student2.getName()
-        studentInfo3.getName() == student3.getName()
+        student1Info.getUserId() == student1.getId()
+        student2Info.getUserId() == student2.getId()
+        student3Info.getUserId() == student3.getId()
+        student1Info.getNumQuestionSubmissions() == 1
+        student2Info.getNumQuestionSubmissions() == 1
+        student3Info.getNumQuestionSubmissions() == 2
+        student1Info.getQuestionSubmissions().size() == 1
+        student2Info.getQuestionSubmissions().size() == 1
+        student3Info.getQuestionSubmissions().size() == 2
+        student1Info.getUsername() == student1.getUsername()
+        student2Info.getUsername() == student2.getUsername()
+        student3Info.getUsername() == student3.getUsername()
+        student1Info.getName() == student1.getName()
+        student2Info.getName() == student2.getName()
+        student3Info.getName() == student3.getName()
     }
 
     def "get all student question submissions info with no question submissions"() {
         when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(courseExecution.getId())
 
         then:
-        result.size() == 0
+        result.size() == 3
+        def student1Info = result.get(0)
+        def student2Info = result.get(1)
+        def student3Info = result.get(2)
+
+        student1Info.getUserId() == student1.getId()
+        student2Info.getUserId() == student2.getId()
+        student3Info.getUserId() == student3.getId()
+        student1Info.getNumQuestionSubmissions() == 0
+        student2Info.getNumQuestionSubmissions() == 0
+        student3Info.getNumQuestionSubmissions() == 0
+        student1Info.getQuestionSubmissions().size() == 0
+        student2Info.getQuestionSubmissions().size() == 0
+        student3Info.getQuestionSubmissions().size() == 0
+        student1Info.getUsername() == student1.getUsername()
+        student2Info.getUsername() == student2.getUsername()
+        student3Info.getUsername() == student3.getUsername()
+        student1Info.getName() == student1.getName()
+        student2Info.getName() == student2.getName()
+        student3Info.getName() == student3.getName()
     }
 
     @TestConfiguration

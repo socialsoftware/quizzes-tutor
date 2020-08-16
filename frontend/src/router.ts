@@ -27,6 +27,7 @@ import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
+import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
 
 Vue.use(Router);
 
@@ -116,6 +117,15 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions/students',
+          name: 'sort-by-student-submissions',
+          component: SortQuestionSubmissionsByStudentView,
+          meta: {
+            title: APP_NAME + ' - Sort by Student Submissions',
             requiredAuth: 'Teacher'
           }
         },

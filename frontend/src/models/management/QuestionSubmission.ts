@@ -17,6 +17,36 @@ export default class QuestionSubmission {
     }
   }
 
+  static questionSubmissionHeader = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '5px',
+      sortable: false
+    },
+    { text: 'Title', value: 'question.title', align: 'center', width: '20%' },
+    {
+      text: 'Status',
+      value: 'question.status',
+      align: 'center',
+      width: '150px'
+    },
+    {
+      text: 'Topics',
+      value: 'question.topics',
+      align: 'center',
+      sortable: false,
+      width: '50%'
+    },
+    {
+      text: 'Creation Date',
+      value: 'question.creationDate',
+      width: '150px',
+      align: 'center'
+    }
+  ];
+
   isInDiscussion() {
     return (
       this.question.status === 'IN_REVISION' ||

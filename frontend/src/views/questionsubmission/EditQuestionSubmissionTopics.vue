@@ -1,10 +1,7 @@
 <template>
   <v-form>
     <v-autocomplete
-      v-if="
-        ($store.getters.isStudent && questionSubmission.isInRevision()) ||
-          ($store.getters.isTeacher && questionSubmission.isRejected())
-      "
+      v-if="canEditTopics()"
       v-model="questionTopics"
       :items="topics"
       multiple
@@ -59,6 +56,7 @@ export default class EditQuestionSubmissionTopics extends Vue {
   @Prop({ type: QuestionSubmission, required: true })
   readonly questionSubmission!: QuestionSubmission;
   @Prop({ type: Array, required: true }) readonly topics!: Topic[];
+  @Prop({ type: Boolean }) readOnly: boolean | undefined;
 
   questionTopics: Topic[] = JSON.parse(
     JSON.stringify(this.questionSubmission.question.topics)
@@ -95,6 +93,16 @@ export default class EditQuestionSubmissionTopics extends Vue {
       element => element.id != topic.id
     );
     this.saveTopics();
+  }
+
+  canEditTopics() {
+    return (
+      !this.readOnly &&
+      ((this.$store.getters.isStudent &&
+        this.questionSubmission.isInRevision()) ||
+        (this.$store.getters.isTeacher &&
+          !this.questionSubmission.isRejected()))
+    );
   }
 }
 </script>

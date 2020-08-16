@@ -84,7 +84,7 @@ Cypress.Commands.add(
         .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 6);
+        .should('have.length', 5);
     } else {
       cy.get('[data-cy="SubmitButton"]').click();
     }
@@ -116,7 +116,7 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 6)
+    .should('have.length', 5)
     .find('[data-cy="ViewSubmission"]')
     .click();
   cy.contains(title);
@@ -138,7 +138,7 @@ Cypress.Commands.add('deleteQuestionSubmission', (title=null, reviews=true) => {
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 6)
+      .should('have.length', 5)
       .find('[data-cy="DeleteSubmission"]')
       .click();
   } else if (reviews) {

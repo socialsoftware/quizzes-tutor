@@ -25,6 +25,12 @@
           <v-btn color="primary" dark @click="getQuestionSubmissions"
             >Refresh List</v-btn
           ><v-btn
+            v-if="$store.getters.isTeacher"
+            color="primary"
+            dark
+            to="/management/submissions/students"
+            >Sort by Students</v-btn
+          ><v-btn
             v-if="$store.getters.isStudent"
             color="primary"
             dark
@@ -141,41 +147,7 @@ export default class QuestionSubmissionView extends Vue {
   editQuestionSubmissionDialog: boolean = false;
   questionSubmissionDialog: boolean = false;
   search: string = '';
-
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false
-    },
-    { text: 'Title', value: 'question.title', align: 'center', width: '50%' },
-    {
-      text: 'Submitted by',
-      value: 'name',
-      align: this.$store.getters.isTeacher ? 'center' : ' d-none'
-    },
-    {
-      text: 'Status',
-      value: 'question.status',
-      align: 'center',
-      width: '150px'
-    },
-    {
-      text: 'Topics',
-      value: 'question.topics',
-      align: 'center',
-      sortable: false,
-      width: '50%'
-    },
-    {
-      text: 'Creation Date',
-      value: 'question.creationDate',
-      width: '150px',
-      align: 'center'
-    }
-  ];
+  headers = QuestionSubmission.questionSubmissionHeader.slice();
 
   @Watch('editQuestionSubmissionDialog')
   closeError() {
@@ -185,6 +157,9 @@ export default class QuestionSubmissionView extends Vue {
   }
 
   async created() {
+    if (this.$store.getters.isTeacher) {
+      this.headers.splice(2, 0, { text: 'Submitted by', value: 'name', align: 'center', width: '50%' });
+    }
     await this.getQuestionSubmissions();
   }
 

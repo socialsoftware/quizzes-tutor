@@ -98,7 +98,7 @@ public class QuestionSubmissionController {
     }
 
     @GetMapping(value = "/submissions/{executionId}/all")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(@Valid @PathVariable int executionId) {
         return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
     }

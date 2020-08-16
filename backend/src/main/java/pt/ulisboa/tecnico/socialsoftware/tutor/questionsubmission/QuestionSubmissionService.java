@@ -26,10 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -184,19 +181,19 @@ public class QuestionSubmissionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
-        Map<Integer, UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new HashMap<>();
-        List<QuestionSubmission> questionSubmissions = questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseExecutionId);
+        CourseExecution courseExecution = getCourseExecution(courseExecutionId);
+        Set<User> students = courseExecution.getStudents();
 
-        for (QuestionSubmission questionSubmission: questionSubmissions) {
-            User user = questionSubmission.getUser();
-            if (userQuestionSubmissionInfoDtos.containsKey(user.getId())) {
-                userQuestionSubmissionInfoDtos.get(user.getId()).addQuestionSubmission();
-            } else {
-                userQuestionSubmissionInfoDtos.put(user.getId(), new UserQuestionSubmissionInfoDto(user, 1));
-            }
+        List<UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new ArrayList<>();
+
+        for (User student: students) {
+            List<QuestionSubmissionDto> questionSubmissions = student.getQuestionSubmissions().stream().map(QuestionSubmissionDto::new).collect(Collectors.toList());
+            userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student, questionSubmissions));
         }
 
-        return new ArrayList<>(userQuestionSubmissionInfoDtos.values());
+        userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
+
+        return userQuestionSubmissionInfoDtos;
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
