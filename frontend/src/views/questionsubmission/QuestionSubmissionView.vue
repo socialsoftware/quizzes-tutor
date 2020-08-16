@@ -55,6 +55,7 @@
         <edit-question-submission-topics
           :questionSubmission="item"
           :topics="topics"
+          :key="topicsComponentKey"
           v-on:submission-changed-topics="onQuestionSubmissionChangedTopics"
         />
       </template>
@@ -147,6 +148,7 @@ export default class QuestionSubmissionView extends Vue {
   editQuestionSubmissionDialog: boolean = false;
   questionSubmissionDialog: boolean = false;
   search: string = '';
+  topicsComponentKey: number = 0;
   headers = QuestionSubmission.questionSubmissionHeader.slice();
 
   @Watch('editQuestionSubmissionDialog')
@@ -158,7 +160,12 @@ export default class QuestionSubmissionView extends Vue {
 
   async created() {
     if (this.$store.getters.isTeacher) {
-      this.headers.splice(2, 0, { text: 'Submitted by', value: 'name', align: 'center', width: '50%' });
+      this.headers.splice(2, 0, {
+        text: 'Submitted by',
+        value: 'name',
+        align: 'center',
+        width: '50%'
+      });
     }
     await this.getQuestionSubmissions();
   }
@@ -175,6 +182,7 @@ export default class QuestionSubmissionView extends Vue {
             RemoteServices.getCourseExecutionQuestionSubmissions(),
             RemoteServices.getTopics()
           ]);
+      this.topicsComponentKey += 1;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
