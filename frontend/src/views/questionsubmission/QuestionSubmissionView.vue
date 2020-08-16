@@ -289,16 +289,6 @@ export default class QuestionSubmissionView extends Vue {
       confirm('Are you sure you want to delete this submission?')
     ) {
       try {
-        let reviews = await RemoteServices.getQuestionSubmissionReviews(
-          toDeleteQuestionSubmission.id!
-        );
-        if (reviews.length > 0) {
-          await this.$store.dispatch(
-            'error',
-            'Error: Cannot delete submission that already has reviews'
-          );
-          return;
-        }
         await RemoteServices.deleteSubmittedQuestion(
           toDeleteQuestionSubmission.id
         );
