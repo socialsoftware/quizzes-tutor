@@ -39,10 +39,15 @@
             <v-expansion-panel-header>
               {{ item.name }}
               <template v-slot:actions>
-                <v-chip color="primary">
-                  {{ item.numQuestionSubmissions }}
+                <v-chip
+                  v-for="status in item.numQuestionSubmissions"
+                  :color="status.color"
+                  :key="status.userId"
+                >
+                  {{ status.num }}
                 </v-chip>
                 <v-icon>$expand</v-icon>
+                <v-chip> {{ item.totalQuestionSubmissions }} </v-chip>
               </template>
             </v-expansion-panel-header>
             <v-expansion-panel-content>
@@ -101,7 +106,8 @@
       :questionSubmission="currentQuestionSubmission"
     />
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on student to see their question submissions
+      <v-icon class="mr-2">mouse</v-icon>Left-click on student to see their
+      question submissions
     </footer>
   </v-card>
 </template>

@@ -75,9 +75,9 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         student1Info.getUserId() == student1.getId()
         student2Info.getUserId() == student2.getId()
         student3Info.getUserId() == student3.getId()
-        student1Info.getNumQuestionSubmissions() == 1
-        student2Info.getNumQuestionSubmissions() == 1
-        student3Info.getNumQuestionSubmissions() == 2
+        student1Info.getTotalQuestionSubmissions() == 1
+        student2Info.getTotalQuestionSubmissions() == 1
+        student3Info.getTotalQuestionSubmissions() == 2
         student1Info.getQuestionSubmissions().size() == 1
         student2Info.getQuestionSubmissions().size() == 1
         student3Info.getQuestionSubmissions().size() == 2
@@ -101,9 +101,9 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         student1Info.getUserId() == student1.getId()
         student2Info.getUserId() == student2.getId()
         student3Info.getUserId() == student3.getId()
-        student1Info.getNumQuestionSubmissions() == 0
-        student2Info.getNumQuestionSubmissions() == 0
-        student3Info.getNumQuestionSubmissions() == 0
+        student1Info.getTotalQuestionSubmissions() == 0
+        student2Info.getTotalQuestionSubmissions() == 0
+        student3Info.getTotalQuestionSubmissions() == 0
         student1Info.getQuestionSubmissions().size() == 0
         student2Info.getQuestionSubmissions().size() == 0
         student3Info.getQuestionSubmissions().size() == 0
