@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -36,6 +37,9 @@ public class QuestionSubmissionService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private CourseService courseService;
 
     @Autowired
     private UserRepository userRepository;
@@ -194,6 +198,22 @@ public class QuestionSubmissionService {
         userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
 
         return userQuestionSubmissionInfoDtos;
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoQuestionSubmissions() {
+        questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseService.getDemoCourse().getCourseExecutionId())
+                .stream()
+                .skip(2)
+                .forEach( questionSubmission -> {
+                    Question question = questionRepository.findById(questionSubmission.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSubmission.getQuestion().getId()));
+                    this.removeQuestionSubmission(questionSubmission.getId());
+                    question.remove();
+                    questionRepository.delete(question);
+                });
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
