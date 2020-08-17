@@ -83,14 +83,6 @@
           </template>
           <span>Upload External Users</span>
         </v-tooltip>
-        <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-icon class="mr-2" v-on="on"
-                  >add_box</v-icon
-                >
-              </template>
-              <span>Add Answer</span>
-            </v-tooltip>
       </template>
     </v-data-table>
 

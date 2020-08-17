@@ -18,8 +18,6 @@ class DemoAuthWebServiceIT extends SpockTest {
     }
 
     def "demo student login"() {
-        given:
-        System.out.println("\n\n\n\n\n"+userRepository.findAll()+"\n\n\n\n\n\n")
         when:
         def response = restClient.get(
                 path: '/auth/demo/student',

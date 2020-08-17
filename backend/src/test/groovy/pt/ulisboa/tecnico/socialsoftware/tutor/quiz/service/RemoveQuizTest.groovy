@@ -20,7 +20,7 @@ class RemoveQuizTest extends SpockTest {
     def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())

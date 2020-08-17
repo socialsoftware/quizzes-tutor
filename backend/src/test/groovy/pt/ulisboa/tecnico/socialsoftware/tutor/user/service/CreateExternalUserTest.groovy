@@ -79,8 +79,7 @@ class CreateExternalUserTest extends SpockTest {
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
         given: "a user"
-        def user = new User("", USER_1_EMAIL, User.Role.STUDENT)
-        user.setEmail(USER_1_EMAIL)
+        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
         userRepository.save(user)
         and: "a external course execution"
         def executionId = externalCourseExecution.getId()

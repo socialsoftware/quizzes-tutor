@@ -33,15 +33,13 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
 
     def "there are two inactive external user and deletes them"() {
         given: "two inactive external users"
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.INACTIVE, false)
         user1.addCourse(courseExecution1)
-        user1.setState(User.State.INACTIVE)
         courseExecution1.addUser(user1)
         userRepository.save(user1)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, User.State.INACTIVE, false)
         user2.addCourse(courseExecution1)
-        user2.setState(User.State.INACTIVE)
         courseExecution1.addUser(user2)
         userRepository.save(user2)
 
