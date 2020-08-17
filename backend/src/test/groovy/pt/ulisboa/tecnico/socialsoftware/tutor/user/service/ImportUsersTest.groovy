@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.mock.DetachedMockFactory
 
 @DataJpaTest
@@ -41,7 +42,7 @@ class ImportUsersTest extends SpockTest {
         userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
 
         and: "a mail was sent for each user"
-        NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
+        NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
 
 
     }

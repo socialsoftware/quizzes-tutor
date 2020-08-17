@@ -93,7 +93,7 @@ class ConfirmRegistrationTest extends SpockTest {
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
         and: "a new confirmation mail is sent"
-        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, User.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
+        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
     }
 
     @Unroll

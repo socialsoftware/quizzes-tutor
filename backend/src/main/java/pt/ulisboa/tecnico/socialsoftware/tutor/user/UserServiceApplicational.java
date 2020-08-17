@@ -45,7 +45,7 @@ public class UserServiceApplicational {
 
 
     public void sendConfirmationEmailTo(ExternalUserDto user) {
-        mailer.sendSimpleMail(mailUsername, user.getEmail(), User.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
+        mailer.sendSimpleMail(mailUsername, user.getEmail(), UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(user));
     }
 
     private String buildMailBody(ExternalUserDto user) {

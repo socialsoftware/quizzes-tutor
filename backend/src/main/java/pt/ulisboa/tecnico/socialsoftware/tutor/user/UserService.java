@@ -61,6 +61,10 @@ public class UserService {
     @Value("${spring.mail.username}")
     private String mailUsername;
 
+    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
+    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
+
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
     }
@@ -211,7 +215,7 @@ public class UserService {
                     continue;
                 }
 
-                if (userInfo[0].length() == 0 || !userInfo[0].matches(User.MAIL_FORMAT) || userInfo[1].length() == 0) {
+                if (userInfo[0].length() == 0 || !userInfo[0].matches(MAIL_FORMAT) || userInfo[1].length() == 0) {
                     notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
                         new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;

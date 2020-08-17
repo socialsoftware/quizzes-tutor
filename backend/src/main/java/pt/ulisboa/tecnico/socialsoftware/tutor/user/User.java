@@ -27,9 +27,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
-    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
-    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -207,7 +204,7 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.matches(MAIL_FORMAT))
+        if (email == null || !email.matches(UserService.MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email;
