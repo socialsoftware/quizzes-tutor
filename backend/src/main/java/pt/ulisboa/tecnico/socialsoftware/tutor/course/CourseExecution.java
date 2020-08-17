@@ -5,7 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -47,7 +47,7 @@ public class CourseExecution implements DomainEntity {
     private final Set<Assessment> assessments = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private final Set<Submission> submissions = new HashSet<>();
+    private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
 
     public CourseExecution() {
     }
@@ -146,9 +146,11 @@ public class CourseExecution implements DomainEntity {
         assessments.add(assessment);
     }
 
-    public void addSubmission(Submission submission) {
-        submissions.add(submission);
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
     }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
 
     @Override
     public String toString() {
@@ -172,6 +174,7 @@ public class CourseExecution implements DomainEntity {
 
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
+        questionSubmissions.forEach(submission -> submission.getCourseExecution().remove());
     }
 
     public int getNumberOfTeachers() {

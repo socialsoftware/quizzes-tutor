@@ -4,13 +4,15 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Unroll
 
 @DataJpaTest
-class ToggleInReviewStatusTest extends SpockTest{
+class RemoveQuestionSubmissionTest extends SpockTest{
     def student
     def teacher
     def question
@@ -27,6 +29,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(course)
+        question.setStatus(Question.Status.IN_REVISION)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
@@ -35,31 +38,45 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionSubmissionRepository.save(questionSubmission)
     }
 
-    @Unroll
-    def "Toggle InReview Status: Initial Status = #status | Toggle = #toggle | New Status = #newStatus"() {
-        given: "the question's status is #status"
-        question.setStatus(status)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
-
+    def "student removes a submitted question with no reviews"(){
         when:
-        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), toggle)
+        questionSubmissionService.removeSubmittedQuestion(questionSubmission.getId())
 
-        then: "the question is now #newStatus"
-        def question = questionRepository.findAll().get(0)
-        question.getStatus() == newStatus
-
-        where:
-        status                      | toggle | newStatus
-        Question.Status.IN_REVISION | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVISION | false  | Question.Status.IN_REVISION
-        Question.Status.IN_REVIEW   | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVIEW   | false  | Question.Status.IN_REVISION
+        then: "the submitted question and associated reviews are removed"
+        questionRepository.count() == 0L
+        optionRepository.count() == 0L
+        questionSubmissionRepository.count() == 0L
+        reviewRepository.count() == 0L
     }
 
+    def "error cases: alreadyInReview=#!hasReviews | hasReviews=#hasReviews"() {
+        given:
+        if (hasReviews) {
+            def review = new Review()
+            review.setComment(REVIEW_1_COMMENT)
+            review.setUser(teacher)
+            review.setQuestionSubmission(questionSubmission)
+            review.setStatus(Review.Status.IN_REVISION)
+            questionSubmission.addReview(review)
+            reviewRepository.save(review)
+        } else {
+            question.setStatus(Question.Status.IN_REVIEW)
+        }
+
+        when:
+        questionSubmissionService.removeSubmittedQuestion(questionSubmission.getId())
+
+        then: "exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_REVIEWED_QUESTION
+
+        where:
+        hasReviews << [false, true]
+    }
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
+
+
 
 

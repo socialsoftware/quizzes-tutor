@@ -23,14 +23,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Review;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.domain.Submission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -68,13 +65,10 @@ public class QuestionService {
     private OptionRepository optionRepository;
 
     @Autowired
-    private SubmissionRepository submissionRepository;
+    private QuestionSubmissionService questionSubmissionService;
 
     @Autowired
-    private ReviewRepository reviewRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Retryable(
       value = { SQLException.class },
@@ -83,6 +77,14 @@ public class QuestionService {
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    }
+
+    @Retryable(
+          value = { SQLException.class },
+          backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
+        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
     }
 
     @Retryable(
@@ -99,7 +101,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().filter(this::isValidQuestion).map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isSubmittedQuestion()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -132,29 +134,20 @@ public class QuestionService {
         return new QuestionDto(question);
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeQuestion(Integer userId, Integer questionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-        Submission submission = submissionRepository.findByQuestionId(question.getId());
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
-        if (submission != null) {
-            removeSubmission(user, submission);
+        if (questionSubmission != null) {
+            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
         }
 
         question.remove();
         questionRepository.delete(question);
-    }
-
-    private void removeSubmission(User user, Submission submission) {
-        if(user.isStudent() && (!submission.getReviews().isEmpty() || !submission.getQuestion().getStatus().equals(Question.Status.IN_REVISION))) {
-            throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
-        }
-        deleteSubmission(submission);
     }
 
     @Retryable(
@@ -290,10 +283,10 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        Submission submission = submissionRepository.findByQuestionId(question.getId());
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
-        if (submission != null) {
-            deleteSubmission(submission);
+        if (questionSubmission != null) {
+            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
         }
 
         for (Option option : question.getOptions()) {
@@ -309,22 +302,6 @@ public class QuestionService {
         question.getTopics().clear();
 
         questionRepository.delete(question);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteSubmission(Submission submission) {
-        List<Review> reviews = new ArrayList<>(reviewRepository.findBySubmissionId(submission.getId()));
-        for (Review review : reviews) {
-            reviewRepository.delete(review);
-        }
-        submissionRepository.delete(submission);
-    }
-
-    public boolean isValidQuestion(Question question) {
-        return Arrays.asList(Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REMOVED).contains(question.getStatus());
     }
 }
 

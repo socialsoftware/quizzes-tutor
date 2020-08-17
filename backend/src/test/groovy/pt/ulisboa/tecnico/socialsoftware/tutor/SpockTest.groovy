@@ -16,14 +16,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.SubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.ReviewRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.submission.repository.SubmissionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Shared
@@ -155,10 +155,10 @@ class SpockTest extends Specification {
     UserService userService
 
     @Autowired
-    SubmissionService submissionService
+    QuestionSubmissionService questionSubmissionService
 
     @Autowired
-    SubmissionRepository submissionRepository
+    QuestionSubmissionRepository questionSubmissionRepository
 
     @Autowired
     ReviewRepository reviewRepository

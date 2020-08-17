@@ -92,7 +92,7 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  'editSubmission',
+  'editQuestionSubmission',
   (valid, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="EditSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
@@ -117,7 +117,7 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
     .should('have.length', 1)
     .children()
     .should('have.length', 5)
-    .find('[data-cy="viewQuestion"]')
+    .find('[data-cy="ViewSubmission"]')
     .click();
   cy.contains(title);
   cy.contains(content);
@@ -128,18 +128,18 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
   if (status != null) {
     cy.contains(status);
   }
-  cy.get('[data-cy="close"]').click();
+  cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) => {
+Cypress.Commands.add('deleteQuestionSubmission', (title=null, reviews=true) => {
   if(title != null) {
     cy.contains(title)
       .parent()
       .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', size)
-      .find('[data-cy="deleteSubmission"]')
+      .should('have.length', 5)
+      .find('[data-cy="DeleteSubmission"]')
       .click();
   } else if (reviews) {
     cy.exec(
@@ -147,7 +147,7 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) =
       Cypress.env('PASS') +
       ' psql -d ' +
       Cypress.env('DBNAME') +
-      ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING submission_id), sub AS (DELETE FROM submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
+      ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING question_submission_id), sub AS (DELETE FROM question_submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
      );
   } else {
     cy.exec(
@@ -155,24 +155,12 @@ Cypress.Commands.add('deleteSubmission', (title=null, size=null, reviews=true) =
       Cypress.env('PASS') +
       ' psql -d ' +
       Cypress.env('DBNAME') +
-      ' -h localhost -c "WITH sub AS (DELETE FROM submissions WHERE id IN (SELECT max(id) FROM submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
+      ' -h localhost -c "WITH sub AS (DELETE FROM question_submissions WHERE id IN (SELECT max(id) FROM question_submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
     );
   }
 });
 
-Cypress.Commands.add('addReview', title => {
-  cy.exec(
-    'PGPASSWORD=' +
-    Cypress.env('PASS') +
-    ' psql -d ' +
-    Cypress.env('DBNAME') +
-    ' -h localhost -c "with sub as (select s.id from submissions s join questions q on s.question_id=q.id where q.title=\'' +
-    title +
-    '\') insert into reviews(creation_date, comment, status, submission_id, user_id) values (current_timestamp, \'test\', \'AVAILABLE\', (select id from sub), 677);"'
-  );
-});
-
-Cypress.Commands.add('reviewSubmission', (select, title, comment=null) => {
+Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -190,7 +178,7 @@ Cypress.Commands.add('reviewSubmission', (select, title, comment=null) => {
   cy.get('[data-cy="SubmitButton"]').click();
 });
 
-Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
+Cypress.Commands.add('checkQuestionSubmissionStatus', (title, status) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -204,7 +192,7 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
   cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
+Cypress.Commands.add('addQuestionSubmission', (title, questionStatus, userId) => {
   cy.exec(
     'PGPASSWORD=' +
     Cypress.env('PASS') +
@@ -214,7 +202,7 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
     title +
     '\', \'Question?\', \'' +
     questionStatus +
-    '\', 2, current_timestamp) RETURNING id) INSERT INTO submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), ' +
+    '\', 2, current_timestamp) RETURNING id) INSERT INTO question_submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), ' +
     userId +
     ', 11);" '
   );
@@ -231,10 +219,5 @@ Cypress.Commands.add('addSubmission', (title, questionStatus, userId) => {
       '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
     );
   }
-
-  Cypress.Commands.add('checkUserSubmissionInfo', (username, num) => {
-    cy.contains(username);
-    cy.contains(num);
-  });
 });
 

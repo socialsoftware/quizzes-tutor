@@ -9,7 +9,7 @@ describe('Student walkthrough', () => {
     cy.contains('Logout').click();
   });
 
-  it('login submits a question', () => {
+  it('login edits a question', () => {
     cy.submitQuestion(
       true,
       'Test',
@@ -20,7 +20,30 @@ describe('Student walkthrough', () => {
       'D'
     );
 
+    cy.editQuestionSubmission(
+      true,
+      ' 2',
+      ' 2',
+      '1',
+      '2',
+      '3',
+      '4'
+    );
+
     cy.viewQuestion(
+      'Test 2',
+      'Test Question 2',
+      'A1',
+      'B2',
+      'C3',
+      'D4'
+    );
+    cy.deleteQuestionSubmission();
+  });
+
+  it('login edits an invalid question', () => {
+    cy.submitQuestion(
+      true,
       'Test',
       'Test Question',
       'A',
@@ -28,20 +51,18 @@ describe('Student walkthrough', () => {
       'C',
       'D'
     );
-    cy.deleteQuestionSubmission('Test');
-  });
 
-  it('login submits an invalid question', () => {
-    cy.submitQuestion(
+    cy.editQuestionSubmission(
       false,
-      'Test',
-      'Test Question'
+      ' 2',
+      ' 2'
     );
 
-    cy.closeErrorMessage('Question with invalid option');
-
+    cy.closeErrorMessage('Error: Invalid content for option');
     cy.log('close dialog');
-
     cy.get('[data-cy="CancelButton"]').click();
+  
+    cy.deleteQuestionSubmission('Test');
   });
+  
 });

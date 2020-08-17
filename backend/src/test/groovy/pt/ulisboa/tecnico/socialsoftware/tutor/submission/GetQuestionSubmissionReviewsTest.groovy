@@ -5,12 +5,13 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import spock.lang.Unroll
+
 
 @DataJpaTest
-class ToggleInReviewStatusTest extends SpockTest{
+class GetQuestionSubmissionReviewsTest extends SpockTest{
     def student
     def teacher
     def question
@@ -27,6 +28,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(course)
+        question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
@@ -35,31 +37,42 @@ class ToggleInReviewStatusTest extends SpockTest{
         questionSubmissionRepository.save(questionSubmission)
     }
 
-    @Unroll
-    def "Toggle InReview Status: Initial Status = #status | Toggle = #toggle | New Status = #newStatus"() {
-        given: "the question's status is #status"
-        question.setStatus(status)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
+    def "get question submission reviews with 1 review"(){
+        given: "a review"
+        def review = new Review()
+        review.setComment(REVIEW_1_COMMENT)
+        review.setUser(teacher)
+        review.setQuestionSubmission(questionSubmission)
+        review.setStatus(Review.Status.AVAILABLE)
+        questionSubmission.addReview(review)
 
         when:
-        questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), toggle)
+        def result = questionSubmissionService.getQuestionSubmissionReviews(questionSubmission.getId())
 
-        then: "the question is now #newStatus"
-        def question = questionRepository.findAll().get(0)
-        question.getStatus() == newStatus
+        then: "returned data is correct"
+        result.size() == 1
+        def rev = result.get(0)
 
-        where:
-        status                      | toggle | newStatus
-        Question.Status.IN_REVISION | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVISION | false  | Question.Status.IN_REVISION
-        Question.Status.IN_REVIEW   | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVIEW   | false  | Question.Status.IN_REVISION
+        rev.getId() != null
+        rev.getUserId() == teacher.getId()
+        rev.getQuestionSubmissionId() == questionSubmission.getId()
+        rev.getComment() == REVIEW_1_COMMENT
+        rev.getStatus() == Review.Status.AVAILABLE.name()
+        rev.getName() == teacher.getName()
+        rev.getUsername() == teacher.getUsername()
+    }
+
+    def "get question submission reviews with no review"(){
+        when:
+        def result = questionSubmissionService.getQuestionSubmissionReviews(questionSubmission.getId())
+
+        then:"returned data is correct"
+        result.size() == 0
     }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
+
 
 
