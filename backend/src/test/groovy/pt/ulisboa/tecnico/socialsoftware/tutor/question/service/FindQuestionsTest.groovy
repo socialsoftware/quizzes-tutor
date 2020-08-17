@@ -18,7 +18,7 @@ class FindQuestionsTest extends SpockTest {
     def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
 
         user.addCourse(externalCourseExecution)
         userRepository.save(user)

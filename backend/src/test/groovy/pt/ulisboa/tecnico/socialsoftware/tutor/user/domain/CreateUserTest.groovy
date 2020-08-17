@@ -26,7 +26,7 @@ class CreateUserTest extends SpockTest {
     def quiz
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.INACTIVE, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -70,7 +70,7 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, role" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
 
 
         then:
@@ -81,14 +81,14 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, email, role, state, admin" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.INACTIVE, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getEmail() == USER_1_EMAIL
         result.getRole() == User.Role.STUDENT
-        result.getState() == User.State.INACTIVE
+        result.isActive() == false
         !result.isAdmin()
     }
 

@@ -259,10 +259,10 @@ export default class CoursesView extends Vue {
   updateUserNumbers(course: Course) {
     if(!!course && !!course.courseExecutionUsers) {
       course.numberOfInactiveTeachers = course.courseExecutionUsers
-        .filter(user => user.role === 'TEACHER' && user.state === 'INACTIVE')
+        .filter(user => user.role === 'TEACHER' && !user.active)
         .length;
       course.numberOfInactiveStudents = course.courseExecutionUsers
-        .filter(user => user.role === 'STUDENT' && user.state === 'INACTIVE')
+        .filter(user => user.role === 'STUDENT' && !user.active)
         .length;
     }
   }

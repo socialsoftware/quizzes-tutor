@@ -68,7 +68,7 @@ class CreateExternalUserTest extends SpockTest {
         and: "checks if user data is correct"
         result.getUsername() == USER_1_EMAIL
         result.getEmail() == USER_1_EMAIL
-        result.getState() == User.State.INACTIVE
+        result.getActive() == false
         and:"checks if the user and the course execution are associated"
         result.getConfirmationToken() != ""
         externalCourseExecution.getUsers().size() == 1
@@ -79,7 +79,7 @@ class CreateExternalUserTest extends SpockTest {
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
         given: "a user"
-        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user)
         and: "a external course execution"
         def executionId = externalCourseExecution.getId()

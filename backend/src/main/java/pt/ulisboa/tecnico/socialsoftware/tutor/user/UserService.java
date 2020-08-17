@@ -79,9 +79,9 @@ public class UserService {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, email, role, User.State.ACTIVE, false);
+        User user = new User(name, username, email, role, true, false);
         userRepository.save(user);
-        user.setState(User.State.ACTIVE);
+        user.setActive(true);
         user.setKey(user.getId());
         return user;
     }
@@ -274,7 +274,7 @@ public class UserService {
     private User getOrCreateUser(ExternalUserDto externalUserDto) {
         return userRepository.findByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
-                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), User.State.INACTIVE, false);
+                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), false, false);
                     userRepository.save(createdUser);
                     return createdUser;
                 });

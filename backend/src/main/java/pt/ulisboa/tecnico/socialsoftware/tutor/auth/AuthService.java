@@ -213,7 +213,7 @@ public class AuthService {
         }
 
         user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-        user.setState(User.State.ACTIVE);
+        user.setActive(true);
 
         return new ExternalUserDto(user);
     }

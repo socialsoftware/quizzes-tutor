@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -27,7 +26,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         })
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
-    public enum State {ACTIVE, INACTIVE}
 
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
@@ -43,8 +41,7 @@ public class User implements UserDetails, DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Enumerated(EnumType.STRING)
-    private State state;
+    private boolean active;
     
     @Column(unique=true)
     private String username;
@@ -88,19 +85,12 @@ public class User implements UserDetails, DomainEntity {
     public User() {
     }
 
-    /*public User(String name, String username, User.Role role) {
-        setName(name);
-        setUsername(username);
-        setRole(role);
-        setCreationDate(DateHandler.now());
-    }*/
-
-    public User(String name, String username, String email, User.Role role, State state, boolean isAdmin){
+    public User(String name, String username, String email, User.Role role, boolean isActive, boolean isAdmin){
         setName(name);
         setUsername(username);
         setRole(role);
         setEmail(email);
-        setState(state);
+        setActive(isActive);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
 
@@ -204,6 +194,14 @@ public class User implements UserDetails, DomainEntity {
         return password;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -213,18 +211,6 @@ public class User implements UserDetails, DomainEntity {
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email;
-    }
-
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
-    public boolean isActive() {
-        return state == State.ACTIVE;
     }
 
     public LocalDateTime getTokenGenerationDate() {
@@ -549,7 +535,7 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void remove() {
-        if(getState() == User.State.ACTIVE)
+        if(active)
             throw new TutorException(USER_IS_ACTIVE, getUsername());
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));

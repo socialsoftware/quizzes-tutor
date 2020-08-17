@@ -13,8 +13,7 @@ public class ExternalUserDto implements Serializable {
     private String email;
     private String password;
     private User.Role role;
-    private User.State state;
-    private boolean isActive;
+    private boolean active;
     private boolean isAdmin;
     private List<CourseDto> courseExecutions;
     private String confirmationToken;
@@ -25,14 +24,12 @@ public class ExternalUserDto implements Serializable {
 
     public ExternalUserDto(User user){
         this.id = user.getId();
-        this.state = user.getState();
         this.name = user.getName();
         this.username = user.getUsername();
         this.email = user.getEmail();
         this.password = user.getPassword();
         this.role = user.getRole();
-        this.state = user.getState();
-        this.isActive = user.getState() == User.State.ACTIVE; 
+        this.active = user.isActive();
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
     }
@@ -85,17 +82,16 @@ public class ExternalUserDto implements Serializable {
         this.role = role;
     }
 
-    public User.State getState() {
-        return state;
+    public boolean getActive() {
+        return active;
     }
 
-    public void setState(User.State state) {
-        this.isActive = state == User.State.ACTIVE; 
-        this.state = state;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public boolean isActive() {
-        return this.isActive;
+        return this.active;
     }
 
     public boolean isAdmin() {

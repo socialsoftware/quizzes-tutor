@@ -32,13 +32,13 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
 
         userRepository.save(user1)
         externalCourseExecution.addUser(user1)
         user1.addCourse(externalCourseExecution)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user2)
         externalCourseExecution.addUser(user2)
         user2.addCourse(externalCourseExecution)
@@ -52,7 +52,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         def executionId = -1
 
         and: "a list of user id's"
-        user1.setState(User.State.INACTIVE)
+        user1.setActive(false)
         userIdList << user1.getId()
 
         when:
@@ -68,7 +68,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         def executionId = tecnicoCourseExecution.getId()
 
         and: "a list of user id's"
-        user1.setState(User.State.INACTIVE)
+        user1.setActive(false)
         user1.addCourse(tecnicoCourseExecution)
         tecnicoCourseExecution.addUser(user1)
         userIdList << user1.getId()
@@ -90,7 +90,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         def executionId = externalCourseExecution.getId()
 
         and: "a list of user id's"
-        user1.setState(User.State.ACTIVE)
+        user1.setActive(true)
         userIdList << user1.getId()
 
         when:
@@ -117,8 +117,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         def executionId = externalCourseExecution.getId()
 
         and: "a list of user id's"
-        user1.setState(User.State.INACTIVE)
-        user2.setState(User.State.INACTIVE)
+        user1.setActive(false)
+        user2.setActive(false)
         userIdList << user1.getId()
         userIdList << user2.getId()
 

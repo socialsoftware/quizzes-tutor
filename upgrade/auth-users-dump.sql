@@ -1,2 +1,2 @@
-ALTER TABLE Users  ADD COLUMN State character varying(255);
-UPDATE Users SET State = 'ACTIVE';
+ALTER TABLE Users  ADD COLUMN Active character varying(255);
+UPDATE Users SET Active = true;

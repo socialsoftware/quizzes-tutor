@@ -27,7 +27,7 @@ class GetExternalUsersTest extends SpockTest {
         courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution1)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user1)
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
@@ -37,7 +37,7 @@ class GetExternalUsersTest extends SpockTest {
         courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution2)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, User.State.ACTIVE, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user2)
         user2.addCourse(courseExecution2)
         courseExecution2.addUser(user2)
