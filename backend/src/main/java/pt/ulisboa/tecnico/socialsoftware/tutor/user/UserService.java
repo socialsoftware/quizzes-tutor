@@ -244,21 +244,12 @@ public class UserService {
             propagation = Propagation.REQUIRED)
     public ExternalUserDto createExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
-        checkRole(externalUserDto);
         User user = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
         generateConfirmationToken(user);
         return new ExternalUserDto(user);
     }
 
-
-    private void checkRole(ExternalUserDto externalUserDto) {
-        if (externalUserDto.getRole() == null)
-            throw new TutorException(INVALID_ROLE);
-
-        if (!(externalUserDto.getRole().equals(User.Role.STUDENT) || externalUserDto.getRole().equals(User.Role.TEACHER)))
-            throw new TutorException(INVALID_ROLE, externalUserDto.getRole().toString());
-    }
 
     public String generateConfirmationToken(User user) {
         String token = KeyGenerators.string().generateKey();

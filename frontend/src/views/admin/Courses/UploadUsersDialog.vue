@@ -22,8 +22,8 @@
           </template>
           <v-card-text>
             <div>The file to upload must follow the rule: </div>
-            <div>email,name,student|teacher</div>
-            <div>If the third camp is omitted, it will be considered as a Student</div>
+            <div>email,name,['student'|'teacher']</div>
+            <div>When omitted the third column, by default is considered a student</div>
          </v-card-text>
         </v-tooltip>
       </v-card-title>

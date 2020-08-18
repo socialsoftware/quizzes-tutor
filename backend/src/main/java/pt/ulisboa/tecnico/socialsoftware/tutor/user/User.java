@@ -86,6 +86,7 @@ public class User implements UserDetails, DomainEntity {
         setName(name);
         setUsername(username);
         setRole(role);
+        checkRole(role, isActive);
         setEmail(email);
         setActive(isActive);
         setAdmin(isAdmin);
@@ -152,6 +153,11 @@ public class User implements UserDetails, DomainEntity {
             throw new TutorException(INVALID_ROLE);
 
         this.role = role;
+    }
+
+    public void checkRole(Role role, boolean isActive) {
+        if (!isActive && (!(role.equals(User.Role.STUDENT) || role.equals(User.Role.TEACHER))))
+            throw new TutorException(INVALID_ROLE, role.toString());
     }
 
     public LocalDateTime getCreationDate() {

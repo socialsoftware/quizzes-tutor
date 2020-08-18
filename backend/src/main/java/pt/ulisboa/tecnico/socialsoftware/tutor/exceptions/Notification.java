@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 public class Notification {
 
-    private static class Error extends RuntimeException{
+    private static class Error extends RuntimeException {
         String message;
         TutorException cause;
 
