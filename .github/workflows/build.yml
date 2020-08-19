@@ -54,15 +54,15 @@ jobs:
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
         
-    - name: Run integration tests
-      working-directory: ./backend
-      run: mvn clean -Ptest-int integration-test
-      env:
-        PSQL_INT_TEST_DB_NAME: "tutordb"
-        PSQL_INT_TEST_DB_USERNAME: "postgres"
-        PSQL_INT_TEST_DB_PASSWORD: "postgres"
-        PSQL_INT_TEST_DB_HOST: "localhost"
-        PSQL_INT_TEST_DB_PORT: "5432"
+  #  - name: Run integration tests
+  #    working-directory: ./backend
+  #    run: mvn clean -Ptest-int integration-test
+  #    env:
+  #      PSQL_INT_TEST_DB_NAME: "tutordb"
+  #      PSQL_INT_TEST_DB_USERNAME: "postgres"
+  #      PSQL_INT_TEST_DB_PASSWORD: "postgres"
+  #      PSQL_INT_TEST_DB_HOST: "localhost"
+  #      PSQL_INT_TEST_DB_PORT: "5432"
 
     - name: Run backend server
       working-directory: ./backend
