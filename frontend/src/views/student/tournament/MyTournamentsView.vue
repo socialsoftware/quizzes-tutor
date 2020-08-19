@@ -49,8 +49,8 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="getStateColor(item.isCanceled)">
-          {{ getStateName(item.isCanceled) }}
+        <v-chip :color="getStateColor(item)">
+          {{ getStateName(item) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
@@ -154,6 +154,7 @@ import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopic
 })
 export default class MyTournamentsView extends Vue {
   tournaments: Tournament[] = [];
+  closedTournamentsId: number[] = [];
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
   editTournamentDialog: boolean = false;
@@ -215,6 +216,10 @@ export default class MyTournamentsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.tournaments = await RemoteServices.getUserTournaments();
+      let closedTournaments = await RemoteServices.getClosedTournaments();
+      closedTournaments.map(t => {
+        if (t.id) this.closedTournamentsId.push(t.id);
+      });
       this.tournaments.sort((a, b) => this.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -268,13 +273,17 @@ export default class MyTournamentsView extends Vue {
     this.currentTournament = null;
   }
 
-  getStateColor(isCanceled: string) {
-    if (!isCanceled) return 'green';
+  getStateColor(tournament: Tournament) {
+    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
+      return 'orange';
+    else if (!tournament.isCanceled) return 'green';
     else return 'red';
   }
 
-  getStateName(isCanceled: string) {
-    if (!isCanceled) return 'AVAILABLE';
+  getStateName(tournament: Tournament) {
+    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
+      return 'FINISHED';
+    else if (!tournament.isCanceled) return 'AVAILABLE';
     else return 'CANCELLED';
   }
 

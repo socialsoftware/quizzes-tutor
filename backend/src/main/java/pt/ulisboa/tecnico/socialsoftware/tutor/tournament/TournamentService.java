@@ -186,7 +186,11 @@ public class TournamentService {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
         tournament.checkCreator(user);
-        tournament.checkCanChange();
+
+        Integer numberOfAnswers = 0;
+        if (tournament.hasQuiz())
+            numberOfAnswers = quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size();
+        tournament.checkCanChange(numberOfAnswers);
 
         // change
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
@@ -229,7 +233,12 @@ public class TournamentService {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
         tournament.checkCreator(user);
-        tournament.checkCanChange();
+
+        Integer numberOfAnswers = 0;
+        if (tournament.hasQuiz())
+            numberOfAnswers = quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size();
+        tournament.checkCanChange(numberOfAnswers);
+
         tournament.cancel();
         return new TournamentDto(tournament);
     }
@@ -241,7 +250,12 @@ public class TournamentService {
         Tournament tournament = checkTournament(tournamentId);
 
         tournament.checkCreator(user);
-        tournament.checkCanChange();
+
+        Integer numberOfAnswers = 0;
+        if (tournament.hasQuiz())
+            numberOfAnswers = quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size();
+        tournament.checkCanChange(numberOfAnswers);
+
         tournament.remove();
         tournamentRepository.delete(tournament);
     }

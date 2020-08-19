@@ -5,9 +5,12 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -15,6 +18,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CancelTournamentTest extends SpockTest {
+    def question1
     def topic1
     def topic2
     def tournamentDto
@@ -40,11 +44,42 @@ class CancelTournamentTest extends SpockTest {
         topics.add(topic1.getId())
         topics.add(topic2.getId())
 
+        def assessment = new Assessment()
+        assessment.setTitle(ASSESSMENT_1_TITLE)
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+        assessment.setCourseExecution(courseExecution)
+
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic1)
+        topicConjunction.addTopic(topic2)
+
+        assessment.addTopicConjunction(topicConjunction)
+        assessmentRepository.save(assessment)
+
         tournamentDto = new TournamentDto()
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentDto.setState(false)
+
+        question1 = new Question()
+        question1.setKey(1)
+        question1.setCreationDate(LOCAL_DATE_TODAY)
+        question1.setContent(QUESTION_1_CONTENT)
+        question1.setTitle(QUESTION_1_TITLE)
+        question1.setStatus(Question.Status.AVAILABLE)
+        question1.setCourse(course)
+        question1.addTopic(topic1)
+        question1.addTopic(topic2)
+
+        def optionDto = new OptionDto()
+        optionDto.setContent(OPTION_1_CONTENT)
+        optionDto.setCorrect(true)
+        def options = new ArrayList<OptionDto>()
+        options.add(optionDto)
+        question1.setOptions(options)
+
+        questionRepository.save(question1)
     }
 
     def "user that created tournament cancels it"() {
@@ -74,7 +109,7 @@ class CancelTournamentTest extends SpockTest {
         tournamentRepository.count() == 1L
     }
 
-    def "user that created tournament tries to cancel it after has ended"() {
+    def "user that created tournament tries to cancel it after has ended with no answers"() {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_TODAY)
@@ -84,8 +119,31 @@ class CancelTournamentTest extends SpockTest {
         tournamentService.cancelTournament(user.getId(), tournamentDto)
 
         then:
+        tournamentRepository.count() == 1L
+        def result = tournamentRepository.findAll().get(0)
+        result.isCanceled()
+    }
+
+    def "user that created tournament tries to cancel it with answers"() {
+        given: "a tournament"
+        tournamentDto.setStartTime(STRING_DATE_TODAY)
+        tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
+
+        and: "join a tournament"
+        tournamentService.joinTournament(user.getId(), tournamentDto, "")
+
+        and: "solve a tournament"
+        tournamentService.solveQuiz(user.getId(), tournamentDto)
+
+        and: "is now closed"
+        tournamentDto.setEndTime(STRING_DATE_TODAY)
+
+        when:
+        tournamentService.cancelTournament(user.getId(), tournamentDto)
+
+        then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_ALREADY_CLOSED
+        exception.getErrorMessage() == TOURNAMENT_IS_OPEN
         tournamentRepository.count() == 1L
     }
 

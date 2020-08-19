@@ -44,7 +44,7 @@ public class Tournament  {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "topicConjunction_id")
     private TopicConjunction topicConjunction;
 
@@ -181,10 +181,14 @@ public class Tournament  {
         }
     }
 
-    public void checkCanChange() {
+    public void checkCanChange(Integer numberOfAnswers) {
         if (this.getStartTime().isBefore(DateHandler.now())) {
-            if (this.getEndTime().isBefore(DateHandler.now()))
+            if (this.getEndTime().isBefore(DateHandler.now())) {
+                if (numberOfAnswers == 0) {
+                    return;
+                }
                 throw new TutorException(TOURNAMENT_ALREADY_CLOSED, getId());
+            }
             throw new TutorException(TOURNAMENT_IS_OPEN, getId());
         }
     }
