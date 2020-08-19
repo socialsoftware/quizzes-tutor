@@ -39,7 +39,8 @@ public class User implements UserDetails, DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean active;
+    @Column(columnDefinition = "boolean default false")
+    private Boolean active;
     
     @Column(unique=true)
     private String username;

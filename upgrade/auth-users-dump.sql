@@ -1,2 +1,5 @@
-ALTER TABLE Users  ADD COLUMN Active character varying(255);
-UPDATE Users SET Active = true;
+ALTER TABLE Users ADD COLUMN Active boolean;
+UPDATE Users SET Active = CASE
+															WHEN username LIKE 'ist%' THEN TRUE
+															ELSE FALSE
+													END;
