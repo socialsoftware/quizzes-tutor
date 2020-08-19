@@ -13,6 +13,19 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:10.8
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: tutordb
+        ports:
+        # will assign a random free host port
+        - 5432:5432
+        # needed because the postgres container does not provide a healthcheck
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
     - uses: actions/checkout@v2
@@ -40,10 +53,26 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
+        
+    - name: Run integration tests
+      working-directory: ./backend
+      run: mvn clean -Ptest-int integration-test
+      env:
+        PSQL_INT_TEST_DB_NAME: "tutordb"
+        PSQL_INT_TEST_DB_USERNAME: "postgres"
+        PSQL_INT_TEST_DB_PASSWORD: "postgres"
+        PSQL_INT_TEST_DB_HOST: "localhost"
+        PSQL_INT_TEST_DB_PORT: "5432"
 
     - name: Run backend server
       working-directory: ./backend
-      run: mvn clean -Ptest spring-boot:run &
+      run: mvn clean -Ptest-int spring-boot:run &
+      env:
+        PSQL_INT_TEST_DB_NAME: "tutordb"
+        PSQL_INT_TEST_DB_USERNAME: "postgres"
+        PSQL_INT_TEST_DB_PASSWORD: "postgres"
+        PSQL_INT_TEST_DB_HOST: "localhost"
+        PSQL_INT_TEST_DB_PORT: "5432"
       
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
@@ -55,4 +84,8 @@ jobs:
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        
+        cypress_psql_db_name: "tutordb"
+        cypress_psql_db_username: "postgres"
+        cypress_psql_db_password: "postgres"
+        cypress_psql_db_host: "localhost"
+        cypress_psql_db_port: "5432"        
