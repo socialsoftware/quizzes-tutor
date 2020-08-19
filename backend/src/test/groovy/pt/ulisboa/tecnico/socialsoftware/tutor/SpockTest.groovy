@@ -28,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -175,6 +176,9 @@ class SpockTest extends Specification {
 
     @Autowired
     UserService userService
+
+    @Autowired
+    AuthUserRepository authUserRepository
 
     @Autowired
     UserServiceApplicational userServiceApplicational

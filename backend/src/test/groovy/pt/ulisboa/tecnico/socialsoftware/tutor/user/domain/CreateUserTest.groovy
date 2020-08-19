@@ -261,6 +261,18 @@ class CreateUserTest extends SpockTest {
         courseExecution.getUsers().size() == previousNumberOfUsers - 1
     }
 
+    def "add AuthUser" (){
+        given:
+        def authUser = new AuthUser()
+        authUserRepository.save(authUser)
+
+        when:
+        user.setAuthUser(authUser)
+
+        then:
+        user.authUser.user.id == user.id
+    }
+
     @Unroll
     def "get user authorities" (){
         given:

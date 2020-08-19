@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -72,6 +73,9 @@ public class User implements UserDetails, DomainEntity {
 
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    private AuthUser authUser;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
@@ -230,6 +234,15 @@ public class User implements UserDetails, DomainEntity {
 
     public String getConfirmationToken() {
         return confirmationToken;
+    }
+
+    public AuthUser getAuthUser() {
+        return authUser;
+    }
+
+    public void setAuthUser(AuthUser authUser) {
+        this.authUser = authUser;
+        authUser.setUser(this);
     }
 
     public void checkConfirmationToken(String token) {
