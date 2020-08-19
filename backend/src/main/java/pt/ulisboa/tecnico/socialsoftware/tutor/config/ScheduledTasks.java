@@ -49,7 +49,7 @@ public class ScheduledTasks {
 		userService.resetDemoStudents();
 		quizService.resetDemoQuizzes();
 		topicService.resetDemoTopics();
-		questionSubmissionService.resetDemoQuestionSubmissions();
 		assessmentService.resetDemoAssessments();
-    }
+		questionSubmissionService.resetDemoQuestionSubmissions();
+	}
 }

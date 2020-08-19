@@ -24,35 +24,19 @@ public class QuestionSubmissionController {
 
     @PostMapping(value = "/submissions/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public QuestionSubmissionDto createQuestionSubmission(Principal principal, @PathVariable int executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if (user == null)
-            throw new TutorException(AUTHENTICATION_ERROR);
-        
+    public QuestionSubmissionDto createQuestionSubmission(@PathVariable int executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         return questionSubmissionService.createQuestionSubmission(questionSubmissionDto);
     }
 
     @PostMapping("/submissions/{executionId}/reviews")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or (hasRole('ROLE_STUDENT') and hasPermission(#reviewDto.getQuestionSubmissionId(),'SUBMISSION.ACCESS'))) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public ReviewDto createReview(Principal principal, @PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if (user == null)
-            throw new TutorException(AUTHENTICATION_ERROR);
-
+    public ReviewDto createReview(@PathVariable int executionId, @Valid @RequestBody ReviewDto reviewDto) {
         return questionSubmissionService.createReview(reviewDto);
     }
 
     @PutMapping("/submissions/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionDto.getId(),'SUBMISSION.ACCESS') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public QuestionSubmissionDto updateQuestionSubmission(Principal principal, @PathVariable Integer executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        if (user == null)
-            throw new TutorException(AUTHENTICATION_ERROR);
-
-        questionSubmissionDto.setUserId(user.getId());
+    public QuestionSubmissionDto updateQuestionSubmission(@PathVariable Integer executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
         return this.questionSubmissionService.updateQuestionSubmission(questionSubmissionDto.getId(), questionSubmissionDto);
     }
 

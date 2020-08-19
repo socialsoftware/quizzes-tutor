@@ -70,6 +70,7 @@ public class QuestionSubmission {
         this.courseExecution = null;
         this.user = null;
 
-        getReviews().clear();
+        question.remove();
+        getReviews().forEach(Review::remove);
     }
 }

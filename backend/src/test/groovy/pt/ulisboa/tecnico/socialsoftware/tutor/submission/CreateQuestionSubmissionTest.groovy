@@ -67,20 +67,6 @@ class CreateQuestionSubmissionTest extends SpockTest{
         student.getEnrolledCoursesAcronyms().contains(courseExecution.getAcronym())
     }
 
-    def "user is not a student"(){
-        given: "a QuestionSubmissionDto for a teacher"
-        def questionSubmissionDto = new QuestionSubmissionDto()
-        questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
-        questionSubmissionDto.setUserId(teacher.getId())
-        questionSubmissionDto.setQuestion(questionDto)
-
-        when: questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.USER_NOT_STUDENT
-    }
-
     @Unroll
     def "invalid arguments: userId=#userId | question#question | courseExecutionIdw=#courseExecutionId || errorMessage"(){
         given: "a QuestionSubmissionDto"

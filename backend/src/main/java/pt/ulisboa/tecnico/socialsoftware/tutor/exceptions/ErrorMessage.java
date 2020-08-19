@@ -75,7 +75,6 @@ public enum ErrorMessage {
     QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
     QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),
     QUESTION_SUBMISSION_MISSING_COURSE("Question submission is not assigned to a course"),
-    USER_NOT_STUDENT("User %s is not a student"),
     REVIEW_MISSING_COMMENT("Review must have comment"),
     REVIEW_MISSING_QUESTION_SUBMISSION("Review is missing associated question submission"),
     REVIEW_MISSING_USER("Review is missing associated user"),

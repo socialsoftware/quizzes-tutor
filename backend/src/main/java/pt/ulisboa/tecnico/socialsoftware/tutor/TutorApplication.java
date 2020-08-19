@@ -60,7 +60,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         userService.resetDemoStudents();
         quizService.resetDemoQuizzes();
         topicService.resetDemoTopics();
-        questionSubmissionService.resetDemoQuestionSubmissions();
         assessmentService.resetDemoAssessments();
+        questionSubmissionService.resetDemoQuestionSubmissions();
     }
 }

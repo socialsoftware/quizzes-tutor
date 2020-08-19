@@ -79,6 +79,7 @@ class CreateReviewTest extends SpockTest{
 
         when:
         questionSubmissionService.createReview(reviewDto)
+
         then: "exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_REVIEW_QUESTION_SUBMISSION

@@ -65,7 +65,7 @@ public class QuestionSubmissionService {
 
         Question question = createQuestion(courseExecution.getCourse(), questionSubmissionDto.getQuestion());
 
-        User user = getStudent(questionSubmissionDto.getUserId());
+        User user = getUser(questionSubmissionDto.getUserId());
 
         QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, user);
 
@@ -95,9 +95,7 @@ public class QuestionSubmissionService {
     public QuestionSubmissionDto updateQuestionSubmission(Integer questionSubmissionId, QuestionSubmissionDto questionSubmissionDto) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
-        User user = getStudent(questionSubmissionDto.getUserId());
-
-        if(user.isStudent() && questionSubmission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
+        if (questionSubmission.getQuestion().getStatus() != Question.Status.IN_REVISION) {
             throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
         }
 
@@ -110,7 +108,7 @@ public class QuestionSubmissionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateQuestionSubmissionTopics(Integer questionSubmissionId, TopicDto[] topics) {
-        Integer questionId = questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
+        Integer questionId = questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
 
         questionService.updateQuestionTopics(questionId, topics);
     }
@@ -123,34 +121,20 @@ public class QuestionSubmissionService {
         QuestionSubmission questionSubmission = questionSubmissionRepository.findById(questionSubmissionId).orElseThrow(() -> new TutorException(QUESTION_SUBMISSION_NOT_FOUND, questionSubmissionId));
         Question question = questionRepository.findById(questionSubmission.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSubmission.getQuestion().getId()));
 
-        if(!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
+        if (!questionSubmission.getReviews().isEmpty() || !question.getStatus().equals(Question.Status.IN_REVISION)) {
             throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
-        } else {
-            removeQuestionSubmission(questionSubmission.getId());
-            question.remove();
-            questionRepository.delete(question);
         }
+
+        deleteQuestionSubmission(questionSubmission, question);
     }
 
-    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeQuestionSubmission(Integer questionSubmissionId) {
-        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
-
-        removeReviews(questionSubmission);
-
+    public void deleteQuestionSubmission(QuestionSubmission questionSubmission, Question question) {
         questionSubmission.remove();
+        questionSubmission.getReviews().forEach(review -> reviewRepository.delete(review));
+        questionRepository.delete(question);
         questionSubmissionRepository.delete(questionSubmission);
-    }
-
-    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeReviews(QuestionSubmission questionSubmission) {
-        List<Review> reviews = new ArrayList<>(reviewRepository.findQuestionSubmissionReviews(questionSubmission.getId()));
-        for (Review review : reviews) {
-            review.remove();
-            reviewRepository.delete(review);
-        }
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
@@ -164,21 +148,21 @@ public class QuestionSubmissionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {
-        return questionSubmissionRepository.findQuestionSubmissions(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.findQuestionSubmissionsByUserAndCourseExecution(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId) {
-        return questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseExecutionId).stream().map(QuestionSubmissionDto::new)
+        return questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<ReviewDto> getQuestionSubmissionReviews(Integer questionSubmissionId) {
-        return reviewRepository.findQuestionSubmissionReviews(questionSubmissionId).stream().map(ReviewDto::new)
+        return reviewRepository.findReviewsBySubmissionId(questionSubmissionId).stream().map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -191,8 +175,7 @@ public class QuestionSubmissionService {
         List<UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new ArrayList<>();
 
         for (User student: students) {
-            List<QuestionSubmissionDto> questionSubmissions = student.getQuestionSubmissions().stream().map(QuestionSubmissionDto::new).collect(Collectors.toList());
-            userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student, questionSubmissions));
+            userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student));
         }
 
         userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
@@ -205,15 +188,8 @@ public class QuestionSubmissionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuestionSubmissions() {
-        questionSubmissionRepository.findCourseExecutionQuestionSubmissions(courseService.getDemoCourse().getCourseExecutionId())
-                .stream()
-                .skip(2)
-                .forEach( questionSubmission -> {
-                    Question question = questionRepository.findById(questionSubmission.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionSubmission.getQuestion().getId()));
-                    this.removeQuestionSubmission(questionSubmission.getId());
-                    question.remove();
-                    questionRepository.delete(question);
-                });
+        questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseService.getDemoCourse().getCourseExecutionId())
+                .forEach( questionSubmission -> deleteQuestionSubmission(questionSubmission, questionSubmission.getQuestion()));
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
@@ -247,13 +223,6 @@ public class QuestionSubmissionService {
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
-    private User getStudent(Integer userId) {
-        User user = getUser(userId);
-        if (!user.isStudent())
-            throw new TutorException(USER_NOT_STUDENT, user.getUsername());
-        return user;
-    }
-
     private User getUser(Integer userId) {
         return userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
     }
@@ -268,7 +237,7 @@ public class QuestionSubmissionService {
 
     private void updateQuestionStatus(Review.Status status, Integer questionId) {
         Question question = getQuestion(questionId);
-        if(question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW) {
+        if (question.getStatus() == Question.Status.IN_REVISION || question.getStatus() == Question.Status.IN_REVIEW) {
             if (status != Review.Status.COMMENT) {
                 question.setStatus(Question.Status.valueOf(status.name()));
             }

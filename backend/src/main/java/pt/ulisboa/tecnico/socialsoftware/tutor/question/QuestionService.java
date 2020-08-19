@@ -84,7 +84,7 @@ public class QuestionService {
           backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
-        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId);
+        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
     }
 
     @Retryable(
@@ -101,7 +101,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isSubmittedQuestion()).map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -286,7 +286,7 @@ public class QuestionService {
         QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
         if (questionSubmission != null) {
-            questionSubmissionService.removeQuestionSubmission(questionSubmission.getId());
+            questionSubmissionService.deleteQuestionSubmission(questionSubmission, question);
         }
 
         for (Option option : question.getOptions()) {

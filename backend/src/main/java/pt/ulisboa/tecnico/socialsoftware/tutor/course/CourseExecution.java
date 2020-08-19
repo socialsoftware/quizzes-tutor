@@ -174,7 +174,7 @@ public class CourseExecution implements DomainEntity {
 
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
-        questionSubmissions.forEach(submission -> submission.getCourseExecution().remove());
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
     public int getNumberOfTeachers() {

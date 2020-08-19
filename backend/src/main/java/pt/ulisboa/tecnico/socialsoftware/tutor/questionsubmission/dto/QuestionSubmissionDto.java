@@ -17,7 +17,7 @@ public class QuestionSubmissionDto implements Serializable {
     public QuestionSubmissionDto(QuestionSubmission questionSubmission){
         setId(questionSubmission.getId());
         setCourseExecutionId(questionSubmission.getCourseExecution().getId());
-        if(questionSubmission.getQuestion() != null)
+        if (questionSubmission.getQuestion() != null)
             setQuestion(new QuestionDto(questionSubmission.getQuestion()));
         setUserId(questionSubmission.getUser().getId());
         setName(questionSubmission.getUser().getName());

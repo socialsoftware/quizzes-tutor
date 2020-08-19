@@ -315,7 +315,7 @@ public class Question implements DomainEntity {
         getTopics().clear();
     }
 
-    public boolean isSubmittedQuestion() {
-        return !Arrays.asList(Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REMOVED).contains(status);
+    public boolean isInSubmission() {
+        return status == Status.IN_REVIEW || status == Status.IN_REVISION || status == Status.REJECTED;
     }
 }
