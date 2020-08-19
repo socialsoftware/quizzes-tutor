@@ -188,7 +188,8 @@ public class QuizAnswer implements DomainEntity {
         quiz.getQuizAnswers().remove(this);
         quiz = null;
 
-        questionAnswers.clear();
+        List<QuestionAnswer> questionAnswersTmp = new ArrayList(questionAnswers);
+        questionAnswersTmp.forEach(QuestionAnswer::remove);
     }
 
     public boolean openToAnswer() {

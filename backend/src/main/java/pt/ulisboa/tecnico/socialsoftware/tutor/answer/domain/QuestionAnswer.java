@@ -36,7 +36,7 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "answer_details_id")
     private AnswerDetails answerDetails;
 
