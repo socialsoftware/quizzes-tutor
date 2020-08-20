@@ -1,5 +1,157 @@
 ALTER TABLE Users ADD COLUMN Active boolean;
 UPDATE Users SET Active = CASE
-                              WHEN username LIKE 'ist%' THEN TRUE
-                              ELSE FALSE
-                          END;
+ 	WHEN username LIKE 'ist%' THEN TRUE
+	ELSE FALSE
+END;
+
+
+CREATE TABLE auth_users (
+	id integer NOT NULL,
+	user_id integer,
+	PRIMARY KEY (id),	
+	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+
+ALTER TABLE users  ADD COLUMN auth_user_id integer;
+ALTER TABLE users ADD CONSTRAINT fk_auth_user FOREIGN KEY (auth_user_id) REFERENCES auth_users(id); 
+
+CREATE SEQUENCE auth_users_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+ALTER SEQUENCE auth_users_id_seq OWNED BY auth_users.id;
+
+ALTER TABLE ONLY auth_users ALTER COLUMN id SET DEFAULT nextval('auth_users_id_seq'::regclass);
+
+SELECT pg_catalog.setval('public.auth_users_id_seq', 737, true);
+
+
+COPY auth_users (user_id) FROM stdin;
+616
+617
+618
+619
+620
+621
+622
+623
+624
+625
+626
+627
+628
+629
+630
+631
+632
+633
+634
+635
+636
+637
+638
+639
+640
+641
+642
+643
+644
+645
+646
+647
+648
+649
+650
+651
+652
+653
+654
+655
+656
+657
+658
+659
+660
+661
+662
+663
+664
+665
+666
+667
+668
+669
+670
+671
+672
+673
+674
+675
+676
+677
+678
+679
+680
+681
+682
+683
+684
+685
+686
+687
+688
+689
+690
+691
+692
+693
+694
+695
+696
+697
+698
+699
+700
+701
+702
+703
+704
+705
+706
+707
+708
+709
+710
+711
+712
+713
+714
+715
+716
+717
+718
+719
+720
+721
+722
+723
+724
+725
+726
+727
+728
+729
+730
+731
+732
+733
+734
+735
+736
+737
+\.
