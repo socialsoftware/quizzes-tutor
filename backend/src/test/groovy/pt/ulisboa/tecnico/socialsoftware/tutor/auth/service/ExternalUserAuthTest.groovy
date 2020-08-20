@@ -9,12 +9,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
 @DataJpaTest
 class ExternalUserAuthTest extends SpockTest {
 
     User user
+    AuthUser authUser
     Course course
     CourseExecution courseExecution
 
@@ -29,6 +31,8 @@ class ExternalUserAuthTest extends SpockTest {
         user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         courseExecution.addUser(user)
         userRepository.save(user)
+        authUser = new AuthUser(user)
+        authUserRepository.save(authUser)
     }
 
     def "user logins successfully" () {

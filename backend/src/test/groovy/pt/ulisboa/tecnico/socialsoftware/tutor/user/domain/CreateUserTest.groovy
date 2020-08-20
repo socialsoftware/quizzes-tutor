@@ -72,7 +72,6 @@ class CreateUserTest extends SpockTest {
         when:
         def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
 
-
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
@@ -88,7 +87,7 @@ class CreateUserTest extends SpockTest {
         result.getUsername() == USER_1_USERNAME
         result.getEmail() == USER_1_EMAIL
         result.getRole() == User.Role.STUDENT
-        result.isActive() == false
+        !result.isActive()
         !result.isAdmin()
     }
 
@@ -259,18 +258,6 @@ class CreateUserTest extends SpockTest {
 
         then:
         courseExecution.getUsers().size() == previousNumberOfUsers - 1
-    }
-
-    def "add AuthUser" (){
-        given:
-        def authUser = new AuthUser()
-        authUserRepository.save(authUser)
-
-        when:
-        user.setAuthUser(authUser)
-
-        then:
-        user.authUser.user.id == user.id
     }
 
     @Unroll

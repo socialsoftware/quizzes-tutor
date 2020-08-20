@@ -96,7 +96,6 @@ public class User implements UserDetails, DomainEntity {
         setActive(isActive);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
-
     }
 
     @Override
@@ -243,7 +242,6 @@ public class User implements UserDetails, DomainEntity {
 
     public void setAuthUser(AuthUser authUser) {
         this.authUser = authUser;
-        authUser.setUser(this);
     }
 
     public void checkConfirmationToken(String token) {

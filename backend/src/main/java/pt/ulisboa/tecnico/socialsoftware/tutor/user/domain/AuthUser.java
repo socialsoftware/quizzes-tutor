@@ -17,7 +17,11 @@ public class AuthUser implements DomainEntity {
     @OneToOne
     private User user;
 
-    public AuthUser() {}
+    public  AuthUser() {}
+
+    public AuthUser(User user) {
+        setUser(user);
+    }
 
     public User getUser() {
         return user;
@@ -25,6 +29,7 @@ public class AuthUser implements DomainEntity {
 
     public void setUser(User user) {
         this.user = user;
+        this.user.setAuthUser(this);
     }
 
     @Override

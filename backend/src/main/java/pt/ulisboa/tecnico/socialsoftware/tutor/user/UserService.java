@@ -25,7 +25,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +44,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private AuthUserRepository authUserRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -85,7 +90,8 @@ public class UserService {
 
         User user = new User(name, username, email, role, true, false);
         userRepository.save(user);
-        user.setActive(true);
+        AuthUser authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
         user.setKey(user.getId());
         return user;
     }
@@ -271,6 +277,8 @@ public class UserService {
                 .orElseGet(() -> {
                     User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), false, false);
                     userRepository.save(createdUser);
+                    AuthUser authUser = new AuthUser(createdUser);
+                    authUserRepository.save(authUser);
                     return createdUser;
                 });
     }
