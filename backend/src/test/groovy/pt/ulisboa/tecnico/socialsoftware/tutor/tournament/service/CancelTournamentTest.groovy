@@ -57,7 +57,6 @@ class CancelTournamentTest extends SpockTest {
         assessmentRepository.save(assessment)
 
         tournamentDto = new TournamentDto()
-        tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentDto.setState(false)
@@ -84,6 +83,7 @@ class CancelTournamentTest extends SpockTest {
 
     def "user that created tournament cancels it"() {
         given:
+        tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         when:
@@ -149,6 +149,7 @@ class CancelTournamentTest extends SpockTest {
 
     def "user that did not created tournament cancels it"() {
         given:
+        tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
 
         and: "a new user"
