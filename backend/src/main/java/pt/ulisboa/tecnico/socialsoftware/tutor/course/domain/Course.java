@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.course;
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;

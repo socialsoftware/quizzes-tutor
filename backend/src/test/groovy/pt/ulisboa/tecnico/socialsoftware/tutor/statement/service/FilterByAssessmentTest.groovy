@@ -25,23 +25,23 @@ class FilterByAssessmentTest extends SpockTest {
     def setup() {
         topic1 = new Topic()
         topic1.setName(TOPIC_1_NAME)
-        topic1.setCourse(course)
+        topic1.setCourse(externalCourse)
         topic1 = topicRepository.save(topic1)
 
         topic2 = new Topic()
         topic2.setName(TOPIC_2_NAME)
-        topic2.setCourse(course)
+        topic2.setCourse(externalCourse)
         topic2 = topicRepository.save(topic2)
 
         topic3 = new Topic()
         topic3.setName(TOPIC_3_NAME)
-        topic3.setCourse(course)
+        topic3.setCourse(externalCourse)
         topic3 = topicRepository.save(topic3)
 
         questionList = new ArrayList<>()
 
         questionTopic1 = new Question()
-        questionTopic1.setCourse(course)
+        questionTopic1.setCourse(externalCourse)
         questionTopic1.setTitle(QUESTION_1_TITLE)
         questionTopic1.setContent(QUESTION_1_CONTENT)
         questionTopic1.setKey(1)
@@ -49,7 +49,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic1)
 
         questionTopic2 = new Question()
-        questionTopic2.setCourse(course)
+        questionTopic2.setCourse(externalCourse)
         questionTopic2.setTitle(QUESTION_2_TITLE)
         questionTopic2.setContent(QUESTION_2_CONTENT)
         questionTopic2.setKey(2)
@@ -57,7 +57,7 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic2)
 
         questionTopic1_2 = new Question()
-        questionTopic1_2.setCourse(course)
+        questionTopic1_2.setCourse(externalCourse)
         questionTopic1_2.setTitle(QUESTION_3_TITLE)
         questionTopic1_2.setContent(QUESTION_3_CONTENT)
         questionTopic1_2.setKey(3)
@@ -66,14 +66,14 @@ class FilterByAssessmentTest extends SpockTest {
         questionList.add(questionTopic1_2)
 
         questionNoTopic = new Question()
-        questionNoTopic.setCourse(course)
+        questionNoTopic.setCourse(externalCourse)
         questionNoTopic.setTitle(QUESTION_4_TITLE)
         questionNoTopic.setContent(QUESTION_4_CONTENT)
         questionNoTopic.setKey(4)
         questionList.add(questionNoTopic)
 
         questionTopic1Again = new Question()
-        questionTopic1Again.setCourse(course)
+        questionTopic1Again.setCourse(externalCourse)
         questionTopic1Again.setTitle(QUESTION_5_TITLE)
         questionTopic1Again.setContent(QUESTION_5_CONTENT)
         questionTopic1Again.setKey(5)
@@ -85,7 +85,7 @@ class FilterByAssessmentTest extends SpockTest {
         given: 'assessment with topic 1'
         def assessmentTopic1 = new Assessment()
         assessmentTopic1.setTitle(ASSESSMENT_1_TITLE)
-        assessmentTopic1.setCourseExecution(courseExecution)
+        assessmentTopic1.setCourseExecution(externalCourseExecution)
         assessmentRepository.save(assessmentTopic1)
 
         def topicConjunction1 = new TopicConjunction()
@@ -107,7 +107,7 @@ class FilterByAssessmentTest extends SpockTest {
     def "check assessment topic 1 and 2"() {
         given: 'assessment with topic 1 and 2'
         def assessmentTopic1_and_2 = new Assessment()
-        assessmentTopic1_and_2.setCourseExecution(courseExecution)
+        assessmentTopic1_and_2.setCourseExecution(externalCourseExecution)
         assessmentTopic1_and_2.setTitle(ASSESSMENT_2_TITLE)
         assessmentRepository.save(assessmentTopic1_and_2)
 
@@ -131,7 +131,7 @@ class FilterByAssessmentTest extends SpockTest {
         given: 'assessment with topic 1 or 2'
         def assessmentTopic1_or_2 = new Assessment()
         assessmentTopic1_or_2.setTitle(ASSESSMENT_1_TITLE)
-        assessmentTopic1_or_2.setCourseExecution(courseExecution)
+        assessmentTopic1_or_2.setCourseExecution(externalCourseExecution)
         assessmentRepository.save(assessmentTopic1_or_2)
 
         def topicConjunction1 = new TopicConjunction()

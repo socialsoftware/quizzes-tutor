@@ -24,6 +24,13 @@ public enum ErrorMessage {
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
+    COURSE_EXECUTION_NOT_EXTERNAL("The course execution with id %d is not external"),
+    INVALID_COURSE_EXECUTION_REQUEST_PARAMETER("The received course execution parameter \"%s\" is invalid"),
+    INVALID_EMAIL("The mail %s is invalid."),
+    NO_USER_NAME("User requires a name"),
+    NO_USER_USERNAME("User requires a username"),
+    INVALID_PASSWORD("The password %s is invalid."),
+    INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
@@ -33,7 +40,15 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
+    USER_ALREADY_ACTIVE("User is already active with username %s"),
+    USER_IS_INACTIVE("User state is inactive: username %s"),
+    USER_IS_ACTIVE("User state is active: username %s"),
+    INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
+    EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
+    INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
+    INVALID_PARAMETERS("Invalid parameters"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
@@ -74,7 +89,10 @@ public enum ErrorMessage {
 
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
+    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d");
 
     public final String label;
 

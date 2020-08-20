@@ -3,22 +3,29 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_ENROLLED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class AuthService {
@@ -30,6 +37,9 @@ public class AuthService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Retryable(
             value = { SQLException.class },
@@ -47,17 +57,20 @@ public class AuthService {
 
         // If user is student and is not in db
         if (user == null && !activeAttendingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.STUDENT);
+            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT);
         }
 
         // If user is teacher and is not in db
         if (user == null && !fenixTeachingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, User.Role.TEACHER);
+            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER);
         }
 
         if (user == null) {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
+
+        if (user.getEmail() == null)
+            user.setEmail(fenix.getPersonEmail());
 
         user.setLastAccess(DateHandler.now());
 
@@ -107,14 +120,38 @@ public class AuthService {
         throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthDto externalUserAuth(String email, String password) {
+        User user = userService.findByUsername(email);
+
+        if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
+
+        if (password == null ||
+                !passwordEncoder.matches(password, user.getPassword()))
+            throw new TutorException(INVALID_PASSWORD, password);
+
+        user.setLastAccess(DateHandler.now());
+
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+    }
+
+
     @Retryable(
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto demoStudentAuth() {
-//         User user = this.userService.getDemoStudent();
-        User user = this.userService.createDemoStudent();
+    public AuthDto demoStudentAuth(Boolean createNew) {
+        User user;
+
+        if (createNew == null || !createNew)
+            user = this.userService.getDemoStudent();
+        else
+            user = this.userService.createDemoStudent();
 
         return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
     }
@@ -149,5 +186,35 @@ public class AuthService {
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
+        User user = userService.findByUsername(externalUserDto.getUsername());
+
+        if (user == null)
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
+
+        if (user.isActive())
+            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
+
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
+            throw new TutorException(INVALID_PASSWORD);
+
+        try {
+            user.checkConfirmationToken(externalUserDto.getConfirmationToken());
+        }
+        catch (TutorException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
+                userService.generateConfirmationToken(user);
+                return new ExternalUserDto(user);
+            }
+            else throw new TutorException(e.getErrorMessage());
+        }
+
+        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+        user.setActive(true);
+
+        return new ExternalUserDto(user);
     }
 }
