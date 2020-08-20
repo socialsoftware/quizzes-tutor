@@ -1,15 +1,15 @@
 ## Datasource
-spring.datasource.url=jdbc:postgresql://localhost:5432/tutortestdb
-spring.datasource.username=
-spring.datasource.password=
+spring.datasource.url=jdbc:postgresql://<DATABASE HOST>:<DATABASE PORT>/<DATABASE NAME>
+spring.datasource.username= <DATABASE USERNAME>
+spring.datasource.password= <DATABASE PASSWORD>
 
 ## Jpa
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
 
 ## Resources
-figures.dir=./folder
-export.dir=./folder
-load.dir=./folder
+figures.dir=${maven.basedir}/../data/images/
+export.dir=${maven.basedir}/../data/export/
+load.dir=${maven.basedir}/../data/load/
 
 ## Fenix oauth
 oauth.consumer.key=<FENIX CLIENT KEY>
