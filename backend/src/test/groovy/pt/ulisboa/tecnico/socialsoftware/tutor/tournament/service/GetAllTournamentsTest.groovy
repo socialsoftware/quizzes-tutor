@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
@@ -12,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class GetAllTournamentsTest extends SpockTest {
+    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+
     def topic1
     def topic2
     def topics = new HashSet<Integer>()

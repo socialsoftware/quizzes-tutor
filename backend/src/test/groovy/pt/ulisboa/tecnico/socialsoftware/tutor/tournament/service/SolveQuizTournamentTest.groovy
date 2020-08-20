@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -18,6 +19,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class SolveQuizTournamentTest extends SpockTest {
+    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+
     def question1
     def topic1
     def topic2

@@ -17,6 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class QuizTournamentGenerateTest extends SpockTest {
+    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+
     def question1
     def topic1
     def topic2

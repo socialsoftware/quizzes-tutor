@@ -20,6 +20,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class UpdateTournamentTest extends SpockTest {
+    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+
     def question1
     def topic1
     def topic2
