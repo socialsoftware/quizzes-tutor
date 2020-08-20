@@ -72,7 +72,7 @@
                 <v-list-item-title>Question Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/topics">
+            <v-list-item to="/management/topics" data-cy="manageTopicsMenuButton">
               <v-list-item-action>
                 <v-icon>category</v-icon>
               </v-list-item-action>

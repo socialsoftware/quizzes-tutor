@@ -59,7 +59,10 @@ jobs:
     - name: Run backend server
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &
-
+      env:
+        PSQL_INT_TEST_DB_USERNAME: "postgres"
+        PSQL_INT_TEST_DB_PASSWORD: "postgres"
+             
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
       with:
@@ -70,3 +73,16 @@ jobs:
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        cypress_psql_db_name: "tutortestdb"
+        cypress_psql_db_username: "postgres"
+        cypress_psql_db_password: "postgres"
+        cypress_psql_db_host: "localhost"
+        cypress_psql_db_port: "5432"       
+        
+        
+#    - name: Run integration tests
+#      working-directory: ./backend
+#      run: mvn clean -Ptest-int integration-test
+#      env:
+#        PSQL_INT_TEST_DB_USERNAME: "postgres"
+#        PSQL_INT_TEST_DB_PASSWORD: "postgres"

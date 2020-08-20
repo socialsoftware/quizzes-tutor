@@ -114,7 +114,6 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
             <id>test-int</id>
             <properties>
