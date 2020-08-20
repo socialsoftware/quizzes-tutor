@@ -23,6 +23,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -74,6 +76,8 @@ class SpockTest extends Specification {
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
     public static final String QUIZ_TITLE = "Quiz title"
+
+    public static final String DISCUSSION_MESSAGE = "Discussion Message"
 
     @Autowired
     AuthService authService
@@ -143,6 +147,12 @@ class SpockTest extends Specification {
 
     @Autowired
     UserService userService
+
+    @Autowired
+    DiscussionRepository discussionRepository
+
+    @Autowired
+    DiscussionService discussionService
 
     Course course
     CourseExecution courseExecution
