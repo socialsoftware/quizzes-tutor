@@ -71,7 +71,16 @@ public enum ErrorMessage {
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
-
+    REPLY_MISSING_DATA("Missing information for reply"),
+    DISCUSSION_MISSING_DATA("Missing information for discussion"),
+    DISCUSSION_MISSING_USER("Missing user for discussion"),
+    DISCUSSION_NOT_STUDENT_CREATOR("Teacher cannot create discussion"),
+    DUPLICATE_DISCUSSION("Duplicate discussion for user id %d and question id %d"),
+    DUPLICATE_REPLY("Duplicate Reply for teacher: %d"),
+    QUESTION_NOT_ANSWERED("Question not answered with id %d"),
+    DISCUSSION_MISSING_MESSAGE("Missing message for discussion"),
+    DISCUSSION_DATE_MISSING("Date is missing!"),
+    DISCUSSION_MISSING_QUESTION("Missing question for discussion"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");

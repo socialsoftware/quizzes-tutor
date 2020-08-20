@@ -6,6 +6,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -22,6 +24,7 @@ import java.util.stream.Collectors;
                 @Index(name = "users_indx_0", columnList = "username")
         })
 public class User implements UserDetails, DomainEntity {
+
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -54,6 +57,12 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers = 0;
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Discussion> discussions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Reply> replies = new HashSet<>();
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -94,6 +103,38 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    public Set<Discussion> getDiscussions() {
+        return discussions;
+    }
+
+    public void setDiscussions(Set<Discussion> discussions) {
+        this.discussions = discussions;
+    }
+
+    public Set<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(Set<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
+    }
+
     @Override
     public String getUsername() {
         return username;
@@ -129,6 +170,10 @@ public class User implements UserDetails, DomainEntity {
 
     public Role getRole() {
         return role;
+    }
+
+    public void addReply(Reply reply) {
+        this.replies.add(reply);
     }
 
     public void setRole(Role role) {
@@ -283,6 +328,14 @@ public class User implements UserDetails, DomainEntity {
     public void setNumberOfCorrectInClassAnswers(Integer numberOfCorrectInClassAnswers) {
         this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
     }
+
+    public boolean checkQuestionAnswered(Question question) {
+        return getQuizAnswers().stream().flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getTimeTaken() != 0)
+                .map(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion()).collect(Collectors.toList())
+                .contains(question);
+    }
+
 
     public Integer getNumberOfCorrectStudentAnswers() {
         if (this.numberOfCorrectStudentAnswers == null)
