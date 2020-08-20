@@ -58,12 +58,9 @@ jobs:
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &
       env:
-        PSQL_INT_TEST_DB_NAME: "tutortestdb"
         PSQL_INT_TEST_DB_USERNAME: "postgres"
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
-        PSQL_INT_TEST_DB_HOST: "localhost"
-        PSQL_INT_TEST_DB_PORT: "5432"
-      
+             
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
       with:
@@ -85,8 +82,5 @@ jobs:
 #      working-directory: ./backend
 #      run: mvn clean -Ptest-int integration-test
 #      env:
-#        PSQL_INT_TEST_DB_NAME: "tutortestdb"
 #        PSQL_INT_TEST_DB_USERNAME: "postgres"
 #        PSQL_INT_TEST_DB_PASSWORD: "postgres"
-#        PSQL_INT_TEST_DB_HOST: "localhost"
-#        PSQL_INT_TEST_DB_PORT: "5432"
