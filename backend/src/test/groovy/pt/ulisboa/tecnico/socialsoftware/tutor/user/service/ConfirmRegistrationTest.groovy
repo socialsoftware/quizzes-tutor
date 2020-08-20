@@ -20,10 +20,9 @@ import java.time.LocalDateTime;
 
 @DataJpaTest
 class ConfirmRegistrationTest extends SpockTest {
-
-    Course course
-    CourseExecution courseExecution
-    ExternalUserDto externalUserDto
+    def course
+    def courseExecution
+    def externalUserDto
 
     @Autowired
     Mailer mailerMock
@@ -53,7 +52,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(USER_1_PASSWORD)
 
         when:
-        def result = authServiceApplcational.confirmRegistration(externalUserDto)
+        def result = authServiceApplicational.confirmRegistration(externalUserDto)
 
         then:"the user has a new password and matches"
         passwordEncoder.matches(USER_1_PASSWORD, result.getPassword())
@@ -66,10 +65,10 @@ class ConfirmRegistrationTest extends SpockTest {
     def "user is already active" () {
         given: "an active user"
         externalUserDto.setPassword(USER_1_PASSWORD)
-        authServiceApplcational.confirmRegistration(externalUserDto)
+        authServiceApplicational.confirmRegistration(externalUserDto)
 
         when:
-        authServiceApplcational.confirmRegistration(externalUserDto)
+        authServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
@@ -86,7 +85,7 @@ class ConfirmRegistrationTest extends SpockTest {
         user.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
 
         when:
-        def result = authServiceApplcational.confirmRegistration(externalUserDto)
+        def result = authServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         result.active == false
@@ -106,7 +105,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(password)
 
         when:
-        authServiceApplcational.confirmRegistration(externalUserDto)
+        authServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)

@@ -50,11 +50,12 @@ public class CourseDto implements Serializable {
         this.numberOfInactiveStudents = courseExecution.getNumberOfInactiveStudents();
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
-        if(courseExecution.getType().equals(Course.Type.EXTERNAL))
+        if (courseExecution.getType().equals(Course.Type.EXTERNAL)) {
             this.courseExecutionUsers = courseExecution.getUsers().stream()
                     .map(ExternalUserDto::new)
                     .sorted(Comparator.comparing(ExternalUserDto::getName))
                     .collect(Collectors.toList());
+        }
     }
 
     public CourseDto(String name, String acronym, String academicTerm) {

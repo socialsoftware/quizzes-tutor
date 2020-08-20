@@ -27,7 +27,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class User implements UserDetails, DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -538,8 +537,9 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void remove() {
-        if(active)
+        if (active) {
             throw new TutorException(USER_IS_ACTIVE, getUsername());
+        }
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
     }

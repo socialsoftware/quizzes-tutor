@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplcational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
@@ -108,7 +108,7 @@ class SpockTest extends Specification {
     AuthService authService
 
     @Autowired
-    AuthServiceApplcational authServiceApplcational
+    AuthServiceApplicational authServiceApplicational
 
     @Autowired
     AnswerService answerService
