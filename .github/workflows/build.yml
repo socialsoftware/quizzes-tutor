@@ -60,6 +60,13 @@ jobs:
       env:
         PSQL_INT_TEST_DB_USERNAME: "postgres"
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
+
+    - name: Run integration tests
+      working-directory: ./backend
+      run: mvn clean -Ptest-int integration-test
+      env:
+        PSQL_INT_TEST_DB_USERNAME: "postgres"
+        PSQL_INT_TEST_DB_PASSWORD: "postgres"
              
     - name: Run Cypress tests
       uses: cypress-io/github-action@v1
@@ -76,11 +83,4 @@ jobs:
         cypress_psql_db_password: "postgres"
         cypress_psql_db_host: "localhost"
         cypress_psql_db_port: "5432"       
-        
-        
-#    - name: Run integration tests
-#      working-directory: ./backend
-#      run: mvn clean -Ptest-int integration-test
-#      env:
-#        PSQL_INT_TEST_DB_USERNAME: "postgres"
-#        PSQL_INT_TEST_DB_PASSWORD: "postgres"
+
