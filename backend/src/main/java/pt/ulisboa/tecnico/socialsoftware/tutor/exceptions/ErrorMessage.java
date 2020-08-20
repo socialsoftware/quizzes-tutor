@@ -72,6 +72,19 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
+    QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
+    QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),
+    QUESTION_SUBMISSION_MISSING_COURSE("Question submission is not assigned to a course"),
+    USER_NOT_STUDENT("User %s is not a student"),
+    REVIEW_MISSING_COMMENT("Review must have comment"),
+    REVIEW_MISSING_QUESTION_SUBMISSION("Review is missing associated question submission"),
+    REVIEW_MISSING_USER("Review is missing associated user"),
+    INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
+    QUESTION_SUBMISSION_NOT_FOUND("Question submission not found with id %d"),
+    CANNOT_DELETE_REVIEWED_QUESTION("Question submission already in review or reviewed by teacher cannot be deleted"),
+    CANNOT_DELETE_SUBMITTED_QUESTION("Question submission can not be deleted by teacher"),
+    CANNOT_EDIT_REVIEWED_QUESTION("Question submission already in review by teacher cannot be edited"),
+    CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");

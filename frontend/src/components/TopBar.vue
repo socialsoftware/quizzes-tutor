@@ -61,6 +61,17 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item
+              to="/management/submissions"
+              data-cy="submissionTeacherMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-user-edit</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Question Submissions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/topics" data-cy="manageTopicsMenuButton">
               <v-list-item-action>
                 <v-icon>category</v-icon>
@@ -147,6 +158,17 @@
           </v-list>
         </v-menu>
 
+        <v-btn
+          to="/student/submissions"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="submissionStudentMenuButton"
+        >
+          Question Submissions
+          <v-icon>question_answer</v-icon>
+        </v-btn>
+
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
@@ -225,6 +247,14 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Submissions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/topics">
@@ -308,6 +338,20 @@
               <v-icon>done</v-icon>
             </v-list-item-action>
             <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>My Question Submissions</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/all-submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-users</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>All Question Submissions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

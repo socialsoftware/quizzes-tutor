@@ -118,7 +118,7 @@ export default class ShowStudentAnswersDialog extends Vue {
       width: '5%'
     },
     {
-      text: 'Submission Lag',
+      text: 'QuestionSubmission Lag',
       value: 'submissionLag',
       align: 'center',
       width: '5%'

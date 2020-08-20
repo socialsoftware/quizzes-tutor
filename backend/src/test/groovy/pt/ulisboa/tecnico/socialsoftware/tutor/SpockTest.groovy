@@ -16,13 +16,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -31,8 +35,10 @@ import java.time.LocalDateTime
 class SpockTest extends Specification {
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
+    public static final String USER_3_NAME = "User 3 Name"
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_3_USERNAME = "User 3 Username"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
@@ -74,6 +80,10 @@ class SpockTest extends Specification {
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
     public static final String QUIZ_TITLE = "Quiz title"
+
+    public static final String REVIEW_1_COMMENT = "Review Comment 1"
+    public static final String REVIEW_2_COMMENT = "Review Comment 2"
+    public static final String REVIEW_3_COMMENT = "Review Comment 3"
 
     @Autowired
     AuthService authService
@@ -144,7 +154,17 @@ class SpockTest extends Specification {
     @Autowired
     UserService userService
 
+    @Autowired
+    QuestionSubmissionService questionSubmissionService
+
+    @Autowired
+    QuestionSubmissionRepository questionSubmissionRepository
+
+    @Autowired
+    ReviewRepository reviewRepository
+
     Course course
+    @Shared
     CourseExecution courseExecution
 
     def setup() {

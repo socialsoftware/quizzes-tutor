@@ -16,14 +16,12 @@ jobs:
     
     services:
       postgres:
-        image: postgres:10.8
+        image: postgres:latest
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: test 
           POSTGRES_DB: tutortestdb
         ports:
-        # will assign a random free host port
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
@@ -53,7 +51,11 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
-
+        
+    - name: Populate DB
+      working-directory: ./frontend/tests/resources/cypress
+      run: psql tutortestdb < demo.sql
+          
     - name: Run backend server
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &

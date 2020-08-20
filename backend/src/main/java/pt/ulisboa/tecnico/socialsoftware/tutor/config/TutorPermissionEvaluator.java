@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -25,6 +26,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -91,6 +95,12 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     courseExecutionId = quizRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
                         return userHasThisExecution(userId, courseExecutionId);
+                    }
+                    return false;
+                case "SUBMISSION.ACCESS":
+                    Integer submittedUserId = questionSubmissionRepository.findUserIdByQuestionSubmissionId(id).orElse(null);
+                    if (submittedUserId != null) {
+                        return submittedUserId == userId;
                     }
                     return false;
                 default: return false;
