@@ -620,7 +620,7 @@ export default class RemoteServices {
   static async createReview(review: Review): Promise<Review> {
     return httpClient
       .post(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/reviews`,
+        `/submissions/${review.questionSubmissionId}/reviews?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`,
         review
       )
       .then(response => {
@@ -636,7 +636,7 @@ export default class RemoteServices {
   ): Promise<QuestionSubmission> {
     return httpClient
       .put(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+        `/submissions/${questionSubmission.id}`,
         questionSubmission
       )
       .then(response => {
