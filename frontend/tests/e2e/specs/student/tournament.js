@@ -8,11 +8,11 @@ describe('Student walkthrough', () => {
   afterEach(() => {
     cy.exec(
       'PGPASSWORD=' +
-      Cypress.env('PASS') +
+      Cypress.env('PSQL_INT_TEST_DB_PASSWORD') +
       ' psql -d ' +
-      Cypress.env('DBNAME') +
+      Cypress.env('PSQL_INT_TEST_DB_NAME') +
       ' -U ' +
-      Cypress.env('USER') +
+      Cypress.env('PSQL_INT_TEST_DB_USERNAME') +
       ' -h localhost -c "DELETE FROM topics_questions WHERE questions_id = 1389;' +
       ' DELETE FROM tournaments_participants;' +
       ' DELETE FROM tournaments;' +

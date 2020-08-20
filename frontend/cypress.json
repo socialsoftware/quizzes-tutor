@@ -6,8 +6,8 @@
   "supportFile": "tests/e2e/support/index.js",
   "projectId": "ou7bhq",
   "env": {
-    "USER": "tf",
-    "PASS": "123",
-    "DBNAME": "tutordb"
+    "PSQL_INT_TEST_DB_USERNAME": "tf",
+    "PSQL_INT_TEST_DB_PASSWORD": "123",
+    "PSQL_INT_TEST_DB_NAME": "tutordb"
   }
 }

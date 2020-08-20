@@ -108,11 +108,11 @@ Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
   cy.createTournament(numberOfQuestions);
   cy.exec(
     'PGPASSWORD=' +
-    Cypress.env('PASS') +
+    Cypress.env('PSQL_INT_TEST_DB_PASSWORD') +
     ' psql -d ' +
-    Cypress.env('DBNAME') +
+    Cypress.env('PSQL_INT_TEST_DB_NAME') +
     ' -U ' +
-    Cypress.env('USER') +
+    Cypress.env('PSQL_INT_TEST_DB_USERNAME') +
     ' -h localhost -c "UPDATE tournaments SET start_time = \'2020-07-16 07:57:00\';" '
   );
 });
@@ -203,11 +203,11 @@ Cypress.Commands.add('selectTournamentWithAction', (tournament, action) => {
 Cypress.Commands.add('addQuestionTopic', () => {
   cy.exec(
     'PGPASSWORD=' +
-    Cypress.env('PASS') +
+    Cypress.env('PSQL_INT_TEST_DB_PASSWORD') +
     ' psql -d ' +
-    Cypress.env('DBNAME') +
+    Cypress.env('PSQL_INT_TEST_DB_NAME') +
     ' -U ' +
-    Cypress.env('USER') +
+    Cypress.env('PSQL_INT_TEST_DB_USERNAME') +
     ' -h localhost -c "INSERT INTO topics_questions (topics_id, questions_id) VALUES (82, 1389);"'
   );
 });
