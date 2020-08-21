@@ -142,7 +142,7 @@ class CreateExternalUserTest extends SpockTest {
         def mockFactory = new DetachedMockFactory()
 
         @Bean
-        Mailer mailer(){
+        Mailer mailer() {
             return mockFactory.Mock(Mailer)
         }
     }

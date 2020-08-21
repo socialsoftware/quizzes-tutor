@@ -69,7 +69,7 @@ public class AuthUser implements DomainEntity {
         user.setConfirmationToken(confirmationToken);
     }
 
-    public LocalDateTime getTokenGeneratioDate() {
+    public LocalDateTime getTokenGenerationDate() {
         return user.getTokenGenerationDate();
     }
 
