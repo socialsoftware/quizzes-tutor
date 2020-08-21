@@ -20,7 +20,7 @@ class ImportExportAnswersTest extends SpockTest {
 
     def setup() {
         Question question = new Question()
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
@@ -38,7 +38,7 @@ class ImportExportAnswersTest extends SpockTest {
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
 
         quiz.setCreationDate(DateHandler.now())
         quiz.setAvailableDate(DateHandler.now())
@@ -52,7 +52,7 @@ class ImportExportAnswersTest extends SpockTest {
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)
 
-        User user = userService.createUser(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        User user = userService.createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT)
 
         quizAnswer = new QuizAnswer()
         quizAnswer.setQuiz(quiz)

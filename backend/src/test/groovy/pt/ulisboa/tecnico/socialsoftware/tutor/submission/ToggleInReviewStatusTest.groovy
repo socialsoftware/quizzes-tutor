@@ -17,21 +17,21 @@ class ToggleInReviewStatusTest extends SpockTest{
     def questionSubmission
 
     def setup() {
-        student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        student.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, User.Role.TEACHER)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setUser(student)
-        questionSubmission.setCourseExecution(courseExecution)
+        questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(questionSubmission)
     }
 

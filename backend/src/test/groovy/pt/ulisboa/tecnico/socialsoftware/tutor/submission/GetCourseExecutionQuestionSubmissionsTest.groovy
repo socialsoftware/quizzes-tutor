@@ -17,19 +17,19 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
     def questionSubmission
 
     def setup() {
-        student1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        student1.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student1.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student1)
-        student2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
-        student2.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        student2.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student2)
-        teacher = new User(USER_3_NAME, USER_3_USERNAME, User.Role.TEACHER)
+        teacher = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
     }
@@ -39,13 +39,13 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         def questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setUser(student1)
-        questionSubmission.setCourseExecution(courseExecution)
-        courseExecution.addQuestionSubmission(questionSubmission)
+        questionSubmission.setCourseExecution(externalCourseExecution)
+        externalCourseExecution.addQuestionSubmission(questionSubmission)
         student1.addQuestionSubmission(questionSubmission)
         questionSubmissionRepository.save(questionSubmission)
 
         when:
-        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(courseExecution.getId())
+        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId())
 
         then: "the returned data is correct"
         result.size() == 1
@@ -54,7 +54,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         submission.getId() != null
         submission.getQuestion().getId() == question.getId()
         submission.getUserId() == student1.getId()
-        submission.getCourseExecutionId() == courseExecution.getId()
+        submission.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
     def "get question submissions with 3 submitted questions"(){
@@ -62,8 +62,8 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         def questionSubmission1 = new QuestionSubmission()
         questionSubmission1.setQuestion(question)
         questionSubmission1.setUser(student1)
-        questionSubmission1.setCourseExecution(courseExecution)
-        courseExecution.addQuestionSubmission(questionSubmission1)
+        questionSubmission1.setCourseExecution(externalCourseExecution)
+        externalCourseExecution.addQuestionSubmission(questionSubmission1)
         student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
 
@@ -71,8 +71,8 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         def questionSubmission2 = new QuestionSubmission()
         questionSubmission2.setQuestion(question)
         questionSubmission2.setUser(student1)
-        questionSubmission2.setCourseExecution(courseExecution)
-        courseExecution.addQuestionSubmission(questionSubmission2)
+        questionSubmission2.setCourseExecution(externalCourseExecution)
+        externalCourseExecution.addQuestionSubmission(questionSubmission2)
         student1.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
 
@@ -80,13 +80,13 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         def questionSubmission3 = new QuestionSubmission()
         questionSubmission3.setQuestion(question)
         questionSubmission3.setUser(student2)
-        questionSubmission3.setCourseExecution(courseExecution)
-        courseExecution.addQuestionSubmission(questionSubmission3)
+        questionSubmission3.setCourseExecution(externalCourseExecution)
+        externalCourseExecution.addQuestionSubmission(questionSubmission3)
         student2.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
 
         when:
-        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(courseExecution.getId())
+        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId())
 
         then: "the returned data is correct"
         result.size() == 3
@@ -103,14 +103,14 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         submission1.getUserId() == student1.getId()
         submission2.getUserId() == student1.getId()
         submission3.getUserId() == student2.getId()
-        submission1.getCourseExecutionId() == courseExecution.getId()
-        submission2.getCourseExecutionId() == courseExecution.getId()
-        submission3.getCourseExecutionId() == courseExecution.getId()
+        submission1.getCourseExecutionId() == externalCourseExecution.getId()
+        submission2.getCourseExecutionId() == externalCourseExecution.getId()
+        submission3.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
     def "get question submissions with no submitted questions"(){
         when:
-        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(courseExecution.getId())
+        def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId())
 
         then: "the returned data is correct"
         result.size() == 0

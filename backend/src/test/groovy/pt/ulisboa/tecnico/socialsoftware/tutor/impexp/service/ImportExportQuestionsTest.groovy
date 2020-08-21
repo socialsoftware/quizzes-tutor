@@ -16,9 +16,6 @@ class ImportExportQuestionsTest extends SpockTest {
     def teacher
 
     def setup() {
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, User.Role.TEACHER)
-        userRepository.save(teacher)
-
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
@@ -42,7 +39,7 @@ class ImportExportQuestionsTest extends SpockTest {
         options.add(optionDto)
         questionDto.setOptions(options)
 
-        questionId = questionService.createQuestion(course.getId(), questionDto).getId()
+        questionId = questionService.createQuestion(externalCourse.getId(), questionDto).getId()
     }
 
     def 'export and import questions to xml'() {
@@ -55,8 +52,8 @@ class ImportExportQuestionsTest extends SpockTest {
         questionService.importQuestionsFromXml(questionsXml)
 
         then:
-        questionRepository.findQuestions(course.getId()).size() == 1
-        def questionResult = questionService.findQuestions(course.getId()).get(0)
+        questionRepository.findQuestions(externalCourse.getId()).size() == 1
+        def questionResult = questionService.findQuestions(externalCourse.getId()).get(0)
         questionResult.getKey() == null
         questionResult.getTitle() == QUESTION_1_TITLE
         questionResult.getContent() == QUESTION_1_CONTENT

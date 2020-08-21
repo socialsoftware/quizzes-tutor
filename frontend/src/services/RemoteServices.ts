@@ -11,6 +11,7 @@ import Topic from '@/models/management/Topic';
 import { Student } from '@/models/management/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
+import ExternalUser from '@/models/user/ExternalUser';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
@@ -31,9 +32,19 @@ httpClient.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
-
     return config;
   },
+  error => Promise.reject(error)
+);
+httpClient.interceptors.response.use(
+  response => {
+    if (response.data.notification) {
+      if (response.data.notification.errorMessages.length)
+        Store.dispatch('notification', response.data.notification.errorMessages);
+      response.data = response.data.response;
+    }
+    return response;
+  }, 
   error => Promise.reject(error)
 );
 
@@ -49,9 +60,20 @@ export default class RemoteServices {
       });
   }
 
-  static async demoStudentLogin(): Promise<AuthDto> {
+  static async externalLogin(email: string, password: string): Promise<AuthDto> {
     return httpClient
-      .get('/auth/demo/student')
+      .get(`/auth/external?email=${email}&password=${password}`)
+      .then(response => {
+        return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async demoStudentLogin(createNew: boolean): Promise<AuthDto> {
+    return httpClient
+      .get(`/auth/demo/student?createNew=${createNew}`)
       .then(response => {
         return new AuthDto(response.data);
       })
@@ -76,6 +98,28 @@ export default class RemoteServices {
       .get('/auth/demo/admin')
       .then(response => {
         return new AuthDto(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createExternalUser(executionId: number, externalUser: ExternalUser): Promise<ExternalUser> {
+    return httpClient
+      .post(`/users/create/${executionId}`, externalUser)
+      .then(response => {
+        return new ExternalUser(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async confirmRegistration(externalUser: ExternalUser): Promise<ExternalUser> {
+    return httpClient
+      .post('/auth/registration/confirm', externalUser)
+      .then(response => {
+        return new ExternalUser(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -477,6 +521,31 @@ export default class RemoteServices {
       });
   }
 
+  static async getExternalUsers(courseExecutionId: number): Promise<ExternalUser[]>{
+    return httpClient
+      .get('/executions/'+courseExecutionId+'/users/external')
+      .then(response => {
+        return response.data.map((user: any) => {
+          return new ExternalUser(user);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteExternalInactiveUsers(courseExecution: Course, userIdList: number[]):Promise<Course> {
+    return httpClient
+      .post('/executions/'+courseExecution.courseExecutionId+'/users/delete/', userIdList)
+      .then(response => {
+        return new Course(response.data)
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+
+  }
+
   static async getAssessments(): Promise<Assessment[]> {
     return httpClient
       .get(
@@ -747,6 +816,25 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+
+  static async uploadCSVFile(file: File, executionId: number): Promise<Course> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .post(`/courses/executions/${executionId}/csv`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {

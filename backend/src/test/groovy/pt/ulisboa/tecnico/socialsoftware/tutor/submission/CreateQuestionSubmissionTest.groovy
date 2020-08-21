@@ -27,10 +27,10 @@ class CreateQuestionSubmissionTest extends SpockTest{
     def teacher
 
     def setup() {
-        student = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        student.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, User.Role.TEACHER)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(teacher)
         questionDto = new QuestionDto()
         questionDto.setKey(1)
@@ -48,13 +48,13 @@ class CreateQuestionSubmissionTest extends SpockTest{
     def "create question submission with question not null"() {
         given: "a QuestionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
-        questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
+        questionSubmissionDto.setCourseExecutionId(externalCourseExecution.getId())
         questionSubmissionDto.setUserId(student.getId())
         questionSubmissionDto.setQuestion(questionDto)
 
         when: questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
 
-        then: "the correct questionSubmission is in the repository and student is enrolled in course"
+        then: "the correct questionSubmission is in the repository and student is enrolled in externalCourse"
         questionSubmissionRepository.count() == 1L
         def result = questionSubmissionRepository.findAll().get(0)
         result.getId() != null
@@ -63,15 +63,15 @@ class CreateQuestionSubmissionTest extends SpockTest{
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.IN_REVISION
-        result.getCourseExecution() == courseExecution
-        student.getEnrolledCoursesAcronyms().contains(courseExecution.getAcronym())
+        result.getCourseExecution() == externalCourseExecution
+        student.getEnrolledCoursesAcronyms().contains(externalCourseExecution.getAcronym())
     }
 
     @Unroll
-    def "invalid arguments: userId=#userId | question#question | courseExecutionIdw=#courseExecutionId || errorMessage"(){
+    def "invalid arguments: userId=#userId | question#question | externalCourseExecutionIdw=#externalCourseExecutionId || errorMessage"(){
         given: "a QuestionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
-        questionSubmissionDto.setCourseExecutionId(courseExecutionId)
+        questionSubmissionDto.setCourseExecutionId(externalCourseExecutionId)
         questionSubmissionDto.setUserId(userId)
         questionSubmissionDto.setQuestion(question)
         when:
@@ -82,9 +82,9 @@ class CreateQuestionSubmissionTest extends SpockTest{
         exception.errorMessage == errorMessage
 
         where:
-        userId          | question     | courseExecutionId        || errorMessage
-        null            | questionDto  | courseExecution.getId()  || QUESTION_SUBMISSION_MISSING_STUDENT
-        student.getId() | null         | courseExecution.getId()  || QUESTION_SUBMISSION_MISSING_QUESTION
+        userId          | question     | externalCourseExecutionId        || errorMessage
+        null            | questionDto  | externalCourseExecution.getId()  || QUESTION_SUBMISSION_MISSING_STUDENT
+        student.getId() | null         | externalCourseExecution.getId()  || QUESTION_SUBMISSION_MISSING_QUESTION
         student.getId() | questionDto  | null                     || QUESTION_SUBMISSION_MISSING_COURSE
     }
 
