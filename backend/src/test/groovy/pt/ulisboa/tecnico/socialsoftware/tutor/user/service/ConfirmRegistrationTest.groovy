@@ -88,7 +88,7 @@ class ConfirmRegistrationTest extends SpockTest {
         def result = authServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
-        result.active == false
+        !result.active
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
         and: "a new confirmation mail is sent"

@@ -33,6 +33,10 @@ public class AuthUser implements DomainEntity {
         this.id = id;
     }
 
+    public Integer getId() {
+        return id;
+    }
+
     public User getUser() {
         return user;
     }
@@ -114,7 +118,11 @@ public class AuthUser implements DomainEntity {
         this.type = type;
     }
 
-    @Override
+    public void checkConfirmationToken(String token) {
+        user.checkConfirmationToken(token);
+    }
+
+        @Override
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
     }

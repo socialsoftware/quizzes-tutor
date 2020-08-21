@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.io.Serializable;
 import java.util.List;
@@ -32,6 +33,18 @@ public class ExternalUserDto implements Serializable {
         this.active = user.isActive();
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
+    }
+
+    public ExternalUserDto(AuthUser authUser){
+        this.id = authUser.getId();
+        this.name = authUser.getUser().getName();
+        this.username = authUser.getUsername();
+        this.email = authUser.getEmail();
+        this.password = authUser.getPassword();
+        this.role = authUser.getUser().getRole();
+        this.active = authUser.isActive();
+        this.isAdmin = authUser.getUser().isAdmin();
+        this.confirmationToken = authUser.getConfirmationToken();
     }
 
     public Integer getId() {

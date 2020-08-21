@@ -31,11 +31,11 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
     def "user confirms registration"() {
         given: "one inactive user with an expired "
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false)
-        user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
         authUser = new AuthUser(user)
+        authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         authUserRepository.save(authUser)
 
         when:

@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -28,6 +30,15 @@ public class AuthUserDto implements Serializable {
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
     }
 
+    public AuthUserDto(AuthUser authUser) {
+        this.name = authUser.getUser().getName();
+        this.username = authUser.getUsername();
+        this.email = authUser.getEmail();
+        this.role = authUser.getUser().getRole();
+        this.admin = authUser.getUser().isAdmin();
+        this.courses = getActiveAndInactiveCourses(authUser.getUser(), new ArrayList<>());
+    }
+
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
         this.name = user.getName();
         this.username = user.getUsername();
@@ -35,6 +46,15 @@ public class AuthUserDto implements Serializable {
         this.role = user.getRole();
         this.admin = user.isAdmin();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
+    }
+
+    public AuthUserDto(AuthUser authUser, List<CourseDto> currentCourses) {
+        this.name = authUser.getUser().getName();
+        this.username = authUser.getUsername();
+        this.email = authUser.getEmail();
+        this.role = authUser.getUser().getRole();
+        this.admin = authUser.getUser().isAdmin();
+        this.courses = getActiveAndInactiveCourses(authUser.getUser(), currentCourses);
     }
 
     public String getName() {

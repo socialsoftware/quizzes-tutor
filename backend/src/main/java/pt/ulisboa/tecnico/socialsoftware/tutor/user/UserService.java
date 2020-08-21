@@ -99,8 +99,8 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String getEnrolledCoursesAcronyms(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        return user.getEnrolledCoursesAcronyms();
+        AuthUser authUser = user.getAuthUser();
+        return authUser.getEnrolledCoursesAcronyms();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -252,14 +252,14 @@ public class UserService {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         User user = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
-        generateConfirmationToken(user);
+        generateConfirmationToken(user.getAuthUser());
         return new ExternalUserDto(user);
     }
 
-    public String generateConfirmationToken(User user) {
+    public String generateConfirmationToken(AuthUser authUser) {
         String token = KeyGenerators.string().generateKey();
-        user.setTokenGenerationDate(LocalDateTime.now());
-        user.setConfirmationToken(token);
+        authUser.setTokenGenerationDate(LocalDateTime.now());
+        authUser.setConfirmationToken(token);
         return token;
     }
 

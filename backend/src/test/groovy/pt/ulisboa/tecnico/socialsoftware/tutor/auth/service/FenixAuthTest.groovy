@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 import java.util.stream.Collectors
 
@@ -104,6 +105,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -132,6 +135,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -160,6 +165,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -254,6 +261,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -306,6 +315,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -333,6 +344,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -357,6 +370,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -383,6 +398,8 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(user)
         user.setKey(user.getId())
+        def authUser = new AuthUser(user);
+        authUserRepository.save(authUser);
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME

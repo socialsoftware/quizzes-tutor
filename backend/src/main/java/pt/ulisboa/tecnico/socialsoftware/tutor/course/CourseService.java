@@ -174,7 +174,7 @@ public class CourseService {
     public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
         CourseExecution execution = getExternalCourseExecution(courseExecutionId);
         return execution.getStudents().stream()
-                .sorted(Comparator.comparing(User::getUsername))
+                .sorted(Comparator.comparing(User::getName))
                 .map(ExternalUserDto::new)
                 .collect(Collectors.toList());
     }
