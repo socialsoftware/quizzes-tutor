@@ -1,17 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
+import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
@@ -25,16 +29,31 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@DataJpaTest
+
 class SpockTest extends Specification {
+
+    @Value('${spring.mail.username}')
+    public String mailerUsername
+
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
+    public static final String DEMO_STUDENT_NAME = "Demo Student"
+    public static final String DEMO_TEACHER_NAME = "Demo Teacher"
+    public static final String DEMO_ADMIN_NAME = "Demo Admin"
+
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_1_EMAIL = "user1@mail.com"
+    public static final String USER_2_EMAIL = "user2@mail.com"
+    public final static String USER_1_PASSWORD = "1234"
+    public final static String USER_2_PASSWORD = "4321"
+    public static final String USER_1_TOKEN = "1a2b3c"
+    public static final String USER_2_TOKEN = "c3b2a1"
 
     public static final String ASSESSMENT_1_TITLE = "Assessment 1 Title"
     public static final String ASSESSMENT_2_TITLE = "Assessment 2 Title"
@@ -81,13 +100,25 @@ class SpockTest extends Specification {
     public static final String OPTION_1_CONTENT = "Option 1 Content"
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
+    public static final String ROLE_STUDENT = "ROLE_STUDENT"
+    public static final String ROLE_TEACHER = "ROLE_TEACHER"
+    public static final String ROLE_ADMIN = "ROLE_ADMIN"
+    public static final String ROLE_DEMO_ADMIN = "ROLE_DEMO_ADMIN"
+
     public static final String QUIZ_TITLE = "Quiz title"
+    public static final String CSVFILE = System.getProperty("user.dir") + "/src/test/resources/importUsers.csv"
+    public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
+    public static final String CSVIMPORTUSERSBADROLEFORMAT = System.getProperty("user.dir") + "/src/test/resources/csvImportUsersBadRoleFormat.csv"
+    public static final int NUMBER_OF_USERS_IN_FILE = 5
 
     public static final int NUMBER_OF_QUESTIONS = 1
 
 
     @Autowired
     AuthService authService
+
+    @Autowired
+    AuthServiceApplicational authServiceApplicational
 
     @Autowired
     AnswerService answerService
@@ -161,14 +192,60 @@ class SpockTest extends Specification {
     @Autowired
     UserService userService
 
-    Course course
-    CourseExecution courseExecution
+    @Autowired
+    UserServiceApplicational userServiceApplicational
+
+    @Autowired
+    Mailer mailer
+
+    @Autowired
+    PasswordEncoder passwordEncoder;
+
+    Course externalCourse
+    CourseExecution externalCourseExecution
+
+    RESTClient restClient
 
     def setup() {
-        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
+        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(externalCourse)
 
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
-        courseExecutionRepository.save(courseExecution)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(externalCourseExecution)
+    }
+
+    def persistentCourseCleanup() {
+        Course c
+        CourseExecution ce
+        if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).isPresent()){
+            ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).get()
+            c = ce.getCourse()
+            courseExecutionRepository.dissociateCourseExecutionUsers(ce.getId())
+            courseExecutionRepository.deleteById(ce.getId())
+            courseRepository.deleteById(c.getId())
+        }
+    }
+
+
+
+    def demoAdminLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/admin'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def demoStudentLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/student'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def demoTeacherLogin() {
+        def loginResponse = restClient.get(
+                path: '/auth/demo/teacher'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
     }
 }

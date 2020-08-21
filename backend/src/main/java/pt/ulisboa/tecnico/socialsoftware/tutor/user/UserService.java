@@ -1,22 +1,34 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,6 +52,19 @@ public class UserService {
     @Autowired
     private AnswerService answerService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private Mailer mailer;
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
+
+    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
+    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
+
     public User findByUsername(String username) {
         return this.userRepository.findByUsername(username).orElse(null);
     }
@@ -53,13 +78,14 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    public User createUser(String name, String username, User.Role role) {
+    public User createUser(String name, String username, String email, User.Role role) {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, role);
+        User user = new User(name, username, email, role, true, false);
         userRepository.save(user);
+        user.setActive(true);
         user.setKey(user.getId());
         return user;
     }
@@ -91,7 +117,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, User.Role.TEACHER);
+            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -100,7 +126,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, User.Role.STUDENT);
+            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -109,7 +135,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, User.Role.DEMO_ADMIN);
+            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN);
             user.addCourse(courseService.getDemoCourseExecution());
             return user;
         });
@@ -118,7 +144,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public User createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, User.Role.STUDENT);
+        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT);
         CourseExecution courseExecution = courseService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(newDemoUser);
@@ -153,4 +179,109 @@ public class UserService {
                     this.userRepository.delete(user);
                 });
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public NotificationResponse<CourseDto> importListOfUsersTransactional(InputStream stream, int courseExecutionId) {
+        Notification notification = new Notification();
+        extractUserDtos(stream, notification).forEach(userDto -> createExternalUserTransactional(courseExecutionId, userDto));
+
+        CourseDto courseDto = courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseDto::new)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        return new NotificationResponse<>(notification, courseDto);
+    }
+
+    private List<ExternalUserDto> extractUserDtos(InputStream stream, Notification notification) {
+        List<ExternalUserDto> userDtos = new ArrayList<>();
+        String line = "";
+        String cvsSplitBy = ",";
+        User.Role auxRole;
+        int lineNumber = 1;
+        InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);
+        try (BufferedReader br = new BufferedReader(isr)) {
+            while ((line = br.readLine()) != null) {
+                String[] userInfo = line.split(cvsSplitBy);
+                if (userInfo.length == 2) {
+                    auxRole = User.Role.STUDENT;
+                } else if (userInfo.length == 3 && (userInfo[2].equalsIgnoreCase("student") 
+                            || userInfo[2].equalsIgnoreCase("teacher"))) {
+                    auxRole = User.Role.valueOf(userInfo[2].toUpperCase());
+                } else {
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber), 
+                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                    lineNumber++;
+                    continue;
+                }
+
+                if (userInfo[0].length() == 0 || !userInfo[0].matches(MAIL_FORMAT) || userInfo[1].length() == 0) {
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
+                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                    lineNumber++;
+                    continue;
+                }
+
+                ExternalUserDto userDto = new ExternalUserDto();
+                userDto.setEmail(userInfo[0]);
+                userDto.setName(userInfo[1]);
+                userDto.setRole(auxRole);
+                userDtos.add(userDto);
+                lineNumber++;
+            }
+        } catch (IOException ex) {
+            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
+        }
+
+        if (notification.hasErrors())
+            return new ArrayList<>();
+
+        return userDtos;
+    }
+
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public ExternalUserDto createExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
+        User user = getOrCreateUser(externalUserDto);
+        associateUserWithExecution(courseExecution, user);
+        generateConfirmationToken(user);
+        return new ExternalUserDto(user);
+    }
+
+    public String generateConfirmationToken(User user) {
+        String token = KeyGenerators.string().generateKey();
+        user.setTokenGenerationDate(LocalDateTime.now());
+        user.setConfirmationToken(token);
+        return token;
+    }
+
+    private void associateUserWithExecution(CourseExecution courseExecution, User user) {
+        if(courseExecution.getUsers().stream().map(User::getId).collect(Collectors.toList()).contains(user.getId()))
+            throw new TutorException(DUPLICATE_USER, user.getUsername());
+
+        courseExecution.addUser(user);
+        user.addCourse(courseExecution);
+    }
+
+    private User getOrCreateUser(ExternalUserDto externalUserDto) {
+        return userRepository.findByUsername(externalUserDto.getEmail())
+                .orElseGet(() -> {
+                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), false, false);
+                    userRepository.save(createdUser);
+                    return createdUser;
+                });
+    }
+
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+
+        if (!courseExecution.getType().equals(Course.Type.EXTERNAL)) {
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        }
+        return courseExecution;
+    }
+
 }

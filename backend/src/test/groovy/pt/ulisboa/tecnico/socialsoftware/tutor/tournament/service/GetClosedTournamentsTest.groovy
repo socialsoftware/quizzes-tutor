@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -21,19 +20,19 @@ class GetClosedTournamentsTest extends SpockTest {
     def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
-        topic1 = new Topic(course, topicDto1)
+        topic1 = new Topic(externalCourse, topicDto1)
         topicRepository.save(topic1)
 
         def topicDto2 = new TopicDto()
         topicDto2.setName(TOPIC_2_NAME)
-        topic2 = new Topic(course, topicDto2)
+        topic2 = new Topic(externalCourse, topicDto2)
         topicRepository.save(topic2)
 
         topics.add(topic1.getId())

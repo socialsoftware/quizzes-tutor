@@ -18,10 +18,22 @@ function dbCommand(command){
     );
 }
 
+Cypress.Commands.add('addQuestionTopic', () => {
+    dbCommand(`
+        INSERT INTO topics_questions (topics_id, questions_id) 
+        VALUES (82, 1389);
+    `)
+});
+
 Cypress.Commands.add('cleanTestTopics', () => {
     dbCommand(`
         DELETE FROM topics
         WHERE name like 'CY%'
     `)
 });
-  
+
+Cypress.Commands.add('updateTournamentStartTime', () => {
+    dbCommand(`
+        UPDATE tournaments SET start_time = '2020-07-16 07:57:00';
+    `)
+});

@@ -4,7 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
@@ -16,7 +16,7 @@ class CreateAssessmentTest extends SpockTest {
     def "create a assessment with one topicConjunction with one topic"() {
         given: "a assessmentDto"
         def topic = new Topic()
-        topic.setCourse(course)
+        topic.setCourse(externalCourse)
         topic.setName(TOPIC_1_NAME)
         topic = topicRepository.save(topic)
 
@@ -35,7 +35,7 @@ class CreateAssessmentTest extends SpockTest {
         assessmentDto.setTopicConjunctions(topicConjunctionList)
 
         when:
-        assessmentService.createAssessment(courseExecution.getId(), assessmentDto)
+        assessmentService.createAssessment(externalCourseExecution.getId(), assessmentDto)
 
         then: "the correct assessment is inside the repository"
         assessmentRepository.count() == 1L
@@ -45,7 +45,7 @@ class CreateAssessmentTest extends SpockTest {
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE
         result.getTitle() == ASSESSMENT_1_TITLE
-        result.getCourseExecution() == courseExecution
+        result.getCourseExecution() == externalCourseExecution
         result.getTopicConjunctions().size() == 1
         def resTopicConjunction = result.getTopicConjunctions().first()
         resTopicConjunction.getId() != null

@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -32,30 +32,30 @@ class UpdateTournamentTest extends SpockTest {
     def user2
 
     def setup() {
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, false)
 
-        user1.addCourse(courseExecution)
+        user1.addCourse(externalCourseExecution)
         userRepository.save(user1)
         user1.setKey(user1.getId())
 
-        user2.addCourse(courseExecution)
+        user2.addCourse(externalCourseExecution)
         userRepository.save(user2)
         user2.setKey(user2.getId())
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
-        topic1 = new Topic(course, topicDto1)
+        topic1 = new Topic(externalCourse, topicDto1)
         topicRepository.save(topic1)
 
         def topicDto2 = new TopicDto()
         topicDto2.setName(TOPIC_2_NAME)
-        topic2 = new Topic(course, topicDto2)
+        topic2 = new Topic(externalCourse, topicDto2)
         topicRepository.save(topic2)
 
         def topicDto3 = new TopicDto()
         topicDto3.setName(TOPIC_3_NAME)
-        topic3 = new Topic(course, topicDto3)
+        topic3 = new Topic(externalCourse, topicDto3)
         topicRepository.save(topic3)
 
         topics.add(topic1.getId())
@@ -64,7 +64,7 @@ class UpdateTournamentTest extends SpockTest {
         def assessment = new Assessment()
         assessment.setTitle(ASSESSMENT_1_TITLE)
         assessment.setStatus(Assessment.Status.AVAILABLE)
-        assessment.setCourseExecution(courseExecution)
+        assessment.setCourseExecution(externalCourseExecution)
 
         def topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic1)
@@ -85,7 +85,7 @@ class UpdateTournamentTest extends SpockTest {
         question1.setContent(QUESTION_1_CONTENT)
         question1.setTitle(QUESTION_1_TITLE)
         question1.setStatus(Question.Status.AVAILABLE)
-        question1.setCourse(course)
+        question1.setCourse(externalCourse)
         question1.addTopic(topic1)
         question1.addTopic(topic2)
 

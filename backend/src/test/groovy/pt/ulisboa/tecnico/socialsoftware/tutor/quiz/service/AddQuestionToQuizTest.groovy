@@ -17,13 +17,13 @@ class AddQuestionToQuizTest extends SpockTest {
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(true)
         quizRepository.save(quiz)
 
         Question question = new Question()
         question.setKey(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setTitle("Question title")
         questionRepository.save(question)
     }

@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -22,25 +21,25 @@ class GetUserTournamentsTest extends SpockTest {
     def user2
 
     def setup() {
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, false)
 
-        user1.addCourse(courseExecution)
+        user1.addCourse(externalCourseExecution)
         userRepository.save(user1)
         user1.setKey(user1.getId())
 
-        user2.addCourse(courseExecution)
+        user2.addCourse(externalCourseExecution)
         userRepository.save(user2)
         user2.setKey(user2.getId())
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
-        topic1 = new Topic(course, topicDto1)
+        topic1 = new Topic(externalCourse, topicDto1)
         topicRepository.save(topic1)
 
         def topicDto2 = new TopicDto()
         topicDto2.setName(TOPIC_2_NAME)
-        topic2 = new Topic(course, topicDto2)
+        topic2 = new Topic(externalCourse, topicDto2)
         topicRepository.save(topic2)
 
         topics.add(topic1.getId())

@@ -4,19 +4,34 @@
       {{ appName }}
     </h1>
 
-    <v-btn v-if="!isLoggedIn" :href="fenixUrl" depressed color="primary">
-      Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
-    </v-btn>
+    <div class="horizontal-btn-container" v-if="!isLoggedIn">
+      <v-btn :href="fenixUrl" depressed color="primary">
+        Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
+      </v-btn>
 
-    <div class="demo-buttons" v-if="!isLoggedIn">
+      <v-btn href="./login/external" depressed color="primary">
+        External User Login <v-icon>fas fa-sign-in-alt</v-icon>
+      </v-btn>
+    </div>
+
+    <div class="horizontal-btn-container" v-if="!isLoggedIn">
       <v-btn
         depressed
         small
         color="primary"
-        @click="demoStudent"
+        @click="demoStudent(false)"
         data-cy="demoStudentLoginButton"
       >
         <i class="fa fa-graduation-cap" />Demo as student
+      </v-btn>
+      <v-btn
+        depressed
+        small
+        color="primary"
+        @click="demoStudent(true)"
+        data-cy="demoNewStudentLoginButton"
+      >
+        <i class="fa fa-graduation-cap" />Demo as new student
       </v-btn>
       <v-btn
         depressed
@@ -88,10 +103,13 @@ export default class HomeView extends Vue {
     return Store.state.token;
   }
 
-  async demoStudent() {
+  async demoStudent(createNew: boolean) {
     await this.$store.dispatch('loading');
     try {
-      await this.$store.dispatch('demoStudentLogin');
+      if (createNew)
+        await this.$store.dispatch('demoNewStudentLogin');
+      else  
+        await this.$store.dispatch('demoStudentLogin');
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -151,12 +169,12 @@ export default class HomeView extends Vue {
     padding: 10px 20px;
   }
 
-  .demo-buttons {
+  .horizontal-btn-container {
     margin-top: 40px;
     padding-bottom: 30px;
 
-    button {
-      margin: 10px;
+    button, a {
+      margin: 0 10px;
     }
   }
 
