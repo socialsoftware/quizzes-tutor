@@ -16,10 +16,10 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
     private int port
 
     def response
-    User user
+    def user
 
-    Course course
-    CourseExecution courseExecution
+    def course
+    def courseExecution
 
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
@@ -59,7 +59,6 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
         
         cleanup:
-
         courseExecution.getUsers().remove(userRepository.findById((int)response.data.id).get())
         userRepository.delete(userRepository.findById((int)response.data.id).get())
     }
@@ -94,7 +93,6 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
 
         cleanup:
-
         courseExecution.getUsers().remove(userRepository.findById((int)response.data.id).get())
         userRepository.delete(userRepository.findById((int)response.data.id).get())
     }

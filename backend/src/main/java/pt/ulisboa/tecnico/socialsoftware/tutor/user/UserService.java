@@ -256,7 +256,6 @@ public class UserService {
         return new ExternalUserDto(user);
     }
 
-
     public String generateConfirmationToken(User user) {
         String token = KeyGenerators.string().generateKey();
         user.setTokenGenerationDate(LocalDateTime.now());
@@ -287,7 +286,7 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (courseExecution.getType() != Course.Type.EXTERNAL){
+        if (!courseExecution.getType().equals(Course.Type.EXTERNAL)) {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
         }
         return courseExecution;

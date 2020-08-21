@@ -13,13 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 @DataJpaTest
 class GetExternalUsersTest extends SpockTest {
-
-    Course course1
-    CourseExecution courseExecution1
-    Course course2
-    CourseExecution courseExecution2
-    User user1
-    User user2
+    def course1
+    def courseExecution1
+    def course2
+    def courseExecution2
+    def user1
+    def user2
 
     def setup() {
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -81,7 +80,6 @@ class GetExternalUsersTest extends SpockTest {
         result.get(0).getId() == user1.getId()
 
     }
-
     
     @TestConfiguration
     static class LocalTestConfiguration extends BeanConfiguration { }

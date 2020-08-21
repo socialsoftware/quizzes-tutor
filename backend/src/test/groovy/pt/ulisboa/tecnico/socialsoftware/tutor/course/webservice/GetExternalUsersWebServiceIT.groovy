@@ -9,28 +9,24 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetExternalUsersWebServiceIT extends SpockTest{
-
+class GetExternalUsersWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
-    Course course1
-    Course course2
-
-    CourseExecution courseExecution1
-    CourseExecution courseExecution2
-
-    User user1
-    User user2
+    def course
+    def courseExecution1
+    def courseExecution2
+    def user1
+    def user2
 
     def response
 
     def setup() {
         restClient = new RESTClient("http://localhost:" + port)
 
-        course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
-        courseRepository.save(course1)
-        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        course = new Course("Demo Course", Course.Type.EXTERNAL)
+        courseRepository.save(course)
+        courseExecution1 = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution1)
 
         user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
@@ -38,9 +34,7 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         courseExecution1.addUser(user1)
         userRepository.save(user1)
 
-        course2 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
-        courseRepository.save(course2)
-        courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution2 = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution2)
 
         user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
@@ -48,14 +42,13 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         courseExecution2.addUser(user2)
         userRepository.save(user2)
 
-
         demoAdminLogin()
     }
 
     def "get users from courseExecution1"() {
         when:
         response = restClient.get(
-            path: '/executions/'+courseExecution1.getId()+'/users/external',
+            path: '/executions/' + courseExecution1.getId() + '/users/external',
             requestContentType: 'application/json'
         )
 
@@ -75,11 +68,11 @@ class GetExternalUsersWebServiceIT extends SpockTest{
         courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution1.getId())
         userRepository.deleteById(user1.getId())
         courseExecutionRepository.deleteById(courseExecution1.getId())
-        courseRepository.deleteById(course1.getId())
 
         courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution2.getId())
         userRepository.deleteById(user2.getId())
         courseExecutionRepository.deleteById(courseExecution2.getId())
-        courseRepository.deleteById(course2.getId())
+
+        courseRepository.deleteById(course.getId())
     }
 }

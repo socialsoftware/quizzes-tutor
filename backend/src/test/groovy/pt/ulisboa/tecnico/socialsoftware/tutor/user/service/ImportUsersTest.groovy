@@ -17,12 +17,11 @@ import spock.mock.DetachedMockFactory
 
 @DataJpaTest
 class ImportUsersTest extends SpockTest {
-
     @Autowired
     Mailer mailerMock
 
-    Course course
-    CourseExecution courseExecution
+    def course
+    def courseExecution
 
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -35,25 +34,26 @@ class ImportUsersTest extends SpockTest {
         given: "number of users in dataBase"
         def usersInDataBase = userRepository.count()
         and: "inputStream"
-        InputStream csvFile = new FileInputStream(CSVFILE);
+        InputStream csvFile = new FileInputStream(CSVFILE)
+
         when:
         userServiceApplicational.importListOfUsers(csvFile, courseExecution.getId())
+
         then:
         userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
-
         and: "a mail was sent for each user"
         NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
-
-
     }
 
     def 'Csv file has wrong format on some lines, no users are added' () {
         given: "number of users in dataBase"
         def usersInDataBase = userRepository.count()
         and: "wrong formatted InputStream"
-        InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE);
+        InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE)
+
         when:
         def result  = userServiceApplicational.importListOfUsers(csvBadFormatFile, courseExecution.getId())
+
         then:
         result.response.name == COURSE_1_NAME
         and:
@@ -62,7 +62,6 @@ class ImportUsersTest extends SpockTest {
             e.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
-
         and: "no mail was sent"
         0 * mailerMock.sendSimpleMail(_,_,_,_)
     }
@@ -73,15 +72,16 @@ class ImportUsersTest extends SpockTest {
         and: "a invalid course execution id"
         def executionId = -1
         and: "inputStream"
-        InputStream csvFile = new FileInputStream(CSVFILE);
+        InputStream csvFile = new FileInputStream(CSVFILE)
+
         when:
         userServiceApplicational.importListOfUsers(csvFile, executionId)
+
         then:
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
         and:
         userRepository.findAll().size() == usersInDataBase
-
         and: "no mail was sent"
         0 * mailerMock.sendSimpleMail(_,_,_,_)
     }
@@ -90,9 +90,11 @@ class ImportUsersTest extends SpockTest {
         given: "number of users in dataBase"
         def usersInDataBase = userRepository.count()
         and: "wrong role formatted InputStream"
-        InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT);
+        InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT)
+
         when:
         def result = userServiceApplicational.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
+
         then:
         result.response.name == COURSE_1_NAME
         and:
@@ -101,7 +103,6 @@ class ImportUsersTest extends SpockTest {
             e.getErrorMessage() == ErrorMessage.WRONG_FORMAT_ON_CSV_LINE
         and:
         userRepository.findAll().size() == usersInDataBase
-
         and: "no mail was sent"
         0 * mailerMock.sendSimpleMail(_,_,_,_)
     }

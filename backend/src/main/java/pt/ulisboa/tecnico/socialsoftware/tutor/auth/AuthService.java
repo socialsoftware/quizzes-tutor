@@ -130,7 +130,7 @@ public class AuthService {
 
         if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
 
-        if (password== null ||
+        if (password == null ||
                 !passwordEncoder.matches(password, user.getPassword()))
             throw new TutorException(INVALID_PASSWORD, password);
 

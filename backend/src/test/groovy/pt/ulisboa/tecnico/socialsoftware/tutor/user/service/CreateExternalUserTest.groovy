@@ -19,8 +19,7 @@ import spock.mock.DetachedMockFactory
 
 @DataJpaTest
 class CreateExternalUserTest extends SpockTest {
-
-    ExternalUserDto externalUserDto
+    def externalUserDto
 
     @Autowired
     Mailer mailerMock
@@ -112,7 +111,6 @@ class CreateExternalUserTest extends SpockTest {
         given: "a course execution id"
         externalCourseExecution.setType(executionType)
         def executionId = externalCourseExecution.getId()
-
         and: "a external user dto"
         externalUserDto = new ExternalUserDto()
         externalUserDto.setEmail(email)

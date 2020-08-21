@@ -79,13 +79,13 @@ public class CourseController {
     }
 
     @GetMapping("/executions/{executionId}/users/external")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public List<ExternalUserDto> getExternalUsers(@PathVariable Integer executionId) {
         return courseService.getExternalUsers(executionId);
     }
 
     @PostMapping("/executions/{executionId}/users/delete/")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public CourseDto deleteExternalInactiveUsers(@PathVariable Integer executionId, @Valid @RequestBody List<Integer> usersIds) {
         return courseService.deleteExternalInactiveUsers(executionId, usersIds);
     }

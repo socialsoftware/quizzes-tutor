@@ -16,10 +16,10 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
     def user1
     def user2
 
-    Course tecnicoCourse
-    CourseExecution tecnicoCourseExecution
+    def tecnicoCourse
+    def tecnicoCourseExecution
 
-    List userIdList
+    def userIdList
 
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -50,7 +50,6 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
     def "invalid course execution id" () {
         given: "an invalid execution id"
         def executionId = -1
-
         and: "a list of user id's"
         user1.setActive(false)
         userIdList << user1.getId()
@@ -66,7 +65,6 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
     def "course execution not external" () {
         given: "a tecnico course execution id"
         def executionId = tecnicoCourseExecution.getId()
-
         and: "a list of user id's"
         user1.setActive(false)
         user1.addCourse(tecnicoCourseExecution)
@@ -79,7 +77,6 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         then: "check if an exception is thrown"
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
-
         and: "no user was removed"
         tecnicoCourseExecution.getStudents().size() == 1
         userRepository.count() == 5
@@ -88,7 +85,6 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
     def "tries to delete an active user" () {
         given: "and execution id"
         def executionId = externalCourseExecution.getId()
-
         and: "a list of user id's"
         user1.setActive(true)
         userIdList << user1.getId()
@@ -99,23 +95,18 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         then: "an execption is thrown"
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.USER_IS_ACTIVE
-
         and: "the user is not removed from his course execution"
         externalCourseExecution.getStudents().size() == 2
-
-
         and: "no user is removed from the database"
         userRepository.count() == 5
         userRepository.findById(user1.getId()) != null
         userRepository.findById(user2.getId()) != null
-
     }
 
 
     def "there are some inactive external users and deletes them" (){
         given: "an execution id"
         def executionId = externalCourseExecution.getId()
-
         and: "a list of user id's"
         user1.setActive(false)
         user2.setActive(false)
@@ -127,11 +118,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
 
         then: "check that that no user was removed from the course execution"
         externalCourseExecution.getStudents().size() == 0
-
         and: "there are no external users in the database"
         userRepository.count() == 3 // The 3 Demo-Users
-
-
     }
 
 

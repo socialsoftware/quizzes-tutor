@@ -9,19 +9,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class CreateExternalUserWebServiceIT extends SpockTest {
-
     @LocalServerPort
     private int port
 
     def response
 
-    Course course1
-    CourseExecution courseExecution1
+    def course1
+    def courseExecution1
     
     @Override
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
-        course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
+        course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
         courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution1)
@@ -55,7 +54,6 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
         userRepository.delete(userRepository.findById(response.data.id).get())
-
     }
 
     def cleanup() {
