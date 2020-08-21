@@ -8,7 +8,7 @@ tests/e2e/screenshots/
 
 # local env files
 .env
-.env*
+*.env.json
 
 # Log files
 npm-debug.log*
