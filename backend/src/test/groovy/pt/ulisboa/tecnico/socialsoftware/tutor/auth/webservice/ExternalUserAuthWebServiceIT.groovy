@@ -28,14 +28,14 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
     }
 
-    def "user confirms registration"() {
+    def "external user makes a login"() {
         given: "one inactive user with an expired "
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
-        userRepository.save(user)
         authUser = new AuthUser(user)
         authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        userRepository.save(user)
         authUserRepository.save(authUser)
 
         when:
@@ -57,6 +57,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         cleanup:
 
         courseExecution.getUsers().remove(userRepository.findByUsername(response.data.user.username).get())
+        authUserRepository.delete(userRepository.findByUsername(response.data.user.username).get().getAuthUser())
         userRepository.delete(userRepository.findByUsername(response.data.user.username).get())
     }
 
