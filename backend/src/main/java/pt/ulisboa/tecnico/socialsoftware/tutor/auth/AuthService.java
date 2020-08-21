@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
@@ -54,6 +55,7 @@ public class AuthService {
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
 
         User user = this.userService.findByUsername(username);
+        AuthUser authUser = null;
 
         // If user is student and is not in db
         if (user == null && !activeAttendingCourses.isEmpty()) {
@@ -69,10 +71,16 @@ public class AuthService {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
 
-        if (user.getEmail() == null)
-            user.setEmail(fenix.getPersonEmail());
+        authUser = user.getAuthUser();
 
-        user.setLastAccess(DateHandler.now());
+        if (authUser == null) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
+        }
+
+        if (authUser.getEmail() == null)
+            authUser.setEmail(fenix.getPersonEmail());
+
+        authUser.setLastAccess(DateHandler.now());
 
         if (user.getRole() == User.Role.ADMIN) {
             List<CourseDto> allCoursesInDb = courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList());
@@ -87,16 +95,16 @@ public class AuthService {
                         .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                         .collect(Collectors.joining(","));
 
-                user.setEnrolledCoursesAcronyms(ids);
+                authUser.setEnrolledCoursesAcronyms(ids);
             }
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,allCoursesInDb));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser, allCoursesInDb));
         }
 
         // Update student courses
         if (!activeAttendingCourses.isEmpty() && user.getRole() == User.Role.STUDENT) {
             User student = user;
             activeAttendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
         }
 
         // Update teacher courses
@@ -108,13 +116,13 @@ public class AuthService {
                     .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
-            user.setEnrolledCoursesAcronyms(ids);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user,  fenixTeachingCourses));
+            authUser.setEnrolledCoursesAcronyms(ids);
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser, fenixTeachingCourses));
         }
 
         // Previous teacher without active courses
         if (user.getRole() == User.Role.TEACHER) {
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
         }
 
         throw new TutorException(USER_NOT_ENROLLED, username);
@@ -130,13 +138,15 @@ public class AuthService {
 
         if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
 
+        AuthUser authUser = user.getAuthUser();
+
         if (password == null ||
-                !passwordEncoder.matches(password, user.getPassword()))
+                !passwordEncoder.matches(password, authUser.getPassword()))
             throw new TutorException(INVALID_PASSWORD, password);
 
-        user.setLastAccess(DateHandler.now());
+        authUser.setLastAccess(DateHandler.now());
 
-        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
     }
 
 
@@ -195,26 +205,28 @@ public class AuthService {
         if (user == null)
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
 
-        if (user.isActive())
+        AuthUser authUser = user.getAuthUser();
+
+        if (authUser.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
 
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
             throw new TutorException(INVALID_PASSWORD);
 
         try {
-            user.checkConfirmationToken(externalUserDto.getConfirmationToken());
+            authUser.checkConfirmationToken(externalUserDto.getConfirmationToken());
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                userService.generateConfirmationToken(user);
+                userService.generateConfirmationToken(user.getAuthUser());
                 return new ExternalUserDto(user);
             }
             else throw new TutorException(e.getErrorMessage());
         }
 
-        user.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-        user.setActive(true);
+        authUser.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
+        authUser.setActive(true);
 
-        return new ExternalUserDto(user);
+        return new ExternalUserDto(authUser);
     }
 }

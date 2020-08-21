@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -15,7 +16,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
     private int port
 
     User user
-
+    AuthUser authUser
     Course course
     CourseExecution courseExecution
 
@@ -30,10 +31,12 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
     def "user confirms registration"() {
         given: "one inactive user with an expired "
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false)
-        user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
+        authUser = new AuthUser(user)
+        authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        authUserRepository.save(authUser)
 
         when:
         def response = restClient.get(

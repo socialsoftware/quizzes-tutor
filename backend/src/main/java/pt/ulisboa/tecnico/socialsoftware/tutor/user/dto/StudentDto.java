@@ -32,7 +32,7 @@ public class StudentDto implements Serializable {
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
         this.numberOfInClassAnswers = user.getNumberOfInClassAnswers();
         this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
-        this.lastAccess = DateHandler.toISOString(user.getLastAccess());
+        this.lastAccess = DateHandler.toISOString(user.getAuthUser().getLastAccess());
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
 
         if (this.numberOfTeacherAnswers != 0)
