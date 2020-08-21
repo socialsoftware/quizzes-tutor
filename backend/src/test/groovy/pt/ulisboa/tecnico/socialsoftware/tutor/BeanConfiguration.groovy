@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplcational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
@@ -103,8 +103,8 @@ class BeanConfiguration {
     }
 
     @Bean
-    AuthServiceApplcational authServiceApplcational() {
-        return new AuthServiceApplcational()
+    AuthServiceApplicational authServiceApplicational() {
+        return new AuthServiceApplicational()
     }
 
     @Bean

@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 
 @Service
-public class AuthServiceApplcational {
+public class AuthServiceApplicational {
 
     @Autowired
     private AuthService authService;
@@ -17,7 +17,7 @@ public class AuthServiceApplcational {
 
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
         ExternalUserDto user = authService.confirmRegistrationTransactional(externalUserDto);
-        if(!user.isActive()){
+        if (!user.isActive()) {
             userServiceApplicational.sendConfirmationEmailTo(user);
         }
         return user;

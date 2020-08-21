@@ -22,13 +22,13 @@ public class UserController {
     private UserServiceApplicational userServiceApplicational;
 
     @PostMapping ("/users/create/{executionId}")
-    @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
         return userServiceApplicational.createExternalUser(executionId,externalUserDto);
     }
 
     @PostMapping("/courses/executions/{executionId}/csv")
-    @PreAuthorize("hasRole('ROLE_DEMO_ADMIN') or (hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public NotificationResponse<CourseDto> uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
         return userService.importListOfUsersTransactional(file.getInputStream(), executionId);
     }

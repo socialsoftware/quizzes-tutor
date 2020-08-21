@@ -21,7 +21,6 @@ import spock.lang.Unroll;
 
 @DataJpaTest
 class CreateUserTest extends SpockTest {
-
     def user
     def quiz
 
@@ -71,7 +70,6 @@ class CreateUserTest extends SpockTest {
     def "create User: name, username, role" (){
         when:
         def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
-
 
         then:
         result.getName() == USER_1_NAME
@@ -216,10 +214,8 @@ class CreateUserTest extends SpockTest {
         given:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-
         def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
-
         def previousNumberOfUsers = courseExecution.getUsers().size()
         def previousNumberOfCourses = user.getCourseExecutions().size()
 
@@ -247,11 +243,9 @@ class CreateUserTest extends SpockTest {
         given:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-
         def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
         courseExecutionRepository.save(courseExecution)
         user.addCourse(courseExecution)
-
         def previousNumberOfUsers = courseExecution.getUsers().size()
 
         when:

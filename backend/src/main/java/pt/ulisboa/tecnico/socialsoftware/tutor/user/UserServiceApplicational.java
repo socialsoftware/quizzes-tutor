@@ -29,7 +29,7 @@ public class UserServiceApplicational {
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         boolean userExists = userRepository.findByUsername(externalUserDto.getEmail()).isPresent();
         ExternalUserDto user = userService.createExternalUserTransactional(courseExecutionId, externalUserDto);
-        if(!userExists) {
+        if (!userExists) {
             sendConfirmationEmailTo(user);
         }
         return user;

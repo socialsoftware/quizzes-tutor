@@ -14,7 +14,7 @@ public class AuthController {
     private AuthService authService;
 
     @Autowired
-    private AuthServiceApplcational authServiceApplcational;
+    private AuthServiceApplicational authServiceApplicational;
 
     @Value("${base.url}")
     private String baseUrl;
@@ -61,7 +61,7 @@ public class AuthController {
 
     @PostMapping("/auth/registration/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = authServiceApplcational.confirmRegistration(externalUserDto);
+        ExternalUserDto user = authServiceApplicational.confirmRegistration(externalUserDto);
         return user;
     }
 }
