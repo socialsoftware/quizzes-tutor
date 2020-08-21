@@ -142,10 +142,10 @@ public class Discussion implements Serializable {
     }
 
     private void checkConsistentDiscussion(DiscussionDto discussionDto) {
-        if (discussionDto.getMessage().trim().length() == 0){
+        if (discussionDto.getMessage() == null || discussionDto.getMessage().trim().length() == 0){
             throw new TutorException(DISCUSSION_MISSING_MESSAGE);
         }
-        if (discussionDto.getDate() == null){
+        if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0){
             throw new TutorException(DISCUSSION_DATE_MISSING);
         }
     }

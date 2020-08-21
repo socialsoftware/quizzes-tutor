@@ -8,19 +8,24 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Shared
+import spock.lang.Unroll
 
 @DataJpaTest
 class CreateDiscussionTest extends SpockTest {
 
     @Shared
     def student
+    @Shared
     def question1
+    def question2
     def quiz
     def quizAnswer
 
@@ -34,6 +39,12 @@ class CreateDiscussionTest extends SpockTest {
         question1.setContent("Question Content")
         questionRepository.save(question1)
 
+        question2 = new Question()
+        question2.setCourse(course)
+        question2.setTitle("Question title")
+        question2.setContent("Question Content")
+        questionRepository.save(question2)
+
         def quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType("TEST")
@@ -43,6 +54,7 @@ class CreateDiscussionTest extends SpockTest {
         def quizanswer = new QuizAnswer()
         quizanswer.setUser(student)
         quizanswer.setQuiz(quiz)
+        quizanswer.setQuiz(quizRepository.findAll().get(0))
         quizAnswerRepository.save(quizanswer)
 
         def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 3)
@@ -53,18 +65,18 @@ class CreateDiscussionTest extends SpockTest {
         questionanswer.setQuizAnswer(quizanswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-        questionanswer.setQuizQuestion(quizquestion)
+
 
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
 
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-        quizanswer.setQuiz(quizRepository.findAll().get(0))
+
 
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
         quiz.addQuizQuestion(quizQuestionRepository.findAll().get(0))
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
 
-        quizanswer.setQuiz(quizRepository.findAll().get(0))
+
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
     }
 
@@ -84,17 +96,19 @@ class CreateDiscussionTest extends SpockTest {
         then: "the correct discussion is inside the repository"
         discussionRepository.count() == 1L
 
-        /*def resultRepo = discussionService.findDiscussionByUserIdAndQuestionId(student.getId(), question.getId())
-        resultRepo.getMessage() == DISCUSSION_MESSAGE
-        resultRepo.getUserId() == student.getId()
-        resultRepo.getQuestion().getId() == question.getId()
+        def resultRepo = discussionService.findDiscussionByUserIdAndQuestionId(student.getId(), question1.getId())
+        resultRepo.size() == 1
+        def resultQuestion2 = resultRepo.get(0)
+        resultQuestion2.getMessage() == DISCUSSION_MESSAGE
+        resultQuestion2.getUserId() == student.getId()
+        resultQuestion2.getQuestion().getId() == question1.getId()
 
         def resultUserList = discussionService.findDiscussionsByUserId(student.getId())
         resultUserList.size() == 1
         def resultUser = resultUserList.get(0)
-        resultUser.getContent() == DISCUSSION_MESSAGE
+        resultUser.getMessage() == DISCUSSION_MESSAGE
         resultUser.getUserId() == student.getId()
-        resultUser.getQuestion().getId() == question.getId()*/
+        resultUser.getQuestion().getId() == question1.getId()
 
         def resultDiscussionList = discussionService.findDiscussionsByQuestionId(question1.getId())
         resultDiscussionList.size() == 1
@@ -103,17 +117,76 @@ class CreateDiscussionTest extends SpockTest {
         resultQuestion.getUserId() == student.getId()
         resultQuestion.getQuestion().getId() == question1.getId()
     }
-/*
+
+    def "student answered the question in discussion"(){
+        given: "a discussionDto"
+        def discussionDto = new DiscussionDto()
+        discussionDto.setMessage(DISCUSSION_MESSAGE)
+        discussionDto.setUserId(student.getId())
+        discussionDto.setQuestion(new QuestionDto(question2))
+
+        when: "creating a discussion on a non answered question"
+        discussionService.createDiscussion(discussionDto)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.QUESTION_NOT_ANSWERED
+    }
+
+
     def "user can't create two discusions for the same question"(){
+        given: "a student"
+        def studentId = student.getId()
 
+        and: "a discussion dto"
+        def discussionDto1 = new DiscussionDto()
+        discussionDto1.setMessage(DISCUSSION_MESSAGE)
+        discussionDto1.setUserId(studentId)
+        discussionDto1.setQuestion(new QuestionDto(question1))
+        discussionDto1.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        discussionDto1.setUserName(student.getUsername())
 
+        and: "another discussion dto"
+        def discussionDto2 = new DiscussionDto()
+        discussionDto2.setMessage(DISCUSSION_MESSAGE)
+        discussionDto2.setUserId(studentId)
+        discussionDto2.setQuestion(new QuestionDto(question1))
+        discussionDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        discussionDto2.setUserName(student.getUsername())
+
+        when: "creating two discussions on the same question"
+        discussionService.createDiscussion(discussionDto1)
+        discussionService.createDiscussion(discussionDto2)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.DUPLICATE_DISCUSSION
     }
 
     @Unroll
-    def "invalid arguments: question=#question | userId=#userId | content=#content"(){
+    def "invalid arguments: question=#question | userId=#userId | content=#content | date=#date"(){
+        given: "a discusssionDto"
+        def discussionDto = new DiscussionDto()
+        discussionDto.setQuestion(question)
+        discussionDto.setUserId(userId)
+        discussionDto.setMessage(content)
+        discussionDto.setDate(date)
+        userRepository.save(student)
 
+        when: "creating discussion"
+        discussionService.createDiscussion(discussionDto)
 
-    }*/
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == errorMessage
+
+        where:
+        question                   | userId          | content            | date                                      || errorMessage
+        null                       | student.getId() | DISCUSSION_MESSAGE | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_QUESTION
+        new QuestionDto(question1) | null            | DISCUSSION_MESSAGE | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_USER
+        new QuestionDto(question1) | student.getId() | null               | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
+        new QuestionDto(question1) | student.getId() | "          "       | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
