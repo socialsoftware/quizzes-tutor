@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -17,6 +18,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def response
     def user
+    def authUser
 
     def course
     def courseExecution
@@ -37,6 +39,8 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         user.setTokenGenerationDate(LOCAL_DATE_TODAY)
         courseExecution.addUser(user)
         userRepository.save(user)
+        authUser = new AuthUser(user)
+        authUserRepository.save(authUser)
 
         when:
         response = restClient.post(
@@ -59,8 +63,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
         
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById((int)response.data.id).get())
-        userRepository.delete(userRepository.findById((int)response.data.id).get())
+        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.username).get())
+        authUserRepository.delete(userRepository.findByUsername(response.data.username).get().getAuthUser())
+        userRepository.delete(userRepository.findByUsername(response.data.username).get())
     }
 
     def "user tries to confirm registration with an expired token"() {
@@ -71,6 +76,8 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         user.setTokenGenerationDate(LOCAL_DATE_BEFORE)
         courseExecution.addUser(user)
         userRepository.save(user)
+        authUser = new AuthUser(user)
+        authUserRepository.save(authUser)
 
         when:
         response = restClient.post(
@@ -93,8 +100,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById((int)response.data.id).get())
-        userRepository.delete(userRepository.findById((int)response.data.id).get())
+        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.username).get())
+        authUserRepository.delete(userRepository.findByUsername(response.data.username).get().getAuthUser())
+        userRepository.delete(userRepository.findByUsername(response.data.username).get())
     }
 
     def cleanup() {
