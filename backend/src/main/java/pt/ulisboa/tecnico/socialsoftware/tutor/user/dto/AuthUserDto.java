@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.io.Serializable;
@@ -15,6 +15,7 @@ public class AuthUserDto implements Serializable {
     private Integer id;
     private String name;
     private String username;
+    private String email;
     private User.Role role;
     private boolean admin;
     private Map<String, List<CourseDto>> courses;
@@ -23,6 +24,7 @@ public class AuthUserDto implements Serializable {
         this.id = user.getId();
         this.name = user.getName();
         this.username = user.getUsername();
+        this.email = user.getEmail();
         this.role = user.getRole();
         this.admin = user.isAdmin();
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
@@ -32,6 +34,7 @@ public class AuthUserDto implements Serializable {
         this.id = user.getId();
         this.name = user.getName();
         this.username = user.getUsername();
+        this.email = user.getEmail();
         this.role = user.getRole();
         this.admin = user.isAdmin();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
@@ -79,6 +82,14 @@ public class AuthUserDto implements Serializable {
 
     public void setCourses(Map<String, List<CourseDto>> courses) {
         this.courses = courses;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     private Map<String, List<CourseDto>> getActiveAndInactiveCourses(User user, List<CourseDto> courses) {

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.course;
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -177,12 +177,36 @@ public class CourseExecution implements DomainEntity {
         questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
-    public int getNumberOfTeachers() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER)).count();
+    public int getNumberOfActiveTeachers() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.TEACHER) &&
+                        user.isActive())
+                .count();
     }
 
-    public int getNumberOfStudents() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT)).count();
+    public int getNumberofInactiveTeachers() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.TEACHER) &&
+                        !user.isActive())
+                .count();
+    }
+
+    public int getNumberOfActiveStudents() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.STUDENT) &&
+                        user.isActive())
+                .count();
+    }
+
+    public int getNumberOfInactiveStudents() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.STUDENT) &&
+                        !user.isActive())
+                .count();
     }
 
     public int getNumberOfQuizzes() {

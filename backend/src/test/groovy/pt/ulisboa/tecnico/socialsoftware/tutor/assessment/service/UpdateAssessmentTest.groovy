@@ -19,14 +19,14 @@ class UpdateAssessmentTest extends SpockTest {
     def setup() {
         def topic = new Topic()
         topic.setName(TOPIC_1_NAME)
-        topic.setCourse(course)
+        topic.setCourse(externalCourse)
         topicRepository.save(topic)
 
         def assessment = new Assessment()
         assessment.setTitle(ASSESSMENT_1_TITLE)
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setSequence(1)
-        assessment.setCourseExecution(courseExecution)
+        assessment.setCourseExecution(externalCourseExecution)
         assessmentRepository.save(assessment)
         assessmentId = assessment.id
 
@@ -39,7 +39,7 @@ class UpdateAssessmentTest extends SpockTest {
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
         def topic = new Topic()
         topic.setName(TOPIC_2_NAME)
-        topic.setCourse(course)
+        topic.setCourse(externalCourse)
         topicRepository.save(topic)
 
         def topicConjunctionDto = new TopicConjunctionDto()
@@ -86,7 +86,7 @@ class UpdateAssessmentTest extends SpockTest {
     def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
         def topic = new Topic()
         topic.setName(TOPIC_2_NAME)
-        topic.setCourse(course)
+        topic.setCourse(externalCourse)
         topicRepository.save(topic)
 
         def topicConjunctionDto = new TopicConjunctionDto()

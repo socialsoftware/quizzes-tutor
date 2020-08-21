@@ -28,7 +28,7 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(course.getId(), questionDto)
+        questionService.createQuestion(externalCourse.getId(), questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -41,7 +41,7 @@ class CreateQuestionTest extends SpockTest {
         result.getImage() == null
         result.getOptions().size() == 1
         result.getCourse().getName() == COURSE_1_NAME
-        course.getQuestions().contains(result)
+        externalCourse.getQuestions().contains(result)
         def resOption = result.getOptions().get(0)
         resOption.getContent() == OPTION_1_CONTENT
         resOption.getCorrect()
@@ -74,7 +74,7 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setOptions(options)
 
         when:
-        questionService.createQuestion(course.getId(), questionDto)
+        questionService.createQuestion(externalCourse.getId(), questionDto)
 
         then: "the correct question is inside the repository"
         questionRepository.count() == 1L
@@ -105,9 +105,9 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setOptions(options)
 
         when: 'are created two questions'
-        questionService.createQuestion(course.getId(), questionDto)
+        questionService.createQuestion(externalCourse.getId(), questionDto)
         questionDto.setKey(null)
-        questionService.createQuestion(course.getId(), questionDto)
+        questionService.createQuestion(externalCourse.getId(), questionDto)
 
         then: "the two questions are created with the correct numbers"
         questionRepository.count() == 2L

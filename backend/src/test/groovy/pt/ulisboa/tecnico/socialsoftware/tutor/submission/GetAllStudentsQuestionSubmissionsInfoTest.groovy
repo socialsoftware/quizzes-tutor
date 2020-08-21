@@ -16,23 +16,23 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
     def question
 
     def setup() {
-        student1 = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        student1.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student1.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student1)
-        student2 = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
-        student2.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        student2.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student2)
-        student3 = new User(USER_3_NAME, USER_3_USERNAME, User.Role.STUDENT)
-        student3.setEnrolledCoursesAcronyms(courseExecution.getAcronym())
+        student3 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.STUDENT, true, false)
+        student3.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student3)
-        courseExecution.addUser(student1)
-        courseExecution.addUser(student2)
-        courseExecution.addUser(student3)
+        externalCourseExecution.addUser(student1)
+        externalCourseExecution.addUser(student2)
+        externalCourseExecution.addUser(student3)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setStatus(Question.Status.IN_REVIEW)
         questionRepository.save(question)
     }
@@ -42,29 +42,29 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         def questionSubmission1 = new QuestionSubmission()
         questionSubmission1.setQuestion(question)
         questionSubmission1.setUser(student1)
-        questionSubmission1.setCourseExecution(courseExecution)
+        questionSubmission1.setCourseExecution(externalCourseExecution)
         student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
         def questionSubmission2 = new QuestionSubmission()
         questionSubmission2.setQuestion(question)
         questionSubmission2.setUser(student2)
-        questionSubmission2.setCourseExecution(courseExecution)
+        questionSubmission2.setCourseExecution(externalCourseExecution)
         student2.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
         def questionSubmission3 = new QuestionSubmission()
         questionSubmission3.setQuestion(question)
         questionSubmission3.setUser(student3)
-        questionSubmission3.setCourseExecution(courseExecution)
+        questionSubmission3.setCourseExecution(externalCourseExecution)
         student3.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
         def questionSubmission4 = new QuestionSubmission()
         questionSubmission4.setQuestion(question)
         questionSubmission4.setUser(student3)
-        questionSubmission4.setCourseExecution(courseExecution)
+        questionSubmission4.setCourseExecution(externalCourseExecution)
         student3.addQuestionSubmission(questionSubmission4)
         questionSubmissionRepository.save(questionSubmission4)
 
-        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(courseExecution.getId())
+        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
 
         then:
         result.size() == 3
@@ -90,7 +90,7 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
     }
 
     def "get all student question submissions info with no question submissions"() {
-        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(courseExecution.getId())
+        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
 
         then:
         result.size() == 3

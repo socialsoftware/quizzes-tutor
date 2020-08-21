@@ -4,6 +4,7 @@ import RemoteServices from '@/services/RemoteServices';
 import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
+import ExternalUser from '@/models/user/ExternalUser';
 
 interface State {
   token: string;
@@ -11,6 +12,8 @@ interface State {
   currentCourse: Course | null;
   error: boolean;
   errorMessage: string;
+  notification: boolean;
+  notificationMessageList: string[];
   loading: boolean;
 }
 
@@ -20,6 +23,8 @@ const state: State = {
   currentCourse: null,
   error: false,
   errorMessage: '',
+  notification: false,
+  notificationMessageList: [],
   loading: false
 };
 
@@ -46,6 +51,14 @@ export default new Vuex.Store({
       state.error = false;
       state.errorMessage = '';
     },
+    notification(state, notificationMessageList: string[]) {
+      state.notification = true;
+      state.notificationMessageList = notificationMessageList;
+    },
+    clearNotification(state) {
+      state.notification = false;
+      state.notificationMessageList = [];
+    },
     loading(state) {
       state.loading = true;
     },
@@ -63,6 +76,12 @@ export default new Vuex.Store({
     clearError({ commit }) {
       commit('clearError');
     },
+    notification({ commit }, message) {
+      commit('notification', message);
+    },
+    clearNotification({ commit }) {
+      commit('clearNotification');
+    },
     loading({ commit }) {
       commit('loading');
     },
@@ -75,8 +94,24 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
+    async externalLogin({ commit }, user : ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(user.email, user.password);
+      commit('login', authResponse);
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
     async demoStudentLogin({ commit }) {
-      const authResponse = await RemoteServices.demoStudentLogin();
+      const authResponse = await RemoteServices.demoStudentLogin(false);
+      commit('login', authResponse);
+      commit(
+        'currentCourse',
+        (Object.values(authResponse.user.courses)[0] as Course[])[0]
+      );
+      // localStorage.setItem("token", authResponse.token);
+      // localStorage.setItem("userRole", authResponse.user.role);
+    },
+    async demoNewStudentLogin({ commit }) {
+      const authResponse = await RemoteServices.demoStudentLogin(true);
       commit('login', authResponse);
       commit(
         'currentCourse',
@@ -148,6 +183,12 @@ export default new Vuex.Store({
     },
     getErrorMessage(state): string {
       return state.errorMessage;
+    },
+    getNotification(state): boolean {
+      return state.notification;
+    },
+    getNotificationMessageList(state): string[] {
+      return state.notificationMessageList;
     },
     getLoading(state): boolean {
       return state.loading;

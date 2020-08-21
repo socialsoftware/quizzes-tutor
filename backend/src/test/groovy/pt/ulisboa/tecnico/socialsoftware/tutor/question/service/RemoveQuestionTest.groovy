@@ -29,9 +29,6 @@ class RemoveQuestionTest extends SpockTest {
         image.setWidth(20)
         imageRepository.save(image)
 
-        teacher = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
-        userRepository.save(teacher)
-
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
@@ -39,7 +36,7 @@ class RemoveQuestionTest extends SpockTest {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setImage(image)
         questionRepository.save(question)
 
@@ -75,7 +72,7 @@ class RemoveQuestionTest extends SpockTest {
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(true)
         quizRepository.save(quiz)
 
@@ -96,9 +93,9 @@ class RemoveQuestionTest extends SpockTest {
         given: 'a question with topics'
         def topicDto = new TopicDto()
         topicDto.setName("name1")
-        def topicOne = new Topic(course, topicDto)
+        def topicOne = new Topic(externalCourse, topicDto)
         topicDto.setName("name2")
-        def topicTwo = new Topic(course, topicDto)
+        def topicTwo = new Topic(externalCourse, topicDto)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)
@@ -120,14 +117,14 @@ class RemoveQuestionTest extends SpockTest {
 
     def "remove a question that was submitted"() {
         given: "a student"
-        def student = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
+        def student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
 
         and: "a questionSubmission"
         def questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setUser(student)
-        questionSubmission.setCourseExecution(courseExecution)
+        questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(questionSubmission)
 
         when:

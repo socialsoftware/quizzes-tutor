@@ -13,13 +13,13 @@ class ImportExportUsersTest extends SpockTest {
     def setup() {
         existingUsers = userRepository.findAll().size()
 
-        User user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.TEACHER)
-        user.addCourse(courseExecution)
+        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
-        user = new User(USER_2_NAME, USER_2_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
     }
@@ -29,13 +29,13 @@ class ImportExportUsersTest extends SpockTest {
         def usersXml = userService.exportUsers()
         and: 'a clean database'
         userRepository.deleteAll()
-        courseExecution.getUsers().clear()
+        externalCourseExecution.getUsers().clear()
 
         when:
         userService.importUsers(usersXml)
 
         then:
-        courseExecution.getUsers().size() == 2
+        externalCourseExecution.getUsers().size() == 2
 
         userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByUsername(USER_1_USERNAME).orElse(null)
@@ -43,6 +43,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getKey() == existingUsers + 1
         userOne.getName() == USER_1_NAME
         userOne.getRole() == User.Role.TEACHER
+        userOne.getEmail() == USER_1_EMAIL
         userOne.getCourseExecutions().size() == 1
 
         def userTwo = userRepository.findByUsername(USER_2_USERNAME).orElse(null)
@@ -50,7 +51,8 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getKey() == existingUsers + 2
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
-        userOne.getCourseExecutions().size() == 1
+        userTwo.getEmail() == USER_2_EMAIL
+        userTwo.getCourseExecutions().size() == 1
     }
 
     @TestConfiguration
