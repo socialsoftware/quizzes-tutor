@@ -6,19 +6,7 @@ describe('Student walkthrough', () => {
   });
 
   afterEach(() => {
-    cy.exec(
-      'PGPASSWORD=' +
-      Cypress.env('PSQL_INT_TEST_DB_PASSWORD') +
-      ' psql -d ' +
-      Cypress.env('PSQL_INT_TEST_DB_NAME') +
-      ' -U ' +
-      Cypress.env('PSQL_INT_TEST_DB_USERNAME') +
-      ' -h localhost -c "DELETE FROM topics_questions WHERE questions_id = 1389;' +
-      ' DELETE FROM tournaments_participants;' +
-      ' DELETE FROM tournaments;' +
-      ' ALTER SEQUENCE tournaments_id_seq RESTART WITH 1;' +
-      ' UPDATE tournaments SET id=nextval(\'tournaments_id_seq\');" '
-    );
+    cy.afterEachTournament();
     cy.contains('Demo Course').click();
     cy.logout();
   });

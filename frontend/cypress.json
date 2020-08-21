@@ -4,10 +4,5 @@
   "integrationFolder": "tests/e2e/specs",
   "pluginsFile": "tests/e2e/plugins/index.js",
   "supportFile": "tests/e2e/support/index.js",
-  "projectId": "ou7bhq",
-  "env": {
-    "PSQL_INT_TEST_DB_USERNAME": "tf",
-    "PSQL_INT_TEST_DB_PASSWORD": "123",
-    "PSQL_INT_TEST_DB_NAME": "tutordb"
-  }
+  "projectId": "ou7bhq"
 }

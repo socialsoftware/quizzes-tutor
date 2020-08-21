@@ -37,3 +37,13 @@ Cypress.Commands.add('updateTournamentStartTime', () => {
         UPDATE tournaments SET start_time = '2020-07-16 07:57:00';
     `)
 });
+
+Cypress.Commands.add('afterEachTournament', () => {
+    dbCommand(`
+        DELETE FROM topics_questions WHERE questions_id = 1389;
+        DELETE FROM tournaments_participants;
+        DELETE FROM tournaments; 
+        ALTER SEQUENCE tournaments_id_seq RESTART WITH 1;
+        UPDATE tournaments SET id=nextval('tournaments_id_seq');
+    `)
+});
