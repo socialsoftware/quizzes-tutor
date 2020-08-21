@@ -2,7 +2,7 @@ describe('Student walkthrough', () => {
 
   beforeEach(() => {
     cy.demoStudentLogin();
-    cy.addQuestionTopic();
+    cy.beforeEachTournament();
   });
 
   afterEach(() => {
