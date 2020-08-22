@@ -38,7 +38,7 @@ describe('Student walkthrough', () => {
       'C3',
       'D4'
     );
-    cy.deleteQuestionSubmission();
+    cy.removeQuestionSubmission(true);
   });
 
   it('login edits an invalid question', () => {

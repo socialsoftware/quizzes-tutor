@@ -74,7 +74,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
     cy.get('[data-cy="Switch1"]').click({ force: true });
-    if(valid) {
+    if (valid) {
       cy.get('[data-cy="Option1"]').type(opt1);
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
@@ -98,7 +98,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="EditSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
-    if(valid) {
+    if (valid) {
       cy.get('[data-cy="Option1"]').type(opt1);
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
@@ -132,33 +132,15 @@ Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status
   cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('deleteQuestionSubmission', (title=null, reviews=true) => {
-  if(title != null) {
-    cy.contains(title)
-      .parent()
-      .parent()
-      .should('have.length', 1)
-      .children()
-      .should('have.length', 5)
-      .find('[data-cy="DeleteSubmission"]')
-      .click();
-  } else if (reviews) {
-    cy.exec(
-      'PGPASSWORD=' +
-      Cypress.env('PASS') +
-      ' psql -d ' +
-      Cypress.env('DBNAME') +
-      ' -h localhost -c "WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING question_submission_id), sub AS (DELETE FROM question_submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
-     );
-  } else {
-    cy.exec(
-      'PGPASSWORD=' +
-      Cypress.env('PASS') +
-      ' psql -d ' +
-      Cypress.env('DBNAME') +
-      ' -h localhost -c "WITH sub AS (DELETE FROM question_submissions WHERE id IN (SELECT max(id) FROM question_submissions) RETURNING question_id), opt AS (DELETE FROM options WHERE question_id IN (SELECT * FROM sub) RETURNING question_id) DELETE FROM questions WHERE id IN (SELECT * FROM opt);" '
-    );
-  }
+Cypress.Commands.add('deleteQuestionSubmission', (title) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 5)
+    .find('[data-cy="DeleteSubmission"]')
+    .click();
 });
 
 Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) => {
@@ -193,35 +175,6 @@ Cypress.Commands.add('checkQuestionSubmissionStatus', (title, status) => {
   cy.get('[data-cy="CloseButton"]').click();
 });
 
-Cypress.Commands.add('addQuestionSubmission', (title, questionStatus, userId) => {
-  cy.exec(
-    'PGPASSWORD=' +
-    Cypress.env('PASS') +
-    ' psql -d ' +
-    Cypress.env('DBNAME') +
-    ' -h localhost -c "WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES (\'' +
-    title +
-    '\', \'Question?\', \'' +
-    questionStatus +
-    '\', 2, current_timestamp) RETURNING id) INSERT INTO question_submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), ' +
-    userId +
-    ', 11);" '
-  );
-  //add options
-  for (let content in [0, 1, 2, 3]) {
-    let correct = content === 'A' ? 't' : 'f';
-    cy.exec(
-      'PGPASSWORD=' +
-      Cypress.env('PASS') +
-      ' psql -d ' +
-      Cypress.env('DBNAME') +
-      ' -h localhost -c "WITH quest AS (SELECT * FROM questions WHERE title=\'' +
-      title +
-      '\') INSERT INTO options(content, correct, question_id, sequence) VALUES (\'' + content + '\', \'' + correct + '\', (SELECT id FROM quest),'+ content +');" '
-    );
-  }
-});
-
 Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.contains(acronym)
     .parent()
@@ -238,7 +191,6 @@ Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.get('[data-cy="saveButton"]').click();
   cy.wait(3000);
 });
-
 
 Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains(acronym)

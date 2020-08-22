@@ -16,6 +16,7 @@
             v-model="search"
             append-icon="search"
             label="Search"
+            data-cy="Search"
             single-line
             hide-details
           />
