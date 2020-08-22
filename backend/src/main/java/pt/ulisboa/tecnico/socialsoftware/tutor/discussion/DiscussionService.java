@@ -72,6 +72,47 @@ public class DiscussionService {
         return new DiscussionDto(discussion);
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void setAvailability(DiscussionDto discussionDto) {
+        Discussion discussion = discussionRepository
+                .findByUserIdQuestionId(discussionDto.getUserId(), discussionDto.getQuestionId())
+                .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionDto.getUserId(),
+                        discussionDto.getQuestionId()));
+        discussion.setAvailable(discussionDto.isAvailable());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void giveReply(DiscussionDto discussionDto, ReplyDto replyDto) {
+        checkDiscussionDto(discussionDto);
+
+        User user = userRepository.findById(replyDto.getUserId()).orElseThrow(()->new TutorException(USER_NOT_FOUND, replyDto.getUserId()));
+
+        checkUserAndDiscussion(user, discussionDto);
+
+
+        Discussion discussion = discussionRepository
+                .findByUserIdQuestionId(discussionDto.getUserId(), discussionDto.getQuestionId())
+                .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionDto.getUserId(),
+                        discussionDto.getQuestionId()));
+
+
+        checkMessage(discussionDto.getMessage());
+
+        Reply reply = new Reply(user, replyDto, discussion);
+        //discussion.addReply(reply);
+
+        this.entityManager.persist(reply);
+        //this.entityManager.merge(discussion);
+    }
+
+    private void checkUserAndDiscussion(User user, DiscussionDto discussion) {
+        if (user.getRole() != User.Role.TEACHER && !user.getId().equals(discussion.getUserId())) {
+            throw new TutorException(REPLY_UNAUTHORIZED_USER);
+        }
+    }
+
     private void checkMessage(String message) {
         if (message == null || message.trim().length() == 0) {
             throw new TutorException(DISCUSSION_MISSING_MESSAGE);

@@ -81,6 +81,8 @@ public enum ErrorMessage {
     DISCUSSION_MISSING_MESSAGE("Missing message for discussion"),
     DISCUSSION_DATE_MISSING("Date is missing!"),
     DISCUSSION_MISSING_QUESTION("Missing question for discussion"),
+    DISCUSSION_NOT_FOUND("Discussion not found"),
+    REPLY_UNAUTHORIZED_USER("Reply is not authorized!"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
