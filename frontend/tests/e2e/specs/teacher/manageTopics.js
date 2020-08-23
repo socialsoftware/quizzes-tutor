@@ -28,6 +28,7 @@ describe('Manage Topics Walk-through', () => {
     cy.route('GET', '/courses/*/topics').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageTopicsMenuButton"]').click();
+    cy.get('[data-cy="Search"]').click();
 
     cy.wait('@getTopics')
       .its('status')
