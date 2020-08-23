@@ -165,9 +165,7 @@ Cypress.Commands.add('leaveTournament', tournament => {
 Cypress.Commands.add('editTournament', tournament => {
   cy.selectTournamentWithAction(tournament, "EditTournament");
 
-  cy.time('Start Time', 24, 0);
-  cy.wait(100);
-  cy.time('End Time', 26, 1);
+  cy.time('End Time', 24, 1);
   cy.get('[data-cy="NumberOfQuestions"]')
     .clear({
       force: true
