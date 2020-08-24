@@ -1,10 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
@@ -25,7 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 
 @TestConfiguration
-@PropertySource("classpath:application-test.properties")
+@PropertySource("classpath:application-dev.properties")
 class BeanConfiguration {
 
     @Value('${spring.mail.host}')
@@ -38,7 +36,7 @@ class BeanConfiguration {
     private String username
 
     @Value('${spring.mail.password}')
-    private String passowrd
+    private String password
 
     @Value('${spring.mail.properties.mail.smtp.auth}')
     private String auth;
@@ -129,7 +127,7 @@ class BeanConfiguration {
         mailSender.setPort(port);
 
         mailSender.setUsername(username);
-        mailSender.setPassword(passowrd);
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", Boolean.parseBoolean(protocol));
