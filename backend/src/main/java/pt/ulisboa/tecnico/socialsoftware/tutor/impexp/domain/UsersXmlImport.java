@@ -70,13 +70,17 @@ public class UsersXmlImport {
 					role = User.Role.valueOf(element.getAttributeValue("role"));
 				}
 
-				String email = null;
+				String email = "mm@mm.mm";
 				if (element.getAttributeValue("email") != null) {
 					email = element.getAttributeValue("email");
 				}
 
 				User user = userService.createUser(name, username, email, role);
 				user.setKey(key);
+
+				if (element.getChild("authUsers") != null) {
+					importAuthUsers(element.getChild("authUsers"), user);
+				}
 
 				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
@@ -89,5 +93,22 @@ public class UsersXmlImport {
 
 			userService.addCourseExecution(user.getId(), executionId);
 		}
+	}
+
+	private void importAuthUsers(Element authUsers, User user) {
+		Element authUser = authUsers.getChild("authUser");
+
+		String username = authUser.getAttributeValue("username");
+		String email = authUser.getAttributeValue("email");
+		String type = "EXTERNAL";
+		String password = "";
+
+		if (authUser.getAttributeValue("type") != null) {
+			type = authUser.getAttributeValue("type");
+		}
+		if (authUser.getAttributeValue("password") != null) {
+			 password = authUser.getAttributeValue("password");
+		}
+		userService.createAuthUser(user, username, email, type, password);
 	}
 }

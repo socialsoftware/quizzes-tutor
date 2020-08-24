@@ -6,6 +6,7 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.util.List;
 import java.util.Set;
@@ -41,20 +42,13 @@ public class UsersXmlExport {
 
 		userElement.setAttribute("key", String.valueOf(user.getKey()));
 
-		if (user.getUsername() != null) {
-			userElement.setAttribute("username", user.getUsername());
-		}
-
 		userElement.setAttribute("name", user.getName());
 
 		if (user.getRole() != null) {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
-		if (user.getEmail() != null) {
-			userElement.setAttribute("email", user.getEmail());
-		}
-
+		exportAuthUsers(userElement, user.getAuthUser());
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);
@@ -71,4 +65,24 @@ public class UsersXmlExport {
 		}
 		userElement.addContent(courseExecutionsElement);
 	}
+
+	private void exportAuthUsers(Element userElement, AuthUser authUser) {
+		Element authUsersElement = new Element("authUsers");
+		Element authUserElement = new Element("authUser");
+
+		authUserElement.setAttribute("username", authUser.getUsername());
+		authUserElement.setAttribute("email", authUser.getEmail());
+
+		if (authUser.getType() != null) {
+			authUserElement.setAttribute("type", authUser.getType().toString());
+		}
+
+		if (authUser.getPassword() != null) {
+			authUserElement.setAttribute("password", authUser.getPassword());
+		}
+
+		authUsersElement.addContent(authUserElement);
+		userElement.addContent(authUsersElement);
+	}
+
 }

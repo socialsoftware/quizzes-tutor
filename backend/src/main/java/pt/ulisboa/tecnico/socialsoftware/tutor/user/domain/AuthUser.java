@@ -29,6 +29,14 @@ public class AuthUser implements DomainEntity {
         setUser(user);
     }
 
+    public AuthUser(User user, String username, String email, Type type, String password) {
+        this(user);
+        setUsername(username);
+        setEmail(email);
+        setType(type);
+        setPassword(password);
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

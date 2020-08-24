@@ -96,6 +96,12 @@ public class UserService {
         return user;
     }
 
+    public AuthUser createAuthUser(User user, String username, String email, String type, String password) {
+        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.valueOf(type), password);
+        authUserRepository.save(authUser);
+        return authUser;
+    }
+
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String getEnrolledCoursesAcronyms(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));

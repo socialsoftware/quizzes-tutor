@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @DataJpaTest
 class ImportExportUsersTest extends SpockTest {
@@ -17,11 +18,15 @@ class ImportExportUsersTest extends SpockTest {
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
+        AuthUser authUser = new AuthUser(user)
+        authUserRepository.save(authUser)
 
         user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
+        authUser = new AuthUser(user)
+        authUserRepository.save(authUser)
     }
 
     def 'export and import users'() {
@@ -43,16 +48,18 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getKey() == existingUsers + 1
         userOne.getName() == USER_1_NAME
         userOne.getRole() == User.Role.TEACHER
-        userOne.getEmail() == USER_1_EMAIL
         userOne.getCourseExecutions().size() == 1
+        userOne.getAuthUser().getEmail() == USER_1_EMAIL
+        userOne.getAuthUser().getUsername() == USER_1_USERNAME
 
         def userTwo = userRepository.findByUsername(USER_2_USERNAME).orElse(null)
         userTwo != null
         userTwo.getKey() == existingUsers + 2
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
-        userTwo.getEmail() == USER_2_EMAIL
         userTwo.getCourseExecutions().size() == 1
+        userOne.getAuthUser().getEmail() == USER_1_EMAIL
+        userOne.getAuthUser().getUsername() == USER_1_USERNAME
     }
 
     @TestConfiguration
