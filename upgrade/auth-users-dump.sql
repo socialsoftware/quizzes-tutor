@@ -31,6 +31,13 @@ ALTER TABLE ONLY auth_users ALTER COLUMN id SET DEFAULT nextval('auth_users_id_s
 
 SELECT pg_catalog.setval('public.auth_users_id_seq', 737, true);
 
+INSERT INTO auth_users(user_id, type)
+  SELECT id, (CASE
+                WHEN password <> '' THEN 'TECNICO' 
+                ELSE 'EXTERNAL' 
+              END)
+    FROM users
+    WHERE active;
 
 COPY auth_users (user_id, type) FROM stdin;
 616	EXTERNAL
