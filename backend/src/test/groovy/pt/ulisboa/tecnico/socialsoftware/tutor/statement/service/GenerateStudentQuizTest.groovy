@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 import java.util.stream.Collectors
 
@@ -23,7 +24,7 @@ class GenerateStudentQuizTest extends SpockTest {
     def assessment
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
