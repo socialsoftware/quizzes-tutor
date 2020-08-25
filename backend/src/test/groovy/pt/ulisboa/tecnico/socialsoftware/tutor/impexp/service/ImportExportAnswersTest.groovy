@@ -52,7 +52,7 @@ class ImportExportAnswersTest extends SpockTest {
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)
 
-        User user = userService.createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT)
+        User user = userService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT).getUser()
 
         quizAnswer = new QuizAnswer()
         quizAnswer.setQuiz(quiz)

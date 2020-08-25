@@ -56,37 +56,36 @@ public class AuthService {
 
         User user = this.userService.findByUsername(username);
         AuthUser authUser = null;
+        if (user != null) {
+             authUser = user.getAuthUser();
+        }
 
         // If user is student and is not in db
         if (user == null && !activeAttendingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT);
+            authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT);
         }
 
         // If user is teacher and is not in db
         if (user == null && !fenixTeachingCourses.isEmpty()) {
-            user = this.userService.createUser(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER);
+            authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER);
         }
-
-        if (user == null) {
-            throw new TutorException(USER_NOT_ENROLLED, username);
-        }
-
-        authUser = user.getAuthUser();
 
         if (authUser == null) {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
 
-        if (authUser.getEmail() == null)
-            authUser.setEmail(fenix.getPersonEmail());
+        user = authUser.getUser();
 
+        if (authUser.getEmail() == null) {
+            authUser.setEmail(fenix.getPersonEmail());
+        }
         authUser.setLastAccess(DateHandler.now());
 
         if (user.getRole() == User.Role.ADMIN) {
             List<CourseDto> allCoursesInDb = courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList());
 
             if (!fenixTeachingCourses.isEmpty()) {
-                User finalUser = user;
+                User finalUser = authUser.getUser();
                 activeTeachingCourses.stream().filter(courseExecution -> !finalUser.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
 
                 allCoursesInDb.addAll(fenixTeachingCourses);
@@ -156,14 +155,15 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoStudentAuth(Boolean createNew) {
+        AuthUser authUser;
         User user;
 
         if (createNew == null || !createNew)
-            user = this.userService.getDemoStudent();
+            authUser = this.userService.getDemoStudent().getAuthUser();
         else
-            user = this.userService.createDemoStudent();
+            authUser = this.userService.createDemoStudent();
 
-        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -172,9 +172,9 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoTeacherAuth() {
-        User user = this.userService.getDemoTeacher();
+        AuthUser authUser = this.userService.getDemoTeacher().getAuthUser();
 
-        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -183,9 +183,9 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoAdminAuth() {
-        User user = this.userService.getDemoAdmin();
+        AuthUser authUser = this.userService.getDemoAdmin().getAuthUser();
 
-        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(user));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {

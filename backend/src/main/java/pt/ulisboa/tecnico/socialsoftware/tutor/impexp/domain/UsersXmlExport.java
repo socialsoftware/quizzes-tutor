@@ -81,6 +81,8 @@ public class UsersXmlExport {
 			authUserElement.setAttribute("password", authUser.getPassword());
 		}
 
+		authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));
+
 		authUsersElement.addContent(authUserElement);
 		userElement.addContent(authUsersElement);
 	}

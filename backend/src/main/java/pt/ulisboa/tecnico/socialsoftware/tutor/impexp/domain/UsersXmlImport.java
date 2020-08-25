@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -75,7 +76,7 @@ public class UsersXmlImport {
 					email = element.getAttributeValue("email");
 				}
 
-				User user = userService.createUser(name, username, email, role);
+				User user = userService.createUser(name, role);
 				user.setKey(key);
 
 				if (element.getChild("authUsers") != null) {
@@ -102,6 +103,7 @@ public class UsersXmlImport {
 		String email = authUser.getAttributeValue("email");
 		String type = "EXTERNAL";
 		String password = "";
+		Boolean isActive = true;
 
 		if (authUser.getAttributeValue("type") != null) {
 			type = authUser.getAttributeValue("type");
@@ -109,6 +111,9 @@ public class UsersXmlImport {
 		if (authUser.getAttributeValue("password") != null) {
 			 password = authUser.getAttributeValue("password");
 		}
-		userService.createAuthUser(user, username, email, type, password);
+		if (authUser.getAttributeValue("isActive") != null) {
+			isActive = Boolean.parseBoolean(authUser.getAttributeValue("isActive"));
+		}
+		userService.createAuthUser(user, username, email, type, password, isActive);
 	}
 }

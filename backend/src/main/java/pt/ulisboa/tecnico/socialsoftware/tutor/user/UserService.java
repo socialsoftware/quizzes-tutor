@@ -83,21 +83,30 @@ public class UserService {
         return result != null ? result : 0;
     }
 
-    public User createUser(String name, String username, String email, User.Role role) {
-        if (findByUsername(username) != null) {
-            throw new TutorException(DUPLICATE_USER, username);
-        }
+    public User createUser(String name, User.Role role) {
 
-        User user = new User(name, username, email, role, true, false);
+        User user = new User(name, role, false);
         userRepository.save(user);
-        AuthUser authUser = new AuthUser(user);
-        authUserRepository.save(authUser);
         user.setKey(user.getId());
         return user;
     }
 
-    public AuthUser createAuthUser(User user, String username, String email, String type, String password) {
-        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.valueOf(type), password);
+    public AuthUser createUserWithAuth(String name, String username, String email, User.Role role) {
+        if (findByUsername(username) != null) {
+            throw new TutorException(DUPLICATE_USER, username);
+        }
+
+        User user = new User(name, role, false);
+        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.TECNICO, true);
+        userRepository.save(user);
+        user.setKey(user.getId());
+        authUserRepository.save(authUser);
+
+        return authUser;
+    }
+
+    public AuthUser createAuthUser(User user, String username, String email, String type, String password, Boolean isActive) {
+        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.valueOf(type), isActive, password);
         authUserRepository.save(authUser);
         return authUser;
     }
@@ -126,43 +135,46 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
+    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER);
-            user.addCourse(courseService.getDemoCourseExecution());
-            return user;
+            AuthUser authUser = createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser.getUser();
         });
     }
 
+    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT);
-            user.addCourse(courseService.getDemoCourseExecution());
-            return user;
+            AuthUser authUser = createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser.getUser();
         });
     }
 
+    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            User user = createUser("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN);
-            user.addCourse(courseService.getDemoCourseExecution());
-            return user;
+            AuthUser authUser = createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser.getUser();
         });
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public User createDemoStudent() {
+    public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        User newDemoUser = createUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT);
+        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT);
         CourseExecution courseExecution = courseService.getDemoCourseExecution();
         if (courseExecution != null) {
-            courseExecution.addUser(newDemoUser);
-            newDemoUser.addCourse(courseExecution);
+            courseExecution.addUser(authUser.getUser());
+            authUser.getUser().addCourse(courseExecution);
         }
-        return newDemoUser;
+        return authUser;
     }
 
     public String exportUsers() {
@@ -259,7 +271,7 @@ public class UserService {
         User user = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, user);
         generateConfirmationToken(user.getAuthUser());
-        return new ExternalUserDto(user);
+        return new ExternalUserDto(user.getAuthUser());
     }
 
     public String generateConfirmationToken(AuthUser authUser) {
@@ -277,12 +289,13 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
+    // TODO: Change to AuthUser after step 8
     private User getOrCreateUser(ExternalUserDto externalUserDto) {
         return userRepository.findByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
-                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getEmail(), externalUserDto.getEmail(), externalUserDto.getRole(), false, false);
+                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getRole(), false);
+                    AuthUser authUser = new AuthUser(createdUser, externalUserDto.getEmail(), externalUserDto.getEmail(), AuthUser.Type.EXTERNAL, false);
                     userRepository.save(createdUser);
-                    AuthUser authUser = new AuthUser(createdUser);
                     authUserRepository.save(authUser);
                     return createdUser;
                 });

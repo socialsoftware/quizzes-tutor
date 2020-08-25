@@ -29,11 +29,17 @@ public class AuthUser implements DomainEntity {
         setUser(user);
     }
 
-    public AuthUser(User user, String username, String email, Type type, String password) {
-        this(user);
+    public AuthUser(User user, String username, String email, Type type, Boolean isActive) {
+        setUser(user);
         setUsername(username);
         setEmail(email);
         setType(type);
+        setActive(isActive);
+        checkRole(isActive);
+    }
+
+    public AuthUser(User user, String username, String email, Type type, Boolean isActive, String password) {
+        this(user, username, email, type, isActive);
         setPassword(password);
     }
 
@@ -128,6 +134,10 @@ public class AuthUser implements DomainEntity {
 
     public void checkConfirmationToken(String token) {
         user.checkConfirmationToken(token);
+    }
+
+    public void checkRole(boolean isActive) {
+        user.checkRole(isActive);
     }
 
         @Override
