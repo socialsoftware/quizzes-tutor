@@ -289,11 +289,12 @@ public class UserService {
     private User getOrCreateUser(ExternalUserDto externalUserDto) {
         return userRepository.findByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
-                    User createdUser = new User(externalUserDto.getName(), externalUserDto.getRole(), false);
-                    AuthUser authUser = new AuthUser(createdUser, externalUserDto.getEmail(), externalUserDto.getEmail(), AuthUser.Type.EXTERNAL, false);
-                    userRepository.save(createdUser);
-                    authUserRepository.save(authUser);
-                    return createdUser;
+                    User user = new User(externalUserDto.getName(),
+                            externalUserDto.getEmail(), externalUserDto.getEmail(),
+                            externalUserDto.getRole(), false, false, AuthUser.Type.EXTERNAL);
+                    userRepository.save(user);
+                    user.setKey(user.getId());
+                    return user;
                 });
     }
 

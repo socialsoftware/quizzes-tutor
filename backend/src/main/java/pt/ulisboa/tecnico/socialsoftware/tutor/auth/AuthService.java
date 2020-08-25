@@ -134,7 +134,6 @@ public class AuthService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto externalUserAuth(String email, String password) {
         User user = userService.findByUsername(email);
-
         if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
 
         AuthUser authUser = user.getAuthUser();

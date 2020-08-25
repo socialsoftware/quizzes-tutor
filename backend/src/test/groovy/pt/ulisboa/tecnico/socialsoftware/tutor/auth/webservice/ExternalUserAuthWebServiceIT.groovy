@@ -32,6 +32,7 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        user.setKey(userRepository.getMaxUserNumber()+1)
         userRepository.save(user)
         courseExecution.addUser(user)
 
@@ -45,14 +46,13 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
                 requestContentType: 'application/json'
         )
 
-
         then: "check response status"
         response.status == 200
         response.data.token != ""
+        response.data.user.key != null
         response.data.user.username == USER_1_EMAIL
         
         cleanup:
-
         courseExecution.getUsers().remove(userRepository.findByKey(response.data.user.key).get())
         authUserRepository.delete(userRepository.findByKey(response.data.user.key).get().getAuthUser())
         userRepository.delete(userRepository.findByKey(response.data.user.key).get())

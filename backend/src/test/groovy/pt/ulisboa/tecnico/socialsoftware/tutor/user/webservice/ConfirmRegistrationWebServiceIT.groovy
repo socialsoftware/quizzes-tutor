@@ -38,6 +38,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
         courseExecution.addUser(user)
+        user.setKey(userRepository.getMaxUserNumber()+1)
         userRepository.save(user)
 
         when:
@@ -73,6 +74,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
         courseExecution.addUser(user)
+        user.setKey(userRepository.getMaxUserNumber()+1)
         userRepository.save(user)
 
         when:
