@@ -8,6 +8,7 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -15,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
@@ -93,14 +95,31 @@ public class UsersXmlImport {
 		String username = authUserElement.getAttributeValue("username");
 		String email = authUserElement.getAttributeValue("email");
 		AuthUser.Type type = AuthUser.Type.EXTERNAL;
-		String password = "";
+		String password = null;
 		Boolean isActive = true;
+		LocalDateTime lastAccess = null;
+		String confirmationDate = null;
+		LocalDateTime tokenGenerationDate = null;
 
 		if (authUserElement.getAttributeValue("type") != null) {
 			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
 		}
 		if (authUserElement.getAttributeValue("password") != null) {
 			 password = authUserElement.getAttributeValue("password");
+		}
+		if (authUserElement.getAttributeValue("lastAccess") != null) {
+			lastAccess = DateHandler.toLocalDateTime(
+					authUserElement.getAttributeValue("lastAccess"));
+		}
+
+		if (authUserElement.getAttributeValue("confirmationToken") != null) {
+			confirmationDate = authUserElement.getAttributeValue("confirmationToken");
+		}
+
+		if (authUserElement.getAttributeValue("tokenGenerationDate") != null) {
+			tokenGenerationDate = DateHandler.toLocalDateTime(
+					authUserElement.getAttributeValue("tokenGenerationDate"));
+
 		}
 		if (authUserElement.getAttributeValue("isActive") != null) {
 			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
@@ -110,6 +129,9 @@ public class UsersXmlImport {
 		authUser.getUser().setKey(key);
 		authUser.setPassword(password);
 		authUser.setActive(isActive);
+		authUser.setLastAccess(lastAccess);
+		authUser.setConfirmationToken(confirmationDate);
+		authUser.setTokenGenerationDate(tokenGenerationDate);
 
 		return authUser.getUser();
 	}

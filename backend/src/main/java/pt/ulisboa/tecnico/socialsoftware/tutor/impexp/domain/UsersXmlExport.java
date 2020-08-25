@@ -4,6 +4,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
@@ -83,7 +84,23 @@ public class UsersXmlExport {
 			authUserElement.setAttribute("password", authUser.getPassword());
 		}
 
+		if (authUser.getLastAccess() != null) {
+			authUserElement.setAttribute("lastAccess",
+					DateHandler.toISOString(authUser.getLastAccess()));
+		}
+
+		if (authUser.getConfirmationToken() != null) {
+			authUserElement.setAttribute("confirmationToken",
+					authUser.getConfirmationToken());
+		}
+
+		if (authUser.getTokenGenerationDate() != null) {
+			authUserElement.setAttribute("tokenGenerationDate",
+					DateHandler.toISOString(authUser.getTokenGenerationDate()));
+		}
+
 		authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));
+
 
 		authUsersElement.addContent(authUserElement);
 		userElement.addContent(authUsersElement);

@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 class ImportExportUsersTest extends SpockTest {
 
 
-    def 'export and import with a auth user'() {
+    def 'export and import with a AuthUser'() {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()
         User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER,
@@ -20,6 +20,11 @@ class ImportExportUsersTest extends SpockTest {
         userRepository.save(user)
         def keyOne = user.getId()
         user.setKey(keyOne)
+        AuthUser authUser = user.getAuthUser()
+        authUser.setPassword(USER_1_PASSWORD)
+        authUser.setLastAccess(LOCAL_DATE_TODAY)
+        authUser.setConfirmationToken(USER_1_TOKEN)
+        authUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT,
                 true, false, AuthUser.Type.EXTERNAL)
@@ -27,6 +32,11 @@ class ImportExportUsersTest extends SpockTest {
         userRepository.save(user)
         def keyTwo = user.getId()
         user.setKey(keyTwo)
+        authUser = user.getAuthUser()
+        authUser.setPassword(USER_2_PASSWORD)
+        authUser.setLastAccess(LOCAL_DATE_TODAY)
+        authUser.setConfirmationToken(USER_2_TOKEN)
+        authUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
         and: 'a xml with of users'
         def usersXml = userService.exportUsers()
         and: 'a clean database'
@@ -48,6 +58,10 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getCourseExecutions().size() == 1
         userOne.getAuthUser().getEmail() == USER_1_EMAIL
         userOne.getAuthUser().getUsername() == USER_1_USERNAME
+        userOne.getAuthUser().getPassword() == USER_1_PASSWORD
+        userOne.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
+        userOne.getAuthUser().getConfirmationToken() == USER_1_TOKEN
+        userOne.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
 
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
@@ -55,11 +69,15 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
         userTwo.getCourseExecutions().size() == 1
-        userOne.getAuthUser().getEmail() == USER_1_EMAIL
-        userOne.getAuthUser().getUsername() == USER_1_USERNAME
+        userTwo.getAuthUser().getEmail() == USER_2_EMAIL
+        userTwo.getAuthUser().getUsername() == USER_2_USERNAME
+        userTwo.getAuthUser().getPassword() == USER_2_PASSWORD
+        userTwo.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
+        userTwo.getAuthUser().getConfirmationToken() == USER_2_TOKEN
+        userTwo.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
     }
 
-    def 'export and import users without a auth user'() {
+    def 'export and import users without a AuthUser'() {
         given: 'two users without a auth user'
         def existingUsers = userRepository.findAll().size()
         User user = new User(USER_1_NAME, User.Role.TEACHER, false)
