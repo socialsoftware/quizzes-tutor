@@ -18,7 +18,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def response
     def user
-    def authUser
+
 
     def course
     def courseExecution
@@ -33,14 +33,12 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def "user confirms registration"() {
         given: "one inactive user"
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
-        user.setConfirmationToken(USER_1_TOKEN)
-        user.setTokenGenerationDate(LOCAL_DATE_TODAY)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
         courseExecution.addUser(user)
         userRepository.save(user)
-        authUser = new AuthUser(user)
-        authUserRepository.save(authUser)
 
         when:
         response = restClient.post(
@@ -70,14 +68,12 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
-        user.setConfirmationToken(USER_1_TOKEN)
-        user.setTokenGenerationDate(LOCAL_DATE_BEFORE)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
         courseExecution.addUser(user)
         userRepository.save(user)
-        authUser = new AuthUser(user)
-        authUserRepository.save(authUser)
 
         when:
         response = restClient.post(

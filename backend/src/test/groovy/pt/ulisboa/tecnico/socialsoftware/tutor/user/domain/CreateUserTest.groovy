@@ -22,15 +22,12 @@ import spock.lang.Unroll;
 @DataJpaTest
 class CreateUserTest extends SpockTest {
     def user
-    def authUser
+
     def quiz
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
-        authUser = new AuthUser(user)
-        user.setAuthUser(authUser)
-        authUserRepository.save(authUser)
         user.setKey(user.getId())
 
         QuizDto quizDto = new QuizDto()
@@ -73,25 +70,34 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, role" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getRole() == User.Role.STUDENT
+        result.getAuthUser() != null
+        result.getAuthUser().getUsername() == USER_1_USERNAME
+        result.getAuthUser().getEmail() == USER_1_EMAIL
+        result.getAuthUser().getType() == AuthUser.Type.EXTERNAL
+        result.getAuthUser().isActive()
     }
 
     def "create User: name, username, email, role, state, admin" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getEmail() == USER_1_EMAIL
         result.getRole() == User.Role.STUDENT
-        !result.isActive()
         !result.isAdmin()
+        result.getAuthUser() != null
+        result.getAuthUser().getUsername() == USER_1_USERNAME
+        result.getAuthUser().getEmail() == USER_1_EMAIL
+        result.getAuthUser().getType() == AuthUser.Type.EXTERNAL
+        !result.getAuthUser().isActive()
     }
 
     def "checkConfirmationToken: correct token and date has not expired" (){

@@ -20,8 +20,6 @@ class GetExternalUsersTest extends SpockTest {
     def courseExecution2
     def user1
     def user2
-    def authUser1
-    def authUser2
 
     def setup() {
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -29,27 +27,20 @@ class GetExternalUsersTest extends SpockTest {
         courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution1)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user1)
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
-        authUser1 = new AuthUser(user1)
-        user1.setAuthUser(authUser1)
-        authUserRepository.save(authUser1)
-
 
         course2 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course2)
         courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution2)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user2)
         user2.addCourse(courseExecution2)
         courseExecution2.addUser(user2)
-        authUser2 = new AuthUser(user2)
-        user2.setAuthUser(authUser2)
-        authUserRepository.save(authUser2)
     }
 
     def "the course execution id is invalid"() {

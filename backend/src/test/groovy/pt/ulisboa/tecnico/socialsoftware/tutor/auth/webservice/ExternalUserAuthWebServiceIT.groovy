@@ -16,7 +16,6 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
     private int port
 
     User user
-    AuthUser authUser
     Course course
     CourseExecution courseExecution
 
@@ -32,6 +31,8 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         given: "one inactive user with an expired "
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
+        user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        userRepository.save(user)
         courseExecution.addUser(user)
 
         when:
