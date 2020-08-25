@@ -48,7 +48,9 @@ public class UsersXmlExport {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
-		exportAuthUsers(userElement, user.getAuthUser());
+		if (user.getAuthUser() != null) {
+			exportAuthUsers(userElement, user.getAuthUser());
+		}
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);

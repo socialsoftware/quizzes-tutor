@@ -63,29 +63,55 @@ public class UsersXmlImport {
 			Integer key = Integer.valueOf(element.getAttributeValue("key"));
 
 			if (userService.findByKey(key) == null) {
-				String name = element.getAttributeValue("name");
-				String username = element.getAttributeValue("username");
-
-				User.Role role = null;
-				if (element.getAttributeValue("role") != null) {
-					role = User.Role.valueOf(element.getAttributeValue("role"));
-				}
-
-				String email = "mm@mm.mm";
-				if (element.getAttributeValue("email") != null) {
-					email = element.getAttributeValue("email");
-				}
-
-				User user = userService.createUser(name, role);
-				user.setKey(key);
-
+				User user;
 				if (element.getChild("authUsers") != null) {
-					importAuthUsers(element.getChild("authUsers"), user);
+					user = importUserWithAuth(element);
+				} else {
+					user = importUser(element);
 				}
-
 				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
 		}
+	}
+
+	private User importUser(Element userElement) {
+		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+		String name = userElement.getAttributeValue("name");
+		User.Role role = getUserRole(userElement);
+
+		User user = userService.createUser(name, role);
+		user.setKey(key);
+		return user;
+	}
+
+	private User importUserWithAuth(Element userElement) {
+		Element authUserElement = userElement.getChild("authUsers").getChild("authUser");
+		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+		String name = userElement.getAttributeValue("name");
+		User.Role role = getUserRole(userElement);
+
+		String username = authUserElement.getAttributeValue("username");
+		String email = authUserElement.getAttributeValue("email");
+		AuthUser.Type type = AuthUser.Type.EXTERNAL;
+		String password = "";
+		Boolean isActive = true;
+
+		if (authUserElement.getAttributeValue("type") != null) {
+			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
+		}
+		if (authUserElement.getAttributeValue("password") != null) {
+			 password = authUserElement.getAttributeValue("password");
+		}
+		if (authUserElement.getAttributeValue("isActive") != null) {
+			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
+		}
+
+		AuthUser authUser = userService.createUserWithAuth(name, username, email, role,  type);
+		authUser.getUser().setKey(key);
+		authUser.setPassword(password);
+		authUser.setActive(isActive);
+
+		return authUser.getUser();
 	}
 
 	private void importCourseExecutions(Element courseExecutions, User user) {
@@ -96,24 +122,11 @@ public class UsersXmlImport {
 		}
 	}
 
-	private void importAuthUsers(Element authUsers, User user) {
-		Element authUser = authUsers.getChild("authUser");
-
-		String username = authUser.getAttributeValue("username");
-		String email = authUser.getAttributeValue("email");
-		String type = "EXTERNAL";
-		String password = "";
-		Boolean isActive = true;
-
-		if (authUser.getAttributeValue("type") != null) {
-			type = authUser.getAttributeValue("type");
+	private User.Role getUserRole(Element userElement) {
+		User.Role role = null;
+		if (userElement.getAttributeValue("role") != null) {
+			role = User.Role.valueOf(userElement.getAttributeValue("role"));
 		}
-		if (authUser.getAttributeValue("password") != null) {
-			 password = authUser.getAttributeValue("password");
-		}
-		if (authUser.getAttributeValue("isActive") != null) {
-			isActive = Boolean.parseBoolean(authUser.getAttributeValue("isActive"));
-		}
-		userService.createAuthUser(user, username, email, type, password, isActive);
+		return role;
 	}
 }

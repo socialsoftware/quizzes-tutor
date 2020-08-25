@@ -13,24 +13,24 @@ class ImportExportUsersTest extends SpockTest {
 
     def setup() {
         existingUsers = userRepository.findAll().size()
-
-        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
-        user.addCourse(externalCourseExecution)
-        userRepository.save(user)
-        user.setKey(user.getId())
-        AuthUser authUser = new AuthUser(user)
-        authUserRepository.save(authUser)
-
-        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
-        user.addCourse(externalCourseExecution)
-        userRepository.save(user)
-        user.setKey(user.getId())
-        authUser = new AuthUser(user)
-        authUserRepository.save(authUser)
     }
 
-    def 'export and import users'() {
-        given: 'a xml with of users'
+    def 'export and import with a auth user'() {
+        given: 'two users with a auth user'
+        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER,
+                true, false, AuthUser.Type.EXTERNAL)
+        user.addCourse(externalCourseExecution)
+        userRepository.save(user)
+        def keyOne = user.getId()
+        user.setKey(keyOne)
+
+        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT,
+                true, false, AuthUser.Type.EXTERNAL)
+        user.addCourse(externalCourseExecution)
+        userRepository.save(user)
+        def keyTwo = user.getId()
+        user.setKey(keyTwo)
+        and: 'a xml with of users'
         def usersXml = userService.exportUsers()
         and: 'a clean database'
         userRepository.deleteAll()
@@ -43,7 +43,7 @@ class ImportExportUsersTest extends SpockTest {
         externalCourseExecution.getUsers().size() == 2
 
         userRepository.findAll().size() == existingUsers + 2
-        def userOne = userRepository.findByUsername(USER_1_USERNAME).orElse(null)
+        def userOne = userRepository.findByKey(keyOne).orElse(null)
         userOne != null
         userOne.getKey() == existingUsers + 1
         userOne.getName() == USER_1_NAME
@@ -52,7 +52,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getAuthUser().getEmail() == USER_1_EMAIL
         userOne.getAuthUser().getUsername() == USER_1_USERNAME
 
-        def userTwo = userRepository.findByUsername(USER_2_USERNAME).orElse(null)
+        def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
         userTwo.getKey() == existingUsers + 2
         userTwo.getName() == USER_2_NAME
@@ -60,6 +60,47 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getCourseExecutions().size() == 1
         userOne.getAuthUser().getEmail() == USER_1_EMAIL
         userOne.getAuthUser().getUsername() == USER_1_USERNAME
+    }
+
+    def 'export and import users without a auth user'() {
+        given: 'two users without a auth user'
+        User user = new User(USER_1_NAME, User.Role.TEACHER, false)
+        user.addCourse(externalCourseExecution)
+        userRepository.save(user)
+        def keyOne = user.getId()
+        user.setKey(keyOne)
+
+        user = new User(USER_2_NAME, User.Role.STUDENT, false)
+        user.addCourse(externalCourseExecution)
+        userRepository.save(user)
+        def keyTwo = user.getId()
+        user.setKey(keyTwo)
+        and: 'a xml with of users'
+        def usersXml = userService.exportUsers()
+        and: 'a clean database'
+        userRepository.deleteAll()
+        externalCourseExecution.getUsers().clear()
+
+        when:
+        userService.importUsers(usersXml)
+
+        then:
+        externalCourseExecution.getUsers().size() == 2
+
+        userRepository.findAll().size() == existingUsers + 2
+        def userOne = userRepository.findByKey(keyOne).orElse(null)
+        userOne != null
+        userOne.getKey() == existingUsers + 1
+        userOne.getName() == USER_1_NAME
+        userOne.getRole() == User.Role.TEACHER
+        userOne.getCourseExecutions().size() == 1
+
+        def userTwo = userRepository.findByKey(keyTwo).orElse(null)
+        userTwo != null
+        userTwo.getKey() == existingUsers + 2
+        userTwo.getName() == USER_2_NAME
+        userTwo.getRole() == User.Role.STUDENT
+        userTwo.getCourseExecutions().size() == 1
     }
 
     @TestConfiguration
