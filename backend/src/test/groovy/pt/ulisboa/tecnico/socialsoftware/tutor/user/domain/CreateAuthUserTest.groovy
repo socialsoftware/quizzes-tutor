@@ -12,7 +12,7 @@ class CreateAuthUserTest  extends SpockTest {
     def User
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         user.setKey(user.getId())
         userRepository.save(user)
     }

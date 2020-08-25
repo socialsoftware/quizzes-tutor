@@ -26,7 +26,7 @@ class CreateUserTest extends SpockTest {
     def quiz
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         userRepository.save(user)
         authUser = new AuthUser(user)
         user.setAuthUser(authUser)
@@ -73,7 +73,7 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, role" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
 
         then:
         result.getName() == USER_1_NAME
@@ -83,7 +83,7 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, email, role, state, admin" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
 
         then:
         result.getName() == USER_1_NAME

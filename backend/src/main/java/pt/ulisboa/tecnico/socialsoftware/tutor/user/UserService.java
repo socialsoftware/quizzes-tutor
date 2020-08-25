@@ -91,18 +91,15 @@ public class UserService {
         return user;
     }
 
-    public AuthUser createUserWithAuth(String name, String username, String email, User.Role role) {
+    public AuthUser createUserWithAuth(String name, String username, String email, User.Role role, AuthUser.Type type) {
         if (findByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, role, false);
-        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.TECNICO, true);
+        User user = new User(name, username, email, role, true, false, type);
         userRepository.save(user);
         user.setKey(user.getId());
-        authUserRepository.save(authUser);
-
-        return authUser;
+        return user.getAuthUser();
     }
 
     public AuthUser createAuthUser(User user, String username, String email, String type, String password, Boolean isActive) {
@@ -139,7 +136,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoTeacher() {
         return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER);
+            AuthUser authUser = createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.EXTERNAL);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser.getUser();
         });
@@ -149,7 +146,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoStudent() {
         return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT);
+            AuthUser authUser = createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser.getUser();
         });
@@ -159,7 +156,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User getDemoAdmin() {
         return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN);
+            AuthUser authUser = createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.EXTERNAL);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser.getUser();
         });
@@ -168,7 +165,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT);
+        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
         CourseExecution courseExecution = courseService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(authUser.getUser());

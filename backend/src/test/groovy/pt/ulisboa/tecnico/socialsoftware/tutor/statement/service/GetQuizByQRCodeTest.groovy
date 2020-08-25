@@ -25,7 +25,7 @@ class GetQuizByQRCodeTest extends SpockTest {
     def setup() {
         courseDto = new CourseDto(externalCourseExecution)
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())

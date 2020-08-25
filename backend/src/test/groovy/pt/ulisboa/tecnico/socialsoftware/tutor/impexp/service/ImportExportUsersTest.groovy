@@ -14,14 +14,14 @@ class ImportExportUsersTest extends SpockTest {
     def setup() {
         existingUsers = userRepository.findAll().size()
 
-        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
+        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
         AuthUser authUser = new AuthUser(user)
         authUserRepository.save(authUser)
 
-        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())

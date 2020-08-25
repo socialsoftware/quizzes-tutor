@@ -86,13 +86,14 @@ public class User implements UserDetails, DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, String email, User.Role role, boolean isActive, boolean isAdmin){
+    public User(String name, String username, String email, Role role, boolean isActive, boolean isAdmin, AuthUser.Type type){
         setName(name);
         setUsername(username);
         setRole(role);
         setEmail(email);
         setActive(isActive);
         setAdmin(isAdmin);
+        setAuthUser(new AuthUser(this, username, email, type, isActive));
         setCreationDate(DateHandler.now());
     }
 
