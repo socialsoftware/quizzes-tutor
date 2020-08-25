@@ -84,7 +84,6 @@ public class UserService {
     }
 
     public User createUser(String name, User.Role role) {
-
         User user = new User(name, role, false);
         userRepository.save(user);
         user.setKey(user.getId());
