@@ -22,11 +22,15 @@ import spock.lang.Unroll;
 @DataJpaTest
 class CreateUserTest extends SpockTest {
     def user
+    def authUser
     def quiz
 
     def setup() {
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
         userRepository.save(user)
+        authUser = new AuthUser(user)
+        user.setAuthUser(authUser)
+        authUserRepository.save(authUser)
         user.setKey(user.getId())
 
         QuizDto quizDto = new QuizDto()
@@ -92,8 +96,8 @@ class CreateUserTest extends SpockTest {
 
     def "checkConfirmationToken: correct token and date has not expired" (){
         given:
-        user.setConfirmationToken(USER_1_TOKEN)
-        user.setTokenGenerationDate(LOCAL_DATE_TODAY)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         when:
         user.checkConfirmationToken(USER_1_TOKEN)
@@ -104,8 +108,8 @@ class CreateUserTest extends SpockTest {
 
     def "checkConfirmationToken: correct token but date has expired" (){
         given:
-        user.setConfirmationToken(USER_1_TOKEN)
-        user.setTokenGenerationDate(LOCAL_DATE_BEFORE)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
 
         when:
         user.checkConfirmationToken(USER_1_TOKEN)
@@ -117,8 +121,8 @@ class CreateUserTest extends SpockTest {
 
     def "checkConfirmationToken: incorrect token" (){
         given:
-        user.setConfirmationToken(USER_1_TOKEN)
-        user.setTokenGenerationDate(LOCAL_DATE_TODAY)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         when:
         user.checkConfirmationToken(USER_2_TOKEN)

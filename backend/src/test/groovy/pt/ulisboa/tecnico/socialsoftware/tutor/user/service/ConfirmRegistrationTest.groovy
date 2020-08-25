@@ -44,7 +44,7 @@ class ConfirmRegistrationTest extends SpockTest {
         userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         User user = userService.findByUsername(USER_1_EMAIL)
-        user.setConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
     }
 
 	def "user confirms registration successfully" () {

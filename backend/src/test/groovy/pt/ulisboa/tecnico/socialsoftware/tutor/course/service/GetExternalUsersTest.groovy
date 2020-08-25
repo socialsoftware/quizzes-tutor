@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 @DataJpaTest
@@ -19,6 +20,8 @@ class GetExternalUsersTest extends SpockTest {
     def courseExecution2
     def user1
     def user2
+    def authUser1
+    def authUser2
 
     def setup() {
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -30,6 +33,10 @@ class GetExternalUsersTest extends SpockTest {
         userRepository.save(user1)
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
+        authUser1 = new AuthUser(user1)
+        user1.setAuthUser(authUser1)
+        authUserRepository.save(authUser1)
+
 
         course2 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course2)
@@ -40,6 +47,9 @@ class GetExternalUsersTest extends SpockTest {
         userRepository.save(user2)
         user2.addCourse(courseExecution2)
         courseExecution2.addUser(user2)
+        authUser2 = new AuthUser(user2)
+        user2.setAuthUser(authUser2)
+        authUserRepository.save(authUser2)
     }
 
     def "the course execution id is invalid"() {

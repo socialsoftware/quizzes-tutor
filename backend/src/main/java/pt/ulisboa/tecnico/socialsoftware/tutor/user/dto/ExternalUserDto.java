@@ -28,9 +28,9 @@ public class ExternalUserDto implements Serializable {
         this.name = user.getName();
         this.username = user.getUsername();
         this.email = user.getEmail();
-        this.password = user.getPassword();
+        this.password = user.getAuthUser().getPassword();
         this.role = user.getRole();
-        this.active = user.isActive();
+        this.active = user.getAuthUser().isActive();
         this.isAdmin = user.isAdmin();
         this.confirmationToken = user.getConfirmationToken();
     }

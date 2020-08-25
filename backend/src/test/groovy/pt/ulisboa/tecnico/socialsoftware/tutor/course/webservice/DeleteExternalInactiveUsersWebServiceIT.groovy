@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
@@ -16,6 +17,8 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
     def response
     def user1
     def user2
+    def authUser1
+    def authUser2
 
     def course1
     def courseExecution1
@@ -37,10 +40,17 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
         userRepository.save(user1)
+        authUser1 = new AuthUser(user1)
+        user1.setAuthUser(authUser1)
+        authUserRepository.save(authUser1)
+
         user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, false, false)
         user2.addCourse(courseExecution1)
         courseExecution1.addUser(user2)
         userRepository.save(user2)
+        authUser2 = new AuthUser(user2)
+        user2.setAuthUser(authUser2)
+        authUserRepository.save(authUser2)
         and:"a user ids list"
         usersIdsList.add(user1.getId())
         usersIdsList.add(user2.getId())

@@ -244,9 +244,9 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void checkConfirmationToken(String token) {
-        if (!token.equals(getConfirmationToken()))
+        if (!token.equals(authUser.getConfirmationToken()))
             throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+        if (authUser.getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
             throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
