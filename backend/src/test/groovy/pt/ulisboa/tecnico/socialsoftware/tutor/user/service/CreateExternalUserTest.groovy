@@ -80,8 +80,6 @@ class CreateExternalUserTest extends SpockTest {
         given: "a user"
         def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
         userRepository.save(user)
-        def authUser = new AuthUser(user)
-        authUserRepository.save(authUser)
         and: "a external course execution"
         def executionId = externalCourseExecution.getId()
         and: "a external user dto"

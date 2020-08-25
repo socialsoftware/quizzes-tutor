@@ -63,9 +63,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
         
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.username).get())
-        authUserRepository.delete(userRepository.findByUsername(response.data.username).get().getAuthUser())
-        userRepository.delete(userRepository.findByUsername(response.data.username).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(response.data.key).get())
+        authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(response.data.key).get())
     }
 
     def "user tries to confirm registration with an expired token"() {
@@ -100,9 +100,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.username).get())
-        authUserRepository.delete(userRepository.findByUsername(response.data.username).get().getAuthUser())
-        userRepository.delete(userRepository.findByUsername(response.data.username).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(response.data.key).get())
+        authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(response.data.key).get())
     }
 
     def cleanup() {

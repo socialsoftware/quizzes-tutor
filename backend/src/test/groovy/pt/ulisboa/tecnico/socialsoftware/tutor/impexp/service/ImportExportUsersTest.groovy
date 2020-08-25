@@ -9,14 +9,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @DataJpaTest
 class ImportExportUsersTest extends SpockTest {
-    def existingUsers
 
-    def setup() {
-        existingUsers = userRepository.findAll().size()
-    }
 
     def 'export and import with a auth user'() {
         given: 'two users with a auth user'
+        def existingUsers = userRepository.findAll().size()
         User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER,
                 true, false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
@@ -45,7 +42,7 @@ class ImportExportUsersTest extends SpockTest {
         userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByKey(keyOne).orElse(null)
         userOne != null
-        userOne.getKey() == existingUsers + 1
+        userOne.getKey() == keyOne
         userOne.getName() == USER_1_NAME
         userOne.getRole() == User.Role.TEACHER
         userOne.getCourseExecutions().size() == 1
@@ -54,7 +51,7 @@ class ImportExportUsersTest extends SpockTest {
 
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
-        userTwo.getKey() == existingUsers + 2
+        userTwo.getKey() == keyTwo
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
         userTwo.getCourseExecutions().size() == 1
@@ -64,6 +61,7 @@ class ImportExportUsersTest extends SpockTest {
 
     def 'export and import users without a auth user'() {
         given: 'two users without a auth user'
+        def existingUsers = userRepository.findAll().size()
         User user = new User(USER_1_NAME, User.Role.TEACHER, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
@@ -90,14 +88,14 @@ class ImportExportUsersTest extends SpockTest {
         userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByKey(keyOne).orElse(null)
         userOne != null
-        userOne.getKey() == existingUsers + 1
+        userOne.getKey() == keyOne
         userOne.getName() == USER_1_NAME
         userOne.getRole() == User.Role.TEACHER
         userOne.getCourseExecutions().size() == 1
 
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
-        userTwo.getKey() == existingUsers + 2
+        userTwo.getKey() == keyTwo
         userTwo.getName() == USER_2_NAME
         userTwo.getRole() == User.Role.STUDENT
         userTwo.getCourseExecutions().size() == 1

@@ -52,9 +52,9 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         
         cleanup:
 
-        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.user.username).get())
-        authUserRepository.delete(userRepository.findByUsername(response.data.user.username).get().getAuthUser())
-        userRepository.delete(userRepository.findByUsername(response.data.user.username).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(response.data.user.key).get())
+        authUserRepository.delete(userRepository.findByKey(response.data.user.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(response.data.user.key).get())
     }
 
     def cleanup() {
