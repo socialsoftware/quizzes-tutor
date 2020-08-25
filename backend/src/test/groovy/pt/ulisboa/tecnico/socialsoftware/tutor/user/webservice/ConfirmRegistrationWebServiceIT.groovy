@@ -49,7 +49,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest{
                         username: USER_1_EMAIL,
                         password: USER_1_PASSWORD,
                         confirmationToken: USER_1_TOKEN
-                ],
+                ], 
                 requestContentType: 'application/json'
         )
 

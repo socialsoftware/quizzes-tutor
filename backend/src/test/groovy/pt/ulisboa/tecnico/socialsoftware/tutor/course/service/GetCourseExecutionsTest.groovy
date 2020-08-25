@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @DataJpaTest
 class GetCourseExecutionsTest extends SpockTest {
@@ -53,9 +54,13 @@ class GetCourseExecutionsTest extends SpockTest {
 
         def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         teacher.addCourse(courseExecution)
+        def authTeacher = new AuthUser(teacher)
+        teacher.setAuthUser(authTeacher)
 
         def student = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
         student.addCourse(courseExecution)
+        def authStudent = new AuthUser(student)
+        student.setAuthUser(authStudent)
 
         Question question = new Question()
         question.setTitle("Title")

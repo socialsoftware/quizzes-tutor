@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GetExternalUsersWebServiceIT extends SpockTest {
@@ -18,6 +19,8 @@ class GetExternalUsersWebServiceIT extends SpockTest {
     def courseExecution2
     def user1
     def user2
+    def authUser1
+    def authUser2
 
     def response
 
@@ -33,6 +36,9 @@ class GetExternalUsersWebServiceIT extends SpockTest {
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
         userRepository.save(user1)
+        authUser1 = new AuthUser(user1)
+        user1.setAuthUser(authUser1)
+        authUserRepository.save(authUser1)
 
         courseExecution2 = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution2)
@@ -41,6 +47,9 @@ class GetExternalUsersWebServiceIT extends SpockTest {
         user2.addCourse(courseExecution2)
         courseExecution2.addUser(user2)
         userRepository.save(user2)
+        authUser2 = new AuthUser(user2)
+        user2.setAuthUser(authUser2)
+        authUserRepository.save(authUser2)
 
         demoAdminLogin()
     }
