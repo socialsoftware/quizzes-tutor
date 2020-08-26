@@ -1,8 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
@@ -21,10 +18,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(name = "users",
-        indexes = {
-                @Index(name = "users_indx_0", columnList = "username")
-        })
+@Table(name = "users")
 public class User implements DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
@@ -40,9 +34,6 @@ public class User implements DomainEntity {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean active;
-
-    @Column(unique=true)
-    private String username;
 
     private String name;
 
