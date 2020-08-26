@@ -34,9 +34,6 @@ public class User implements DomainEntity {
 
     private String name;
 
-    @Column(columnDefinition = "TEXT")
-    private String enrolledCoursesAcronyms;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
 
@@ -117,13 +114,13 @@ public class User implements DomainEntity {
         this.admin = admin;
     }
 
-    public String getEnrolledCoursesAcronyms() {
+    /*public String getEnrolledCoursesAcronyms() {
         return enrolledCoursesAcronyms;
     }
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
-    }
+    }*/
 
     public Role getRole() {
         return role;
@@ -314,7 +311,7 @@ public class User implements DomainEntity {
                 ", role=" + role +
                 ", username='" + getUsername() + '\'' +
                 ", name='" + name + '\'' +
-                ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
+                ", enrolledCoursesAcronyms='" + authUser.getEnrolledCoursesAcronyms() + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +

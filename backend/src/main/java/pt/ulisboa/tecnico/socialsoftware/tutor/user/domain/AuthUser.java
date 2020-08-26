@@ -51,6 +51,9 @@ public class AuthUser implements DomainEntity, UserDetails {
     @Column(columnDefinition = "boolean default false")
     private Boolean active;
 
+    @Column(columnDefinition = "TEXT")
+    private String enrolledCoursesAcronyms;
+
     public AuthUser() {}
 
     public AuthUser(User user) {
@@ -150,11 +153,11 @@ public class AuthUser implements DomainEntity, UserDetails {
     }
 
     public String getEnrolledCoursesAcronyms() {
-        return user.getEnrolledCoursesAcronyms();
+        return enrolledCoursesAcronyms;
     }
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
-        user.setEnrolledCoursesAcronyms(enrolledCoursesAcronyms);
+        this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
 
     public Type getType() {
