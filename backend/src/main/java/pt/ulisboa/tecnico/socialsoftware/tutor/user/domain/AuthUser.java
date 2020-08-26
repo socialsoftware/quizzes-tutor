@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,12 +11,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "auth_users")
-public class AuthUser implements DomainEntity {
+public class AuthUser implements DomainEntity, UserDetails {
     public enum Type { EXTERNAL, TECNICO}
 
     @Id
@@ -27,6 +33,8 @@ public class AuthUser implements DomainEntity {
     private Type type;
 
     private String email;
+    private String password;
+
 
     public AuthUser() {}
 
@@ -65,6 +73,7 @@ public class AuthUser implements DomainEntity {
         this.user.setAuthUser(this);
     }
 
+    @Override
     public String getUsername() {
         return user.getUsername();
     }
@@ -84,12 +93,13 @@ public class AuthUser implements DomainEntity {
         this.email = email;
     }
 
+    @Override
     public String getPassword() {
-        return user.getPassword();
+        return password;
     }
 
     public void setPassword(String password) {
-        user.setPassword(password);
+        this.password = password;
     }
 
     public String getConfirmationToken() {
@@ -140,7 +150,6 @@ public class AuthUser implements DomainEntity {
         this.type = type;
     }
 
-
     public void checkRole(boolean isActive) {
         if (!isActive && !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {
             throw new TutorException(INVALID_ROLE, user.getRole().toString());
@@ -157,5 +166,37 @@ public class AuthUser implements DomainEntity {
             throw new TutorException(INVALID_CONFIRMATION_TOKEN);
         if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
             throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        List<GrantedAuthority> list = new ArrayList<>();
+
+        list.add(new SimpleGrantedAuthority("ROLE_" + user.getRole()));
+
+        if (user.isAdmin())
+            list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
+        return list;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

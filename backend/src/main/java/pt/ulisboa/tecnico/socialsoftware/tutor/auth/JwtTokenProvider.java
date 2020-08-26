@@ -92,6 +92,6 @@ public class JwtTokenProvider {
 
     Authentication getAuthentication(String token) {
         User user = this.userRepository.findById(getUserId(token)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, getUserId(token)));
-        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthUser().getAuthorities());
     }
 }
