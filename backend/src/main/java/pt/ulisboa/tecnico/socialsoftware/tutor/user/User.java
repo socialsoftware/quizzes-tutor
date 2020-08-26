@@ -56,9 +56,6 @@ public class User implements DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Column(name = "last_access")
-    private LocalDateTime lastAccess;
-
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval=true)
     public AuthUser authUser;
 
@@ -151,13 +148,13 @@ public class User implements DomainEntity {
         this.creationDate = creationDate;
     }
 
-    public LocalDateTime getLastAccess() {
+    /*public LocalDateTime getLastAccess() {
         return lastAccess;
     }
 
     public void setLastAccess(LocalDateTime lastAccess) {
         this.lastAccess = lastAccess;
-    }
+    }*/
 
     public Set<QuizAnswer> getQuizAnswers() {
         return quizAnswers;
@@ -348,7 +345,7 @@ public class User implements DomainEntity {
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
                 ", creationDate=" + creationDate +
-                ", lastAccess=" + lastAccess +
+                ", lastAccess=" + authUser.getLastAccess() +
                 '}';
     }
 

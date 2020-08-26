@@ -45,6 +45,9 @@ public class AuthUser implements DomainEntity, UserDetails {
 
     private LocalDateTime tokenGenerationDate;
 
+    @Column(name = "last_access")
+    private LocalDateTime lastAccess;
+
     public AuthUser() {}
 
     public AuthUser(User user) {
@@ -128,11 +131,11 @@ public class AuthUser implements DomainEntity, UserDetails {
     }
 
     public LocalDateTime getLastAccess() {
-        return user.getLastAccess();
+        return lastAccess;
     }
 
     public void setLastAccess(LocalDateTime lastAccess) {
-        user.setLastAccess(lastAccess);
+        this.lastAccess = lastAccess;
     }
 
     public boolean isActive() {
