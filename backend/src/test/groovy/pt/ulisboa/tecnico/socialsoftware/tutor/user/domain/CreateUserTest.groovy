@@ -266,7 +266,7 @@ class CreateUserTest extends SpockTest {
 
     def "remove active user from course executions" (){
         given:
-        user.setActive(true)
+        user.getAuthUser().setActive(true)
         and:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)

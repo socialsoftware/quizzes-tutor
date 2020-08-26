@@ -51,7 +51,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "an invalid execution id"
         def executionId = -1
         and: "a list of user id's"
-        user1.setActive(false)
+        user1.getAuthUser().setActive(false)
         userIdList << user1.getId()
 
         when:
@@ -66,7 +66,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "a tecnico course execution id"
         def executionId = tecnicoCourseExecution.getId()
         and: "a list of user id's"
-        user1.setActive(false)
+        user1.getAuthUser().setActive(false)
         user1.addCourse(tecnicoCourseExecution)
         tecnicoCourseExecution.addUser(user1)
         userIdList << user1.getId()
@@ -86,7 +86,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "and execution id"
         def executionId = externalCourseExecution.getId()
         and: "a list of user id's"
-        user1.setActive(true)
+        user1.getAuthUser().setActive(true)
         userIdList << user1.getId()
 
         when:
@@ -108,8 +108,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "an execution id"
         def executionId = externalCourseExecution.getId()
         and: "a list of user id's"
-        user1.setActive(false)
-        user2.setActive(false)
+        user1.getAuthUser().setActive(false)
+        user2.getAuthUser().setActive(false)
         userIdList << user1.getId()
         userIdList << user2.getId()
 

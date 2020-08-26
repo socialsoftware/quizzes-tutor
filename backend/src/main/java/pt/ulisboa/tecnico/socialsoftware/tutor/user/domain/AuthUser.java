@@ -48,6 +48,9 @@ public class AuthUser implements DomainEntity, UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
+    @Column(columnDefinition = "boolean default false")
+    private Boolean active;
+
     public AuthUser() {}
 
     public AuthUser(User user) {
@@ -139,11 +142,11 @@ public class AuthUser implements DomainEntity, UserDetails {
     }
 
     public boolean isActive() {
-        return user.isActive();
+        return active;
     }
 
     public void setActive(boolean active) {
-        user.setActive(active);
+        this.active = active;
     }
 
     public String getEnrolledCoursesAcronyms() {

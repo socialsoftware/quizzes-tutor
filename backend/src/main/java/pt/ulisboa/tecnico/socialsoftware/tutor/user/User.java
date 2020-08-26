@@ -32,9 +32,6 @@ public class User implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean active;
-
     private String name;
 
     @Column(columnDefinition = "TEXT")
@@ -71,7 +68,6 @@ public class User implements DomainEntity {
     public User(String name, String username, String email, Role role, boolean isActive, boolean isAdmin, AuthUser.Type type){
         setName(name);
         setRole(role);
-        setActive(isActive);
         setAdmin(isAdmin);
         setAuthUser(new AuthUser(this, username, email, type, isActive));
         setCreationDate(DateHandler.now());
@@ -148,14 +144,6 @@ public class User implements DomainEntity {
         this.creationDate = creationDate;
     }
 
-    /*public LocalDateTime getLastAccess() {
-        return lastAccess;
-    }
-
-    public void setLastAccess(LocalDateTime lastAccess) {
-        this.lastAccess = lastAccess;
-    }*/
-
     public Set<QuizAnswer> getQuizAnswers() {
         return quizAnswers;
     }
@@ -166,14 +154,6 @@ public class User implements DomainEntity {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public String getEmail() {
