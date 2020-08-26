@@ -75,7 +75,7 @@ public class User implements UserDetails, DomainEntity {
     private LocalDateTime lastAccess;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
-    private AuthUser authUser;
+    public AuthUser authUser;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
@@ -90,7 +90,6 @@ public class User implements UserDetails, DomainEntity {
         setName(name);
         setUsername(username);
         setRole(role);
-        setEmail(email);
         setActive(isActive);
         setAdmin(isAdmin);
         setAuthUser(new AuthUser(this, username, email, type, isActive));
@@ -217,15 +216,15 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public String getEmail() {
-        return email;
+        return authUser.getEmail();
     }
 
-    public void setEmail(String email) {
+    /*public void setEmail(String email) {
         if (email == null || !email.matches(UserService.MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email;
-    }
+    }*/
 
     public LocalDateTime getTokenGenerationDate() {
         return tokenGenerationDate;
@@ -249,13 +248,6 @@ public class User implements UserDetails, DomainEntity {
 
     public void setAuthUser(AuthUser authUser) {
         this.authUser = authUser;
-    }
-
-    public void checkConfirmationToken(String token) {
-        if (!token.equals(authUser.getConfirmationToken()))
-            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (authUser.getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
-            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
     public Integer getNumberOfTeacherQuizzes() {

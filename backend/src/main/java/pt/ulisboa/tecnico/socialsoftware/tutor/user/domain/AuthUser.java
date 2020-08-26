@@ -1,16 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+
 @Entity
 @Table(name = "auth_users")
 public class AuthUser implements DomainEntity {
-
     public enum Type { EXTERNAL, TECNICO}
 
     @Id
@@ -22,6 +25,8 @@ public class AuthUser implements DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Type type;
+
+    private String email;
 
     public AuthUser() {}
 
@@ -69,11 +74,14 @@ public class AuthUser implements DomainEntity {
     }
 
     public String getEmail() {
-        return user.getEmail();
+        return email;
     }
 
     public void setEmail(String email) {
-        user.setEmail(email);
+        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+            throw new TutorException(INVALID_EMAIL, email);
+
+        this.email = email;
     }
 
     public String getPassword() {
@@ -132,17 +140,22 @@ public class AuthUser implements DomainEntity {
         this.type = type;
     }
 
-    public void checkConfirmationToken(String token) {
-        user.checkConfirmationToken(token);
-    }
 
     public void checkRole(boolean isActive) {
-        user.checkRole(isActive);
+        if (!isActive && !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {
+            throw new TutorException(INVALID_ROLE, user.getRole().toString());
+        }
     }
 
-        @Override
+    @Override
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
     }
 
+    public void checkConfirmationToken(String token) {
+        if (!token.equals(getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
+    }
 }

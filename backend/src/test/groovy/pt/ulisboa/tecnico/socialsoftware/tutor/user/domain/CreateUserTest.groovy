@@ -90,7 +90,6 @@ class CreateUserTest extends SpockTest {
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
-        result.getEmail() == USER_1_EMAIL
         result.getRole() == User.Role.STUDENT
         !result.isAdmin()
         result.getAuthUser() != null
@@ -106,7 +105,7 @@ class CreateUserTest extends SpockTest {
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         when:
-        user.checkConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().checkConfirmationToken(USER_1_TOKEN)
 
         then:
         noExceptionThrown()
@@ -118,7 +117,7 @@ class CreateUserTest extends SpockTest {
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
 
         when:
-        user.checkConfirmationToken(USER_1_TOKEN)
+        user.getAuthUser().checkConfirmationToken(USER_1_TOKEN)
 
         then:
         def error = thrown(TutorException)
@@ -131,7 +130,7 @@ class CreateUserTest extends SpockTest {
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         when:
-        user.checkConfirmationToken(USER_2_TOKEN)
+        user.getAuthUser().checkConfirmationToken(USER_2_TOKEN)
 
         then:
         def error = thrown(TutorException)

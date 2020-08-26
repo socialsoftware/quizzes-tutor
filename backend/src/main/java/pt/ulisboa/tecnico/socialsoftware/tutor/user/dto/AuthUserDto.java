@@ -26,7 +26,7 @@ public class AuthUserDto implements Serializable {
     public AuthUserDto(User user) {
         this.name = user.getName();
         this.username = user.getUsername();
-        this.email = user.getEmail();
+        this.email = user.getAuthUser().getEmail();
         this.role = user.getRole();
         this.admin = user.isAdmin();
         this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
@@ -45,7 +45,7 @@ public class AuthUserDto implements Serializable {
     public AuthUserDto(User user, List<CourseDto> currentCourses) {
         this.name = user.getName();
         this.username = user.getUsername();
-        this.email = user.getEmail();
+        this.email = user.getAuthUser().getEmail();
         this.role = user.getRole();
         this.admin = user.isAdmin();
         this.courses = getActiveAndInactiveCourses(user, currentCourses);
