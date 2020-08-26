@@ -71,7 +71,7 @@ public class User implements DomainEntity {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval=true)
     public AuthUser authUser;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
@@ -486,7 +486,7 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (active) {
+        if (this.getAuthUser().isActive()) {
             throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 

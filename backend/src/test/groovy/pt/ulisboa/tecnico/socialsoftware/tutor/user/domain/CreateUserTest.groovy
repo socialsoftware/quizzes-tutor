@@ -248,7 +248,7 @@ class CreateUserTest extends SpockTest {
         user.getQuizAnswers().size() == previousNumberQuizAnswers + 1
     }
 
-    def "remove from course executions" (){
+    def "remove inactive user from course executions" (){
         given:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
@@ -262,6 +262,27 @@ class CreateUserTest extends SpockTest {
 
         then:
         courseExecution.getUsers().size() == previousNumberOfUsers - 1
+    }
+
+    def "remove active user from course executions" (){
+        given:
+        user.setActive(true)
+        and:
+        def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
+        courseRepository.save(course)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        courseExecutionRepository.save(courseExecution)
+        user.addCourse(courseExecution)
+        def previousNumberOfUsers = courseExecution.getUsers().size()
+
+        when:
+        user.remove()
+
+        then:
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.USER_IS_ACTIVE
+        and:
+        courseExecution.getUsers().size() == previousNumberOfUsers
     }
 
     @Unroll
