@@ -1,7 +1,7 @@
 ALTER TABLE Users ADD COLUMN Active boolean;
 ALTER TABLE Users ADD COLUMN password character varying(255);
 ALTER TABLE Users ADD COLUMN email character varying(255);
---ALTER TABLE Users ADD COLUMN confirmation_token character varying(255);
+ALTER TABLE Users ADD COLUMN confirmation_token character varying(255);
 
 
 
@@ -20,7 +20,7 @@ CREATE TABLE auth_users (
 	username character varying(255),
 	email character varying(255),
   password character varying(255),
-  --confirmation_token character varying(255),
+  confirmation_token character varying(255),
   --token_generation_date timestamp without time zone,
 	--last_access timestamp without time zone,
 	--enrolled_courses_acronyms text,
@@ -61,8 +61,8 @@ UPDATE auth_users
 SET username = u.username,
     user_id = u.id , 
     email = u.email,
-    password = u.password
-    --confirmation_token = u.confirmation_token,
+    password = u.password,
+    confirmation_token = u.confirmation_token
     --token_generation_date = u.token_generation_date,
     --last_access = u.last_access,
     --enrolled_courses_acronyms = u.enrolled_courses_acronyms,
@@ -73,8 +73,8 @@ WHERE u.id = user_id;
 ALTER TABLE users
   DROP COLUMN username, 
   DROP COLUMN email,
-  DROP COLUMN password;
-  --DROP COLUMN confirmation_token,
+  DROP COLUMN password,
+  DROP COLUMN confirmation_token;
   --DROP COLUMN token_generation_date,
   --DROP COLUMN last_access,
   --DROP COLUMN enrolled_courses_acronyms,

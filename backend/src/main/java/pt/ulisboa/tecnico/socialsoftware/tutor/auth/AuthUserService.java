@@ -241,7 +241,6 @@ public class AuthUserService {
         return new ExternalUserDto(authUser);
     }
 
-    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoTeacher(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
@@ -251,7 +250,6 @@ public class AuthUserService {
         });
     }
 
-    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoStudent(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
@@ -261,7 +259,6 @@ public class AuthUserService {
         });
     }
 
-    // TODO: Change to AuthUser after step 8
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoAdmin(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {

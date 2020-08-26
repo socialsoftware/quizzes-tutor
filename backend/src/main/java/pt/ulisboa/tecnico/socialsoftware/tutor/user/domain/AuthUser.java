@@ -38,6 +38,7 @@ public class AuthUser implements DomainEntity, UserDetails {
     @Column(unique=true)
     private String username;
 
+    private String confirmationToken = "";
 
     public AuthUser() {}
 
@@ -106,11 +107,11 @@ public class AuthUser implements DomainEntity, UserDetails {
     }
 
     public String getConfirmationToken() {
-        return user.getConfirmationToken();
+        return confirmationToken;
     }
 
     public void setConfirmationToken(String confirmationToken) {
-        user.setConfirmationToken(confirmationToken);
+        this.confirmationToken = confirmationToken;
     }
 
     public LocalDateTime getTokenGenerationDate() {

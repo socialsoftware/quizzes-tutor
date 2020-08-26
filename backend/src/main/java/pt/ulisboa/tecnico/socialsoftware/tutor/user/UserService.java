@@ -254,7 +254,6 @@ public class UserService {
         user.addCourse(courseExecution);
     }
 
-    // TODO: Change to AuthUser after step 8
     private AuthUser getOrCreateUser(ExternalUserDto externalUserDto) {
         return authUserRepository.findAuthUserByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
