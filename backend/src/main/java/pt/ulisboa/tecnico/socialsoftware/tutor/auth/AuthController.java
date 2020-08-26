@@ -11,10 +11,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @RestController
 public class AuthController {
     @Autowired
-    private AuthService authService;
+    private AuthUserService authUserService;
 
     @Autowired
-    private AuthServiceApplicational authServiceApplicational;
+    private AuthUserServiceApplicational authUserServiceApplicational;
 
     @Value("${base.url}")
     private String baseUrl;
@@ -32,13 +32,13 @@ public class AuthController {
     public AuthDto fenixAuth(@RequestParam String code) {
         FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);
         fenix.authenticate(code);
-        return this.authService.fenixAuth(fenix);
+        return this.authUserService.fenixAuth(fenix);
     }
 
     @GetMapping("/auth/external")
     public AuthDto externalUserAuth(@RequestParam String email, @RequestParam String password) {
         try {
-            return authService.externalUserAuth(email, password);
+            return authUserService.externalUserAuth(email, password);
         } catch (TutorException e) {
             throw new TutorException(INVALID_LOGIN_CREDENTIALS);
         }
@@ -46,22 +46,22 @@ public class AuthController {
 
     @GetMapping("/auth/demo/student")
     public AuthDto demoStudentAuth(@RequestParam Boolean createNew) {
-        return this.authService.demoStudentAuth(createNew);
+        return this.authUserService.demoStudentAuth(createNew);
     }
 
     @GetMapping("/auth/demo/teacher")
     public AuthDto demoTeacherAuth() {
-        return this.authService.demoTeacherAuth();
+        return this.authUserService.demoTeacherAuth();
     }
 
     @GetMapping("/auth/demo/admin")
     public AuthDto demoAdminAuth() {
-        return this.authService.demoAdminAuth();
+        return this.authUserService.demoAdminAuth();
     }
 
     @PostMapping("/auth/registration/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = authServiceApplicational.confirmRegistration(externalUserDto);
+        ExternalUserDto user = authUserServiceApplicational.confirmRegistration(externalUserDto);
         return user;
     }
 }

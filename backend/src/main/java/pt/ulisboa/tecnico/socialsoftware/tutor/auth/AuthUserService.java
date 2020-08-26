@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
@@ -20,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -29,18 +32,28 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class AuthService {
+public class AuthUserService {
     @Autowired
     private UserService userService;
 
     @Autowired
+    private CourseService courseService;
+
+    @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private AuthUserRepository authUserRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    public AuthUser findAuthUserByUsername(String username) {
+        return this.authUserRepository.findAuthUserByUsername(username).orElse(null);
+    }
 
     @Retryable(
             value = { SQLException.class },
@@ -54,19 +67,15 @@ public class AuthService {
         List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
 
-        User user = this.userService.findByUsername(username);
-        AuthUser authUser = null;
-        if (user != null) {
-             authUser = user.getAuthUser();
-        }
+        AuthUser authUser = this.findAuthUserByUsername(username);
 
         // If user is student and is not in db
-        if (user == null && !activeAttendingCourses.isEmpty()) {
+        if (authUser == null && !activeAttendingCourses.isEmpty()) {
             authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
         }
 
         // If user is teacher and is not in db
-        if (user == null && !fenixTeachingCourses.isEmpty()) {
+        if (authUser == null && !fenixTeachingCourses.isEmpty()) {
             authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
         }
 
@@ -74,19 +83,20 @@ public class AuthService {
             throw new TutorException(USER_NOT_ENROLLED, username);
         }
 
-        user = authUser.getUser();
-
         if (authUser.getEmail() == null) {
             authUser.setEmail(fenix.getPersonEmail());
         }
         authUser.setLastAccess(DateHandler.now());
 
-        if (user.getRole() == User.Role.ADMIN) {
+        if (authUser.getUser().getRole() == User.Role.ADMIN) {
             List<CourseDto> allCoursesInDb = courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList());
 
             if (!fenixTeachingCourses.isEmpty()) {
                 User finalUser = authUser.getUser();
-                activeTeachingCourses.stream().filter(courseExecution -> !finalUser.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
+                activeTeachingCourses.stream()
+                        .filter(courseExecution ->
+                                !finalUser.getCourseExecutions().contains(courseExecution))
+                        .forEach(authUser.getUser()::addCourse);
 
                 allCoursesInDb.addAll(fenixTeachingCourses);
 
@@ -96,32 +106,38 @@ public class AuthService {
 
                 authUser.setEnrolledCoursesAcronyms(ids);
             }
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser, allCoursesInDb));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, allCoursesInDb));
         }
 
         // Update student courses
-        if (!activeAttendingCourses.isEmpty() && user.getRole() == User.Role.STUDENT) {
-            User student = user;
-            activeAttendingCourses.stream().filter(courseExecution -> !student.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
+        if (!activeAttendingCourses.isEmpty() && authUser.getUser().getRole() == User.Role.STUDENT) {
+            User student = authUser.getUser();
+            activeAttendingCourses.stream()
+                    .filter(courseExecution ->
+                            !student.getCourseExecutions().contains(courseExecution))
+                    .forEach(authUser.getUser()::addCourse);
+            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
         }
 
         // Update teacher courses
-        if (!fenixTeachingCourses.isEmpty() && user.getRole() == User.Role.TEACHER) {
-            User teacher = user;
-            activeTeachingCourses.stream().filter(courseExecution -> !teacher.getCourseExecutions().contains(courseExecution)).forEach(user::addCourse);
+        if (!fenixTeachingCourses.isEmpty() && authUser.getUser().getRole() == User.Role.TEACHER) {
+            User teacher = authUser.getUser();
+            activeTeachingCourses.stream()
+                    .filter(courseExecution ->
+                            !teacher.getCourseExecutions().contains(courseExecution))
+                    .forEach(authUser.getUser()::addCourse);
 
             String ids = fenixTeachingCourses.stream()
                     .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
             authUser.setEnrolledCoursesAcronyms(ids);
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser, fenixTeachingCourses));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, fenixTeachingCourses));
         }
 
         // Previous teacher without active courses
-        if (user.getRole() == User.Role.TEACHER) {
-            return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
+        if (authUser.getUser().getRole() == User.Role.TEACHER) {
+            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
         }
 
         throw new TutorException(USER_NOT_ENROLLED, username);
@@ -133,10 +149,8 @@ public class AuthService {
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto externalUserAuth(String email, String password) {
-        User user = userService.findByUsername(email);
-        if (user == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
-
-        AuthUser authUser = user.getAuthUser();
+        AuthUser authUser = this.findAuthUserByUsername(email);
+        if (authUser == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
 
         if (password == null ||
                 !passwordEncoder.matches(password, authUser.getPassword()))
@@ -144,7 +158,7 @@ public class AuthService {
 
         authUser.setLastAccess(DateHandler.now());
 
-        return new AuthDto(JwtTokenProvider.generateToken(user), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
 
@@ -158,7 +172,7 @@ public class AuthService {
         User user;
 
         if (createNew == null || !createNew)
-            authUser = this.userService.getDemoStudent().getAuthUser();
+            authUser = getDemoStudent(this.userService);
         else
             authUser = this.userService.createDemoStudent();
 
@@ -171,7 +185,7 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoTeacherAuth() {
-        AuthUser authUser = this.userService.getDemoTeacher().getAuthUser();
+        AuthUser authUser = getDemoTeacher(this.userService);
 
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
@@ -182,7 +196,7 @@ public class AuthService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoAdminAuth() {
-        AuthUser authUser = this.userService.getDemoAdmin().getAuthUser();
+        AuthUser authUser = getDemoAdmin(this.userService);
 
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
@@ -199,12 +213,10 @@ public class AuthService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        User user = userService.findByUsername(externalUserDto.getUsername());
+        AuthUser authUser = this.findAuthUserByUsername(externalUserDto.getUsername());
 
-        if (user == null)
+        if (authUser == null)
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
-
-        AuthUser authUser = user.getAuthUser();
 
         if (authUser.isActive())
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
@@ -217,8 +229,8 @@ public class AuthService {
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                userService.generateConfirmationToken(user.getAuthUser());
-                return new ExternalUserDto(user);
+                userService.generateConfirmationToken(authUser.getUser().getAuthUser());
+                return new ExternalUserDto(authUser);
             }
             else throw new TutorException(e.getErrorMessage());
         }
@@ -227,5 +239,35 @@ public class AuthService {
         authUser.setActive(true);
 
         return new ExternalUserDto(authUser);
+    }
+
+    // TODO: Change to AuthUser after step 8
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser getDemoTeacher(UserService userService) {
+        return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.EXTERNAL);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser;
+        });
+    }
+
+    // TODO: Change to AuthUser after step 8
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser getDemoStudent(UserService userService) {
+        return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser;
+        });
+    }
+
+    // TODO: Change to AuthUser after step 8
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser getDemoAdmin(UserService userService) {
+        return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.EXTERNAL);
+            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            return authUser;
+        });
     }
 }

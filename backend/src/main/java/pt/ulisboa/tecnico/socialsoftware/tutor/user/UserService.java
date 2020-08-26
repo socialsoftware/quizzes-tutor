@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
@@ -57,6 +57,9 @@ public class UserService {
     @Autowired
     private AnswerService answerService;
 
+     @Autowired
+     public AuthUserService authUserService;
+
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -69,10 +72,6 @@ public class UserService {
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
     public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
     public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
-
-    public User findByUsername(String username) {
-        return this.userRepository.findByUsername(username).orElse(null);
-    }
 
     public User findByKey(Integer key) {
         return this.userRepository.findByKey(key).orElse(null);
@@ -91,7 +90,7 @@ public class UserService {
     }
 
     public AuthUser createUserWithAuth(String name, String username, String email, User.Role role, AuthUser.Type type) {
-        if (findByUsername(username) != null) {
+        if (authUserService.findAuthUserByUsername(username) != null) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
@@ -129,36 +128,6 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         user.addCourse(courseExecution);
-    }
-
-    // TODO: Change to AuthUser after step 8
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User getDemoTeacher() {
-        return this.userRepository.findByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.EXTERNAL);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
-            return authUser.getUser();
-        });
-    }
-
-    // TODO: Change to AuthUser after step 8
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User getDemoStudent() {
-        return this.userRepository.findByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
-            return authUser.getUser();
-        });
-    }
-
-    // TODO: Change to AuthUser after step 8
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User getDemoAdmin() {
-        return this.userRepository.findByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.EXTERNAL);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
-            return authUser.getUser();
-        });
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -264,7 +233,7 @@ public class UserService {
             propagation = Propagation.REQUIRED)
     public ExternalUserDto createExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
-        User user = getOrCreateUser(externalUserDto);
+        User user = getOrCreateUser(externalUserDto).getUser();
         associateUserWithExecution(courseExecution, user);
         generateConfirmationToken(user.getAuthUser());
         return new ExternalUserDto(user.getAuthUser());
@@ -286,15 +255,15 @@ public class UserService {
     }
 
     // TODO: Change to AuthUser after step 8
-    private User getOrCreateUser(ExternalUserDto externalUserDto) {
-        return userRepository.findByUsername(externalUserDto.getEmail())
+    private AuthUser getOrCreateUser(ExternalUserDto externalUserDto) {
+        return authUserRepository.findAuthUserByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
                     User user = new User(externalUserDto.getName(),
                             externalUserDto.getEmail(), externalUserDto.getEmail(),
                             externalUserDto.getRole(), false, false, AuthUser.Type.EXTERNAL);
                     userRepository.save(user);
                     user.setKey(user.getId());
-                    return user;
+                    return user.getAuthUser();
                 });
     }
 

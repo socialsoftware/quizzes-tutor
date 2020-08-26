@@ -35,7 +35,7 @@ class ExternalUserAuthTest extends SpockTest {
 
     def "user logins successfully" () {
         when:
-        def result = authService.externalUserAuth(USER_1_EMAIL, USER_1_PASSWORD)
+        def result = authUserService.externalUserAuth(USER_1_EMAIL, USER_1_PASSWORD)
 
         then:
         result.user.username == USER_1_EMAIL
@@ -43,7 +43,7 @@ class ExternalUserAuthTest extends SpockTest {
 
     def "login fails, given values are invalid" () {
         when:
-        authService.externalUserAuth(username, password)
+        authUserService.externalUserAuth(username, password)
 
         then:
         def error = thrown(TutorException)

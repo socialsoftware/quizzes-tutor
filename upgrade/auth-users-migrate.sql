@@ -10,6 +10,7 @@ ALTER TABLE auth_users
   
 UPDATE auth_users
 SET username = u.username,
+    user_id = u.id	
     email = u.email,
     password = u.password,
     confirmation_token = u.confirmation_token,

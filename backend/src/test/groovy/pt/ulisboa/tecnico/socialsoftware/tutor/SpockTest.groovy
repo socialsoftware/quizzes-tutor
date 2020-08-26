@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
@@ -106,10 +106,10 @@ class SpockTest extends Specification {
     public static final int NUMBER_OF_USERS_IN_FILE = 5
 
     @Autowired
-    AuthService authService
+    AuthUserService authUserService
 
     @Autowired
-    AuthServiceApplicational authServiceApplicational
+    AuthUserServiceApplicational authUserServiceApplicational
 
     @Autowired
     AnswerService answerService

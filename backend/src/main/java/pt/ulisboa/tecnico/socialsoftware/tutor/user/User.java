@@ -40,7 +40,7 @@ public class User implements DomainEntity {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean active;
-    
+
     @Column(unique=true)
     private String username;
 
@@ -48,7 +48,6 @@ public class User implements DomainEntity {
 
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
-    private String password;
 
     private String confirmationToken = "";
     private LocalDateTime tokenGenerationDate;
@@ -86,7 +85,6 @@ public class User implements DomainEntity {
 
     public User(String name, String username, String email, Role role, boolean isActive, boolean isAdmin, AuthUser.Type type){
         setName(name);
-        setUsername(username);
         setRole(role);
         setActive(isActive);
         setAdmin(isAdmin);
@@ -119,11 +117,7 @@ public class User implements DomainEntity {
     }
 
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+        return authUser.getUsername();
     }
 
     public String getName() {
@@ -369,7 +363,7 @@ public class User implements DomainEntity {
                 "id=" + id +
                 ", key=" + key +
                 ", role=" + role +
-                ", username='" + username + '\'' +
+                ", username='" + getUsername() + '\'' +
                 ", name='" + name + '\'' +
                 ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +

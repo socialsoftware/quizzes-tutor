@@ -43,7 +43,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -51,7 +51,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null) != null
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == existingCourses
         courseExecutionRepository.findAll().size() == existingCourseExecutions
@@ -65,7 +65,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -73,7 +73,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        def user = userRepository.findByUsername(USER_1_USERNAME).orElse(null)
+        def user = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser()
         user != null
         and: 'is teaching'
         user.getCourseExecutions().size() == 1
@@ -89,7 +89,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then:
         thrown(TutorException)
@@ -114,7 +114,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -122,7 +122,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null) != null
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == existingCourses
         courseExecutionRepository.findAll().size() == existingCourseExecutions
@@ -142,7 +142,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -150,7 +150,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null) != null
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null) != null
         and: 'no courses are created'
         courseRepository.findAll().size() == existingCourses
         courseExecutionRepository.findAll().size() == existingCourseExecutions
@@ -169,7 +169,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -177,7 +177,9 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        def user2 = userRepository.findByUsername(USER_1_USERNAME).orElse(null)
+        def user2 = authUserRepository.findAuthUserByUsername(USER_1_USERNAME)
+                .map({authUser -> authUser.getUser()})
+                .orElse(null)
         user2 != null
         and: 'is teaching'
         user2.getCourseExecutions().size() == 1
@@ -193,7 +195,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then:
         thrown(TutorException)
@@ -216,7 +218,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then:
         thrown(TutorException)
@@ -235,7 +237,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -243,7 +245,9 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        User user = userRepository.findByUsername(USER_1_USERNAME).orElse(null)
+        User user = authUserRepository.findAuthUserByUsername(USER_1_USERNAME)
+                .map({authUser -> authUser.getUser()})
+                .orElse(null)
         user.getRole() == User.Role.STUDENT
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
@@ -264,7 +268,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         thrown(TutorException)
@@ -292,7 +296,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         thrown(TutorException)
@@ -315,7 +319,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -323,7 +327,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null).getRole() == User.Role.STUDENT
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser().getRole() == User.Role.STUDENT
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == COURSE_1_ACRONYM
@@ -342,13 +346,13 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        authService.fenixAuth(client)
+        authUserService.fenixAuth(client)
 
         then:
         thrown(TutorException)
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null).getRole() == User.Role.STUDENT
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser().getRole() == User.Role.STUDENT
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -366,7 +370,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> new ArrayList<>()
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -374,7 +378,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null).getRole() == User.Role.TEACHER
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser().getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 0
     }
@@ -392,7 +396,7 @@ class FenixAuthTest extends SpockTest {
         client.getPersonTeachingCourses() >> courses
 
         when:
-        def result = authService.fenixAuth(client)
+        def result = authUserService.fenixAuth(client)
 
         then: "the returned data are correct"
         result.user.username == USER_1_USERNAME
@@ -400,7 +404,7 @@ class FenixAuthTest extends SpockTest {
         result.user.email == USER_1_EMAIL
         and: 'the user is created in the db'
         userRepository.findAll().size() == existingUsers + 1
-        userRepository.findByUsername(USER_1_USERNAME).orElse(null).getRole() == User.Role.TEACHER
+        authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser().getRole() == User.Role.TEACHER
         and: 'is enrolled'
         user.getCourseExecutions().size() == 1
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == COURSE_1_ACRONYM

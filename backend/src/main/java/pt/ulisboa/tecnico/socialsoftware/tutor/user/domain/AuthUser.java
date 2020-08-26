@@ -35,6 +35,9 @@ public class AuthUser implements DomainEntity, UserDetails {
     private String email;
     private String password;
 
+    @Column(unique=true)
+    private String username;
+
 
     public AuthUser() {}
 
@@ -75,11 +78,11 @@ public class AuthUser implements DomainEntity, UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getUsername();
+        return username;
     }
 
     public void setUsername(String username) {
-        user.setUsername(username);
+        this.username = username;
     }
 
     public String getEmail() {

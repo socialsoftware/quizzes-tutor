@@ -10,12 +10,14 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 @PropertySource({ "classpath:application.properties" })
 @EnableJpaRepositories
@@ -30,6 +32,9 @@ public class TutorApplication extends SpringBootServletInitializer implements In
 
     @Autowired
     UserService userService;
+
+    @Autowired
+    AuthUserService authUserService;
 
     @Autowired
     private QuizService quizService;
@@ -47,9 +52,9 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     public void afterPropertiesSet() {
         // Run on startup
         JwtTokenProvider.generateKeys();
-        userService.getDemoTeacher();
-        userService.getDemoStudent();
-        userService.getDemoAdmin();
+        authUserService.getDemoTeacher(userService);
+        authUserService.getDemoStudent(userService);
+        authUserService.getDemoAdmin(userService);
 
         statementService.writeQuizAnswersAndCalculateStatistics();
 

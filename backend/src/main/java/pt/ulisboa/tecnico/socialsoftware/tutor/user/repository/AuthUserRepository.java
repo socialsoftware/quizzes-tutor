@@ -13,5 +13,6 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface AuthUserRepository extends JpaRepository<AuthUser, Integer> {
-
+    @Query(value = "select * from auth_users u where u.username = :username", nativeQuery = true)
+    Optional<AuthUser> findAuthUserByUsername(String username);
 }

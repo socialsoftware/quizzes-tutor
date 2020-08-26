@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
 
 import java.io.InputStream;
@@ -23,11 +25,14 @@ public class UserServiceApplicational {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthUserRepository authUserRepository;
+
     @Value("${spring.mail.username}")
     private String mailUsername;
 
     public ExternalUserDto createExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        boolean userExists = userRepository.findByUsername(externalUserDto.getEmail()).isPresent();
+        boolean userExists = authUserRepository.findAuthUserByUsername(externalUserDto.getEmail()).isPresent();
         ExternalUserDto user = userService.createExternalUserTransactional(courseExecutionId, externalUserDto);
         if (!userExists) {
             sendConfirmationEmailTo(user);
