@@ -203,7 +203,7 @@ class SpockTest extends Specification {
     Mailer mailer
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder
 
     Course externalCourse
     @Shared
@@ -252,5 +252,17 @@ class SpockTest extends Specification {
                 path: '/auth/demo/teacher'
         )
         restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def createdUserLogin(email, password) {
+        def loggedUser = restClient.get(
+                path: '/auth/external',
+                query: [
+                        email: email,
+                        password: password,
+                ],
+                requestContentType: 'application/json'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loggedUser.data.token
     }
 }
