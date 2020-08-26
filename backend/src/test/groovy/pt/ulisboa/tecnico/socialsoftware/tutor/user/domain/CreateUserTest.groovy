@@ -292,7 +292,7 @@ class CreateUserTest extends SpockTest {
         user.setRole(role)
 
         when:
-        def result  = user.getAuthorities()
+        def result  = user.getAuthUser().getAuthorities()
 
         then:
         result.size() == size

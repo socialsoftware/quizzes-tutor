@@ -25,7 +25,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         indexes = {
                 @Index(name = "users_indx_0", columnList = "username")
         })
-public class User implements UserDetails, DomainEntity {
+public class User implements DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -52,8 +52,6 @@ public class User implements UserDetails, DomainEntity {
 
     private String confirmationToken = "";
     private LocalDateTime tokenGenerationDate;
-
-    private String email;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
@@ -120,7 +118,6 @@ public class User implements UserDetails, DomainEntity {
         this.key = key;
     }
 
-    @Override
     public String getUsername() {
         return username;
     }
@@ -164,12 +161,6 @@ public class User implements UserDetails, DomainEntity {
         this.role = role;
     }
 
-    public void checkRole(boolean isActive) {
-        if (!isActive && !(role.equals(User.Role.STUDENT) || role.equals(User.Role.TEACHER))) {
-            throw new TutorException(INVALID_ROLE, role.toString());
-        }
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -198,15 +189,6 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
     public boolean isActive() {
         return active;
     }
@@ -218,13 +200,6 @@ public class User implements UserDetails, DomainEntity {
     public String getEmail() {
         return authUser.getEmail();
     }
-
-    /*public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
-            throw new TutorException(INVALID_EMAIL, email);
-
-        this.email = email;
-    }*/
 
     public LocalDateTime getTokenGenerationDate() {
         return tokenGenerationDate;
@@ -466,38 +441,6 @@ public class User implements UserDetails, DomainEntity {
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
         course.addUser(this);
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-
-        list.add(new SimpleGrantedAuthority("ROLE_" + role));
-
-        if (isAdmin())
-            list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        return list;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
     }
 
     public List<Question> filterQuestionsByStudentModel(Integer numberOfQuestions, List<Question> availableQuestions) {
