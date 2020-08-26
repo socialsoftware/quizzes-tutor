@@ -40,6 +40,8 @@ public class AuthUser implements DomainEntity, UserDetails {
 
     private String confirmationToken = "";
 
+    private LocalDateTime tokenGenerationDate;
+
     public AuthUser() {}
 
     public AuthUser(User user) {
@@ -115,11 +117,11 @@ public class AuthUser implements DomainEntity, UserDetails {
     }
 
     public LocalDateTime getTokenGenerationDate() {
-        return user.getTokenGenerationDate();
+        return tokenGenerationDate;
     }
 
     public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
-        user.setTokenGenerationDate(tokenGenerationDate);
+        this.tokenGenerationDate = tokenGenerationDate;
     }
 
     public LocalDateTime getLastAccess() {

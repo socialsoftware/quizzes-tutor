@@ -46,8 +46,6 @@ public class User implements DomainEntity {
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
 
-    private LocalDateTime tokenGenerationDate;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
 
@@ -189,14 +187,6 @@ public class User implements DomainEntity {
 
     public String getEmail() {
         return authUser.getEmail();
-    }
-
-    public LocalDateTime getTokenGenerationDate() {
-        return tokenGenerationDate;
-    }
-
-    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
-        this.tokenGenerationDate = tokenGenerationDate;
     }
 
     public AuthUser getAuthUser() {

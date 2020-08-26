@@ -21,7 +21,7 @@ CREATE TABLE auth_users (
 	email character varying(255),
   password character varying(255),
   confirmation_token character varying(255),
-  --token_generation_date timestamp without time zone,
+  token_generation_date timestamp without time zone,
 	--last_access timestamp without time zone,
 	--enrolled_courses_acronyms text,
   --active boolean;
@@ -54,8 +54,8 @@ INSERT INTO auth_users(user_id, type)
                 WHEN password <> '' THEN 'TECNICO' 
                 ELSE 'EXTERNAL' 
               END)
-    FROM users
-    WHERE active;
+  FROM users
+  WHERE active;
 
 UPDATE auth_users
 SET username = u.username,
