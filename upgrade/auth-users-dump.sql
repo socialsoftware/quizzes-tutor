@@ -80,4 +80,4 @@ ALTER TABLE users
   --DROP COLUMN enrolled_courses_acronyms,
   --DROP COLUMN active;
 
-
+DROP INDEX users_indx_0;

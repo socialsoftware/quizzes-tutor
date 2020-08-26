@@ -18,7 +18,10 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(name = "auth_users")
+@Table(name = "auth_users",
+        indexes = {
+                @Index(name = "auth_users_indx_0", columnList = "username")
+        })
 public class AuthUser implements DomainEntity, UserDetails {
     public enum Type { EXTERNAL, TECNICO}
 
