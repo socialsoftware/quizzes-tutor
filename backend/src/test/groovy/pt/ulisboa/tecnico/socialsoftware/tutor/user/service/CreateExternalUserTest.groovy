@@ -20,6 +20,7 @@ import spock.mock.DetachedMockFactory
 @DataJpaTest
 class CreateExternalUserTest extends SpockTest {
     def externalUserDto
+    def previousNumberUser
 
     @Autowired
     Mailer mailerMock
@@ -29,6 +30,8 @@ class CreateExternalUserTest extends SpockTest {
         courseRepository.save(externalCourse)
         externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(externalCourseExecution)
+
+        previousNumberUser = userRepository.findAll().size()
     }
 
     def "the course execution exists, the external user is enrolled in it and tries to enroll again"() {
@@ -63,7 +66,7 @@ class CreateExternalUserTest extends SpockTest {
         def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then: "the user is saved in the database"
-        userRepository.findAll().size() == 4
+        userRepository.findAll().size() == previousNumberUser + 1
         and: "checks if user data is correct"
         result.getUsername() == USER_1_EMAIL
         result.getEmail() == USER_1_EMAIL
@@ -92,7 +95,7 @@ class CreateExternalUserTest extends SpockTest {
         def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
         then:"the user is saved in the database"
-        userRepository.count() == 4
+        userRepository.count() == previousNumberUser + 1
         and: "checks if user data is correct"
         result.getUsername() == USER_1_EMAIL
         result.getEmail() == USER_1_EMAIL
@@ -122,7 +125,7 @@ class CreateExternalUserTest extends SpockTest {
         def error = thrown(TutorException)
         error.getErrorMessage() == errorMessage
         and: "no user was created"
-        userRepository.count() == 3
+        userRepository.count() == previousNumberUser
         and: "no mail is sent"
         0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
 

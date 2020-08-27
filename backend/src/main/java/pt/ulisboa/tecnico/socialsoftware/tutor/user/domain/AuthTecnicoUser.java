@@ -22,4 +22,7 @@ public class AuthTecnicoUser extends AuthUser {
         return true;
     }
 
+    @Override
+    public Type getType() {return Type.TECNICO;}
+
 }

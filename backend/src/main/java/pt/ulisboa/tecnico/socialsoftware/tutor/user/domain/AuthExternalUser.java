@@ -32,4 +32,6 @@ public class AuthExternalUser extends AuthUser {
         return active;
     }
 
+    @Override
+    public Type getType() {return Type.EXTERNAL;}
 }

@@ -126,7 +126,7 @@ public class UsersXmlImport {
 			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
 		}
 
-		AuthUser authUser = userService.createUserWithAuth(name, username, email, role,  type);
+		AuthUser authUser = userService.createUserWithAuth(name, username, email, role, type);
 		authUser.getUser().setKey(key);
 		authUser.setPassword(password);
 		if (type == AuthUser.Type.EXTERNAL) {

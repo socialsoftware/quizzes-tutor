@@ -17,4 +17,10 @@ public class AuthDemoUser extends AuthUser {
         super(user, username, email);
     }
 
+    @Override
+    public Type getType() {return Type.DEMO;}
+
+    public boolean isGenerated() {
+        return getUsername().startsWith("Demo-Student-");
+    }
 }

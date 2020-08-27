@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthDemoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
@@ -153,7 +154,7 @@ public class UserService {
     public void resetDemoStudents() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> user.getAuthUser().getType() == AuthUser.Type.DEMO)
+                .filter(user -> ((AuthDemoUser)user.getAuthUser()).isGenerated())
                 .forEach(user -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);

@@ -24,7 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "auth_users_indx_0", columnList = "username")
         })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="type",
+@DiscriminatorColumn(name="auth_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AuthUser implements DomainEntity, UserDetails {
     public enum Type { EXTERNAL, TECNICO, DEMO }
@@ -35,10 +35,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
 
     @OneToOne
     private User user;
-
-    @Column(name="type", insertable = false, updatable = false)
-    @Enumerated(EnumType.STRING)
-    private Type type;
 
     private String email;
     private String password;
@@ -159,13 +155,7 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
 
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
-    }
+    public abstract Type getType();
 
     public void checkRole(boolean isActive) {
         if (!isActive && !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {
