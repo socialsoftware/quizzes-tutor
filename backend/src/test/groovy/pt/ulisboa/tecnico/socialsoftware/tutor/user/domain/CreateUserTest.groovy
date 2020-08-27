@@ -65,7 +65,7 @@ class CreateUserTest extends SpockTest {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setCompleted(true)
 
-        QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
+        new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
     }
 
     def "create User: name, username, email, role, state, admin" (){
@@ -108,6 +108,22 @@ class CreateUserTest extends SpockTest {
         result.getAuthUser() instanceof AuthExternalUser
         !result.getAuthUser().isActive()
     }
+
+    def "create Demo User: name, username, email, role, state, admin" (){
+        when:
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.DEMO)
+
+        then:
+        result.getName() == USER_1_NAME
+        result.getUsername() == USER_1_USERNAME
+        result.getRole() == User.Role.STUDENT
+        !result.isAdmin()
+        result.getAuthUser() != null
+        result.getAuthUser().getUsername() == USER_1_USERNAME
+        result.getAuthUser().getEmail() == USER_1_EMAIL
+        result.getAuthUser() instanceof AuthDemoUser
+    }
+
 
     def "checkConfirmationToken: correct token and date has not expired" (){
         given:

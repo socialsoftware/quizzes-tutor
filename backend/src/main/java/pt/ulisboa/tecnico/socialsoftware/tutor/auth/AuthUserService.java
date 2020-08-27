@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
@@ -213,16 +214,17 @@ public class AuthUserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        AuthUser authUser = this.findAuthUserByUsername(externalUserDto.getUsername());
+        AuthExternalUser authUser = (AuthExternalUser) this.findAuthUserByUsername(externalUserDto.getUsername());
 
-        if (authUser == null)
+        if (authUser == null) {
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
-
-        if (authUser.isActive())
+        }
+        if (authUser.isActive()) {
             throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
-
-        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty())
+        }
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty()) {
             throw new TutorException(INVALID_PASSWORD);
+        }
 
         try {
             authUser.checkConfirmationToken(externalUserDto.getConfirmationToken());
@@ -244,7 +246,7 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoTeacher(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.EXTERNAL);
+            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });
@@ -253,7 +255,7 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoStudent(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
+            AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });
@@ -262,7 +264,7 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoAdmin(UserService userService) {
         return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.EXTERNAL);
+            AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });

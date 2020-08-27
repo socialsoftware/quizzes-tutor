@@ -44,6 +44,18 @@ class CreateAuthUserTest  extends SpockTest {
         authUser instanceof  AuthExternalUser
     }
 
+    def "create AuthDemoUser"() {
+        authUser = new AuthDemoUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUserRepository.save(authUser)
+
+        when:
+        authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
+
+        then:
+        authUser.username == USER_1_USERNAME
+        authUser.email == USER_1_EMAIL
+        authUser instanceof  AuthDemoUser
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

@@ -127,7 +127,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.EXTERNAL);
+        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
         CourseExecution courseExecution = courseService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(authUser.getUser());
@@ -153,7 +153,7 @@ public class UserService {
     public void resetDemoStudents() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> user.getName().startsWith("Demo-Student-"))
+                .filter(user -> user.getAuthUser().getType() == AuthUser.Type.DEMO)
                 .forEach(user -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);

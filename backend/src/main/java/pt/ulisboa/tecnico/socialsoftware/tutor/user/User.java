@@ -62,14 +62,6 @@ public class User implements DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, String email, Role role, boolean isActive, boolean isAdmin, AuthUser.Type type){
-        setName(name);
-        setRole(role);
-        setAdmin(isAdmin);
-        //setAuthUser(new AuthUser(this, username, email, type, isActive));
-        setCreationDate(DateHandler.now());
-    }
-
     public User(String name, String username, String email, Role role, boolean isAdmin, AuthUser.Type type){
         setName(name);
         setRole(role);

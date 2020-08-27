@@ -27,7 +27,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @DiscriminatorColumn(name="type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AuthUser implements DomainEntity, UserDetails {
-    public enum Type { EXTERNAL, TECNICO }
+    public enum Type { EXTERNAL, TECNICO, DEMO }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -53,9 +53,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean active;
-
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
 
@@ -73,6 +70,8 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
                 return new AuthExternalUser(user, username, email);
             case TECNICO:
                 return new AuthTecnicoUser(user, username, email);
+            case DEMO:
+                return new AuthDemoUser(user, username, email);
             default:
                 throw new TutorException(INVALID_TYPE_FOR_AUTH_USER);
         }
@@ -148,13 +147,8 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         this.lastAccess = lastAccess;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public boolean isActive() {
-        if (active == null) return true; // Temporario enquanto nao se muda para a classe correta
-        return active;
+        return true;
     }
 
     public String getEnrolledCoursesAcronyms() {

@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 import java.io.*;
@@ -96,7 +97,7 @@ public class UsersXmlImport {
 		String email = authUserElement.getAttributeValue("email");
 		AuthUser.Type type = AuthUser.Type.EXTERNAL;
 		String password = null;
-		Boolean isActive = true;
+		Boolean isActive = null;
 		LocalDateTime lastAccess = null;
 		String confirmationDate = null;
 		LocalDateTime tokenGenerationDate = null;
@@ -128,7 +129,9 @@ public class UsersXmlImport {
 		AuthUser authUser = userService.createUserWithAuth(name, username, email, role,  type);
 		authUser.getUser().setKey(key);
 		authUser.setPassword(password);
-		authUser.setActive(isActive);
+		if (type == AuthUser.Type.EXTERNAL) {
+			((AuthExternalUser)authUser).setActive(isActive);
+		}
 		authUser.setLastAccess(lastAccess);
 		authUser.setConfirmationToken(confirmationDate);
 		authUser.setTokenGenerationDate(tokenGenerationDate);
