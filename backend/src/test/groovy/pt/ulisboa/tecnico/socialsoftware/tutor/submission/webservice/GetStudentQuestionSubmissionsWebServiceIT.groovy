@@ -32,6 +32,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)

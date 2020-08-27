@@ -96,10 +96,6 @@ class CreateReviewWebServiceIT extends SpockTest {
         review.questionSubmissionId == questionSubmission.getId()
         review.userId == teacher.getId()
         review.status == Review.Status.AVAILABLE.name()
-
-        cleanup:
-        reviewRepository.deleteById(review.id)
-        questionSubmissionRepository.deleteById(questionSubmission.getId())
     }
 
     def cleanup() {

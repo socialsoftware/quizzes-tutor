@@ -130,7 +130,7 @@ public class Question implements DomainEntity {
 
         int index = 0;
         for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
+            if (optionDto.getId() == null || optionDto.getId() == 0) {
                 optionDto.setSequence(index++);
                 new Option(optionDto).setQuestion(this);
             } else {

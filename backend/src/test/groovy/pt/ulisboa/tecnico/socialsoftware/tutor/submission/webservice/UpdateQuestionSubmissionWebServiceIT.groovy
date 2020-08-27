@@ -84,12 +84,12 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
         and: "if it responds with the updated question"
         def questionSubmission = response.data
         questionSubmission.id != null
-        questionSubmission.user == student
+        questionSubmission.userId == student.getId()
         questionSubmission.question != null
         questionSubmission.question.title == questionDto.getTitle()
         questionSubmission.question.content == questionDto.getContent()
-        questionSubmission.question.status == Question.Status.IN_REVISION
-        questionSubmission.courseExecution == courseExecution
+        questionSubmission.question.status == Question.Status.IN_REVISION.name()
+        questionSubmission.courseExecutionId == courseExecution.getId()
     }
 
     def cleanup() {

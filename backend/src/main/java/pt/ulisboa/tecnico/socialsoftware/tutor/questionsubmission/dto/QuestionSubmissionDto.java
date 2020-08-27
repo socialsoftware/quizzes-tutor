@@ -42,4 +42,15 @@ public class QuestionSubmissionDto implements Serializable {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
+
+    @Override
+    public String toString() {
+        return "QuestionDto{" +
+                "id=" + id +
+                ", courseExecutionId=" + courseExecutionId +
+                ", userId=" + userId +
+                ", name=" + name +
+                ", questionDto=" + question +
+                '}';
+    }
 }

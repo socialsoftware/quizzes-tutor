@@ -99,7 +99,7 @@ public class  QuestionSubmissionService {
             throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
         }
 
-        this.questionService.updateQuestion(questionSubmissionDto.getQuestion().getId(), questionSubmissionDto.getQuestion());
+        this.questionService.updateQuestion(questionSubmission.getQuestion().getId(), questionSubmissionDto.getQuestion());
         return new QuestionSubmissionDto(questionSubmission);
     }
 

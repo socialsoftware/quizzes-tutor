@@ -33,6 +33,7 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
@@ -56,12 +57,6 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.TEACHER, true, false)
-        teacher.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
-        teacher.addCourse(courseExecution)
-        courseExecution.addUser(teacher)
-        userRepository.save(teacher)
-
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
     }
 
@@ -81,7 +76,6 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         persistentCourseCleanup()
 
         courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution.getId())
-        userRepository.deleteById(teacher.getId())
         userRepository.deleteById(student.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
 
