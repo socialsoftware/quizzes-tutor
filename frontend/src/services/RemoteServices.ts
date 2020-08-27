@@ -13,6 +13,7 @@ import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import DashboardInfo from '@/models/management/DashboardInfo';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -46,6 +47,16 @@ export default class RemoteServices {
       });
   }
 
+  static async getDashboardInfo(): Promise<DashboardInfo> {
+    return httpClient
+      .get('/dashboard')
+      .then(response => {
+        return new DashboardInfo(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
   static async demoStudentLogin(): Promise<AuthDto> {
     return httpClient
       .get('/auth/demo/student')

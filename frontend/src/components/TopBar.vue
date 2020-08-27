@@ -144,6 +144,14 @@
                 <v-list-item-title>Solved</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <!-- ----DDP---- -->
+            <v-list-item to="/student/discussions">
+              <v-list-item-action>
+                <v-icon>fas fa-comment-alt</v-icon>
+              </v-list-item-action>
+              <v-list-item-title>Discussions</v-list-item-title>
+            </v-list-item>
+            <!-- ----------- -->
           </v-list>
         </v-menu>
 
@@ -316,6 +324,14 @@
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
           </v-list-item>
+          <!-- ----DDP---- -->
+          <v-list-item to="/student/discussions">
+            <v-list-item-action>
+              <v-icon>fas fa-comment-alt</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Discussions</v-list-item-title>
+          </v-list-item>
+          <!-- ----------- -->
         </v-list-group>
 
         <v-list-item to="/courses" v-if="isLoggedIn && moreThanOneCourse">

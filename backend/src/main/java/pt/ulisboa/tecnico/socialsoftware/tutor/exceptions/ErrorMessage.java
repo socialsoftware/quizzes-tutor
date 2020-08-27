@@ -83,6 +83,8 @@ public enum ErrorMessage {
     DISCUSSION_MISSING_QUESTION("Missing question for discussion"),
     DISCUSSION_NOT_FOUND("Discussion not found"),
     REPLY_UNAUTHORIZED_USER("Reply is not authorized!"),
+    DISCUSSION_NOT_SUBMITTED_BY_REQUESTER("Discussion not submitted by requester"),
+    USER_NOT_STUDENT("This user is not a student"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file");
