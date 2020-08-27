@@ -9,22 +9,41 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 @DataJpaTest
 class CreateAuthUserTest  extends SpockTest {
 
-    def User
-    def authUser
+    User user
+    AuthUser authUser
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
-        user.setKey(user.getId())
+        user = new User(USER_1_NAME, User.Role.STUDENT, false)
         userRepository.save(user)
+        user.setKey(user.getId())
     }
 
-    def "create Auth User"() {
+    def "create AuthTecnicoUser"() {
+        authUser = new AuthTecnicoUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUserRepository.save(authUser)
+
         when:
-        authUser = new AuthUser(user)
+        authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
 
         then:
-        authUser.user.id == user.id
+        authUser.username == USER_1_USERNAME
+        authUser.email == USER_1_EMAIL
+        authUser instanceof  AuthTecnicoUser
     }
+
+    def "create AuthExternalUser"() {
+        authUser = new AuthExternalUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUserRepository.save(authUser)
+
+        when:
+        authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
+
+        then:
+        authUser.username == USER_1_USERNAME
+        authUser.email == USER_1_EMAIL
+        authUser instanceof  AuthExternalUser
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

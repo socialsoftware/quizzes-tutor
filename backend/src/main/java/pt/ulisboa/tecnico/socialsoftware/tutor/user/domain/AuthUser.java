@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import org.hibernate.annotations.DiscriminatorOptions;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,8 +23,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         indexes = {
                 @Index(name = "auth_users_indx_0", columnList = "username")
         })
-public class AuthUser implements DomainEntity, UserDetails {
-    public enum Type { EXTERNAL, TECNICO}
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="type",
+        discriminatorType = DiscriminatorType.STRING)
+public abstract class AuthUser implements DomainEntity, UserDetails {
+    public enum Type { EXTERNAL, TECNICO }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +36,7 @@ public class AuthUser implements DomainEntity, UserDetails {
     @OneToOne
     private User user;
 
+    @Column(name="type", insertable = false, updatable = false)
     @Enumerated(EnumType.STRING)
     private Type type;
 
@@ -53,22 +58,21 @@ public class AuthUser implements DomainEntity, UserDetails {
 
     public AuthUser() {}
 
-    public AuthUser(User user) {
-        setUser(user);
-    }
-
-    public AuthUser(User user, String username, String email, Type type, Boolean isActive) {
+    public AuthUser(User user, String username, String email) {
         setUser(user);
         setUsername(username);
         setEmail(email);
-        setType(type);
-        setActive(isActive);
-        checkRole(isActive);
     }
 
-    public AuthUser(User user, String username, String email, Type type, Boolean isActive, String password) {
-        this(user, username, email, type, isActive);
-        setPassword(password);
+    public static AuthUser createAuthUser(User user, String username, String email, Type type) {
+        switch (type) {
+            case EXTERNAL:
+                return new AuthExternalUser(user, username, email);
+            case TECNICO:
+                return new AuthTecnicoUser(user, username, email);
+            default:
+                throw new TutorException(INVALID_TYPE_FOR_AUTH_USER);
+        }
     }
 
     public void setId(Integer id) {
@@ -141,12 +145,13 @@ public class AuthUser implements DomainEntity, UserDetails {
         this.lastAccess = lastAccess;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public boolean isActive() {
+        if (active == null) return true; // Temporario enquanto nao se muda para a classe correta
+        return active;
     }
 
     public String getEnrolledCoursesAcronyms() {

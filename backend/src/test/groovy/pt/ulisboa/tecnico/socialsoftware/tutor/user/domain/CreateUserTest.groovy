@@ -26,7 +26,7 @@ class CreateUserTest extends SpockTest {
     def quiz
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
         user.setKey(user.getId())
 
@@ -68,24 +68,19 @@ class CreateUserTest extends SpockTest {
         QuestionAnswer questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
     }
 
-    def "create User: name, username, role" (){
+    def "create User: name, username, email, role, state, admin" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
+        def result = new User(USER_1_NAME, User.Role.STUDENT, false)
 
         then:
         result.getName() == USER_1_NAME
-        result.getUsername() == USER_1_USERNAME
         result.getRole() == User.Role.STUDENT
-        result.getAuthUser() != null
-        result.getAuthUser().getUsername() == USER_1_USERNAME
-        result.getAuthUser().getEmail() == USER_1_EMAIL
-        result.getAuthUser().getType() == AuthUser.Type.EXTERNAL
-        result.getAuthUser().isActive()
+        !result.isAdmin()
     }
 
-    def "create User: name, username, email, role, state, admin" (){
+    def "create Tecnico User: name, username, email, role, state, admin" (){
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false, AuthUser.Type.EXTERNAL)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
 
         then:
         result.getName() == USER_1_NAME
@@ -95,7 +90,22 @@ class CreateUserTest extends SpockTest {
         result.getAuthUser() != null
         result.getAuthUser().getUsername() == USER_1_USERNAME
         result.getAuthUser().getEmail() == USER_1_EMAIL
-        result.getAuthUser().getType() == AuthUser.Type.EXTERNAL
+        result.getAuthUser() instanceof AuthTecnicoUser
+    }
+
+    def "create External User: name, username, email, role, state, admin" (){
+        when:
+        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+
+        then:
+        result.getName() == USER_1_NAME
+        result.getUsername() == USER_1_USERNAME
+        result.getRole() == User.Role.STUDENT
+        !result.isAdmin()
+        result.getAuthUser() != null
+        result.getAuthUser().getUsername() == USER_1_USERNAME
+        result.getAuthUser().getEmail() == USER_1_EMAIL
+        result.getAuthUser() instanceof AuthExternalUser
         !result.getAuthUser().isActive()
     }
 

@@ -14,8 +14,8 @@ class ImportExportUsersTest extends SpockTest {
     def 'export and import with a AuthUser'() {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()
-        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER,
-                true, false, AuthUser.Type.EXTERNAL)
+        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
@@ -26,8 +26,8 @@ class ImportExportUsersTest extends SpockTest {
         authUser.setConfirmationToken(USER_1_TOKEN)
         authUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
 
-        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT,
-                true, false, AuthUser.Type.EXTERNAL)
+        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()

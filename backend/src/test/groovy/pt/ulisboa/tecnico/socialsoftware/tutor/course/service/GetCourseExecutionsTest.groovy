@@ -52,10 +52,10 @@ class GetCourseExecutionsTest extends SpockTest {
         def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false, AuthUser.Type.TECNICO)
+        def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         teacher.addCourse(courseExecution)
 
-        def student = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.TECNICO)
+        def student = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         student.addCourse(courseExecution)
 
         Question question = new Question()

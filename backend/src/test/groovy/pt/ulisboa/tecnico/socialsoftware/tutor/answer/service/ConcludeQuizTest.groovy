@@ -31,8 +31,9 @@ class ConcludeQuizTest extends SpockTest {
     def quiz
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false, AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
+        user.getAuthUser().setActive(true)
         userRepository.save(user)
         user.setKey(user.getId())
 

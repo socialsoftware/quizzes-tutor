@@ -94,16 +94,10 @@ public class UserService {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, email, role, true, false, type);
+        User user = new User(name, username, email, role, false, type);
         userRepository.save(user);
         user.setKey(user.getId());
         return user.getAuthUser();
-    }
-
-    public AuthUser createAuthUser(User user, String username, String email, String type, String password, Boolean isActive) {
-        AuthUser authUser = new AuthUser(user, username, email, AuthUser.Type.valueOf(type), isActive, password);
-        authUserRepository.save(authUser);
-        return authUser;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -259,7 +253,7 @@ public class UserService {
                 .orElseGet(() -> {
                     User user = new User(externalUserDto.getName(),
                             externalUserDto.getEmail(), externalUserDto.getEmail(),
-                            externalUserDto.getRole(), false, false, AuthUser.Type.EXTERNAL);
+                            externalUserDto.getRole(), false, AuthUser.Type.EXTERNAL);
                     userRepository.save(user);
                     user.setKey(user.getId());
                     return user.getAuthUser();

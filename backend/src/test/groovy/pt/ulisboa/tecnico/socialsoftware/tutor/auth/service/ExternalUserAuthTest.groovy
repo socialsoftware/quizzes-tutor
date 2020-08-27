@@ -26,8 +26,9 @@ class ExternalUserAuthTest extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false, pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser.Type.EXTERNAL)
+        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
+        user.getAuthUser().setActive(true)
         courseExecution.addUser(user)
         userRepository.save(user)
         user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
