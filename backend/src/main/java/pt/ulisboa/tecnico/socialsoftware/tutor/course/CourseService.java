@@ -13,10 +13,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -35,6 +38,11 @@ public class CourseService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Retryable(
             value = { SQLException.class },
@@ -113,6 +121,24 @@ public class CourseService {
     public void deactivateCourseExecution(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         courseExecution.setStatus(CourseExecution.Status.INACTIVE);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void anonymizeCourseExecutionUsers(int executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+        for (User user : courseExecution.getUsers()) {
+            String oldUsername = user.getUsername();
+            authUserRepository.delete(user.getAuthUser());
+            user.setAuthUser(null);
+            String newUsername = user.getUsername();
+            questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
+            String role = user.getRole().toString();
+            String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
+            user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+        }
     }
 
     @Retryable(

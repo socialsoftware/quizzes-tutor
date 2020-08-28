@@ -60,6 +60,12 @@ public class CourseController {
         courseService.deactivateCourseExecution(executionId);
     }
 
+    @GetMapping("/executions/{executionId}/anonymize")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void anonymizeCourseExecutionUsers(@PathVariable int executionId) {
+        courseService.anonymizeCourseExecutionUsers(executionId);
+    }
+
     @PostMapping("/courses/external")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseDto, 'DEMO.ACCESS'))")
     public CourseDto createExternalCourseExecution(@RequestBody CourseDto courseDto) {
