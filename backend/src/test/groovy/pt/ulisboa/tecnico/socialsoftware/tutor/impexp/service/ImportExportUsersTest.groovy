@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @DataJpaTest
@@ -15,7 +16,7 @@ class ImportExportUsersTest extends SpockTest {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()
         User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.EXTERNAL)
+                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
@@ -62,6 +63,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
         userOne.getAuthUser().getConfirmationToken() == USER_1_TOKEN
         userOne.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
+        userTwo.getAuthUser().isActive()
 
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
@@ -75,6 +77,7 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
         userTwo.getAuthUser().getConfirmationToken() == USER_2_TOKEN
         userTwo.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
+        !userTwo.getAuthUser().isActive()
     }
 
     def 'export and import users without a AuthUser'() {

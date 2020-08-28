@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
@@ -83,6 +84,7 @@ class CreateExternalUserTest extends SpockTest {
         given: "a user"
         def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
+        ((AuthExternalUser)user.authUser).setActive(true)
 
         and: "a external course execution"
         def executionId = externalCourseExecution.getId()
@@ -99,6 +101,7 @@ class CreateExternalUserTest extends SpockTest {
         and: "checks if user data is correct"
         result.getUsername() == USER_1_EMAIL
         result.getEmail() == USER_1_EMAIL
+        result.getActive()
         and:"checks if the user and the course execution are associated"
         result.getConfirmationToken() != ""
         externalCourseExecution.getUsers().size() == 1

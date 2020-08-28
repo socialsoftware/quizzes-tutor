@@ -19,7 +19,7 @@ class CreateAuthUserTest  extends SpockTest {
     }
 
     def "create AuthTecnicoUser"() {
-        authUser = new AuthTecnicoUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, AuthUser.Type.TECNICO)
         authUserRepository.save(authUser)
 
         when:
@@ -28,11 +28,12 @@ class CreateAuthUserTest  extends SpockTest {
         then:
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
-        authUser instanceof  AuthTecnicoUser
+        authUser.isActive()
+        authUser instanceof AuthTecnicoUser
     }
 
     def "create AuthExternalUser"() {
-        authUser = new AuthExternalUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, AuthUser.Type.EXTERNAL)
         authUserRepository.save(authUser)
 
         when:
@@ -41,11 +42,12 @@ class CreateAuthUserTest  extends SpockTest {
         then:
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
-        authUser instanceof  AuthExternalUser
+        !authUser.isActive()
+        authUser instanceof AuthExternalUser
     }
 
     def "create AuthDemoUser"() {
-        authUser = new AuthDemoUser(user, USER_1_USERNAME, USER_1_EMAIL)
+        authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, AuthUser.Type.DEMO)
         authUserRepository.save(authUser)
 
         when:
@@ -54,7 +56,8 @@ class CreateAuthUserTest  extends SpockTest {
         then:
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
-        authUser instanceof  AuthDemoUser
+        authUser.isActive()
+        authUser instanceof AuthDemoUser
     }
 
     @TestConfiguration

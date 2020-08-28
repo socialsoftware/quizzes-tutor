@@ -37,9 +37,10 @@ INSERT INTO auth_users(user_id, username, enrolled_courses_acronyms, last_access
   SELECT id, username, enrolled_courses_acronyms, last_access
   FROM users;
 
-UPDATE auth_users SET Active = CASE
-  WHEN username LIKE 'ist%' THEN TRUE
-  ELSE FALSE
+UPDATE auth_users SET Auth_type = CASE
+  WHEN username LIKE 'ist%' THEN 'TECNICO'
+  WHEN username LIKE 'Demo-%' THEN 'DEMO'
+  ELSE 'EXTERNAL'
 END;
 
 
