@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class DeleteExternalInactiveUsersWebServiceIT extends SpockTest{
+class DeleteExternalInactiveUsersWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 

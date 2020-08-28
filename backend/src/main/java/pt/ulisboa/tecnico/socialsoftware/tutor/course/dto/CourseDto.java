@@ -4,8 +4,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +28,7 @@ public class CourseDto implements Serializable {
     private int numberOfInactiveStudents;
     private int numberOfActiveTeachers;
     private int numberOfInactiveTeachers;
-    private List<ExternalUserDto> courseExecutionUsers;
+    private List<UserDto> courseExecutionUsers;
 
     public CourseDto() {}
 
@@ -51,10 +54,16 @@ public class CourseDto implements Serializable {
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
         if (courseExecution.getType().equals(Course.Type.EXTERNAL)) {
-            this.courseExecutionUsers = courseExecution.getUsers().stream()
-                    .map(ExternalUserDto::new)
-                    .sorted(Comparator.comparing(ExternalUserDto::getName))
-                    .collect(Collectors.toList());
+            this.courseExecutionUsers = new ArrayList<>();
+            this.courseExecutionUsers
+                    .addAll(courseExecution.getStudents().stream()
+                            .map(StudentDto::new)
+                            .collect(Collectors.toList()));
+
+            this.courseExecutionUsers
+                    .addAll(courseExecution.getTeachers().stream()
+                            .map(UserDto::new)
+                            .collect(Collectors.toList()));
         }
     }
 
@@ -176,11 +185,11 @@ public class CourseDto implements Serializable {
         this.status = status;
     }
 
-    public List<ExternalUserDto> getCourseExecutionUsers() {
+    public List<UserDto> getCourseExecutionUsers() {
         return courseExecutionUsers;
     }
 
-    public void setCourseExecutionUsers(List<ExternalUserDto> courseExecutionUsers) {
+    public void setCourseExecutionUsers(List<UserDto> courseExecutionUsers) {
         this.courseExecutionUsers = courseExecutionUsers;
     }
 

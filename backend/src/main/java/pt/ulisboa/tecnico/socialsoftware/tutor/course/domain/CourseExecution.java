@@ -211,4 +211,10 @@ public class CourseExecution implements DomainEntity {
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .collect(Collectors.toSet());
     }
+
+    public Set<User> getTeachers() {
+        return getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .collect(Collectors.toSet());
+    }
 }
