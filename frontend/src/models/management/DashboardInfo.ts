@@ -1,5 +1,3 @@
-
-
 export default class DashboardInfo {
   name!: string;
   username!: string;

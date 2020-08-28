@@ -140,7 +140,7 @@ public class DiscussionService {
             throw new TutorException(DUPLICATE_DISCUSSION, user.getId(), question.getId());
         }
 
-        //checkUserAnswered(user, question);
+        checkUserAnswered(user, question);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

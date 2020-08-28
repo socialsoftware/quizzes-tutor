@@ -147,9 +147,16 @@
             <!-- ----DDP---- -->
             <v-list-item to="/student/discussions">
               <v-list-item-action>
-                <v-icon>fas fa-comment-alt</v-icon>
+                <v-icon>fa fa-comment</v-icon>
               </v-list-item-action>
               <v-list-item-title>Discussions</v-list-item-title>
+            </v-list-item>
+
+            <v-list-item to="/student/dashboard">
+              <v-list-item-action>
+                <v-icon>fa fa-user</v-icon>
+              </v-list-item-action>
+              <v-list-item-title>Dashboard</v-list-item-title>
             </v-list-item>
             <!-- ----------- -->
           </v-list>
@@ -327,9 +334,15 @@
           <!-- ----DDP---- -->
           <v-list-item to="/student/discussions">
             <v-list-item-action>
-              <v-icon>fas fa-comment-alt</v-icon>
+              <v-icon>fa fa-comment</v-icon>
             </v-list-item-action>
             <v-list-item-title>Discussions</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/dashboard">
+            <v-list-item-action>
+              <v-icon>fa fa-user</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
           <!-- ----------- -->
         </v-list-group>

@@ -14,6 +14,8 @@ import AuthDto from '@/models/user/AuthDto';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import DashboardInfo from '@/models/management/DashboardInfo';
+import Discussion from '@/models/management/Discussion';
+import Reply from '@/models/management/Reply';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -627,5 +629,43 @@ export default class RemoteServices {
       console.log(error);
       return 'Unknown Error - Contact admin';
     }
+  }
+
+  static async toggleDiscussionStats(): Promise<DashboardInfo> {
+    return httpClient
+      .put('/dashboard/discussions')
+      .then(response => {
+        return new DashboardInfo(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getDiscussions(id: number): Promise<Discussion[]> {
+    return httpClient
+      .get('/discussions?userId=' + id)
+      .then(response => {
+        return new response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createReply(
+    message: string,
+    discussion: Discussion
+  ): Promise<Reply> {
+    return httpClient
+      .post('/discussions/replies?message=' + message, discussion)
+      .then(response => {
+        return new Reply(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 }

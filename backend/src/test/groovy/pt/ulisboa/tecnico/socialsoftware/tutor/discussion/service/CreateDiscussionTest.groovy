@@ -124,6 +124,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setUserId(student.getId())
         discussionDto.setQuestion(new QuestionDto(question2))
+        discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "creating a discussion on a non answered question"
         discussionService.createDiscussion(discussionDto)

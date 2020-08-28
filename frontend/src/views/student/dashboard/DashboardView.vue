@@ -7,12 +7,14 @@
             <v-col>
               <v-list-item-content>
                 <div class="overline mb-4"></div>
-                  <v-list-item-title class="headline mb-1"
-                    >{{info !== null ? info.name.substring(0,25) : 'Unknown user'}}</v-list-item-title
-                  >
-                  <v-list-item-subtitle
-                    >{{ info !== null ? info.username.substring(0,20) : 'Unknown user' }}</v-list-item-subtitle
-                  >
+                <v-list-item-title class="headline mb-1">{{
+                  info !== null ? info.name.substring(0, 25) : 'Unknown user'
+                }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  info !== null
+                    ? info.username.substring(0, 20)
+                    : 'Unknown user'
+                }}</v-list-item-subtitle>
               </v-list-item-content>
             </v-col>
             <v-col>
@@ -30,14 +32,31 @@
       </v-col>
       <v-col>
         <v-card>
+          <v-list-item-content>
+            <v-list-item-title class="headline">Discussions</v-list-item-title>
+          </v-list-item-content>
+          <div style="display: flex; flex-direction: row; position: relative;">
+            <v-switch
+              style="flex: 1"
+              v-if="info.numDiscussions !== 0"
+              v-model="info.discussionStatsPublic"
+              :label="info.discussionStatsPublic ? 'Public' : 'Private'"
+              @change="toggleDiscussions()"
+            />
+          </div>
           <v-col>
-            <v-list-item-content>
+            <v-list-item-content v-if="info.numDiscussions !== 0">
               <v-list-item-title class="headline mb-1"
                 >Discussions</v-list-item-title
               >
               <v-list-item-subtitle
                 >Discussions created:
                 {{ info.numDiscussions }}</v-list-item-subtitle
+              >
+            </v-list-item-content>
+            <v-list-item-content v-else>
+              <v-list-item-title class="headline mb-1"
+                ><b>No discussions to show</b></v-list-item-title
               >
             </v-list-item-content>
           </v-col>
@@ -59,6 +78,16 @@ export default class DashboardView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.info = await RemoteServices.getDashboardInfo();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async toggleDiscussions() {
+    await this.$store.dispatch('loading');
+    try {
+      this.info = await RemoteServices.toggleDiscussionStats();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
