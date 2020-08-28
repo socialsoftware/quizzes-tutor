@@ -1,6 +1,6 @@
-import User from '../user/User';
+import AuthUser from '@/models/user/AuthUser';
 
-export class Student extends User{
+export class Student extends AuthUser{
   number!: number;
   numberOfTeacherQuizzes!: number;
   numberOfStudentQuizzes!: number;
