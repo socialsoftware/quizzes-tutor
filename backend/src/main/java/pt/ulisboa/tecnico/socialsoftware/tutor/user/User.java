@@ -95,6 +95,11 @@ public class User implements DomainEntity {
     }
 
     public String getUsername() {
+        if (authUser == null) {
+            String role = getRole().toString();
+            String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
+            return String.format("%s-%s", roleCapitalized, getId());
+        }
         return authUser.getUsername();
     }
 
