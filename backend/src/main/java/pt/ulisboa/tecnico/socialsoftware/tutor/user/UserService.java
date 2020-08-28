@@ -26,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthDemoUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
@@ -105,7 +106,10 @@ public class UserService {
     public String getEnrolledCoursesAcronyms(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         AuthUser authUser = user.getAuthUser();
-        return authUser.getEnrolledCoursesAcronyms();
+        if (authUser.getType() == AuthUser.Type.TECNICO) {
+            return ((AuthTecnicoUser)authUser).getEnrolledCoursesAcronyms();
+        }
+        return "";
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

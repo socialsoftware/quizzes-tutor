@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
@@ -67,17 +68,21 @@ public class AuthUserService {
 
         List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
-
-        AuthUser authUser = this.findAuthUserByUsername(username);
+        AuthTecnicoUser authUser = null;
+        try {
+            authUser = (AuthTecnicoUser) this.findAuthUserByUsername(username);
+        } catch (ClassCastException e) {
+            throw new TutorException(INVALID_AUTH_USERNAME, username);
+        }
 
         // If user is student and is not in db
         if (authUser == null && !activeAttendingCourses.isEmpty()) {
-            authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
         }
 
         // If user is teacher and is not in db
         if (authUser == null && !fenixTeachingCourses.isEmpty()) {
-            authUser = this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
         }
 
         if (authUser == null) {

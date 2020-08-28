@@ -311,7 +311,6 @@ public class User implements DomainEntity {
                 ", role=" + role +
                 ", username='" + getUsername() + '\'' +
                 ", name='" + name + '\'' +
-                ", enrolledCoursesAcronyms='" + authUser.getEnrolledCoursesAcronyms() + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +

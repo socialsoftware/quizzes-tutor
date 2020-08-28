@@ -63,7 +63,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
         userOne.getAuthUser().getConfirmationToken() == USER_1_TOKEN
         userOne.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
-        userTwo.getAuthUser().isActive()
+        userOne.getAuthUser().isActive()
 
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null

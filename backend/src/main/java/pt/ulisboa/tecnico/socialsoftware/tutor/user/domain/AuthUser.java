@@ -48,9 +48,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    @Column(columnDefinition = "TEXT")
-    private String enrolledCoursesAcronyms;
-
     public AuthUser() {}
 
     public AuthUser(User user, String username, String email) {
@@ -144,14 +141,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
 
     public boolean isActive() {
         return true;
-    }
-
-    public String getEnrolledCoursesAcronyms() {
-        return enrolledCoursesAcronyms;
-    }
-
-    public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
-        this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
     }
 
     public abstract Type getType();
