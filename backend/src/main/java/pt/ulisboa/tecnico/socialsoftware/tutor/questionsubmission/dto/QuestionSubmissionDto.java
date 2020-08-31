@@ -45,7 +45,7 @@ public class QuestionSubmissionDto implements Serializable {
 
     @Override
     public String toString() {
-        return "QuestionDto{" +
+        return "QuestionSubmissionDto{" +
                 "id=" + id +
                 ", courseExecutionId=" + courseExecutionId +
                 ", userId=" + userId +

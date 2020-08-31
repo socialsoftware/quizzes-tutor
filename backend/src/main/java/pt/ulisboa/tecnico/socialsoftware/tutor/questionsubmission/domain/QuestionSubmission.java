@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
-import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -43,7 +42,7 @@ public class QuestionSubmission {
     }
 
     public String toString() {
-        return "Submission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
+        return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
     }
 
     public Integer getId() { return id; }
