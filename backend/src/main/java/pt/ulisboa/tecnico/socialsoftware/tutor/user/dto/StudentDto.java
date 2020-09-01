@@ -1,13 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-
 import java.io.Serializable;
 
-public class StudentDto implements Serializable {
-    private String username;
-    private String name;
+public class StudentDto extends UserDto implements Serializable {
     private Integer numberOfTeacherQuizzes;
     private Integer numberOfInClassQuizzes;
     private Integer numberOfStudentQuizzes;
@@ -19,21 +15,15 @@ public class StudentDto implements Serializable {
     private int percentageOfCorrectTeacherAnswers = 0;
     private int percentageOfCorrectInClassAnswers = 0;
     private int percentageOfCorrectStudentAnswers = 0;
-    private String creationDate;
-    private String lastAccess;
 
     public StudentDto(User user) {
-        this.username = user.getUsername();
-        this.name = user.getName();
-        this.numberOfTeacherQuizzes = user.getNumberOfTeacherQuizzes();
+        super(user);
         this.numberOfInClassQuizzes = user.getNumberOfInClassQuizzes();
         this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
         this.numberOfAnswers = user.getNumberOfTeacherAnswers() + user.getNumberOfInClassAnswers() + user.getNumberOfStudentAnswers();
         this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
         this.numberOfInClassAnswers = user.getNumberOfInClassAnswers();
         this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
-        this.lastAccess = DateHandler.toISOString(user.getAuthUser().getLastAccess());
-        this.creationDate = DateHandler.toISOString(user.getCreationDate());
 
         if (this.numberOfTeacherAnswers != 0)
             this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
@@ -44,22 +34,6 @@ public class StudentDto implements Serializable {
         if (this.numberOfAnswers != 0)
             this.percentageOfCorrectAnswers = (user.getNumberOfCorrectTeacherAnswers() + user.getNumberOfCorrectInClassAnswers() + user.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
 
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -110,22 +84,6 @@ public class StudentDto implements Serializable {
         this.percentageOfCorrectTeacherAnswers = percentageOfCorrectTeacherAnswers;
     }
 
-    public String getCreationDate() {
-        return creationDate;
-    }
-
-    public void setCreationDate(String creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public String getLastAccess() {
-        return lastAccess;
-    }
-
-    public void setLastAccess(String lastAccess) {
-        this.lastAccess = lastAccess;
-    }
-
     public Integer getNumberOfInClassQuizzes() {
         return numberOfInClassQuizzes;
     }
@@ -169,16 +127,16 @@ public class StudentDto implements Serializable {
     @Override
     public String toString() {
         return "StudentDto{" +
-                "username='" + username + '\'' +
-                ", name='" + name + '\'' +
+                "username='" + getUsername() + '\'' +
+                ", name='" + getName() + '\'' +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
                 ", percentageOfCorrectAnswers=" + percentageOfCorrectAnswers +
                 ", percentageOfCorrectTeacherAnswers=" + percentageOfCorrectTeacherAnswers +
-                ", creationDate='" + creationDate + '\'' +
-                ", lastAccess='" + lastAccess + '\'' +
+                ", creationDate='" + getCreationDate() + '\'' +
+                ", lastAccess='" + getLastAccess() + '\'' +
                 '}';
     }
 }

@@ -18,7 +18,7 @@ public class AuthUserServiceApplicational {
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
         ExternalUserDto user = authUserService.confirmRegistrationTransactional(externalUserDto);
         if (!user.isActive()) {
-            userServiceApplicational.sendConfirmationEmailTo(user);
+            userServiceApplicational.sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
         return user;
     }

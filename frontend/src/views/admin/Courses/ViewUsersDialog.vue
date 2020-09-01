@@ -57,13 +57,15 @@ import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
 import ExternalUser from '@/models/user/ExternalUser';
+import User from '@/models/user/User';
+
 
 @Component
 export default class ViewUsersDialog extends Vue {
     @Model('dialog', Boolean) dialog!: boolean;
     @Prop({ type: Course, required: true }) readonly course!: Course;
 
-    selectedUsers: ExternalUser[] = [];
+    selectedUsers: User[] = [];
     search: string = '';
     headers: object = [
         { text: 'Username', value: 'username', align: 'left', width: '65%' },
@@ -75,7 +77,7 @@ export default class ViewUsersDialog extends Vue {
         },
         {
         text: 'State',
-        value: 'state',
+        value: 'active',
         align: 'center',
         width: '15%'
         },

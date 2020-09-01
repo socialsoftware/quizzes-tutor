@@ -44,7 +44,7 @@
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
-import { Student } from '@/models/management/Student';
+import { Student } from '@/models/user/Student';
 
 @Component
 export default class StudentsView extends Vue {
