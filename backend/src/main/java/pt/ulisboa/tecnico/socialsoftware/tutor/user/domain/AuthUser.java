@@ -162,6 +162,10 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
             throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
+ 
+    public boolean isGenerated() {
+        return false;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

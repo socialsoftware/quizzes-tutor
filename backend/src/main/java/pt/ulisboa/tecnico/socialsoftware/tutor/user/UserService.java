@@ -158,7 +158,7 @@ public class UserService {
     public void resetDemoStudents() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> ((AuthDemoUser)user.getAuthUser()).isGenerated())
+                .filter(user -> user.getAuthUser().isGenerated())
                 .forEach(user -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);

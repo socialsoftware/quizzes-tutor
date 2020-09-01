@@ -1,7 +1,7 @@
 CREATE TABLE auth_users (
 	id integer NOT NULL,
 	user_id integer,
-	type character varying(255),
+	auth_type character varying(255),
 	username character varying(255),
 	email character varying(255),
   password character varying(255),
@@ -43,6 +43,7 @@ UPDATE auth_users SET Auth_type = CASE
   ELSE 'EXTERNAL'
 END;
 
+UPDATE auth_users SET active = false WHERE auth_type = 'EXTERNAL';
 
 DROP INDEX users_indx_0;
 
