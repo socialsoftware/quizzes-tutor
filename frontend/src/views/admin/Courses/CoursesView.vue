@@ -40,31 +40,6 @@
             <v-icon
               class="mr-2"
               v-on="on"
-              @click="addExternalUser(item)"
-              data-cy="addExternalUser"
-              >person_add</v-icon
-            >
-          </template>
-          <span>Add Student/Teacher</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="deleteCourse(item)"
-              color="red"
-              data-cy="deleteCourse"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Course</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="isExternalCourse(item)">
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
               @click="viewCourseExecutionUsers(item)"
               data-cy="viewUsersButton"
               >fas fa-user</v-icon
@@ -82,6 +57,44 @@
             >attach_file</v-icon>
           </template>
           <span>Upload External Users</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="addExternalUser(item)"
+              data-cy="addExternalUser"
+              >person_add</v-icon
+            >
+          </template>
+          <span>Add Student/Teacher</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isInactive(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="anonymizeCourse(item)"
+              color="red"
+              data-cy="anonymizeCourse"
+              >lock</v-icon
+            >
+          </template>
+          <span>Anonymize Course's Users</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="deleteCourse(item)"
+              color="red"
+              data-cy="deleteCourse"
+              >delete</v-icon
+            >
+          </template>
+          <span>Delete Course</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -305,6 +318,20 @@ export default class CoursesView extends Vue {
         this.courses = this.courses.filter(
           course => course.courseExecutionId != courseToDelete.courseExecutionId
         );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+  isInactive(course: Course) {
+    return course.status === 'INACTIVE';
+  }
+
+  async anonymizeCourse(courseToDelete: Course) {
+    if (confirm('Are you sure you want to anonymize this course execution\'s users?')) {
+      try {
+        await RemoteServices.anonymizeCourse(courseToDelete.courseExecutionId);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

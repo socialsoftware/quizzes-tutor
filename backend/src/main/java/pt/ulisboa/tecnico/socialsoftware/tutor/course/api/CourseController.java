@@ -61,7 +61,7 @@ public class CourseController {
     }
 
     @GetMapping("/executions/{executionId}/anonymize")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS')) or (hasRole('ROLE_DEMO_ADMIN')  and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public void anonymizeCourseExecutionUsers(@PathVariable int executionId) {
         courseService.anonymizeCourseExecutionUsers(executionId);
     }

@@ -649,6 +649,14 @@ export default class RemoteServices {
       });
   }
 
+  static async anonymizeCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .get(`/executions/${courseExecutionId}/anonymize`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
