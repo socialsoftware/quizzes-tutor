@@ -68,7 +68,7 @@ public class AuthUserService {
 
         List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
-        AuthTecnicoUser authUser = null;
+        AuthTecnicoUser authUser;
         try {
             authUser = (AuthTecnicoUser) this.findAuthUserByUsername(username);
         } catch (ClassCastException e) {

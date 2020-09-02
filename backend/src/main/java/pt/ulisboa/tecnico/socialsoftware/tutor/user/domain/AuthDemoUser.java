@@ -4,10 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 
 @Entity
-@Table(name = "auth_tecnico_users")
 @DiscriminatorValue("DEMO")
 public class AuthDemoUser extends AuthUser {
 
