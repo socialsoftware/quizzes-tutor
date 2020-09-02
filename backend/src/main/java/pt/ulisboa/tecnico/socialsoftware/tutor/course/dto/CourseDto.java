@@ -17,6 +17,7 @@ public class CourseDto implements Serializable {
     private Course.Type courseExecutionType;
     private Course.Type courseType;
     private CourseExecution.Status status;
+    private String endDate;
     private String academicTerm;
     private String acronym;
     private String name;
@@ -95,6 +96,14 @@ public class CourseDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public int getCourseExecutionId() {

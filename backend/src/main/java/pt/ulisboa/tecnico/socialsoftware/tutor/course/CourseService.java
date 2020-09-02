@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
@@ -81,7 +82,6 @@ public class CourseService {
 
         CourseExecution courseExecution = course.getCourseExecution(courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType())
                 .orElseGet(() -> createCourseExecution(course, courseDto));
-
         courseExecution.setStatus(CourseExecution.Status.ACTIVE);
         return new CourseDto(courseExecution);
     }
@@ -167,6 +167,7 @@ public class CourseService {
 
     private CourseExecution createCourseExecution(Course existingCourse, CourseDto courseDto) {
         CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
+        courseExecution.setEndDate(DateHandler.toLocalDateTime(courseDto.getEndDate()));
         courseExecutionRepository.save(courseExecution);
         return courseExecution;
     }

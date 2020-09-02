@@ -7,9 +7,12 @@ import org.fenixedu.sdk.ApplicationConfiguration;
 import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -82,10 +85,27 @@ public class FenixEduInterface {
     private List<CourseDto> getCourses(JsonArray coursesJson) {
         List<CourseDto> result = new ArrayList<>();
         for (JsonElement courseJson : coursesJson) {
-            result.add(new CourseDto(courseJson.getAsJsonObject().get("name").getAsString(),
+            String id = courseJson.getAsJsonObject().get("id").getAsString();
+            JsonArray evaluations = client.getCourseEvaluations(id).getAsJsonArray();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+            LocalDateTime lastDate = null;
+            for (JsonElement evaluation : evaluations) {
+                LocalDateTime evaluationEnd = LocalDateTime.parse(
+                        evaluation.getAsJsonObject()
+                                .get("evaluationPeriod").getAsJsonObject()
+                                .get("end").getAsString()
+                        , formatter);
+                if (lastDate == null || evaluationEnd.isAfter(lastDate)) {
+                    lastDate = evaluationEnd;
+                }
+            }
+            CourseDto course = new CourseDto(courseJson.getAsJsonObject().get("name").getAsString(),
                     courseJson.getAsJsonObject().get("acronym").getAsString(),
-                    courseJson.getAsJsonObject().get("academicTerm").getAsString()));
+                    courseJson.getAsJsonObject().get("academicTerm").getAsString());
+            course.setEndDate(DateHandler.toISOString(lastDate));
+            result.add(course);
         }
         return result;
     }
+
 }

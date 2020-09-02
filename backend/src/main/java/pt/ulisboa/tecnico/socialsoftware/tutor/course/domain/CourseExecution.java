@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +32,9 @@ public class CourseExecution implements DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Status status;
+
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_id")
@@ -107,6 +111,14 @@ public class CourseExecution implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
     public Course getCourse() {

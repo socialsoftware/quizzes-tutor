@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -26,8 +27,10 @@ class FenixAuthTest extends SpockTest {
 
         courses = new ArrayList<>()
         def courseDto = new CourseDto(COURSE_1_NAME, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         courses.add(courseDto)
         courseDto = new CourseDto("Tópicos Avançados em Engenharia de Software", "TAES", COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         courses.add(courseDto)
 
         existingUsers = userRepository.findAll().size()
