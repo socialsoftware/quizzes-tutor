@@ -1,4 +1,4 @@
-import ExternalUser from './ExternalUser';
+import User from './User';
 
 export default class Course {
   academicTerm: string | undefined;
@@ -15,7 +15,7 @@ export default class Course {
   numberOfActiveTeachers: number | undefined;
   numberOfInactiveTeachers: number | undefined;
   status: string | undefined;
-  courseExecutionUsers: ExternalUser[] | undefined;
+  courseExecutionUsers: User[] | undefined;
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
@@ -35,7 +35,7 @@ export default class Course {
       this.status = jsonObj.status;
       if(jsonObj.courseExecutionUsers){
         this.courseExecutionUsers = jsonObj.courseExecutionUsers
-          .map((externalUser: ExternalUser) => new ExternalUser(externalUser));
+          .map((externalUser: User) => new User(externalUser));
       }
     }
   }

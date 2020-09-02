@@ -67,18 +67,19 @@ export default class ViewUsersDialog extends Vue {
 
     selectedUsers: User[] = [];
     search: string = '';
+    items: object = [];
     headers: object = [
         { text: 'Username', value: 'username', align: 'left', width: '65%' },
         {
         text: 'Role',
         value: 'role',
-        align: 'center',
+        align: 'left',
         width: '15%'
         },
         {
-        text: 'State',
+        text: 'Active',
         value: 'active',
-        align: 'center',
+        align: 'left',
         width: '15%'
         },
     ];

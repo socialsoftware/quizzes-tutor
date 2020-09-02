@@ -9,7 +9,6 @@ CREATE TABLE auth_users (
   token_generation_date timestamp without time zone,
 	last_access timestamp without time zone,
 	enrolled_courses_acronyms text,
-  auth_type character varying(255),
   active boolean,
 	PRIMARY KEY (id),	
 	CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id)

@@ -139,6 +139,8 @@ import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
 import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
+import User from '../../../models/user/User';
+
 
 @Component({
   components: {
@@ -354,7 +356,7 @@ export default class CoursesView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async onDeleteUsers(users: ExternalUser[]) {
+  async onDeleteUsers(users: User[]) {
     var course: Course;
       await this.$store.dispatch('loading');
       if(!!this.currentCourse){
@@ -362,7 +364,7 @@ export default class CoursesView extends Vue {
           course = await RemoteServices.deleteExternalInactiveUsers(this.currentCourse, users.map(user => user.id));
           let index: number = this.courses
             .indexOf(this.courses
-              .filter(course => course.courseExecutionId == this.currentCourse?.courseExecutionId)[0]);
+              .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
 
           this.currentCourse = course;
           this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;

@@ -7,6 +7,7 @@ export default class User {
   email!: string;
   role!: string;
   admin!: boolean;
+  active!: boolean
   creationDate!: string;
   lastAccess!: string;
 
@@ -17,6 +18,7 @@ export default class User {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.admin = jsonObj.admin;
+      this.active = jsonObj.active;
       this.creationDate = jsonObj.creationDate;
       this.lastAccess = jsonObj.lastAccess;
     }
