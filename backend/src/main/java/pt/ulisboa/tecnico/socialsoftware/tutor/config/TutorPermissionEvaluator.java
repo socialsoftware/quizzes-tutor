@@ -99,7 +99,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     }
                     return false;
                 case "TOURNAMENT.ACCESS":
-                    courseExecutionId = tournamentRepository.findCourseExecutionIdById(id).orElse(null);
+                    courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
                     if (courseExecutionId != null) {
                         return userHasThisExecution(userId, courseExecutionId);
                     }
@@ -110,7 +110,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     if (tournament != null) {
                         tournament.checkCreator(user);
                     }
-                    courseExecutionId = tournamentRepository.findCourseExecutionIdById(id).orElse(null);
+                    courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
                     if (courseExecutionId != null) {
                         return userHasThisExecution(userId, courseExecutionId);
                     }

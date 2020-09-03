@@ -13,21 +13,21 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
-    @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id IN :set", nativeQuery = true)
-    List<Tournament> getAllTournaments(Set set);
+    @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id IN :courseExecutions", nativeQuery = true)
+    List<Tournament> getAllTournamentsForCourseExecutions(Set courseExecutions);
 
-    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :set", nativeQuery = true)
-    List<Tournament> getOpenedTournaments(Set set);
-
-    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :set", nativeQuery = true)
-    List<Tournament> getClosedTournaments(Set set);
-
+    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :courseExecutions", nativeQuery = true)
+    List<Tournament> getOpenedTournamentsForCourseExecutions(Set courseExecutions);
+    
+    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id IN :courseExecutions", nativeQuery = true)
+    List<Tournament> getClosedTournamentsForCourseExecutions(Set courseExecutions);
+    
     @Query(value = "SELECT * FROM tournaments t WHERE t.user_id = :user_id", nativeQuery = true)
-    List<Tournament> getUserTournaments(Integer user_id);
-
+    List<Tournament> getTournamentsByUserId(Integer user_id);
+    
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id = :execution_id", nativeQuery = true)
-    List<Tournament> getCourseExecutionTournaments(Integer execution_id);
-
+    List<Tournament> getTournamentsByExecutionId(Integer execution_id);
+    
     @Query(value = "SELECT t.course_execution_id FROM tournaments t WHERE t.id = :id", nativeQuery = true)
-    Optional<Integer> findCourseExecutionIdById(int id);
+    Optional<Integer> findCourseExecutionIdByTournamentId(int id);
 }
