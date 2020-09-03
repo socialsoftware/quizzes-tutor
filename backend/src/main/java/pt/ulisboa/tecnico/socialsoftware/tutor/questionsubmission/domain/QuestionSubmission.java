@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
@@ -42,7 +42,7 @@ public class QuestionSubmission {
     }
 
     public String toString() {
-        return "Submission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
+        return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
     }
 
     public Integer getId() { return id; }
@@ -70,6 +70,7 @@ public class QuestionSubmission {
         this.courseExecution = null;
         this.user = null;
 
-        getReviews().clear();
+        question.remove();
+        getReviews().forEach(Review::remove);
     }
 }

@@ -70,7 +70,12 @@ public class UsersXmlImport {
 					role = User.Role.valueOf(element.getAttributeValue("role"));
 				}
 
-				User user = userService.createUser(name, username, role);
+				String email = null;
+				if (element.getAttributeValue("email") != null) {
+					email = element.getAttributeValue("email");
+				}
+
+				User user = userService.createUser(name, username, email, role);
 				user.setKey(key);
 
 				importCourseExecutions(element.getChild("courseExecutions"), user);

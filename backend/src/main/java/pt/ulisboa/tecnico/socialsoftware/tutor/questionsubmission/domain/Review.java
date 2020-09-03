@@ -87,9 +87,13 @@ public class Review {
     public void setStatus(Status status) { this.status = status; }
 
     public void setStatus(String status) {
-        if (status == null || status.isBlank() || !Stream.of(Review.Status.values()).map(String::valueOf).collect(Collectors.toList()).contains(status))
+        if (status == null || status.isBlank())
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
-        this.status = Status.valueOf(status);
+        try {
+            this.status = Status.valueOf(status);
+        } catch (IllegalArgumentException e) {
+            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+        }
     }
 
     public void remove() {

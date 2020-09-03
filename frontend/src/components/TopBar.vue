@@ -7,7 +7,7 @@
         aria-label="Menu"
       />
 
-      <v-toolbar-title>
+      <v-toolbar-title data-cy="homeLink">
         <v-btn
           dark
           active-class="no-active"
@@ -72,7 +72,7 @@
                 <v-list-item-title>Question Submissions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/topics">
+            <v-list-item to="/management/topics" data-cy="manageTopicsMenuButton">
               <v-list-item-action>
                 <v-icon>category</v-icon>
               </v-list-item-action>
@@ -185,6 +185,27 @@
           <v-icon>fa fa-book</v-icon>
         </v-btn>
 
+        <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Login
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item :href="fenixUrl">
+              <v-list-item-content>
+                <v-list-item-title>Fenix Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/login/external">
+              <v-list-item-content>
+                <v-list-item-title>External Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-btn
           v-if="isLoggedIn"
           @click="logout"
@@ -196,9 +217,6 @@
           <v-icon>fas fa-sign-out-alt</v-icon>
         </v-btn>
 
-        <v-btn v-else :href="fenixUrl" text dark>
-          Login <v-icon>fas fa-sign-in-alt</v-icon>
-        </v-btn>
       </v-toolbar-items>
     </v-app-bar>
 

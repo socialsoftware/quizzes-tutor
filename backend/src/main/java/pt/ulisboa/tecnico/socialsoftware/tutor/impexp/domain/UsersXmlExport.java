@@ -4,7 +4,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.util.List;
@@ -49,6 +49,10 @@ public class UsersXmlExport {
 
 		if (user.getRole() != null) {
 			userElement.setAttribute("role", user.getRole().name());
+		}
+
+		if (user.getEmail() != null) {
+			userElement.setAttribute("email", user.getEmail());
 		}
 
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());

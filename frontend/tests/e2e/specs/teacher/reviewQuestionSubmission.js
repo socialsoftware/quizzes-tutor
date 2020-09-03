@@ -2,13 +2,13 @@ describe('Teacher walkthrough', () => {
   beforeEach(() => {
     cy.demoTeacherLogin();
     cy.log('student submits a question');
-    cy.addQuestionSubmission('Test', 'IN_REVISION', 676);
+    cy.addQuestionSubmission('Test', 'IN_REVISION', 2);
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="submissionTeacherMenuButton"]').click();
   });
 
   afterEach(() => {
-    cy.deleteQuestionSubmission();
+    cy.removeQuestionSubmission(true);
     cy.contains('Logout').click();
   });
 

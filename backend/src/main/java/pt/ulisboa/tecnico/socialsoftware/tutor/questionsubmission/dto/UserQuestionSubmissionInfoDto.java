@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class UserQuestionSubmissionInfoDto {
     private int userId;
@@ -18,9 +19,9 @@ public class UserQuestionSubmissionInfoDto {
     private String username;
     private String name;
 
-    public UserQuestionSubmissionInfoDto(User user, List<QuestionSubmissionDto> questionSubmissions) {
+    public UserQuestionSubmissionInfoDto(User user) {
         setUserId(user.getId());
-        setQuestionSubmissions(questionSubmissions);
+        setQuestionSubmissions(user.getQuestionSubmissions().stream().map(QuestionSubmissionDto::new).collect(Collectors.toList()));
         setNumQuestionSubmissions();
         setUsername(user.getUsername());
         setName(user.getName());
