@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 class GetStudentQuestionSubmissionsTest extends SpockTest{
     def student1
     def student2
-    def teacher
     def question
     def questionSubmission
 
@@ -23,8 +22,6 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
         student2.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student2)
-        teacher = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.TEACHER, true, false)
-        userRepository.save(teacher)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)

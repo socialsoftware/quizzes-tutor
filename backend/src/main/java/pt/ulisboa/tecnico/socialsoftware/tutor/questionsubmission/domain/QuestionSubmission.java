@@ -42,7 +42,7 @@ public class QuestionSubmission {
     }
 
     public String toString() {
-        return "Submission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
+        return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
     }
 
     public Integer getId() { return id; }

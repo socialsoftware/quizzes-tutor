@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class QuestionSubmissionService {
+public class  QuestionSubmissionService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -99,7 +99,7 @@ public class QuestionSubmissionService {
             throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
         }
 
-        this.questionService.updateQuestion(questionSubmissionDto.getQuestion().getId(), questionSubmissionDto.getQuestion());
+        this.questionService.updateQuestion(questionSubmission.getQuestion().getId(), questionSubmissionDto.getQuestion());
         return new QuestionSubmissionDto(questionSubmission);
     }
 
@@ -125,15 +125,15 @@ public class QuestionSubmissionService {
             throw new TutorException(CANNOT_DELETE_REVIEWED_QUESTION);
         }
 
-        deleteQuestionSubmission(questionSubmission, question);
+        deleteQuestionSubmission(questionSubmission);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void deleteQuestionSubmission(QuestionSubmission questionSubmission, Question question) {
+    public void deleteQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmission.remove();
         questionSubmission.getReviews().forEach(review -> reviewRepository.delete(review));
-        questionRepository.delete(question);
+        questionRepository.delete(questionSubmission.getQuestion());
         questionSubmissionRepository.delete(questionSubmission);
     }
 
@@ -189,7 +189,7 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuestionSubmissions() {
         questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseService.getDemoCourse().getCourseExecutionId())
-                .forEach( questionSubmission -> deleteQuestionSubmission(questionSubmission, questionSubmission.getQuestion()));
+                .forEach(this::deleteQuestionSubmission);
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {

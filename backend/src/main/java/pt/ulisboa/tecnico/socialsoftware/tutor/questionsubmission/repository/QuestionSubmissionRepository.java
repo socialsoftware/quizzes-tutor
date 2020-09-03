@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,4 +24,8 @@ public interface QuestionSubmissionRepository extends JpaRepository<QuestionSubm
 
     @Query(value = "select question_id from question_submissions s where s.id = :questionSubmissionId", nativeQuery = true)
     Optional<Integer> findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId);
+
+    @Modifying
+    @Query(value = "delete from question_submissions s where s. = :courseExecutionId", nativeQuery = true)
+    void dissociateCourseExecutionUsers(int courseExecutionId);
 }
