@@ -62,16 +62,21 @@ public class Review {
     public String getComment() { return comment; }
 
     public void setComment(String comment) {
-        if (comment == null || comment.isBlank())
+        if (comment == null || comment.isBlank()) {
             throw new TutorException(REVIEW_MISSING_COMMENT);
+        }
         this.comment = comment;
     }
 
     public LocalDateTime getCreationDate() { return creationDate; }
 
     public void setCreationDate(LocalDateTime creationDate) {
-        if (this.creationDate == null) this.creationDate = DateHandler.now();
-        else this.creationDate = creationDate;
+        if (this.creationDate == null) {
+            this.creationDate = DateHandler.now();
+        }
+        else {
+            this.creationDate = creationDate;
+        }
     }
 
     public User getUser() { return user; }
@@ -87,8 +92,9 @@ public class Review {
     public void setStatus(Status status) { this.status = status; }
 
     public void setStatus(String status) {
-        if (status == null || status.isBlank())
+        if (status == null || status.isBlank()) {
             throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+        }
         try {
             this.status = Status.valueOf(status);
         } catch (IllegalArgumentException e) {

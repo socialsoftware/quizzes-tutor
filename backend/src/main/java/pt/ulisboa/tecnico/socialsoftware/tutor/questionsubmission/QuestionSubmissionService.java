@@ -132,7 +132,6 @@ public class  QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmission.remove();
-        questionSubmission.getReviews().forEach(review -> reviewRepository.delete(review));
         questionRepository.delete(questionSubmission.getQuestion());
         questionSubmissionRepository.delete(questionSubmission);
     }

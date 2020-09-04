@@ -286,7 +286,7 @@ public class QuestionService {
         QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
         if (questionSubmission != null) {
-            questionSubmissionService.deleteQuestionSubmission(questionSubmission);
+            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
         }
 
         for (Option option : question.getOptions()) {

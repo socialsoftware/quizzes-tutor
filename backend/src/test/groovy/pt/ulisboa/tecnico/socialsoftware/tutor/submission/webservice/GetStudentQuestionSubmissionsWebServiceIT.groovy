@@ -80,7 +80,6 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
     def cleanup() {
         persistentCourseCleanup()
 
-        courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution.getId())
         userRepository.deleteById(student.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
 
