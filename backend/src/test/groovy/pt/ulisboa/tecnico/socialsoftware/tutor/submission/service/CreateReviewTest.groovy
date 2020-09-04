@@ -35,7 +35,7 @@ class CreateReviewTest extends SpockTest{
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
-        questionSubmission.setUser(student)
+        questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(questionSubmission)
     }
@@ -90,13 +90,13 @@ class CreateReviewTest extends SpockTest{
         given: "a questionSubmission"
         def submission = new QuestionSubmission()
         submission.setQuestion(question)
-        submission.setUser(student)
+        submission.setSubmitter(student)
         submission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(submission)
         and: "a reviewDto"
         def reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(hasQuestionSubmission ? submission.getId() : null)
-        reviewDto.setUserId(hasUser ? submission.getUser().getId() : null)
+        reviewDto.setUserId(hasUser ? submission.getSubmitter().getId() : null)
         reviewDto.setComment(comment)
         reviewDto.setStatus(status)
 

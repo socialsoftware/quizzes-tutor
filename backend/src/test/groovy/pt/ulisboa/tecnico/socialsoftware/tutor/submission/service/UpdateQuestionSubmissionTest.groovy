@@ -45,7 +45,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         optionRepository.save(optionOK)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
-        questionSubmission.setUser(student)
+        questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
         externalCourseExecution.addQuestionSubmission(questionSubmission)
         student.addQuestionSubmission(questionSubmission)
@@ -68,7 +68,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         questionSubmissionRepository.count() == 1L
         def result = questionSubmissionRepository.findAll().get(0)
         result.getId() != null
-        result.getUser() == student
+        result.getSubmitter() == student
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()

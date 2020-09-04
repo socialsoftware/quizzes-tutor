@@ -61,7 +61,7 @@ class CreateReviewWebServiceIT extends SpockTest {
 
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
-        questionSubmissionDto.setUserId(student.getId())
+        questionSubmissionDto.setSubmitterId(student.getId())
         questionSubmissionDto.setQuestion(questionDto)
 
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)

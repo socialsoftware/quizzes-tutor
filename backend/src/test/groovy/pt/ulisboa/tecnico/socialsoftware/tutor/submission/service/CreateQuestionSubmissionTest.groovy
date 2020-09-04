@@ -49,7 +49,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
         given: "a QuestionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(externalCourseExecution.getId())
-        questionSubmissionDto.setUserId(student.getId())
+        questionSubmissionDto.setSubmitterId(student.getId())
         questionSubmissionDto.setQuestion(questionDto)
 
         when: questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
@@ -58,7 +58,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
         questionSubmissionRepository.count() == 1L
         def result = questionSubmissionRepository.findAll().get(0)
         result.getId() != null
-        result.getUser() == student
+        result.getSubmitter() == student
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
@@ -68,11 +68,11 @@ class CreateQuestionSubmissionTest extends SpockTest{
     }
 
     @Unroll
-    def "invalid arguments: userId=#userId | question#question | externalCourseExecutionIdw=#externalCourseExecutionId || errorMessage"(){
+    def "invalid arguments: submitterId=#submitterId | question#question | externalCourseExecutionIdw=#externalCourseExecutionId || errorMessage"(){
         given: "a QuestionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(externalCourseExecutionId)
-        questionSubmissionDto.setUserId(userId)
+        questionSubmissionDto.setSubmitterId(submitterId)
         questionSubmissionDto.setQuestion(question)
         when:
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
@@ -82,10 +82,10 @@ class CreateQuestionSubmissionTest extends SpockTest{
         exception.errorMessage == errorMessage
 
         where:
-        userId          | question     | externalCourseExecutionId        || errorMessage
+        submitterId     | question     | externalCourseExecutionId        || errorMessage
         null            | questionDto  | externalCourseExecution.getId()  || QUESTION_SUBMISSION_MISSING_STUDENT
         student.getId() | null         | externalCourseExecution.getId()  || QUESTION_SUBMISSION_MISSING_QUESTION
-        student.getId() | questionDto  | null                     || QUESTION_SUBMISSION_MISSING_COURSE
+        student.getId() | questionDto  | null                             || QUESTION_SUBMISSION_MISSING_COURSE
     }
 
     @TestConfiguration

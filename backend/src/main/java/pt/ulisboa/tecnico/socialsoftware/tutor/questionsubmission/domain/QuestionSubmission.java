@@ -20,8 +20,8 @@ public class QuestionSubmission {
     private Question question;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "submitter_id")
+    private User submitter;
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -33,16 +33,16 @@ public class QuestionSubmission {
     public QuestionSubmission() {
     }
 
-    public QuestionSubmission(CourseExecution courseExecution, Question question, User user) {
+    public QuestionSubmission(CourseExecution courseExecution, Question question, User submitter) {
         this.courseExecution = courseExecution;
         this.question = question;
-        this.user = user;
-        user.addQuestionSubmission(this);
+        this.submitter = submitter;
+        submitter.addQuestionSubmission(this);
         courseExecution.addQuestionSubmission(this);
     }
 
     public String toString() {
-        return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", user=" + user + ", courseExecution=" + courseExecution + "}";
+        return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", submitter=" + submitter + ", courseExecution=" + courseExecution + "}";
     }
 
     public Integer getId() { return id; }
@@ -51,9 +51,9 @@ public class QuestionSubmission {
 
     public void setQuestion(Question question) { this.question = question; }
 
-    public User getUser() { return user; }
+    public User getSubmitter() { return submitter; }
 
-    public void setUser(User user) { this.user = user; }
+    public void setSubmitter(User submitter) { this.submitter = submitter; }
 
     public CourseExecution getCourseExecution() { return courseExecution; }
 
@@ -65,10 +65,10 @@ public class QuestionSubmission {
 
     public void remove() {
         getCourseExecution().getQuestionSubmissions().remove(this);
-        getUser().getQuestionSubmissions().remove(this);
+        getSubmitter().getQuestionSubmissions().remove(this);
 
         this.courseExecution = null;
-        this.user = null;
+        this.submitter = null;
 
         question.remove();
         getReviews().forEach(Review::remove);

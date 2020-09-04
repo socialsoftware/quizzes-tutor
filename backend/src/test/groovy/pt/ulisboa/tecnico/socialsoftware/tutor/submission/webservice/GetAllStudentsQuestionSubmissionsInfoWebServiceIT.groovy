@@ -67,19 +67,19 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTest {
 
         def questionSubmission1Dto = new QuestionSubmissionDto()
         questionSubmission1Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission1Dto.setUserId(student1.getId())
+        questionSubmission1Dto.setSubmitterId(student1.getId())
         questionSubmission1Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission1Dto)
 
         def questionSubmission2Dto = new QuestionSubmissionDto()
         questionSubmission2Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission2Dto.setUserId(student2.getId())
+        questionSubmission2Dto.setSubmitterId(student2.getId())
         questionSubmission2Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission2Dto)
 
         def questionSubmission3Dto = new QuestionSubmissionDto()
         questionSubmission3Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission3Dto.setUserId(student2.getId())
+        questionSubmission3Dto.setSubmitterId(student2.getId())
         questionSubmission3Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission3Dto)
 
@@ -94,8 +94,8 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTest {
         response.status == 200
         and: "if it responds with the correct info"
         def info = response.data
-        info.get(0).userId == student2.getId()
-        info.get(1).userId == student1.getId()
+        info.get(0).submitterId == student2.getId()
+        info.get(1).submitterId == student1.getId()
         info.get(0).totalQuestionSubmissions == 2
         info.get(1).totalQuestionSubmissions == 1
         info.get(0).questionSubmissions.size() == 2

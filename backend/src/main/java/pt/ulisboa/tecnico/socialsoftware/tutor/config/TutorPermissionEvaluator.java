@@ -101,7 +101,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
                     if (questionSubmission != null) {
-                        return questionSubmission.getUser().getId() == userId;
+                        return questionSubmission.getSubmitter().getId() == userId;
                     }
                     return false;
                 default: return false;

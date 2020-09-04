@@ -38,7 +38,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         given: "a question submission"
         def questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
-        questionSubmission.setUser(student1)
+        questionSubmission.setSubmitter(student1)
         questionSubmission.setCourseExecution(externalCourseExecution)
         externalCourseExecution.addQuestionSubmission(questionSubmission)
         student1.addQuestionSubmission(questionSubmission)
@@ -53,7 +53,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
 
         submission.getId() != null
         submission.getQuestion().getId() == question.getId()
-        submission.getUserId() == student1.getId()
+        submission.getSubmitterId() == student1.getId()
         submission.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
@@ -61,7 +61,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         given: "a question submission"
         def questionSubmission1 = new QuestionSubmission()
         questionSubmission1.setQuestion(question)
-        questionSubmission1.setUser(student1)
+        questionSubmission1.setSubmitter(student1)
         questionSubmission1.setCourseExecution(externalCourseExecution)
         externalCourseExecution.addQuestionSubmission(questionSubmission1)
         student1.addQuestionSubmission(questionSubmission1)
@@ -70,7 +70,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         and: "another question submission"
         def questionSubmission2 = new QuestionSubmission()
         questionSubmission2.setQuestion(question)
-        questionSubmission2.setUser(student1)
+        questionSubmission2.setSubmitter(student1)
         questionSubmission2.setCourseExecution(externalCourseExecution)
         externalCourseExecution.addQuestionSubmission(questionSubmission2)
         student1.addQuestionSubmission(questionSubmission2)
@@ -79,7 +79,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         and: "another question submission"
         def questionSubmission3 = new QuestionSubmission()
         questionSubmission3.setQuestion(question)
-        questionSubmission3.setUser(student2)
+        questionSubmission3.setSubmitter(student2)
         questionSubmission3.setCourseExecution(externalCourseExecution)
         externalCourseExecution.addQuestionSubmission(questionSubmission3)
         student2.addQuestionSubmission(questionSubmission3)
@@ -100,9 +100,9 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest{
         submission1.getQuestion().getId() == question.getId()
         submission2.getQuestion().getId() == question.getId()
         submission3.getQuestion().getId() == question.getId()
-        submission1.getUserId() == student1.getId()
-        submission2.getUserId() == student1.getId()
-        submission3.getUserId() == student2.getId()
+        submission1.getSubmitterId() == student1.getId()
+        submission2.getSubmitterId() == student1.getId()
+        submission3.getSubmitterId() == student2.getId()
         submission1.getCourseExecutionId() == externalCourseExecution.getId()
         submission2.getCourseExecutionId() == externalCourseExecution.getId()
         submission3.getCourseExecutionId() == externalCourseExecution.getId()

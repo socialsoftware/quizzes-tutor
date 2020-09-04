@@ -4,7 +4,7 @@ export default class QuestionSubmission {
   id!: number;
   courseExecutionId!: number;
   question!: Question;
-  userId: number | null = null;
+  submitterId: number | null = null;
   name: string | null = null;
 
   constructor(jsonObj?: QuestionSubmission) {
@@ -12,7 +12,7 @@ export default class QuestionSubmission {
       this.id = jsonObj.id;
       this.courseExecutionId = jsonObj.courseExecutionId;
       this.question = new Question(jsonObj.question);
-      this.userId = jsonObj.userId;
+      this.submitterId = jsonObj.submitterId;
       this.name = jsonObj.name;
     }
   }

@@ -68,19 +68,19 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTest {
 
         def questionSubmission1Dto = new QuestionSubmissionDto()
         questionSubmission1Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission1Dto.setUserId(student1.getId())
+        questionSubmission1Dto.setSubmitterId(student1.getId())
         questionSubmission1Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission1Dto)
 
         def questionSubmission2Dto = new QuestionSubmissionDto()
         questionSubmission2Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission2Dto.setUserId(student2.getId())
+        questionSubmission2Dto.setSubmitterId(student2.getId())
         questionSubmission2Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission2Dto)
 
         def questionSubmission3Dto = new QuestionSubmissionDto()
         questionSubmission3Dto.setCourseExecutionId(courseExecution.getId())
-        questionSubmission3Dto.setUserId(student2.getId())
+        questionSubmission3Dto.setSubmitterId(student2.getId())
         questionSubmission3Dto.setQuestion(questionDto)
         questionSubmissionService.createQuestionSubmission(questionSubmission3Dto)
 
@@ -98,9 +98,9 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTest {
         submissions.get(0).id != null
         submissions.get(1).id != null
         submissions.get(2).id != null
-        submissions.get(0).userId == student1.getId()
-        submissions.get(1).userId == student2.getId()
-        submissions.get(2).userId == student2.getId()
+        submissions.get(0).submitterId == student1.getId()
+        submissions.get(1).submitterId == student2.getId()
+        submissions.get(2).submitterId == student2.getId()
         submissions.get(0).courseExecutionId == courseExecution.getId()
         submissions.get(1).courseExecutionId == courseExecution.getId()
         submissions.get(2).courseExecutionId == courseExecution.getId()

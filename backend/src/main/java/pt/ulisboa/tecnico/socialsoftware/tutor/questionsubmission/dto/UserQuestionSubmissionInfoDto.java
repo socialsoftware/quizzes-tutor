@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class UserQuestionSubmissionInfoDto {
-    private int userId;
+    private int submitterId;
     private int totalQuestionSubmissions = 0;
     private int numAvailableQuestionSubmissions = 0;
     private int numDisabledQuestionSubmissions = 0;
@@ -27,9 +27,9 @@ public class UserQuestionSubmissionInfoDto {
         setName(user.getName());
     }
 
-    public int getUserId() { return userId; }
+    public int getSubmitterId() { return submitterId; }
 
-    public void setUserId(int userId) { this.userId = userId; }
+    public void setUserId(int submitterId) { this.submitterId = submitterId; }
 
     public int getTotalQuestionSubmissions() { return totalQuestionSubmissions; }
 
@@ -77,7 +77,7 @@ public class UserQuestionSubmissionInfoDto {
 
     public static Comparator<UserQuestionSubmissionInfoDto> NumSubmissionsComparator = (a, b) -> {
         if (a.getTotalQuestionSubmissions() == b.getTotalQuestionSubmissions()) {
-            return a.getUserId() - b.getUserId();
+            return a.getSubmitterId() - b.getSubmitterId();
         } else {
             return b.getTotalQuestionSubmissions() - a.getTotalQuestionSubmissions();
         }

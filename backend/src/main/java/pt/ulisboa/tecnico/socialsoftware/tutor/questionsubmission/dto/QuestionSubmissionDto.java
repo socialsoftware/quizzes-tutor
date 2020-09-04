@@ -9,7 +9,7 @@ public class QuestionSubmissionDto implements Serializable {
     private Integer id;
     private Integer courseExecutionId;
     private QuestionDto question;
-    private Integer userId;
+    private Integer submitterId;
     private String name;
 
     public QuestionSubmissionDto(){}
@@ -19,8 +19,8 @@ public class QuestionSubmissionDto implements Serializable {
         setCourseExecutionId(questionSubmission.getCourseExecution().getId());
         if (questionSubmission.getQuestion() != null)
             setQuestion(new QuestionDto(questionSubmission.getQuestion()));
-        setUserId(questionSubmission.getUser().getId());
-        setName(questionSubmission.getUser().getName());
+        setSubmitterId(questionSubmission.getSubmitter().getId());
+        setName(questionSubmission.getSubmitter().getName());
     }
 
     public Integer getId() { return id; }
@@ -35,9 +35,9 @@ public class QuestionSubmissionDto implements Serializable {
 
     public void setQuestion(QuestionDto question) { this.question = question; }
 
-    public Integer getUserId() { return userId; }
+    public Integer getSubmitterId() { return submitterId; }
 
-    public void setUserId(Integer userId) { this.userId = userId; }
+    public void setSubmitterId(Integer submitterId) { this.submitterId = submitterId; }
 
     public String getName() { return name; }
 
@@ -48,7 +48,7 @@ public class QuestionSubmissionDto implements Serializable {
         return "QuestionSubmissionDto{" +
                 "id=" + id +
                 ", courseExecutionId=" + courseExecutionId +
-                ", userId=" + userId +
+                ", submitterId=" + submitterId +
                 ", name=" + name +
                 ", questionDto=" + question +
                 '}';

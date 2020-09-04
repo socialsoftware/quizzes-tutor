@@ -33,7 +33,7 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
-        questionSubmission.setUser(student)
+        questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(questionSubmission)
     }

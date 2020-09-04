@@ -41,25 +41,25 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         given: "questionSubmissions"
         def questionSubmission1 = new QuestionSubmission()
         questionSubmission1.setQuestion(question)
-        questionSubmission1.setUser(student1)
+        questionSubmission1.setSubmitter(student1)
         questionSubmission1.setCourseExecution(externalCourseExecution)
         student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
         def questionSubmission2 = new QuestionSubmission()
         questionSubmission2.setQuestion(question)
-        questionSubmission2.setUser(student2)
+        questionSubmission2.setSubmitter(student2)
         questionSubmission2.setCourseExecution(externalCourseExecution)
         student2.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
         def questionSubmission3 = new QuestionSubmission()
         questionSubmission3.setQuestion(question)
-        questionSubmission3.setUser(student3)
+        questionSubmission3.setSubmitter(student3)
         questionSubmission3.setCourseExecution(externalCourseExecution)
         student3.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
         def questionSubmission4 = new QuestionSubmission()
         questionSubmission4.setQuestion(question)
-        questionSubmission4.setUser(student3)
+        questionSubmission4.setSubmitter(student3)
         questionSubmission4.setCourseExecution(externalCourseExecution)
         student3.addQuestionSubmission(questionSubmission4)
         questionSubmissionRepository.save(questionSubmission4)
@@ -72,9 +72,9 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         def student2Info = result.get(2)
         def student3Info = result.get(0)
 
-        student1Info.getUserId() == student1.getId()
-        student2Info.getUserId() == student2.getId()
-        student3Info.getUserId() == student3.getId()
+        student1Info.getSubmitterId() == student1.getId()
+        student2Info.getSubmitterId() == student2.getId()
+        student3Info.getSubmitterId() == student3.getId()
         student1Info.getTotalQuestionSubmissions() == 1
         student2Info.getTotalQuestionSubmissions() == 1
         student3Info.getTotalQuestionSubmissions() == 2
@@ -98,9 +98,9 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
         def student2Info = result.get(1)
         def student3Info = result.get(2)
 
-        student1Info.getUserId() == student1.getId()
-        student2Info.getUserId() == student2.getId()
-        student3Info.getUserId() == student3.getId()
+        student1Info.getSubmitterId() == student1.getId()
+        student2Info.getSubmitterId() == student2.getId()
+        student3Info.getSubmitterId() == student3.getId()
         student1Info.getTotalQuestionSubmissions() == 0
         student2Info.getTotalQuestionSubmissions() == 0
         student3Info.getTotalQuestionSubmissions() == 0

@@ -50,7 +50,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
 
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
-        questionSubmissionDto.setUserId(student.getId())
+        questionSubmissionDto.setSubmitterId(student.getId())
         questionSubmissionDto.setQuestion(questionDto)
 
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
@@ -73,7 +73,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
         def submissions = response.data
         submissions.get(0).id != null
         submissions.get(0).question.id == question.getId()
-        submissions.get(0).userId == student.getId()
+        submissions.get(0).submitterId == student.getId()
         submissions.get(0).courseExecutionId == courseExecution.getId()
     }
 

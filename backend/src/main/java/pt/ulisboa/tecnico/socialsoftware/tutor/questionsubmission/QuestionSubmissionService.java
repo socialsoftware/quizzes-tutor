@@ -65,7 +65,7 @@ public class  QuestionSubmissionService {
 
         Question question = createQuestion(courseExecution.getCourse(), questionSubmissionDto.getQuestion());
 
-        User user = getUser(questionSubmissionDto.getUserId());
+        User user = getUser(questionSubmissionDto.getSubmitterId());
 
         QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, user);
 
@@ -195,7 +195,7 @@ public class  QuestionSubmissionService {
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {
         if (questionSubmissionDto.getQuestion() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_QUESTION);
-        else if (questionSubmissionDto.getUserId() == null)
+        else if (questionSubmissionDto.getSubmitterId() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_STUDENT);
         else if (questionSubmissionDto.getCourseExecutionId() == null)
             throw new TutorException(QUESTION_SUBMISSION_MISSING_COURSE);

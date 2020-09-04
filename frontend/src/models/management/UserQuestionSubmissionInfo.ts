@@ -1,7 +1,7 @@
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 
 export default class UserQuestionSubmissionInfo {
-  userId: number | null = null;
+  submitterId: number | null = null;
   questionSubmissions: QuestionSubmission[] = [];
   totalQuestionSubmissions: number | null = null;
   numAvailableQuestionSubmissions: number | null = null;
@@ -22,7 +22,7 @@ export default class UserQuestionSubmissionInfo {
 
   constructor(jsonObj?: UserQuestionSubmissionInfo) {
     if (jsonObj) {
-      this.userId = jsonObj.userId;
+      this.submitterId = jsonObj.submitterId;
       this.totalQuestionSubmissions = jsonObj.totalQuestionSubmissions;
       this.numAvailableQuestionSubmissions =
         jsonObj.numAvailableQuestionSubmissions;

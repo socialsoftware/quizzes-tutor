@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuestionSubmissionRepository extends JpaRepository<QuestionSubmission, Integer> {
-    @Query(value = "select * from question_submissions s where s.user_id = :userId and s.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<QuestionSubmission> findQuestionSubmissionsByUserAndCourseExecution(Integer userId, Integer courseExecutionId);
+    @Query(value = "select * from question_submissions s where s.submitter_id = :submitterId and s.course_execution_id = :courseExecutionId", nativeQuery = true)
+    List<QuestionSubmission> findQuestionSubmissionsByUserAndCourseExecution(Integer submitterId, Integer courseExecutionId);
 
     @Query(value = "select * from question_submissions s where s.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<QuestionSubmission> findQuestionSubmissionsByCourseExecution(Integer courseExecutionId);

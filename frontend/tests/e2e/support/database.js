@@ -27,7 +27,7 @@ Cypress.Commands.add('cleanTestTopics', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, questionStatus, userId) => {
     dbCommand(`WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES ('${title}', 'Question?', '${questionStatus}', 1, current_timestamp) RETURNING id)
-    INSERT INTO question_submissions (question_id, user_id, course_execution_id) VALUES ((SELECT id from quest), ${userId}, 1);`);
+    INSERT INTO question_submissions (question_id, submitter_id, course_execution_id) VALUES ((SELECT id from quest), ${userId}, 1);`);
 
     //add options
     for (let content in [0, 1, 2, 3]) {
