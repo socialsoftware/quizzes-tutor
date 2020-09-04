@@ -68,41 +68,49 @@ public class FenixEduInterface {
         if (courses == null) {
             courses = getPersonCourses();
         }
-        return getCourses(courses.get("attending").getAsJsonArray());
+        return getCourses("attending");
     }
 
     public List<CourseDto> getPersonTeachingCourses() {
         if (courses == null) {
             courses = getPersonCourses();
         }
-        return getCourses(courses.get("teaching").getAsJsonArray());
+        return getCourses("teaching");
     }
 
     public String getPersonEmail() {
         return String.valueOf(person.get("email")).replaceAll("^\"|\"$", "");
     }
 
-    private List<CourseDto> getCourses(JsonArray coursesJson) {
-        List<CourseDto> result = new ArrayList<>();
-        for (JsonElement courseJson : coursesJson) {
-            String id = courseJson.getAsJsonObject().get("id").getAsString();
-            JsonArray evaluations = client.getCourseEvaluations(id).getAsJsonArray();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-            LocalDateTime lastDate = null;
-            for (JsonElement evaluation : evaluations) {
-                LocalDateTime evaluationEnd = LocalDateTime.parse(
-                        evaluation.getAsJsonObject()
-                                .get("evaluationPeriod").getAsJsonObject()
-                                .get("end").getAsString()
-                        , formatter);
+    private String getCourseEndDate(JsonElement courseJson) {
+        String id = courseJson.getAsJsonObject().get("id").getAsString();
+        JsonArray evaluations = client.getCourseEvaluations(id).getAsJsonArray();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime lastDate = null;
+        for (JsonElement evaluation : evaluations) {
+            String endDate = evaluation.getAsJsonObject()
+                                        .get("evaluationPeriod").getAsJsonObject()
+                                        .get("end").getAsString();    
+            if (!endDate.isEmpty()) {
+                LocalDateTime evaluationEnd = LocalDateTime.parse(endDate, formatter);
                 if (lastDate == null || evaluationEnd.isAfter(lastDate)) {
                     lastDate = evaluationEnd;
                 }
-            }
+            }             
+        }
+        return DateHandler.toISOString(lastDate);
+    }
+
+    private List<CourseDto> getCourses(String type) {
+        JsonArray coursesJson = courses.get(type).getAsJsonArray();
+        List<CourseDto> result = new ArrayList<>();
+        for (JsonElement courseJson : coursesJson) {
             CourseDto course = new CourseDto(courseJson.getAsJsonObject().get("name").getAsString(),
                     courseJson.getAsJsonObject().get("acronym").getAsString(),
                     courseJson.getAsJsonObject().get("academicTerm").getAsString());
-            course.setEndDate(DateHandler.toISOString(lastDate));
+            if(type.equals("teaching")) {
+                course.setEndDate(getCourseEndDate(courseJson));
+            }
             result.add(course);
         }
         return result;

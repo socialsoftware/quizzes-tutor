@@ -70,7 +70,7 @@
           </template>
           <span>Add Student/Teacher</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isInactive(item)">
+        <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
@@ -326,8 +326,17 @@ export default class CoursesView extends Vue {
     }
   }
 
-  isInactive(course: Course) {
-    return course.status === 'INACTIVE';
+  hasCourseSemesterFinished(course: Course):boolean {
+    if(course.endDate !== undefined) {
+      return new Date(course.endDate) < new Date();
+    } else if (course.academicTerm !== undefined 
+              && RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)) {
+      const termTokens = course.academicTerm.split(/º|\s|\//);
+      const month = termTokens[0] ===  "1" ? 3 : 9; // march : september
+      const year = termTokens[termTokens.length-1]
+      return new Date(`${year}-${month}-${1}`) < new Date();
+    }
+    return false;
   }
 
   async anonymizeCourse(courseToDelete: Course) {

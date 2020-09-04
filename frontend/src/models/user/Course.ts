@@ -8,6 +8,7 @@ export default class Course {
   courseId: number | undefined;
   courseType: string = 'EXTERNAL';
   name: string | undefined;
+  endDate: string | undefined;
   numberOfQuestions: number | undefined;
   numberOfQuizzes: number | undefined;
   numberOfActiveStudents: number | undefined;
@@ -26,6 +27,7 @@ export default class Course {
       this.courseId = jsonObj.courseId;
       this.courseType = jsonObj.courseType;
       this.name = jsonObj.name;
+      this.endDate = jsonObj.endDate;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfQuizzes = jsonObj.numberOfQuizzes;
       this.numberOfActiveStudents = jsonObj.numberOfActiveStudents;
