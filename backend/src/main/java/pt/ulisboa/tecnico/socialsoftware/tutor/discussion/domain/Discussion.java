@@ -61,7 +61,9 @@ public class Discussion implements Serializable {
     public Discussion(User user, Question question, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
         this.question = question;
+        this.question.addDiscussion(this);
         this.user = user;
+        this.user.addDiscussion(this);
         this.message = discussionDto.getMessage();
         this.setQuestionId(question.getId());
         this.setUserId(user.getId());

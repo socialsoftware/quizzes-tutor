@@ -97,4 +97,17 @@ public class DiscussionDto implements Serializable {
     public void setDate(String date) {
         this.date = date;
     }
+
+    @Override
+    public String toString() {
+        return "DiscussionDto{" +
+                "userId=" + userId +
+                ", question=" + question +
+                ", userName='" + userName + '\'' +
+                ", message='" + message + '\'' +
+                ", replies=" + replies +
+                ", available=" + available +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

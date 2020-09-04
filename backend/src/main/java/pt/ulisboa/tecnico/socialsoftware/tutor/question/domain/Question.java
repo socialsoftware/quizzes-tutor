@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -64,6 +65,9 @@ public class Question implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=true)
+    private Set<Discussion> discussions = new HashSet<>();
+
     public Question() {
     }
 
@@ -83,6 +87,14 @@ public class Question implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestion(this);
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public void setDiscussions(Set<Discussion> discussions) {
+        this.discussions = discussions;
     }
 
     public Integer getId() {
@@ -313,5 +325,13 @@ public class Question implements DomainEntity {
 
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
+    }
+
+    public void addDiscussion(Discussion discussion) {
+        this.discussions.add(discussion);
+    }
+
+    public Set<Discussion> getDiscussions() {
+        return this.discussions;
     }
 }

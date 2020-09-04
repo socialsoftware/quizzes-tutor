@@ -29,7 +29,7 @@ public class DiscussionController {
     @GetMapping("/discussions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<DiscussionDto> getDiscussions(Principal principal, @Valid @RequestParam Integer userId) {
-
+        logger.warn("Get discussions: " + userId.toString());
         User user = (User)((Authentication) principal).getPrincipal();
 
         if (user == null){
@@ -70,7 +70,9 @@ public class DiscussionController {
 
     @PutMapping(value = "/discussions")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public void setAvailability(Principal principal, @Valid @RequestParam boolean available, @Valid @RequestBody DiscussionDto discussion) {
+    public DiscussionDto setAvailability(Principal principal, @Valid @RequestParam boolean available, @Valid @RequestBody DiscussionDto discussion) {
+        logger.warn("Set Availability: " + discussion.toString());
+
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -79,12 +81,14 @@ public class DiscussionController {
 
         discussion.setAvailable(available);
 
-        discussionService.setAvailability(discussion);
+        return discussionService.setAvailability(discussion);
     }
 
     @PostMapping(value = "/discussions/replies")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
-    public void createReply(Principal principal, @Valid @RequestParam String message, @Valid @RequestBody DiscussionDto discussion){
+    public ReplyDto createReply(Principal principal, @Valid @RequestParam String message, @Valid @RequestBody DiscussionDto discussion){
+        logger.warn("CreateReply:\n Message: " + message + "\n Discussion: " + discussion.toString());
+
         User user = (User) ((Authentication) principal).getPrincipal();
 
         ReplyDto reply = new ReplyDto();
@@ -97,6 +101,6 @@ public class DiscussionController {
         reply.setUserId(user.getId());
         reply.setDate(DateHandler.now());
 
-        discussionService.giveReply(discussion, reply);
+        return discussionService.giveReply(discussion, reply);
     }
 }

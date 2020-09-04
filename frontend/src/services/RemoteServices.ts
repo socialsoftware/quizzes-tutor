@@ -182,6 +182,17 @@ export default class RemoteServices {
     });
   }
 
+  static async createDiscussion(discussion: Discussion): Promise<Discussion> {
+    return httpClient
+      .post('/discussions', discussion)
+      .then(response => {
+        return new Discussion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async setQuestionStatus(
     questionId: number,
     status: String
@@ -631,7 +642,7 @@ export default class RemoteServices {
     }
   }
 
-  static async toggleDiscussionStats(): Promise<DashboardInfo> {
+  static async changeAvailability(): Promise<DashboardInfo> {
     return httpClient
       .put('/dashboard/discussions')
       .then(response => {
@@ -646,7 +657,7 @@ export default class RemoteServices {
     return httpClient
       .get('/discussions?userId=' + id)
       .then(response => {
-        return new response.data.map((discussion: any) => {
+        return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
       })
@@ -659,6 +670,8 @@ export default class RemoteServices {
     message: string,
     discussion: Discussion
   ): Promise<Reply> {
+    console.log('message');
+    console.log(message);
     return httpClient
       .post('/discussions/replies?message=' + message, discussion)
       .then(response => {

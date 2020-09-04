@@ -6,8 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
@@ -16,8 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionR
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -74,17 +70,18 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void setAvailability(DiscussionDto discussionDto) {
+    public DiscussionDto setAvailability(DiscussionDto discussionDto) {
         Discussion discussion = discussionRepository
                 .findByUserIdQuestionId(discussionDto.getUserId(), discussionDto.getQuestionId())
                 .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionDto.getUserId(),
                         discussionDto.getQuestionId()));
         discussion.setAvailable(discussionDto.isAvailable());
+        return discussionDto;
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void giveReply(DiscussionDto discussionDto, ReplyDto replyDto) {
+    public ReplyDto giveReply(DiscussionDto discussionDto, ReplyDto replyDto) {
         checkDiscussionDto(discussionDto);
 
         User user = userRepository.findById(replyDto.getUserId()).orElseThrow(()->new TutorException(USER_NOT_FOUND, replyDto.getUserId()));
@@ -105,6 +102,8 @@ public class DiscussionService {
 
         this.entityManager.persist(reply);
         //this.entityManager.merge(discussion);
+
+        return new ReplyDto(reply);
     }
 
     private void checkUserAndDiscussion(User user, DiscussionDto discussion) {

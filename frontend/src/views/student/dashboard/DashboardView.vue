@@ -38,20 +38,24 @@
           <div style="display: flex; flex-direction: row; position: relative;">
             <v-switch
               style="flex: 1"
-              v-if="info.numDiscussions !== 0"
+              v-if="info !== null && info.numDiscussions !== 0"
               v-model="info.discussionStatsPublic"
               :label="info.discussionStatsPublic ? 'Public' : 'Private'"
               @change="toggleDiscussions()"
             />
           </div>
           <v-col>
-            <v-list-item-content v-if="info.numDiscussions !== 0">
-              <v-list-item-title class="headline mb-1"
+            <v-list-item-content
+              v-if="info !== null && info.numDiscussions !== 0"
+            >
+              <!--<v-list-item-title class="headline mb-1"
                 >Discussions</v-list-item-title
-              >
+              >-->
               <v-list-item-subtitle
                 >Discussions created:
-                {{ info.numDiscussions }}</v-list-item-subtitle
+                {{
+                  info !== null ? info.numDiscussions : -1
+                }}</v-list-item-subtitle
               >
             </v-list-item-content>
             <v-list-item-content v-else>
@@ -87,7 +91,7 @@ export default class DashboardView extends Vue {
   async toggleDiscussions() {
     await this.$store.dispatch('loading');
     try {
-      this.info = await RemoteServices.toggleDiscussionStats();
+      this.info = await RemoteServices.changeAvailability();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

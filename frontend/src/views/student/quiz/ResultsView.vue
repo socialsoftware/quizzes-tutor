@@ -47,6 +47,23 @@
       @increase-order="increaseOrder"
       @decrease-order="decreaseOrder"
     />
+    <discussion-component
+      :has-discussion="
+        statementManager.statementQuiz.questions[questionOrder]
+          .hasUserDiscussion
+      "
+      :answered="
+        statementManager.statementQuiz.answers[questionOrder].optionId != null
+      "
+      :discussions="
+        statementManager.statementQuiz.questions[questionOrder].discussions
+      "
+      :question="
+        statementManager.statementQuiz.questions[questionOrder].question
+      "
+      v-on:discussionMessage="updateMessage"
+      @submit-discussion="submitDiscussion"
+    />
   </div>
 </template>
 
@@ -54,15 +71,21 @@
 import { Component, Vue } from 'vue-property-decorator';
 import StatementManager from '@/models/statement/StatementManager';
 import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
+import DiscussionComponent from '@/views/student/discussions/DiscussionComponent.vue';
+import Discussion from '@/models/management/Discussion';
+import RemoteServices from '@/services/RemoteServices';
+import Question from '@/models/management/Question';
 
 @Component({
   components: {
-    'result-component': ResultComponent
+    'result-component': ResultComponent,
+    'discussion-component': DiscussionComponent
   }
 })
 export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   questionOrder: number = 0;
+  discussion!: Discussion;
 
   async created() {
     if (this.statementManager.isEmpty()) {
@@ -75,6 +98,37 @@ export default class ResultsView extends Vue {
 
       await this.$store.dispatch('clearLoading');
     }
+
+    this.updateDiscussion();
+  }
+
+  async submitDiscussion() {
+    if (this.discussion!.message === '') {
+      await this.$store.dispatch('error', 'Discussion must have content');
+      return;
+    }
+
+    try {
+      const question = this.statementManager.statementQuiz!.questions[
+        this.questionOrder
+      ].question;
+      this.discussion!.question = question;
+      this.discussion!.questionId = question.id!;
+      this.discussion!.userId = this.$store.getters.getUser.id;
+      this.discussion!.userName = this.$store.getters.getUser.username;
+
+      const result = await RemoteServices.createDiscussion(this.discussion!);
+      this.statementManager.statementQuiz!.questions[
+        this.questionOrder
+      ].discussions!.push(result);
+      this.statementManager.statementQuiz!.questions[
+        this.questionOrder
+      ].hasUserDiscussion = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+
+    this.updateDiscussion();
   }
 
   increaseOrder(): void {
@@ -84,18 +138,37 @@ export default class ResultsView extends Vue {
     ) {
       this.questionOrder += 1;
     }
+
+    this.updateDiscussion();
   }
 
   decreaseOrder(): void {
     if (this.questionOrder > 0) {
       this.questionOrder -= 1;
     }
+
+    this.updateDiscussion();
   }
 
   changeOrder(n: number): void {
     if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
       this.questionOrder = n;
     }
+
+    this.updateDiscussion();
+  }
+
+  updateDiscussion() {
+    if (
+      !this.statementManager.statementQuiz!.questions[this.questionOrder]
+        .hasUserDiscussion
+    ) {
+      this.discussion = new Discussion();
+    }
+  }
+
+  updateMessage(discussionMessage: string) {
+    this.discussion!.message = discussionMessage;
   }
 }
 </script>

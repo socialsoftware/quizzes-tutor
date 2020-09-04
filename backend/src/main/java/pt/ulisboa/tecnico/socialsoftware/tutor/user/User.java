@@ -79,7 +79,7 @@ public class User implements UserDetails, DomainEntity {
         return new DashboardDto(this);
     }
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Discussion> discussions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -139,6 +139,8 @@ public class User implements UserDetails, DomainEntity {
     public Set<Discussion> getDiscussions() {
         return discussions;
     }
+
+    public void addDiscussion(Discussion discussion) {this.discussions.add(discussion);}
 
     public void setDiscussions(Set<Discussion> discussions) {
         this.discussions = discussions;
