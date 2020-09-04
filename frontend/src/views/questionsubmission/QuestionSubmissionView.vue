@@ -46,9 +46,9 @@
           {{ item.question.title }}
         </div>
       </template>
-      <template v-slot:item.question.status="{ item }">
+      <template v-slot:item.status="{ item }">
         <v-chip :color="item.getStatusColor()" small>
-          <span>{{ item.question.status.replace('_', ' ') }}</span>
+          <span>{{ item.status.replace('_', ' ') }}</span>
         </v-chip>
       </template>
       <template v-slot:item.question.topics="{ item }">
@@ -200,7 +200,7 @@ export default class QuestionSubmissionView extends Vue {
 
   submitQuestion() {
     let question = new Question();
-    question.status = 'IN_REVISION';
+    question.status = 'SUBMITTED';
     this.currentQuestionSubmission = new QuestionSubmission();
     this.currentQuestionSubmission.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
     this.currentQuestionSubmission.submitterId = this.$store.getters.getUser.id;

@@ -16,19 +16,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.RE
 @Entity
 @Table(name = "reviews")
 public class Review {
-    public enum Status {
-        DISABLED, REMOVED, AVAILABLE, IN_REVISION, IN_REVIEW, REJECTED, COMMENT
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String comment;
-
-    @Column(columnDefinition = "TEXT")
-    private Status status;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -48,7 +41,6 @@ public class Review {
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionSubmission(questionSubmission);
-        setStatus(reviewDto.getStatus());
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
     }
 
@@ -86,21 +78,6 @@ public class Review {
     public QuestionSubmission getQuestionSubmission() { return questionSubmission; }
 
     public void setQuestionSubmission(QuestionSubmission questionSubmission) { this.questionSubmission = questionSubmission; }
-
-    public Status getStatus() { return status; }
-
-    public void setStatus(Status status) { this.status = status; }
-
-    public void setStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
-        }
-        try {
-            this.status = Status.valueOf(status);
-        } catch (IllegalArgumentException e) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
-        }
-    }
 
     public void remove() {
         this.questionSubmission = null;

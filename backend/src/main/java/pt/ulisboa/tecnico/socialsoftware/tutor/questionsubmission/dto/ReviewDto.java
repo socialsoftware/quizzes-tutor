@@ -10,10 +10,10 @@ public class ReviewDto implements Serializable {
     private Integer userId;
     private Integer questionSubmissionId;
     private String comment;
-    private String status;
     private String creationDate;
     private String name;
     private String username;
+    private String submissionStatus;
 
     public ReviewDto() {}
 
@@ -22,7 +22,6 @@ public class ReviewDto implements Serializable {
         this.userId = review.getUser().getId();
         this.questionSubmissionId = review.getQuestionSubmission().getId();
         this.comment = review.getComment();
-        this.status = review.getStatus().name();
         if (review.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(review.getCreationDate());
         this.name = review.getUser().getName();
@@ -45,10 +44,6 @@ public class ReviewDto implements Serializable {
 
     public void setComment(String comment) { this.comment = comment; }
 
-    public String getStatus() { return status; }
-
-    public void setStatus(String status) { this.status = status; }
-
     public String getCreationDate() { return creationDate; }
 
     public void setCreationDate(String creationDate) { this.creationDate = creationDate; }
@@ -60,4 +55,8 @@ public class ReviewDto implements Serializable {
     public String getUsername() { return username; }
 
     public void setUsername(String username) { this.username = username; }
+
+    public String getSubmissionStatus() { return submissionStatus; }
+
+    public void setSubmissionStatus(String submissionStatus) { this.submissionStatus = submissionStatus; }
 }

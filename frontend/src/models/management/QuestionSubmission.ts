@@ -6,6 +6,7 @@ export default class QuestionSubmission {
   question!: Question;
   submitterId: number | null = null;
   name: string | null = null;
+  status: string | null = null;
 
   constructor(jsonObj?: QuestionSubmission) {
     if (jsonObj) {
@@ -14,6 +15,7 @@ export default class QuestionSubmission {
       this.question = new Question(jsonObj.question);
       this.submitterId = jsonObj.submitterId;
       this.name = jsonObj.name;
+      this.status = jsonObj.status;
     }
   }
 
@@ -28,7 +30,7 @@ export default class QuestionSubmission {
     { text: 'Title', value: 'question.title', align: 'center', width: '20%' },
     {
       text: 'Status',
-      value: 'question.status',
+      value: 'status',
       align: 'center',
       width: '150px'
     },
@@ -48,25 +50,21 @@ export default class QuestionSubmission {
   ];
 
   isInDiscussion() {
-    return (
-      this.question.status === 'IN_REVISION' ||
-      this.question.status === 'IN_REVIEW'
-    );
+    return this.status === 'IN_REVISION' || this.status === 'IN_REVIEW';
   }
 
   isInRevision() {
-    return this.question.status === 'IN_REVISION';
+    return this.status === 'IN_REVISION';
   }
 
   isRejected() {
-    return this.question.status === 'REJECTED';
+    return this.status === 'REJECTED';
   }
 
   getStatusColor() {
-    if (this.question.status === 'AVAILABLE') return 'green';
-    else if (this.question.status === 'DISABLED') return 'orange';
-    else if (this.question.status === 'REJECTED') return 'red';
-    else if (this.question.status === 'IN_REVISION') return 'yellow';
-    else if (this.question.status === 'IN_REVIEW') return 'blue';
+    if (this.status === 'APPROVED') return 'green';
+    else if (this.status === 'REJECTED') return 'red';
+    else if (this.status === 'IN_REVISION') return 'yellow';
+    else if (this.status === 'IN_REVIEW') return 'blue';
   }
 }

@@ -27,6 +27,7 @@ class ToggleInReviewStatusTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
@@ -37,25 +38,22 @@ class ToggleInReviewStatusTest extends SpockTest{
 
     @Unroll
     def "Toggle InReview Status: Initial Status = #status | Toggle = #toggle | New Status = #newStatus"() {
-        given: "the question's status is #status"
-        question.setStatus(status)
-        questionRepository.save(question)
-        questionSubmission.setQuestion(question)
-        questionSubmissionRepository.save(questionSubmission)
+        given: "the question submission's status is #status"
+        questionSubmission.setStatus(status)
 
         when:
         questionSubmissionService.toggleInReviewStatus(questionSubmission.getId(), toggle)
 
         then: "the question is now #newStatus"
         def question = questionRepository.findAll().get(0)
-        question.getStatus() == newStatus
+        questionSubmission.getStatus() == newStatus
 
         where:
-        status                      | toggle | newStatus
-        Question.Status.IN_REVISION | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVISION | false  | Question.Status.IN_REVISION
-        Question.Status.IN_REVIEW   | true   | Question.Status.IN_REVIEW
-        Question.Status.IN_REVIEW   | false  | Question.Status.IN_REVISION
+        status                                | toggle | newStatus
+        QuestionSubmission.Status.IN_REVISION | true   | QuestionSubmission.Status.IN_REVIEW
+        QuestionSubmission.Status.IN_REVISION | false  | QuestionSubmission.Status.IN_REVISION
+        QuestionSubmission.Status.IN_REVIEW   | true   | QuestionSubmission.Status.IN_REVIEW
+        QuestionSubmission.Status.IN_REVIEW   | false  | QuestionSubmission.Status.IN_REVISION
     }
 
     @TestConfiguration

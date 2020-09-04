@@ -27,7 +27,8 @@ describe('Student walkthrough', () => {
       '1',
       '2',
       '3',
-      '4'
+      '4',
+      'Comment'
     );
 
     cy.viewQuestion(

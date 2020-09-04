@@ -8,13 +8,17 @@
     <v-card>
       <v-card-title>
         <span class="headline">{{ questionSubmission.question.title }}</span>
+        <v-spacer />
+        <v-chip :color="questionSubmission.getStatusColor()">
+          {{ questionSubmission.status }}
+        </v-chip>
       </v-card-title>
 
       <v-card-text class="text-left">
         <show-question :question="questionSubmission.question" />
       </v-card-text>
       <v-card-title>
-        <span class="headline">{{ 'Reviews' }}</span>
+        <span class="headline">{{ 'Review Log' }}</span>
       </v-card-title>
       <div class="text-left">
         <show-reviews
@@ -80,9 +84,7 @@
           v-if="questionSubmission.isInDiscussion()"
           color="blue darken-1"
           @click="
-            reviewQuestionSubmission(
-              $store.getters.isTeacher ? selected : 'COMMENT'
-            )
+            reviewQuestionSubmission($store.getters.isTeacher ? selected : null)
           "
           data-cy="SubmitButton"
           >submit</v-btn
@@ -113,7 +115,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
   reviewsComponentKey: number = 0;
   comment: string = '';
-  selected = 'COMMENT';
+  selected: string | null = null;
   statusOptions = Review.statusOptions;
 
   created() {
@@ -125,7 +127,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     if (this.dialog) {
       this.reviewsComponentKey += 1;
       this.comment = '';
-      this.selected = 'COMMENT';
+      this.selected = null;
     }
   }
 
@@ -143,7 +145,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   createReview(status: string) {
     let review = new Review();
     review.questionSubmissionId = this.questionSubmission.id!;
-    review.status = status;
+    review.submissionStatus = status;
     review.comment = this.comment;
     review.userId = this.$store.getters.getUser.id;
     return review;

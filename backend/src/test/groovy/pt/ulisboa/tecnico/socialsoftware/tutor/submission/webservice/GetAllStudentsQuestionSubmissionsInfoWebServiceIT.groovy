@@ -6,9 +6,9 @@ import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -45,7 +45,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTest {
         questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.IN_REVISION.name())
+        questionDto.setStatus(Question.Status.SUBMITTED.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)

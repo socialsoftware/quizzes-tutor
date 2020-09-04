@@ -28,12 +28,13 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
-        question.setStatus(Question.Status.IN_REVIEW)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
         questionSubmissionRepository.save(questionSubmission)
     }
 
@@ -43,7 +44,6 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setQuestionSubmission(questionSubmission)
-        review.setStatus(Review.Status.AVAILABLE)
         questionSubmission.addReview(review)
 
         when:
@@ -57,7 +57,6 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         rev.getUserId() == teacher.getId()
         rev.getQuestionSubmissionId() == questionSubmission.getId()
         rev.getComment() == REVIEW_1_COMMENT
-        rev.getStatus() == Review.Status.AVAILABLE.name()
         rev.getName() == teacher.getName()
         rev.getUsername() == teacher.getUsername()
     }

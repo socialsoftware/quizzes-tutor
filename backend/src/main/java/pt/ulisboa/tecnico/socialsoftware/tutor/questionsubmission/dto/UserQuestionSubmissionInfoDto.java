@@ -1,5 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import java.util.ArrayList;
@@ -10,8 +10,7 @@ import java.util.stream.Collectors;
 public class UserQuestionSubmissionInfoDto {
     private int submitterId;
     private int totalQuestionSubmissions = 0;
-    private int numAvailableQuestionSubmissions = 0;
-    private int numDisabledQuestionSubmissions = 0;
+    private int numApprovedQuestionSubmissions = 0;
     private int numRejectedQuestionSubmissions = 0;
     private int numInReviewQuestionSubmissions = 0;
     private int numInRevisionQuestionSubmissions = 0;
@@ -43,23 +42,19 @@ public class UserQuestionSubmissionInfoDto {
         this.totalQuestionSubmissions = this.questionSubmissions.size();
 
         for (QuestionSubmissionDto questionSubmissionDto: this.questionSubmissions) {
-            if (questionSubmissionDto.getQuestion().getStatus().equals(Question.Status.AVAILABLE.name())) {
-                numAvailableQuestionSubmissions++;
-            } else if (questionSubmissionDto.getQuestion().getStatus().equals(Question.Status.DISABLED.name())) {
-                numDisabledQuestionSubmissions++;
-            } else if (questionSubmissionDto.getQuestion().getStatus().equals(Question.Status.REJECTED.name())) {
+            if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.APPROVED.name())) {
+                numApprovedQuestionSubmissions++;
+            } else if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.REJECTED.name())) {
                 numRejectedQuestionSubmissions++;
-            } else if (questionSubmissionDto.getQuestion().getStatus().equals(Question.Status.IN_REVIEW.name())) {
+            } else if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.IN_REVIEW.name())) {
                 numInReviewQuestionSubmissions++;
-            } else if (questionSubmissionDto.getQuestion().getStatus().equals(Question.Status.IN_REVISION.name())) {
+            } else if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.IN_REVISION.name())) {
                 numInRevisionQuestionSubmissions++;
             }
         }
     }
 
-    public int getNumAvailableQuestionSubmissions() { return numAvailableQuestionSubmissions; }
-
-    public int getNumDisabledQuestionSubmissions() { return numDisabledQuestionSubmissions; }
+    public int getNumApprovedQuestionSubmissions() { return numApprovedQuestionSubmissions; }
 
     public int getNumRejectedQuestionSubmissions() { return numRejectedQuestionSubmissions; }
 

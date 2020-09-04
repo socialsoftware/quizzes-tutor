@@ -94,7 +94,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'editQuestionSubmission',
-  (valid, title, content, opt1, opt2, opt3, opt4) => {
+  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
     cy.get('[data-cy="EditSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
@@ -103,6 +103,7 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="Comment"]').type(comment);
       cy.get('[data-cy="SubmitButton"]').click();
     } else {
       cy.get('[data-cy="Option1"]').clear();
@@ -161,7 +162,7 @@ Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) =
   cy.get('[data-cy="SubmitButton"]').click();
 });
 
-Cypress.Commands.add('checkQuestionSubmissionStatus', (title, status) => {
+Cypress.Commands.add('checkReviewComment', (title) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -171,8 +172,17 @@ Cypress.Commands.add('checkQuestionSubmissionStatus', (title, status) => {
     .find('[data-cy="ViewSubmission"]')
     .click();
   cy.contains(title);
-  cy.contains(status);
   cy.get('[data-cy="CloseButton"]').click();
+});
+
+Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 6)
+    .contains(status)
 });
 
 Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {

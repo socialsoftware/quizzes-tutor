@@ -5,18 +5,17 @@ export default class Review {
   userId: number | null = null;
   questionSubmissionId: number | null = null;
   comment!: string;
-  status!: string;
+  submissionStatus!: string;
   creationDate!: string;
   name!: string;
   username!: string;
 
   static statusOptions = [
-    { text: 'Comment', value: 'COMMENT' },
+    { text: 'Comment', value: null },
     { text: 'Request Changes', value: 'IN_REVISION' },
     { text: 'Request Further Review', value: 'IN_REVIEW' },
-    { text: 'Available', value: 'AVAILABLE' },
-    { text: 'Disabled', value: 'DISABLED' },
-    { text: 'Rejected', value: 'REJECTED' }
+    { text: 'Approve', value: 'APPROVED' },
+    { text: 'Reject', value: 'REJECTED' }
   ];
 
   constructor(jsonObj?: Review) {
@@ -25,7 +24,7 @@ export default class Review {
       this.userId = jsonObj.userId;
       this.questionSubmissionId = jsonObj.questionSubmissionId;
       this.comment = jsonObj.comment;
-      this.status = jsonObj.status;
+      this.submissionStatus = jsonObj.submissionStatus;
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.name = jsonObj.name;
       this.username = jsonObj.username;
@@ -33,30 +32,10 @@ export default class Review {
   }
 
   isComment() {
-    return this.status === 'COMMENT';
+    return this.submissionStatus === null;
   }
 
   isUsersReview(username: string) {
     return username === this.username;
-  }
-
-  reviewStatus() {
-    if (this.status === 'AVAILABLE' || this.status === 'DISABLED') {
-      return 'APPROVED';
-    } else if (this.status === 'IN_REVISION') {
-      return 'QUESTION STATUS';
-    } else if (this.status === 'IN_REVIEW') {
-      return 'FURTHER REVIEW REQUESTED';
-    } else {
-      return this.status;
-    }
-  }
-
-  getStatusColor() {
-    if (this.status === 'AVAILABLE' || this.status === 'DISABLED')
-      return 'green';
-    else if (this.status === 'REJECTED') return 'red';
-    else if (this.status === 'IN_REVISION') return 'yellow';
-    else if (this.status === 'IN_REVIEW') return 'blue';
   }
 }
