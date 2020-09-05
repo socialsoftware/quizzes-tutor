@@ -3,7 +3,7 @@ import Reply from '@/models/management/Reply';
 import { ISOtoString } from '@/services/ConvertDateService';
 
 export default class Discussion {
-  userId?: number;
+  userId!: number;
   questionId!: number;
   userName!: string;
   message!: string;

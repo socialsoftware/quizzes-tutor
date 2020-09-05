@@ -3,7 +3,9 @@
     <v-row>
       <v-col>
         <v-card class="mx-auto" max-width="500" outlined>
-          <v-list-item three-line>
+          <v-list-item
+            style="border-bottom: 3px solid;border-bottom-color: #1e88e5"
+          >
             <v-col>
               <v-list-item-content>
                 <div class="overline mb-4"></div>
@@ -24,17 +26,17 @@
             </v-col>
           </v-list-item>
 
-          <v-card-actions>
-            <v-btn text>Button</v-btn>
-            <v-btn text>Button</v-btn>
-          </v-card-actions>
+          <v-list-item>
+            Discussions created:
+            {{ info !== null ? info.numDiscussions : 0 }}
+          </v-list-item>
         </v-card>
       </v-col>
       <v-col>
         <v-card>
-          <v-list-item-content>
-            <v-list-item-title class="headline">Discussions</v-list-item-title>
-          </v-list-item-content>
+          <v-list-item-title>
+            <v-list-item-title class="headline" style="background-color: #1976d2; color: white;padding: 10px; ">Discussions</v-list-item-title>
+          </v-list-item-title>
           <div style="display: flex; flex-direction: row; position: relative;">
             <v-switch
               style="flex: 1"

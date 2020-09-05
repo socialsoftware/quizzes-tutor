@@ -12,22 +12,17 @@
       ></v-text-field>
     </v-card-title>
     <v-data-table :headers="headers" :items="discussions" :search="search">
-      <template v-slot:item.title="{ item }">
-        <div>
-          {{ item.title }}
-        </div>
-      </template>
-
-      <template v-slot:item.message="{ item }">
-        <div>
-          {{ item.message }}
-        </div>
-      </template>
-
       <template v-slot:item.available="{ item }">
-        <div>
-          {{ item.available }}
-        </div>
+        <v-chip v-if="item.available === true" :color="'green'" dark
+          >Yes</v-chip
+        >
+        <v-chip v-else :color="'red'" dark>No</v-chip>
+      </template>
+      <template v-slot:item.replies.length="{ item }">
+        <v-chip v-if="item.replies === null" :color="'grey'" dark
+        >0</v-chip
+        >
+        <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
       </template>
     </v-data-table>
   </v-card>
@@ -46,13 +41,16 @@ export default class DiscussionView extends Vue {
 
   headers: object = [
     {
-      text: 'Question',
+      text: 'Question Title',
       align: 'start',
       sortable: false,
       value: 'question.title'
     },
+    { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
-    { text: 'Public', value: 'available' }
+    { text: 'Creation Date', value: 'date' },
+    { text: 'Public', value: 'available' },
+    { text: 'Replies', value: 'replies.length' }
   ];
 
   async created() {

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 
 public class ReplyDto implements Serializable {
     private Integer id;
+    private String userName;
     private Integer userId;
     private String message;
     private String date;
@@ -17,6 +18,7 @@ public class ReplyDto implements Serializable {
     }
 
     public ReplyDto(Reply reply) {
+        this.setUserName(reply.getUser().getUsername());
         this.setId(reply.getId());
         this.setUserId(reply.getUser().getId());
         this.setMessage(reply.getMessage());
@@ -55,4 +57,23 @@ public class ReplyDto implements Serializable {
         this.id = id;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public void setUserId(Integer userId) {
+        this.userId = userId;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
 }

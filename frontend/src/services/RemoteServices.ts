@@ -670,8 +670,6 @@ export default class RemoteServices {
     message: string,
     discussion: Discussion
   ): Promise<Reply> {
-    console.log('message');
-    console.log(message);
     return httpClient
       .post('/discussions/replies?message=' + message, discussion)
       .then(response => {

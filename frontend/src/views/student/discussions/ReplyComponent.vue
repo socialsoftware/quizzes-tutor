@@ -34,6 +34,7 @@
                 </div>
                 <div class="reply-message" v-if="discussion.userId === userId">
                   <v-textarea
+                    clearable
                     class="textarea-reply"
                     solo
                     :id="'reply' + discussion.userId"
@@ -58,6 +59,7 @@
           </v-expansion-panels>
           <div v-else class="reply-message">
             <v-textarea
+              clearable
               class="textarea-reply"
               solo
               :id="'reply' + discussion.userId"
@@ -113,10 +115,6 @@ export default class ReplyComponent extends Vue {
 
       this.discussion.replies.push(reply);
 
-
-      console.log('reply');
-      console.log(this.discussion.replies![0].message)
-
       this.replyMessages.set(this.discussion.userId!, '');
     } catch (error) {
       console.log('ERROR');
@@ -147,6 +145,8 @@ export default class ReplyComponent extends Vue {
   }
 
   clearTextarea(name: string) {
+    console.log('clear');
+    console.log(name);
     let textArea: HTMLTextAreaElement;
     let val = document.querySelector(name)!;
     textArea = val as HTMLTextAreaElement;

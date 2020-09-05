@@ -9,6 +9,7 @@
       </v-card-title>
       <div v-if="answered && !hasDiscussion" class="discussion-message">
         <v-textarea
+          clearable
           solo
           v-model="discussionMessage"
           v-on:input="onInput"
@@ -20,7 +21,7 @@
           <v-btn class="submit-button" @click="submitDiscussion">Submit</v-btn>
         </v-card-actions>
       </div>
-      <reply-component v-if="discussions != null" :discussions="discussions"/>
+      <reply-component v-if="discussions != null" :discussions="discussions" />
     </v-card>
   </div>
 </template>
@@ -36,9 +37,9 @@ import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
   components: { 'reply-component': ReplyComponent }
 })
 export default class DiscussionComponent extends Vue {
-  @Prop(Boolean) readonly hasDiscussion!: Boolean;
-  @Prop() readonly question!: Question;
-  @Prop() readonly discussions!: Discussion[];
+  @Prop(Boolean) readonly hasDiscussion!: boolean;
+  @Prop() readonly question?: Question;
+  @Prop() readonly discussions?: Discussion[];
   @Prop(Boolean) readonly answered!: boolean;
   discussionMessage: string = '';
 

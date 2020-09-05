@@ -33,7 +33,7 @@ public class Discussion implements Serializable {
     private User user;
 
     @NotNull
-    @Column(name="message")
+    @Column(name="message", columnDefinition="text")
     private String message;
 
     @NotNull
