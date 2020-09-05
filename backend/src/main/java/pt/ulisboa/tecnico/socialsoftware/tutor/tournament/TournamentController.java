@@ -26,7 +26,7 @@ public class TournamentController {
         User user = (User) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
 
-        return tournamentService.createTournament(user.getId(), topicsId, tournamentDto);
+        return tournamentService.createTournament(user.getId(), executionId, topicsId, tournamentDto);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getAllTournaments")

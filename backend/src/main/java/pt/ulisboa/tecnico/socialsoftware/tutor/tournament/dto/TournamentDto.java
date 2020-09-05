@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
@@ -16,7 +16,7 @@ public class TournamentDto implements Serializable {
     private String endTime = null;
     private Integer numberOfQuestions;
     private boolean isCanceled;
-    private TopicConjunctionDto topicConjunction;
+    private Set<TopicDto> topicsDto = new HashSet<>();
     private Set<StudentDto> participants = new HashSet<>();
     private String courseAcronym = null;
     private Integer quizId = null;
@@ -32,7 +32,7 @@ public class TournamentDto implements Serializable {
         this.endTime = DateHandler.toISOString(tournament.getEndTime());
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.isCanceled = tournament.isCanceled();
-        this.topicConjunction = new TopicConjunctionDto(tournament.getTopicConjunction());
+        this.topicsDto = tournament.getTopics().stream().map(TopicDto::new).collect(Collectors.toSet());
         this.participants = tournament.getParticipants().stream().map(StudentDto::new).collect(Collectors.toSet());
         this.courseAcronym = tournament.getCourseExecution().getAcronym();
         if (tournament.hasQuiz()) this.quizId = tournament.getQuizId();
@@ -56,11 +56,11 @@ public class TournamentDto implements Serializable {
 
     public boolean isCanceled() { return isCanceled; }
 
-    public void setState(boolean state) { this.isCanceled = state; }
+    public void setCanceled(boolean state) { this.isCanceled = state; }
 
-    public TopicConjunctionDto getTopicConjunction() { return topicConjunction; }
+    public Set<TopicDto> getTopicsDto() { return topicsDto; }
 
-    public void setTopicConjunction(TopicConjunctionDto topicConjunction) { this.topicConjunction = topicConjunction; }
+    public void setTopicsDto(Set<TopicDto> topicsDto) { this.topicsDto = topicsDto; }
 
     public Set<StudentDto> getParticipants() { return participants; }
 

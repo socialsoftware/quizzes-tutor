@@ -4,13 +4,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
 import javax.persistence.*;
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -44,9 +44,8 @@ public class Tournament  {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "topicConjunction_id")
-    private TopicConjunction topicConjunction;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private Set<Topic> topics = new HashSet<>();
 
     @Column(name = "quizID")
     private Integer quizId;
@@ -60,19 +59,14 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(User user, TopicConjunction topicConjunction, TournamentDto tournamentDto) {
+    public Tournament(User user, CourseExecution courseExecution, Set<Topic> topics, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        if (tournamentDto.isCanceled())
-            this.isCanceled = tournamentDto.isCanceled();
-        else
-            this.isCanceled = false;
+        this.isCanceled = tournamentDto.isCanceled();
         this.creator = user;
-        setCourseExecution(user);
-        setTopicConjunction(topicConjunction);
-        for (Topic topic: topicConjunction.getTopics())
-            checkTopicCourse(topic);
+        setCourseExecution(courseExecution);
+        setTopics(topics);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
     }
@@ -82,12 +76,9 @@ public class Tournament  {
     public LocalDateTime getStartTime() { return startTime; }
 
     public void setStartTime(LocalDateTime startTime) {
-        if (startTime == null) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "startTime");
-        }
         // Added 1 minute as a buffer to take latency into consideration
-        if (this.endTime != null && this.endTime.isBefore(startTime) ||
-                startTime.plusMinutes(1).isBefore(DateHandler.now())) {
+        if (startTime == null || (this.endTime != null && this.endTime.isBefore(startTime) ||
+                startTime.plusMinutes(1).isBefore(DateHandler.now()))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "startTime");
         }
 
@@ -97,10 +88,7 @@ public class Tournament  {
     public LocalDateTime getEndTime() { return endTime; }
 
     public void setEndTime(LocalDateTime endTime) {
-        if (endTime == null) {
-            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "endTime");
-        }
-        if (this.startTime != null && endTime.isBefore(this.startTime)) {
+        if (endTime == null || (this.startTime != null && endTime.isBefore(this.startTime))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "endTime");
         }
 
@@ -120,11 +108,14 @@ public class Tournament  {
 
     public boolean isCanceled() { return isCanceled; }
 
-    public void cancel() { this.isCanceled = true; }
+    public void cancel(Integer numberOfAnswers) {
+        this.checkCanChange(numberOfAnswers);
+        this.isCanceled = true;
+    }
 
     public Set<User> getParticipants() { return participants; }
 
-    public void setCourseExecution(User user) { this.courseExecution = user.getCourseExecutions().iterator().next(); }
+    public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
 
     public CourseExecution getCourseExecution() { return courseExecution; }
 
@@ -132,9 +123,15 @@ public class Tournament  {
 
     public void setQuizId(Integer quizId) { this.quizId = quizId; }
 
-    public TopicConjunction getTopicConjunction() { return topicConjunction; }
+    public Set<Topic> getTopics() { return topics; }
 
-    public void setTopicConjunction(TopicConjunction topicConjunction) { this.topicConjunction = topicConjunction; }
+    public void setTopics(Set<Topic> topics) {
+        for (Topic topic: topics) {
+            checkTopicCourse(topic);
+        }
+
+        this.topics = topics;
+    }
 
     public void updateTopics(Set<Topic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);
@@ -143,7 +140,17 @@ public class Tournament  {
             checkTopicCourse(topic);
         }
 
-        this.getTopicConjunction().updateTopics(newTopics);
+        List<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic)).collect(Collectors.toList());
+
+        toRemove.forEach(topic -> {
+            this.topics.remove(topic);
+            topic.removeTournament(this);
+        });
+
+        newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
+            this.topics.add(topic);
+            topic.addTournament(this);
+        });
     }
 
     public void checkTopicCourse(Topic topic) {
@@ -152,27 +159,40 @@ public class Tournament  {
         }
     }
 
-    public void addParticipant(User user) {
+    public void checkUserJoined(User user) {
+        if (!getParticipants().contains(user)) {
+            throw new TutorException(USER_NOT_JOINED, user.getId());
+        }
+    }
+
+    public void addParticipant(User user, String password) {
+        if (isPrivateTournament() && !password.equals(getPassword())) {
+            throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());
+        }
+
         this.participants.add(user);
         user.addTournament(this);
     }
 
     public void removeParticipant(User user) {
+        this.checkUserJoined(user);
         this.participants.remove(user);
         user.removeTournament(this);
     }
 
     public boolean hasQuiz() { return this.getQuizId() != null; }
 
-    public void remove() {
+    public void remove(Integer numberOfAnswers) {
+        this.checkCanChange(numberOfAnswers);
+
         creator = null;
         courseExecution = null;
 
+        getTopics().forEach(topic -> topic.getTournaments().remove(this));
+        getTopics().clear();
+
         getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
-
-        getTopicConjunction().remove();
-        topicConjunction = null;
     }
 
     public void checkCreator(User user) {
@@ -191,6 +211,24 @@ public class Tournament  {
             }
             throw new TutorException(TOURNAMENT_IS_OPEN, getId());
         }
+    }
+
+    public void updateTournament(TournamentDto tournamentDto, Set<Topic> topics, Integer numberOfAnswers) {
+        this.checkCanChange(numberOfAnswers);
+
+        if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
+            DateHandler.toISOString(this.getStartTime());
+            this.setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
+        }
+
+        if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {
+            DateHandler.toISOString(this.getEndTime());
+            this.setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
+        }
+
+        this.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+
+        this.updateTopics(topics);
     }
 
     public boolean isPrivateTournament() { return privateTournament; }
