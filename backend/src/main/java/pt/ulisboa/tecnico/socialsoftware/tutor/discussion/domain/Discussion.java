@@ -33,7 +33,7 @@ public class Discussion implements Serializable {
     private User user;
 
     @NotNull
-    @Column(name="message")
+    @Column(name="message", columnDefinition="text")
     private String message;
 
     @NotNull
@@ -61,7 +61,9 @@ public class Discussion implements Serializable {
     public Discussion(User user, Question question, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
         this.question = question;
+        this.question.addDiscussion(this);
         this.user = user;
+        this.user.addDiscussion(this);
         this.message = discussionDto.getMessage();
         this.setQuestionId(question.getId());
         this.setUserId(user.getId());
@@ -142,10 +144,10 @@ public class Discussion implements Serializable {
     }
 
     private void checkConsistentDiscussion(DiscussionDto discussionDto) {
-        if (discussionDto.getMessage().trim().length() == 0){
+        if (discussionDto.getMessage() == null || discussionDto.getMessage().trim().length() == 0){
             throw new TutorException(DISCUSSION_MISSING_MESSAGE);
         }
-        if (discussionDto.getDate() == null){
+        if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0){
             throw new TutorException(DISCUSSION_DATE_MISSING);
         }
     }

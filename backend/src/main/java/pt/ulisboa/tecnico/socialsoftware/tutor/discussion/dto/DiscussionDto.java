@@ -17,12 +17,14 @@ public class DiscussionDto implements Serializable {
     private List<ReplyDto> replies;
     private boolean available;
     private String date;
+    private Integer questionId;
 
     public DiscussionDto() {
     }
 
     public DiscussionDto(Discussion discussion) {
         this.userId = discussion.getUserId();
+        this.questionId = discussion.getQuestionId();
         this.userName = discussion.getUser().getName();
         this.message = discussion.getMessage();
         this.question = new QuestionDto(discussion.getQuestion());
@@ -96,5 +98,24 @@ public class DiscussionDto implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
+    }
+
+
+    @Override
+    public String toString() {
+        return "DiscussionDto{" +
+                "userId=" + userId +
+                ", question=" + question +
+                ", userName='" + userName + '\'' +
+                ", message='" + message + '\'' +
+                ", replies=" + replies +
+                ", available=" + available +
+                ", date='" + date + '\'' +
+                ", questionId=" + questionId +
+                '}';
     }
 }

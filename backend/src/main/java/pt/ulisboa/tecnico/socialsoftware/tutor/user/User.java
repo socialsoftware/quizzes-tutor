@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -58,7 +59,27 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+
+    public void setDiscussionInfoPublic(boolean discussionStatsPublic) {
+        this.discussionInfoPublic = discussionStatsPublic;
+    }
+
+    public void changeDiscussionsVisbility() {
+        this.discussionInfoPublic = !this.discussionInfoPublic;
+    }
+
+    @Column(columnDefinition = "boolean default true")
+    private boolean discussionInfoPublic = true;
+
+    public boolean isDiscussionInfoPublic() {
+        return this.discussionInfoPublic;
+    }
+
+    public DashboardDto getDashboardInfo() {
+        return new DashboardDto(this);
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Discussion> discussions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -118,6 +139,8 @@ public class User implements UserDetails, DomainEntity {
     public Set<Discussion> getDiscussions() {
         return discussions;
     }
+
+    public void addDiscussion(Discussion discussion) {this.discussions.add(discussion);}
 
     public void setDiscussions(Set<Discussion> discussions) {
         this.discussions = discussions;

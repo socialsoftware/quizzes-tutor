@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -14,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
@@ -229,7 +232,7 @@ public class StatementService {
             quizAnswer.calculateStatistics();
         });
     }
-
+    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
@@ -237,7 +240,7 @@ public class StatementService {
     public StatementQuizDto startQuiz(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
+        logger.warn("Quiz:\n"+quiz.toString());
         if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
@@ -261,7 +264,7 @@ public class StatementService {
             quizAnswerRepository.save(qa);
             return qa;
         });
-
+        logger.warn("QuizAnswer:\n"+quizAnswer.toString());
         if (!quizAnswer.openToAnswer()) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }

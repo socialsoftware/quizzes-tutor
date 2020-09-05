@@ -24,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import spock.lang.Specification
 
@@ -78,6 +79,7 @@ class SpockTest extends Specification {
     public static final String QUIZ_TITLE = "Quiz title"
 
     public static final String DISCUSSION_MESSAGE = "Discussion Message"
+    public static final String DISCUSSION_REPLY = "Discussion Reply"
 
     @Autowired
     AuthService authService
@@ -153,6 +155,9 @@ class SpockTest extends Specification {
 
     @Autowired
     DiscussionService discussionService
+
+    @Autowired
+    ReplyRepository replyRepository
 
     Course course
     CourseExecution courseExecution

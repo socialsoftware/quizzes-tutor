@@ -9,22 +9,21 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_STUDENT;
 
 @Service
 public class UserService {
@@ -152,5 +151,31 @@ public class UserService {
 
                     this.userRepository.delete(user);
                 });
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public DashboardDto getDashboardInfo(Integer id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
+
+        checkStudent(user);
+
+        return user.getDashboardInfo();
+    }
+
+    private void checkStudent(User user) {
+        if (user.getRole() != User.Role.STUDENT) {
+            throw new TutorException(USER_NOT_STUDENT, user.getId());
+        }
+    }
+
+    public DashboardDto toggleDiscussionVisibility(Integer userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        checkStudent(user);
+        user.changeDiscussionsVisbility();
+
+        return user.getDashboardInfo();
     }
 }
