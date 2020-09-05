@@ -4,11 +4,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -210,5 +213,13 @@ public class CourseExecution implements DomainEntity {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Integer> findAvailableTopicsGivenAvailableAssessments(List<AssessmentDto> availableAssessments) {
+        Set<TopicDto> availableTopics = new HashSet<>();
+
+        availableAssessments.forEach(assessment -> availableTopics.addAll(assessment.getTopics()));
+
+        return availableTopics.stream().map(TopicDto::getId).collect(Collectors.toSet());
     }
 }

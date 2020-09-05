@@ -17,8 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
@@ -26,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
 
@@ -117,7 +116,7 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails) {
+    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails, Tournament tournament) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
@@ -147,6 +146,14 @@ public class StatementService {
 
         quiz.setCourseExecution(courseExecution);
 
+        if (DateHandler.now().isBefore(tournament.getStartTime())) {
+            quiz.setAvailableDate(tournament.getStartTime());
+        }
+        quiz.setConclusionDate(tournament.getEndTime());
+        quiz.setResultsDate(tournament.getEndTime());
+        quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
+        quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
+
         quizRepository.save(quiz);
         quizAnswerRepository.save(quizAnswer);
 
@@ -165,29 +172,6 @@ public class StatementService {
             throw new TutorException(NOT_QRCODE_QUIZ);
         }
 
-        return getQuiz(user, quiz);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto getTournamentQuiz(int userId, int quizId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
-        if (!quiz.isTournamentQuiz()) {
-            throw new TutorException(NOT_TOURNAMENT_QUIZ);
-        }
-
-        return getQuiz(user, quiz);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto getQuiz(User user, Quiz quiz) {
         if (!user.getCourseExecutions().contains(quiz.getCourseExecution())) {
             throw new TutorException(USER_NOT_ENROLLED, user.getUsername());
         }
@@ -234,7 +218,6 @@ public class StatementService {
         return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.TOURNAMENT.name()))
                 .collect(Collectors.toList());
     }
 
@@ -347,15 +330,15 @@ public class StatementService {
     }
 
     public List<Question> filterByTopicConjunctionTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, CourseExecution courseExecution) {
-        List<TopicConjunction> topicConjunctions = new ArrayList<>();
-        topicConjunctions.add(quizDetails.getTopicConjunction());
+        List<Integer> topicsIds = new ArrayList<>();
 
-        List<Integer> availableTopics = topicService.findTournamentTopics(courseExecution.getCourse().getId(), courseExecution.getId())
+        quizDetails.getTopicConjunction().getTopics().forEach(topicDto -> topicsIds.add(topicDto.getId()));
+
+        List<Integer> availableTopicsIds = topicService.findTournamentTopics(courseExecution.getId())
                 .stream().map(topic -> topic.getId()).collect(Collectors.toList());
 
         return availableQuestions.stream()
-                .filter(question -> question.belongsToTopicConjunction(topicConjunctions))
-                .filter(question -> availableTopics.containsAll(question.getTopics().stream().map(topic -> topic.getId()).collect(Collectors.toList())))
+                .filter(question -> question.belongsToTopicsGivenAvailableTopicsIds(topicsIds, availableTopicsIds))
                 .collect(Collectors.toList());
     }
 }

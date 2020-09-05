@@ -282,8 +282,13 @@ public class Question implements DomainEntity {
         return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
     }
 
-    public boolean belongsToTopicConjunction(List<TopicConjunction> chosenTopicConjunction) {
-        return chosenTopicConjunction.stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
+    public boolean belongsToTopicsGivenAvailableTopicsIds(List<Integer> chosenTopicsIds, List<Integer> availableTopicsIds) {
+        return chosenTopicsIds.containsAll(this.topics.stream()
+                .map(topic -> topic.getId())
+                .collect(Collectors.toList()))
+                && availableTopicsIds.containsAll(this.topics.stream()
+                      .map(topic -> topic.getId())
+                        .collect(Collectors.toList()));
     }
 
     public void update(QuestionDto questionDto) {

@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -42,6 +44,9 @@ public class TopicService {
     private CourseRepository courseRepository;
 
     @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
     private TopicRepository topicRepository;
 
     @Retryable(
@@ -57,15 +62,16 @@ public class TopicService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<TopicDto> findTournamentTopics(int courseId, int courseExecutionId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+    public List<TopicDto> findTournamentTopics(int courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+        Course course = courseRepository.findById(courseExecution.getCourse().getId()).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecution.getCourse().getId()));
 
-        Set<Integer> availableTopics = assessmentService.findAvailableTopics(courseExecutionId);
+        Set<Integer> availableTopicsId = courseExecution.findAvailableTopicsGivenAvailableAssessments(assessmentService.findAvailableAssessments(courseExecutionId));
 
         List<TopicDto> topics = topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
 
         return topics.stream()
-                .filter(topic -> availableTopics.contains(topic.getId()))
+                .filter(topic -> availableTopicsId.contains(topic.getId()))
                 .collect(Collectors.toList());
     }
 

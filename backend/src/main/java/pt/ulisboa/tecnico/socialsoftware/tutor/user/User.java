@@ -94,7 +94,6 @@ public class User implements UserDetails, DomainEntity {
         setActive(isActive);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
-
     }
 
     @Override

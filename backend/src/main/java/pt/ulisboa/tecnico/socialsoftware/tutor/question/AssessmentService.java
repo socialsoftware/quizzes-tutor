@@ -71,18 +71,6 @@ public class AssessmentService {
     }
 
     @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Set<Integer> findAvailableTopics(int courseExecutionId) {
-        Set<TopicDto> availableTopics = new HashSet<>();
-
-        findAvailableAssessments(courseExecutionId).forEach(assessment -> availableTopics.addAll(assessment.getTopics()));
-
-        return availableTopics.stream().map(TopicDto::getId).collect(Collectors.toSet());
-    }
-
-    @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)

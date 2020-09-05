@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 
 import java.io.Serializable;
 
 public class StatementTournamentCreationDto implements Serializable {
     private Integer numberOfQuestions;
-    private TopicConjunction topicConjunction;
+    private TopicConjunctionDto topicConjunction;
 
     public Integer getNumberOfQuestions() {
         return numberOfQuestions;
@@ -16,11 +16,11 @@ public class StatementTournamentCreationDto implements Serializable {
         this.numberOfQuestions = numberOfQuestions;
     }
 
-    public TopicConjunction getTopicConjunction() {
+    public TopicConjunctionDto getTopicConjunction() {
         return topicConjunction;
     }
 
-    public void setTopicConjunction(TopicConjunction topicConjunction) {
+    public void setTopicConjunction(TopicConjunctionDto topicConjunction) {
         this.topicConjunction = topicConjunction;
     }
 
