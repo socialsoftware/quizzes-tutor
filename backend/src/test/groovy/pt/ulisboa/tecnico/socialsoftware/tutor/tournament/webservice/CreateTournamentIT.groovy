@@ -62,7 +62,7 @@ class CreateTournamentIT extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
+        tournamentDto.setCanceled(false)
 
         when:
         response = restClient.post(

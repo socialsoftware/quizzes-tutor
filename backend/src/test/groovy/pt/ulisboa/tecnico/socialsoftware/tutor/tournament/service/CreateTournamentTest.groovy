@@ -3,63 +3,34 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CreateTournamentTest extends SpockTest {
-    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
-
-    def topic1
-    def topic2
+class CreateTournamentTest extends TournamentTest {
     def tournamentDto
-    def topics = new HashSet<Integer>()
-    def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
-        user.addCourse(externalCourseExecution)
-        userRepository.save(user)
-        user.setKey(user.getId())
-
-        def topicDto1 = new TopicDto()
-        topicDto1.setName(TOPIC_1_NAME)
-        topic1 = new Topic(externalCourse, topicDto1)
-        topicRepository.save(topic1)
-
-        def topicDto2 = new TopicDto()
-        topicDto2.setName(TOPIC_2_NAME)
-        topic2 = new Topic(externalCourse, topicDto2)
-        topicRepository.save(topic2)
-
-        topics.add(topic1.getId())
-        topics.add(topic2.getId())
-
         tournamentDto = new TournamentDto()
     }
 
     @Unroll
-    def "valid arguments: userRole=#userRole | startTime=#startTime | endTime=#endTime | numberOfQuestions=#numberOfQuestions"() {
+    def "valid arguments: startTime=#startTime | endTime=#endTime | numberOfQuestions=#numberOfQuestions"() {
         given: 'a tournamentDto'
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
         tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setState(false)
-
-        and: 'a user'
-        user.setRole(userRole)
+        tournamentDto.setCanceled(false)
 
         when:
-        tournamentService.createTournament(user.getId(), topics, tournamentDto)
+        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then: "the correct tournament is inside the repository"
         tournamentRepository.count() == 1L
@@ -67,16 +38,16 @@ class CreateTournamentTest extends SpockTest {
         result.getId() != null
         DateHandler.toISOString(result.getStartTime()) == startTime
         DateHandler.toISOString(result.getEndTime()) == endTime
-        result.getTopicConjunction().getTopics() == [topic2, topic1] as Set
+        result.getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.isCanceled() == false
-        result.getCreator() == user
+        result.getCreator() == user1
         result.getCourseExecution() == externalCourseExecution
 
         where:
-        userRole          | startTime            | endTime              | numberOfQuestions
-        User.Role.STUDENT | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | NUMBER_OF_QUESTIONS
-        User.Role.STUDENT | STRING_DATE_TOMORROW | STRING_DATE_LATER    | NUMBER_OF_QUESTIONS
+        startTime            | endTime              | numberOfQuestions
+        STRING_DATE_TODAY    | STRING_DATE_TOMORROW | NUMBER_OF_QUESTIONS
+        STRING_DATE_TOMORROW | STRING_DATE_LATER    | NUMBER_OF_QUESTIONS
     }
 
     def "create a private tournament"() {
@@ -84,12 +55,12 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
+        tournamentDto.setCanceled(false)
         tournamentDto.setPrivateTournament(true)
         tournamentDto.setPassword('123')
 
         when:
-        tournamentService.createTournament(user.getId(), topics, tournamentDto)
+        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then: "the correct tournament is inside the repository"
         tournamentRepository.count() == 1L
@@ -97,28 +68,48 @@ class CreateTournamentTest extends SpockTest {
         result.getId() != null
         DateHandler.toISOString(result.getStartTime()) == STRING_DATE_TODAY
         DateHandler.toISOString(result.getEndTime()) == STRING_DATE_LATER
-        result.getTopicConjunction().getTopics() == [topic2, topic1] as Set
+        result.getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.isCanceled() == false
-        result.getCreator() == user
+        result.getCreator() == user1
         result.getCourseExecution() == externalCourseExecution
         result.isPrivateTournament() == true
         result.getPassword() == '123'
     }
 
+    def createTournament(String userType, String topicsType) {
+        def userId
+        if (userType == 'good one') {
+            userId = user1.getId()
+        }
+        else if (userType != null) {
+            userId = Integer.parseInt(userType)
+        }
+
+        def topicsList
+        if (topicsType == 'good one') {
+            topicsList = topics
+        }
+        else if (topicsType == 'empty') {
+            topicsList = [] as Set
+        }
+        else if (topicsType == 'missing topic') {
+            topicsList = [-1] as Set
+        }
+
+        tournamentService.createTournament(userId, externalCourseExecution.getId(), topicsList, tournamentDto)
+    }
+
     @Unroll
-    def "invalid arguments: userRole=#userRole | startTime=#startTime | endTime=#endTime | numberOfQuestions=#numberOfQuestions || errorMessage=#errorMessage"() {
+    def "invalid arguments: userType=#userType | startTime=#startTime | endTime=#endTime | numberOfQuestions=#numberOfQuestions | topicsType=#topicsType || errorMessage=#errorMessage"() {
         given: 'a tournamentDto'
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)
         tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setState(false)
-
-        and: 'a user'
-        user.setRole(userRole)
+        tournamentDto.setCanceled(false)
 
         when:
-        tournamentService.createTournament(user.getId(), topics, tournamentDto)
+        createTournament(userType, topicsType)
 
         then:
         def error = thrown(TutorException)
@@ -126,104 +117,24 @@ class CreateTournamentTest extends SpockTest {
         tournamentRepository.count() == 0L
 
         where:
-        userRole          | startTime             | endTime           | numberOfQuestions   || errorMessage
-        User.Role.ADMIN   | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS || USER_NOT_STUDENT
-        User.Role.TEACHER | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS || USER_NOT_STUDENT
-        User.Role.STUDENT | null                  | STRING_DATE_LATER | NUMBER_OF_QUESTIONS || TOURNAMENT_MISSING_START_TIME
-        User.Role.STUDENT | " "                   | STRING_DATE_LATER | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | "bad"                 | STRING_DATE_LATER | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_TODAY     | null              | NUMBER_OF_QUESTIONS || TOURNAMENT_MISSING_END_TIME
-        User.Role.STUDENT | STRING_DATE_TODAY     | " "               | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_TODAY     | "bad"             | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_TODAY     | STRING_DATE_LATER | null                || TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS
-        User.Role.STUDENT | STRING_DATE_TODAY     | STRING_DATE_LATER | 0                   || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_TODAY     | STRING_DATE_LATER | -1                  || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_YESTERDAY | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_TOMORROW  | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-        User.Role.STUDENT | STRING_DATE_LATER     | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS || TOURNAMENT_NOT_CONSISTENT
-    }
-
-    def "create tournament with null user"() {
-        given: 'a tournamentDto'
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
-        when:
-        tournamentService.createTournament(null, topics, tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_MISSING_USER
-        tournamentRepository.count() == 0L
-    }
-
-    def "create tournament with not existing user"() {
-        given:
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
-        and:
-        def fakeUserId = 99
-
-        when:
-        tournamentService.createTournament(fakeUserId, topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == USER_NOT_FOUND
-        tournamentRepository.count() == 0L
-    }
-
-    def "create tournament with null topics"() {
-        given: 'a tournamentDto'
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
-        when:
-        tournamentService.createTournament(user.getId(), null, tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_MISSING_TOPICS
-        tournamentRepository.count() == 0L
-    }
-
-    def "create tournament with zero topics"() {
-        given: 'a tournamentDto'
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
-        when:
-        tournamentService.createTournament(user.getId(), [] as Set, tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOURNAMENT_MISSING_TOPICS
-        tournamentRepository.count() == 0L
-    }
-
-    def "create tournament with non existing topic"() {
-        given: 'a tournamentDto'
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
-        when:
-        tournamentService.createTournament(user.getId(), [-1] as Set, tournamentDto)
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == TOPIC_NOT_FOUND
-        tournamentRepository.count() == 0L
+        userType   | startTime             | endTime           | numberOfQuestions   | topicsType      || errorMessage
+        null       | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_MISSING_USER
+        "99"       | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "good one"      || USER_NOT_FOUND
+        "good one" | null                  | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_MISSING_START_TIME
+        "good one" | " "                   | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | "bad"                 | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_YESTERDAY | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TOMORROW  | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_LATER     | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY     | null              | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_MISSING_END_TIME
+        "good one" | STRING_DATE_TODAY     | " "               | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY     | "bad"             | NUMBER_OF_QUESTIONS | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | null                | "good one"      || TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | 0                   | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | -1                  | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "null"          || TOURNAMENT_MISSING_TOPICS
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "empty"         || TOURNAMENT_MISSING_TOPICS
+        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS | "missing topic" || TOPIC_NOT_FOUND
     }
 
     def "create tournament with existing user and topics from different courses"() {
@@ -231,12 +142,10 @@ class CreateTournamentTest extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-
+        tournamentDto.setCanceled(false)
         and: "new course"
         def differentCourse = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(differentCourse)
-
         and: "new topic"
         def topicDto3 = new TopicDto()
         topicDto3.setName("TOPIC3")
@@ -245,7 +154,7 @@ class CreateTournamentTest extends SpockTest {
         topics.add(topic3.getId())
 
         when:
-        tournamentService.createTournament(user.getId(), topics, tournamentDto)
+        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then:
         def exception = thrown(TutorException)

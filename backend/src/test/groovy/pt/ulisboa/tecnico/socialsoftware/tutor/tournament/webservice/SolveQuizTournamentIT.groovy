@@ -83,8 +83,8 @@ class SolveQuizTournamentIT extends SpockTest {
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_LATER)
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-        tournamentDto = tournamentService.createTournament(user.getId(), topics, tournamentDto)
+        tournamentDto.setCanceled(false)
+        tournamentDto = tournamentService.createTournament(user.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         question1 = new Question()
         question1.setKey(1)

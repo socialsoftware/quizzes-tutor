@@ -3,82 +3,27 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
-class QuizTournamentGenerateTest extends SpockTest {
-    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
-
-    def question1
-    def topic1
-    def topic2
+class QuizTournamentGenerateTest extends TournamentTest {
     def tournamentDto
-    def topics = new HashSet<Integer>()
-    def user1
 
     def setup() {
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, false)
-        user1.addCourse(externalCourseExecution)
-        userRepository.save(user1)
-        user1.setKey(user1.getId())
+        tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
-        def topicDto1 = new TopicDto()
-        topicDto1.setName(TOPIC_1_NAME)
-        topic1 = new Topic(externalCourse, topicDto1)
-        topicRepository.save(topic1)
+        createAssessmentWithTopicConjunction(ASSESSMENT_1_TITLE, Assessment.Status.AVAILABLE, externalCourseExecution)
 
-        def topicDto2 = new TopicDto()
-        topicDto2.setName(TOPIC_2_NAME)
-        topic2 = new Topic(externalCourse, topicDto2)
-        topicRepository.save(topic2)
-
-        topics.add(topic1.getId())
-        topics.add(topic2.getId())
-
-        def assessment = new Assessment()
-        assessment.setTitle(ASSESSMENT_1_TITLE)
-        assessment.setStatus(Assessment.Status.AVAILABLE)
-        assessment.setCourseExecution(externalCourseExecution)
-
-        def topicConjunction = new TopicConjunction()
-        topicConjunction.addTopic(topic1)
-        topicConjunction.addTopic(topic2)
-
-        assessment.addTopicConjunction(topicConjunction)
-        assessmentRepository.save(assessment)
-
-        tournamentDto = new TournamentDto()
-        tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto.setEndTime(STRING_DATE_LATER)
-        tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
-        tournamentDto.setState(false)
-        tournamentDto = tournamentService.createTournament(user1.getId(), topics, tournamentDto)
-
-        question1 = new Question()
-        question1.setKey(1)
-        question1.setCreationDate(LOCAL_DATE_TODAY)
-        question1.setContent(QUESTION_1_CONTENT)
-        question1.setTitle(QUESTION_1_TITLE)
-        question1.setStatus(Question.Status.AVAILABLE)
-        question1.setCourse(externalCourse)
-        question1.addTopic(topic1)
-        question1.addTopic(topic2)
-        questionRepository.save(question1)
+        createQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
     }
 
-    def "1 student join a tournament" () {
+    def "1 student solve a tournament" () {
         given:
-        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
 
         when:
         tournamentService.solveQuiz(user1.getId(), tournamentDto)
@@ -93,15 +38,12 @@ class QuizTournamentGenerateTest extends SpockTest {
         result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
     }
 
-    def "2 student join a tournament" () {
+    def "2 student solve a tournament" () {
         given:
-        def user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, false)
-        user2.addCourse(externalCourseExecution)
-        userRepository.save(user2)
-
+        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
         and:
-        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
-        tournamentService.joinTournament(user2.getId(), tournamentDto, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user2, "")
 
         when: 'both students solve the quiz'
         tournamentService.solveQuiz(user1.getId(), tournamentDto)
@@ -109,7 +51,6 @@ class QuizTournamentGenerateTest extends SpockTest {
 
         then: 'there is only one quiz generated'
         quizRepository.count() == 1L
-
         and: "the correct quiz is inside the repository"
         def result = quizRepository.findAll().get(0)
         result.getId() != null
