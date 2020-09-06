@@ -63,6 +63,11 @@
           {{ item.getPrivateName() }}
         </v-chip>
       </template>
+      <template v-slot:item.id="{ item }">
+        <v-chip color="primary" small @click="openTournamentDashboard(item)">
+          <span> {{ item.id }} </span>
+        </v-chip>
+      </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip
           bottom
@@ -136,16 +141,6 @@
           </template>
           <span>See Solved Quiz</span>
         </v-tooltip>
-      </template>
-      <template v-slot:item.id="{ item }">
-        <v-chip
-          color="primary"
-          small
-          @click="$emit('close-show-dashboard-dialog', false)"
-          :to="openTournamentDashboard(item)"
-        >
-          <span> {{ item.id }} </span>
-        </v-chip>
       </template>
     </v-data-table>
     <footer>
@@ -268,6 +263,7 @@ export default class AllTournamentView extends Vue {
   }
 
   async openTournamentDashboard(tournament: Tournament) {
+    this.$emit('close-show-dashboard-dialog', false);
     if (tournament)
       await this.$router.push({
         name: 'tournament-participants'
