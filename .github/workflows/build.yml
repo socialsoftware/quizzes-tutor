@@ -53,7 +53,7 @@ jobs:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
-
+        
     - name: Run integration tests
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &

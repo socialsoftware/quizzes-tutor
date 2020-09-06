@@ -23,8 +23,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,8 +41,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuestionService {
@@ -62,6 +64,12 @@ public class QuestionService {
     @Autowired
     private OptionRepository optionRepository;
 
+    @Autowired
+    private QuestionSubmissionService questionSubmissionService;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
+
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -69,6 +77,14 @@ public class QuestionService {
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(QuestionDto::new)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+    }
+
+    @Retryable(
+          value = { SQLException.class },
+          backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
+        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
     }
 
     @Retryable(
@@ -85,7 +101,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -118,13 +134,18 @@ public class QuestionService {
         return new QuestionDto(question);
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
+
+        if (questionSubmission != null) {
+            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
+        }
+
         question.remove();
         questionRepository.delete(question);
     }
@@ -253,28 +274,8 @@ public class QuestionService {
         quizQuestionRepository.delete(quizQuestion);
 
         if (question.getQuizQuestions().isEmpty()) {
-            this.deleteQuestion(question);
+            this.removeQuestion(question.getId());
         }
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteQuestion(Question question) {
-        for (Option option : question.getOptions()) {
-            option.remove();
-            optionRepository.delete(option);
-        }
-
-        if (question.getImage() != null) {
-            imageRepository.delete(question.getImage());
-        }
-
-        question.getTopics().forEach(topic -> topic.getQuestions().remove(question));
-        question.getTopics().clear();
-
-        questionRepository.delete(question);
     }
 }
 

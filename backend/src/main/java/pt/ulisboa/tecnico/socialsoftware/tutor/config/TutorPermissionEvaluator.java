@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
@@ -25,6 +27,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -91,6 +96,18 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     courseExecutionId = quizRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
                         return userHasThisExecution(userId, courseExecutionId);
+                    }
+                    return false;
+                case "SUBMISSION.ACCESS":
+                    QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
+                    User user = (User) authentication.getPrincipal();
+                    if (questionSubmission != null) {
+                        boolean hasCourseExecutionAccess = userHasThisExecution(userId, questionSubmission.getCourseExecution().getId());
+                        if (user.getRole() == User.Role.STUDENT) {
+                            return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId() == userId;
+                        } else {
+                            return hasCourseExecutionAccess;
+                        }
                     }
                     return false;
                 default: return false;

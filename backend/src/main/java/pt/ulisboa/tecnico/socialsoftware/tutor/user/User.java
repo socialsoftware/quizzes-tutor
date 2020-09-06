@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -74,6 +76,12 @@ public class User implements UserDetails, DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
@@ -187,6 +195,10 @@ public class User implements UserDetails, DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
+        this.questionSubmissions = questionSubmissions; 
+    }
+    
     public void setPassword(String password) {
         this.password = password;
     }
@@ -456,6 +468,18 @@ public class User implements UserDetails, DomainEntity {
         course.addUser(this);
     }
 
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Review> getReviews() { return reviews; }
+
+    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+
+    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
@@ -542,6 +566,7 @@ public class User implements UserDetails, DomainEntity {
         }
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
 }
