@@ -34,7 +34,7 @@ public class TournamentController {
     public List<TournamentDto> getAllTournaments(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return tournamentService.getAllTournaments(user);
+        return tournamentService.getAllTournaments(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getOpenTournaments")
@@ -42,7 +42,7 @@ public class TournamentController {
     public List<TournamentDto> getOpenTournaments(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return tournamentService.getOpenedTournaments(user);
+        return tournamentService.getOpenedTournaments(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getClosedTournaments")
@@ -50,7 +50,7 @@ public class TournamentController {
     public List<TournamentDto> getClosedTournaments(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return tournamentService.getClosedTournaments(user);
+        return tournamentService.getClosedTournaments(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getUserTournaments")

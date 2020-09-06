@@ -38,11 +38,14 @@ httpClient.interceptors.response.use(
   response => {
     if (response.data.notification) {
       if (response.data.notification.errorMessages.length)
-        Store.dispatch('notification', response.data.notification.errorMessages);
+        Store.dispatch(
+          'notification',
+          response.data.notification.errorMessages
+        );
       response.data = response.data.response;
     }
     return response;
-  }, 
+  },
   error => Promise.reject(error)
 );
 
@@ -58,7 +61,10 @@ export default class RemoteServices {
       });
   }
 
-  static async externalLogin(email: string, password: string): Promise<AuthDto> {
+  static async externalLogin(
+    email: string,
+    password: string
+  ): Promise<AuthDto> {
     return httpClient
       .get(`/auth/external?email=${email}&password=${password}`)
       .then(response => {
@@ -102,7 +108,10 @@ export default class RemoteServices {
       });
   }
 
-  static async createExternalUser(executionId: number, externalUser: ExternalUser): Promise<ExternalUser> {
+  static async createExternalUser(
+    executionId: number,
+    externalUser: ExternalUser
+  ): Promise<ExternalUser> {
     return httpClient
       .post(`/users/create/${executionId}`, externalUser)
       .then(response => {
@@ -113,7 +122,9 @@ export default class RemoteServices {
       });
   }
 
-  static async confirmRegistration(externalUser: ExternalUser): Promise<ExternalUser> {
+  static async confirmRegistration(
+    externalUser: ExternalUser
+  ): Promise<ExternalUser> {
     return httpClient
       .post('/auth/registration/confirm', externalUser)
       .then(response => {
@@ -516,9 +527,11 @@ export default class RemoteServices {
       });
   }
 
-  static async getExternalUsers(courseExecutionId: number): Promise<ExternalUser[]>{
+  static async getExternalUsers(
+    courseExecutionId: number
+  ): Promise<ExternalUser[]> {
     return httpClient
-      .get('/executions/'+courseExecutionId+'/users/external')
+      .get('/executions/' + courseExecutionId + '/users/external')
       .then(response => {
         return response.data.map((user: any) => {
           return new ExternalUser(user);
@@ -529,16 +542,21 @@ export default class RemoteServices {
       });
   }
 
-  static async deleteExternalInactiveUsers(courseExecution: Course, userIdList: number[]):Promise<Course> {
+  static async deleteExternalInactiveUsers(
+    courseExecution: Course,
+    userIdList: number[]
+  ): Promise<Course> {
     return httpClient
-      .post('/executions/'+courseExecution.courseExecutionId+'/users/delete/', userIdList)
+      .post(
+        '/executions/' + courseExecution.courseExecutionId + '/users/delete/',
+        userIdList
+      )
       .then(response => {
-        return new Course(response.data)
+        return new Course(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
-
   }
 
   static async getAssessments(): Promise<Assessment[]> {
@@ -687,7 +705,6 @@ export default class RemoteServices {
       });
   }
 
-
   static async uploadCSVFile(file: File, executionId: number): Promise<Course> {
     let formData = new FormData();
     formData.append('file', file);
@@ -704,7 +721,6 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-
 
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {

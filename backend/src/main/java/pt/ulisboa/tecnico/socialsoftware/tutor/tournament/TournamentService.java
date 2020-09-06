@@ -87,25 +87,22 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getAllTournaments(User user) {
-        Set<CourseExecution> courseExecutions = user.getCourseExecutions();
-        return tournamentRepository.getAllTournamentsForCourseExecutions(courseExecutions).stream().map(TournamentDto::new)
+    public List<TournamentDto> getAllTournaments(Integer executionId) {
+        return tournamentRepository.getAllTournamentsForCourseExecutions(executionId).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getOpenedTournaments(User user) {
-        Set<CourseExecution> courseExecutions = user.getCourseExecutions();
-        return tournamentRepository.getOpenedTournamentsForCourseExecutions(courseExecutions).stream().map(TournamentDto::new)
+    public List<TournamentDto> getOpenedTournaments(Integer executionId) {
+        return tournamentRepository.getOpenedTournamentsForCourseExecutions(executionId).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getClosedTournaments(User user) {
-        Set<CourseExecution> courseExecutions = user.getCourseExecutions();
-        return tournamentRepository.getClosedTournamentsForCourseExecutions(courseExecutions).stream().map(TournamentDto::new)
+    public List<TournamentDto> getClosedTournaments(Integer executionId) {
+        return tournamentRepository.getClosedTournamentsForCourseExecutions(executionId).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
