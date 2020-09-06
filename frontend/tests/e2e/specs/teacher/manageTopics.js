@@ -105,4 +105,3 @@ describe('Manage Topics Walk-through', () => {
     cy.get('[data-cy="topicsGrid"]').contains(topicName).should('not.exist');
   });
 });
-  

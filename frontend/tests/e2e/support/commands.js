@@ -186,9 +186,126 @@ Cypress.Commands.add('removeTournament', tournament => {
 });
 
 Cypress.Commands.add('selectTournamentWithAction', (tournament, action) => {
-
   cy.get(`:nth-child(${tournament}) > :nth-child(1) > [data-cy="${action}"]`)
     .click({ force: true });
+});
+
+Cypress.Commands.add(
+  'submitQuestion',
+  (valid, title, content, opt1, opt2, opt3, opt4) => {
+    cy.get('[data-cy="SubmitQuestion"]').click();
+    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').type(content);
+    cy.get('[data-cy="Switch1"]').click({ force: true });
+    if (valid) {
+      cy.get('[data-cy="Option1"]').type(opt1);
+      cy.get('[data-cy="Option2"]').type(opt2);
+      cy.get('[data-cy="Option3"]').type(opt3);
+      cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="SubmitButton"]').click();
+      cy.contains(title)
+        .parent()
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 5);
+    } else {
+      cy.get('[data-cy="SubmitButton"]').click();
+    }
+  }
+);
+
+Cypress.Commands.add(
+  'editQuestionSubmission',
+  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
+    cy.get('[data-cy="EditSubmission"]').click();
+    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').type(content);
+    if (valid) {
+      cy.get('[data-cy="Option1"]').type(opt1);
+      cy.get('[data-cy="Option2"]').type(opt2);
+      cy.get('[data-cy="Option3"]').type(opt3);
+      cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="SubmitButton"]').click();
+    } else {
+      cy.get('[data-cy="Option1"]').clear();
+      cy.get('[data-cy="SubmitButton"]').click();
+    }
+  }
+);
+
+Cypress.Commands.add('viewQuestion', (title, content, op1, op2, op3, op4, status=null) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 5)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  cy.contains(title);
+  cy.contains(content);
+  cy.contains(op1);
+  cy.contains(op2);
+  cy.contains(op3);
+  cy.contains(op4);
+  if (status != null) {
+    cy.contains(status);
+  }
+  cy.get('[data-cy="CloseButton"]').click();
+});
+
+Cypress.Commands.add('deleteQuestionSubmission', (title) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 5)
+    .find('[data-cy="DeleteSubmission"]')
+    .click();
+});
+
+Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 6)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  if (comment != null){
+    cy.get('[data-cy="Comment"]').type(comment);
+  }
+  cy.log(select);
+  let option = select === 'Request Further Review' ? '{downarrow}{downarrow}{downarrow}' : select;
+  cy.get('[data-cy=SelectMenu]').type(option + '{enter}', {force: true})
+  cy.get('[data-cy="SubmitButton"]').click();
+});
+
+Cypress.Commands.add('checkReviewComment', (title) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 6)
+    .find('[data-cy="ViewSubmission"]')
+    .click();
+  cy.contains(title);
+  cy.get('[data-cy="CloseButton"]').click();
+});
+
+Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
+  cy.contains(title)
+    .parent()
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 6)
+    .contains(status)
 });
 
 Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
@@ -207,7 +324,6 @@ Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
   cy.get('[data-cy="saveButton"]').click();
   cy.wait(3000);
 });
-
 
 Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains(acronym)

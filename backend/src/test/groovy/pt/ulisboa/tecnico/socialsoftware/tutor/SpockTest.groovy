@@ -22,13 +22,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 import spock.lang.Specification
 
@@ -42,14 +46,17 @@ class SpockTest extends Specification {
 
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
+    public static final String USER_3_NAME = "User 3 Name"
     public static final String DEMO_STUDENT_NAME = "Demo Student"
     public static final String DEMO_TEACHER_NAME = "Demo Teacher"
     public static final String DEMO_ADMIN_NAME = "Demo Admin"
 
     public static final String USER_1_USERNAME = "User 1 Username"
     public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_3_USERNAME = "User 3 Username"
     public static final String USER_1_EMAIL = "user1@mail.com"
     public static final String USER_2_EMAIL = "user2@mail.com"
+    public static final String USER_3_EMAIL = "user3@mail.com"
     public final static String USER_1_PASSWORD = "1234"
     public final static String USER_2_PASSWORD = "4321"
     public static final String USER_1_TOKEN = "1a2b3c"
@@ -113,6 +120,9 @@ class SpockTest extends Specification {
 
     public static final int NUMBER_OF_QUESTIONS = 1
 
+    public static final String REVIEW_1_COMMENT = "Review Comment 1"
+    public static final String REVIEW_2_COMMENT = "Review Comment 2"
+    public static final String REVIEW_3_COMMENT = "Review Comment 3"
 
     @Autowired
     AuthService authService
@@ -193,15 +203,25 @@ class SpockTest extends Specification {
     UserService userService
 
     @Autowired
+    QuestionSubmissionService questionSubmissionService
+
+    @Autowired
+    QuestionSubmissionRepository questionSubmissionRepository
+
+    @Autowired
+    ReviewRepository reviewRepository
+
+    @Autowired
     UserServiceApplicational userServiceApplicational
 
     @Autowired
     Mailer mailer
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder
 
     Course externalCourse
+    @Shared
     CourseExecution externalCourseExecution
 
     RESTClient restClient
@@ -247,5 +267,17 @@ class SpockTest extends Specification {
                 path: '/auth/demo/teacher'
         )
         restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def createdUserLogin(email, password) {
+        def loggedUser = restClient.get(
+                path: '/auth/external',
+                query: [
+                        email: email,
+                        password: password,
+                ],
+                requestContentType: 'application/json'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loggedUser.data.token
     }
 }

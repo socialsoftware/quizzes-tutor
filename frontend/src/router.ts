@@ -35,6 +35,9 @@ import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
+import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
+import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+
 Vue.use(Router);
 
 const APP_NAME = process.env.VUE_APP_NAME || '';
@@ -152,6 +155,24 @@ let router = new Router({
             title: APP_NAME + ' - ImpExp',
             requiredAuth: 'Teacher'
           }
+        },
+        {
+          path: 'submissions/students',
+          name: 'sort-by-student-submissions',
+          component: SortQuestionSubmissionsByStudentView,
+          meta: {
+            title: APP_NAME + ' - Sort by Student Submissions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Teacher'
+          }
         }
       ]
     },
@@ -266,6 +287,15 @@ let router = new Router({
           props: route => ({ id: route.query.id }),
           meta: {
             title: process.env.VUE_APP_NAME + ' - Tournament Participants',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'student-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Student'
           }
         }

@@ -5,7 +5,7 @@ interface CourseMap {
 }
 
 export default class User {
-  id!: number;
+  id: number | null = null;
   name!: string;
   username!: string;
   role!: string;
