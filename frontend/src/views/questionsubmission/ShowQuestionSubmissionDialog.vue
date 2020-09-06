@@ -72,6 +72,7 @@
           ></v-textarea>
         </v-card-text>
       </div>
+
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -135,7 +136,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.createReview(this.createReview(status));
-      this.$emit('dialog', false);
+      this.forceRerender();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
