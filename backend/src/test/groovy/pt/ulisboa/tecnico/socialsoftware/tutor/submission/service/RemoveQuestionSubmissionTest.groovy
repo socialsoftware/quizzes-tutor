@@ -29,12 +29,13 @@ class RemoveQuestionSubmissionTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
-        question.setStatus(Question.Status.IN_REVISION)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVISION)
         questionSubmissionRepository.save(questionSubmission)
     }
 
@@ -56,11 +57,10 @@ class RemoveQuestionSubmissionTest extends SpockTest{
             review.setComment(REVIEW_1_COMMENT)
             review.setUser(teacher)
             review.setQuestionSubmission(questionSubmission)
-            review.setStatus(Review.Status.IN_REVISION)
             questionSubmission.addReview(review)
             reviewRepository.save(review)
         } else {
-            question.setStatus(Question.Status.IN_REVIEW)
+            questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
         }
 
         when:

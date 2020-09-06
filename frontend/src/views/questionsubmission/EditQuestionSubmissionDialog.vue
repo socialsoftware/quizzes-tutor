@@ -25,7 +25,7 @@
         />
         <v-textarea
           outline
-          rows="10"
+          rows="5"
           v-model="editQuestionSubmission.question.content"
           label="Question"
           data-cy="QuestionContent"
@@ -34,21 +34,40 @@
           v-for="index in editQuestionSubmission.question.options.length"
           :key="index"
         >
-          <v-switch
-            v-model="editQuestionSubmission.question.options[index - 1].correct"
-            class="ma-4"
-            label="Correct"
-            v-bind:data-cy="'Switch' + index"
-          />
-          <v-textarea
-            outline
-            rows="3"
-            v-model="editQuestionSubmission.question.options[index - 1].content"
-            :label="`Option ${index}`"
-            v-bind:data-cy="'Option' + index"
-          ></v-textarea>
+          <v-row>
+            <v-textarea
+              auto-grow
+              rows="2"
+              v-model="
+                editQuestionSubmission.question.options[index - 1].content
+              "
+              :label="`Option ${index}`"
+              v-bind:data-cy="'Option' + index"
+            ></v-textarea>
+            <v-switch
+              v-model="
+                editQuestionSubmission.question.options[index - 1].correct
+              "
+              class="ma-4"
+              label="Correct"
+              v-bind:data-cy="'Switch' + index"
+            />
+          </v-row>
         </div>
       </v-card-text>
+      <div v-if="editMode(questionSubmission)" class="text-left">
+        <v-card-title>
+          <span class="headline">{{ 'New Comment' }}</span>
+        </v-card-title>
+        <v-card-text class="text-left">
+          <v-textarea
+            rows="1"
+            v-model="comment"
+            label="Comment"
+            data-cy="Comment"
+          ></v-textarea>
+        </v-card-text>
+      </div>
 
       <v-card-actions>
         <v-spacer />
@@ -83,6 +102,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
   readonly questionSubmission!: QuestionSubmission;
 
   editQuestionSubmission!: QuestionSubmission;
+  comment: string = '';
 
   created() {
     this.updateQuestionSubmission();
@@ -116,9 +136,10 @@ export default class EditQuestionSubmissionDialog extends Vue {
         );
         let review = new Review();
         review.questionSubmissionId = this.editQuestionSubmission.id!;
-        review.status = 'IN_REVISION';
+        review.submissionStatus = 'IN_REVISION';
         review.userId = this.$store.getters.getUser.id;
-        review.comment = 'Submission has been edited';
+        review.comment =
+          this.comment === '' ? '' : 'QUESTION EDITED: ' + this.comment;
         await RemoteServices.createReview(review);
       } else {
         result = await RemoteServices.createQuestionSubmission(

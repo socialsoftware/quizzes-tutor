@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -45,7 +46,7 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.IN_REVISION.name())
+        questionDto.setStatus(Question.Status.SUBMITTED.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -73,10 +74,11 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
         def questionSubmission = response.data
         questionSubmission.id != null
         questionSubmission.submitterId == student.getId()
+        questionSubmission.status == QuestionSubmission.Status.IN_REVISION.name()
         questionSubmission.question != null
         questionSubmission.question.title == questionDto.getTitle()
         questionSubmission.question.content == questionDto.getContent()
-        questionSubmission.question.status == Question.Status.IN_REVISION.name()
+        questionSubmission.question.status == Question.Status.SUBMITTED.name()
     }
 
     def cleanup() {

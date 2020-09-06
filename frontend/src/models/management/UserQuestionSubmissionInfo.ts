@@ -4,8 +4,7 @@ export default class UserQuestionSubmissionInfo {
   submitterId: number | null = null;
   questionSubmissions: QuestionSubmission[] = [];
   totalQuestionSubmissions: number | null = null;
-  numAvailableQuestionSubmissions: number | null = null;
-  numDisabledQuestionSubmissions: number | null = null;
+  numApprovedQuestionSubmissions: number | null = null;
   numRejectedQuestionSubmissions: number | null = null;
   numInReviewQuestionSubmissions: number | null = null;
   numInRevisionQuestionSubmissions: number | null = null;
@@ -13,8 +12,7 @@ export default class UserQuestionSubmissionInfo {
   name: string | null = null;
 
   numQuestionSubmissions: {
-    available: { num: number | null; color: string };
-    disabled: { num: number | null; color: string };
+    approved: { num: number | null; color: string };
     rejected: { num: number | null; color: string };
     in_review: { num: number | null; color: string };
     in_revision: { num: number | null; color: string };
@@ -24,10 +22,8 @@ export default class UserQuestionSubmissionInfo {
     if (jsonObj) {
       this.submitterId = jsonObj.submitterId;
       this.totalQuestionSubmissions = jsonObj.totalQuestionSubmissions;
-      this.numAvailableQuestionSubmissions =
-        jsonObj.numAvailableQuestionSubmissions;
-      this.numDisabledQuestionSubmissions =
-        jsonObj.numDisabledQuestionSubmissions;
+      this.numApprovedQuestionSubmissions =
+        jsonObj.numApprovedQuestionSubmissions;
       this.numRejectedQuestionSubmissions =
         jsonObj.numRejectedQuestionSubmissions;
       this.numInReviewQuestionSubmissions =
@@ -38,13 +34,9 @@ export default class UserQuestionSubmissionInfo {
       this.username = jsonObj.username;
 
       this.numQuestionSubmissions = {
-        available: {
-          num: jsonObj.numAvailableQuestionSubmissions,
+        approved: {
+          num: jsonObj.numApprovedQuestionSubmissions,
           color: 'green'
-        },
-        disabled: {
-          num: jsonObj.numDisabledQuestionSubmissions,
-          color: 'orange'
         },
         rejected: {
           num: jsonObj.numRejectedQuestionSubmissions,

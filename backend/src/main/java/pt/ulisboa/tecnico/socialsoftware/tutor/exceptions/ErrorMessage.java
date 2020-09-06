@@ -97,7 +97,7 @@ public enum ErrorMessage {
     QUESTION_SUBMISSION_NOT_FOUND("Question submission not found with id %d"),
     CANNOT_DELETE_REVIEWED_QUESTION("Question submission already in review or reviewed by teacher cannot be deleted"),
     CANNOT_DELETE_SUBMITTED_QUESTION("Question submission can not be deleted by teacher"),
-    CANNOT_EDIT_REVIEWED_QUESTION("Question submission already in review by teacher cannot be edited"),
+    CANNOT_EDIT_REVIEWED_QUESTION("Question submission in review by teacher cannot be edited"),
     CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),

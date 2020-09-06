@@ -31,23 +31,24 @@ class CreateReviewTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
-        question.setStatus(Question.Status.IN_REVIEW)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
         questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmissionRepository.save(questionSubmission)
     }
 
     @Unroll
-    def "create review with review status '#reviewStatus'"() {
+    def "create review with submission status '#submissionStatus'"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setStatus(reviewStatus)
+        reviewDto.setSubmissionStatus(submissionStatus)
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -59,23 +60,28 @@ class CreateReviewTest extends SpockTest{
         result.getComment() == REVIEW_1_COMMENT
         result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
-        result.getStatus().name() == reviewStatus
+        question.getStatus() == questionStatus
 
         where:
-        reviewStatus << ['AVAILABLE', 'DISABLED', 'REJECTED', 'IN_REVIEW', 'IN_REVISION', 'COMMENT']
+        submissionStatus || questionStatus
+        'APPROVED'       || Question.Status.AVAILABLE
+        'REJECTED'       || Question.Status.SUBMITTED
+        'IN_REVIEW'      || Question.Status.SUBMITTED
+        'IN_REVISION'    || Question.Status.SUBMITTED
+        null             || Question.Status.SUBMITTED
     }
 
     def "create review for question submission that has already been reviewed"() {
         given: "a question submission that has already been reviewed"
         question.setStatus(Question.Status.AVAILABLE)
-        questionRepository.save(question)
+        questionSubmission.setStatus(QuestionSubmission.Status.APPROVED)
 
         and: "a reviewDto"
         def reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setStatus('REJECTED')
+        reviewDto.setSubmissionStatus('REJECTED')
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -92,13 +98,14 @@ class CreateReviewTest extends SpockTest{
         submission.setQuestion(question)
         submission.setSubmitter(student)
         submission.setCourseExecution(externalCourseExecution)
+        submission.setStatus(QuestionSubmission.Status.IN_REVIEW)
         questionSubmissionRepository.save(submission)
         and: "a reviewDto"
         def reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(hasQuestionSubmission ? submission.getId() : null)
         reviewDto.setUserId(hasUser ? submission.getSubmitter().getId() : null)
         reviewDto.setComment(comment)
-        reviewDto.setStatus(status)
+        reviewDto.setSubmissionStatus(status)
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -113,7 +120,6 @@ class CreateReviewTest extends SpockTest{
         ' '               | true                   | true     | 'AVAILABLE'   || REVIEW_MISSING_COMMENT
         REVIEW_1_COMMENT  | false                  | true     | 'AVAILABLE'   || REVIEW_MISSING_QUESTION_SUBMISSION
         REVIEW_1_COMMENT  | true                   | false    | 'AVAILABLE'   || REVIEW_MISSING_USER
-        REVIEW_1_COMMENT  | true                   | true     | null          || INVALID_STATUS_FOR_QUESTION
         REVIEW_1_COMMENT  | true                   | true     | ' '           || INVALID_STATUS_FOR_QUESTION
         REVIEW_1_COMMENT  | true                   | true     | 'INVALID'     || INVALID_STATUS_FOR_QUESTION
     }

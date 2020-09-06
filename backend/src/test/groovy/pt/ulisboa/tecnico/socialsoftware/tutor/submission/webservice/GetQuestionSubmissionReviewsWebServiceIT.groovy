@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -43,7 +43,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         def questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.IN_REVISION.name())
+        questionDto.setStatus(Question.Status.SUBMITTED.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -74,7 +74,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setStatus(Review.Status.AVAILABLE.name())
+        reviewDto.setSubmissionStatus(QuestionSubmission.Status.APPROVED.name())
         questionSubmissionService.createReview(reviewDto)
 
         when:
@@ -93,7 +93,6 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         reviews.get(0).userId == teacher.getId()
         reviews.get(0).questionSubmissionId == questionSubmission.getId()
         reviews.get(0).comment == REVIEW_1_COMMENT
-        reviews.get(0).status == Review.Status.AVAILABLE.name()
         reviews.get(0).name == teacher.getName()
         reviews.get(0).username == teacher.getUsername()
     }

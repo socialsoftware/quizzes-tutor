@@ -13,17 +13,10 @@
       ]"
     >
       <p>
-        {{ review.creationDate + ': ' }}
-        <span v-if="!review.isComment()">
-          <v-chip small :color="review.getStatusColor()">
-            <span>{{ review.reviewStatus() }}</span>
-          </v-chip>
-          {{ ' by ' }}
-        </span>
-        {{ review.name }}
+        {{ review.creationDate + ' by ' + review.name }}
       </p>
       <p>
-        {{ "'" + review.comment + "'" }}
+        {{ review.comment }}
       </p>
     </v-container>
     <hr v-if="reviews.length !== 0" style="border: .5px lightgrey solid" />

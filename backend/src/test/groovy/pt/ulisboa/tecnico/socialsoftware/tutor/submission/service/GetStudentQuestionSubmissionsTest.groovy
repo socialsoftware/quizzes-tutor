@@ -27,7 +27,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
-        question.setStatus(Question.Status.IN_REVIEW)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
     }
 
@@ -37,6 +37,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         questionSubmission.setQuestion(question)
         questionSubmission.setSubmitter(student1)
         questionSubmission.setCourseExecution(externalCourseExecution)
+        questionSubmission.setStatus(QuestionSubmission.Status.REJECTED)
         externalCourseExecution.addQuestionSubmission(questionSubmission)
         student1.addQuestionSubmission(questionSubmission)
         questionSubmissionRepository.save(questionSubmission)
@@ -50,8 +51,10 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
 
         submission.getId() != null
         submission.getQuestion().getId() == question.getId()
+        submission.getQuestion().getStatus() == Question.Status.SUBMITTED.name()
         submission.getSubmitterId() == student1.getId()
         submission.getCourseExecutionId() == externalCourseExecution.getId()
+        submission.getStatus() == QuestionSubmission.Status.REJECTED.name()
     }
 
     def "get question submissions with 3 submitted questions"(){
@@ -60,6 +63,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         questionSubmission1.setQuestion(question)
         questionSubmission1.setSubmitter(student1)
         questionSubmission1.setCourseExecution(externalCourseExecution)
+        questionSubmission1.setStatus(QuestionSubmission.Status.IN_REVIEW)
         externalCourseExecution.addQuestionSubmission(questionSubmission1)
         student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
@@ -69,6 +73,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         questionSubmission2.setQuestion(question)
         questionSubmission2.setSubmitter(student1)
         questionSubmission2.setCourseExecution(externalCourseExecution)
+        questionSubmission2.setStatus(QuestionSubmission.Status.IN_REVIEW)
         externalCourseExecution.addQuestionSubmission(questionSubmission2)
         student1.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
@@ -78,6 +83,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         questionSubmission3.setQuestion(question)
         questionSubmission3.setSubmitter(student1)
         questionSubmission3.setCourseExecution(externalCourseExecution)
+        questionSubmission3.setStatus(QuestionSubmission.Status.IN_REVIEW)
         externalCourseExecution.addQuestionSubmission(questionSubmission3)
         student1.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
@@ -87,6 +93,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         questionSubmission4.setQuestion(question)
         questionSubmission4.setSubmitter(student2)
         questionSubmission4.setCourseExecution(externalCourseExecution)
+        questionSubmission4.setStatus(QuestionSubmission.Status.IN_REVIEW)
         externalCourseExecution.addQuestionSubmission(questionSubmission4)
         student2.addQuestionSubmission(questionSubmission4)
         questionSubmissionRepository.save(questionSubmission4)
@@ -112,6 +119,9 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         submission1.getCourseExecutionId() == externalCourseExecution.getId()
         submission2.getCourseExecutionId() == externalCourseExecution.getId()
         submission3.getCourseExecutionId() == externalCourseExecution.getId()
+        submission1.getStatus() == QuestionSubmission.Status.IN_REVIEW.name()
+        submission2.getStatus() == QuestionSubmission.Status.IN_REVIEW.name()
+        submission3.getStatus() == QuestionSubmission.Status.IN_REVIEW.name()
 
     }
 

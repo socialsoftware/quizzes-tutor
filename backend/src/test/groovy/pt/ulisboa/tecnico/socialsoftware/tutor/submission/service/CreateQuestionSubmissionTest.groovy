@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Shared
@@ -36,7 +37,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
-        questionDto.setStatus(Question.Status.IN_REVISION.name())
+        questionDto.setStatus(Question.Status.SUBMITTED.name())
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -60,9 +61,10 @@ class CreateQuestionSubmissionTest extends SpockTest{
         result.getId() != null
         result.getSubmitter() == student
         result.getQuestion() != null
+        result.getStatus() == QuestionSubmission.Status.IN_REVISION
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.IN_REVISION
+        result.getQuestion().getStatus() == Question.Status.SUBMITTED
         result.getCourseExecution() == externalCourseExecution
         student.getEnrolledCoursesAcronyms().contains(externalCourseExecution.getAcronym())
     }

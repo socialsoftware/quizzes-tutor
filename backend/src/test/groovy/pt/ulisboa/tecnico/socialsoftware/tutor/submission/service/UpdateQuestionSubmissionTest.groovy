@@ -4,7 +4,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -35,7 +34,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
-        question.setStatus(Question.Status.IN_REVISION)
+        question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
         optionOK = new Option()
         optionOK.setContent(OPTION_1_CONTENT)
@@ -47,6 +46,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         questionSubmission.setQuestion(question)
         questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVISION)
         externalCourseExecution.addQuestionSubmission(questionSubmission)
         student.addQuestionSubmission(questionSubmission)
         questionSubmissionRepository.save(questionSubmission)
@@ -69,10 +69,11 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         def result = questionSubmissionRepository.findAll().get(0)
         result.getId() != null
         result.getSubmitter() == student
+        result.getStatus() == QuestionSubmission.Status.IN_REVISION
         result.getQuestion() != null
         result.getQuestion().getTitle() == questionDto.getTitle()
         result.getQuestion().getContent() == questionDto.getContent()
-        result.getQuestion().getStatus() == Question.Status.IN_REVISION
+        result.getQuestion().getStatus() == Question.Status.SUBMITTED
         result.getCourseExecution() == externalCourseExecution
     }
 
@@ -103,9 +104,8 @@ class UpdateQuestionSubmissionTest extends SpockTest{
 
     @Unroll
     def "edit a question not in revision"(){
-        given: "a question IN_REVIEW"
-        question.setStatus(status)
-        questionRepository.save(question)
+        given: "a question submission not in revision"
+        questionSubmission.setStatus(status)
         and: "an edited questionDto"
         def questionDto = new QuestionDto(question)
         questionDto.setTitle(QUESTION_2_TITLE)
@@ -119,10 +119,10 @@ class UpdateQuestionSubmissionTest extends SpockTest{
 
         then: "exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.CANNOT_EDIT_REVIEWED_QUESTION
+        exception.getErrorMessage() == CANNOT_EDIT_REVIEWED_QUESTION
 
         where:
-        status << [Question.Status.AVAILABLE, Question.Status.DISABLED, Question.Status.REJECTED, Question.Status.IN_REVIEW]
+        status << [QuestionSubmission.Status.APPROVED, QuestionSubmission.Status.REJECTED, QuestionSubmission.Status.IN_REVIEW]
     }
 
     @TestConfiguration
