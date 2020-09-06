@@ -251,7 +251,7 @@ export default class EditTournamentDialog extends Vue {
       if (this.editTournament.topics !== undefined) {
         this.editTournament.topics!.forEach(topicName => {
           this.availableTopics!.forEach(topic => {
-            if (topic.name.valueOf() == topicName.valueOf()) {
+            if (topic.name.valueOf() === topicName.valueOf()) {
               this.addTopic(topic);
             }
           });

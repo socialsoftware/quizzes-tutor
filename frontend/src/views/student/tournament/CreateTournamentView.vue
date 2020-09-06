@@ -259,7 +259,7 @@ export default class CreateTournamentDialog extends Vue {
   passwordFieldType: string = 'password';
   password: string = '';
 
-  topicsID: Number[] = [];
+  topicsId: Number[] = [];
 
   topicHeaders: object = [
     {
@@ -326,13 +326,13 @@ export default class CreateTournamentDialog extends Vue {
       this.editTournament.isCanceled = false;
       this.editTournament.password = this.password;
 
-      this.topicsID = this.currentTopics.map(topic => {
+      this.topicsId = this.currentTopics.map(topic => {
         return topic.id;
       });
 
       try {
         const result = await RemoteServices.createTournament(
-          this.topicsID,
+          this.topicsId,
           this.editTournament
         );
         this.$emit('new-tournament', result);

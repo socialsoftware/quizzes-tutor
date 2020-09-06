@@ -49,22 +49,22 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="getStateColor(item.isCanceled)">
-          {{ getStateName(item.isCanceled) }}
+        <v-chip :color="item.getStateColor(closedTournamentsId)">
+          {{ item.getStateName(closedTournamentsId) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
-        <v-chip :color="getEnrolledColor(item.enrolled)">
-          {{ getEnrolledName(item.enrolled) }}
+        <v-chip :color="item.getEnrolledColor()">
+          {{ item.getEnrolledName() }}
         </v-chip>
       </template>
       <template v-slot:item.privateTournament="{ item }">
-        <v-chip :color="getPrivateColor(item.privateTournament)">
-          {{ getPrivateName(item.privateTournament) }}
+        <v-chip :color="item.getPrivateColor()">
+          {{ item.getPrivateName() }}
         </v-chip>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-tooltip bottom v-if="!isNotEnrolled(item)">
+        <v-tooltip bottom v-if="!item.isNotEnrolled()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -77,7 +77,7 @@
           </template>
           <span>Solve Quiz</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isNotEnrolled(item) && !isPrivate(item)">
+        <v-tooltip bottom v-if="item.isNotEnrolled() && !item.isPrivate()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -90,7 +90,7 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isNotEnrolled(item) && isPrivate(item)">
+        <v-tooltip bottom v-if="item.isNotEnrolled() && item.isPrivate()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -103,7 +103,7 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="!isNotEnrolled(item)">
+        <v-tooltip bottom v-if="!item.isNotEnrolled()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -135,7 +135,7 @@
       <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's number to
       view the current ranking.
     </footer>
-    <edit-tournament-dialog
+    <create-tournament-dialog
       v-if="currentTournament"
       v-model="createTournamentDialog"
       :tournament="currentTournament"
@@ -163,13 +163,14 @@ import StatementManager from '@/models/statement/StatementManager';
 
 @Component({
   components: {
-    'edit-tournament-dialog': CreateTournamentDialog,
+    'create-tournament-dialog': CreateTournamentDialog,
     'edit-password-dialog': EditPasswordDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
 })
 export default class OpenTournamentView extends Vue {
   tournaments: Tournament[] = [];
+  closedTournamentsId: number[] = [];
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
   editPasswordDialog: boolean = false;
@@ -232,21 +233,23 @@ export default class OpenTournamentView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getOpenTournaments();
-      this.tournaments.sort((a, b) => this.sortById(a, b));
+      this.tournaments = await RemoteServices.getOpenedTournamentsForCourseExecution();
+      this.tournaments.sort((a, b) => Tournament.sortById(a, b));
+      let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
+      closedTournaments.map(t => {
+        if (t.id) this.closedTournamentsId.push(t.id);
+      });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  sortById(a: Tournament, b: Tournament) {
-    if (a.id && b.id) return a.id > b.id ? 1 : -1;
-    else return 0;
-  }
-
-  openTournamentDashboard(tournament: Tournament) {
-    if (tournament) return '/student/tournament?id=' + tournament.id;
+  async openTournamentDashboard(tournament: Tournament) {
+    if (tournament)
+      await this.$router.push({
+        name: 'tournament-participants'
+      });
   }
 
   newTournament() {
@@ -273,44 +276,6 @@ export default class OpenTournamentView extends Vue {
   onClosePasswordDialog() {
     this.currentTournament = null;
     this.editPasswordDialog = false;
-  }
-
-  getStateColor(isCanceled: string) {
-    if (!isCanceled) return 'green';
-    else return 'red';
-  }
-
-  getStateName(isCanceled: string) {
-    if (!isCanceled) return 'AVAILABLE';
-    else return 'CANCELLED';
-  }
-
-  getEnrolledColor(enrolled: string) {
-    if (enrolled) return 'green';
-    else return 'red';
-  }
-
-  getEnrolledName(enrolled: string) {
-    if (enrolled) return 'YOU ARE IN';
-    else return 'YOU NEED TO JOIN';
-  }
-
-  getPrivateColor(privateTournament: boolean) {
-    if (privateTournament) return 'red';
-    else return 'green';
-  }
-
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
-  }
-
-  isNotEnrolled(tournamentToJoin: Tournament) {
-    return !tournamentToJoin.enrolled;
-  }
-
-  isPrivate(tournamentToJoin: Tournament) {
-    return tournamentToJoin.privateTournament;
   }
 
   async joinPrivateTournament(password: string) {

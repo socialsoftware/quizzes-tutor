@@ -55,7 +55,7 @@ let router = new Router({
       component: LoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login Fenix',
+        title: APP_NAME + ' - Login Fenix'
       }
     },
     {
@@ -64,7 +64,7 @@ let router = new Router({
       component: ExternalLoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login External',
+        title: APP_NAME + ' - Login External'
       }
     },
     {
@@ -261,7 +261,7 @@ let router = new Router({
         },
         {
           path: 'tournament',
-          name: 'tournament participants',
+          name: 'tournament-participants',
           component: ParticipantsTournamentView,
           props: route => ({ id: route.query.id }),
           meta: {
@@ -273,7 +273,7 @@ let router = new Router({
     },
     {
       path: '/teacher/tournament',
-      name: 'tournament dashboard',
+      name: 'tournament-dashboard',
       component: SelectedTournamentView,
       props: route => ({ id: route.query.id }),
       meta: {

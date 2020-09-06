@@ -49,24 +49,28 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="getStateColor(item)">
-          {{ getStateName(item) }}
+        <v-chip :color="item.getStateColor(closedTournamentsId)">
+          {{ item.getStateName(closedTournamentsId) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
-        <v-chip :color="getEnrolledColor(item.enrolled)">
-          {{ getEnrolledName(item.enrolled) }}
+        <v-chip :color="item.getEnrolledColor()">
+          {{ item.getEnrolledName() }}
         </v-chip>
       </template>
       <template v-slot:item.privateTournament="{ item }">
-        <v-chip :color="getPrivateColor(item.privateTournament)">
-          {{ getPrivateName(item.privateTournament) }}
+        <v-chip :color="item.getPrivateColor()">
+          {{ item.getPrivateName() }}
         </v-chip>
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip
           bottom
-          v-if="isNotEnrolled(item) && !isPrivate(item) && !isClosed(item)"
+          v-if="
+            item.isNotEnrolled() &&
+              !item.isPrivate() &&
+              !item.isClosed(closedTournamentsId)
+          "
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -82,7 +86,11 @@
         </v-tooltip>
         <v-tooltip
           bottom
-          v-if="isNotEnrolled(item) && isPrivate(item) && !isClosed(item)"
+          v-if="
+            item.isNotEnrolled() &&
+              item.isPrivate() &&
+              !item.isClosed(closedTournamentsId)
+          "
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -96,7 +104,10 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="!isNotEnrolled(item) && !isClosed(item)">
+        <v-tooltip
+          bottom
+          v-if="!item.isNotEnrolled() && !item.isClosed(closedTournamentsId)"
+        >
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -109,7 +120,10 @@
           </template>
           <span>Leave Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="!isNotEnrolled(item) && isClosed(item)">
+        <v-tooltip
+          bottom
+          v-if="!item.isNotEnrolled() && item.isClosed(closedTournamentsId)"
+        >
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -139,7 +153,7 @@
       answers. <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's
       number to view the current ranking.
     </footer>
-    <edit-tournament-dialog
+    <create-tournament-dialog
       v-if="currentTournament"
       v-model="createTournamentDialog"
       :tournament="currentTournament"
@@ -158,15 +172,15 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Tournament from '@/models/user/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
+import Tournament from '@/models/user/Tournament';
 
 @Component({
   components: {
-    'edit-tournament-dialog': CreateTournamentDialog,
+    'create-tournament-dialog': CreateTournamentDialog,
     'edit-password-dialog': EditPasswordDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
@@ -241,25 +255,23 @@ export default class AllTournamentView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getAllTournaments();
-      let closedTournaments = await RemoteServices.getClosedTournaments();
+      this.tournaments = await RemoteServices.getAllTournamentsForCourseExecution();
+      let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
       closedTournaments.map(t => {
         if (t.id) this.closedTournamentsId.push(t.id);
       });
-      this.tournaments.sort((a, b) => this.sortById(a, b));
+      this.tournaments.sort((a, b) => Tournament.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  sortById(a: Tournament, b: Tournament) {
-    if (a.id && b.id) return a.id > b.id ? 1 : -1;
-    else return 0;
-  }
-
-  openTournamentDashboard(tournament: Tournament) {
-    if (tournament) return '/student/tournament?id=' + tournament.id;
+  async openTournamentDashboard(tournament: Tournament) {
+    if (tournament)
+      await this.$router.push({
+        name: 'tournament-participants'
+      });
   }
 
   async openSolvedQuiz() {
@@ -290,53 +302,6 @@ export default class AllTournamentView extends Vue {
   onClosePasswordDialog() {
     this.editPasswordDialog = false;
     this.currentTournament = null;
-  }
-
-  getStateColor(tournament: Tournament) {
-    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
-      return 'orange';
-    else if (!tournament.isCanceled) return 'green';
-    else return 'red';
-  }
-
-  getStateName(tournament: Tournament) {
-    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
-      return 'FINISHED';
-    else if (!tournament.isCanceled) return 'AVAILABLE';
-    else return 'CANCELLED';
-  }
-
-  getEnrolledColor(enrolled: string) {
-    if (enrolled) return 'green';
-    else return 'red';
-  }
-
-  getEnrolledName(enrolled: string) {
-    if (enrolled) return 'YOU ARE IN';
-    else return 'YOU NEED TO JOIN';
-  }
-
-  getPrivateColor(privateTournament: boolean) {
-    if (privateTournament) return 'red';
-    else return 'green';
-  }
-
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
-  }
-
-  isNotEnrolled(tournamentToJoin: Tournament) {
-    return !tournamentToJoin.enrolled;
-  }
-
-  isPrivate(tournamentToJoin: Tournament) {
-    return tournamentToJoin.privateTournament;
-  }
-
-  isClosed(tournamentToJoin: Tournament) {
-    if (tournamentToJoin.id)
-      return this.closedTournamentsId.includes(tournamentToJoin.id);
   }
 
   async joinPrivateTournament(password: string) {

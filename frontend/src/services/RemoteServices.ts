@@ -739,12 +739,12 @@ export default class RemoteServices {
   }
 
   static async createTournament(
-    topicsID: Number[],
+    topicsId: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
     let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}?`;
-    for (let topicID of topicsID) {
-      path += 'topicsId=' + topicID + '&';
+    for (let topicId of topicsId) {
+      path += 'topicsId=' + topicId + '&';
     }
     path = path.substring(0, path.length - 1);
     return httpClient
@@ -757,7 +757,7 @@ export default class RemoteServices {
       });
   }
 
-  static getAllTournaments(): Promise<Tournament[]> {
+  static getAllTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getAllTournaments`
@@ -772,7 +772,7 @@ export default class RemoteServices {
       });
   }
 
-  static getOpenTournaments(): Promise<Tournament[]> {
+  static getOpenedTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getOpenTournaments`
@@ -787,7 +787,7 @@ export default class RemoteServices {
       });
   }
 
-  static getClosedTournaments(): Promise<Tournament[]> {
+  static getClosedTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
@@ -802,7 +802,7 @@ export default class RemoteServices {
       });
   }
 
-  static getUserTournaments(): Promise<Tournament[]> {
+  static getTournamentsByUserId(): Promise<Tournament[]> {
     return httpClient
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getUserTournaments`
@@ -852,12 +852,12 @@ export default class RemoteServices {
   }
 
   static async updateTournament(
-    topicsID: Number[],
+    topicsId: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
     let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/updateTournament?`;
-    for (let topicID of topicsID) {
-      path += 'topicsId=' + topicID + '&';
+    for (let topicId of topicsId) {
+      path += 'topicsId=' + topicId + '&';
     }
     path = path.substring(0, path.length - 1);
     return httpClient

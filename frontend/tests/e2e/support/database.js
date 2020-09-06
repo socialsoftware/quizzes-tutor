@@ -48,6 +48,8 @@ Cypress.Commands.add('updateTournamentStartTime', () => {
 
 Cypress.Commands.add('afterEachTournament', () => {
     dbCommand(`
+        DELETE FROM tournaments_topics WHERE topics_id = 82;
+        DELETE FROM tournaments_topics WHERE topics_id = 83;
         DELETE FROM topics_topic_conjunctions WHERE topics_id = 82;
         DELETE FROM topics_topic_conjunctions WHERE topics_id = 83;
         DELETE FROM topic_conjunctions WHERE id = 100;

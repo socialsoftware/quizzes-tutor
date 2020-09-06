@@ -49,13 +49,13 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="getStateColor(item.isCanceled)">
-          {{ getStateName(item.isCanceled) }}
+        <v-chip :color="item.getStateColor(closedTournamentsId)">
+          {{ item.getStateName(closedTournamentsId) }}
         </v-chip>
       </template>
       <template v-slot:item.privateTournament="{ item }">
-        <v-chip :color="getPrivateColor(item.privateTournament)">
-          {{ getPrivateName(item.privateTournament) }}
+        <v-chip :color="item.getPrivateColor()">
+          {{ item.getPrivateName() }}
         </v-chip>
       </template>
       <template v-slot:item.id="{ item }">
@@ -69,7 +69,7 @@
         </v-chip>
       </template>
       <template v-slot:item.action="{ item }">
-        <v-tooltip bottom v-if="!isNotEnrolled(item)">
+        <v-tooltip bottom v-if="!item.isNotEnrolled()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -89,7 +89,7 @@
       answers. <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's
       number to view the winners.
     </footer>
-    <edit-tournament-dialog
+    <create-tournament-dialog
       v-if="currentTournament"
       v-model="createTournamentDialog"
       :tournament="currentTournament"
@@ -108,12 +108,13 @@ import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopic
 
 @Component({
   components: {
-    'edit-tournament-dialog': CreateTournamentDialog,
+    'create-tournament-dialog': CreateTournamentDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
 })
 export default class ClosedTournamentView extends Vue {
   tournaments: Tournament[] = [];
+  closedTournamentsId: number[] = [];
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
   search: string = '';
@@ -167,21 +168,22 @@ export default class ClosedTournamentView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getClosedTournaments();
-      this.tournaments.sort((a, b) => this.sortById(a, b));
+      this.tournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
+      this.tournaments.sort((a, b) => Tournament.sortById(a, b));
+      this.tournaments.map(t => {
+        if (t.id) this.closedTournamentsId.push(t.id);
+      });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  sortById(a: Tournament, b: Tournament) {
-    if (a.id && b.id) return a.id > b.id ? 1 : -1;
-    else return 0;
-  }
-
-  openTournamentDashboard(tournament: Tournament) {
-    if (tournament) return '/student/tournament?id=' + tournament.id;
+  async openTournamentDashboard(tournament: Tournament) {
+    if (tournament)
+      await this.$router.push({
+        name: 'tournament-participants'
+      });
   }
 
   async openSolvedQuiz() {
@@ -202,30 +204,6 @@ export default class ClosedTournamentView extends Vue {
   onCloseDialog() {
     this.createTournamentDialog = false;
     this.currentTournament = null;
-  }
-
-  getStateColor(isCanceled: string) {
-    if (!isCanceled) return 'orange';
-    else return 'red';
-  }
-
-  getStateName(isCanceled: string) {
-    if (!isCanceled) return 'FINISHED';
-    else return 'CANCELLED';
-  }
-
-  getPrivateColor(privateTournament: boolean) {
-    if (privateTournament) return 'red';
-    else return 'green';
-  }
-
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
-  }
-
-  isNotEnrolled(tournamentToJoin: Tournament) {
-    return !tournamentToJoin.enrolled;
   }
 }
 </script>

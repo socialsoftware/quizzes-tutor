@@ -1,7 +1,6 @@
 import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
-import TopicConjunction from '@/models/management/TopicConjunction';
 
 export default class Tournament {
   id!: number;
@@ -12,8 +11,8 @@ export default class Tournament {
   isCanceled!: boolean;
   courseAcronym!: string;
   enrolled!: boolean;
-  topicConjunction!: TopicConjunction;
   topics!: String[];
+  topicsDto!: Topic[];
   participants!: User[];
   quizId!: number;
   privateTournament!: boolean;
@@ -29,19 +28,20 @@ export default class Tournament {
       this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 
-      this.topicConjunction = jsonObj.topicConjunction;
-      if (this.topicConjunction)
-        this.topicConjunction.topics.forEach((topic: Topic) => {
+      if (jsonObj.topicsDto) {
+        jsonObj.topicsDto.forEach((topic: Topic) => {
           if (!this.topics!.includes(topic.name)) {
             this.topics!.push(topic.name);
           }
         });
+      }
 
       this.participants = jsonObj.participants;
-      this.enrolled = false;
       this.quizId = jsonObj.quizId;
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
+
+      this.enrolled = false;
       if (user) {
         this.participants.forEach(pUser => {
           if (pUser.id == user.id) {
@@ -57,5 +57,58 @@ export default class Tournament {
         }
       }
     }
+  }
+
+  static sortById(a: Tournament, b: Tournament) {
+    if (a.id && b.id) return a.id > b.id ? 1 : -1;
+    else return 0;
+  }
+
+  getStateColor(closedTournamentsId: number[]) {
+    if (this.id && closedTournamentsId.includes(this.id)) return 'orange';
+    else if (!this.isCanceled) return 'green';
+    else return 'red';
+  }
+
+  getStateName(closedTournamentsId: number[]) {
+    if (this.id && closedTournamentsId.includes(this.id)) return 'FINISHED';
+    else if (!this.isCanceled) return 'AVAILABLE';
+    else return 'CANCELLED';
+  }
+
+  getEnrolledColor() {
+    if (this.enrolled) return 'green';
+    else return 'red';
+  }
+
+  getEnrolledName() {
+    if (this.enrolled) return 'YOU ARE IN';
+    else return 'YOU NEED TO JOIN';
+  }
+
+  getPrivateColor() {
+    if (this.privateTournament) return 'red';
+    else return 'green';
+  }
+
+  getPrivateName() {
+    if (this.privateTournament) return 'PRIVATE';
+    else return 'PUBLIC';
+  }
+
+  isNotEnrolled() {
+    return !this.enrolled;
+  }
+
+  isNotCanceled() {
+    return !this.isCanceled;
+  }
+
+  isPrivate() {
+    return this.privateTournament;
+  }
+
+  isClosed(closedTournamentsId: number[]) {
+    return closedTournamentsId.includes(this.id);
   }
 }

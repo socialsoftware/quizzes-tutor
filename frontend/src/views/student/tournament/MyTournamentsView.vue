@@ -49,18 +49,18 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="getStateColor(item)">
-          {{ getStateName(item) }}
+        <v-chip :color="item.getStateColor(closedTournamentsId)">
+          {{ item.getStateName(closedTournamentsId) }}
         </v-chip>
       </template>
       <template v-slot:item.enrolled="{ item }">
-        <v-chip :color="getEnrolledColor(item.enrolled)">
-          {{ getEnrolledName(item.enrolled) }}
+        <v-chip :color="item.getEnrolledColor()">
+          {{ item.getEnrolledName() }}
         </v-chip>
       </template>
       <template v-slot:item.privateTournament="{ item }">
-        <v-chip :color="getPrivateColor(item.privateTournament)">
-          {{ getPrivateName(item.privateTournament) }}
+        <v-chip :color="item.getPrivateColor()">
+          {{ item.getPrivateName() }}
         </v-chip>
       </template>
       <template v-slot:item.action="{ item }">
@@ -77,7 +77,7 @@
           </template>
           <span>Edit Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isNotCanceled(item)">
+        <v-tooltip bottom v-if="item.isNotCanceled()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -215,25 +215,23 @@ export default class MyTournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getUserTournaments();
-      let closedTournaments = await RemoteServices.getClosedTournaments();
+      this.tournaments = await RemoteServices.getTournamentsByUserId();
+      let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
       closedTournaments.map(t => {
         if (t.id) this.closedTournamentsId.push(t.id);
       });
-      this.tournaments.sort((a, b) => this.sortById(a, b));
+      this.tournaments.sort((a, b) => Tournament.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  sortById(a: Tournament, b: Tournament) {
-    if (a.id && b.id) return a.id > b.id ? 1 : -1;
-    else return 0;
-  }
-
-  openTournamentDashboard(tournament: Tournament) {
-    if (tournament) return '/student/tournament?id=' + tournament.id;
+  async openTournamentDashboard(tournament: Tournament) {
+    if (tournament)
+      await this.$router.push({
+        name: 'tournament-participants'
+      });
   }
 
   newTournament() {
@@ -260,7 +258,7 @@ export default class MyTournamentsView extends Vue {
   async onEditTournament(tournament: Tournament) {
     this.currentTournament = tournament;
     try {
-      this.tournaments = await RemoteServices.getUserTournaments();
+      this.tournaments = await RemoteServices.getTournamentsByUserId();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -273,50 +271,13 @@ export default class MyTournamentsView extends Vue {
     this.currentTournament = null;
   }
 
-  getStateColor(tournament: Tournament) {
-    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
-      return 'orange';
-    else if (!tournament.isCanceled) return 'green';
-    else return 'red';
-  }
-
-  getStateName(tournament: Tournament) {
-    if (tournament.id && this.closedTournamentsId.includes(tournament.id))
-      return 'FINISHED';
-    else if (!tournament.isCanceled) return 'AVAILABLE';
-    else return 'CANCELLED';
-  }
-
-  getEnrolledColor(enrolled: string) {
-    if (enrolled) return 'green';
-    else return 'red';
-  }
-
-  getEnrolledName(enrolled: string) {
-    if (enrolled) return 'YOU ARE IN';
-    else return 'YOU NEED TO JOIN';
-  }
-
-  getPrivateColor(privateTournament: boolean) {
-    if (privateTournament) return 'red';
-    else return 'green';
-  }
-
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
-  }
-
-  isNotCanceled(tournamentToCancel: Tournament) {
-    return !tournamentToCancel.isCanceled;
-  }
-
   async cancelTournament(tournamentToCancel: Tournament) {
     if (confirm('Are you sure you want to cancel this tournament?')) {
       const participants = tournamentToCancel.participants;
       tournamentToCancel.participants = [];
       try {
         await RemoteServices.cancelTournament(tournamentToCancel);
+        this.tournaments = await RemoteServices.getTournamentsByUserId();
       } catch (error) {
         await this.$store.dispatch('error', error);
         tournamentToCancel.participants = participants;
@@ -334,7 +295,7 @@ export default class MyTournamentsView extends Vue {
       try {
         if (tournamentToRemove.id)
           await RemoteServices.removeTournament(tournamentToRemove.id);
-        this.tournaments = await RemoteServices.getUserTournaments();
+        this.tournaments = await RemoteServices.getTournamentsByUserId();
       } catch (error) {
         await this.$store.dispatch('error', error);
         tournamentToRemove.participants = participants;
