@@ -67,10 +67,10 @@
               v-on="on"
               @click="showQuestionSubmissionDialog(item)"
               data-cy="ViewSubmission"
-              >visibility</v-icon
+              >question_answer</v-icon
             >
           </template>
-          <span>Show Question Submission</span>
+          <span>View Submission Status</span>
         </v-tooltip>
         <v-tooltip
           bottom

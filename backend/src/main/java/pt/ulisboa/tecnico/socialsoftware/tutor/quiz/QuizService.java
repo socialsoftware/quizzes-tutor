@@ -362,7 +362,7 @@ public class QuizService {
                 .stream()
                 .filter(question -> question.getQuizQuestions().isEmpty())
                 .collect(Collectors.toList())) {
-            questionService.deleteQuestion(question);
+            questionService.removeQuestion(question.getId());
         }
     }
 
