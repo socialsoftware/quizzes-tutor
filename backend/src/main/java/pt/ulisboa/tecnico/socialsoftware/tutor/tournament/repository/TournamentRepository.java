@@ -15,13 +15,13 @@ import java.util.Set;
 @Transactional
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<Tournament> getAllTournamentsForCourseExecutions(Integer courseExecutionId);
+    List<Tournament> getAllTournamentsForCourseExecution(Integer courseExecutionId);
 
     @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<Tournament> getOpenedTournamentsForCourseExecutions(Integer courseExecutionId);
+    List<Tournament> getOpenedTournamentsForCourseExecution(Integer courseExecutionId);
     
     @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<Tournament> getClosedTournamentsForCourseExecutions(Integer courseExecutionId);
+    List<Tournament> getClosedTournamentsForCourseExecution(Integer courseExecutionId);
     
     @Query(value = "SELECT * FROM tournaments t WHERE t.user_id = :user_id", nativeQuery = true)
     List<Tournament> getTournamentsByUserId(Integer user_id);

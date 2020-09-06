@@ -20,7 +20,7 @@ class GetUserTournamentsTest extends TournamentTest {
         def tournamentDto2 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
-        def result = tournamentService.getUserTournaments(user1)
+        def result = tournamentService.getTournamentsByUserId(user1.getId())
 
         then:
         tournamentRepository.count() == 2L
@@ -36,7 +36,7 @@ class GetUserTournamentsTest extends TournamentTest {
         def tournamentDto3 = createTournament(user2, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
-        def result = tournamentService.getUserTournaments(user1)
+        def result = tournamentService.getTournamentsByUserId(user1.getId())
 
         then:
         tournamentRepository.count() == 3L
