@@ -706,10 +706,7 @@ export default class RemoteServices {
 
   static async createReview(review: Review): Promise<Review> {
     return httpClient
-      .post(
-        `/submissions/${review.questionSubmissionId}/reviews?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`,
-        review
-      )
+      .post(`/submissions/${review.questionSubmissionId}/reviews`, review)
       .then(response => {
         return new Review(response.data);
       })
@@ -736,9 +733,7 @@ export default class RemoteServices {
     inReview: boolean
   ) {
     return httpClient
-      .put(
-        `/submissions/${questionSubmissionId}/reviews?inReview=${inReview}&executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
-      )
+      .put(`/submissions/${questionSubmissionId}/reviews?inReview=${inReview}`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -780,9 +775,7 @@ export default class RemoteServices {
     questionSubmissionId: number
   ): Promise<Review[]> {
     return httpClient
-      .get(
-        `/submissions/${questionSubmissionId}/reviews?executionId=${Store.getters.getCurrentCourse.courseExecutionId}`
-      )
+      .get(`/submissions/${questionSubmissionId}/reviews`)
       .then(response => {
         return response.data.map((review: any) => {
           return new Review(review);

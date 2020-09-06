@@ -109,6 +109,11 @@ public class  QuestionSubmissionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateQuestionSubmissionTopics(Integer questionSubmissionId, TopicDto[] topics) {
         Integer questionId = questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
+
+        if (questionSubmission.getStatus() != QuestionSubmission.Status.IN_REVISION) {
+            throw new TutorException(CANNOT_EDIT_REVIEWED_QUESTION);
+        }
 
         questionService.updateQuestionTopics(questionId, topics);
     }

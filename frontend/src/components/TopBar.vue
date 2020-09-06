@@ -364,7 +364,7 @@
             <v-list-item-action>
               <v-icon>fas fa-user-edit</v-icon>
             </v-list-item-action>
-            <v-list-item-content>My Question Submissions</v-list-item-content>
+            <v-list-item-content>Submissions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

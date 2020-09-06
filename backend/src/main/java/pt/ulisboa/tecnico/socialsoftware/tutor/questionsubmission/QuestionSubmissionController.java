@@ -29,8 +29,8 @@ public class QuestionSubmissionController {
     }
 
     @PostMapping("/submissions/{questionSubmissionId}/reviews")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS'))")
-    public ReviewDto createReview(@Valid @RequestParam int executionId, @PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
+    public ReviewDto createReview(@PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
         return questionSubmissionService.createReview(reviewDto);
     }
 
@@ -53,8 +53,8 @@ public class QuestionSubmissionController {
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/reviews")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public void toggleInReviewStatus(@PathVariable int questionSubmissionId, @Valid @RequestParam int executionId, @Valid @RequestParam boolean inReview) {
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void toggleInReviewStatus(@PathVariable int questionSubmissionId,@Valid @RequestParam boolean inReview) {
         questionSubmissionService.toggleInReviewStatus(questionSubmissionId, inReview);
     }
 
@@ -76,8 +76,8 @@ public class QuestionSubmissionController {
     }
 
     @GetMapping("/submissions/{questionSubmissionId}/reviews")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS'))")
-    public List<ReviewDto> getQuestionSubmissionReviews(@PathVariable int questionSubmissionId, @Valid @RequestParam int executionId) {
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public List<ReviewDto> getQuestionSubmissionReviews(@PathVariable int questionSubmissionId) {
         return questionSubmissionService.getQuestionSubmissionReviews(questionSubmissionId);
     }
 

@@ -136,7 +136,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.createReview(this.createReview(status));
-      this.forceRerender();
+      this.$emit('dialog', false);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
