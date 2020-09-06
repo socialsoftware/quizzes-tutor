@@ -22,6 +22,7 @@ import java.time.LocalDateTime
 class TournamentTest extends SpockTest {
     public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
 
+    def assessment
     def topic1
     def topic2
     def topics = new HashSet<Integer>()
@@ -78,7 +79,7 @@ class TournamentTest extends SpockTest {
     }
 
     def createAssessmentWithTopicConjunction(String title, Assessment.Status status, CourseExecution courseExecution) {
-        def assessment = new Assessment()
+        assessment = new Assessment()
         assessment.setTitle(title)
         assessment.setStatus(status)
         assessment.setCourseExecution(courseExecution)

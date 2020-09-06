@@ -4,10 +4,13 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class QuizTournamentGenerateTest extends TournamentTest {
@@ -21,7 +24,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         createQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
     }
 
-    def "1 student solve a tournament" () {
+    def "generate a quiz with 1 student solving" () {
         given:
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
 
@@ -38,7 +41,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
     }
 
-    def "2 student solve a tournament" () {
+    def "generate a quiz with 2 student solving" () {
         given:
         def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
         and:
@@ -58,6 +61,21 @@ class QuizTournamentGenerateTest extends TournamentTest {
         result.getType() == Quiz.QuizType.TOURNAMENT
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
+    }
+
+    def "disabling assessment for already created tournament" () {
+        given:
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        and:
+        assessment.setStatus(Assessment.Status.DISABLED)
+
+        when:
+        tournamentService.solveQuiz(user1.getId(), tournamentDto)
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == NOT_ENOUGH_QUESTIONS_TOURNAMENT
+        quizRepository.count() == 0L
     }
 
     @TestConfiguration

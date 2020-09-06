@@ -129,7 +129,7 @@ public class StatementService {
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
         if (quizDetails.getTopicConjunction() != null) {
-            availableQuestions = filterByTopicConjunctionTournament(availableQuestions, quizDetails, courseExecution);
+            availableQuestions = filterByTopicsTournament(availableQuestions, quizDetails, courseExecution);
         } else {
             availableQuestions = new ArrayList<>();
         }
@@ -329,7 +329,7 @@ public class StatementService {
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
 
-    public List<Question> filterByTopicConjunctionTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, CourseExecution courseExecution) {
+    public List<Question> filterByTopicsTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, CourseExecution courseExecution) {
         List<Integer> topicsIds = new ArrayList<>();
 
         quizDetails.getTopicConjunction().getTopics().forEach(topicDto -> topicsIds.add(topicDto.getId()));
