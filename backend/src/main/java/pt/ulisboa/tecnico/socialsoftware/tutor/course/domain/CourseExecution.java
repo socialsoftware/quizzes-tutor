@@ -1,10 +1,11 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.course;
+package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
@@ -44,6 +45,9 @@ public class CourseExecution implements DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Assessment> assessments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
 
     public CourseExecution() {
     }
@@ -142,6 +146,12 @@ public class CourseExecution implements DomainEntity {
         assessments.add(assessment);
     }
 
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
     @Override
     public String toString() {
         return "CourseExecution{" +
@@ -164,14 +174,39 @@ public class CourseExecution implements DomainEntity {
 
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
-    public int getNumberOfTeachers() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.TEACHER)).count();
+    public int getNumberOfActiveTeachers() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.TEACHER) &&
+                        user.isActive())
+                .count();
     }
 
-    public int getNumberOfStudents() {
-        return (int) this.users.stream().filter(user -> user.getRole().equals(User.Role.STUDENT)).count();
+    public int getNumberofInactiveTeachers() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.TEACHER) &&
+                        !user.isActive())
+                .count();
+    }
+
+    public int getNumberOfActiveStudents() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.STUDENT) &&
+                        user.isActive())
+                .count();
+    }
+
+    public int getNumberOfInactiveStudents() {
+        return (int) this.users.stream()
+                .filter(user ->
+                        user.getRole().equals(User.Role.STUDENT) &&
+                        !user.isActive())
+                .count();
     }
 
     public int getNumberOfQuizzes() {

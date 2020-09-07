@@ -13,8 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
@@ -36,7 +36,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

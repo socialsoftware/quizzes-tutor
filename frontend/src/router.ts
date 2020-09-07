@@ -3,6 +3,8 @@ import Router from 'vue-router';
 import Store from '@/store';
 
 import LoginView from '@/views/LoginView.vue';
+import ExternalLoginView from '@/views/ExternalLoginView.vue';
+import RegistrationConfirmationView from '@/views/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
@@ -28,6 +30,9 @@ import DashboardView from '@/views/student/dashboard/DashboardView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import DiscussionsView from '@/views/student/discussions/DiscussionView.vue';
 
+import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
+import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+
 Vue.use(Router);
 
 const APP_NAME = process.env.VUE_APP_NAME || '';
@@ -47,7 +52,25 @@ let router = new Router({
       name: 'login',
       component: LoginView,
       meta: {
-        title: APP_NAME + ' - Login',
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login Fenix',
+      }
+    },
+    {
+      path: '/login/external',
+      name: 'external-login',
+      component: ExternalLoginView,
+      meta: {
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login External',
+      }
+    },
+    {
+      path: '/registration/confirmation',
+      name: 'registration-confirmation',
+      component: RegistrationConfirmationView,
+      meta: {
+        title: APP_NAME + ' - Registration Confirmation',
         requiredAuth: 'None'
       }
     },
@@ -116,6 +139,24 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions/students',
+          name: 'sort-by-student-submissions',
+          component: SortQuestionSubmissionsByStudentView,
+          meta: {
+            title: APP_NAME + ' - Sort by Student Submissions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Teacher'
           }
         }
@@ -202,8 +243,17 @@ let router = new Router({
           path: 'discussions',
           name: 'discussions',
           component: DiscussionsView,
+          meta:
+            {
+              title: APP_NAME + ' - Discussion',
+            }
+        },
+        {
+          path: 'submissions',
+          name: 'student-submissions',
+          component: QuestionSubmissionView,
           meta: {
-            title: APP_NAME + ' - Discussion',
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Student'
           }
         }

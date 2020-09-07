@@ -4,8 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -19,9 +19,9 @@ class RemoveCourseExecutionsTest extends SpockTest {
     def setup() {
         existingCourseExecutions = courseExecutionRepository.findAll().size()
 
-        courseExecutionTecnico = courseExecution
+        courseExecutionTecnico = externalCourseExecution
 
-        courseExecutionExternal = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecutionExternal = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecutionExternal)
      }
 

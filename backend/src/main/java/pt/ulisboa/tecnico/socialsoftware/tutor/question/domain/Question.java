@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -22,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 public class Question implements DomainEntity {
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, SUBMITTED
     }
 
     @Id
@@ -142,7 +143,7 @@ public class Question implements DomainEntity {
 
         int index = 0;
         for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
+            if (optionDto.getId() == null || optionDto.getId() == 0) { // null option id might be converted to zero during testing
                 optionDto.setSequence(index++);
                 new Option(optionDto).setQuestion(this);
             } else {
@@ -327,11 +328,16 @@ public class Question implements DomainEntity {
         getTopics().clear();
     }
 
+<<<<<<< HEAD
     public void addDiscussion(Discussion discussion) {
         this.discussions.add(discussion);
     }
 
     public Set<Discussion> getDiscussions() {
         return this.discussions;
+=======
+    public boolean isInSubmission() {
+        return status == Status.SUBMITTED;
+>>>>>>> quizzes-tutor/develop
     }
 }

@@ -8,16 +8,22 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "users",
@@ -37,6 +43,8 @@ public class User implements UserDetails, DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private boolean active;
     
     @Column(unique=true)
     private String username;
@@ -45,6 +53,12 @@ public class User implements UserDetails, DomainEntity {
 
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
+    private String password;
+
+    private String confirmationToken = "";
+    private LocalDateTime tokenGenerationDate;
+
+    private String email;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
@@ -94,17 +108,28 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
+
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     public User() {
     }
 
-    public User(String name, String username, User.Role role) {
+    public User(String name, String username, String email, User.Role role, boolean isActive, boolean isAdmin){
         setName(name);
         setUsername(username);
         setRole(role);
+        checkRole(role, isActive);
+        setEmail(email);
+        setActive(isActive);
+        setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
+
     }
 
     @Override
@@ -200,7 +225,15 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void setRole(Role role) {
+        if (role == null)
+            throw new TutorException(INVALID_ROLE);
+
         this.role = role;
+    }
+
+    public void checkRole(Role role, boolean isActive) {
+        if (!isActive && (!(role.equals(User.Role.STUDENT) || role.equals(User.Role.TEACHER))))
+            throw new TutorException(INVALID_ROLE, role.toString());
     }
 
     public LocalDateTime getCreationDate() {
@@ -229,6 +262,61 @@ public class User implements UserDetails, DomainEntity {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
+        this.questionSubmissions = questionSubmissions; 
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+            throw new TutorException(INVALID_EMAIL, email);
+
+        this.email = email;
+    }
+
+    public LocalDateTime getTokenGenerationDate() {
+        return tokenGenerationDate;
+    }
+
+    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
+        this.tokenGenerationDate = tokenGenerationDate;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void checkConfirmationToken(String token) {
+        if (!token.equals(getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -457,6 +545,18 @@ public class User implements UserDetails, DomainEntity {
         course.addUser(this);
     }
 
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Review> getReviews() { return reviews; }
+
+    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+
+    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
@@ -467,11 +567,6 @@ public class User implements UserDetails, DomainEntity {
             list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         return list;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
     }
 
     @Override
@@ -542,5 +637,13 @@ public class User implements UserDetails, DomainEntity {
                 .orElse(null);
     }
 
+    public void remove() {
+        if (active) {
+            throw new TutorException(USER_IS_ACTIVE, getUsername());
+        }
+
+        courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
+    }
 
 }

@@ -7,7 +7,7 @@
         aria-label="Menu"
       />
 
-      <v-toolbar-title>
+      <v-toolbar-title data-cy="homeLink">
         <v-btn
           dark
           active-class="no-active"
@@ -47,7 +47,7 @@
 
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn v-on="on" text dark data-cy="managementMenuButton">
               Management
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -61,7 +61,21 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/topics">
+            <v-list-item
+              to="/management/submissions"
+              data-cy="submissionTeacherMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-user-edit</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Submissions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              to="/management/topics"
+              data-cy="manageTopicsMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>category</v-icon>
               </v-list-item-action>
@@ -162,6 +176,17 @@
           </v-list>
         </v-menu>
 
+        <v-btn
+          to="/student/submissions"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="submissionStudentMenuButton"
+        >
+          Submissions
+          <v-icon>question_answer</v-icon>
+        </v-btn>
+
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
@@ -178,6 +203,27 @@
           <v-icon>fa fa-book</v-icon>
         </v-btn>
 
+        <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Login
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item :href="fenixUrl">
+              <v-list-item-content>
+                <v-list-item-title>Fenix Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/login/external">
+              <v-list-item-content>
+                <v-list-item-title>External Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
         <v-btn
           v-if="isLoggedIn"
           @click="logout"
@@ -187,10 +233,6 @@
         >
           Logout
           <v-icon>fas fa-sign-out-alt</v-icon>
-        </v-btn>
-
-        <v-btn v-else :href="fenixUrl" text dark>
-          Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
@@ -240,6 +282,14 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Questions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Submissions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/topics">
@@ -323,6 +373,13 @@
               <v-icon>done</v-icon>
             </v-list-item-action>
             <v-list-item-content>Solved Quizzes</v-list-item-content>
+          </v-list-item>
+
+          <v-list-item to="/student/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Submissions</v-list-item-content>
           </v-list-item>
 
           <v-list-item to="/student/stats">

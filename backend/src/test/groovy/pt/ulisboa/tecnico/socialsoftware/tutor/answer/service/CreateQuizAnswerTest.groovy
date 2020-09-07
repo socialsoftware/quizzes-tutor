@@ -13,16 +13,15 @@ class CreateQuizAnswerTest extends SpockTest {
 
 
     def setup() {
-        User user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
-
+        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         Quiz quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
 
