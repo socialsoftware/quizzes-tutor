@@ -11,14 +11,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class RemoveQuestionTest extends SpockTest {
     def question
     def optionOK
     def optionKO
+    def teacher
 
     def setup() {
         def image = new Image()
@@ -110,6 +113,26 @@ class RemoveQuestionTest extends SpockTest {
         topicRepository.count() == 2L
         topicOne.getQuestions().size() == 0
         topicTwo.getQuestions().size() == 0
+    }
+
+    def "remove a question that was submitted"() {
+        given: "a student"
+        def student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        userRepository.save(student)
+
+        and: "a questionSubmission"
+        def questionSubmission = new QuestionSubmission()
+        questionSubmission.setQuestion(question)
+        questionSubmission.setSubmitter(student)
+        questionSubmission.setCourseExecution(externalCourseExecution)
+        questionSubmissionRepository.save(questionSubmission)
+
+        when:
+        questionService.removeQuestion(question.getId())
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.CANNOT_DELETE_SUBMITTED_QUESTION
     }
 
     @TestConfiguration

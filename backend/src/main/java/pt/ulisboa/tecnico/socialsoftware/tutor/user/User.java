@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -55,6 +57,12 @@ public class User implements DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
@@ -158,6 +166,10 @@ public class User implements DomainEntity {
         this.courseExecutions = courseExecutions;
     }
 
+    public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
+        this.questionSubmissions = questionSubmissions; 
+    }
+    
     public String getEmail() {
         return authUser.getEmail();
     }
@@ -387,6 +399,18 @@ public class User implements DomainEntity {
         course.addUser(this);
     }
 
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Review> getReviews() { return reviews; }
+
+    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+
+    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+
     public List<Question> filterQuestionsByStudentModel(Integer numberOfQuestions, List<Question> availableQuestions) {
         List<Question> studentAnsweredQuestions = getQuizAnswers().stream()
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
@@ -441,6 +465,7 @@ public class User implements DomainEntity {
         }
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
 }

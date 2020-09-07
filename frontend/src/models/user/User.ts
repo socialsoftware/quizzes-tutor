@@ -1,7 +1,7 @@
 import Course from '@/models/user/Course';
 
 export default class User {
-  id!: number;
+  id: number | null = null;
   name!: string;
   username!: string;
   email!: string;
