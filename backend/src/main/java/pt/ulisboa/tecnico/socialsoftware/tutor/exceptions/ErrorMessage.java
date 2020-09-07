@@ -24,6 +24,13 @@ public enum ErrorMessage {
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
+    COURSE_EXECUTION_NOT_EXTERNAL("The course execution with id %d is not external"),
+    INVALID_COURSE_EXECUTION_REQUEST_PARAMETER("The received course execution parameter \"%s\" is invalid"),
+    INVALID_EMAIL("The mail %s is invalid."),
+    NO_USER_NAME("User requires a name"),
+    NO_USER_USERNAME("User requires a username"),
+    INVALID_PASSWORD("The password %s is invalid."),
+    INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
@@ -34,7 +41,15 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
+    USER_ALREADY_ACTIVE("User is already active with username %s"),
+    USER_IS_INACTIVE("User state is inactive: username %s"),
+    USER_IS_ACTIVE("User state is active: username %s"),
+    INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
+    EXPIRED_CONFIRMATION_TOKEN("Expired confirmation token"),
+    INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
+    INVALID_PARAMETERS("Invalid parameters"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
     USERNAME_NOT_FOUND("Username %d not found"),
@@ -73,11 +88,26 @@ public enum ErrorMessage {
     AUTHENTICATION_ERROR("Authentication Error"),
     FENIX_CONFIGURATION_ERROR("Incorrect server configuration files for fenix"),
 
+    QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
+    QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),
+    QUESTION_SUBMISSION_MISSING_COURSE("Question submission is not assigned to a course"),
+    REVIEW_MISSING_COMMENT("Review must have comment"),
+    REVIEW_MISSING_QUESTION_SUBMISSION("Review is missing associated question submission"),
+    REVIEW_MISSING_USER("Review is missing associated user"),
+    INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
+    QUESTION_SUBMISSION_NOT_FOUND("Question submission not found with id %d"),
+    CANNOT_DELETE_REVIEWED_QUESTION("Question submission already in review or reviewed by teacher cannot be deleted"),
+    CANNOT_DELETE_SUBMITTED_QUESTION("Question submission can not be deleted by teacher"),
+    CANNOT_EDIT_REVIEWED_QUESTION("Question submission in review by teacher cannot be edited"),
+    CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
     CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
-    CANNOT_OPEN_FILE("Cannot open file");
+    CANNOT_OPEN_FILE("Cannot open file"),
+
+    INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
+    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d");
 
 
     public final String label;

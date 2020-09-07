@@ -7,18 +7,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class CourseService {
@@ -27,6 +31,10 @@ public class CourseService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
 
     @Retryable(
             value = { SQLException.class },
@@ -157,5 +165,62 @@ public class CourseService {
             courseExecution.setStatus(CourseExecution.Status.ACTIVE);
             return courseExecutionRepository.save(courseExecution);
         });
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
+        CourseExecution execution = getExternalCourseExecution(courseExecutionId);
+        return execution.getStudents().stream()
+                .sorted(Comparator.comparing(User::getUsername))
+                .map(ExternalUserDto::new)
+                .collect(Collectors.toList());
+    }
+
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
+        CourseExecution execution = courseExecutionRepository
+                .findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+        checkExternalExecution(execution);
+        return execution;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public CourseDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
+        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
+        deleteUsersOfUserIds(usersId, courseExecution);
+        return new CourseDto(courseExecution);
+    }
+
+    private void deleteUsersOfUserIds(List<Integer> usersId, CourseExecution courseExecution) {
+        usersId = getExecutionFilteredIds(usersId, courseExecution);
+        deleteUsers(usersId);
+    }
+
+    private void deleteUsers(List<Integer> usersId) {
+        for (Integer id : usersId) {
+            User user = userRepository
+                    .findById(id)
+                    .orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
+            user.remove();
+            userRepository.delete(user);
+        }
+    }
+
+    private List<Integer> getExecutionFilteredIds(List<Integer> usersId, CourseExecution courseExecution) {
+        List<Integer> executionUserIdList = courseExecution.getUsers().stream()
+                .map(User::getId)
+                .collect(Collectors.toList());
+        return usersId.stream()
+                .filter(executionUserIdList::contains)
+                .collect(Collectors.toList());
+    }
+
+    private void checkExternalExecution(CourseExecution courseExecution) {
+        if (!courseExecution.getType().equals(Course.Type.EXTERNAL)) {
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);
+        }
     }
 }

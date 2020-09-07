@@ -23,21 +23,21 @@ class RemoveTopicTest extends SpockTest {
     def setup() {
         topicOne = new Topic()
         topicOne.setName(TOPIC_1_NAME)
-        topicOne.setCourse(course)
+        topicOne.setCourse(externalCourse)
         topicRepository.save(topicOne)
 
         topicTwo = new Topic()
         topicTwo.setName(TOPIC_2_NAME)
-        topicTwo.setCourse(course)
+        topicTwo.setCourse(externalCourse)
         topicRepository.save(topicTwo)
 
         topicThree = new Topic()
         topicThree.setName(TOPIC_3_NAME)
-        topicThree.setCourse(course)
+        topicThree.setCourse(externalCourse)
         topicRepository.save(topicThree)
 
         question = new Question()
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setTitle("Question Title")
         question.setContent("Question Content")
         question.addTopic(topicOne)

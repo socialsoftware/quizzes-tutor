@@ -20,8 +20,9 @@ class FindQuestionsTest extends SpockTest {
     def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
     }
@@ -35,7 +36,7 @@ class FindQuestionsTest extends SpockTest {
         question.setStatus(Question.Status.AVAILABLE)
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         def questionDetails = new MultipleChoiceQuestion()
         question.setQuestionDetails(questionDetails)
         questionDetailsRepository.save(questionDetails)
@@ -66,7 +67,7 @@ class FindQuestionsTest extends SpockTest {
         Quiz quiz = new Quiz()
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setKey(1)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quizRepository.save(quiz)
 
         QuizQuestion quizQuestion= new QuizQuestion()
@@ -97,7 +98,7 @@ class FindQuestionsTest extends SpockTest {
         answerDetailsRepository.save(answerDetails)
 
         when:
-        def result = questionService.findQuestions(course.getId())
+        def result = questionService.findQuestions(externalCourse.getId())
 
         then: "the returned data are correct"
         result.size() == 1

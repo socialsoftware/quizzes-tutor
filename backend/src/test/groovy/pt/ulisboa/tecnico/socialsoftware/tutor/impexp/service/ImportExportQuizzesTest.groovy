@@ -33,8 +33,10 @@ class ImportExportQuizzesTest extends SpockTest {
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
+
         questionDto.getQuestionDetailsDto().setOptions(options)
-        questionDto = questionService.createQuestion(course.getId(), questionDto)
+        questionDto = questionService.createQuestion(externalCourse.getId(), questionDto)
+
 
         def quizDto = new QuizDto()
         quizDto.setKey(1)
@@ -49,7 +51,7 @@ class ImportExportQuizzesTest extends SpockTest {
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
         quizDto.setType(Quiz.QuizType.EXAM.toString())
-        quiz = quizService.createQuiz(courseExecution.getId(), quizDto)
+        quiz = quizService.createQuiz(externalCourseExecution.getId(), quizDto)
 
         quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
     }

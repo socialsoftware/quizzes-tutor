@@ -3,6 +3,7 @@
     <top-bar />
     <div class="scrollbar">
       <error-message />
+      <notification />
       <loading />
       <router-view />
     </div>
@@ -14,6 +15,7 @@ import { Component, Vue } from 'vue-property-decorator';
 import axios from 'axios';
 import TopBar from '@/components/TopBar.vue';
 import ErrorMessage from '@/components/ErrorMessage.vue';
+import Notification from '@/components/Notification.vue';
 import Loading from '@/components/Loading.vue';
 import '@/assets/css/_global.scss';
 import '@/assets/css/_scrollbar.scss';
@@ -21,7 +23,7 @@ import '@/assets/css/_question.scss';
 require('typeface-roboto');
 
 @Component({
-  components: { TopBar, ErrorMessage, Loading }
+  components: { TopBar, ErrorMessage, Notification, Loading }
 })
 export default class App extends Vue {
   created() {

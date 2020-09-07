@@ -27,7 +27,7 @@ class UpdateTopicsTest extends SpockTest {
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent("Question Content")
-        question.setCourse(course)
+        question.setCourse(externalCourse)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_1_NAME)
@@ -36,8 +36,8 @@ class UpdateTopicsTest extends SpockTest {
         topicDtoThree = new TopicDto()
         topicDtoThree.setName(TOPIC_3_NAME)
 
-        topicOne = new Topic(course, topicDtoOne)
-        topicTwo = new Topic(course, topicDtoTwo)
+        topicOne = new Topic(externalCourse, topicDtoOne)
+        topicTwo = new Topic(externalCourse, topicDtoTwo)
         question.getTopics().add(topicOne)
         topicOne.getQuestions().add(question)
         question.getTopics().add(topicTwo)
@@ -46,7 +46,7 @@ class UpdateTopicsTest extends SpockTest {
         topicRepository.save(topicOne)
         topicRepository.save(topicTwo)
 
-        topicThree = new Topic(course, topicDtoThree)
+        topicThree = new Topic(externalCourse, topicDtoThree)
         topicRepository.save(topicThree)
     }
 

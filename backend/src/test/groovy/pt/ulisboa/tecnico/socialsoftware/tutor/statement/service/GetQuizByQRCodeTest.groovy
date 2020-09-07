@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -24,16 +24,16 @@ class GetQuizByQRCodeTest extends SpockTest {
     def question
 
     def setup() {
-        courseDto = new CourseDto(courseExecution)
+        courseDto = new CourseDto(externalCourseExecution)
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         question = new Question()
         question.setKey(1)
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         def questionDetails = new MultipleChoiceQuestion()
@@ -48,7 +48,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -94,7 +94,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -130,7 +130,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -168,7 +168,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -220,7 +220,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -261,7 +261,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())

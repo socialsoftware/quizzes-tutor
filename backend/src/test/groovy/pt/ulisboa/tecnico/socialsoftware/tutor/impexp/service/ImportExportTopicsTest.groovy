@@ -30,15 +30,15 @@ class ImportExportTopicsTest extends SpockTest {
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
 
-        questionDto = questionService.createQuestion(course.id, questionDto)
+        questionDto = questionService.createQuestion(externalCourse.id, questionDto)
 
         topicDtoOne = new TopicDto()
         topicDtoOne.setName(TOPIC_1_NAME)
         topicDtoTwo = new TopicDto()
         topicDtoTwo.setName(TOPIC_2_NAME)
 
-        topicDtoOne = topicService.createTopic(course.id, topicDtoOne)
-        topicDtoTwo = topicService.createTopic(course.id, topicDtoTwo)
+        topicDtoOne = topicService.createTopic(externalCourse.id, topicDtoOne)
+        topicDtoTwo = topicService.createTopic(externalCourse.id, topicDtoTwo)
 
         TopicDto[] topics = [topicDtoOne, topicDtoTwo]
         questionService.updateQuestionTopics(questionDto.getId(), topics)

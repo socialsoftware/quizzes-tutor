@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -28,7 +28,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 public class Question implements DomainEntity {
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, SUBMITTED
     }
 
     public static class QuestionTypes {
@@ -328,4 +328,7 @@ public class Question implements DomainEntity {
                 '}';
     }
 
+    public boolean isInSubmission() {
+        return status == Status.SUBMITTED;
+    }
 }

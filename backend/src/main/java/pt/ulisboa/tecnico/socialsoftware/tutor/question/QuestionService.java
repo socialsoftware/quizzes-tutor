@@ -7,8 +7,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExportVisitor;
@@ -18,8 +18,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -33,8 +36,7 @@ import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuestionService {
@@ -60,6 +62,12 @@ public class QuestionService {
     @Autowired
     private OptionRepository optionRepository;
 
+    @Autowired
+    private QuestionSubmissionService questionSubmissionService;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
+
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -70,8 +78,16 @@ public class QuestionService {
     }
 
     @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
+          value = { SQLException.class },
+          backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
+        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionByKey(Integer key) {
         return questionRepository.findByKey(key).map(QuestionDto::new)
@@ -83,7 +99,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -119,13 +135,18 @@ public class QuestionService {
         return new QuestionDto(question);
     }
 
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuestion(Integer questionId) {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+        QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
+
+        if (questionSubmission != null) {
+            throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
+        }
+
         question.remove();
         questionRepository.delete(question);
     }
@@ -254,10 +275,11 @@ public class QuestionService {
         quizQuestionRepository.delete(quizQuestion);
 
         if (question.getQuizQuestions().isEmpty()) {
-            this.deleteQuestion(question);
+            this.removeQuestion(question.getId());
         }
     }
 
+    // TODO: might not be needed.
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))

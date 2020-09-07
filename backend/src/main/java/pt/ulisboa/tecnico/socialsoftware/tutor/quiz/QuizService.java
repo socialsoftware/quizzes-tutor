@@ -15,10 +15,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.CSVQuizExportVisitor;
@@ -357,7 +357,7 @@ public class QuizService {
                 .stream()
                 .filter(question -> question.getQuizQuestions().isEmpty())
                 .collect(Collectors.toList())) {
-                questionService.deleteQuestion(question);
+            questionService.removeQuestion(question.getId());
         }
     }
 

@@ -9,10 +9,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @DataJpaTest
 class ImportExportQuestionsTest extends SpockTest {
     def questionId
+    def teacher
 
     def setup() {
         def questionDto = new QuestionDto()
@@ -39,7 +41,7 @@ class ImportExportQuestionsTest extends SpockTest {
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
 
-        questionId = questionService.createQuestion(course.getId(), questionDto).getId()
+        questionId = questionService.createQuestion(externalCourse.getId(), questionDto).getId()
     }
 
     def 'export and import questions to xml'() {
@@ -53,8 +55,8 @@ class ImportExportQuestionsTest extends SpockTest {
         questionService.importQuestionsFromXml(questionsXml)
 
         then:
-        questionRepository.findQuestions(course.getId()).size() == 1
-        def questionResult = questionService.findQuestions(course.getId()).get(0)
+        questionRepository.findQuestions(externalCourse.getId()).size() == 1
+        def questionResult = questionService.findQuestions(externalCourse.getId()).get(0)
         questionResult.getKey() == null
         questionResult.getTitle() == QUESTION_1_TITLE
         questionResult.getContent() == QUESTION_1_CONTENT
