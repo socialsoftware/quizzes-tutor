@@ -328,16 +328,13 @@ public class Question implements DomainEntity {
         getTopics().clear();
     }
 
-<<<<<<< HEAD
     public void addDiscussion(Discussion discussion) {
         this.discussions.add(discussion);
     }
 
     public Set<Discussion> getDiscussions() {
         return this.discussions;
-=======
     public boolean isInSubmission() {
         return status == Status.SUBMITTED;
->>>>>>> quizzes-tutor/develop
     }
 }
