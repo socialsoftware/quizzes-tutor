@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
@@ -32,8 +34,9 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
-        student.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        ((AuthExternalUser)student.authUser).setPassword(USER_1_PASSWORD)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
