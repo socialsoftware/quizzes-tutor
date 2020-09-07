@@ -31,14 +31,14 @@ class GiveReplyTest extends SpockTest {
     def discussionDto
 
     def setup(){
-        student = new User(USER_1_NAME,USER_1_USERNAME, User.Role.STUDENT)
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
 
-        teacher = new User(USER_2_NAME,USER_2_USERNAME, User.Role.TEACHER)
+        teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(teacher)
 
         question1 = new Question()
-        question1.setCourse(course)
+        question1.setCourse(externalCourse)
         question1.setTitle("Question title")
         question1.setContent("Question Content")
         questionRepository.save(question1)

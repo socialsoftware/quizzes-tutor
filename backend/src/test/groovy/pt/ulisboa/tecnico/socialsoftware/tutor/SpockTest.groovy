@@ -15,6 +15,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -30,9 +33,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmis
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 import spock.lang.Specification
@@ -194,16 +194,6 @@ class SpockTest extends Specification {
     UserService userService
 
     @Autowired
-    DiscussionRepository discussionRepository
-
-    @Autowired
-    DiscussionService discussionService
-
-    @Autowired
-    ReplyRepository replyRepository
-
-    Course course
-    CourseExecution courseExecution
     QuestionSubmissionService questionSubmissionService
 
     @Autowired
@@ -220,6 +210,15 @@ class SpockTest extends Specification {
 
     @Autowired
     PasswordEncoder passwordEncoder
+
+    @Autowired
+    DiscussionRepository discussionRepository
+
+    @Autowired
+    DiscussionService discussionService
+
+    @Autowired
+    ReplyRepository replyRepository
 
     Course externalCourse
     @Shared

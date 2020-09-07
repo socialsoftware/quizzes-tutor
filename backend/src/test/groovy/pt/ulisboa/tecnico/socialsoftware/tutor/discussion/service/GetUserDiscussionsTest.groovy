@@ -26,11 +26,11 @@ class GetUserDiscussionsTest extends SpockTest {
     def quizAnswer
 
     def setup(){
-        student = new User(USER_1_NAME,USER_1_USERNAME, User.Role.STUDENT)
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
 
         question1 = new Question()
-        question1.setCourse(course)
+        question1.setCourse(externalCourse)
         question1.setTitle("Question title")
         question1.setContent("Question Content")
         questionRepository.save(question1)

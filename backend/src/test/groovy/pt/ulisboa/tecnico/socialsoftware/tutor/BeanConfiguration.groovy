@@ -120,11 +120,11 @@ class BeanConfiguration {
     }
 
     @Bean
-<<<<<<< HEAD
     DiscussionService discussionService() {
         return new DiscussionService()
     }
-=======
+
+    @Bean
     QuestionSubmissionService questionSubmissionService() {
         return new QuestionSubmissionService()
     }
@@ -151,6 +151,4 @@ class BeanConfiguration {
 
         return mailSender;
     }
-
->>>>>>> quizzes-tutor/develop
 }
