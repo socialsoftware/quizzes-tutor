@@ -58,7 +58,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTest {
         questionDto.setOptions(options)
 
         teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+                User.Role.TEACHER, false, AuthUser.Type.EXTERNAL)
         ((AuthExternalUser)teacher.authUser).setPassword(USER_1_PASSWORD)
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)

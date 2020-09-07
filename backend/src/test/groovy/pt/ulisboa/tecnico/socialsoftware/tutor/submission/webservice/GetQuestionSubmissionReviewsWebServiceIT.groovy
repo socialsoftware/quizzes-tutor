@@ -63,7 +63,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
         teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+                User.Role.TEACHER, false, AuthUser.Type.EXTERNAL)
         ((AuthExternalUser)teacher.authUser).setPassword(USER_2_PASSWORD)
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)

@@ -35,7 +35,7 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+                User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         ((AuthExternalUser)student.authUser).setPassword(USER_1_PASSWORD)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
