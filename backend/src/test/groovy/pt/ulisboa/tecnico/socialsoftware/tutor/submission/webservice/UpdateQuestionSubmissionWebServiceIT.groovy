@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
@@ -48,7 +49,8 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(courseExecution.getId())
@@ -74,7 +76,7 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
 
         when:
         response = restClient.put(
-                path: '/submissions/'+questionSubmission.getId(),
+                path: '/submissions/' + questionSubmission.getId(),
                 body: questionSubmissionDto,
                 requestContentType: 'application/json'
         )

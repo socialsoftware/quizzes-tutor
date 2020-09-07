@@ -121,7 +121,7 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public boolean isCorrect() {
-        return getAnswerDetails().isCorrect();
+        return getAnswerDetails() != null && getAnswerDetails().isCorrect();
     }
 
     public void remove() {
