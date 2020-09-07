@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
+import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -77,7 +78,7 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
         when:
         response = restClient.put(
                 path: '/submissions/' + questionSubmission.getId(),
-                body: questionSubmissionDto,
+                body: JsonOutput.toJson(questionSubmissionDto),
                 requestContentType: 'application/json'
         )
 
