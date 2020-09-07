@@ -3,21 +3,19 @@
     <p v-if="reviews.length === 0" style="text-align: center; color: lightgrey">
       No reviews available
     </p>
-    <v-container
-      v-for="review in reviews"
-      :key="review.id"
-      v-bind:class="[
-        $store.getters.getUser.username === review.username
-          ? 'review-left'
-          : 'review-right'
-      ]"
-    >
-      <p>
-        {{ review.creationDate + ' by ' + review.name }}
-      </p>
-      <p>
-        {{ review.comment }}
-      </p>
+    <v-container v-for="review in reviews" :key="review.id" class="review">
+      <span style="float: left; padding-right: 10px">
+        <b>{{ review.name + '  ' }}</b>
+        <v-chip x-small>{{ review.creationDate }}</v-chip>
+        {{ '| ' }}
+        <span v-if="review.getSubmissionStatus() !== null">
+          <v-chip small :color="review.getStatusColor()">
+            {{ review.getSubmissionStatus() }}
+          </v-chip>
+          {{ ' |' }}
+        </span>
+      </span>
+      {{ review.getComment() }}
     </v-container>
     <hr v-if="reviews.length !== 0" style="border: .5px lightgrey solid" />
   </v-container>
@@ -62,15 +60,9 @@ export default class ShowReviews extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.review-left {
+.review {
   border-style: solid;
-  border-color: lightgrey lightgrey lightgrey dodgerblue;
+  border-color: lightgrey;
   border-width: 1px 1px 0 10px;
-}
-.review-right {
-  border-style: solid;
-  border-color: lightgrey dodgerblue lightgrey lightgrey;
-  border-width: 1px 10px 0 1px;
-  text-align: right;
 }
 </style>

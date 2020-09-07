@@ -31,6 +31,43 @@ export default class Review {
     }
   }
 
+  prepareReview(
+    questionSubmissionId: number,
+    status: string,
+    comment: string,
+    userId: number
+  ) {
+    this.questionSubmissionId = questionSubmissionId;
+    this.submissionStatus = status;
+    this.userId = userId;
+    this.comment = status !== null ? status + '@@' + comment : comment; // explain @@
+  }
+
+  getSubmissionStatus() {
+    let comment = this.comment.split('@@');
+    return comment.length > 1 ? comment[0].replace('_', ' ') : null;
+  }
+
+  getComment() {
+    let comment = this.comment.split('@@');
+    return comment.length > 1 ? comment[1] : this.comment;
+  }
+
+  getStatusColor() {
+    let comment = this.comment.split('@@');
+
+    switch (comment[0]) {
+      case 'APPROVED':
+        return 'green';
+      case 'REJECTED':
+        return 'red';
+      case 'IN_REVISION':
+        return 'yellow';
+      case 'IN_REVIEW':
+        return 'blue';
+    }
+  }
+
   isComment() {
     return this.submissionStatus === null;
   }

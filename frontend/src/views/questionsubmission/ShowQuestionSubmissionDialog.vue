@@ -145,10 +145,12 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
   createReview(status: string) {
     let review = new Review();
-    review.questionSubmissionId = this.questionSubmission.id!;
-    review.submissionStatus = status;
-    review.comment = this.comment;
-    review.userId = this.$store.getters.getUser.id;
+    review.prepareReview(
+      this.questionSubmission.id!,
+      status,
+      this.comment,
+      this.$store.getters.getUser.id
+    );
     return review;
   }
 }
@@ -156,7 +158,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
 <style lang="scss" scoped>
 .history {
-  max-height: 225px;
+  max-height: 260px;
   overflow-y: auto;
 }
 </style>
