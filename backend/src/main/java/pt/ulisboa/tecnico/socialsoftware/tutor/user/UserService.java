@@ -207,7 +207,7 @@ public class UserService {
 
         return user.getDashboardInfo();
     }
-    @Transactional(isolation = Isolation.READ_COMMITTED,
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public NotificationResponse<CourseDto> importListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
         extractUserDtos(stream, notification).forEach(userDto -> createExternalUserTransactional(courseExecutionId, userDto));

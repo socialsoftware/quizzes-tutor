@@ -334,6 +334,8 @@ public class Question implements DomainEntity {
 
     public Set<Discussion> getDiscussions() {
         return this.discussions;
+    }
+    
     public boolean isInSubmission() {
         return status == Status.SUBMITTED;
     }
