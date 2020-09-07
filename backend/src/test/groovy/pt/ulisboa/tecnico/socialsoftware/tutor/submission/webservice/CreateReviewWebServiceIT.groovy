@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
@@ -40,7 +41,7 @@ class CreateReviewWebServiceIT extends SpockTest {
 
         teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
-        ((AuthExternalUser)teacher.authUser).setPassword(USER_1_PASSWORD)
+        (teacher.authUser).setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)

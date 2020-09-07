@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -36,7 +37,7 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
-        ((AuthExternalUser)student.authUser).setPassword(USER_1_PASSWORD)
+        (student.authUser).setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)

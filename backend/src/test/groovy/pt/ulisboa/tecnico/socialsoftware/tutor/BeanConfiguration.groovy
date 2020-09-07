@@ -24,7 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 
 @TestConfiguration
-@PropertySource("classpath:application-dev.properties")
+@PropertySource("classpath:application-test.properties")
 class BeanConfiguration {
 
     @Value('${spring.mail.host}')
