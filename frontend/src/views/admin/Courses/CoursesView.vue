@@ -327,10 +327,10 @@ export default class CoursesView extends Vue {
   }
 
   hasCourseSemesterFinished(course: Course):boolean {
-    if(course.endDate !== undefined) {
+    if(course.endDate) {
       return new Date(course.endDate) < new Date();
-    } else if (course.academicTerm !== undefined 
-              && RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)) {
+    } else if (course.academicTerm
+               && RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)) {
       const termTokens = course.academicTerm.split(/º|\s|\//);
       const month = termTokens[0] ===  "1" ? 3 : 9; // march : september
       const year = termTokens[termTokens.length-1]
