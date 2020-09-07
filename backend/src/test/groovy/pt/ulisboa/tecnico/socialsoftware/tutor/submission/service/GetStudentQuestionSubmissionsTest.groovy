@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @DataJpaTest
 class GetStudentQuestionSubmissionsTest extends SpockTest{
@@ -16,11 +17,11 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
     def questionSubmission
 
     def setup() {
-        student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
-        student1.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
+        student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student1)
-        student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
-        student2.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
+        student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student2)
         question = new Question()
         question.setKey(1)

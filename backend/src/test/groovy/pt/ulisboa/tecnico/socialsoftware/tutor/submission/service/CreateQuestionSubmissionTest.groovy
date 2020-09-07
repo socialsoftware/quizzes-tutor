@@ -12,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 import spock.lang.Shared
 import spock.lang.Unroll
 
@@ -28,10 +30,12 @@ class CreateQuestionSubmissionTest extends SpockTest{
     def teacher
 
     def setup() {
-        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
-        student.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        ((AuthTecnicoUser)student.authUser).setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, true, false)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
         questionDto = new QuestionDto()
         questionDto.setKey(1)
@@ -66,7 +70,7 @@ class CreateQuestionSubmissionTest extends SpockTest{
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.SUBMITTED
         result.getCourseExecution() == externalCourseExecution
-        student.getEnrolledCoursesAcronyms().contains(externalCourseExecution.getAcronym())
+        ((AuthTecnicoUser)student.authUser).getEnrolledCoursesAcronyms().contains(externalCourseExecution.getAcronym())
     }
 
     @Unroll
