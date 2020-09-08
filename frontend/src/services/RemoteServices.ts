@@ -297,7 +297,7 @@ export default class RemoteServices {
   static async getTournamentTopics(): Promise<Topic[]> {
     return httpClient
       .get(
-        `/courses/${Store.getters.getCurrentCourse.courseId}/${Store.getters.getCurrentCourse.courseExecutionId}/tournamentTopics`
+        `/courses/${Store.getters.getCurrentCourse.courseId}/${Store.getters.getCurrentCourse.courseExecutionId}/available`
       )
       .then(response => {
         return response.data.map((topic: any) => {
