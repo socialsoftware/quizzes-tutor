@@ -12,10 +12,10 @@ export default class Review {
 
   static statusOptions = [
     { text: 'Comment', value: null },
-    { text: 'Request Changes', value: 'IN_REVISION' },
-    { text: 'Request Further Review', value: 'IN_REVIEW' },
-    { text: 'Approve', value: 'APPROVED' },
-    { text: 'Reject', value: 'REJECTED' }
+    { text: 'Request Changes', value: 'IN_REVISION', color: 'yellow' },
+    { text: 'Request Further Review', value: 'IN_REVIEW', color: 'blue' },
+    { text: 'Approve', value: 'APPROVED', color: 'green' },
+    { text: 'Reject', value: 'REJECTED', color: 'red' }
   ];
 
   constructor(jsonObj?: Review) {
