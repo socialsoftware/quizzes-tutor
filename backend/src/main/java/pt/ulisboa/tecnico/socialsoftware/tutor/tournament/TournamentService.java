@@ -6,7 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -119,22 +118,6 @@ public class TournamentService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        if (DateHandler.now().isAfter(tournament.getEndTime())) {
-            throw new TutorException(TOURNAMENT_NOT_OPEN, tournament.getId());
-        }
-
-        if (tournament.isCanceled()) {
-            throw new TutorException(TOURNAMENT_CANCELED, tournament.getId());
-        }
-
-        if (tournament.getParticipants().contains(user)) {
-            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, user.getUsername());
-        }
-
-        if (!user.getCourseExecutions().contains(tournament.getCourseExecution())) {
-            throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
-        }
-
         tournament.addParticipant(user, password);
     }
 
@@ -143,7 +126,7 @@ public class TournamentService {
     public StatementQuizDto solveQuiz(Integer userId, TournamentDto tournamentDto) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentDto.getId());
-        tournament.checkUserJoined(user);
+        tournament.checkIsParticipant(user);
 
         if (!tournament.hasQuiz()) {
             createQuiz(tournament);

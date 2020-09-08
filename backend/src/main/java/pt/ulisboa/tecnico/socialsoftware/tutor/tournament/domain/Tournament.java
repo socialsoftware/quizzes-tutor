@@ -161,13 +161,29 @@ public class Tournament  {
         }
     }
 
-    public void checkUserJoined(User user) {
+    public void checkIsParticipant(User user) {
         if (!getParticipants().contains(user)) {
             throw new TutorException(USER_NOT_JOINED, user.getId());
         }
     }
 
     public void addParticipant(User user, String password) {
+        if (DateHandler.now().isAfter(getEndTime())) {
+            throw new TutorException(TOURNAMENT_NOT_OPEN, getId());
+        }
+
+        if (isCanceled()) {
+            throw new TutorException(TOURNAMENT_CANCELED, getId());
+        }
+
+        if (getParticipants().contains(user)) {
+            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, user.getUsername());
+        }
+
+        if (!user.getCourseExecutions().contains(getCourseExecution())) {
+            throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
+        }
+
         if (isPrivateTournament() && !password.equals(getPassword())) {
             throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());
         }
@@ -177,7 +193,7 @@ public class Tournament  {
     }
 
     public void removeParticipant(User user) {
-        checkUserJoined(user);
+        checkIsParticipant(user);
         this.participants.remove(user);
         user.removeTournament(this);
     }
