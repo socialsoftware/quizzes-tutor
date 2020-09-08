@@ -35,6 +35,7 @@ public class AuthUserDto implements Serializable {
     }
 
     public AuthUserDto(AuthUser authUser) {
+        this.id = authUser.getUser().getId();
         this.key = authUser.getUser().getKey();
         this.name = authUser.getUser().getName();
         this.username = authUser.getUsername();
@@ -55,6 +56,7 @@ public class AuthUserDto implements Serializable {
     }
 
     public AuthUserDto(AuthUser authUser, List<CourseDto> currentCourses) {
+        this.id = authUser.getUser().getId();
         this.key = authUser.getUser().getKey();
         this.name = authUser.getUser().getName();
         this.username = authUser.getUsername();
