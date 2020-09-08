@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
@@ -26,6 +27,7 @@ class TournamentTest extends SpockTest {
     def topic1
     def topic2
     def topics = new HashSet<Integer>()
+    def topicsList = new HashSet<Topic>()
     def user1
 
     def setup() {
@@ -43,6 +45,9 @@ class TournamentTest extends SpockTest {
 
         topics.add(topic1.getId())
         topics.add(topic2.getId())
+
+        topicsList.add(topic1)
+        topicsList.add(topic2)
     }
 
     def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {
@@ -55,27 +60,35 @@ class TournamentTest extends SpockTest {
     }
 
     def createTournament(User user, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled) {
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setStartTime(startTime)
-        tournamentDto.setEndTime(endTime)
-        tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setCanceled(isCanceled)
-        tournamentDto = tournamentService.createTournament(user.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        def tournament = new Tournament()
+        tournament.setStartTime(DateHandler.toLocalDateTime(startTime))
+        tournament.setEndTime(DateHandler.toLocalDateTime(endTime))
+        tournament.setNumberOfQuestions(numberOfQuestions)
+        tournament.setCanceled(isCanceled)
+        tournament.setCreator(user)
+        tournament.setCourseExecution(externalCourseExecution)
+        tournament.setTopics(topicsList)
+        tournament.setPassword('')
+        tournament.setPrivateTournament(false)
+        tournamentRepository.save(tournament)
 
-        return tournamentDto
+        return new TournamentDto(tournament)
     }
 
     def createPrivateTournament(User user, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled, String password) {
-        def tournamentDto = new TournamentDto()
-        tournamentDto.setStartTime(startTime)
-        tournamentDto.setEndTime(endTime)
-        tournamentDto.setNumberOfQuestions(numberOfQuestions)
-        tournamentDto.setCanceled(isCanceled)
-        tournamentDto.setPrivateTournament(true)
-        tournamentDto.setPassword(password)
-        tournamentDto = tournamentService.createTournament(user.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        def tournament = new Tournament()
+        tournament.setStartTime(DateHandler.toLocalDateTime(startTime))
+        tournament.setEndTime(DateHandler.toLocalDateTime(endTime))
+        tournament.setNumberOfQuestions(numberOfQuestions)
+        tournament.setCanceled(isCanceled)
+        tournament.setCreator(user)
+        tournament.setCourseExecution(externalCourseExecution)
+        tournament.setTopics(topicsList)
+        tournament.setPassword(password)
+        tournament.setPrivateTournament(true)
+        tournamentRepository.save(tournament)
 
-        return tournamentDto
+        return new TournamentDto(tournament)
     }
 
     def createAssessmentWithTopicConjunction(String title, Assessment.Status status, CourseExecution courseExecution) {

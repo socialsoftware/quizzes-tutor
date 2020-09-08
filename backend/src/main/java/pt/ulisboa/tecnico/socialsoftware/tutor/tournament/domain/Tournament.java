@@ -63,8 +63,8 @@ public class Tournament  {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        this.isCanceled = tournamentDto.isCanceled();
-        this.creator = user;
+        setCanceled(tournamentDto.isCanceled());
+        setCreator(user);
         setCourseExecution(courseExecution);
         setTopics(topics);
         setPassword(tournamentDto.getPassword());
@@ -106,7 +106,11 @@ public class Tournament  {
 
     public User getCreator() { return creator; }
 
+    public void setCreator(User user) { this.creator = user; }
+
     public boolean isCreator(User user) { return creator.getId().equals(user.getId()); }
+
+    public void setCanceled(boolean isCanceled) { this.isCanceled = isCanceled; }
 
     public boolean isCanceled() { return isCanceled; }
 
