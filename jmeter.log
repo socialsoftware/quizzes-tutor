@@ -1,0 +1,46 @@
+2020-08-26 09:47:34,803 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2020-08-26 09:47:34,828 INFO o.a.j.JMeter: Loading user properties from: C:\Program Files (x86)\apache-jmeter-5.3\bin\user.properties
+2020-08-26 09:47:34,829 INFO o.a.j.JMeter: Loading system properties from: C:\Program Files (x86)\apache-jmeter-5.3\bin\system.properties
+2020-08-26 09:47:34,831 INFO o.a.j.JMeter: Copyright (c) 1998-2020 The Apache Software Foundation
+2020-08-26 09:47:34,831 INFO o.a.j.JMeter: Version 5.3
+2020-08-26 09:47:34,831 INFO o.a.j.JMeter: java.version=11.0.8
+2020-08-26 09:47:34,831 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2020-08-26 09:47:34,832 INFO o.a.j.JMeter: os.name=Windows 10
+2020-08-26 09:47:34,832 INFO o.a.j.JMeter: os.arch=amd64
+2020-08-26 09:47:34,832 INFO o.a.j.JMeter: os.version=10.0
+2020-08-26 09:47:34,832 INFO o.a.j.JMeter: file.encoding=Cp1252
+2020-08-26 09:47:34,832 INFO o.a.j.JMeter: java.awt.headless=null
+2020-08-26 09:47:34,833 INFO o.a.j.JMeter: Max memory     =1073741824
+2020-08-26 09:47:34,833 INFO o.a.j.JMeter: Available Processors =8
+2020-08-26 09:47:34,843 INFO o.a.j.JMeter: Default Locale=English (EN)
+2020-08-26 09:47:34,843 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2020-08-26 09:47:34,843 INFO o.a.j.JMeter: JMeterHome=C:\Program Files (x86)\apache-jmeter-5.3
+2020-08-26 09:47:34,843 INFO o.a.j.JMeter: user.dir  =D:\TutorTest
+2020-08-26 09:47:34,843 INFO o.a.j.JMeter: PWD       =D:\TutorTest
+2020-08-26 09:47:39,406 INFO o.a.j.JMeter: IP: 192.168.99.1 Name: DESKTOP-JF FullName: DESKTOP-JF
+2020-08-26 09:47:39,623 INFO o.a.j.JMeter: Setting LAF to: com.github.weisj.darklaf.DarkLaf:com.github.weisj.darklaf.theme.IntelliJTheme
+2020-08-26 09:47:40,076 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2020-08-26 09:48:19,531 INFO o.a.j.s.FileServer: Default base='D:\TutorTest'
+2020-08-26 09:51:59,734 INFO o.a.j.s.FileServer: Set new base='D:\TutorTest\backend\jmeter\discussion'
+2020-08-26 09:51:59,949 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2020-08-26 09:51:59,969 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2020-08-26 09:51:59,971 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2020-08-26 09:54:25,801 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-08-26 09:54:25,801 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-08-26 09:54:25,802 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-08-26 09:54:25,802 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2020-08-26 09:54:25,803 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2020-08-26 09:54:25,803 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2020-08-26 09:55:24,291 INFO o.a.j.g.a.Load: Loading file: D:\TutorTest\backend\jmeter\discussion\WSGetUserDiscussionsTest.jmx
+2020-08-26 09:55:24,292 INFO o.a.j.s.FileServer: Set new base='D:\TutorTest\backend\jmeter\discussion'
+2020-08-26 09:55:24,292 INFO o.a.j.s.SaveService: Loading file: D:\TutorTest\backend\jmeter\discussion\WSGetUserDiscussionsTest.jmx
+2020-08-26 09:55:24,329 INFO o.a.j.s.FileServer: Set new base='D:\TutorTest\backend\jmeter\discussion'
+2020-08-26 09:55:36,393 INFO o.a.j.g.a.Load: Loading file: D:\TutorTest\backend\jmeter\administration\WSGetExternalCourseExecutionsTest.jmx
+2020-08-26 09:55:36,394 INFO o.a.j.s.FileServer: Set new base='D:\TutorTest\backend\jmeter\administration'
+2020-08-26 09:55:36,395 INFO o.a.j.s.SaveService: Loading file: D:\TutorTest\backend\jmeter\administration\WSGetExternalCourseExecutionsTest.jmx
+2020-08-26 09:55:36,584 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2020-08-26 09:55:36,584 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2020-08-26 09:55:36,585 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2020-08-26 09:55:36,585 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2020-08-26 09:55:36,890 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2020-08-26 09:55:36,974 INFO o.a.j.s.FileServer: Set new base='D:\TutorTest\backend\jmeter\administration'

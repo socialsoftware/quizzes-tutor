@@ -8,6 +8,7 @@
       :mobile-breakpoint="0"
       :items-per-page="50"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      data-cy="topicsGrid"
     >
       <template v-slot:top>
         <v-card-title>
@@ -15,18 +16,19 @@
             v-model="search"
             append-icon="search"
             label="Search"
+            data-cy="Search"
             single-line
             hide-details
           />
           <v-spacer />
-          <v-btn color="primary" dark @click="newTopic">New Topic</v-btn>
+          <v-btn color="primary" dark @click="newTopic" data-cy="topicsNewTopicBtn">New Topic</v-btn>
         </v-card-title>
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon class="mr-2" v-on="on" @click="editTopic(item)"
-              >edit</v-icon
+              data-cy="topicsGridEditButton">edit</v-icon
             >
           </template>
           <span>Edit Topic</span>
@@ -38,7 +40,7 @@
               v-on="on"
               @click="deleteTopic(item)"
               color="red"
-              >delete</v-icon
+              data-cy="topicsGridDeleteButton">delete</v-icon
             >
           </template>
           <span>Delete Topic</span>
@@ -55,13 +57,13 @@
     </footer>
 
     <v-dialog v-model="topicDialog" max-width="75%">
-      <v-card>
+      <v-card data-cy="topicsCreateOrEditDialog">
         <v-card-title>
           <span class="headline">{{ formTitle() }}</span>
         </v-card-title>
 
         <v-card-text v-if="editedTopic">
-          <v-text-field v-model="editedTopic.name" label="Topic" />
+          <v-text-field v-model="editedTopic.name" label="Topic" data-cy="topicsFormTopicNameInput"/>
         </v-card-text>
 
         <v-card-actions>

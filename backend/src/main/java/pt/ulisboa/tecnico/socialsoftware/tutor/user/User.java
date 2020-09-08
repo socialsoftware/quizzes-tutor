@@ -5,16 +5,24 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "users",
@@ -22,6 +30,7 @@ import java.util.stream.Collectors;
                 @Index(name = "users_indx_0", columnList = "username")
         })
 public class User implements UserDetails, DomainEntity {
+
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -33,6 +42,8 @@ public class User implements UserDetails, DomainEntity {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    private boolean active;
     
     @Column(unique=true)
     private String username;
@@ -41,6 +52,12 @@ public class User implements UserDetails, DomainEntity {
 
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
+    private String password;
+
+    private String confirmationToken = "";
+    private LocalDateTime tokenGenerationDate;
+
+    private String email;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
@@ -55,6 +72,32 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
 
+
+    public void setDiscussionInfoPublic(boolean discussionStatsPublic) {
+        this.discussionInfoPublic = discussionStatsPublic;
+    }
+
+    public void changeDiscussionsVisbility() {
+        this.discussionInfoPublic = !this.discussionInfoPublic;
+    }
+
+    @Column(columnDefinition = "boolean default true")
+    private boolean discussionInfoPublic = true;
+
+    public boolean isDiscussionInfoPublic() {
+        return this.discussionInfoPublic;
+    }
+
+    public DashboardDto getDashboardInfo() {
+        return new DashboardDto(this);
+    }
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
+    private Set<Discussion> discussions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Reply> replies = new HashSet<>();
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -64,17 +107,28 @@ public class User implements UserDetails, DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Review> reviews = new HashSet<>();
+
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
     public User() {
     }
 
-    public User(String name, String username, User.Role role) {
+    public User(String name, String username, String email, User.Role role, boolean isActive, boolean isAdmin){
         setName(name);
         setUsername(username);
         setRole(role);
+        checkRole(role, isActive);
+        setEmail(email);
+        setActive(isActive);
+        setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
+
     }
 
     @Override
@@ -92,6 +146,40 @@ public class User implements UserDetails, DomainEntity {
 
     public void setKey(Integer key) {
         this.key = key;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    public Set<Discussion> getDiscussions() {
+        return discussions;
+    }
+
+    public void addDiscussion(Discussion discussion) {this.discussions.add(discussion);}
+
+    public void setDiscussions(Set<Discussion> discussions) {
+        this.discussions = discussions;
+    }
+
+    public Set<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(Set<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
     }
 
     @Override
@@ -131,8 +219,20 @@ public class User implements UserDetails, DomainEntity {
         return role;
     }
 
+    public void addReply(Reply reply) {
+        this.replies.add(reply);
+    }
+
     public void setRole(Role role) {
+        if (role == null)
+            throw new TutorException(INVALID_ROLE);
+
         this.role = role;
+    }
+
+    public void checkRole(Role role, boolean isActive) {
+        if (!isActive && (!(role.equals(User.Role.STUDENT) || role.equals(User.Role.TEACHER))))
+            throw new TutorException(INVALID_ROLE, role.toString());
     }
 
     public LocalDateTime getCreationDate() {
@@ -161,6 +261,61 @@ public class User implements UserDetails, DomainEntity {
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
+    }
+
+    public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
+        this.questionSubmissions = questionSubmissions; 
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+            throw new TutorException(INVALID_EMAIL, email);
+
+        this.email = email;
+    }
+
+    public LocalDateTime getTokenGenerationDate() {
+        return tokenGenerationDate;
+    }
+
+    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
+        this.tokenGenerationDate = tokenGenerationDate;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void checkConfirmationToken(String token) {
+        if (!token.equals(getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -284,6 +439,14 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
     }
 
+    public boolean checkQuestionAnswered(Question question) {
+        return getQuizAnswers().stream().flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getTimeTaken() != 0)
+                .map(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion()).collect(Collectors.toList())
+                .contains(question);
+    }
+
+
     public Integer getNumberOfCorrectStudentAnswers() {
         if (this.numberOfCorrectStudentAnswers == null)
             this.numberOfCorrectStudentAnswers = (int) this.getQuizAnswers().stream()
@@ -381,6 +544,18 @@ public class User implements UserDetails, DomainEntity {
         course.addUser(this);
     }
 
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Review> getReviews() { return reviews; }
+
+    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+
+    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> list = new ArrayList<>();
@@ -391,11 +566,6 @@ public class User implements UserDetails, DomainEntity {
             list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         return list;
-    }
-
-    @Override
-    public String getPassword() {
-        return null;
     }
 
     @Override
@@ -466,5 +636,13 @@ public class User implements UserDetails, DomainEntity {
                 .orElse(null);
     }
 
+    public void remove() {
+        if (active) {
+            throw new TutorException(USER_IS_ACTIVE, getUsername());
+        }
+
+        courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
+    }
 
 }

@@ -1,0 +1,1 @@
+{"version":3,"file":"StatementOption.js","sourceRoot":"","sources":["StatementOption.ts"],"names":[],"mappings":"AAAA,MAAM,CAAC,OAAO,OAAO,eAAe;IAIlC,YAAY,OAAyB;QACnC,IAAI,OAAO,EAAE;YACX,IAAI,CAAC,QAAQ,GAAG,OAAO,CAAC,QAAQ,CAAC;YACjC,IAAI,CAAC,OAAO,GAAG,OAAO,CAAC,OAAO,CAAC;SAChC;IACH,CAAC;CACF"}
