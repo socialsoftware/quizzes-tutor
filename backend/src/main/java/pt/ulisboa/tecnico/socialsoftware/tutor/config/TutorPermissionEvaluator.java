@@ -113,11 +113,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     Tournament tournament = tournamentRepository.findById(id).orElse(null);
                     User user = ((User) authentication.getPrincipal());
                     if (tournament != null) {
-                        tournament.checkCreator(user);
-                    }
-                    courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
-                    if (courseExecutionId != null) {
-                        return userHasThisExecution(userId, courseExecutionId);
+                        return tournament.isCreator(user);
                     }
                     return false;
                 case "SUBMISSION.ACCESS":

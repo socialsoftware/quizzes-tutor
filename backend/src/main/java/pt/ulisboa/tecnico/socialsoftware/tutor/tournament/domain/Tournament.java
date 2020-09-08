@@ -106,6 +106,8 @@ public class Tournament  {
 
     public User getCreator() { return creator; }
 
+    public boolean isCreator(User user) { return creator == user; }
+
     public boolean isCanceled() { return isCanceled; }
 
     public void cancel(Integer numberOfAnswers) {
