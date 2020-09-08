@@ -8,7 +8,7 @@ class GetAllTournamentsIT extends TournamentIT {
     def "user gets all tournament"() {
         when:
         response = restClient.get(
-                path: '/tournaments/' + courseExecution.getId() + '/getAllTournaments',
+                path: '/tournaments/' + courseExecution.getId() + '/getTournaments',
                 requestContentType: 'application/json'
         )
 

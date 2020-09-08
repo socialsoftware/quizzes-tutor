@@ -893,10 +893,10 @@ export default class RemoteServices {
       });
   }
 
-  static getAllTournamentsForCourseExecution(): Promise<Tournament[]> {
+  static getTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getAllTournaments`
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getTournaments`
       )
       .then(response => {
         return response.data.map((tournament: any) => {

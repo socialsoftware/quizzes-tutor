@@ -29,12 +29,12 @@ public class TournamentController {
         return tournamentService.createTournament(user.getId(), executionId, topicsId, tournamentDto);
     }
 
-    @GetMapping(value = "/tournaments/{executionId}/getAllTournaments")
+    @GetMapping(value = "/tournaments/{executionId}/getTournaments")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getAllTournamentsForCourseExecution(Principal principal, @PathVariable int executionId) {
+    public List<TournamentDto> getTournamentsForCourseExecution(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return tournamentService.getAllTournamentsForCourseExecution(executionId);
+        return tournamentService.getTournamentsForCourseExecution(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getOpenTournaments")

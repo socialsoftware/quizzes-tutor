@@ -250,7 +250,7 @@ export default class AllTournamentView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getAllTournamentsForCourseExecution();
+      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
       let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
       closedTournaments.map(t => {
         if (t.id) this.closedTournamentsId.push(t.id);

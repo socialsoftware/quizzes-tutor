@@ -64,7 +64,7 @@ export default class TournamentsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getAllTournamentsForCourseExecution();
+      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
       this.tournaments.sort((a, b) => this.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);

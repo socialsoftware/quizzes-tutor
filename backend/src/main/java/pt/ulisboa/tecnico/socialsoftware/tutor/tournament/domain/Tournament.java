@@ -106,7 +106,7 @@ public class Tournament  {
 
     public User getCreator() { return creator; }
 
-    public boolean isCreator(User user) { return creator == user; }
+    public boolean isCreator(User user) { return creator.getId().equals(user.getId()); }
 
     public boolean isCanceled() { return isCanceled; }
 

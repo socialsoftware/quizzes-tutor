@@ -87,8 +87,8 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getAllTournamentsForCourseExecution(Integer executionId) {
-        return tournamentRepository.getAllTournamentsForCourseExecution(executionId).stream().map(TournamentDto::new)
+    public List<TournamentDto> getTournamentsForCourseExecution(Integer executionId) {
+        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 

@@ -77,7 +77,7 @@ export default class ParticipantsTournament extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getAllTournamentsForCourseExecution();
+      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
       this.closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
       this.tournaments.map(tournament => {
         if (tournament.id == this.id) this.selectedTournament = tournament;
