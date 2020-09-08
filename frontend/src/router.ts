@@ -26,12 +26,12 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
-import DashboardView from '@/views/student/dashboard/DashboardView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
-import DiscussionsView from '@/views/student/discussions/DiscussionView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import DashboardView from '@/views/student/dashboard/DashboardView.vue';
+import DiscussionView from '@/views/student/discussions/DiscussionView.vue';
 
 Vue.use(Router);
 
@@ -53,7 +53,7 @@ let router = new Router({
       component: LoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login Fenix',
+        title: APP_NAME + ' - Login Fenix'
       }
     },
     {
@@ -62,7 +62,7 @@ let router = new Router({
       component: ExternalLoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login External',
+        title: APP_NAME + ' - Login External'
       }
     },
     {
@@ -242,11 +242,11 @@ let router = new Router({
         {
           path: 'discussions',
           name: 'discussions',
-          component: DiscussionsView,
-          meta:
-            {
-              title: APP_NAME + ' - Discussion',
-            }
+          component: DiscussionView,
+          meta: {
+            title: APP_NAME + ' - Discussion',
+            requiredAuth: 'Student'
+          }
         },
         {
           path: 'submissions',

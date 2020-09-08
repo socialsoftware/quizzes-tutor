@@ -165,16 +165,20 @@
               </v-list-item-action>
               <v-list-item-title>Discussions</v-list-item-title>
             </v-list-item>
-
-            <v-list-item to="/student/dashboard">
-              <v-list-item-action>
-                <v-icon>fa fa-user</v-icon>
-              </v-list-item-action>
-              <v-list-item-title>Dashboard</v-list-item-title>
-            </v-list-item>
             <!-- ----------- -->
           </v-list>
         </v-menu>
+
+        <v-btn
+          to="/student/dashboard"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="submissionStudentMenuButton"
+        >
+          Dashboard
+          <v-icon>fas fa-columns</v-icon>
+        </v-btn>
 
         <v-btn
           to="/student/submissions"
@@ -388,18 +392,19 @@
             </v-list-item-action>
             <v-list-item-content>Stats</v-list-item-content>
           </v-list-item>
+
+          <v-list-item to="/student/dashboard">
+            <v-list-item-action>
+              <v-icon>fas fa-columns</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Dashboard</v-list-item-content>
+          </v-list-item>
           <!-- ----DDP---- -->
           <v-list-item to="/student/discussions">
             <v-list-item-action>
               <v-icon>fa fa-comment</v-icon>
             </v-list-item-action>
             <v-list-item-title>Discussions</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/student/dashboard">
-            <v-list-item-action>
-              <v-icon>fa fa-user</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
           <!-- ----------- -->
         </v-list-group>
