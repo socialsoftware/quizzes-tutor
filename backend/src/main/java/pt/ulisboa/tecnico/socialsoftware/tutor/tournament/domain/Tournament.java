@@ -111,7 +111,7 @@ public class Tournament  {
     public boolean isCanceled() { return isCanceled; }
 
     public void cancel(Integer numberOfAnswers) {
-        this.checkCanChange(numberOfAnswers);
+        checkCanChange(numberOfAnswers);
         this.isCanceled = true;
     }
 
@@ -177,7 +177,7 @@ public class Tournament  {
     }
 
     public void removeParticipant(User user) {
-        this.checkUserJoined(user);
+        checkUserJoined(user);
         this.participants.remove(user);
         user.removeTournament(this);
     }
@@ -185,7 +185,7 @@ public class Tournament  {
     public boolean hasQuiz() { return this.getQuizId() != null; }
 
     public void remove(Integer numberOfAnswers) {
-        this.checkCanChange(numberOfAnswers);
+        checkCanChange(numberOfAnswers);
 
         creator = null;
         courseExecution = null;
@@ -198,14 +198,14 @@ public class Tournament  {
     }
 
     public void checkCreator(User user) {
-        if (!this.getCreator().getId().equals(user.getId())) {
+        if (!getCreator().getId().equals(user.getId())) {
             throw new TutorException(TOURNAMENT_CREATOR, user.getId());
         }
     }
 
     public void checkCanChange(Integer numberOfAnswers) {
-        if (this.getStartTime().isBefore(DateHandler.now())) {
-            if (this.getEndTime().isBefore(DateHandler.now())) {
+        if (getStartTime().isBefore(DateHandler.now())) {
+            if (getEndTime().isBefore(DateHandler.now())) {
                 if (numberOfAnswers == 0) {
                     return;
                 }
@@ -216,21 +216,21 @@ public class Tournament  {
     }
 
     public void updateTournament(TournamentDto tournamentDto, Set<Topic> topics, Integer numberOfAnswers) {
-        this.checkCanChange(numberOfAnswers);
+        checkCanChange(numberOfAnswers);
 
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
-            DateHandler.toISOString(this.getStartTime());
-            this.setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
+            DateHandler.toISOString(getStartTime());
+            setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         }
 
         if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {
-            DateHandler.toISOString(this.getEndTime());
-            this.setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
+            DateHandler.toISOString(getEndTime());
+            setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         }
 
-        this.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+        setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 
-        this.updateTopics(topics);
+        updateTopics(topics);
     }
 
     public boolean isPrivateTournament() { return privateTournament; }
