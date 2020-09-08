@@ -57,7 +57,7 @@ export default class DiscussionView extends Vue {
     await this.$store.dispatch('loading');
     try {
       [this.discussions] = await Promise.all([
-        RemoteServices.getDiscussions(this.user.id)
+        RemoteServices.getDiscussions(this.user.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
