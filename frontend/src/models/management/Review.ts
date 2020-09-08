@@ -72,6 +72,10 @@ export default class Review {
     return this.submissionStatus === null;
   }
 
+  isInRevision() {
+    return this.getSubmissionStatus() === 'IN REVISION';
+  }
+
   isUsersReview(username: string) {
     return username === this.username;
   }

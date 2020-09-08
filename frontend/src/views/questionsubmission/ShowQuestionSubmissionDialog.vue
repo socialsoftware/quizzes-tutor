@@ -8,20 +8,36 @@
     <v-card>
       <v-container fluid>
         <v-card-title>
-          <span class="headline">Question Submission</span>
+          <span class="headline"
+            >Question Submission
+            <i
+              v-if="
+                $store.getters.isStudent &&
+                  currentQuestionSubmission.isInRevision()
+              "
+              class="editText"
+              >(Click on question to edit)</i
+            ></span
+          >
           <v-spacer />
-          <v-chip :color="questionSubmission.getStatusColor()">
-            {{ questionSubmission.status }}
+          <v-chip :color="currentQuestionSubmission.getStatusColor()">
+            {{ currentQuestionSubmission.status }}
           </v-chip>
         </v-card-title>
-        <v-card ripple outlined class="text-left" id="question">
+        <v-card
+          ripple
+          outlined
+          class="text-left"
+          id="question"
+          @click="editQuestionSubmission"
+        >
           <v-card-title>
             <span class="headline">{{
-              questionSubmission.question.title
+              currentQuestionSubmission.question.title
             }}</span>
           </v-card-title>
           <v-card-text>
-            <show-question :question="questionSubmission.question" />
+            <show-question :question="currentQuestionSubmission.question" />
           </v-card-text>
         </v-card>
         <v-card-title class="headline">Reviews</v-card-title>
@@ -29,7 +45,8 @@
           <div
             class="text-left"
             v-if="
-              $store.getters.isTeacher && questionSubmission.isInDiscussion()
+              $store.getters.isTeacher &&
+                currentQuestionSubmission.isInDiscussion()
             "
           >
             <v-card flat>
@@ -69,7 +86,8 @@
           <div
             class="text-left"
             v-if="
-              $store.getters.isStudent && questionSubmission.isInDiscussion()
+              $store.getters.isStudent &&
+                currentQuestionSubmission.isInDiscussion()
             "
           >
             <v-card-text>
@@ -94,7 +112,7 @@
             flat
             focusable
             v-bind:style="{
-              'border-top': questionSubmission.isInDiscussion()
+              'border-top': currentQuestionSubmission.isInDiscussion()
                 ? '1px solid lightgrey'
                 : ''
             }"
@@ -107,14 +125,14 @@
                 <show-reviews
                   class="history"
                   :key="reviewsComponentKey"
-                  :questionSubmission="questionSubmission"
+                  :questionSubmission="currentQuestionSubmission"
+                  v-on:edit-question="editQuestionSubmission"
                 />
               </v-expansion-panel-content>
             </v-expansion-panel>
           </v-expansion-panels>
         </v-card>
       </v-container>
-
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -125,6 +143,12 @@
         >
       </v-card-actions>
     </v-card>
+    <edit-question-submission-dialog
+      v-if="currentQuestionSubmission"
+      v-model="editQuestionSubmissionDialog"
+      :questionSubmission="currentQuestionSubmission"
+      v-on:save-submission="onSaveQuestionSubmission"
+    />
   </v-dialog>
 </template>
 
@@ -135,11 +159,13 @@ import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import RemoteServices from '@/services/RemoteServices';
 import ShowReviews from '@/views/questionsubmission/ShowReviews.vue';
+import EditQuestionSubmissionDialog from '@/views/questionsubmission/EditQuestionSubmissionDialog.vue';
 
 @Component({
   components: {
     'show-question': ShowQuestion,
-    'show-reviews': ShowReviews
+    'show-reviews': ShowReviews,
+    'edit-question-submission-dialog': EditQuestionSubmissionDialog
   }
 })
 export default class ShowQuestionSubmissionDialog extends Vue {
@@ -151,6 +177,8 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   comment: string = '';
   selected: string | null = null;
   statusOptions = Review.statusOptions;
+  editQuestionSubmissionDialog: boolean = false;
+  currentQuestionSubmission: QuestionSubmission = this.questionSubmission;
 
   created() {
     this.forceRerender();
@@ -159,10 +187,15 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   @Watch('dialog')
   forceRerender() {
     if (this.dialog) {
-      this.reviewsComponentKey += 1;
-      this.comment = '';
-      this.selected = null;
+      this.updateReviews();
+      this.currentQuestionSubmission = this.questionSubmission;
     }
+  }
+
+  updateReviews() {
+    this.reviewsComponentKey += 1;
+    this.comment = '';
+    this.selected = null;
   }
 
   async reviewQuestionSubmission(status: string) {
@@ -170,7 +203,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     try {
       await RemoteServices.createReview(this.createReview(status));
       if (status == null) {
-        this.forceRerender();
+        this.updateReviews();
       } else {
         this.$emit('dialog', false);
       }
@@ -190,6 +223,21 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     );
     return review;
   }
+
+  editQuestionSubmission(e?: Event) {
+    if (
+      this.$store.getters.isStudent &&
+      this.questionSubmission.isInRevision()
+    ) {
+      if (e) e.preventDefault();
+      this.editQuestionSubmissionDialog = true;
+    }
+  }
+
+  async onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
+    this.currentQuestionSubmission = questionSubmission;
+    this.editQuestionSubmissionDialog = false;
+  }
 }
 </script>
 
@@ -204,5 +252,9 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   justify-content: flex-end;
   padding-right: 20px;
   padding-left: 20px;
+}
+.editText {
+  color: gray;
+  font-size: 15px;
 }
 </style>

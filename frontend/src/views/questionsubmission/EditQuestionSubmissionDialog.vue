@@ -55,19 +55,6 @@
           </v-row>
         </div>
       </v-card-text>
-      <div v-if="editMode(questionSubmission)" class="text-left">
-        <v-card-title>
-          <span class="headline">{{ 'New Comment' }}</span>
-        </v-card-title>
-        <v-card-text class="text-left">
-          <v-textarea
-            rows="1"
-            v-model="comment"
-            label="Comment"
-            data-cy="Comment"
-          ></v-textarea>
-        </v-card-text>
-      </div>
 
       <v-card-actions>
         <v-spacer />
@@ -134,14 +121,6 @@ export default class EditQuestionSubmissionDialog extends Vue {
         result = await RemoteServices.updateQuestionSubmission(
           this.editQuestionSubmission
         );
-        let review = new Review();
-        review.prepareReview(
-          this.questionSubmission.id!,
-          'IN_REVISION',
-          this.comment,
-          this.$store.getters.getUser.id
-        );
-        await RemoteServices.createReview(review);
       } else {
         result = await RemoteServices.createQuestionSubmission(
           this.editQuestionSubmission

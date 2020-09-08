@@ -214,14 +214,11 @@ export default class QuestionSubmissionView extends Vue {
     this.editQuestionSubmissionDialog = true;
   }
 
-  async onSaveQuestionSubmission() {
-    await this.$store.dispatch('loading');
-    try {
-      this.questionSubmissions = await RemoteServices.getStudentQuestionSubmissions();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  async onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
+    this.questionSubmissions = this.questionSubmissions.filter(
+      qs => qs.id !== questionSubmission.id
+    );
+    this.questionSubmissions.unshift(questionSubmission);
     this.editQuestionSubmissionDialog = false;
     this.currentQuestionSubmission = null;
   }
@@ -267,16 +264,7 @@ export default class QuestionSubmissionView extends Vue {
   @Watch('questionSubmissionDialog')
   async onCloseShowQuestionSubmissionDialog() {
     if (!this.questionSubmissionDialog) {
-      if (this.$store.getters.isTeacher) {
-        await this.$store.dispatch('loading');
-        try {
-          this.questionSubmissions = await RemoteServices.getCourseExecutionQuestionSubmissions();
-        } catch (error) {
-          await this.$store.dispatch('error', error);
-        }
-        await this.$store.dispatch('clearLoading');
-      }
-
+      await this.getQuestionSubmissions();
       this.questionSubmissionDialog = false;
     }
   }

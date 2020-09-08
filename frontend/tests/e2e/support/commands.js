@@ -94,7 +94,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'editQuestionSubmission',
-  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
+  (valid, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="EditSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
@@ -103,7 +103,6 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      cy.get('[data-cy="Comment"]').type(comment);
       cy.get('[data-cy="SubmitButton"]').click();
     } else {
       cy.get('[data-cy="Option1"]').clear();
