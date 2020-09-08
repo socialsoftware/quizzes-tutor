@@ -8,9 +8,8 @@ class JoinTournamentIT extends TournamentIT {
     def "user joins tournament"() {
         when:
         response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/joinTournament',
+                path: '/tournaments/' + courseExecution.getId() + '/joinTournament/' + tournamentDto.getId(),
                 query: ['password': ''],
-                body: tournamentDto,
                 requestContentType: 'application/json'
         )
 

@@ -7,12 +7,11 @@ class LeaveTournamentIT extends TournamentIT {
 
     def "user leaves tournament"() {
         given: 'user joins tournament'
-        tournamentService.joinTournament(user.getId(), tournamentDto, "")
+        tournamentService.joinTournament(user.getId(), tournamentDto.getId(), "")
 
         when:
         response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/leaveTournament',
-                body: tournamentDto,
+                path: '/tournaments/' + courseExecution.getId() + '/leaveTournament/' + tournamentDto.getId(),
                 requestContentType: 'application/json'
         )
 

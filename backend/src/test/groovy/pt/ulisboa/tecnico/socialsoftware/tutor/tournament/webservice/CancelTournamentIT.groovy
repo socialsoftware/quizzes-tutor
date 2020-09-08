@@ -8,8 +8,7 @@ class CancelTournamentIT extends TournamentIT {
     def "user cancels tournament"() {
         when:
         response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/cancelTournament',
-                body: tournamentDto,
+                path: '/tournaments/' + courseExecution.getId() + '/cancelTournament/' + tournamentDto.getId(),
                 requestContentType: 'application/json'
         )
 

@@ -78,7 +78,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/{executionId}/leaveTournament/{tournamentId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
     public void leaveTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 

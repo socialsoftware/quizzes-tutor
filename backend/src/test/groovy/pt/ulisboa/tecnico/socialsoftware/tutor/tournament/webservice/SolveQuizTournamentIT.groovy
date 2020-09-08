@@ -101,12 +101,11 @@ class SolveQuizTournamentIT extends SpockTest {
 
     def "user solves quiz tournament"() {
         given: 'user joins tournament'
-        tournamentService.joinTournament(user.getId(), tournamentDto, "")
+        tournamentService.joinTournament(user.getId(), tournamentDto.getId(), "")
 
         when:
         response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/solveQuiz',
-                body: tournamentDto,
+                path: '/tournaments/' + courseExecution.getId() + '/solveQuiz/' + tournamentDto.getId(),
                 requestContentType: 'application/json'
         )
 
