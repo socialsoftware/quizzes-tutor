@@ -68,9 +68,9 @@
                     {{ item.question.title }}
                   </div>
                 </template>
-                <template v-slot:item.question.status="{ item }">
+                <template v-slot:item.status="{ item }">
                   <v-chip :color="item.getStatusColor()" small>
-                    <span>{{ item.question.status.replace('_', ' ') }}</span>
+                    <span>{{ item.status.replace('_', ' ') }}</span>
                   </v-chip>
                 </template>
                 <template v-slot:item.question.topics="{ item }">

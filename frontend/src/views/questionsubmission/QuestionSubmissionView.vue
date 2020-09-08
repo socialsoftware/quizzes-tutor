@@ -70,7 +70,7 @@
               >question_answer</v-icon
             >
           </template>
-          <span>View Submission Status</span>
+          <span>View Submission</span>
         </v-tooltip>
         <v-tooltip
           bottom
@@ -85,7 +85,7 @@
               >edit</v-icon
             >
           </template>
-          <span>Edit Question Submission</span>
+          <span>Edit Submission</span>
         </v-tooltip>
         <v-tooltip
           bottom
@@ -101,7 +101,7 @@
               >delete</v-icon
             >
           </template>
-          <span>Delete Question Submission</span>
+          <span>Delete Submission</span>
         </v-tooltip>
       </template>
     </v-data-table>
