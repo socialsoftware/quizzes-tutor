@@ -279,7 +279,7 @@ export default class MyTournamentsView extends Vue {
         tournamentToCancel.participants = participants;
         return;
       }
-      tournamentToCancel.isCanceled = true;
+      tournamentToCancel.canceled = true;
       tournamentToCancel.participants = participants;
     }
   }

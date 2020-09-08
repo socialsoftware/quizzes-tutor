@@ -323,7 +323,7 @@ export default class CreateTournamentDialog extends Vue {
     }
 
     if (this.editTournament && this.editTournament.id == null) {
-      this.editTournament.isCanceled = false;
+      this.editTournament.canceled = false;
       this.editTournament.password = this.password;
 
       this.topicsId = this.currentTopics.map(topic => {

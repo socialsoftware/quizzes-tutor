@@ -886,7 +886,7 @@ export default class RemoteServices {
     return httpClient
       .post(path, tournament)
       .then(response => {
-        return new Tournament(response.data);
+        return new Tournament(response.data, Store.getters.getUser);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

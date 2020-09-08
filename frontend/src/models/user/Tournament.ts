@@ -8,7 +8,6 @@ export default class Tournament {
   endTime!: string;
   numberOfQuestions!: number;
   canceled!: boolean;
-  isCanceled!: boolean;
   courseAcronym!: string;
   enrolled!: boolean;
   topics!: String[];
@@ -24,7 +23,7 @@ export default class Tournament {
       this.startTime = ISOtoString(jsonObj.startTime);
       this.endTime = ISOtoString(jsonObj.endTime);
       this.numberOfQuestions = jsonObj.numberOfQuestions;
-      this.isCanceled = jsonObj.canceled;
+      this.canceled = jsonObj.canceled;
       this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 
@@ -66,13 +65,13 @@ export default class Tournament {
 
   getStateColor(closedTournamentsId: number[]) {
     if (this.id && closedTournamentsId.includes(this.id)) return 'orange';
-    else if (!this.isCanceled) return 'green';
+    else if (!this.canceled) return 'green';
     else return 'red';
   }
 
   getStateName(closedTournamentsId: number[]) {
     if (this.id && closedTournamentsId.includes(this.id)) return 'FINISHED';
-    else if (!this.isCanceled) return 'AVAILABLE';
+    else if (!this.canceled) return 'AVAILABLE';
     else return 'CANCELLED';
   }
 
@@ -101,7 +100,7 @@ export default class Tournament {
   }
 
   isNotCanceled() {
-    return !this.isCanceled;
+    return !this.canceled;
   }
 
   isPrivate() {
