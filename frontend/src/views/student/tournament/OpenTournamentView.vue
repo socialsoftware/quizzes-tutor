@@ -287,7 +287,7 @@ export default class OpenTournamentView extends Vue {
     const participants = tournamentToJoin.participants;
     tournamentToJoin.participants = [];
     try {
-      await RemoteServices.joinTournament(tournamentToJoin, this.password);
+      await RemoteServices.joinTournament(tournamentToJoin.id, this.password);
     } catch (error) {
       await this.$store.dispatch('error', error);
       tournamentToJoin.participants = participants;
@@ -303,7 +303,7 @@ export default class OpenTournamentView extends Vue {
     tournament.participants = [];
     try {
       statementManager.statementQuiz = await RemoteServices.solveTournament(
-        tournament
+        tournament.id
       );
       await this.$router.push({ name: 'solve-quiz' });
     } catch (error) {
@@ -317,7 +317,7 @@ export default class OpenTournamentView extends Vue {
     const participants = tournamentToLeave.participants;
     tournamentToLeave.participants = [];
     try {
-      await RemoteServices.leaveTournament(tournamentToLeave);
+      await RemoteServices.leaveTournament(tournamentToLeave.id);
     } catch (error) {
       await this.$store.dispatch('error', error);
       tournamentToLeave.participants = participants;

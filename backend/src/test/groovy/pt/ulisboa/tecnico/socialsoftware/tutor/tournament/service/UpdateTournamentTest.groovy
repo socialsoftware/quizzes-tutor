@@ -180,7 +180,7 @@ class UpdateTournamentTest extends TournamentTest {
         and: "join a tournament"
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
         and: "solve a tournament"
-        tournamentService.solveQuiz(user1.getId(), tournamentDto)
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
         and: "is now closed"
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 

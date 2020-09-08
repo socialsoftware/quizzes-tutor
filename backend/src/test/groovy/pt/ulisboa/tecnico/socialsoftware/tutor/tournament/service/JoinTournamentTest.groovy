@@ -26,7 +26,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "1 student join an open tournament and get participants" () {
         when:
-        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
+        tournamentService.joinTournament(user1.getId(), tournamentDto.getId(), "")
 
         then: "the students have joined the tournament"
         def result = tournamentRepository.findById(tournamentDto.getId()).orElse(null)
@@ -41,7 +41,7 @@ class JoinTournamentTest extends TournamentTest {
         def canceledTournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, true)
 
         when:
-        tournamentService.joinTournament(user1.getId(), canceledTournamentDto, "")
+        tournamentService.joinTournament(user1.getId(), canceledTournamentDto.getId(), "")
 
         then: "student cannot join"
         def exception = thrown(TutorException)
@@ -56,7 +56,7 @@ class JoinTournamentTest extends TournamentTest {
         def notOpenTournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
 
         when:
-        tournamentService.joinTournament(user1.getId(), notOpenTournamentDto, "")
+        tournamentService.joinTournament(user1.getId(), notOpenTournamentDto.getId(), "")
 
         then: "student cannot join"
         def exception = thrown(TutorException)
@@ -71,7 +71,7 @@ class JoinTournamentTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
 
         when:
-        tournamentService.joinTournament(user1.getId(), tournamentDto, "")
+        tournamentService.joinTournament(user1.getId(), tournamentDto.getId(), "")
 
         then: "student cannot join"
         def exception = thrown(TutorException)
@@ -89,7 +89,7 @@ class JoinTournamentTest extends TournamentTest {
         def fakeUserId = 99
 
         when:
-        tournamentService.joinTournament(fakeUserId, tournamentDto, "")
+        tournamentService.joinTournament(fakeUserId, tournamentDto.getId(), "")
 
         then: "student cannot join"
         def exception = thrown(TutorException)
@@ -101,7 +101,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "student joins an open and private tournament with correct password" () {
         when:
-        tournamentService.joinTournament(user1.getId(), privateTournamentDto, "123")
+        tournamentService.joinTournament(user1.getId(), privateTournamentDto.getId(), "123")
 
         then: "the student have joined the tournament"
         def result = tournamentRepository.findById(privateTournamentDto.getId()).orElse(null)
@@ -113,7 +113,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "student joins an open and private tournament with wrong password" () {
         when:
-        tournamentService.joinTournament(user1.getId(), privateTournamentDto, "Not 123")
+        tournamentService.joinTournament(user1.getId(), privateTournamentDto.getId(), "Not 123")
 
         then: "receives exception"
         def exception = thrown(TutorException)

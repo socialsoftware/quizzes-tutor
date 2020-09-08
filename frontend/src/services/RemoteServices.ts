@@ -953,20 +953,21 @@ export default class RemoteServices {
       });
   }
 
-  static joinTournament(tournament: Tournament, password: String) {
-    let path: string =
-      `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament?password=` +
-      password;
-    return httpClient.put(path, tournament).catch(async error => {
-      throw Error(await this.errorMessage(error));
-    });
-  }
-
-  static solveTournament(tournament: Tournament): Promise<StatementQuiz> {
+  static joinTournament(tournamentId: number, password: String) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/solveQuiz`,
-        tournament
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament/${tournamentId}?password=` +
+          password
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static solveTournament(tournamentId: number): Promise<StatementQuiz> {
+    return httpClient
+      .put(
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/solveQuiz/${tournamentId}`
       )
       .then(response => {
         return new StatementQuiz(response.data);
@@ -976,11 +977,10 @@ export default class RemoteServices {
       });
   }
 
-  static leaveTournament(tournament: Tournament) {
+  static leaveTournament(tournamentId: number) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/leaveTournament`,
-        tournament
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/leaveTournament/${tournamentId}`
       )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -1006,11 +1006,10 @@ export default class RemoteServices {
       });
   }
 
-  static cancelTournament(tournament: Tournament) {
+  static cancelTournament(tournamentId: number) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/cancelTournament`,
-        tournament
+        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/cancelTournament/${tournamentId}`
       )
       .catch(async error => {
         throw Error(await this.errorMessage(error));

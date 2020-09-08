@@ -313,7 +313,7 @@ export default class AllTournamentView extends Vue {
     const participants = tournamentToJoin.participants;
     tournamentToJoin.participants = [];
     try {
-      await RemoteServices.joinTournament(tournamentToJoin, this.password);
+      await RemoteServices.joinTournament(tournamentToJoin.id, this.password);
     } catch (error) {
       await this.$store.dispatch('error', error);
       tournamentToJoin.participants = participants;
@@ -327,7 +327,7 @@ export default class AllTournamentView extends Vue {
     const participants = tournamentToLeave.participants;
     tournamentToLeave.participants = [];
     try {
-      await RemoteServices.leaveTournament(tournamentToLeave);
+      await RemoteServices.leaveTournament(tournamentToLeave.id);
     } catch (error) {
       await this.$store.dispatch('error', error);
       tournamentToLeave.participants = participants;

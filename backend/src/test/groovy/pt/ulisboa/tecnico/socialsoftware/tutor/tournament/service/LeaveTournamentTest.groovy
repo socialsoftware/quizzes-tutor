@@ -30,7 +30,7 @@ class LeaveTournamentTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
 
         when:
-        tournamentService.leaveTournament(user1.getId(), tournamentDto)
+        tournamentService.leaveTournament(user1.getId(), tournamentDto.getId())
 
         then: "the tournament has no participants"
         def result = tournamentRepository.findById(tournamentDto.getId()).orElse(null)
@@ -39,7 +39,7 @@ class LeaveTournamentTest extends TournamentTest {
 
     def "Non participant student leaves the tournament" () {
         when:
-        tournamentService.leaveTournament(user2.getId(), tournamentDto)
+        tournamentService.leaveTournament(user2.getId(), tournamentDto.getId())
 
         then: "exception is thrown"
         def exception = thrown(TutorException)

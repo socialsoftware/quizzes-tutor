@@ -114,18 +114,18 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void joinTournament(Integer userId, TournamentDto tournamentDto, String password) {
+    public void joinTournament(Integer userId, Integer tournamentId, String password) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        Tournament tournament = checkTournament(tournamentDto.getId());
+        Tournament tournament = checkTournament(tournamentId);
 
         tournament.addParticipant(user, password);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public StatementQuizDto solveQuiz(Integer userId, TournamentDto tournamentDto) {
+    public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        Tournament tournament = checkTournament(tournamentDto.getId());
+        Tournament tournament = checkTournament(tournamentId);
         tournament.checkIsParticipant(user);
 
         if (!tournament.hasQuiz()) {
@@ -137,9 +137,9 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void leaveTournament(Integer userId, TournamentDto tournamentDto) {
+    public void leaveTournament(Integer userId, Integer tournamentId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        Tournament tournament = checkTournament(tournamentDto.getId());
+        Tournament tournament = checkTournament(tournamentId);
 
         tournament.removeParticipant(user);
     }
@@ -181,9 +181,9 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto cancelTournament(Integer userId, TournamentDto tournamentDto) {
+    public TournamentDto cancelTournament(Integer userId, Integer tournamentId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        Tournament tournament = checkTournament(tournamentDto.getId());
+        Tournament tournament = checkTournament(tournamentId);
 
         tournament.checkCreator(user);
 

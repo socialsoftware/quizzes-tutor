@@ -272,7 +272,7 @@ export default class MyTournamentsView extends Vue {
       const participants = tournamentToCancel.participants;
       tournamentToCancel.participants = [];
       try {
-        await RemoteServices.cancelTournament(tournamentToCancel);
+        await RemoteServices.cancelTournament(tournamentToCancel.id);
         this.tournaments = await RemoteServices.getTournamentsByUserId();
       } catch (error) {
         await this.$store.dispatch('error', error);

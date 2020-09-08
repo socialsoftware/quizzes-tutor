@@ -29,7 +29,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
 
         when:
-        tournamentService.solveQuiz(user1.getId(), tournamentDto)
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
 
         then: "the correct quiz is inside the repository"
         quizRepository.count() == 1L
@@ -49,8 +49,8 @@ class QuizTournamentGenerateTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user2, "")
 
         when: 'both students solve the quiz'
-        tournamentService.solveQuiz(user1.getId(), tournamentDto)
-        tournamentService.solveQuiz(user2.getId(), tournamentDto)
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        tournamentService.solveQuiz(user2.getId(), tournamentDto.getId())
 
         then: 'there is only one quiz generated'
         quizRepository.count() == 1L
@@ -70,7 +70,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         assessment.setStatus(Assessment.Status.DISABLED)
 
         when:
-        tournamentService.solveQuiz(user1.getId(), tournamentDto)
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
 
         then:
         def error = thrown(TutorException)
