@@ -30,30 +30,10 @@
           label="Question"
           data-cy="QuestionContent"
         ></v-textarea>
-        <div
-          v-for="index in editQuestionSubmission.question.options.length"
-          :key="index"
-        >
-          <v-row>
-            <v-textarea
-              auto-grow
-              rows="2"
-              v-model="
-                editQuestionSubmission.question.options[index - 1].content
-              "
-              :label="`Option ${index}`"
-              v-bind:data-cy="'Option' + index"
-            ></v-textarea>
-            <v-switch
-              v-model="
-                editQuestionSubmission.question.options[index - 1].correct
-              "
-              class="ma-4"
-              label="Correct"
-              v-bind:data-cy="'Switch' + index"
-            />
-          </v-row>
-        </div>
+        <component
+            :is="editQuestionSubmission.question.questionDetailsDto.type"
+            :questionDetails.sync="editQuestionSubmission.question.questionDetailsDto"
+          />
       </v-card-text>
       <div v-if="editMode(questionSubmission)" class="text-left">
         <v-card-title>
@@ -94,8 +74,13 @@ import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
+import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 
-@Component
+@Component({
+  components: {
+    multiple_choice: MultipleChoiceCreate
+  }
+})
 export default class EditQuestionSubmissionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: QuestionSubmission, required: true })
