@@ -40,20 +40,10 @@ export default class Tournament {
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
 
-      this.enrolled = false;
       if (user) {
-        this.participants.forEach(pUser => {
-          if (pUser.id == user.id) {
-            this.enrolled = true;
-            return;
-          }
-        });
-        for (let i = 0; i < this.participants.length; i++) {
-          if (user.id == this.participants[i].id) {
-            this.enrolled = true;
-            return;
-          }
-        }
+        this.enrolled = this.participants.some(
+          pUser => pUser.username === user.username
+        );
       }
     }
   }

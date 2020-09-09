@@ -63,9 +63,8 @@ export default class ParticipantsTournament extends Vue {
 
   tournaments: Tournament[] = [];
   closedTournaments: Tournament[] = [];
-  selectedTournament: Tournament | null = null;
+  selectedTournament: Tournament | undefined;
   isClosed: Boolean = false;
-  quizAnswers: QuizAnswers | null = null;
   tournamentScores: TournamentScore[] = [];
   correctAnswers: number = 0;
 
@@ -81,16 +80,17 @@ export default class ParticipantsTournament extends Vue {
     try {
       this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
       this.closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
-      this.tournaments.map(tournament => {
-        if (tournament.id == this.id) this.selectedTournament = tournament;
-      });
-      this.closedTournaments.map(tournament => {
-        if (tournament.id == this.id) this.isClosed = true;
-      });
+      this.selectedTournament = this.tournaments.find(
+        tournament => tournament.id === this.id
+      );
       if (this.selectedTournament) {
-        for (const participant of this.selectedTournament.participants) {
+        this.isClosed = this.closedTournaments.includes(
+          this.selectedTournament
+        );
+
+        this.selectedTournament.participants.map(async participant => {
           let score;
-          if (this.isClosed)
+          if (this.isClosed && this.selectedTournament)
             score = await TournamentScore.getScore(
               this.selectedTournament,
               this.correctAnswers
@@ -99,7 +99,7 @@ export default class ParticipantsTournament extends Vue {
           this.tournamentScores.push(
             new TournamentScore(participant, score, this.correctAnswers)
           );
-        }
+        });
       }
       if (this.isClosed)
         this.tournamentScores.sort((a, b) => TournamentScore.sortByScore(a, b));
