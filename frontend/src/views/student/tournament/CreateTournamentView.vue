@@ -282,9 +282,7 @@ export default class CreateTournamentDialog extends Vue {
 
     await this.$store.dispatch('loading');
     try {
-      [this.allTopics] = await Promise.all([
-        RemoteServices.getTournamentTopics()
-      ]);
+      this.allTopics = await RemoteServices.getTournamentTopics();
       this.availableTopics = this.allTopics;
     } catch (error) {
       await this.$store.dispatch('error', error);

@@ -146,17 +146,7 @@ public class Tournament  {
             checkTopicCourse(topic);
         }
 
-        List<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic)).collect(Collectors.toList());
-
-        toRemove.forEach(topic -> {
-            this.topics.remove(topic);
-            topic.removeTournament(this);
-        });
-
-        newTopics.stream().filter(topic -> !this.topics.contains(topic)).forEach(topic -> {
-            this.topics.add(topic);
-            topic.addTournament(this);
-        });
+        this.topics = newTopics;
     }
 
     public void checkTopicCourse(Topic topic) {

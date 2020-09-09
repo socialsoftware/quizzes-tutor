@@ -266,7 +266,8 @@ export default class AllTournamentView extends Vue {
     this.$emit('close-show-dashboard-dialog', false);
     if (tournament)
       await this.$router.push({
-        name: 'tournament-participants'
+        path: 'tournament',
+        query: { id: tournament.id.toString() }
       });
   }
 

@@ -116,7 +116,7 @@ let router = new Router({
           name: 'tournaments-management',
           component: TournamentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournaments',
+            title: APP_NAME + ' - Tournaments',
             requiredAuth: 'Teacher'
           }
         },
@@ -249,7 +249,7 @@ let router = new Router({
           name: 'all-tournament',
           component: AllTournamentView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament',
+            title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
           }
         },
@@ -258,7 +258,7 @@ let router = new Router({
           name: 'open-tournament',
           component: OpenTournamentView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament',
+            title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
           }
         },
@@ -267,7 +267,7 @@ let router = new Router({
           name: 'closed-tournament',
           component: ClosedTournamentView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament',
+            title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
           }
         },
@@ -276,7 +276,7 @@ let router = new Router({
           name: 'my-tournaments',
           component: MyTournamentsView,
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament',
+            title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
           }
         },
@@ -286,7 +286,7 @@ let router = new Router({
           component: ParticipantsTournamentView,
           props: route => ({ id: route.query.id }),
           meta: {
-            title: process.env.VUE_APP_NAME + ' - Tournament Participants',
+            title: APP_NAME + ' - Tournament Participants',
             requiredAuth: 'Student'
           }
         },
@@ -307,7 +307,7 @@ let router = new Router({
       component: SelectedTournamentView,
       props: route => ({ id: route.query.id }),
       meta: {
-        title: process.env.VUE_APP_NAME + ' - Tournament Dashboard',
+        title: APP_NAME + ' - Tournament Dashboard',
         requiredAuth: 'Teacher'
       }
     },
