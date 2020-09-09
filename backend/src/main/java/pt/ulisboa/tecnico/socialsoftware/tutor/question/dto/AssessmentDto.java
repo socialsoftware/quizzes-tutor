@@ -75,12 +75,6 @@ public class AssessmentDto implements Serializable {
         this.topicConjunctions.add(topicConjunctionDto);
     }
 
-    public List<TopicDto> getTopics() {
-        return this.topicConjunctions.stream()
-                .flatMap(topicConjunction -> topicConjunction.getTopics().stream())
-                .collect(Collectors.toList());
-    }
-
     @Override
     public String toString() {
         return "AssessmentDto{" +

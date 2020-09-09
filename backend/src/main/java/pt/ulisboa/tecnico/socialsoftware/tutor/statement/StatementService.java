@@ -128,8 +128,11 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        if (quizDetails.getTopicConjunction() != null) {
-            availableQuestions = filterByTopicsTournament(availableQuestions, quizDetails, courseExecution);
+        List<Integer> availableTopicsIds = topicService.findTournamentTopics(courseExecution.getId())
+                .stream().map(topic -> topic.getId()).collect(Collectors.toList());
+
+        if (quizDetails.getTopics() != null) {
+            availableQuestions = courseExecution.filterByTopicsTournament(availableQuestions, quizDetails, availableTopicsIds);
         } else {
             availableQuestions = new ArrayList<>();
         }
@@ -327,18 +330,5 @@ public class StatementService {
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
-    }
-
-    public List<Question> filterByTopicsTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, CourseExecution courseExecution) {
-        List<Integer> topicsIds = new ArrayList<>();
-
-        quizDetails.getTopicConjunction().getTopics().forEach(topicDto -> topicsIds.add(topicDto.getId()));
-
-        List<Integer> availableTopicsIds = topicService.findTournamentTopics(courseExecution.getId())
-                .stream().map(topic -> topic.getId()).collect(Collectors.toList());
-
-        return availableQuestions.stream()
-                .filter(question -> question.belongsToTopicsGivenAvailableTopicsIds(topicsIds, availableTopicsIds))
-                .collect(Collectors.toList());
     }
 }

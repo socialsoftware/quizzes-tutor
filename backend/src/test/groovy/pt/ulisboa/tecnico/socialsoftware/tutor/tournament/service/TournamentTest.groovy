@@ -96,13 +96,15 @@ class TournamentTest extends SpockTest {
         assessment.setTitle(title)
         assessment.setStatus(status)
         assessment.setCourseExecution(courseExecution)
+        assessmentRepository.save(assessment)
 
         def topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic1)
         topicConjunction.addTopic(topic2)
+        topicConjunction.setAssessment(assessment)
+        topicConjunctionRepository.save(topicConjunction)
 
         assessment.addTopicConjunction(topicConjunction)
-        assessmentRepository.save(assessment)
     }
 
     def createQuestion(LocalDateTime creationDate, String content, String title, Question.Status status, Course course) {

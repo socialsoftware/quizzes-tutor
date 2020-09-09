@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -102,6 +103,12 @@ public class Assessment implements DomainEntity {
 
     public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
+    }
+
+    public List<Topic> getTopics() {
+        return this.topicConjunctions.stream()
+                .flatMap(topicConjunction -> topicConjunction.getTopics().stream())
+                .collect(Collectors.toList());
     }
 
     public void addTopicConjunction(TopicConjunction topicConjunction) {

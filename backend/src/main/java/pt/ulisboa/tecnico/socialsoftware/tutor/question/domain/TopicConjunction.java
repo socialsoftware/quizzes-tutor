@@ -20,7 +20,7 @@ public class TopicConjunction {
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch=FetchType.LAZY, optional=false)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
 
@@ -49,10 +49,8 @@ public class TopicConjunction {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
-        if (this.assessment != null) {
-            this.assessment.getTopicConjunctions().remove(this);
-            this.assessment = null;
-        }
+        this.assessment.getTopicConjunctions().remove(this);
+        this.assessment = null;
     }
 
     @Override

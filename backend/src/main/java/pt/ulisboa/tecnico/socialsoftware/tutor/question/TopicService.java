@@ -14,12 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import java.sql.SQLException;
 import java.util.Comparator;
@@ -66,7 +63,7 @@ public class TopicService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
         Course course = courseRepository.findById(courseExecution.getCourse().getId()).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecution.getCourse().getId()));
 
-        Set<Integer> availableTopicsId = courseExecution.findAvailableTopicsGivenAvailableAssessments(assessmentService.findAvailableAssessments(courseExecutionId));
+        Set<Integer> availableTopicsId = courseExecution.findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
 
         List<TopicDto> topics = topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
 

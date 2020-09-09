@@ -10,8 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -241,21 +239,11 @@ public class TournamentService {
     }
 
     private Integer getQuizAnswers(Tournament tournament) {
-        Integer numberOfAnswers = 0;
-        if (tournament.hasQuiz()) {
-            numberOfAnswers = quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size();
-        }
-
-        return numberOfAnswers;
+        return tournament.hasQuiz() ? quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size() : 0;
     }
 
     private void createQuiz(Tournament tournament) {
-        TopicConjunction topicConjunction = new TopicConjunction();
-        topicConjunction.updateTopics(tournament.getTopics());
-
-        StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto();
-        quizForm.setNumberOfQuestions(tournament.getNumberOfQuestions());
-        quizForm.setTopicConjunction(new TopicConjunctionDto(topicConjunction));
+        StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
 
         StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm, tournament);

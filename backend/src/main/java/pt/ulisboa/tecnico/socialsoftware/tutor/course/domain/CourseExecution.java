@@ -4,16 +4,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -145,6 +144,12 @@ public class CourseExecution implements DomainEntity {
         return assessments;
     }
 
+    public List<Assessment> getAvailableAssessments() {
+        return getAssessments().stream()
+                .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
+                .collect(Collectors.toList());
+    }
+
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
     }
@@ -226,11 +231,20 @@ public class CourseExecution implements DomainEntity {
                 .collect(Collectors.toSet());
     }
 
-    public Set<Integer> findAvailableTopicsGivenAvailableAssessments(List<AssessmentDto> availableAssessments) {
-        Set<TopicDto> availableTopics = new HashSet<>();
+    public Set<Topic> findAvailableTopics() {
+        Set<Topic> availableTopics = new HashSet<>();
 
-        availableAssessments.forEach(assessment -> availableTopics.addAll(assessment.getTopics()));
+        getAvailableAssessments().forEach(assessment -> availableTopics.addAll(assessment.getTopics()));
 
-        return availableTopics.stream().map(TopicDto::getId).collect(Collectors.toSet());
+        return availableTopics;
+    }
+
+    public List<Question> filterByTopicsTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, List<Integer> availableTopicsIds) {
+        List<Integer> topicsIds = new ArrayList<>();
+        quizDetails.getTopics().forEach(topicDto -> topicsIds.add(topicDto.getId()));
+
+        return availableQuestions.stream()
+                .filter(question -> question.belongsToTopicsGivenAvailableTopicsIds(topicsIds, availableTopicsIds))
+                .collect(Collectors.toList());
     }
 }
