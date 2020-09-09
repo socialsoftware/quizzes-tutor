@@ -52,12 +52,6 @@ public class QuestionSubmissionController {
         questionSubmissionService.updateQuestionSubmissionTopics(questionSubmissionId, topics);
     }
 
-    @PutMapping("/submissions/{questionSubmissionId}/reviews")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
-    public void toggleInReviewStatus(@PathVariable int questionSubmissionId,@Valid @RequestParam boolean inReview) {
-        questionSubmissionService.toggleInReviewStatus(questionSubmissionId, inReview);
-    }
-
     @GetMapping(value = "/submissions/{executionId}/student")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {

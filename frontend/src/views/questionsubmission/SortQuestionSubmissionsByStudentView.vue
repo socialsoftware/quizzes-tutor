@@ -154,24 +154,6 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
 
   async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
     this.currentQuestionSubmission = questionSubmission;
-
-    await this.$store.dispatch('loading');
-    try {
-      if (this.currentQuestionSubmission.isInDiscussion()) {
-        try {
-          await RemoteServices.toggleInReviewStatus(
-            questionSubmission!.id!,
-            true
-          );
-        } catch (error) {
-          await this.$store.dispatch('error', error);
-        }
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-
     this.questionSubmissionDialog = true;
   }
 

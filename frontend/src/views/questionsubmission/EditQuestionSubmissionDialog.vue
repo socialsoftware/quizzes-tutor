@@ -67,9 +67,8 @@
         <v-btn
           color="blue darken-1"
           @click="saveQuestionSubmission"
-          data-cy="SubmitButton"
-        >
-          {{ editMode(editQuestionSubmission) ? 'Save' : 'Submit' }}</v-btn
+          data-cy="SaveButton"
+          >Save</v-btn
         >
       </v-card-actions>
     </v-card>

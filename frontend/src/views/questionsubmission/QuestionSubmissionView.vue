@@ -34,9 +34,9 @@
             v-if="$store.getters.isStudent"
             color="primary"
             dark
-            @click="submitQuestion"
-            data-cy="SubmitQuestion"
-            >Submit Question</v-btn
+            @click="newSubmission"
+            data-cy="NewSubmission"
+            >New Submission</v-btn
           >
         </v-card-title>
       </template>
@@ -198,7 +198,7 @@ export default class QuestionSubmissionView extends Vue {
     );
   }
 
-  submitQuestion() {
+  newSubmission() {
     let question = new Question();
     question.status = 'SUBMITTED';
     this.currentQuestionSubmission = new QuestionSubmission();
@@ -238,26 +238,6 @@ export default class QuestionSubmissionView extends Vue {
 
   async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
     this.currentQuestionSubmission = questionSubmission;
-
-    if (this.$store.getters.isTeacher) {
-      await this.$store.dispatch('loading');
-      try {
-        if (this.currentQuestionSubmission.isInDiscussion()) {
-          try {
-            await RemoteServices.toggleInReviewStatus(
-              questionSubmission!.id!,
-              true
-            );
-          } catch (error) {
-            await this.$store.dispatch('error', error);
-          }
-        }
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-      await this.$store.dispatch('clearLoading');
-    }
-
     this.questionSubmissionDialog = true;
   }
 

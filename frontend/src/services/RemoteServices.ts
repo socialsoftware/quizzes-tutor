@@ -728,17 +728,6 @@ export default class RemoteServices {
       });
   }
 
-  static async toggleInReviewStatus(
-    questionSubmissionId: number,
-    inReview: boolean
-  ) {
-    return httpClient
-      .put(`/submissions/${questionSubmissionId}/reviews?inReview=${inReview}`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(

@@ -140,14 +140,6 @@ public class  QuestionSubmissionService {
         questionSubmissionRepository.delete(questionSubmission);
     }
 
-    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void toggleInReviewStatus(int questionSubmissionId, boolean inReview) {
-        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
-        QuestionSubmission.Status status = inReview ? QuestionSubmission.Status.IN_REVIEW : QuestionSubmission.Status.IN_REVISION;
-        updateQuestionSubmissionStatus(status.name(), questionSubmission);
-    }
-
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {

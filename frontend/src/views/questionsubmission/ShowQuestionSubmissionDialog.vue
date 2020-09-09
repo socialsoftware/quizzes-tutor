@@ -21,7 +21,7 @@
           >
           <v-spacer />
           <v-chip :color="currentQuestionSubmission.getStatusColor()">
-            {{ currentQuestionSubmission.status }}
+            {{ currentQuestionSubmission.status.replace('_', ' ') }}
           </v-chip>
         </v-card-title>
         <v-card

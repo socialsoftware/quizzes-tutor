@@ -70,7 +70,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'submitQuestion',
   (valid, title, content, opt1, opt2, opt3, opt4) => {
-    cy.get('[data-cy="SubmitQuestion"]').click();
+    cy.get('[data-cy="NewSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
     cy.get('[data-cy="Switch1"]').click({ force: true });
@@ -79,7 +79,7 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="SaveButton"]').click();
       cy.contains(title)
         .parent()
         .parent()
@@ -87,7 +87,7 @@ Cypress.Commands.add(
         .children()
         .should('have.length', 5);
     } else {
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="SaveButton"]').click();
     }
   }
 );
@@ -103,10 +103,10 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="SaveButton"]').click();
     } else {
       cy.get('[data-cy="Option1"]').clear();
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="SaveButton"]').click();
     }
   }
 );
