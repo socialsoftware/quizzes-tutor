@@ -1,8 +1,8 @@
 <template>
   <v-dialog
     :value="dialog"
-    @input="$emit('close-edit-dialog')"
-    @keydown.esc="$emit('close-edit-dialog')"
+    @input="cancelTournament()"
+    @keydown.esc="cancelTournament()"
     max-width="75%"
     max-height="80%"
   >
