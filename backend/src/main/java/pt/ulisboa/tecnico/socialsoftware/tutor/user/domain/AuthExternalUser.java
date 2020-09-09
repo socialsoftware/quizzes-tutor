@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.Column;
@@ -23,6 +24,12 @@ public class AuthExternalUser extends AuthUser {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public void confirmRegistration(PasswordEncoder passwordEncoder, String confirmationToken, String password) {
+        checkConfirmationToken(confirmationToken);
+        setPassword(passwordEncoder.encode(password));
+        setActive(true);
     }
 
     @Override

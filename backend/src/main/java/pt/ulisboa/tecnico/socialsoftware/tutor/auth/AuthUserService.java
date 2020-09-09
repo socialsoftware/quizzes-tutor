@@ -175,7 +175,6 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoStudentAuth(Boolean createNew) {
         AuthUser authUser;
-        User user;
 
         if (createNew == null || !createNew)
             authUser = getDemoStudent(this.userService);
@@ -232,18 +231,15 @@ public class AuthUserService {
         }
 
         try {
-            authUser.checkConfirmationToken(externalUserDto.getConfirmationToken());
+            authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
+                    externalUserDto.getPassword());
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                userService.generateConfirmationToken(authUser.getUser().getAuthUser());
-                return new ExternalUserDto(authUser);
+                userService.generateConfirmationToken(authUser);
             }
             else throw new TutorException(e.getErrorMessage());
         }
-
-        authUser.setPassword(passwordEncoder.encode(externalUserDto.getPassword()));
-        authUser.setActive(true);
 
         return new ExternalUserDto(authUser);
     }

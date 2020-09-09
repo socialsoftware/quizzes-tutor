@@ -76,9 +76,7 @@ public class UsersXmlExport {
 		authUserElement.setAttribute("username", authUser.getUsername());
 		authUserElement.setAttribute("email", authUser.getEmail());
 
-		if (authUser.getType() != null) {
-			authUserElement.setAttribute("type", authUser.getType().toString());
-		}
+		authUserElement.setAttribute("type", authUser.getType().toString());
 
 		if (authUser.getPassword() != null) {
 			authUserElement.setAttribute("password", authUser.getPassword());
