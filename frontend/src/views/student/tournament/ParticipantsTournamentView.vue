@@ -55,7 +55,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
 import TournamentScore from '@/models/user/TournamentScore';
 import RemoteServices from '@/services/RemoteServices';
-import { QuizAnswers } from '@/models/management/QuizAnswers';
 
 @Component({})
 export default class ParticipantsTournament extends Vue {

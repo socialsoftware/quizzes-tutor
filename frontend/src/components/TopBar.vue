@@ -107,6 +107,14 @@
                 <v-list-item-title>Students</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/management/tournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-trophy</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/impexp">
               <v-list-item-action>
                 <v-icon>cloud</v-icon>
@@ -116,15 +124,6 @@
               </v-list-item-content>
             </v-list-item>
           </v-list>
-        </v-menu>
-
-        <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" :to="'/management/tournaments'" text dark>
-              Tournaments
-              <v-icon>fas fa-trophy</v-icon>
-            </v-btn>
-          </template>
         </v-menu>
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
@@ -358,6 +357,14 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Students</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/tournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-trophy</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Tournaments</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/impexp">
