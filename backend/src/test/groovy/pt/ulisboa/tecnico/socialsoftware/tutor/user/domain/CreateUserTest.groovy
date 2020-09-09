@@ -249,7 +249,7 @@ class CreateUserTest extends SpockTest {
         given:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
         def previousNumberOfUsers = courseExecution.getUsers().size()
         def previousNumberOfCourses = user.getCourseExecutions().size()
@@ -278,7 +278,7 @@ class CreateUserTest extends SpockTest {
         given:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
         user.addCourse(courseExecution)
         def previousNumberOfUsers = courseExecution.getUsers().size()
@@ -296,7 +296,7 @@ class CreateUserTest extends SpockTest {
         and:
         def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
         courseRepository.save(course)
-        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
         user.addCourse(courseExecution)
         def previousNumberOfUsers = courseExecution.getUsers().size()

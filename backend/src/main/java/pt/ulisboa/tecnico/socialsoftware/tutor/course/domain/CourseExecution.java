@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -56,7 +57,7 @@ public class CourseExecution implements DomainEntity {
     public CourseExecution() {
     }
 
-    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type) {
+    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type, LocalDateTime endDate) {
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
@@ -66,6 +67,8 @@ public class CourseExecution implements DomainEntity {
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
         setStatus(Status.ACTIVE);
+        setEndDate(endDate);
+
     }
 
     @Override

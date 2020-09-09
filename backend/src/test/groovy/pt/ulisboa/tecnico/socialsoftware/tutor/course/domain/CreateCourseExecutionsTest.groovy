@@ -16,7 +16,7 @@ class CreateCourseExecutionsTest extends SpockTest {
         course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL) >> false
 
         when:
-        def courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        def courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
 
         then: "the object is correctly created"
         courseExecution.acronym == COURSE_1_ACRONYM
@@ -32,7 +32,7 @@ class CreateCourseExecutionsTest extends SpockTest {
         course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL) >> true
 
         when:
-        new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
 
         then: "the returned data are correct"
         thrown(TutorException)

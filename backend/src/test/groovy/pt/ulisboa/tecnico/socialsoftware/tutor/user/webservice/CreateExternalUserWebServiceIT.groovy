@@ -22,7 +22,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         restClient = new RESTClient("http://localhost:" + port)
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
-        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution1)
         demoAdminLogin()
     }

@@ -198,4 +198,8 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void remove() {
+        user.setAuthUser(null);
+    }
 }

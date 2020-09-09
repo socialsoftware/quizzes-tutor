@@ -223,8 +223,7 @@ class SpockTest extends Specification {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
 
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
-        externalCourseExecution.setEndDate(LOCAL_DATE_TODAY)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(externalCourseExecution)
     }
 

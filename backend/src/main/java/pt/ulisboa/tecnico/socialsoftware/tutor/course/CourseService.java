@@ -132,8 +132,9 @@ public class CourseService {
         for (User user : courseExecution.getUsers()) {
             if (user.getAuthUser() == null) continue;
             String oldUsername = user.getUsername();
-            authUserRepository.delete(user.getAuthUser());
-            user.setAuthUser(null);
+            AuthUser authUser = user.getAuthUser();
+            authUser.remove();
+            authUserRepository.delete(authUser);
             String newUsername = user.getUsername();
             questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
             String role = user.getRole().toString();
@@ -167,8 +168,7 @@ public class CourseService {
     }
 
     private CourseExecution createCourseExecution(Course existingCourse, CourseDto courseDto) {
-        CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
-        courseExecution.setEndDate(DateHandler.toLocalDateTime(courseDto.getEndDate()));
+        CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType(), DateHandler.toLocalDateTime(courseDto.getEndDate()));
         courseExecutionRepository.save(courseExecution);
         return courseExecution;
     }
@@ -189,7 +189,7 @@ public class CourseService {
     public CourseExecution getDemoCourseExecution() {
         return this.courseExecutionRepository.findByFields(Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElseGet(() -> {
             Course course = getCourse(Demo.COURSE_NAME, Course.Type.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO, null);
             courseExecution.setStatus(CourseExecution.Status.ACTIVE);
             return courseExecutionRepository.save(courseExecution);
         });
@@ -202,8 +202,8 @@ public class CourseService {
     public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
         CourseExecution execution = getExternalCourseExecution(courseExecutionId);
         return execution.getStudents().stream()
-                .sorted(Comparator.comparing(User::getName))
                 .map(ExternalUserDto::new)
+                .sorted(Comparator.comparing(ExternalUserDto::getUsername))
                 .collect(Collectors.toList());
     }
 
