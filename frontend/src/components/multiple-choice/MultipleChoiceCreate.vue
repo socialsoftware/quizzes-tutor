@@ -7,13 +7,13 @@
           rows="2"
           v-model="sQuestionDetails.options[index - 1].content"
           :label="`Option ${index}`"
-          v-bind:data-cy="`Option ${index}`"
+          v-bind:data-cy="`Option${index}`"
         ></v-textarea>
         <v-switch
           v-model="sQuestionDetails.options[index - 1].correct"
           class="ma-4"
           :label="`Correct ${index}`"
-          v-bind:data-cy="`Switch ${index}`"
+          v-bind:data-cy="`Switch${index}`"
         />
       </v-row>
     </div>

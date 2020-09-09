@@ -1,7 +1,7 @@
 describe('Administration walkthrough', () => {
   beforeEach(() => {
+    cy.cleanTestCourses();
     cy.demoAdminLogin();
-
     cy.get('[data-cy="administrationMenuButton"]').click();
     cy.get('[data-cy="manageCoursesMenuButton"]').click({force: true});
   });
@@ -10,7 +10,7 @@ describe('Administration walkthrough', () => {
     cy.logout();
   });
 
-  it('login creates a course execution adds a teacher though the form and deletes the taeacher and course execution', () => {
+  it('login creates a course execution adds a teacher though the form and deletes the teacher and course execution', () => {
     cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
     cy.addUserThroughForm('TEST-AO3', 'User1', 'test@mail.com', "TEACHER");
     cy.closeUserCreationDialog();
