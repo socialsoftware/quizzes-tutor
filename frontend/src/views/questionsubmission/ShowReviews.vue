@@ -8,14 +8,14 @@
         <b>{{ review.name + '  ' }}</b>
         <v-chip x-small>{{ review.creationDate }}</v-chip>
         {{ '| ' }}
-        <span v-if="review.getSubmissionStatus() !== null">
+        <span v-if="review.submissionStatus !== null">
           <v-chip small :color="review.getStatusColor()">
-            {{ review.getSubmissionStatus() }}
+            {{ review.submissionStatus.replace('_', ' ') }}
           </v-chip>
           {{ ' |' }}
         </span>
       </span>
-      {{ review.getComment() }}
+      {{ review.comment }}
       <v-icon
         v-if="
           $store.getters.isStudent &&

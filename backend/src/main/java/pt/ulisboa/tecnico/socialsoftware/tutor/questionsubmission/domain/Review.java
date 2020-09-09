@@ -7,8 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
@@ -34,6 +32,9 @@ public class Review {
     @JoinColumn(name = "question_submission_id")
     private QuestionSubmission questionSubmission;
 
+    @Column(columnDefinition = "TEXT")
+    private String submissionStatus;
+
     public Review() {
     }
 
@@ -42,6 +43,7 @@ public class Review {
         setUser(user);
         setQuestionSubmission(questionSubmission);
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
+        setSubmissionStatus(reviewDto.getSubmissionStatus());
     }
 
     @Override
@@ -78,6 +80,20 @@ public class Review {
     public QuestionSubmission getQuestionSubmission() { return questionSubmission; }
 
     public void setQuestionSubmission(QuestionSubmission questionSubmission) { this.questionSubmission = questionSubmission; }
+
+    public String getSubmissionStatus() { return submissionStatus; }
+
+    public void setSubmissionStatus(String submissionStatus) {
+        try {
+            if (submissionStatus != null) {
+                this.submissionStatus = QuestionSubmission.Status.valueOf(submissionStatus).name();
+            } else {
+                this.submissionStatus = null;
+            }
+        } catch (IllegalArgumentException e) {
+            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+        }
+    }
 
     public void remove() {
         this.questionSubmission = null;

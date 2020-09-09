@@ -62,9 +62,15 @@ export default class QuestionSubmission {
   }
 
   getStatusColor() {
-    if (this.status === 'APPROVED') return 'green';
-    else if (this.status === 'REJECTED') return 'red';
-    else if (this.status === 'IN_REVISION') return 'yellow';
-    else if (this.status === 'IN_REVIEW') return 'blue';
+    switch (this.status) {
+      case 'APPROVED':
+        return 'green';
+      case 'REJECTED':
+        return 'red';
+      case 'IN_REVISION':
+        return 'yellow';
+      case 'IN_REVIEW':
+        return 'blue';
+    }
   }
 }

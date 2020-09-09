@@ -40,23 +40,11 @@ export default class Review {
     this.questionSubmissionId = questionSubmissionId;
     this.submissionStatus = status;
     this.userId = userId;
-    this.comment = status !== null ? status + '@@' + comment : comment; // explain @@
-  }
-
-  getSubmissionStatus() {
-    let comment = this.comment.split('@@');
-    return comment.length > 1 ? comment[0].replace('_', ' ') : null;
-  }
-
-  getComment() {
-    let comment = this.comment.split('@@');
-    return comment.length > 1 ? comment[1] : this.comment;
+    this.comment = comment;
   }
 
   getStatusColor() {
-    let comment = this.comment.split('@@');
-
-    switch (comment[0]) {
+    switch (this.submissionStatus) {
       case 'APPROVED':
         return 'green';
       case 'REJECTED':
@@ -73,7 +61,7 @@ export default class Review {
   }
 
   isInRevision() {
-    return this.getSubmissionStatus() === 'IN REVISION';
+    return this.submissionStatus === 'IN_REVISION';
   }
 
   isUsersReview(username: string) {
