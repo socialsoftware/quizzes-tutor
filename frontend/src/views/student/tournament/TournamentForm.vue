@@ -7,7 +7,12 @@
     max-height="80%"
   >
     <v-card>
-      <v-card-title>
+      <v-card-title v-if="!editMode">
+        <span class="headline">
+          <b>New Tournament</b>
+        </span>
+      </v-card-title>
+      <v-card-title v-if="editMode">
         <span class="headline">
           <b>Edit Tournament</b>
         </span>
@@ -40,7 +45,64 @@
                 </VueCtkDateTimePicker>
               </v-col>
             </v-row>
-            <v-flex xs24 sm12 md8>
+            <v-flex xs24 sm12 md8 v-if="!editMode">
+              <v-row>
+                <v-col cols="12" sm="4">
+                  <p>
+                    <b>Number Of Questions:</b>
+                    {{ editTournament.numberOfQuestions }}
+                  </p>
+                  <v-text-field
+                    min="1"
+                    step="1"
+                    type="number"
+                    v-model="editTournament.numberOfQuestions"
+                    label="Number Of Questions"
+                    data-cy="NumberOfQuestions"
+                  />
+                </v-col>
+                <v-col cols="12" sm="2">
+                  <p>
+                    <b>Privacy:</b>
+                  </p>
+                  <div
+                    class="switchContainer"
+                    style="display: flex; flex-direction: row; position: relative;"
+                  >
+                    <v-switch
+                      data-cy="SwitchPrivacy"
+                      v-model="editTournament.privateTournament"
+                      :label="
+                        editTournament.privateTournament ? 'Private' : 'Public'
+                      "
+                      @change="togglePrivacy()"
+                    />
+                  </div>
+                </v-col>
+                <v-col cols="12" sm="6" v-if="this.typePassword">
+                  <p>
+                    <b>Set Password:</b>
+                  </p>
+                  <v-text-field
+                    :type="passwordFieldType"
+                    v-model="password"
+                    label="Password"
+                    data-cy="Password"
+                  >
+                    <template slot="append">
+                      <v-icon
+                        v-if="this.typePassword"
+                        medium
+                        class="mr-2"
+                        @click="switchVisibility()"
+                        >visibility</v-icon
+                      >
+                    </template>
+                  </v-text-field>
+                </v-col>
+              </v-row>
+            </v-flex>
+            <v-flex xs24 sm12 md8 v-if="editMode">
               <p>
                 <b>Number Of Questions:</b>
                 {{ oldNumberOfQuestions }}
@@ -191,9 +253,10 @@ import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component
-export default class EditTournamentDialog extends Vue {
+export default class TournamentForm extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
+  @Prop({ type: Boolean, required: true }) readonly editMode!: boolean;
 
   editTournament!: Tournament;
   currentTopicsSearch: string = '';
@@ -202,7 +265,6 @@ export default class EditTournamentDialog extends Vue {
   allTopicsSearchText: string = '';
 
   allTopics: Topic[] = [];
-
   currentTopics: Topic[] = [];
   availableTopics: Topic[] = [];
 
@@ -213,6 +275,12 @@ export default class EditTournamentDialog extends Vue {
 
   newStartTime: string = '';
   newEndTime: string = '';
+
+  typePassword: boolean = false;
+  passwordFieldType: string = 'password';
+  password: string = '';
+
+  topicsId: Number[] = [];
 
   topicHeaders: object = [
     {
@@ -231,7 +299,28 @@ export default class EditTournamentDialog extends Vue {
   ];
 
   async created() {
-    this.editTournament = this.tournament;
+    this.editTournament = this.editMode
+      ? this.tournament
+      : new Tournament(this.tournament);
+
+    if (this.editMode) {
+      await this.storeOldValues();
+    }
+
+    await this.$store.dispatch('loading');
+    try {
+      this.allTopics = await RemoteServices.getTournamentTopics();
+      this.availableTopics = this.allTopics;
+      if (this.editMode && this.editTournament.topics !== undefined) {
+        await this.updateCurrentTopics();
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async storeOldValues() {
     if (this.editTournament.startTime) {
       this.oldStartTime = this.newStartTime = this.editTournament.startTime;
     }
@@ -242,23 +331,16 @@ export default class EditTournamentDialog extends Vue {
       this.oldNumberOfQuestions = this.editTournament.numberOfQuestions;
     }
     this.oldTopics = this.editTournament.topics!;
-    await this.$store.dispatch('loading');
-    try {
-      this.allTopics = await RemoteServices.getTournamentTopics();
-      this.availableTopics = this.allTopics;
-      if (this.editTournament.topics !== undefined) {
-        this.editTournament.topics!.forEach(topicName => {
-          this.availableTopics!.forEach(topic => {
-            if (topic.name.valueOf() === topicName.valueOf()) {
-              this.addTopic(topic);
-            }
-          });
-        });
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  }
+
+  async updateCurrentTopics() {
+    this.editTournament.topics!.forEach(topicName => {
+      this.availableTopics!.forEach(topic => {
+        if (topic.name.valueOf() === topicName.valueOf()) {
+          this.addTopic(topic);
+        }
+      });
+    });
   }
 
   async resetChanges() {
@@ -269,8 +351,12 @@ export default class EditTournamentDialog extends Vue {
   }
 
   async cancelTournament() {
-    await this.resetChanges();
-    this.$emit('close-edit-dialog');
+    if (this.editMode) {
+      await this.resetChanges();
+      this.$emit('close-edit-dialog');
+    } else {
+      this.$emit('close-dialog');
+    }
   }
 
   async saveTournament() {
@@ -288,14 +374,53 @@ export default class EditTournamentDialog extends Vue {
         'error',
         'Tournament must have Start Time, End Time, Number Of Questions and Topics'
       );
-      await this.resetChanges();
+      if (this.editMode) {
+        await this.resetChanges();
+      }
       return;
     }
 
-    if (this.editTournament && this.editTournament.id != null) {
-      const participants = this.editTournament.participants;
-      this.editTournament.participants = [];
+    if (
+      !this.editMode &&
+      this.editTournament &&
+      this.editTournament.privateTournament &&
+      this.password === ''
+    ) {
+      await this.$store.dispatch(
+        'error',
+        'Tournament must have a password in order to be private'
+      );
+      return;
+    }
 
+    if (
+      !this.editMode &&
+      this.editTournament &&
+      this.editTournament.id == null
+    ) {
+      this.editTournament.canceled = false;
+      this.editTournament.password = this.password;
+
+      this.topicsId = this.currentTopics.map(topic => {
+        return topic.id;
+      });
+
+      try {
+        const result = await RemoteServices.createTournament(
+          this.topicsId,
+          this.editTournament
+        );
+        this.$emit('new-tournament', result);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+
+    if (
+      this.editMode &&
+      this.editTournament &&
+      this.editTournament.id != null
+    ) {
       let topicsList = this.currentTopics.map(topic => {
         return topic.id;
       });
@@ -308,13 +433,22 @@ export default class EditTournamentDialog extends Vue {
         this.$emit('edit-tournament', result);
       } catch (error) {
         await this.$store.dispatch('error', error);
-        this.editTournament.participants = participants;
       }
       this.editTournament.topics = this.currentTopics.map(topic => {
         return topic.name;
       });
-      this.editTournament.participants = participants;
     }
+  }
+
+  async togglePrivacy() {
+    this.tournament.privateTournament = !this.tournament.privateTournament;
+    this.typePassword = !this.typePassword;
+    this.password = '';
+  }
+
+  async switchVisibility() {
+    this.passwordFieldType =
+      this.passwordFieldType === 'password' ? 'text' : 'password';
   }
 
   topicFilter(value: string, search: string, topic: Topic) {

@@ -152,6 +152,7 @@
       v-if="currentTournament"
       v-model="createTournamentDialog"
       :tournament="currentTournament"
+      :edit-mode="false"
       v-on:new-tournament="onCreateTournament"
       v-on:close-dialog="onCloseDialog"
     />
@@ -168,7 +169,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import CreateTournamentDialog from '@/views/student/tournament/CreateTournamentView.vue';
+import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import Tournament from '@/models/user/Tournament';
