@@ -127,14 +127,6 @@ public class User implements DomainEntity {
         this.admin = admin;
     }
 
-    /*public String getEnrolledCoursesAcronyms() {
-        return enrolledCoursesAcronyms;
-    }
-
-    public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
-        this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
-    }*/
-
     public Role getRole() {
         return role;
     }

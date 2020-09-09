@@ -177,7 +177,7 @@ public class AuthUserService {
         AuthUser authUser;
 
         if (createNew == null || !createNew)
-            authUser = getDemoStudent(this.userService);
+            authUser = getDemoStudent();
         else
             authUser = this.userService.createDemoStudent();
 
@@ -190,7 +190,7 @@ public class AuthUserService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoTeacherAuth() {
-        AuthUser authUser = getDemoTeacher(this.userService);
+        AuthUser authUser = getDemoTeacher();
 
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
@@ -201,7 +201,7 @@ public class AuthUserService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoAdminAuth() {
-        AuthUser authUser = getDemoAdmin(this.userService);
+        AuthUser authUser = getDemoAdmin();
 
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
@@ -245,7 +245,7 @@ public class AuthUserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser getDemoTeacher(UserService userService) {
+    public AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
@@ -254,7 +254,7 @@ public class AuthUserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser getDemoStudent(UserService userService) {
+    public AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
@@ -263,7 +263,7 @@ public class AuthUserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser getDemoAdmin(UserService userService) {
+    public AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
