@@ -54,6 +54,13 @@
             />
           </v-row>
         </div>
+        <v-textarea
+          outline
+          rows="1"
+          v-model="comment"
+          label="Comment"
+          data-cy="Comment"
+        ></v-textarea>
       </v-card-text>
 
       <v-card-actions>
@@ -69,6 +76,12 @@
           @click="saveQuestionSubmission"
           data-cy="SaveButton"
           >Save</v-btn
+        >
+        <v-btn
+          color="blue darken-1"
+          @click="submitQuestionSubmission"
+          data-cy="RequestReviewButton"
+          >Request Review</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -92,6 +105,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
 
   created() {
     this.updateQuestionSubmission();
+    this.comment = '';
   }
 
   @Watch('questionSubmission', { immediate: true, deep: true })
@@ -102,6 +116,38 @@ export default class EditQuestionSubmissionDialog extends Vue {
   }
 
   async saveQuestionSubmission() {
+    try {
+      if (
+        this.comment.trim().length == 0 ||
+        (this.comment.trim().length > 0 &&
+          confirm('Comment will not be saved. Do you wish to proceed?'))
+      ) {
+        let result = await this.createQuestionSubmission();
+        this.$emit('save-submission', result);
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async submitQuestionSubmission() {
+    try {
+      if (this.comment.trim().length === 0) {
+        await this.$store.dispatch(
+          'error',
+          'Error: Please insert a short comment that justifies your submission'
+        );
+        return;
+      }
+
+      let result = await this.createQuestionSubmission();
+      this.$emit('submit-submission', this.comment, result);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async createQuestionSubmission() {
     if (
       this.editQuestionSubmission &&
       (!this.editQuestionSubmission.question.title ||
@@ -109,7 +155,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
     ) {
       await this.$store.dispatch(
         'error',
-        'Question must have title and content'
+        'Error: Question must have title and content'
       );
       return;
     }
@@ -125,8 +171,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
           this.editQuestionSubmission
         );
       }
-
-      this.$emit('save-submission', result);
+      return result;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

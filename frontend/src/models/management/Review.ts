@@ -55,7 +55,7 @@ export default class Review {
     }
   }
 
-  getType(id: number) {
+  getType(firstReview: boolean) {
     switch (this.type) {
       case 'APPROVE':
         return 'APPROVED';
@@ -64,7 +64,7 @@ export default class Review {
       case 'REQUEST_CHANGES':
         return 'CHANGES REQUESTED';
       case 'REQUEST_REVIEW':
-        return id === 0 ? 'NEW SUBMISSION' : 'SUBMISSION EDITED';
+        return firstReview ? 'NEW SUBMISSION' : 'SUBMISSION EDITED';
     }
   }
 

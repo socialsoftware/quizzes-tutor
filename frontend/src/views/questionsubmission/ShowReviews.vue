@@ -3,14 +3,18 @@
     <p v-if="reviews.length === 0" style="text-align: center; color: lightgrey">
       No reviews available
     </p>
-    <v-container v-for="(review, index) in reviews" :key="review.id" class="review">
+    <v-container
+      v-for="(review, index) in reviews"
+      :key="review.id"
+      class="review"
+    >
       <span style="float: left; padding-right: 10px">
         <b>{{ review.name + '  ' }}</b>
         <v-chip x-small>{{ review.creationDate }}</v-chip>
         {{ '| ' }}
         <span v-if="!review.isComment()">
           <v-chip small :color="review.getStatusColor()">
-            {{ review.getType(index) }}
+            {{ review.getType(index === reviews.length - 1) }}
           </v-chip>
           {{ ' |' }}
         </span>

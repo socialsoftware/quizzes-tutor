@@ -97,6 +97,7 @@
                 ? '1px solid lightgrey'
                 : ''
             }"
+            data-cy="ReviewLog"
           >
             <v-expansion-panel>
               <v-expansion-panel-header>

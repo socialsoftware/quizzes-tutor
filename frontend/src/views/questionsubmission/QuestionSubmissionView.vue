@@ -110,6 +110,7 @@
       v-model="editQuestionSubmissionDialog"
       :questionSubmission="currentQuestionSubmission"
       v-on:save-submission="onSaveQuestionSubmission"
+      v-on:submit-submission="onSubmitQuestionSubmission"
     />
     <show-question-submission-dialog
       v-if="currentQuestionSubmission"
@@ -133,6 +134,7 @@ import Topic from '@/models/management/Topic';
 import ShowQuestionSubmissionDialog from '@/views/questionsubmission/ShowQuestionSubmissionDialog.vue';
 import EditQuestionSubmissionDialog from '@/views/questionsubmission/EditQuestionSubmissionDialog.vue';
 import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestionSubmissionTopics.vue';
+import Review from '@/models/management/Review';
 
 @Component({
   components: {
@@ -214,13 +216,35 @@ export default class QuestionSubmissionView extends Vue {
     this.editQuestionSubmissionDialog = true;
   }
 
-  async onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
+  onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
     this.questionSubmissions = this.questionSubmissions.filter(
       qs => qs.id !== questionSubmission.id
     );
     this.questionSubmissions.unshift(questionSubmission);
     this.editQuestionSubmissionDialog = false;
     this.currentQuestionSubmission = null;
+  }
+
+  async onSubmitQuestionSubmission(
+    comment: string,
+    questionSubmission: QuestionSubmission
+  ) {
+    this.onSaveQuestionSubmission(questionSubmission);
+    await this.$store.dispatch('loading');
+    try {
+      let review = new Review();
+      review.prepareReview(
+        questionSubmission.id,
+        'REQUEST_REVIEW',
+        comment,
+        this.$store.getters.getUser.id
+      );
+      await RemoteServices.createReview(review);
+      await this.getQuestionSubmissions();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 
   onQuestionSubmissionChangedTopics(
