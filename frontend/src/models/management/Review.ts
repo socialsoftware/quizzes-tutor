@@ -5,17 +5,16 @@ export default class Review {
   userId: number | null = null;
   questionSubmissionId: number | null = null;
   comment!: string;
-  submissionStatus!: string;
+  type!: string;
   creationDate!: string;
   name!: string;
   username!: string;
 
   static statusOptions = [
-    { text: 'Comment', value: null },
-    { text: 'Request Changes', value: 'IN_REVISION', color: 'yellow' },
-    { text: 'Request Further Review', value: 'IN_REVIEW', color: 'blue' },
-    { text: 'Approve', value: 'APPROVED', color: 'green' },
-    { text: 'Reject', value: 'REJECTED', color: 'red' }
+    { text: 'Comment', value: 'COMMENT' },
+    { text: 'Request Changes', value: 'REQUEST_CHANGES', color: 'yellow' },
+    { text: 'Approve', value: 'APPROVE', color: 'green' },
+    { text: 'Reject', value: 'REJECT', color: 'red' }
   ];
 
   constructor(jsonObj?: Review) {
@@ -24,7 +23,7 @@ export default class Review {
       this.userId = jsonObj.userId;
       this.questionSubmissionId = jsonObj.questionSubmissionId;
       this.comment = jsonObj.comment;
-      this.submissionStatus = jsonObj.submissionStatus;
+      this.type = jsonObj.type;
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.name = jsonObj.name;
       this.username = jsonObj.username;
@@ -33,35 +32,44 @@ export default class Review {
 
   prepareReview(
     questionSubmissionId: number,
-    status: string,
+    type: string,
     comment: string,
     userId: number
   ) {
     this.questionSubmissionId = questionSubmissionId;
-    this.submissionStatus = status;
+    this.type = type;
     this.userId = userId;
     this.comment = comment;
   }
 
   getStatusColor() {
-    switch (this.submissionStatus) {
-      case 'APPROVED':
+    switch (this.type) {
+      case 'APPROVE':
         return 'green';
-      case 'REJECTED':
+      case 'REJECT':
         return 'red';
-      case 'IN_REVISION':
+      case 'REQUEST_CHANGES':
         return 'yellow';
-      case 'IN_REVIEW':
+      case 'REQUEST_REVIEW':
         return 'blue';
     }
   }
 
-  isComment() {
-    return this.submissionStatus === null;
+  getType(id: number) {
+    switch (this.type) {
+      case 'APPROVE':
+        return 'APPROVED';
+      case 'REJECT':
+        return 'REJECTED';
+      case 'REQUEST_CHANGES':
+        return 'CHANGES REQUESTED';
+      case 'REQUEST_REVIEW':
+        return id === 0 ? 'NEW SUBMISSION' : 'SUBMISSION EDITED';
+    }
   }
 
-  isInRevision() {
-    return this.submissionStatus === 'IN_REVISION';
+  isComment() {
+    return this.type === 'COMMENT';
   }
 
   isUsersReview(username: string) {

@@ -62,7 +62,6 @@
                     <v-select
                       v-model="selected"
                       :items="statusOptions"
-                      label="Review type"
                       data-cy="SelectMenu"
                       chips
                     >
@@ -100,7 +99,7 @@
                 ></v-textarea>
                 <v-btn
                   color="blue darken-1"
-                  @click="reviewQuestionSubmission(null)"
+                  @click="reviewQuestionSubmission('COMMENT')"
                   data-cy="SubmitButton"
                   >submit</v-btn
                 >
@@ -175,8 +174,8 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
   reviewsComponentKey: number = 0;
   comment: string = '';
-  selected: string | null = null;
   statusOptions = Review.statusOptions;
+  selected: Object = {};
   editQuestionSubmissionDialog: boolean = false;
   currentQuestionSubmission: QuestionSubmission = this.questionSubmission;
 
@@ -195,14 +194,14 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   updateReviews() {
     this.reviewsComponentKey += 1;
     this.comment = '';
-    this.selected = null;
+    this.selected = this.statusOptions[0];
   }
 
-  async reviewQuestionSubmission(status: string) {
+  async reviewQuestionSubmission(type: string) {
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.createReview(this.createReview(status));
-      if (status == null) {
+      await RemoteServices.createReview(this.createReview(type));
+      if (type == 'COMMENT') {
         this.updateReviews();
       } else {
         this.$emit('dialog', false);

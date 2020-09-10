@@ -3,29 +3,19 @@
     <p v-if="reviews.length === 0" style="text-align: center; color: lightgrey">
       No reviews available
     </p>
-    <v-container v-for="review in reviews" :key="review.id" class="review">
+    <v-container v-for="(review, index) in reviews" :key="review.id" class="review">
       <span style="float: left; padding-right: 10px">
         <b>{{ review.name + '  ' }}</b>
         <v-chip x-small>{{ review.creationDate }}</v-chip>
         {{ '| ' }}
-        <span v-if="review.submissionStatus !== null">
+        <span v-if="!review.isComment()">
           <v-chip small :color="review.getStatusColor()">
-            {{ review.submissionStatus.replace('_', ' ') }}
+            {{ review.getType(index) }}
           </v-chip>
           {{ ' |' }}
         </span>
       </span>
       {{ review.comment }}
-      <v-icon
-        v-if="
-          $store.getters.isStudent &&
-            review.isInRevision() &&
-            questionSubmission.isInRevision()
-        "
-        color="blue darken-1"
-        @click="editQuestionSubmission"
-        >fa-pen-square</v-icon
-      >
     </v-container>
     <hr v-if="reviews.length !== 0" style="border: .5px lightgrey solid" />
   </v-container>
@@ -65,10 +55,6 @@ export default class ShowReviews extends Vue {
     if (a.creationDate && b.creationDate)
       return a.creationDate < b.creationDate ? 1 : -1;
     else return 0;
-  }
-
-  editQuestionSubmission() {
-    this.$emit('edit-question', false);
   }
 }
 </script>

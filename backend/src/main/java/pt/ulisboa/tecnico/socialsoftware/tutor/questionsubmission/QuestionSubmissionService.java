@@ -84,7 +84,7 @@ public class  QuestionSubmissionService {
 
         Review review = new Review(user, questionSubmission, reviewDto);
 
-        updateQuestionSubmissionStatus(reviewDto.getSubmissionStatus(), questionSubmission);
+        updateQuestionSubmissionStatus(reviewDto.getType(), questionSubmission);
 
         reviewRepository.save(review);
         return new ReviewDto(review);
@@ -223,11 +223,9 @@ public class  QuestionSubmissionService {
         return questionRepository.findById(newQuestionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, newQuestionDto.getId()));
     }
 
-    private void updateQuestionSubmissionStatus(String status, QuestionSubmission questionSubmission) {
+    private void updateQuestionSubmissionStatus(String reviewType, QuestionSubmission questionSubmission) {
         if (questionSubmission.getStatus() == QuestionSubmission.Status.IN_REVISION || questionSubmission.getStatus() == QuestionSubmission.Status.IN_REVIEW) {
-            if (status != null) {
-                questionSubmission.setStatus(status);
-            }
+            questionSubmission.setStatus(reviewType);
         } else
             throw new TutorException(CANNOT_REVIEW_QUESTION_SUBMISSION);
     }

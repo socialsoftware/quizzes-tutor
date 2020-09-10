@@ -44,6 +44,7 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         review.setComment(REVIEW_1_COMMENT)
         review.setUser(teacher)
         review.setQuestionSubmission(questionSubmission)
+        review.setType(Review.Type.APPROVE)
         questionSubmission.addReview(review)
 
         when:
@@ -59,6 +60,7 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         rev.getComment() == REVIEW_1_COMMENT
         rev.getName() == teacher.getName()
         rev.getUsername() == teacher.getUsername()
+        rev.getType() == Review.Type.APPROVE.name()
     }
 
     def "get question submission reviews with no review"(){

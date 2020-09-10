@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
 
 @Entity
 @Table(name = "question_submissions")
@@ -82,17 +83,28 @@ public class QuestionSubmission {
         }
     }
 
-    public void setStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
-        }
+    public void setStatus(String reviewType) {
         try {
-            this.status = Status.valueOf(status);
-            if (status.equals(Status.APPROVED.name())) {
-                this.question.setStatus(Question.Status.AVAILABLE);
+            switch (Review.Type.valueOf(reviewType)) {
+                case APPROVE:
+                    setStatus(Status.APPROVED);
+                    break;
+                case REJECT:
+                    setStatus(Status.REJECTED);
+                    break;
+                case REQUEST_CHANGES:
+                    setStatus(Status.IN_REVISION);
+                    break;
+                case REQUEST_REVIEW:
+                    setStatus(Status.IN_REVIEW);
+                    break;
+                case COMMENT:
+                    break;
+                default:
+                    throw new TutorException(INVALID_TYPE_FOR_REVIEW);
             }
         } catch (IllegalArgumentException e) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+            throw new TutorException(INVALID_TYPE_FOR_REVIEW);
         }
     }
 
