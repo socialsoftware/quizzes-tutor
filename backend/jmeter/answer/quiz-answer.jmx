@@ -428,7 +428,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
           <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${prefix}/auth/demo/student?createNew=false</stringProp>
+          <stringProp name="HTTPSampler.path">${prefix}/auth/demo/student?createNew=true</stringProp>
           <stringProp name="HTTPSampler.method">GET</stringProp>
           <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
           <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
