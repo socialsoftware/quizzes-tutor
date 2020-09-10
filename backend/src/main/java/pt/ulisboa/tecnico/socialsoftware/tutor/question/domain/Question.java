@@ -283,10 +283,11 @@ public class Question implements DomainEntity {
     }
 
     public boolean belongsToTopicsGivenAvailableTopicsIds(List<Integer> chosenTopicsIds, List<Integer> availableTopicsIds) {
-        return chosenTopicsIds.containsAll(this.topics.stream()
+        return !getTopics().isEmpty()
+                && chosenTopicsIds.containsAll(getTopics().stream()
                 .map(topic -> topic.getId())
                 .collect(Collectors.toList()))
-                && availableTopicsIds.containsAll(this.topics.stream()
+                && availableTopicsIds.containsAll(getTopics().stream()
                       .map(topic -> topic.getId())
                         .collect(Collectors.toList()));
     }
