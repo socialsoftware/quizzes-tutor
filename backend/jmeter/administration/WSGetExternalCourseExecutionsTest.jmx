@@ -139,7 +139,7 @@
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert number of teachers" enabled="true">
-              <stringProp name="JSON_PATH">$[0].numberOfTeachers</stringProp>
+              <stringProp name="JSON_PATH">$[0].numberOfActiveTeachers</stringProp>
               <stringProp name="EXPECTED_VALUE">1</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
@@ -148,7 +148,7 @@
             </JSONPathAssertion>
             <hashTree/>
             <JSONPathAssertion guiclass="JSONPathAssertionGui" testclass="JSONPathAssertion" testname="Assert number of students" enabled="true">
-              <stringProp name="JSON_PATH">$[0].numberOfStudents</stringProp>
+              <stringProp name="JSON_PATH">$[0].numberOfActiveStudents</stringProp>
               <stringProp name="EXPECTED_VALUE">60</stringProp>
               <boolProp name="JSONVALIDATION">true</boolProp>
               <boolProp name="EXPECT_NULL">false</boolProp>
