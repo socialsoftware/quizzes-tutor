@@ -22,7 +22,10 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
 
     def userIdList
 
+    def initialUserCount
+
     def setup() {
+        initialUserCount = userRepository.count()
         externalCourse = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(externalCourse)
         externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
@@ -60,6 +63,9 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         then: "check if an execution is thrown"
         def error = thrown(TutorException)
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
+
+        and: "no user was deleted"
+        userRepository.count() == initialUserCount + 2
     }
 
     def "course execution not external" () {
@@ -79,7 +85,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         error.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
         and: "no user was removed"
         tecnicoCourseExecution.getStudents().size() == 1
-        userRepository.count() == 5
+        userRepository.count() == initialUserCount + 2
     }
 
     def "tries to delete an active user" () {
@@ -98,7 +104,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         and: "the user is not removed from his course execution"
         externalCourseExecution.getStudents().size() == 2
         and: "no user is removed from the database"
-        userRepository.count() == 5
+        userRepository.count() == initialUserCount + 2
         userRepository.findById(user1.getId()) != null
         userRepository.findById(user2.getId()) != null
     }
@@ -119,7 +125,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         then: "check that that no user was removed from the course execution"
         externalCourseExecution.getStudents().size() == 0
         and: "there are no external users in the database"
-        userRepository.count() == 3 // The 3 Demo-Users
+        userRepository.count() == initialUserCount // The 3 Demo-Users
     }
 
 
