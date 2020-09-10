@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.UnansweredDiscussionsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -70,13 +71,12 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public DiscussionDto setAvailability(DiscussionDto discussionDto) {
+    public DiscussionDto changeAvailability(int discussionId) {
         Discussion discussion = discussionRepository
-                .findByUserIdQuestionId(discussionDto.getUserId(), discussionDto.getQuestionId())
-                .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionDto.getUserId(),
-                        discussionDto.getQuestionId()));
-        discussion.setAvailable(discussionDto.isAvailable());
-        return discussionDto;
+                .findById(discussionId)
+                .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionId));
+        discussion.changeAvailability();
+        return  new DiscussionDto(discussion);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -169,4 +169,22 @@ public class DiscussionService {
                 .collect(Collectors.toList());
     }
 
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<DiscussionDto> findDiscussionsByCourseExecutionId(int courseExecutionId)  {
+        return discussionRepository.findByCourseExecutionId(courseExecutionId).stream().map(DiscussionDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(int courseExecutionId)  {
+        List<DiscussionDto> list = discussionRepository.findByCourseExecutionId(courseExecutionId).stream()
+                .filter(discussion -> (discussion.getReplies() == null || discussion.getReplies().isEmpty()))
+                .map(DiscussionDto::new)
+                .collect(Collectors.toList());
+
+        return new UnansweredDiscussionsDto(list);
+    }
 }

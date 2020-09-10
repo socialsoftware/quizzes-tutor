@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 public class DiscussionDto implements Serializable {
+    private Integer id;
     private Integer userId;
     private QuestionDto question;
     private String userName;
@@ -18,11 +19,13 @@ public class DiscussionDto implements Serializable {
     private boolean available;
     private String date;
     private Integer questionId;
+    private Integer courseExecutionId;
 
     public DiscussionDto() {
     }
 
     public DiscussionDto(Discussion discussion) {
+        this.id = discussion.getId();
         this.userId = discussion.getUserId();
         this.questionId = discussion.getQuestionId();
         this.userName = discussion.getUser().getName();
@@ -30,6 +33,7 @@ public class DiscussionDto implements Serializable {
         this.question = new QuestionDto(discussion.getQuestion());
         this.available = discussion.isAvailable();
         this.date = DateHandler.toISOString(discussion.getDate());
+        this.courseExecutionId = discussion.getCourseExecutionId();
 
         List<Reply> discussionReplies = discussion.getReplies();
         if(discussionReplies != null && !discussionReplies.isEmpty()){
@@ -104,11 +108,27 @@ public class DiscussionDto implements Serializable {
         this.questionId = questionId;
     }
 
+    public Integer getCourseExecutionId() {
+        return courseExecutionId;
+    }
+
+    public void setCourseExecutionId(Integer courseExecutionId) {
+        this.courseExecutionId = courseExecutionId;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
     @Override
     public String toString() {
         return "DiscussionDto{" +
-                "userId=" + userId +
+                "id=" + id +
+                ", userId=" + userId +
                 ", question=" + question +
                 ", userName='" + userName + '\'' +
                 ", message='" + message + '\'' +
@@ -116,6 +136,7 @@ public class DiscussionDto implements Serializable {
                 ", available=" + available +
                 ", date='" + date + '\'' +
                 ", questionId=" + questionId +
+                ", courseExecutionId=" + courseExecutionId +
                 '}';
     }
 }

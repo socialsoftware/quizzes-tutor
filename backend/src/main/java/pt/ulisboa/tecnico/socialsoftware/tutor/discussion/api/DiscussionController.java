@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.UnansweredDiscussionsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
@@ -41,6 +42,18 @@ public class DiscussionController {
         return discussionService.findDiscussionsByUserId(userId);
     }
 
+    @GetMapping("/{courseExecutionId}/discussions")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public List<DiscussionDto> getCourseExecutionDiscussions(@PathVariable int courseExecutionId) {
+        return this.discussionService.findDiscussionsByCourseExecutionId(courseExecutionId);
+    }
+
+    @GetMapping("/{courseExecutionId}/discussions/unanswered")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(@PathVariable int courseExecutionId) {
+        return this.discussionService.getUnansweredDiscussionsNumber(courseExecutionId);
+    }
+
     @GetMapping(value = "/discussions/question")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public List<DiscussionDto> getDiscussionsByQuestions(Principal principal, @Valid @RequestParam Integer questionId) {
@@ -68,10 +81,10 @@ public class DiscussionController {
         return discussionService.createDiscussion(discussion);
     }
 
-    @PutMapping(value = "/discussions")
+    @PutMapping(value = "/discussions/availability")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public DiscussionDto setAvailability(Principal principal, @Valid @RequestParam boolean available, @Valid @RequestBody DiscussionDto discussion) {
-        logger.warn("Set Availability: " + discussion.toString());
+    public DiscussionDto changeAvailability(Principal principal, @Valid @RequestParam int discussionId) {
+        logger.warn("Change Availability: " + discussionId);
 
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -79,9 +92,7 @@ public class DiscussionController {
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
         }
 
-        discussion.setAvailable(available);
-
-        return discussionService.setAvailability(discussion);
+        return discussionService.changeAvailability(discussionId);
     }
 
     @PostMapping(value = "/discussions/replies")

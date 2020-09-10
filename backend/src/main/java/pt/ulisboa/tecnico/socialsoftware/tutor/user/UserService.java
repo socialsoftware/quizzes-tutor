@@ -200,14 +200,6 @@ public class UserService {
         }
     }
 
-    public DashboardDto toggleDiscussionVisibility(Integer userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        checkStudent(user);
-        user.changeDiscussionsVisbility();
-
-        return user.getDashboardInfo();
-    }
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public NotificationResponse<CourseDto> importListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();

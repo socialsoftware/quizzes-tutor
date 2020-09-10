@@ -30,7 +30,7 @@ public class DashboardController {
 
         return userService.getDashboardInfo(user.getId());
     }
-
+/*
     @PutMapping(value = "/dashboard/discussions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public DashboardDto changeChangeDiscussionsVisibility(Principal principal) {
@@ -41,5 +41,5 @@ public class DashboardController {
         }
 
         return userService.toggleDiscussionVisibility(user.getId());
-    }
+    }*/
 }

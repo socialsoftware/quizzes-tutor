@@ -72,22 +72,6 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
 
-
-    public void setDiscussionInfoPublic(boolean discussionStatsPublic) {
-        this.discussionInfoPublic = discussionStatsPublic;
-    }
-
-    public void changeDiscussionsVisbility() {
-        this.discussionInfoPublic = !this.discussionInfoPublic;
-    }
-
-    @Column(columnDefinition = "boolean default true")
-    private boolean discussionInfoPublic = true;
-
-    public boolean isDiscussionInfoPublic() {
-        return this.discussionInfoPublic;
-    }
-
     public DashboardDto getDashboardInfo() {
         return new DashboardDto(this);
     }

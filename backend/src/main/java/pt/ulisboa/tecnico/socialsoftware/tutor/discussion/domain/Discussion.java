@@ -44,6 +44,10 @@ public class Discussion implements Serializable {
     @Column(name="user_id")
     private Integer userId;
 
+    @NotNull
+    @Column(name="course_execution_id")
+    private Integer courseExecutionId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
@@ -69,6 +73,7 @@ public class Discussion implements Serializable {
         this.setUserId(user.getId());
         this.setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
         this.available = discussionDto.isAvailable();
+        this.courseExecutionId = discussionDto.getCourseExecutionId();
     }
 
     public List<Reply> getReplies() {
@@ -150,5 +155,17 @@ public class Discussion implements Serializable {
         if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0){
             throw new TutorException(DISCUSSION_DATE_MISSING);
         }
+    }
+
+    public Integer getCourseExecutionId() {
+        return courseExecutionId;
+    }
+
+    public void setCourseExecutionId(Integer courseExecutionId) {
+        this.courseExecutionId = courseExecutionId;
+    }
+
+    public void changeAvailability() {
+        this.available = !this.available;
     }
 }
