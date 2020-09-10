@@ -1,5 +1,5 @@
 <template>
-  <div class="reply-container" v-if="discussions[0] !== undefined">
+  <div class="reply-container" v-if="discussions[0] !== null">
     <div class="discussion">
       <ul>
         <li
@@ -8,7 +8,7 @@
           @focus="setDiscussion(discussion)"
         >
           <div class="text-left">
-            <b v-if="discussion.userId !== userId"
+            <b v-if="discussion.userId !== user.id"
               >{{ discussion.userName }} opened a discussion on
               {{ discussion.date }} :</b
             >
@@ -26,15 +26,19 @@
                   :key="reply.id"
                   class="text-left reply"
                 >
-                  <b v-if="userId !== reply.userId"
+                  <b v-if="user.id !== reply.userId"
                     >{{ reply.userName }} replied on {{ reply.date }} :
                   </b>
                   <b v-else>You replied on {{ reply.date }} :</b>
                   <span v-html="convertMarkDown(reply.message)" />
                 </div>
-                <div class="reply-message" v-if="discussion.userId === userId">
+                <div
+                  class="reply-message"
+                  v-if="
+                    discussion.userId === user.id || user.role === 'TEACHER'
+                  "
+                >
                   <v-textarea
-                    clearable
                     class="textarea-reply"
                     solo
                     :id="'reply' + discussion.userId"
@@ -59,7 +63,6 @@
           </v-expansion-panels>
           <div v-else class="reply-message">
             <v-textarea
-              clearable
               class="textarea-reply"
               solo
               :id="'reply' + discussion.userId"
@@ -90,13 +93,14 @@ import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '../../../services/RemoteServices';
+import User from '@/models/user/User';
 
 @Component
 export default class ReplyComponent extends Vue {
   @Prop() readonly discussions!: Discussion[];
   discussion: Discussion = this.discussions[0];
   replyMessages: Map<number, string> = new Map();
-  userId: number = this.$store.getters.getUser.id;
+  user: User = this.$store.getters.getUser;
 
   @Emit('submit')
   async submitReply() {

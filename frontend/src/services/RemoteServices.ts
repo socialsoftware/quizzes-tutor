@@ -20,6 +20,7 @@ import Reply from '@/models/management/Reply';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
+import UnansweredDiscussionsInfo from '@/models/management/UnansweredDiscussionsInfo';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -247,7 +248,7 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
-  
+
   static async createDiscussion(discussion: Discussion): Promise<Discussion> {
     return httpClient
       .post('/discussions', discussion)
@@ -882,11 +883,11 @@ export default class RemoteServices {
     }
   }
 
-  static async changeAvailability(): Promise<DashboardInfo> {
+  static async changeAvailability(id: number): Promise<Discussion> {
     return httpClient
-      .put('/dashboard/discussions')
+      .put('/discussions/availability?discussionId=' + id)
       .then(response => {
-        return new DashboardInfo(response.data);
+        return new Discussion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -914,6 +915,34 @@ export default class RemoteServices {
       .post('/discussions/replies?message=' + message, discussion)
       .then(response => {
         return new Reply(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCourseExecutionDiscussions(
+    courseExecutionId: number
+  ): Promise<Discussion[]> {
+    return httpClient
+      .get(`/${courseExecutionId}/discussions`)
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getUnansweredDiscussionsNumber(
+    courseExecutionId: number
+  ): Promise<UnansweredDiscussionsInfo> {
+    return httpClient
+      .get(`/${courseExecutionId}/discussions/unanswered`)
+      .then(response => {
+        return new UnansweredDiscussionsInfo(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

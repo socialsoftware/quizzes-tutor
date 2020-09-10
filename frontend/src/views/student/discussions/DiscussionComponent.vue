@@ -9,7 +9,6 @@
       </v-card-title>
       <div v-if="answered && !hasDiscussion" class="discussion-message">
         <v-textarea
-          clearable
           solo
           v-model="discussionMessage"
           v-on:input="onInput"

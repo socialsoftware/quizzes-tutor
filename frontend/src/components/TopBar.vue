@@ -118,6 +118,23 @@
           </v-list>
         </v-menu>
 
+        <v-btn
+          to="/management/forum"
+          v-if="isTeacher && currentCourse"
+          text
+          dark
+        >
+          Forum
+          <v-badge
+            v-if="this.$store.getters.getUnansweredDiscussionsNumber !== 0"
+            overlap
+            color="red"
+            :content="this.$store.getters.getUnansweredDiscussionsNumber"
+          >
+            <v-icon>fas fa-comment-dots</v-icon>
+          </v-badge>
+        </v-btn>
+
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
@@ -158,27 +175,33 @@
                 <v-list-item-title>Solved</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <!-- ----DDP---- -->
-            <v-list-item to="/student/discussions">
-              <v-list-item-action>
-                <v-icon>fa fa-comment</v-icon>
-              </v-list-item-action>
-              <v-list-item-title>Discussions</v-list-item-title>
-            </v-list-item>
-            <!-- ----------- -->
           </v-list>
         </v-menu>
 
+        <!-- ----DDP---- -->
         <v-btn
           to="/student/dashboard"
           v-if="isStudent && currentCourse"
           text
           dark
-          data-cy="submissionStudentMenuButton"
+          data-cy="dashboardStudentMenuButton"
         >
           Dashboard
           <v-icon>fas fa-columns</v-icon>
         </v-btn>
+
+        <v-btn
+          to="/student/discussions"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="discussionsStudentMenuButton"
+        >
+          Discussions
+          <v-icon>fa fa-comment</v-icon>
+        </v-btn>
+
+        <!-- ----------- -->
 
         <v-btn
           to="/student/submissions"
@@ -393,13 +416,13 @@
             <v-list-item-content>Stats</v-list-item-content>
           </v-list-item>
 
+          <!-- ----DDP---- -->
           <v-list-item to="/student/dashboard">
             <v-list-item-action>
               <v-icon>fas fa-columns</v-icon>
             </v-list-item-action>
             <v-list-item-content>Dashboard</v-list-item-content>
           </v-list-item>
-          <!-- ----DDP---- -->
           <v-list-item to="/student/discussions">
             <v-list-item-action>
               <v-icon>fa fa-comment</v-icon>
@@ -435,12 +458,18 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
+import Discussion from '@/models/management/Discussion';
+import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class TopBar extends Vue {
   appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
   fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
   drawer: boolean = false;
+
+  async mounted() {
+    await this.countUnansweredDiscussions();
+  }
 
   get currentCourse() {
     return this.$store.getters.getCurrentCourse;
@@ -472,6 +501,10 @@ export default class TopBar extends Vue {
   async logout() {
     await this.$store.dispatch('logout');
     await this.$router.push({ name: 'home' }).catch(() => {});
+  }
+
+  async countUnansweredDiscussions() {
+    await this.$store.dispatch('countUnansweredDiscussions');
   }
 }
 </script>

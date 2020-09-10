@@ -75,6 +75,7 @@ import DiscussionComponent from '@/views/student/discussions/DiscussionComponent
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
+import Store from '@/store';
 
 @Component({
   components: {
@@ -116,6 +117,7 @@ export default class ResultsView extends Vue {
       this.discussion!.questionId = question.id!;
       this.discussion!.userId = this.$store.getters.getUser.id;
       this.discussion!.userName = this.$store.getters.getUser.username;
+      this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
 
       const result = await RemoteServices.createDiscussion(this.discussion!);
       this.statementManager.statementQuiz!.questions[

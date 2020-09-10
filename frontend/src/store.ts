@@ -5,6 +5,7 @@ import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
 import ExternalUser from '@/models/user/ExternalUser';
+import enumerate = Reflect.enumerate;
 
 interface State {
   token: string;
@@ -15,6 +16,7 @@ interface State {
   notification: boolean;
   notificationMessageList: string[];
   loading: boolean;
+  unansweredDiscussionsNumber: number;
 }
 
 const state: State = {
@@ -25,7 +27,8 @@ const state: State = {
   errorMessage: '',
   notification: false,
   notificationMessageList: [],
-  loading: false
+  loading: false,
+  unansweredDiscussionsNumber: -1
 };
 
 Vue.use(Vuex);
@@ -67,6 +70,9 @@ export default new Vuex.Store({
     },
     currentCourse(state, currentCourse: Course) {
       state.currentCourse = currentCourse;
+    },
+    countUnansweredDiscussions(state, count: number) {
+      state.unansweredDiscussionsNumber = count;
     }
   },
   actions: {
@@ -94,8 +100,11 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
-    async externalLogin({ commit }, user : ExternalUser) {
-      const authResponse = await RemoteServices.externalLogin(user.email, user.password);
+    async externalLogin({ commit }, user: ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(
+        user.email,
+        user.password
+      );
       commit('login', authResponse);
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
@@ -146,6 +155,22 @@ export default new Vuex.Store({
     },
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
+    },
+    async countUnansweredDiscussions({ commit }) {
+      if (this.state.currentCourse != null) {
+        let count;
+        try {
+          const answer = await RemoteServices.getUnansweredDiscussionsNumber(
+            this.state.currentCourse.courseExecutionId!
+          );
+          count = answer.quantity == null ? 0 : answer.quantity;
+        } catch (error) {
+          count = 0;
+        }
+        commit('countUnansweredDiscussions', count);
+      } else {
+        commit('countUnansweredDiscussions', 0);
+      }
     }
   },
   getters: {
@@ -192,6 +217,9 @@ export default new Vuex.Store({
     },
     getLoading(state): boolean {
       return state.loading;
+    },
+    getUnansweredDiscussionsNumber(state): number {
+      return state.unansweredDiscussionsNumber;
     }
   }
 });

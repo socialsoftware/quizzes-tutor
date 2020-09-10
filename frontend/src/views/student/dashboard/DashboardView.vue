@@ -30,35 +30,41 @@
             Discussions created:
             {{ info !== null ? info.numDiscussions : 0 }}
           </v-list-item>
+          <v-list-item>
+            Discussions answered:
+            {{ info !== null ? info.numAnsweredDiscussions: 0 }}
+          </v-list-item>
         </v-card>
       </v-col>
       <v-col>
         <v-card>
           <v-list-item-title>
-            <v-list-item-title class="headline" style="background-color: #1976d2; color: white;padding: 10px; ">Discussions</v-list-item-title>
+            <v-list-item-title
+              class="headline"
+              style="background-color: #1976d2; color: white;padding: 10px; "
+              >Discussions</v-list-item-title
+            >
           </v-list-item-title>
-          <div style="display: flex; flex-direction: row; position: relative;">
-            <v-switch
-              style="flex: 1"
-              v-if="info !== null && info.numDiscussions !== 0"
-              v-model="info.discussionStatsPublic"
-              :label="info.discussionStatsPublic ? 'Public' : 'Private'"
-              @change="toggleDiscussions()"
-            />
-          </div>
           <v-col>
             <v-list-item-content
               v-if="info !== null && info.numDiscussions !== 0"
             >
-              <!--<v-list-item-title class="headline mb-1"
-                >Discussions</v-list-item-title
-              >-->
-              <v-list-item-subtitle
-                >Discussions created:
-                {{
-                  info !== null ? info.numDiscussions : -1
-                }}</v-list-item-subtitle
-              >
+              <v-data-table :headers="headers" :items="discussions">
+                <template v-slot:item.available="{ item }">
+                  <v-chip v-if="item.available === true" :color="'green'" dark
+                    >Yes</v-chip
+                  >
+                  <v-chip v-else :color="'red'" dark>No</v-chip>
+                </template>
+                <template v-slot:item.replies.length="{ item }">
+                  <v-chip v-if="item.replies === null" :color="'grey'" dark
+                    >0</v-chip
+                  >
+                  <v-chip v-else :color="'grey'" dark>{{
+                    item.replies.length
+                  }}</v-chip>
+                </template>
+              </v-data-table>
             </v-list-item-content>
             <v-list-item-content v-else>
               <v-list-item-title class="headline mb-1"
@@ -76,24 +82,32 @@
 import { Component, Vue } from 'vue-property-decorator';
 import DashboardInfo from '@/models/management/DashboardInfo';
 import RemoteServices from '@/services/RemoteServices';
+import Discussion from '@/models/management/Discussion';
+import User from '@/models/user/User';
 @Component
 export default class DashboardView extends Vue {
   info: DashboardInfo | null = null;
+  discussions: Discussion[] = [];
+  user: User = this.$store.getters.getUser;
+
+  headers: object = [
+    {
+      text: 'Message',
+      align: 'start',
+      sortable: false,
+      value: 'message'
+    },
+    { text: 'Public', value: 'available' },
+    { text: 'Replies', value: 'replies.length' }
+  ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
       this.info = await RemoteServices.getDashboardInfo();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async toggleDiscussions() {
-    await this.$store.dispatch('loading');
-    try {
-      this.info = await RemoteServices.changeAvailability();
+      [this.discussions] = await Promise.all([
+        RemoteServices.getDiscussions(this.user.id!)
+      ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

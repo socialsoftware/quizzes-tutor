@@ -32,6 +32,7 @@ import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissio
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
 import DashboardView from '@/views/student/dashboard/DashboardView.vue';
 import DiscussionView from '@/views/student/discussions/DiscussionView.vue';
+import ForumView from '@/views/teacher/ForumView.vue';
 
 Vue.use(Router);
 
@@ -157,6 +158,15 @@ let router = new Router({
           component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'forum',
+          name: 'teacher-forum',
+          component: ForumView,
+          meta: {
+            title: APP_NAME + ' - Forum',
             requiredAuth: 'Teacher'
           }
         }
@@ -290,6 +300,7 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.meta.requiredAuth == 'Admin' && Store.getters.isAdmin) {
     next();
   } else if (to.meta.requiredAuth == 'Teacher' && Store.getters.isTeacher) {
+    await Store.dispatch('countUnansweredDiscussions');
     next();
   } else if (to.meta.requiredAuth == 'Student' && Store.getters.isStudent) {
     next();

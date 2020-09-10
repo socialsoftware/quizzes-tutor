@@ -3,6 +3,7 @@ import Reply from '@/models/management/Reply';
 import { ISOtoString } from '@/services/ConvertDateService';
 
 export default class Discussion {
+  id!: number;
   userId!: number;
   questionId!: number;
   userName!: string;
@@ -11,9 +12,11 @@ export default class Discussion {
   replies!: Reply[] | null;
   date!: string | null;
   available!: boolean;
+  courseExecutionId!: number;
 
   constructor(jsonObj?: Discussion) {
     if (jsonObj) {
+      this.id = jsonObj.id;
       this.userId = jsonObj.userId;
       this.questionId = jsonObj.questionId;
       this.userName = jsonObj.userName;
@@ -21,6 +24,8 @@ export default class Discussion {
       this.question = new Question(jsonObj.question);
       this.date = ISOtoString(jsonObj.date);
       this.available = jsonObj.available;
+      this.courseExecutionId = jsonObj.courseExecutionId;
+
       if (jsonObj.replies !== null) {
         this.replies = jsonObj.replies.map((reply: any) => {
           return new Reply(reply);
