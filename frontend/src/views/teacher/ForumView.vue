@@ -15,7 +15,7 @@
       :headers="headers"
       :items="discussions"
       :sort-by="'date'"
-      :sort-desc="true"
+      :sort-desc="false"
       :search="search"
     >
       <template v-slot:item.available="{ item }">

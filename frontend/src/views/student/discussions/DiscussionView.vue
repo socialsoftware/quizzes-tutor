@@ -19,27 +19,56 @@
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
       <template v-slot:item.replies.length="{ item }">
-        <v-chip v-if="item.replies === null" :color="'grey'" dark
-        >0</v-chip
-        >
+        <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
         <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
       </template>
+      <template v-slot:item.action="{ item }">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon class="mr-2" v-on="on" @click="showDiscussionDialog(item)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Discussion</span>
+        </v-tooltip>
+      </template>
     </v-data-table>
+    <show-discussion-dialog
+      v-if="currentDiscussion"
+      v-model="discussionDialog"
+      :discussion="currentDiscussion"
+      v-on:close-show-question-dialog="onCloseShowDiscussionDialog"
+    />
   </v-card>
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import User from '@/models/user/User';
-@Component
+import ShowDiscussionDialog from '@/views/teacher/discussions/ShowDiscussionDialog.vue';
+
+@Component({
+  components: {
+    'show-discussion-dialog': ShowDiscussionDialog
+  }
+})
 export default class DiscussionView extends Vue {
   discussions: Discussion[] = [];
   search: string = '';
   user: User = this.$store.getters.getUser;
+  currentDiscussion: Discussion | null = null;
+  discussionDialog: boolean = false;
 
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '5px',
+      sortable: false
+    },
     {
       text: 'Question Title',
       align: 'start',
@@ -63,6 +92,23 @@ export default class DiscussionView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  showDiscussionDialog(discussion: Discussion) {
+    this.currentDiscussion = discussion;
+    this.discussionDialog = true;
+  }
+
+  onCloseShowDiscussionDialog() {
+    this.currentDiscussion = null;
+    this.discussionDialog = false;
+  }
+
+  @Watch('discussionDialog')
+  closeError() {
+    if (!this.discussionDialog) {
+      this.currentDiscussion = null;
+    }
   }
 }
 </script>

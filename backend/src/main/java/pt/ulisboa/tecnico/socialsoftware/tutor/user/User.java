@@ -71,6 +71,7 @@ public class User implements UserDetails, DomainEntity {
     private Integer numberOfCorrectTeacherAnswers = 0;
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
+    private Integer numAnsweredDiscussions = 0;
 
     public DashboardDto getDashboardInfo() {
         return new DashboardDto(this);
@@ -448,15 +449,33 @@ public class User implements UserDetails, DomainEntity {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
+    public Integer getNumAnsweredDiscussions() {
+        return (int) this.getDiscussions().stream().filter(Discussion::teacherAnswered).count();
+    }
+
+    public void setNumAnsweredDiscussions(Integer numAnsweredDiscussions) {
+        this.numAnsweredDiscussions = numAnsweredDiscussions;
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
+    }
+
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
                 ", key=" + key +
                 ", role=" + role +
+                ", active=" + active +
                 ", username='" + username + '\'' +
                 ", name='" + name + '\'' +
                 ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
+                ", password='" + password + '\'' +
+                ", confirmationToken='" + confirmationToken + '\'' +
+                ", tokenGenerationDate=" + tokenGenerationDate +
+                ", email='" + email + '\'' +
+                ", admin=" + admin +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
@@ -466,8 +485,15 @@ public class User implements UserDetails, DomainEntity {
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
+                ", numAnsweredDiscussions=" + numAnsweredDiscussions +
+                ", discussions=" + discussions +
+                ", replies=" + replies +
                 ", creationDate=" + creationDate +
                 ", lastAccess=" + lastAccess +
+                ", quizAnswers=" + quizAnswers +
+                ", questionSubmissions=" + questionSubmissions +
+                ", reviews=" + reviews +
+                ", courseExecutions=" + courseExecutions +
                 '}';
     }
 

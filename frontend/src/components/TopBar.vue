@@ -133,6 +133,7 @@
           >
             <v-icon>fas fa-comment-dots</v-icon>
           </v-badge>
+          <v-icon v-else>fas fa-comment-dots</v-icon>
         </v-btn>
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>

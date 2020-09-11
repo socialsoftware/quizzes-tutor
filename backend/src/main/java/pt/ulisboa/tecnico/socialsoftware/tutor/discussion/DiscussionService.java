@@ -187,4 +187,13 @@ public class DiscussionService {
 
         return new UnansweredDiscussionsDto(list);
     }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<DiscussionDto> getAnsweredDiscussions(int courseExecutionId, Integer userId) {
+        return discussionRepository.findByCourseExecutionIdAndUserId(courseExecutionId, userId).stream()
+                .filter(discussion -> (!discussion.getReplies().isEmpty()))
+                .map(DiscussionDto::new)
+                .collect(Collectors.toList());
+    }
 }

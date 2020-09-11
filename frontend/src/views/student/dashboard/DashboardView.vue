@@ -32,7 +32,7 @@
           </v-list-item>
           <v-list-item>
             Discussions answered:
-            {{ info !== null ? info.numAnsweredDiscussions: 0 }}
+            {{ info !== null ? info.numAnsweredDiscussions : 0 }}
           </v-list-item>
         </v-card>
       </v-col>
@@ -42,7 +42,7 @@
             <v-list-item-title
               class="headline"
               style="background-color: #1976d2; color: white;padding: 10px; "
-              >Discussions</v-list-item-title
+              >Answered Discussions</v-list-item-title
             >
           </v-list-item-title>
           <v-col>
@@ -64,7 +64,23 @@
                     item.replies.length
                   }}</v-chip>
                 </template>
+                <template v-slot:item.action="{ item }">
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-icon class="mr-2" v-on="on" @click="showDiscussionDialog(item)"
+                      >visibility</v-icon
+                      >
+                    </template>
+                    <span>Show Discussion</span>
+                  </v-tooltip>
+                </template>
               </v-data-table>
+              <show-discussion-dialog
+                v-if="currentDiscussion"
+                v-model="discussionDialog"
+                :discussion="currentDiscussion"
+                v-on:close-show-question-dialog="onCloseShowDiscussionDialog"
+              />
             </v-list-item-content>
             <v-list-item-content v-else>
               <v-list-item-title class="headline mb-1"
@@ -79,18 +95,32 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import DashboardInfo from '@/models/management/DashboardInfo';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import User from '@/models/user/User';
-@Component
+import ShowDiscussionDialog from '@/views/teacher/discussions/ShowDiscussionDialog.vue';
+@Component({
+  components: {
+    'show-discussion-dialog': ShowDiscussionDialog
+  }
+})
 export default class DashboardView extends Vue {
   info: DashboardInfo | null = null;
   discussions: Discussion[] = [];
   user: User = this.$store.getters.getUser;
+  currentDiscussion: Discussion | null = null;
+  discussionDialog: boolean = false;
 
   headers: object = [
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '5px',
+      sortable: false
+    },
     {
       text: 'Message',
       align: 'start',
@@ -106,12 +136,32 @@ export default class DashboardView extends Vue {
     try {
       this.info = await RemoteServices.getDashboardInfo();
       [this.discussions] = await Promise.all([
-        RemoteServices.getDiscussions(this.user.id!)
+        RemoteServices.getAnsweredDiscussions(
+          this.$store.getters.getCurrentCourse.courseExecutionId,
+          this.user.id!
+        )
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  showDiscussionDialog(discussion: Discussion) {
+    this.currentDiscussion = discussion;
+    this.discussionDialog = true;
+  }
+
+  onCloseShowDiscussionDialog() {
+    this.currentDiscussion = null;
+    this.discussionDialog = false;
+  }
+
+  @Watch('discussionDialog')
+  closeError() {
+    if (!this.discussionDialog) {
+      this.currentDiscussion = null;
+    }
   }
 }
 </script>

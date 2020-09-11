@@ -907,6 +907,22 @@ export default class RemoteServices {
       });
   }
 
+  static async getAnsweredDiscussions(
+    courseExecutionId: number,
+    id: number
+  ): Promise<Discussion[]> {
+    return httpClient
+      .get(`/discussions/${courseExecutionId}/answered?userId=` + id)
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async createReply(
     message: string,
     discussion: Discussion

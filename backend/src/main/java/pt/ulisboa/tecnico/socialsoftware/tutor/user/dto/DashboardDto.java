@@ -17,7 +17,7 @@ public class DashboardDto implements Serializable {
         this.name = user.getName();
         this.username = user.getUsername();
         this.numDiscussions = user.getDiscussions().size();
-        this.numAnsweredDiscussions = user.getDiscussions().size();
+        this.numAnsweredDiscussions = user.getNumAnsweredDiscussions();
     }
 
     public String getName() {

@@ -168,4 +168,8 @@ public class Discussion implements Serializable {
     public void changeAvailability() {
         this.available = !this.available;
     }
+
+    public boolean teacherAnswered() {
+        return this.getReplies().stream().anyMatch(reply -> reply.getUser().isTeacher());
+    }
 }

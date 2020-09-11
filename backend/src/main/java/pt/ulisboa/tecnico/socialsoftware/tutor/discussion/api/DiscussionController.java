@@ -30,7 +30,6 @@ public class DiscussionController {
     @GetMapping("/discussions")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
     public List<DiscussionDto> getDiscussions(Principal principal, @Valid @RequestParam Integer userId) {
-        logger.warn("Get discussions: " + userId.toString());
         User user = (User)((Authentication) principal).getPrincipal();
 
         if (user == null){
@@ -52,6 +51,12 @@ public class DiscussionController {
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(@PathVariable int courseExecutionId) {
         return this.discussionService.getUnansweredDiscussionsNumber(courseExecutionId);
+    }
+
+    @GetMapping("/discussions/{courseExecutionId}/answered")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
+    public List<DiscussionDto> getAnsweredDiscussions(@PathVariable int courseExecutionId, @Valid @RequestParam Integer userId) {
+        return this.discussionService.getAnsweredDiscussions(courseExecutionId, userId);
     }
 
     @GetMapping(value = "/discussions/question")
