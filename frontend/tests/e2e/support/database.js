@@ -1,6 +1,6 @@
 function dbPasswordCommand(password){
     if (Cypress.platform === 'win32'){
-        return `set PGPASSWORD=${password} `
+        return `set PGPASSWORD=${password}&& `
     }
     else{
         return `PGPASSWORD=${password} `
