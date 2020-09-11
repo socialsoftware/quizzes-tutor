@@ -73,13 +73,13 @@
         >
         <v-btn
           color="blue darken-1"
-          @click="saveQuestionSubmission"
+          @click="createQuestionSubmission(false)"
           data-cy="SaveButton"
           >Save</v-btn
         >
         <v-btn
           color="blue darken-1"
-          @click="submitQuestionSubmission"
+          @click="createQuestionSubmission(true)"
           data-cy="RequestReviewButton"
           >Request Review</v-btn
         >
@@ -115,39 +115,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
     );
   }
 
-  async saveQuestionSubmission() {
-    try {
-      if (
-        this.comment.trim().length == 0 ||
-        (this.comment.trim().length > 0 &&
-          confirm('Comment will not be saved. Do you wish to proceed?'))
-      ) {
-        let result = await this.createQuestionSubmission();
-        this.$emit('save-submission', result);
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  async submitQuestionSubmission() {
-    try {
-      if (this.comment.trim().length === 0) {
-        await this.$store.dispatch(
-          'error',
-          'Error: Please insert a short comment that justifies your submission'
-        );
-        return;
-      }
-
-      let result = await this.createQuestionSubmission();
-      this.$emit('submit-submission', this.comment, result);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  async createQuestionSubmission() {
+  async createQuestionSubmission(requestReview: boolean) {
     if (
       this.editQuestionSubmission &&
       (!this.editQuestionSubmission.question.title ||
@@ -158,8 +126,19 @@ export default class EditQuestionSubmissionDialog extends Vue {
         'Error: Question must have title and content'
       );
       return;
+    } else if (requestReview && this.comment.trim().length == 0) {
+      await this.$store.dispatch(
+        'error',
+        'Error: Please insert a short comment to justify your submission'
+      );
+      return;
+    } else if (
+      !requestReview &&
+      this.comment.trim().length > 0 &&
+      !confirm('Comment will not be saved. Do you wish to proceed?')
+    ) {
+      return;
     }
-
     try {
       let result;
       if (this.editQuestionSubmission.question.id != null) {
@@ -171,7 +150,11 @@ export default class EditQuestionSubmissionDialog extends Vue {
           this.editQuestionSubmission
         );
       }
-      return result;
+      if (requestReview) {
+        this.$emit('submit-submission', this.comment, result);
+      } else {
+        this.$emit('save-submission', result);
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

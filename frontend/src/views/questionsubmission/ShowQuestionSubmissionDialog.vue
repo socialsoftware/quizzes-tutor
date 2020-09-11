@@ -11,7 +11,7 @@
           <span class="headline">Question Submission</span>
           <v-spacer />
           <v-chip :color="questionSubmission.getStatusColor()">
-            {{ questionSubmission.status.replace('_', ' ') }}
+            {{ questionSubmission.getStatus() }}
           </v-chip>
         </v-card-title>
         <v-card ripple outlined class="text-left" id="question">

@@ -73,4 +73,8 @@ export default class QuestionSubmission {
         return 'blue';
     }
   }
+
+  getStatus() {
+    return this.status?.replace('_',' ');
+  }
 }
