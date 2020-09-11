@@ -244,7 +244,6 @@ public class AuthUserService {
         return new ExternalUserDto(authUser);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
@@ -253,7 +252,6 @@ public class AuthUserService {
         });
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
@@ -262,7 +260,6 @@ public class AuthUserService {
         });
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
