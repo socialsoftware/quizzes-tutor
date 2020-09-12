@@ -7,6 +7,8 @@ export default class QuestionSubmission {
   submitterId: number | null = null;
   name: string | null = null;
   status: string | null = null;
+  studentRead!: boolean;
+  teacherRead!: boolean;
 
   constructor(jsonObj?: QuestionSubmission) {
     if (jsonObj) {
@@ -16,6 +18,8 @@ export default class QuestionSubmission {
       this.submitterId = jsonObj.submitterId;
       this.name = jsonObj.name;
       this.status = jsonObj.status;
+      this.studentRead = jsonObj.studentRead;
+      this.teacherRead = jsonObj.teacherRead;
     }
   }
 
@@ -75,6 +79,6 @@ export default class QuestionSubmission {
   }
 
   getStatus() {
-    return this.status?.replace('_',' ');
+    return this.status?.replace('_', ' ');
   }
 }

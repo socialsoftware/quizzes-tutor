@@ -792,6 +792,28 @@ export default class RemoteServices {
       });
   }
 
+  static async setStudentSubmissionVisibility(
+    questionSubmissionId: number,
+    hasRead: boolean
+  ) {
+    return httpClient
+      .put(`/submissions/${questionSubmissionId}/student-visibility?hasRead=${hasRead}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async setTeacherSubmissionVisibility(
+    questionSubmissionId: number,
+    hasRead: boolean
+  ) {
+    return httpClient
+      .put(`/submissions/${questionSubmissionId}/teacher-visibility?hasRead=${hasRead}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async exportAll() {
     return httpClient
       .get('/admin/export', {

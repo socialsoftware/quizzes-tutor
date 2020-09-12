@@ -37,6 +37,12 @@ public class QuestionSubmission {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean studentRead;
+
+    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean teacherRead;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionSubmission", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
@@ -48,6 +54,8 @@ public class QuestionSubmission {
         setQuestion(question);
         setSubmitter(submitter);
         setStatus(Status.IN_REVISION);
+        setStudentRead(true);
+        setTeacherRead(true);
         submitter.addQuestionSubmission(this);
         courseExecution.addQuestionSubmission(this);
     }
@@ -73,6 +81,16 @@ public class QuestionSubmission {
     public Set<Review> getReviews() { return reviews; }
 
     public void addReview(Review review) { this.reviews.add(review); }
+
+    public boolean hasStudentRead() { return studentRead; }
+
+    public void setStudentRead(boolean studentRead) { this.studentRead = studentRead; }
+
+    public boolean hasTeacherRead() { return teacherRead; }
+
+    public void setTeacherRead(boolean teacherRead) {
+        this.teacherRead = teacherRead;
+    }
 
     public Status getStatus() { return status; }
 

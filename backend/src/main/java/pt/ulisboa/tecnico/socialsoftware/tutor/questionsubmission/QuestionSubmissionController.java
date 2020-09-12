@@ -80,4 +80,16 @@ public class QuestionSubmissionController {
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(@Valid @PathVariable int executionId) {
         return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
     }
+
+    @PutMapping("/submissions/{questionSubmissionId}/student-visibility")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void setStudentSubmissionVisibility(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+        questionSubmissionService.setStudentSubmissionVisibility(questionSubmissionId, hasRead);
+    }
+
+    @PutMapping("/submissions/{questionSubmissionId}/teacher-visibility")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    public void setTeacherSubmissionVisibility(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+        questionSubmissionService.setTeacherSubmissionVisibility(questionSubmissionId, hasRead);
+    }
 }

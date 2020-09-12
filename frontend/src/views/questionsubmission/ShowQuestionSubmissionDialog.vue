@@ -47,6 +47,7 @@
                       :items="statusOptions"
                       data-cy="SelectMenu"
                       chips
+                      label="Review Type"
                     >
                       <template #selection="{ item }">
                         <v-chip small :color="item.color">{{
@@ -165,13 +166,21 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   updateReviews() {
     this.reviewsComponentKey += 1;
     this.comment = '';
-    this.selected = this.statusOptions[0];
   }
 
   async reviewQuestionSubmission(type: string) {
     await this.$store.dispatch('loading');
     try {
       await RemoteServices.createReview(this.createReview(type));
+      this.$store.getters.isTeacher
+        ? await RemoteServices.setStudentSubmissionVisibility(
+            this.questionSubmission.id,
+            false
+          )
+        : await RemoteServices.setTeacherSubmissionVisibility(
+            this.questionSubmission.id,
+            false
+          );
       if (type == 'COMMENT') {
         this.updateReviews();
       } else {

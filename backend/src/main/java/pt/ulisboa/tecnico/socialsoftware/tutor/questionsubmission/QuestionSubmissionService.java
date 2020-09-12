@@ -178,6 +178,22 @@ public class  QuestionSubmissionService {
         return userQuestionSubmissionInfoDtos;
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void setStudentSubmissionVisibility(Integer questionSubmissionId, boolean hasRead) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
+
+        questionSubmission.setStudentRead(hasRead);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void setTeacherSubmissionVisibility(Integer questionSubmissionId, boolean hasRead) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
+
+        questionSubmission.setTeacherRead(hasRead);
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
