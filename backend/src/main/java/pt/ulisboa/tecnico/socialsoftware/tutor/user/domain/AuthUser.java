@@ -157,6 +157,9 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     }
 
     public void checkConfirmationToken(String token) {
+        if (isActive()) {
+            throw new TutorException(USER_ALREADY_ACTIVE, getUsername());
+        }
         if (!token.equals(getConfirmationToken()))
             throw new TutorException(INVALID_CONFIRMATION_TOKEN);
         if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))

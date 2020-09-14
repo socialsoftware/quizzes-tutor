@@ -125,7 +125,7 @@ public class FenixEduInterface {
             CourseDto course = new CourseDto(courseJson.getAsJsonObject().get(API_COURSE_NAME).getAsString(),
                     courseJson.getAsJsonObject().get(API_COURSE_ACRONYM).getAsString(),
                     courseJson.getAsJsonObject().get(API_COURSE_ACADEMIC_TERM).getAsString());
-            if(type.equals(API_TEACHING)) {
+            if (type.equals(API_TEACHING)) {
                 course.setEndDate(getCourseEndDate(courseJson));
             }
             result.add(course);

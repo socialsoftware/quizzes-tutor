@@ -223,9 +223,7 @@ public class AuthUserService {
         if (authUser == null) {
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
         }
-        if (authUser.isActive()) {
-            throw new TutorException(USER_ALREADY_ACTIVE, externalUserDto.getUsername());
-        }
+
         if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty()) {
             throw new TutorException(INVALID_PASSWORD);
         }

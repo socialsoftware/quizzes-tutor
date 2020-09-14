@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_ALREADY_ACTIVE;
 
 @Entity
 @DiscriminatorValue("EXTERNAL")

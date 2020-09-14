@@ -130,15 +130,16 @@ public class CourseService {
     public void anonymizeCourseExecutionUsers(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
-            if (user.getAuthUser() == null) continue;
-            String oldUsername = user.getUsername();
-            authUserRepository.delete(user.getAuthUser());
-            user.setAuthUser(null);
-            String newUsername = user.getUsername();
-            questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
-            String role = user.getRole().toString();
-            String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
-            user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+            if (user.getAuthUser() != null) {
+                String oldUsername = user.getUsername();
+                authUserRepository.delete(user.getAuthUser());
+                user.setAuthUser(null);
+                String newUsername = user.getUsername();
+                questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
+                String role = user.getRole().toString();
+                String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
+                user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+            }
         }
     }
 
