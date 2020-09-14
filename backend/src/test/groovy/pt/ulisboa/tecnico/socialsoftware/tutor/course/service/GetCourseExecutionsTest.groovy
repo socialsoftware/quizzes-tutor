@@ -49,7 +49,7 @@ class GetCourseExecutionsTest extends SpockTest {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
 
-        def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, false, AuthUser.Type.TECNICO)

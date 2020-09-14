@@ -21,7 +21,7 @@ class RemoveCourseExecutionsTest extends SpockTest {
 
         courseExecutionTecnico = externalCourseExecution
 
-        courseExecutionExternal = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecutionExternal = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecutionExternal)
      }
 

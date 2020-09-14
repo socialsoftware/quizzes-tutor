@@ -25,7 +25,7 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
     def setup() {
         tecnicoCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(tecnicoCourse)
-        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)

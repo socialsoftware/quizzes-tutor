@@ -29,7 +29,7 @@ class CreateExternalUserTest extends SpockTest {
     def setup() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(externalCourse)
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(externalCourseExecution)
 
         previousNumberUser = userRepository.findAll().size()

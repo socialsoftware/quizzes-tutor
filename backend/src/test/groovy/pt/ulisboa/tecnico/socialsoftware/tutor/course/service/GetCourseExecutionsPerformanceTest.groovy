@@ -13,7 +13,7 @@ class GetCourseExecutionsPerformanceTest extends SpockTest {
 
     def "performance testing to get 1000 course executions"() {
         1.upto(1, {
-            courseExecutionRepository.save(new CourseExecution(externalCourse, COURSE_1_ACRONYM + it, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO))
+            courseExecutionRepository.save(new CourseExecution(externalCourse, COURSE_1_ACRONYM + it, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW))
         })
 
         when:

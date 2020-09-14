@@ -13,8 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
@@ -35,7 +33,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,

@@ -11,8 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -33,7 +31,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTest {
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         student1 = new User(USER_3_NAME, USER_3_EMAIL, USER_3_EMAIL,
