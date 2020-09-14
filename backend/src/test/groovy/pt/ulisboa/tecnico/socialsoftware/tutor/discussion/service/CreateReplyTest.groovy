@@ -19,7 +19,7 @@ import spock.lang.Shared
 import java.time.LocalDateTime
 
 @DataJpaTest
-class GiveReplyTest extends SpockTest {
+class CreateReplyTest extends SpockTest {
 
     @Shared
     def student

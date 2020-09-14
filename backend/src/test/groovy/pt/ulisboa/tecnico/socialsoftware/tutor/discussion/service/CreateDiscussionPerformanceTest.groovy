@@ -22,6 +22,7 @@ class CreateDiscussionPerformanceTest extends SpockTest {
     def student
     @Shared
     def question1
+    def question2
     def quiz
     def quizAnswer
 
@@ -34,6 +35,12 @@ class CreateDiscussionPerformanceTest extends SpockTest {
         question1.setTitle("Question title")
         question1.setContent("Question Content")
         questionRepository.save(question1)
+
+        question2 = new Question()
+        question2.setCourse(externalCourse)
+        question2.setTitle("Question title")
+        question2.setContent("Question Content")
+        questionRepository.save(question2)
 
         def quiz = new Quiz()
         quiz.setKey(1)
@@ -70,42 +77,7 @@ class CreateDiscussionPerformanceTest extends SpockTest {
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
     }
 
-    def "get created discussion"(){
-        given:"a discussion dto"
-        def discussionDto = new DiscussionDto()
-        discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
-        discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        and: "a student"
-        discussionDto.setUserId(student.getId())
-        discussionDto.setUserName(student.getUsername())
-        and: "created discussion"
-        discussionService.createDiscussion(discussionDto)
-
-        when:
-        def discussionsResult = discussionService.findDiscussionsByQuestionId(question1.getId())
-
-        then: "the correct discussion is retrieved"
-        discussionsResult.size() == 1
-        def discussion = discussionsResult.get(0)
-        discussion.getUserId() == discussionDto.getUserId()
-        discussion.getQuestionId() == discussionDto.getQuestionId()
-        discussion.getMessage() == discussionDto.getMessage()
-
-    }
-
-    def "get discussion of invalid question"(){
-        given: "an invalid question id"
-        def questionId = -3
-
-        when: "getting question discussion"
-        def discussions = discussionService.findDiscussionsByQuestionId(questionId);
-
-        then:
-        discussions.size() == 0
-    }
-
-    def "get discussion from question with no discussion"(){
+    def "create discussion"(){
         given:"a discussion dto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
@@ -116,10 +88,12 @@ class CreateDiscussionPerformanceTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
 
         when:
-        def discussionsResult = discussionService.findDiscussionsByQuestionId(question1.getId())
+        1.upto(10000, {
+            discussionService.createDiscussion(discussionDto)
+        })
 
-        then: "no discussion is retrieved"
-        discussionsResult.size() == 0
+        then: "the correct discussion is inside the repository"
+        true
     }
 
     @TestConfiguration

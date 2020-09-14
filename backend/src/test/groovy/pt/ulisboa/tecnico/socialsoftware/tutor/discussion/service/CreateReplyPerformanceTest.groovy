@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -15,19 +16,26 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Shared
 
+import java.time.LocalDateTime
+
 @DataJpaTest
-class CreateDiscussionPerformanceTest extends SpockTest {
+class CreateReplyPerformanceTest extends SpockTest {
 
     @Shared
     def student
+    def teacher
     @Shared
     def question1
     def quiz
     def quizAnswer
+    def discussionDto
 
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
+
+        teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
+        userRepository.save(teacher)
 
         question1 = new Question()
         question1.setCourse(externalCourse)
@@ -68,58 +76,31 @@ class CreateDiscussionPerformanceTest extends SpockTest {
 
 
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
-    }
 
-    def "get created discussion"(){
-        given:"a discussion dto"
-        def discussionDto = new DiscussionDto()
+        discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        and: "a student"
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        and: "created discussion"
         discussionService.createDiscussion(discussionDto)
-
-        when:
-        def discussionsResult = discussionService.findDiscussionsByQuestionId(question1.getId())
-
-        then: "the correct discussion is retrieved"
-        discussionsResult.size() == 1
-        def discussion = discussionsResult.get(0)
-        discussion.getUserId() == discussionDto.getUserId()
-        discussion.getQuestionId() == discussionDto.getQuestionId()
-        discussion.getMessage() == discussionDto.getMessage()
-
     }
 
-    def "get discussion of invalid question"(){
-        given: "an invalid question id"
-        def questionId = -3
+    def "teacher replies to discussion"(){
+        given: "a reply"
+        def replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(teacher.getId())
+        replyDto.setDate(LocalDateTime.now())
 
-        when: "getting question discussion"
-        def discussions = discussionService.findDiscussionsByQuestionId(questionId);
 
-        then:
-        discussions.size() == 0
-    }
+        when: "a reply is given"
+        1.upto(10000,{
+            discussionService.giveReply(discussionDto, replyDto)
+        })
 
-    def "get discussion from question with no discussion"(){
-        given:"a discussion dto"
-        def discussionDto = new DiscussionDto()
-        discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
-        discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        and: "a student"
-        discussionDto.setUserId(student.getId())
-        discussionDto.setUserName(student.getUsername())
-
-        when:
-        def discussionsResult = discussionService.findDiscussionsByQuestionId(question1.getId())
-
-        then: "no discussion is retrieved"
-        discussionsResult.size() == 0
+        then: "the correct reply was given"
+        true
     }
 
     @TestConfiguration
