@@ -178,11 +178,11 @@ export default class ShowQuestionSubmissionDialog extends Vue {
     try {
       await RemoteServices.createReview(this.createReview(type!));
       this.$store.getters.isTeacher
-        ? await RemoteServices.notifyStudentOnQuestionSubmission(
+        ? await RemoteServices.toggleStudentNotificationRead(
             this.questionSubmission.id,
             false
           )
-        : await RemoteServices.notifyTeacherOnQuestionSubmission(
+        : await RemoteServices.toggleTeacherNotificationRead(
             this.questionSubmission.id,
             false
           );

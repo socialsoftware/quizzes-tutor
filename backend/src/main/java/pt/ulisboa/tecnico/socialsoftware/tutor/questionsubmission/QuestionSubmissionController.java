@@ -81,15 +81,15 @@ public class QuestionSubmissionController {
         return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);
     }
 
-    @PutMapping("/submissions/{questionSubmissionId}/notify-student")
+    @PutMapping("/submissions/{questionSubmissionId}/toggle-notification-student")
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
-    public void notifyStudentOnQuestionSubmission(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
-        questionSubmissionService.notifyStudentOnQuestionSubmission(questionSubmissionId, hasRead);
+    public void toggleStudentNotificationRead(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+        questionSubmissionService.toggleStudentNotificationRead(questionSubmissionId, hasRead);
     }
 
-    @PutMapping("/submissions/{questionSubmissionId}/notify-teacher")
+    @PutMapping("/submissions/{questionSubmissionId}/toggle-notification-teacher")
     @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
-    public void notifyTeacherOnQuestionSubmission(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
-        questionSubmissionService.notifyTeacherOnQuestionSubmission(questionSubmissionId, hasRead);
+    public void toggleTeacherNotificationRead(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+        questionSubmissionService.toggleTeacherNotificationRead(questionSubmissionId, hasRead);
     }
 }

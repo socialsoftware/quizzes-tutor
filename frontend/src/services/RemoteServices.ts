@@ -792,26 +792,26 @@ export default class RemoteServices {
       });
   }
 
-  static async notifyStudentOnQuestionSubmission(
+  static async toggleStudentNotificationRead(
     questionSubmissionId: number,
     hasRead: boolean
   ) {
     return httpClient
       .put(
-        `/submissions/${questionSubmissionId}/notify-student?hasRead=${hasRead}`
+        `/submissions/${questionSubmissionId}/toggle-notification-student?hasRead=${hasRead}`
       )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  static async notifyTeacherOnQuestionSubmission(
+  static async toggleTeacherNotificationRead(
     questionSubmissionId: number,
     hasRead: boolean
   ) {
     return httpClient
       .put(
-        `/submissions/${questionSubmissionId}/notify-teacher?hasRead=${hasRead}`
+        `/submissions/${questionSubmissionId}/toggle-notification-teacher?hasRead=${hasRead}`
       )
       .catch(async error => {
         throw Error(await this.errorMessage(error));

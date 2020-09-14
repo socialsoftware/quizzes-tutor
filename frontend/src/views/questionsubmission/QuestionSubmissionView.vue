@@ -263,7 +263,7 @@ export default class QuestionSubmissionView extends Vue {
         this.$store.getters.getUser.id
       );
       await RemoteServices.createReview(review);
-      await RemoteServices.notifyTeacherOnQuestionSubmission(
+      await RemoteServices.toggleTeacherNotificationRead(
         questionSubmission.id,
         false
       );
@@ -293,12 +293,12 @@ export default class QuestionSubmissionView extends Vue {
 
     try {
       if (this.$store.getters.isStudent) {
-        await RemoteServices.notifyStudentOnQuestionSubmission(
+        await RemoteServices.toggleStudentNotificationRead(
           questionSubmission.id,
           true
         );
       } else if (this.$store.getters.isTeacher) {
-        await RemoteServices.notifyTeacherOnQuestionSubmission(
+        await RemoteServices.toggleTeacherNotificationRead(
           questionSubmission.id,
           true
         );

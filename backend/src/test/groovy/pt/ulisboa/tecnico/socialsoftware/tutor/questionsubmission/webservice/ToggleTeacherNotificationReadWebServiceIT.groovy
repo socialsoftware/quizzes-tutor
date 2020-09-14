@@ -13,14 +13,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class NotifyStudentOnQuestionSubmissionWebServiceIT extends SpockTest {
+class ToggleTeacherNotificationReadWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     def course
     def courseExecution
     def student
-    def teacher
     def questionDto
     def questionSubmission
     def response
@@ -38,12 +37,6 @@ class NotifyStudentOnQuestionSubmissionWebServiceIT extends SpockTest {
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
-
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.TEACHER, true, false)
-        teacher.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
-        teacher.addCourse(courseExecution)
-        courseExecution.addUser(teacher)
-        userRepository.save(teacher)
 
         questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
@@ -64,13 +57,13 @@ class NotifyStudentOnQuestionSubmissionWebServiceIT extends SpockTest {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
     }
 
-    def "notify student on question submission"() {
+    def "notify teacher on question submission"() {
         when:
         response = restClient.put(
-                path: '/submissions/'+questionSubmission.getId()+'/notify-student',
+                path: '/submissions/'+questionSubmission.getId()+'/toggle-notification-teacher',
                 query: ['hasRead': true],
                 requestContentType: 'application/json'
         )
@@ -84,7 +77,6 @@ class NotifyStudentOnQuestionSubmissionWebServiceIT extends SpockTest {
         persistentCourseCleanup()
 
         userRepository.deleteById(student.getId())
-        userRepository.deleteById(teacher.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
 
         courseRepository.deleteById(course.getId())
