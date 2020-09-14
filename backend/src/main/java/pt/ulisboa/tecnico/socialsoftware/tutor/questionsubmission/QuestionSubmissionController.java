@@ -82,13 +82,13 @@ public class QuestionSubmissionController {
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/notify-student")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
     public void notifyStudentOnQuestionSubmission(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
         questionSubmissionService.notifyStudentOnQuestionSubmission(questionSubmissionId, hasRead);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/notify-teacher")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
+    @PreAuthorize("(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
     public void notifyTeacherOnQuestionSubmission(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
         questionSubmissionService.notifyTeacherOnQuestionSubmission(questionSubmissionId, hasRead);
     }
