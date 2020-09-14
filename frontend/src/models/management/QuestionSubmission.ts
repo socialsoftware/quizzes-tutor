@@ -53,6 +53,16 @@ export default class QuestionSubmission {
     }
   ];
 
+  prepareQuestionSubmission(
+    courseExecutionId: number,
+    submitterId: number,
+    question: Question
+  ) {
+    this.courseExecutionId = courseExecutionId;
+    this.submitterId = submitterId;
+    this.question = question;
+  }
+
   isInDiscussion() {
     return this.status === 'IN_REVISION' || this.status === 'IN_REVIEW';
   }

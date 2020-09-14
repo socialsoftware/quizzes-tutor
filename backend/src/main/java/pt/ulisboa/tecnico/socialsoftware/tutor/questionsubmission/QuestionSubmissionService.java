@@ -180,7 +180,7 @@ public class  QuestionSubmissionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void setStudentSubmissionVisibility(Integer questionSubmissionId, boolean hasRead) {
+    public void notifyStudentOnQuestionSubmission(Integer questionSubmissionId, boolean hasRead) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
         questionSubmission.setStudentRead(hasRead);
@@ -188,7 +188,7 @@ public class  QuestionSubmissionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void setTeacherSubmissionVisibility(Integer questionSubmissionId, boolean hasRead) {
+    public void notifyTeacherOnQuestionSubmission(Integer questionSubmissionId, boolean hasRead) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
         questionSubmission.setTeacherRead(hasRead);

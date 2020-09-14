@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SetQuestionSubmissionVisibilityWebServiceIT extends SpockTest {
+class NotifyTeacherOnQuestionSubmissionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -60,23 +60,10 @@ class SetQuestionSubmissionVisibilityWebServiceIT extends SpockTest {
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
     }
 
-    def "set teacher's question submission visibility"() {
+    def "notify teacher on question submission"() {
         when:
         response = restClient.put(
-                path: '/submissions/'+questionSubmission.getId()+'/teacher-visibility',
-                query: ['hasRead': true],
-                requestContentType: 'application/json'
-        )
-
-        then: "check the response status"
-        response != null
-        response.status == 200
-    }
-
-    def "set student's question submission visibility"() {
-        when:
-        response = restClient.put(
-                path: '/submissions/'+questionSubmission.getId()+'/student-visibility',
+                path: '/submissions/'+questionSubmission.getId()+'/notify-teacher',
                 query: ['hasRead': true],
                 requestContentType: 'application/json'
         )

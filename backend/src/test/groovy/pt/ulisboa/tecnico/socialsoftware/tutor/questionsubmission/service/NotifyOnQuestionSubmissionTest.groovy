@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Unroll
 
 @DataJpaTest
-class SetQuestionSubmissionVisibilityTest extends SpockTest{
+class NotifyOnQuestionSubmissionTest extends SpockTest{
     def student
     def question
     def optionOK
@@ -48,9 +48,9 @@ class SetQuestionSubmissionVisibilityTest extends SpockTest{
     def "set submission visibility"() {
         when:
         if (forTeacher) {
-            questionSubmissionService.setTeacherSubmissionVisibility(questionSubmission.getId(), hasRead)
+            questionSubmissionService.notifyTeacherOnQuestionSubmission(questionSubmission.getId(), hasRead)
         } else {
-            questionSubmissionService.setStudentSubmissionVisibility(questionSubmission.getId(), hasRead)
+            questionSubmissionService.notifyStudentOnQuestionSubmission(questionSubmission.getId(), hasRead)
         }
 
         then: "the question submission visibility is changed"

@@ -225,9 +225,11 @@ export default class QuestionSubmissionView extends Vue {
     let question = new Question();
     question.status = 'SUBMITTED';
     this.currentQuestionSubmission = new QuestionSubmission();
-    this.currentQuestionSubmission.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
-    this.currentQuestionSubmission.submitterId = this.$store.getters.getUser.id;
-    this.currentQuestionSubmission.question = question;
+    this.currentQuestionSubmission.prepareQuestionSubmission(
+      this.$store.getters.getCurrentCourse.courseExecutionId,
+      this.$store.getters.getUser.id,
+      question
+    );
     this.editQuestionSubmissionDialog = true;
   }
 
@@ -261,7 +263,7 @@ export default class QuestionSubmissionView extends Vue {
         this.$store.getters.getUser.id
       );
       await RemoteServices.createReview(review);
-      await RemoteServices.setTeacherSubmissionVisibility(
+      await RemoteServices.notifyTeacherOnQuestionSubmission(
         questionSubmission.id,
         false
       );
@@ -291,12 +293,12 @@ export default class QuestionSubmissionView extends Vue {
 
     try {
       if (this.$store.getters.isStudent) {
-        await RemoteServices.setStudentSubmissionVisibility(
+        await RemoteServices.notifyStudentOnQuestionSubmission(
           questionSubmission.id,
           true
         );
       } else if (this.$store.getters.isTeacher) {
-        await RemoteServices.setTeacherSubmissionVisibility(
+        await RemoteServices.notifyTeacherOnQuestionSubmission(
           questionSubmission.id,
           true
         );

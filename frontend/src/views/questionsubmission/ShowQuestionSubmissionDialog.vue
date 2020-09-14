@@ -150,7 +150,7 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   reviewsComponentKey: number = 0;
   comment: string = '';
   statusOptions = Review.statusOptions;
-  selected: Object = {};
+  selected: string | null = null;
 
   created() {
     this.forceRerender();
@@ -166,18 +166,23 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   updateReviews() {
     this.reviewsComponentKey += 1;
     this.comment = '';
+    this.selected = null;
   }
 
-  async reviewQuestionSubmission(type: string) {
+  async reviewQuestionSubmission(type: string | null) {
+    if (type === null) {
+      await this.$store.dispatch('error', 'Error: Please select review type');
+      return;
+    }
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.createReview(this.createReview(type));
+      await RemoteServices.createReview(this.createReview(type!));
       this.$store.getters.isTeacher
-        ? await RemoteServices.setStudentSubmissionVisibility(
+        ? await RemoteServices.notifyStudentOnQuestionSubmission(
             this.questionSubmission.id,
             false
           )
-        : await RemoteServices.setTeacherSubmissionVisibility(
+        : await RemoteServices.notifyTeacherOnQuestionSubmission(
             this.questionSubmission.id,
             false
           );

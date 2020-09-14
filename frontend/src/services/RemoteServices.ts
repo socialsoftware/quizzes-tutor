@@ -792,23 +792,27 @@ export default class RemoteServices {
       });
   }
 
-  static async setStudentSubmissionVisibility(
+  static async notifyStudentOnQuestionSubmission(
     questionSubmissionId: number,
     hasRead: boolean
   ) {
     return httpClient
-      .put(`/submissions/${questionSubmissionId}/student-visibility?hasRead=${hasRead}`)
+      .put(
+        `/submissions/${questionSubmissionId}/notify-student?hasRead=${hasRead}`
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  static async setTeacherSubmissionVisibility(
+  static async notifyTeacherOnQuestionSubmission(
     questionSubmissionId: number,
     hasRead: boolean
   ) {
     return httpClient
-      .put(`/submissions/${questionSubmissionId}/teacher-visibility?hasRead=${hasRead}`)
+      .put(
+        `/submissions/${questionSubmissionId}/notify-teacher?hasRead=${hasRead}`
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
