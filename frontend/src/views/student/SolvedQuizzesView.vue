@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h2>Solved Quizzes</h2>
-    <ul>
+    <ul data-cy="solvedQuizzesList">
       <li class="list-header ">
         <div class="col">Title</div>
         <div class="col">Solved Date</div>

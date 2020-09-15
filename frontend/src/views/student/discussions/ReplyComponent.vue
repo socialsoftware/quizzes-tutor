@@ -39,6 +39,7 @@
                   "
                 >
                   <v-textarea
+                    data-cy="replyTextArea"
                     class="textarea-reply"
                     solo
                     :id="'reply' + discussion.userId"
@@ -48,6 +49,7 @@
                   ></v-textarea>
                   <v-card-actions>
                     <v-btn
+                      data-cy="submitReplyButton"
                       class="submit-button"
                       @click="
                         setDiscussion(discussion);

@@ -10,6 +10,7 @@
       <div v-if="answered && !hasDiscussion" class="discussion-message">
         <v-textarea
           solo
+          data-cy="discussionTextArea"
           v-model="discussionMessage"
           v-on:input="onInput"
           name="input-7-4"
@@ -17,7 +18,12 @@
         ></v-textarea>
         <v-card-actions>
           <v-spacer />
-          <v-btn class="submit-button" @click="submitDiscussion">Submit</v-btn>
+          <v-btn
+            data-cy="submitDiscussionButton"
+            class="submit-button"
+            @click="submitDiscussion"
+            >Submit</v-btn
+          >
         </v-card-actions>
       </div>
       <reply-component v-if="discussions != null" :discussions="discussions" />

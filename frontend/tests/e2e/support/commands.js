@@ -214,7 +214,7 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains('No data available');
   cy.get('[data-cy="cancelButton"').click()
 });
-
+"quizzesStudentMenuButton"
 Cypress.Commands.add('checkStudentCount', (acronym, count) => {
   cy.contains(acronym).parent().children().eq(9).contains(count);
 });
@@ -225,4 +225,61 @@ Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
 
 Cypress.Commands.add('closeUserCreationDialog', () => {
   cy.get('[data-cy="cancelButton"]').click();
+});
+
+Cypress.Commands.add('solveQuizz', (numberOfQuizQuestions) => {
+  cy.get('[data-cy="quizzesStudentMenuButton"]').click()
+  cy.contains('Available').click()
+  cy.wait(8000)
+
+  cy.get('[data-cy="availableQuizzesList"]').children().eq(1).click()
+  cy.wait(9000)
+
+  for(let i = 1; i < numberOfQuizQuestions; i++){
+    cy.get('[data-cy="optionList"]').children().eq(1).click()
+    cy.get('[data-cy="nextQuestionButton"]').click()
+  }
+
+  cy.get('[data-cy="optionList"]').children().eq(0).click()
+
+  cy.get('[data-cy="endQuizButton"]').click()
+  cy.get('[data-cy="confirmationButton"]').click()
+
+  cy.wait(3000)
+});
+
+Cypress.Commands.add('createDiscussion', (discussionContent) => {
+  cy.get('[data-cy="quizzesStudentMenuButton"]').click()
+  cy.contains('Solved').click()
+
+  cy.wait(3000)
+
+  cy.get('[data-cy="solvedQuizzesList"]').children().eq(1).click()
+  cy.get('[data-cy="nextQuestionButton"]').click()
+  cy.get('[data-cy="discussionTextArea"]').type(discussionContent)
+  cy.get('[data-cy="submitDiscussionButton"]').click()
+
+  cy.wait(3000)
+
+  cy.get('[data-cy="discussionsStudentMenuButton"]').click()
+
+  cy.contains(discussionContent).parent().should('have.length', 1).children()
+    .should('have.length', 7)
+});
+
+Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
+  cy.wait(2000)
+  cy.get('[data-cy="forumTeacherMenuButton"]').click()
+  cy.contains(discussionContent).parent().should('have.length', 1).children()
+    .should('have.length', 7)
+
+  //cy.contains(discussionContent).parent()
+    //.get('[data-cy="showDiscussionButton"]').click()
+
+  cy.get('[data-cy="showDiscussionButton"]').click()
+
+  cy.get('[data-cy="replyTextArea"]').type(replyContent)
+  cy.get('[data-cy="submitReplyButton"]').click()
+
+  cy.wait(3000)
 });

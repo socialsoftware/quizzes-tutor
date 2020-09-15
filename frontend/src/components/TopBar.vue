@@ -123,6 +123,7 @@
           v-if="isTeacher && currentCourse"
           text
           dark
+          data-cy="forumTeacherMenuButton"
         >
           Forum
           <v-badge
@@ -138,7 +139,7 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn data-cy="quizzesStudentMenuButton" v-on="on" text dark>
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>

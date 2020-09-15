@@ -34,7 +34,11 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showDiscussionDialog(item)"
+            <v-icon
+              data-cy="showDiscussionButton"
+              class="mr-2"
+              v-on="on"
+              @click="showDiscussionDialog(item)"
               >visibility</v-icon
             >
           </template>

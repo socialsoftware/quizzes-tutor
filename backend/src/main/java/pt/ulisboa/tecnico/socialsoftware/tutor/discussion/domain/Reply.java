@@ -94,4 +94,12 @@ public class Reply {
             throw new TutorException(REPLY_MISSING_DATA);
         }
     }
+
+    public void remove() {
+        user.getReplies().remove(this);
+        user = null;
+
+        discussion.getReplies().remove(this);
+        discussion = null;
+    }
 }

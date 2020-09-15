@@ -653,6 +653,8 @@ public class User implements UserDetails, DomainEntity {
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
         questionSubmissions.forEach(QuestionSubmission::remove);
+        discussions.forEach(Discussion::remove);
+        replies.forEach(Reply::remove);
     }
 
 }

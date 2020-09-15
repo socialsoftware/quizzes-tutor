@@ -18,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
@@ -61,6 +63,9 @@ public class UserService {
 
     @Autowired
     private Mailer mailer;
+
+    @Autowired
+    private DiscussionService discussionService;
 
     @Value("${spring.mail.username}")
     private String mailUsername;
@@ -178,6 +183,10 @@ public class UserService {
                 .forEach(user -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);
+                    }
+
+                    for (Discussion discussion : new ArrayList<>(user.getDiscussions())) {
+                        discussionService.deleteDiscussion(discussion);
                     }
 
                     this.userRepository.delete(user);

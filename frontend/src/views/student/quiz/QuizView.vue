@@ -13,14 +13,18 @@
           convertToHHMMSS(statementQuiz.timeToSubmission)
         }}</span>
       </span>
-      <span class="end-quiz" @click="confirmationDialog = true"
+      <span
+        data-cy="endQuizButton"
+        class="end-quiz"
+        @click="confirmationDialog = true"
         ><i class="fas fa-times" />End Quiz</span
       >
     </header>
 
     <div class="question-navigation">
-      <div class="navigation-buttons">
+      <div data-cy="navigationButtons" class="navigation-buttons">
         <span
+          :questionNumber="statementQuiz.questions.length"
           v-for="index in +statementQuiz.questions.length"
           v-bind:class="[
             'question-button',
@@ -40,6 +44,7 @@
       /></span>
       <span
         class="right-button"
+        data-cy="nextQuestionButton"
         @click="confirmAnswer"
         v-if="questionOrder !== statementQuiz.questions.length - 1"
         ><i class="fas fa-chevron-right"
@@ -91,7 +96,7 @@
           <v-btn color="secondary" text @click="confirmationDialog = false">
             Cancel
           </v-btn>
-          <v-btn color="primary" text @click="concludeQuiz">
+          <v-btn color="primary" text data-cy="confirmationButton" @click="concludeQuiz">
             I'm sure
           </v-btn>
         </v-card-actions>
@@ -117,7 +122,12 @@
           <v-btn color="secondary" text @click="nextConfirmationDialog = false">
             Cancel
           </v-btn>
-          <v-btn color="primary" text @click="increaseOrder">
+          <v-btn
+            data-cy="confirmationButton"
+            color="primary"
+            text
+            @click="increaseOrder"
+          >
             I'm sure
           </v-btn>
         </v-card-actions>

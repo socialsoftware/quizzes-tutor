@@ -1,7 +1,7 @@
 <template>
   <div class="quiz-container" v-if="statementManager.correctAnswers.length > 0">
     <div class="question-navigation">
-      <div class="navigation-buttons">
+      <div data-cy="navigationButtons" class="navigation-buttons">
         <span
           v-for="index in +statementManager.statementQuiz.questions.length"
           v-bind:class="[
@@ -31,6 +31,7 @@
       /></span>
       <span
         class="right-button"
+        data-cy="nextQuestionButton"
         @click="increaseOrder"
         v-if="
           questionOrder !== statementManager.statementQuiz.questions.length - 1

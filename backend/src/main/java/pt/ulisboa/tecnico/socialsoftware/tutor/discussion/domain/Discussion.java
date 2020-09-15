@@ -172,4 +172,11 @@ public class Discussion implements Serializable {
     public boolean teacherAnswered() {
         return this.getReplies().stream().anyMatch(reply -> reply.getUser().isTeacher());
     }
+
+    public void remove() {
+        user.getDiscussions().remove(this);
+        user = null;
+
+        replies.clear();
+    }
 }

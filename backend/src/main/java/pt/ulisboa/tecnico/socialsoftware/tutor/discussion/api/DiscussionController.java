@@ -117,6 +117,6 @@ public class DiscussionController {
         reply.setUserId(user.getId());
         reply.setDate(DateHandler.now());
 
-        return discussionService.giveReply(discussion, reply);
+        return discussionService.createReply(discussion, reply);
     }
 }
