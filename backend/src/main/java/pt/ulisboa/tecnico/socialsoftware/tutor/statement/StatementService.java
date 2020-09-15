@@ -128,11 +128,8 @@ public class StatementService {
 
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
 
-        List<Integer> availableTopicsIds = topicService.findTournamentTopics(courseExecution.getId())
-                .stream().map(topic -> topic.getId()).collect(Collectors.toList());
-
         if (quizDetails.getTopics() != null) {
-            availableQuestions = courseExecution.filterByTopicsTournament(availableQuestions, quizDetails, availableTopicsIds);
+            availableQuestions = courseExecution.filterQuestionsByTopics(availableQuestions, quizDetails.getTopics());
         } else {
             availableQuestions = new ArrayList<>();
         }

@@ -1,17 +1,23 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.domain;
 
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -232,16 +238,12 @@ public class CourseExecution implements DomainEntity {
     }
 
     public Set<Topic> findAvailableTopics() {
-        Set<Topic> availableTopics = new HashSet<>();
-
-        getAvailableAssessments().forEach(assessment -> availableTopics.addAll(assessment.getTopics()));
-
-        return availableTopics;
+        return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).distinct().collect(Collectors.toSet());
     }
 
-    public List<Question> filterByTopicsTournament(List<Question> availableQuestions, StatementTournamentCreationDto quizDetails, List<Integer> availableTopicsIds) {
-        List<Integer> topicsIds = new ArrayList<>();
-        quizDetails.getTopics().forEach(topicDto -> topicsIds.add(topicDto.getId()));
+    public List<Question> filterQuestionsByTopics(List<Question> availableQuestions, Set<TopicDto> tournamentTopics) {
+        List<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toList());
+        List<Integer> topicsIds = tournamentTopics.stream().map(TopicDto::getId).distinct().collect(Collectors.toList());
 
         return availableQuestions.stream()
                 .filter(question -> question.belongsToTopicsGivenAvailableTopicsIds(topicsIds, availableTopicsIds))
