@@ -241,11 +241,11 @@ public class CourseExecution implements DomainEntity {
         return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).distinct().collect(Collectors.toSet());
     }
 
-    public List<Question> filterQuestionsByTopics(List<Question> availableQuestions, Set<TopicDto> tournamentTopics) {
+    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
         List<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toList());
-        List<Integer> topicsIds = tournamentTopics.stream().map(TopicDto::getId).distinct().collect(Collectors.toList());
+        List<Integer> topicsIds = topics.stream().map(TopicDto::getId).distinct().collect(Collectors.toList());
 
-        return availableQuestions.stream()
+        return questions.stream()
                 .filter(question -> question.belongsToTopicsGivenAvailableTopicsIds(topicsIds, availableTopicsIds))
                 .collect(Collectors.toList());
     }
