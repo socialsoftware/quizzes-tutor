@@ -90,27 +90,6 @@ public class AuthUserService {
         }
         authUser.setLastAccess(DateHandler.now());
 
-        if (authUser.getUser().getRole() == User.Role.ADMIN) {
-            List<CourseDto> allCoursesInDb = courseExecutionRepository.findAll().stream().map(CourseDto::new).collect(Collectors.toList());
-
-            if (!fenixTeachingCourses.isEmpty()) {
-                User finalUser = authUser.getUser();
-                activeTeachingCourses.stream()
-                        .filter(courseExecution ->
-                                !finalUser.getCourseExecutions().contains(courseExecution))
-                        .forEach(authUser.getUser()::addCourse);
-
-                allCoursesInDb.addAll(fenixTeachingCourses);
-
-                String ids = fenixTeachingCourses.stream()
-                        .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
-                        .collect(Collectors.joining(","));
-
-                authUser.setEnrolledCoursesAcronyms(ids);
-            }
-            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, allCoursesInDb));
-        }
-
         // Update student courses
         if (!activeAttendingCourses.isEmpty() && authUser.getUser().getRole() == User.Role.STUDENT) {
             User student = authUser.getUser();
