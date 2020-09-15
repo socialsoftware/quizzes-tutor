@@ -19,7 +19,7 @@ public class AuthDemoUser extends AuthUser {
     public Type getType() {return Type.DEMO;}
 
     @Override
-    public boolean isGenerated() {
+    public boolean isDemoStudent() {
         return getUsername().startsWith("Demo-Student-");
     }
 }

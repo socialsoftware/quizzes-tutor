@@ -53,10 +53,6 @@ public class AuthUserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public AuthUser findAuthUserByUsername(String username) {
-        return this.authUserRepository.findAuthUserByUsername(username).orElse(null);
-    }
-
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
@@ -70,19 +66,19 @@ public class AuthUserService {
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         AuthTecnicoUser authUser;
         try {
-            authUser = (AuthTecnicoUser) this.findAuthUserByUsername(username);
+            authUser = (AuthTecnicoUser) findAuthUserByUsername(username);
         } catch (ClassCastException e) {
             throw new TutorException(INVALID_AUTH_USERNAME, username);
         }
 
         // If user is student and is not in db
         if (authUser == null && !activeAttendingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
         }
 
         // If user is teacher and is not in db
         if (authUser == null && !fenixTeachingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) this.userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
         }
 
         if (authUser == null) {
@@ -155,13 +151,14 @@ public class AuthUserService {
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto externalUserAuth(String email, String password) {
-        AuthUser authUser = this.findAuthUserByUsername(email);
-        if (authUser == null) throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
-
+        AuthUser authUser = findAuthUserByUsername(email);
+        if (authUser == null) {
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
+        }
         if (password == null ||
-                !passwordEncoder.matches(password, authUser.getPassword()))
+                !passwordEncoder.matches(password, authUser.getPassword())) {
             throw new TutorException(INVALID_PASSWORD, password);
-
+        }
         authUser.setLastAccess(DateHandler.now());
 
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
@@ -176,11 +173,12 @@ public class AuthUserService {
     public AuthDto demoStudentAuth(Boolean createNew) {
         AuthUser authUser;
 
-        if (createNew == null || !createNew)
+        if (createNew == null || !createNew) {
             authUser = getDemoStudent();
-        else
-            authUser = this.userService.createDemoStudent();
-
+        }
+        else {
+            authUser = userService.createDemoStudent();
+        }
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
@@ -218,7 +216,7 @@ public class AuthUserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        AuthExternalUser authUser = (AuthExternalUser) this.findAuthUserByUsername(externalUserDto.getUsername());
+        AuthExternalUser authUser = (AuthExternalUser) findAuthUserByUsername(externalUserDto.getUsername());
 
         if (authUser == null) {
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
@@ -264,5 +262,9 @@ public class AuthUserService {
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });
+    }
+
+    public AuthUser findAuthUserByUsername(String username) {
+        return authUserRepository.findAuthUserByUsername(username).orElse(null);
     }
 }

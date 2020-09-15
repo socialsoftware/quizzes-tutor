@@ -190,8 +190,7 @@ public class CourseService {
     public CourseExecution getDemoCourseExecution() {
         return this.courseExecutionRepository.findByFields(Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElseGet(() -> {
             Course course = getCourse(Demo.COURSE_NAME, Course.Type.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO, null);
-            courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }

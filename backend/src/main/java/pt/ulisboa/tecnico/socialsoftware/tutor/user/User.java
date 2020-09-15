@@ -452,7 +452,7 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (this.getAuthUser().isActive()) {
+        if (getAuthUser().isActive()) {
             throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 

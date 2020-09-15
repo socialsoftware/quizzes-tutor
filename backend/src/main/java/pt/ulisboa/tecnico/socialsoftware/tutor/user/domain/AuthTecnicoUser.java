@@ -19,17 +19,13 @@ public class AuthTecnicoUser extends AuthUser {
         super(user, username, email);
     }
 
+    @Override
     public String getEnrolledCoursesAcronyms() {
         return enrolledCoursesAcronyms;
     }
 
     public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
         this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
-    }
-
-    @Override
-    public boolean isActive() {
-        return true;
     }
 
     @Override
