@@ -9,14 +9,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
+import java.time.LocalDateTime
+
 @DataJpaTest
 class ResetDemoStudentTest extends SpockTest {
 
     def course
     def courseExecution
-    def quiz
-    def quizQuestion
-    def option
 
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -27,7 +26,10 @@ class ResetDemoStudentTest extends SpockTest {
 
     def "reset all demo students"() {
         given:
-        def user1 = userService.createDemoStudent()
+        def birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
+        def user1 = new User("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
+                USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.DEMO)
+        userRepository.save(user1)
         def user1Username = user1.username
         def user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.DEMO)

@@ -55,8 +55,6 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
         )
     }
 
-
-
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }

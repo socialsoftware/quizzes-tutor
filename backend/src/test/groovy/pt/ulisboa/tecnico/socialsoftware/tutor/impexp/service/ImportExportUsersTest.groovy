@@ -49,7 +49,7 @@ class ImportExportUsersTest extends SpockTest {
 
         then:
         externalCourseExecution.getUsers().size() == 2
-
+        and:
         userRepository.findAll().size() == existingUsers + 2
         def userOne = userRepository.findByKey(keyOne).orElse(null)
         userOne != null
@@ -64,7 +64,7 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getAuthUser().getConfirmationToken() == USER_1_TOKEN
         userOne.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
         userOne.getAuthUser().isActive()
-
+        and:
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
         userTwo != null
         userTwo.getKey() == keyTwo

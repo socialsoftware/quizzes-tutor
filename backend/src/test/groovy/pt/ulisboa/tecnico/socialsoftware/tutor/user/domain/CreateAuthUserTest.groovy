@@ -9,8 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 @DataJpaTest
 class CreateAuthUserTest  extends SpockTest {
 
-    User user
-    AuthUser authUser
+    def user
+    def authUser
 
     def setup() {
         user = new User(USER_1_NAME, User.Role.STUDENT, false)
@@ -18,7 +18,7 @@ class CreateAuthUserTest  extends SpockTest {
         user.setKey(user.getId())
     }
 
-    def "create AuthTecnicoUser"() {
+    def "create AuthUser"() {
         authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, AuthUser.Type.TECNICO)
         authUserRepository.save(authUser)
 
@@ -29,6 +29,7 @@ class CreateAuthUserTest  extends SpockTest {
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
         authUser.isActive()
+        authUser.user.id == user.id
         authUser instanceof AuthTecnicoUser
     }
 
@@ -42,6 +43,7 @@ class CreateAuthUserTest  extends SpockTest {
         then:
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
+        authUser.user.id == user.id
         !authUser.isActive()
         authUser instanceof AuthExternalUser
     }
@@ -56,6 +58,7 @@ class CreateAuthUserTest  extends SpockTest {
         then:
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
+        authUser.user.id == user.id
         authUser.isActive()
         authUser instanceof AuthDemoUser
     }
