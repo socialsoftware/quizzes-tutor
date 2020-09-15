@@ -47,9 +47,9 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 1 * * *")
     public void resetDemoInfo() {
 		userService.resetDemoStudents();
+		questionSubmissionService.resetDemoQuestionSubmissions();
 		quizService.resetDemoQuizzes();
 		topicService.resetDemoTopics();
 		assessmentService.resetDemoAssessments();
-		questionSubmissionService.resetDemoQuestionSubmissions();
 	}
 }

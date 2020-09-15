@@ -7,6 +7,8 @@ export default class QuestionSubmission {
   submitterId: number | null = null;
   name: string | null = null;
   status: string | null = null;
+  studentRead!: boolean;
+  teacherRead!: boolean;
 
   constructor(jsonObj?: QuestionSubmission) {
     if (jsonObj) {
@@ -16,6 +18,8 @@ export default class QuestionSubmission {
       this.submitterId = jsonObj.submitterId;
       this.name = jsonObj.name;
       this.status = jsonObj.status;
+      this.studentRead = jsonObj.studentRead;
+      this.teacherRead = jsonObj.teacherRead;
     }
   }
 
@@ -49,6 +53,16 @@ export default class QuestionSubmission {
     }
   ];
 
+  prepareQuestionSubmission(
+    courseExecutionId: number,
+    submitterId: number,
+    question: Question
+  ) {
+    this.courseExecutionId = courseExecutionId;
+    this.submitterId = submitterId;
+    this.question = question;
+  }
+
   isInDiscussion() {
     return this.status === 'IN_REVISION' || this.status === 'IN_REVIEW';
   }
@@ -62,9 +76,19 @@ export default class QuestionSubmission {
   }
 
   getStatusColor() {
-    if (this.status === 'APPROVED') return 'green';
-    else if (this.status === 'REJECTED') return 'red';
-    else if (this.status === 'IN_REVISION') return 'yellow';
-    else if (this.status === 'IN_REVIEW') return 'blue';
+    switch (this.status) {
+      case 'APPROVED':
+        return 'green';
+      case 'REJECTED':
+        return 'red';
+      case 'IN_REVISION':
+        return 'yellow';
+      case 'IN_REVIEW':
+        return 'blue';
+    }
+  }
+
+  getStatus() {
+    return this.status?.replace('_', ' ');
   }
 }

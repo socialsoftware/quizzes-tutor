@@ -69,8 +69,8 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'submitQuestion',
-  (valid, title, content, opt1, opt2, opt3, opt4) => {
-    cy.get('[data-cy="SubmitQuestion"]').click();
+  (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
+    cy.get('[data-cy="NewSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
     cy.get('[data-cy="Switch1"]').click({ force: true });
@@ -79,7 +79,13 @@ Cypress.Commands.add(
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      cy.get('[data-cy="SubmitButton"]').click();
+      if (comment != null) {
+        cy.get('[data-cy="Comment"]').type(comment);
+        cy.get('[data-cy="RequestReviewButton"]').click();
+      } else {
+        cy.get('[data-cy="RequestReviewButton"]').click();
+        return;
+      }
       cy.contains(title)
         .parent()
         .parent()
@@ -87,27 +93,40 @@ Cypress.Commands.add(
         .children()
         .should('have.length', 5);
     } else {
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="RequestReviewButton"]').click();
     }
   }
 );
 
 Cypress.Commands.add(
-  'editQuestionSubmission',
-  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
-    cy.get('[data-cy="EditSubmission"]').click();
+  'saveQuestion',
+  (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
+    cy.get('[data-cy="NewSubmission"]').click();
     cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
     cy.get('[data-cy="QuestionContent"]').type(content);
+    cy.get('[data-cy="Switch1"]').click({ force: true });
     if (valid) {
       cy.get('[data-cy="Option1"]').type(opt1);
       cy.get('[data-cy="Option2"]').type(opt2);
       cy.get('[data-cy="Option3"]').type(opt3);
       cy.get('[data-cy="Option4"]').type(opt4);
-      cy.get('[data-cy="Comment"]').type(comment);
-      cy.get('[data-cy="SubmitButton"]').click();
+      if (comment != null) {
+        cy.get('[data-cy="Comment"]').type(comment);
+        cy.get('[data-cy="SaveButton"]').click();
+      } else {
+        cy.get('[data-cy="SaveButton"]').click();
+        return;
+      }
+      cy.contains(title)
+        .parent()
+        .parent()
+        .should('have.length', 1)
+        .children()
+        .should('have.length', 5);
     } else {
-      cy.get('[data-cy="Option1"]').clear();
-      cy.get('[data-cy="SubmitButton"]').click();
+      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="SaveButton"]').click();
     }
   }
 );
@@ -156,22 +175,26 @@ Cypress.Commands.add('reviewQuestionSubmission', (select, title, comment=null) =
   if (comment != null){
     cy.get('[data-cy="Comment"]').type(comment);
   }
-  cy.log(select);
-  let option = select === 'Request Further Review' ? '{downarrow}{downarrow}{downarrow}' : select;
-  cy.get('[data-cy=SelectMenu]').type(option + '{enter}', {force: true})
+  cy.get('[data-cy=SelectMenu]').type(select + '{enter}', {force: true})
   cy.get('[data-cy="SubmitButton"]').click();
 });
 
-Cypress.Commands.add('checkReviewComment', (title) => {
-  cy.contains(title)
-    .parent()
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 6)
-    .find('[data-cy="ViewSubmission"]')
-    .click();
-  cy.contains(title);
+Cypress.Commands.add('checkReview', (title, comment, isComment, type=null) => {
+  if (!isComment) {
+    cy.contains(title)
+      .parent()
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 6)
+      .find('[data-cy="ViewSubmission"]')
+      .click();
+  }
+  cy.get('[data-cy=ReviewLog]').click();
+  cy.contains(comment);
+  if (!isComment) {
+    cy.contains(type);
+  }
   cy.get('[data-cy="CloseButton"]').click();
 });
 

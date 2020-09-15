@@ -9,18 +9,22 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ToggleInReviewStatusWebServiceIT extends SpockTest {
+class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     def course
     def courseExecution
-    def student
     def teacher
+    def student
     def questionSubmission
     def response
 
@@ -65,17 +69,34 @@ class ToggleInReviewStatusWebServiceIT extends SpockTest {
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
     }
 
-    def "get student's question submission"() {
+    def "get question submission review"() {
+        given: "a review"
+        def reviewDto = new ReviewDto()
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
+        reviewDto.setUserId(teacher.getId())
+        reviewDto.setComment(REVIEW_1_COMMENT)
+        reviewDto.setType(Review.Type.APPROVE.name())
+        questionSubmissionService.createReview(reviewDto)
+
         when:
-        response = restClient.put(
+        response = restClient.get(
                 path: '/submissions/'+questionSubmission.getId()+'/reviews',
-                query: ['inReview': true, 'executionId': courseExecution.getId()],
+                query: ['executionId': courseExecution.getId()],
                 requestContentType: 'application/json'
         )
 
         then: "check the response status"
         response != null
         response.status == 200
+        and: "if it responds with the correct question submissions"
+        def reviews = response.data
+        reviews.get(0).id != null
+        reviews.get(0).userId == teacher.getId()
+        reviews.get(0).questionSubmissionId == questionSubmission.getId()
+        reviews.get(0).comment == REVIEW_1_COMMENT
+        reviews.get(0).name == teacher.getName()
+        reviews.get(0).username == teacher.getUsername()
+        reviews.get(0).type == Review.Type.APPROVE.name()
     }
 
     def cleanup() {
@@ -88,4 +109,10 @@ class ToggleInReviewStatusWebServiceIT extends SpockTest {
         courseRepository.deleteById(course.getId())
     }
 }
+
+
+
+
+
+
 
