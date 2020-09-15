@@ -24,8 +24,6 @@ class ImportExportUsersTest extends SpockTest {
         AuthUser authUser = user.getAuthUser()
         authUser.setPassword(USER_1_PASSWORD)
         authUser.setLastAccess(LOCAL_DATE_TODAY)
-        authUser.setConfirmationToken(USER_1_TOKEN)
-        authUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
 
         user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
@@ -33,11 +31,11 @@ class ImportExportUsersTest extends SpockTest {
         userRepository.save(user)
         def keyTwo = user.getId()
         user.setKey(keyTwo)
-        authUser = user.getAuthUser()
-        authUser.setPassword(USER_2_PASSWORD)
-        authUser.setLastAccess(LOCAL_DATE_TODAY)
-        authUser.setConfirmationToken(USER_2_TOKEN)
-        authUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
+        AuthExternalUser authExternalUser = user.getAuthUser()
+        authExternalUser.setPassword(USER_2_PASSWORD)
+        authExternalUser.setLastAccess(LOCAL_DATE_TODAY)
+        authExternalUser.setConfirmationToken(USER_2_TOKEN)
+        authExternalUser.setTokenGenerationDate(LOCAL_DATE_TODAY)
         and: 'a xml with of users'
         def usersXml = userService.exportUsers()
         and: 'a clean database'
@@ -61,8 +59,6 @@ class ImportExportUsersTest extends SpockTest {
         userOne.getAuthUser().getUsername() == USER_1_USERNAME
         userOne.getAuthUser().getPassword() == USER_1_PASSWORD
         userOne.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
-        userOne.getAuthUser().getConfirmationToken() == USER_1_TOKEN
-        userOne.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
         userOne.getAuthUser().isActive()
         and:
         def userTwo = userRepository.findByKey(keyTwo).orElse(null)
@@ -75,8 +71,8 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getAuthUser().getUsername() == USER_2_USERNAME
         userTwo.getAuthUser().getPassword() == USER_2_PASSWORD
         userTwo.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
-        userTwo.getAuthUser().getConfirmationToken() == USER_2_TOKEN
-        userTwo.getAuthUser().getTokenGenerationDate() == LOCAL_DATE_TODAY
+        ((AuthExternalUser)userTwo.getAuthUser()).getConfirmationToken() == USER_2_TOKEN
+        ((AuthExternalUser)userTwo.getAuthUser()).getTokenGenerationDate() == LOCAL_DATE_TODAY
         !userTwo.getAuthUser().isActive()
     }
 

@@ -234,7 +234,7 @@ public class UserService {
         return new ExternalUserDto(authUser);
     }
 
-    public String generateConfirmationToken(AuthUser authUser) {
+    public String generateConfirmationToken(AuthExternalUser authUser) {
         String token = KeyGenerators.string().generateKey();
         authUser.setTokenGenerationDate(LocalDateTime.now());
         authUser.setConfirmationToken(token);

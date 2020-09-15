@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
@@ -48,7 +49,7 @@ public class UserServiceApplicational {
                 .map(UserDto::getUsername)
                 .map(authUserRepository::findAuthUserByUsername)
                 .map(Optional::get)
-                .forEach(user -> this.sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken()));
+                .forEach(authUser -> this.sendConfirmationEmailTo(authUser.getEmail(), ((AuthExternalUser)authUser).getConfirmationToken()));
         return courseDtoNotificationResponse;
     }
 

@@ -41,10 +41,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Column(unique=true)
     private String username;
 
-    private String confirmationToken = "";
-
-    private LocalDateTime tokenGenerationDate;
-
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
@@ -115,22 +111,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         this.password = password;
     }
 
-    public String getConfirmationToken() {
-        return confirmationToken;
-    }
-
-    public void setConfirmationToken(String confirmationToken) {
-        this.confirmationToken = confirmationToken;
-    }
-
-    public LocalDateTime getTokenGenerationDate() {
-        return tokenGenerationDate;
-    }
-
-    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
-        this.tokenGenerationDate = tokenGenerationDate;
-    }
-
     public LocalDateTime getLastAccess() {
         return lastAccess;
     }
@@ -160,16 +140,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
-    }
-
-    public void checkConfirmationToken(String token) {
-        if (isActive()) {
-            throw new TutorException(USER_ALREADY_ACTIVE, getUsername());
-        }
-        if (!token.equals(getConfirmationToken()))
-            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
-            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
  
     public boolean isDemoStudent() {

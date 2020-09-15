@@ -131,10 +131,10 @@ public class UsersXmlImport {
 		authUser.setPassword(password);
 		if (type == AuthUser.Type.EXTERNAL) {
 			((AuthExternalUser)authUser).setActive(isActive);
+			((AuthExternalUser)authUser).setConfirmationToken(confirmationDate);
+			((AuthExternalUser)authUser).setTokenGenerationDate(tokenGenerationDate);
 		}
 		authUser.setLastAccess(lastAccess);
-		authUser.setConfirmationToken(confirmationDate);
-		authUser.setTokenGenerationDate(tokenGenerationDate);
 
 		return authUser.getUser();
 	}
