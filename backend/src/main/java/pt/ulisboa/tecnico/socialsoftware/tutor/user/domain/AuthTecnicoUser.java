@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

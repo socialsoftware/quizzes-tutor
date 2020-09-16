@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -74,4 +74,11 @@ public class AuthExternalUser extends AuthUser {
 
     @Override
     public Type getType() {return Type.EXTERNAL;}
+
+    public String generateConfirmationToken() {
+        String token = KeyGenerators.string().generateKey();
+        setTokenGenerationDate(LocalDateTime.now());
+        setConfirmationToken(token);
+        return token;
+    }
 }

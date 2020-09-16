@@ -3,10 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.keygen.KeyGenerators;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
@@ -79,7 +79,6 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
 
     public void setUser(User user) {
         this.user = user;
-        this.user.setAuthUser(this);
     }
 
     @Override
@@ -178,7 +177,9 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         return true;
     }
 
+
     public void remove() {
         user.setAuthUser(null);
+        setUser(null);
     }
 }
