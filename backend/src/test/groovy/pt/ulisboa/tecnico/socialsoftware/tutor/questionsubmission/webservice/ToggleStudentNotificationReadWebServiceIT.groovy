@@ -10,21 +10,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
+class ToggleStudentNotificationReadWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     def course
     def courseExecution
-    def teacher
     def student
+    def teacher
+    def questionDto
     def questionSubmission
     def response
 
@@ -37,11 +35,18 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
 
-        def questionDto = new QuestionDto()
+        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.TEACHER, true, false)
+        teacher.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
+        teacher.addCourse(courseExecution)
+        courseExecution.addUser(teacher)
+        userRepository.save(teacher)
+
+        questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.SUBMITTED.name())
@@ -61,58 +66,32 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.TEACHER, true, false)
-        teacher.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
-        teacher.addCourse(courseExecution)
-        courseExecution.addUser(teacher)
-        userRepository.save(teacher)
-
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
     }
 
-    def "get question submission review"() {
-        given: "a review"
-        def reviewDto = new ReviewDto()
-        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
-        reviewDto.setUserId(teacher.getId())
-        reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setSubmissionStatus(QuestionSubmission.Status.APPROVED.name())
-        questionSubmissionService.createReview(reviewDto)
-
+    def "notify student on question submission"() {
         when:
-        response = restClient.get(
-                path: '/submissions/'+questionSubmission.getId()+'/reviews',
-                query: ['executionId': courseExecution.getId()],
+        response = restClient.put(
+                path: '/submissions/'+questionSubmission.getId()+'/toggle-notification-student',
+                query: ['hasRead': true],
                 requestContentType: 'application/json'
         )
 
         then: "check the response status"
         response != null
         response.status == 200
-        and: "if it responds with the correct question submissions"
-        def reviews = response.data
-        reviews.get(0).id != null
-        reviews.get(0).userId == teacher.getId()
-        reviews.get(0).questionSubmissionId == questionSubmission.getId()
-        reviews.get(0).comment == REVIEW_1_COMMENT
-        reviews.get(0).name == teacher.getName()
-        reviews.get(0).username == teacher.getUsername()
     }
 
     def cleanup() {
         persistentCourseCleanup()
 
-        userRepository.deleteById(teacher.getId())
         userRepository.deleteById(student.getId())
+        userRepository.deleteById(teacher.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
 
         courseRepository.deleteById(course.getId())
     }
 }
-
-
-
-
 
 
 

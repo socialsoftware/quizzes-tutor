@@ -6,73 +6,115 @@
     max-width="75%"
   >
     <v-card>
-      <v-card-title>
-        <span class="headline">{{ questionSubmission.question.title }}</span>
-        <v-spacer />
-        <v-chip :color="questionSubmission.getStatusColor()">
-          {{ questionSubmission.status }}
-        </v-chip>
-      </v-card-title>
-
-      <v-card-text class="text-left">
-        <show-question :question="questionSubmission.question" />
-      </v-card-text>
-      <v-card-title>
-        <span class="headline">{{ 'Review Log' }}</span>
-      </v-card-title>
-      <div class="text-left">
-        <show-reviews
-          class="history"
-          :key="reviewsComponentKey"
-          :questionSubmission="questionSubmission"
-        />
-      </div>
-      <div
-        class="text-left"
-        v-if="$store.getters.isTeacher && questionSubmission.isInDiscussion()"
-      >
+      <v-container fluid>
         <v-card-title>
-          <span class="headline">{{ 'New Review' }}</span>
+          <span class="headline">Question Submission</span>
+          <v-spacer />
+          <v-chip :color="questionSubmission.getStatusColor()">
+            {{ questionSubmission.getStatus() }}
+          </v-chip>
         </v-card-title>
-        <v-card-text class="text-left">
-          <v-row align="center">
-            <v-col cols="9">
-              <v-textarea
-                rows="1"
-                v-model="comment"
-                label="Comment"
-                data-cy="Comment"
-              ></v-textarea>
-            </v-col>
-            <v-col cols="3">
-              <v-select
-                v-model="selected"
-                :items="statusOptions"
-                label="Status"
-                data-cy="SelectMenu"
-              >
-              </v-select>
-            </v-col>
-          </v-row>
-        </v-card-text>
-      </div>
-      <div
-        class="text-left"
-        v-if="$store.getters.isStudent && questionSubmission.isInDiscussion()"
-      >
-        <v-card-title>
-          <span class="headline">{{ 'New Comment' }}</span>
-        </v-card-title>
-        <v-card-text class="text-left">
-          <v-textarea
-            rows="1"
-            v-model="comment"
-            label="Comment"
-            data-cy="Comment"
-          ></v-textarea>
-        </v-card-text>
-      </div>
-
+        <v-card ripple outlined class="text-left" id="question">
+          <v-card-title>
+            <span class="headline">{{
+              questionSubmission.question.title
+            }}</span>
+          </v-card-title>
+          <v-card-text>
+            <show-question :question="questionSubmission.question" />
+          </v-card-text>
+        </v-card>
+        <v-card-title class="headline">Reviews</v-card-title>
+        <v-card outlined>
+          <div
+            class="text-left"
+            v-if="
+              $store.getters.isTeacher && questionSubmission.isInDiscussion()
+            "
+          >
+            <v-card flat>
+              <v-card-text>
+                <v-row align="center" class="newReview">
+                  <v-textarea
+                    rows="1"
+                    v-model="comment"
+                    label="Comment"
+                    data-cy="Comment"
+                  ></v-textarea>
+                  <v-col cols="3">
+                    <v-select
+                      v-model="selected"
+                      :items="statusOptions"
+                      data-cy="SelectMenu"
+                      chips
+                      label="Review Type"
+                    >
+                      <template #selection="{ item }">
+                        <v-chip small :color="item.color">{{
+                          item.text
+                        }}</v-chip>
+                      </template>
+                    </v-select>
+                  </v-col>
+                  <v-btn
+                    color="blue darken-1"
+                    @click="reviewQuestionSubmission(selected)"
+                    data-cy="SubmitButton"
+                    >submit</v-btn
+                  >
+                </v-row>
+              </v-card-text>
+            </v-card>
+          </div>
+          <div
+            class="text-left"
+            v-if="
+              $store.getters.isStudent && questionSubmission.isInDiscussion()
+            "
+          >
+            <v-card-text>
+              <v-row align="center" class="newReview">
+                <v-textarea
+                  rows="1"
+                  v-model="comment"
+                  label="Comment"
+                  data-cy="Comment"
+                ></v-textarea>
+                <v-btn
+                  color="blue darken-1"
+                  @click="reviewQuestionSubmission('COMMENT')"
+                  data-cy="SubmitButton"
+                  >submit</v-btn
+                >
+              </v-row>
+            </v-card-text>
+          </div>
+          <v-expansion-panels
+            hover
+            flat
+            focusable
+            v-bind:style="{
+              'border-top': questionSubmission.isInDiscussion()
+                ? '1px solid lightgrey'
+                : ''
+            }"
+            data-cy="ReviewLog"
+          >
+            <v-expansion-panel>
+              <v-expansion-panel-header>
+                <span>Review Log</span>
+              </v-expansion-panel-header>
+              <v-expansion-panel-content>
+                <show-reviews
+                  class="history"
+                  :key="reviewsComponentKey"
+                  :questionSubmission="questionSubmission"
+                />
+              </v-expansion-panel-content>
+            </v-expansion-panel>
+          </v-expansion-panels>
+        </v-card>
+      </v-container>
       <v-card-actions>
         <v-spacer />
         <v-btn
@@ -80,15 +122,6 @@
           color="blue darken-1"
           @click="$emit('dialog', false)"
           >close</v-btn
-        >
-        <v-btn
-          v-if="questionSubmission.isInDiscussion()"
-          color="blue darken-1"
-          @click="
-            reviewQuestionSubmission($store.getters.isTeacher ? selected : null)
-          "
-          data-cy="SubmitButton"
-          >submit</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -116,8 +149,8 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
   reviewsComponentKey: number = 0;
   comment: string = '';
-  selected: string | null = null;
   statusOptions = Review.statusOptions;
+  selected: string | null = null;
 
   created() {
     this.forceRerender();
@@ -126,17 +159,38 @@ export default class ShowQuestionSubmissionDialog extends Vue {
   @Watch('dialog')
   forceRerender() {
     if (this.dialog) {
-      this.reviewsComponentKey += 1;
-      this.comment = '';
-      this.selected = null;
+      this.updateReviews();
     }
   }
 
-  async reviewQuestionSubmission(status: string) {
+  updateReviews() {
+    this.reviewsComponentKey += 1;
+    this.comment = '';
+    this.selected = null;
+  }
+
+  async reviewQuestionSubmission(type: string | null) {
+    if (type === null) {
+      await this.$store.dispatch('error', 'Error: Please select review type');
+      return;
+    }
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.createReview(this.createReview(status));
-      this.$emit('dialog', false);
+      await RemoteServices.createReview(this.createReview(type!));
+      this.$store.getters.isTeacher
+        ? await RemoteServices.toggleStudentNotificationRead(
+            this.questionSubmission.id,
+            false
+          )
+        : await RemoteServices.toggleTeacherNotificationRead(
+            this.questionSubmission.id,
+            false
+          );
+      if (type == 'COMMENT') {
+        this.updateReviews();
+      } else {
+        this.$emit('dialog', false);
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -145,10 +199,12 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
   createReview(status: string) {
     let review = new Review();
-    review.questionSubmissionId = this.questionSubmission.id!;
-    review.submissionStatus = status;
-    review.comment = this.comment;
-    review.userId = this.$store.getters.getUser.id;
+    review.prepareReview(
+      this.questionSubmission.id!,
+      status,
+      this.comment,
+      this.$store.getters.getUser.id
+    );
     return review;
   }
 }
@@ -156,7 +212,18 @@ export default class ShowQuestionSubmissionDialog extends Vue {
 
 <style lang="scss" scoped>
 .history {
-  max-height: 225px;
+  max-height: 210px;
   overflow-y: auto;
+  text-align: left;
+}
+.newReview {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 20px;
+  padding-left: 20px;
+}
+.editText {
+  color: gray;
+  font-size: 15px;
 }
 </style>

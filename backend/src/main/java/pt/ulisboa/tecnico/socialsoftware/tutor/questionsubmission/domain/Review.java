@@ -7,15 +7,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "reviews")
 public class Review {
+    public enum Type {
+        APPROVE, REJECT, REQUEST_CHANGES, REQUEST_REVIEW, COMMENT
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -34,6 +35,9 @@ public class Review {
     @JoinColumn(name = "question_submission_id")
     private QuestionSubmission questionSubmission;
 
+    @Enumerated(EnumType.STRING)
+    private Review.Type type;
+
     public Review() {
     }
 
@@ -42,11 +46,12 @@ public class Review {
         setUser(user);
         setQuestionSubmission(questionSubmission);
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
+        setType(reviewDto.getType());
     }
 
     @Override
     public String toString() {
-        return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", questionSubmission=" + questionSubmission.getQuestion() + "}";
+        return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", type='" + type.name() + ", questionSubmission=" + questionSubmission.getQuestion() + "}";
     }
 
     public Integer getId() { return id; }
@@ -78,6 +83,21 @@ public class Review {
     public QuestionSubmission getQuestionSubmission() { return questionSubmission; }
 
     public void setQuestionSubmission(QuestionSubmission questionSubmission) { this.questionSubmission = questionSubmission; }
+
+    public Type getType() { return type; }
+
+    public void setType(Type type) { this.type = type; }
+
+    public void setType(String type) {
+        if (type == null || type.isBlank()) {
+            throw new TutorException(INVALID_TYPE_FOR_REVIEW);
+        }
+        try {
+            this.type = Review.Type.valueOf(type);
+        } catch (IllegalArgumentException e) {
+            throw new TutorException(INVALID_TYPE_FOR_REVIEW);
+        }
+    }
 
     public void remove() {
         this.questionSubmission = null;

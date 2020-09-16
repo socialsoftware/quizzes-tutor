@@ -34,75 +34,96 @@
             v-if="$store.getters.isStudent"
             color="primary"
             dark
-            @click="submitQuestion"
-            data-cy="SubmitQuestion"
-            >Submit Question</v-btn
+            @click="newSubmission"
+            data-cy="NewSubmission"
+            >New Submission</v-btn
           >
         </v-card-title>
       </template>
 
-      <template v-slot:item.question.title="{ item }">
-        <div @click="showQuestionSubmissionDialog(item)" class="clickableTitle">
-          {{ item.question.title }}
-        </div>
-      </template>
-      <template v-slot:item.status="{ item }">
-        <v-chip :color="item.getStatusColor()" small>
-          <span>{{ item.status.replace('_', ' ') }}</span>
-        </v-chip>
-      </template>
-      <template v-slot:item.question.topics="{ item }">
-        <edit-question-submission-topics
-          :questionSubmission="item"
-          :topics="topics"
-          :key="topicsComponentKey"
-          v-on:submission-changed-topics="onQuestionSubmissionChangedTopics"
-        />
-      </template>
-      <template v-slot:item.action="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
+      <template #item="{ item }">
+        <tr v-bind:class="{ unread: hasUnreadReviews(item) }">
+          <td id="actions">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  v-if="hasUnreadReviews(item)"
+                  class="unread-icon"
+                  v-on="on"
+                  @click="showQuestionSubmissionDialog(item)"
+                  data-cy="ViewSubmission"
+                  color="white"
+                  >fa-comment-dots</v-icon
+                ><v-icon
+                  v-else
+                  class="mr-2"
+                  v-on="on"
+                  @click="showQuestionSubmissionDialog(item)"
+                  data-cy="ViewSubmission"
+                  >fa-comments</v-icon
+                >
+              </template>
+              <span>View Submission</span>
+            </v-tooltip>
+            <v-tooltip
+              bottom
+              v-if="$store.getters.isStudent && item.isInRevision()"
+            >
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  v-bind:class="{ 'unread-icon': hasUnreadReviews(item) }"
+                  v-on="on"
+                  @click="editQuestionSubmission(item)"
+                  data-cy="EditSubmission"
+                  :color="hasUnreadReviews(item) ? 'white' : ''"
+                  >edit</v-icon
+                >
+              </template>
+              <span>Edit Submission</span>
+            </v-tooltip>
+            <v-tooltip
+              bottom
+              v-if="$store.getters.isStudent && item.isInRevision()"
+            >
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  v-bind:class="{ 'unread-icon': hasUnreadReviews(item) }"
+                  v-on="on"
+                  color="red"
+                  @click="deleteQuestionSubmission(item)"
+                  data-cy="DeleteSubmission"
+                  >delete</v-icon
+                >
+              </template>
+              <span>Delete Submission</span>
+            </v-tooltip>
+          </td>
+          <td id="title">
+            <div
               @click="showQuestionSubmissionDialog(item)"
-              data-cy="ViewSubmission"
-              >question_answer</v-icon
+              class="clickableTitle"
             >
-          </template>
-          <span>View Submission Status</span>
-        </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="$store.getters.isStudent && item.isInRevision()"
-        >
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="editQuestionSubmission(item)"
-              data-cy="EditSubmission"
-              >edit</v-icon
-            >
-          </template>
-          <span>Edit Question Submission</span>
-        </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="$store.getters.isStudent && item.isInRevision()"
-        >
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              color="red"
-              @click="deleteQuestionSubmission(item)"
-              data-cy="DeleteSubmission"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Question Submission</span>
-        </v-tooltip>
+              {{ item.question.title }}
+            </div>
+          </td>
+          <td id="submittedBy" v-if="$store.getters.isTeacher">
+            {{ item.name }}
+          </td>
+          <td id="status">
+            <v-chip :color="item.getStatusColor()" small>
+              <span>{{ item.getStatus() }}</span>
+            </v-chip>
+          </td>
+          <td id="topics">
+            <edit-question-submission-topics
+              :questionSubmission="item"
+              :topics="topics"
+              :key="topicsComponentKey"
+              v-on:submission-changed-topics="onQuestionSubmissionChangedTopics"
+            />
+          </td>
+          <td id="creationDate">{{ item.question.creationDate }}</td>
+        </tr>
       </template>
     </v-data-table>
     <edit-question-submission-dialog
@@ -110,6 +131,7 @@
       v-model="editQuestionSubmissionDialog"
       :questionSubmission="currentQuestionSubmission"
       v-on:save-submission="onSaveQuestionSubmission"
+      v-on:submit-submission="onSubmitQuestionSubmission"
     />
     <show-question-submission-dialog
       v-if="currentQuestionSubmission"
@@ -133,6 +155,7 @@ import Topic from '@/models/management/Topic';
 import ShowQuestionSubmissionDialog from '@/views/questionsubmission/ShowQuestionSubmissionDialog.vue';
 import EditQuestionSubmissionDialog from '@/views/questionsubmission/EditQuestionSubmissionDialog.vue';
 import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestionSubmissionTopics.vue';
+import Review from '@/models/management/Review';
 
 @Component({
   components: {
@@ -198,13 +221,15 @@ export default class QuestionSubmissionView extends Vue {
     );
   }
 
-  submitQuestion() {
+  newSubmission() {
     let question = new Question();
     question.status = 'SUBMITTED';
     this.currentQuestionSubmission = new QuestionSubmission();
-    this.currentQuestionSubmission.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
-    this.currentQuestionSubmission.submitterId = this.$store.getters.getUser.id;
-    this.currentQuestionSubmission.question = question;
+    this.currentQuestionSubmission.prepareQuestionSubmission(
+      this.$store.getters.getCurrentCourse.courseExecutionId,
+      this.$store.getters.getUser.id,
+      question
+    );
     this.editQuestionSubmissionDialog = true;
   }
 
@@ -214,16 +239,39 @@ export default class QuestionSubmissionView extends Vue {
     this.editQuestionSubmissionDialog = true;
   }
 
-  async onSaveQuestionSubmission() {
+  onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
+    this.questionSubmissions = this.questionSubmissions.filter(
+      qs => qs.id !== questionSubmission.id
+    );
+    this.questionSubmissions.unshift(questionSubmission);
+    this.editQuestionSubmissionDialog = false;
+    this.currentQuestionSubmission = null;
+  }
+
+  async onSubmitQuestionSubmission(
+    comment: string,
+    questionSubmission: QuestionSubmission
+  ) {
+    this.onSaveQuestionSubmission(questionSubmission);
     await this.$store.dispatch('loading');
     try {
-      this.questionSubmissions = await RemoteServices.getStudentQuestionSubmissions();
+      let review = new Review();
+      review.prepareReview(
+        questionSubmission.id,
+        'REQUEST_REVIEW',
+        comment,
+        this.$store.getters.getUser.id
+      );
+      await RemoteServices.createReview(review);
+      await RemoteServices.toggleTeacherNotificationRead(
+        questionSubmission.id,
+        false
+      );
+      await this.getQuestionSubmissions();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-    this.editQuestionSubmissionDialog = false;
-    this.currentQuestionSubmission = null;
   }
 
   onQuestionSubmissionChangedTopics(
@@ -241,42 +289,29 @@ export default class QuestionSubmissionView extends Vue {
 
   async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
     this.currentQuestionSubmission = questionSubmission;
-
-    if (this.$store.getters.isTeacher) {
-      await this.$store.dispatch('loading');
-      try {
-        if (this.currentQuestionSubmission.isInDiscussion()) {
-          try {
-            await RemoteServices.toggleInReviewStatus(
-              questionSubmission!.id!,
-              true
-            );
-          } catch (error) {
-            await this.$store.dispatch('error', error);
-          }
-        }
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-      await this.$store.dispatch('clearLoading');
-    }
-
     this.questionSubmissionDialog = true;
+
+    try {
+      if (this.$store.getters.isStudent) {
+        await RemoteServices.toggleStudentNotificationRead(
+          questionSubmission.id,
+          true
+        );
+      } else if (this.$store.getters.isTeacher) {
+        await RemoteServices.toggleTeacherNotificationRead(
+          questionSubmission.id,
+          true
+        );
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 
   @Watch('questionSubmissionDialog')
   async onCloseShowQuestionSubmissionDialog() {
     if (!this.questionSubmissionDialog) {
-      if (this.$store.getters.isTeacher) {
-        await this.$store.dispatch('loading');
-        try {
-          this.questionSubmissions = await RemoteServices.getCourseExecutionQuestionSubmissions();
-        } catch (error) {
-          await this.$store.dispatch('error', error);
-        }
-        await this.$store.dispatch('clearLoading');
-      }
-
+      await this.getQuestionSubmissions();
       this.questionSubmissionDialog = false;
     }
   }
@@ -302,24 +337,21 @@ export default class QuestionSubmissionView extends Vue {
       }
     }
   }
+
+  hasUnreadReviews(questionSubmission: QuestionSubmission) {
+    return (
+      (this.$store.getters.isStudent && !questionSubmission.studentRead) ||
+      (this.$store.getters.isTeacher && !questionSubmission.teacherRead)
+    );
+  }
 }
 </script>
 
-<style lang="scss" scoped>
-.question-textarea {
-  text-align: left;
-
-  .CodeMirror,
-  .CodeMirror-scroll {
-    min-height: 200px !important;
-  }
+<style lang="scss">
+.unread {
+  background-color: rgba(51, 153, 255, 0.2);
 }
-.option-textarea {
-  text-align: left;
-
-  .CodeMirror,
-  .CodeMirror-scroll {
-    min-height: 100px !important;
-  }
+.unread-icon {
+  background-color: dodgerblue;
 }
 </style>
