@@ -13,15 +13,14 @@ export default class ExternalUser {
   constructor(jsonObj?: ExternalUser) {
     if (jsonObj) {
       this.id = jsonObj.id;
-			this.username = jsonObj.username;
-			this.email = jsonObj.email;
-			this.password = jsonObj.password;
+      this.username = jsonObj.username;
+      this.email = jsonObj.email;
+      this.password = jsonObj.password;
       this.role = jsonObj.role;
       this.state = jsonObj.state;
       this.active = jsonObj.active;
       this.admin = jsonObj.admin;
       this.confirmationToken = jsonObj.confirmationToken;
-
     }
   }
 }

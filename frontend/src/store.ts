@@ -94,8 +94,11 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
-    async externalLogin({ commit }, user : ExternalUser) {
-      const authResponse = await RemoteServices.externalLogin(user.email, user.password);
+    async externalLogin({ commit }, user: ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(
+        user.email,
+        user.password
+      );
       commit('login', authResponse);
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);

@@ -79,7 +79,8 @@
               v-on="on"
               @click="uploadUsersHandler(item)"
               data-cy="uploadUsersHandler"
-            >attach_file</v-icon>
+              >attach_file</v-icon
+            >
           </template>
           <span>Upload External Users</span>
         </v-tooltip>
@@ -132,7 +133,7 @@ import ExternalUser from '../../../models/user/ExternalUser';
     'upload-users-dialog': UploadUsersDialog,
     'edit-course-dialog': EditCourseDialog,
     'add-user-dialog': AddUserDialog,
-    'view-users-dialog': ViewUsersDialog 
+    'view-users-dialog': ViewUsersDialog
   }
 })
 export default class CoursesView extends Vue {
@@ -257,13 +258,13 @@ export default class CoursesView extends Vue {
   }
 
   updateUserNumbers(course: Course) {
-    if(!!course && !!course.courseExecutionUsers) {
-      course.numberOfInactiveTeachers = course.courseExecutionUsers
-        .filter(user => user.role === 'TEACHER' && !user.active)
-        .length;
-      course.numberOfInactiveStudents = course.courseExecutionUsers
-        .filter(user => user.role === 'STUDENT' && !user.active)
-        .length;
+    if (!!course && !!course.courseExecutionUsers) {
+      course.numberOfInactiveTeachers = course.courseExecutionUsers.filter(
+        user => user.role === 'TEACHER' && !user.active
+      ).length;
+      course.numberOfInactiveStudents = course.courseExecutionUsers.filter(
+        user => user.role === 'STUDENT' && !user.active
+      ).length;
     }
   }
 
@@ -281,7 +282,7 @@ export default class CoursesView extends Vue {
   }
 
   onCreateUser(user: ExternalUser) {
-    if(!!this.currentCourse && !!this.currentCourse.courseExecutionUsers){
+    if (!!this.currentCourse && !!this.currentCourse.courseExecutionUsers) {
       this.currentCourse.courseExecutionUsers.unshift(user);
       let index: number = this.courses.indexOf(
         this.courses.filter(
@@ -289,7 +290,9 @@ export default class CoursesView extends Vue {
             course.courseExecutionId == this.currentCourse?.courseExecutionId
         )[0]
       );
-      this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+      this.courses[
+        index
+      ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
       this.updateUserNumbers(this.courses[index]);
     }
   }
@@ -316,39 +319,43 @@ export default class CoursesView extends Vue {
     this.uploadUsersDialog = true;
   }
 
-
   async closeUploadUsersDialog(updatedCourse: Course) {
     this.uploadUsersDialog = false;
     await this.$store.dispatch('loading');
     this.courses = this.courses.filter(
-        course => course.courseExecutionId !== updatedCourse.courseExecutionId
+      course => course.courseExecutionId !== updatedCourse.courseExecutionId
     );
-    this.courses.unshift(updatedCourse)
+    this.courses.unshift(updatedCourse);
     await this.$store.dispatch('clearLoading');
   }
 
   async onDeleteUsers(users: ExternalUser[]) {
     var course: Course;
-      await this.$store.dispatch('loading');
-      if(!!this.currentCourse){
-        try {
-          course = await RemoteServices.deleteExternalInactiveUsers(this.currentCourse, users.map(user => user.id));
-          let index: number = this.courses
-            .indexOf(this.courses
-              .filter(course => course.courseExecutionId == this.currentCourse?.courseExecutionId)[0]);
+    await this.$store.dispatch('loading');
+    if (!!this.currentCourse) {
+      try {
+        course = await RemoteServices.deleteExternalInactiveUsers(
+          this.currentCourse,
+          users.map(user => user.id)
+        );
+        let index: number = this.courses.indexOf(
+          this.courses.filter(
+            course =>
+              course.courseExecutionId == this.currentCourse?.courseExecutionId
+          )[0]
+        );
 
-          this.currentCourse = course;
-          this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
-          this.updateUserNumbers(this.courses[index]);
-
-
-        } catch (error) {
-          await this.$store.dispatch('error', error);
-        }
+        this.currentCourse = course;
+        this.courses[
+          index
+        ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+        this.updateUserNumbers(this.courses[index]);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
       }
-      await this.$store.dispatch('clearLoading');
+    }
+    await this.$store.dispatch('clearLoading');
   }
-
 }
 </script>
 
