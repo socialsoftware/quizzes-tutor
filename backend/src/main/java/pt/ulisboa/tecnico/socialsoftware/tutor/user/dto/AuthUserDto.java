@@ -24,16 +24,6 @@ public class AuthUserDto implements Serializable {
     private boolean admin;
     private Map<String, List<CourseDto>> courses;
 
-    public AuthUserDto(User user) {
-        this.id = user.getId();
-        this.name = user.getName();
-        this.username = user.getUsername();
-        this.email = user.getAuthUser().getEmail();
-        this.role = user.getRole();
-        this.admin = user.isAdmin();
-        this.courses = getActiveAndInactiveCourses(user, new ArrayList<>());
-    }
-
     public AuthUserDto(AuthUser authUser) {
         this.id = authUser.getUser().getId();
         this.key = authUser.getUser().getKey();
@@ -43,16 +33,6 @@ public class AuthUserDto implements Serializable {
         this.role = authUser.getUser().getRole();
         this.admin = authUser.getUser().isAdmin();
         this.courses = getActiveAndInactiveCourses(authUser.getUser(), new ArrayList<>());
-    }
-
-    public AuthUserDto(User user, List<CourseDto> currentCourses) {
-        this.id = user.getId();
-        this.name = user.getName();
-        this.username = user.getUsername();
-        this.email = user.getAuthUser().getEmail();
-        this.role = user.getRole();
-        this.admin = user.isAdmin();
-        this.courses = getActiveAndInactiveCourses(user, currentCourses);
     }
 
     public AuthUserDto(AuthUser authUser, List<CourseDto> currentCourses) {
