@@ -15,13 +15,13 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.13.1",
-    "axios": "^0.19.2",
+    "axios": "^0.20.0",
     "material-design-icons-iconfont": "^5.0.1",
     "qrcode": "^1.4.4",
     "sanitize-html": "^1.27.2",
     "showdown": "^1.9.1",
     "typeface-roboto": "0.0.75",
-    "vue": "^2.6.10",
+    "vue": "^2.6.12",
     "vue-class-component": "^7.2.5",
     "vue-ctk-date-time-picker": "^2.5.0",
     "vue-property-decorator": "^8.5.1",
@@ -29,7 +29,7 @@
     "vue-qrcode-reader": "^2.3.11",
     "vue-router": "^3.4.3",
     "vue-underscore": "^0.1.4",
-    "vuetify": "^2.3.6",
+    "vuetify": "^2.3.10",
     "vuex": "^3.5.1"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "axios-mock-adapter": "^1.17.0",
     "codecov": "^3.7.0",
     "compression-webpack-plugin": "^5.0.2",
-    "cypress": "^4.12.1",
+    "cypress": "^5.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-vue": "^6.2.2",
@@ -63,7 +63,7 @@
     "terser-webpack-plugin": "^2.2.1",
     "typescript": "~3.7.5",
     "vue-cli-plugin-vuetify": "^2.0.6",
-    "vue-template-compiler": "^2.6.10",
+    "vue-template-compiler": "^2.6.12",
     "vuetify-loader": "^1.6.0",
     "webpack-bundle-analyzer": "^3.8.0"
   },

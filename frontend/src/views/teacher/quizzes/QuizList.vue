@@ -108,6 +108,11 @@
           {{ item.title }}
         </div>
       </template>
+      <template v-slot:item.id="{ item }">
+        <div v-if="item.qrCodeOnly">
+          {{ item.id }}
+        </div>
+      </template>
 
       <template v-slot:item.options="{ item }">
         <v-tooltip bottom v-if="item.timed">
@@ -200,6 +205,12 @@ export default class QuizList extends Vue {
       sortable: false
     },
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
+    {
+      text: 'Code',
+      value: 'id',
+      align: 'center',
+      width: '150px'
+    },
     {
       text: 'Available Date',
       value: 'availableDate',

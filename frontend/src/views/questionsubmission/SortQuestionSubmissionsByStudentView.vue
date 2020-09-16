@@ -20,86 +20,106 @@
         >Sort by Date</v-btn
       >
     </v-card-title>
-    <v-data-iterator
+    <v-data-table
+      :headers="headers"
       :items="userQuestionSubmissionsInfo"
       :search="search"
+      item-key="name"
+      show-expand
+      multi-sort
+      single-expand
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
-      <template v-slot:item="{ item }">
-        <v-expansion-panels
-          tile
-          hover
-          multiple
-          focusable
-          :readonly="item.hasNoSubmissions()"
+      <template v-slot:item="{ item, expand, isExpanded }">
+        <tr
+          v-bind:class="{ clickableRow: item.totalQuestionSubmissions > 0 }"
+          @click="expand(!isExpanded && item.totalQuestionSubmissions > 0)"
         >
-          <v-expansion-panel>
-            <v-expansion-panel-header>
-              {{ item.name }}
-              <template v-slot:actions>
-                <v-chip
-                  v-for="status in item.numQuestionSubmissions"
-                  :color="status.color"
-                  :key="status.userId"
-                >
-                  {{ status.num }}
-                </v-chip>
-                <v-icon>$expand</v-icon>
-                <v-chip> {{ item.totalQuestionSubmissions }} </v-chip>
-              </template>
-            </v-expansion-panel-header>
-            <v-expansion-panel-content>
-              <v-data-table
-                :headers="headers"
-                :items="item.questionSubmissions"
-                :sort-by="['question.creationDate']"
-                sort-desc
-                :mobile-breakpoint="0"
-                :items-per-page="5"
-                :footer-props="{ itemsPerPageOptions: [5, 10, 15, 25] }"
-              >
-                <template v-slot:item.question.title="{ item }">
+          <td>
+            <v-icon v-if="!isExpanded">fa-angle-down</v-icon>
+            <v-icon v-else>fa-angle-up</v-icon>
+          </td>
+          <td>{{ item.name }}</td>
+          <td>
+            <v-chip :color="item.numQuestionSubmissions.approved.color">{{
+              item.numQuestionSubmissions.approved.num
+            }}</v-chip>
+          </td>
+          <td>
+            <v-chip :color="item.numQuestionSubmissions.rejected.color">{{
+              item.numQuestionSubmissions.rejected.num
+            }}</v-chip>
+          </td>
+          <td>
+            <v-chip :color="item.numQuestionSubmissions.in_review.color">{{
+              item.numQuestionSubmissions.in_review.num
+            }}</v-chip>
+          </td>
+          <td>
+            <v-chip :color="item.numQuestionSubmissions.in_revision.color">{{
+              item.numQuestionSubmissions.in_revision.num
+            }}</v-chip>
+          </td>
+          <td>
+            <v-chip>{{ item.totalQuestionSubmissions }}</v-chip>
+          </td>
+        </tr>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <v-data-table
+            :headers="studentHeaders"
+            :items="item.questionSubmissions"
+            :sort-by="['question.creationDate']"
+            sort-desc
+            hide-default-footer
+            class="studentSubmissions"
+          >
+            <template #item="{ item }">
+              <tr>
+                <td>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }"
+                      ><v-icon
+                        class="mr-2"
+                        v-on="on"
+                        @click="showQuestionSubmissionDialog(item)"
+                        data-cy="ViewSubmission"
+                        >fa-comments</v-icon
+                      >
+                    </template>
+                    <span>View Submission</span>
+                  </v-tooltip>
+                </td>
+                <td>
                   <div
                     @click="showQuestionSubmissionDialog(item)"
                     class="clickableTitle"
                   >
                     {{ item.question.title }}
                   </div>
-                </template>
-                <template v-slot:item.question.status="{ item }">
+                </td>
+                <td>
                   <v-chip :color="item.getStatusColor()" small>
-                    <span>{{ item.question.status.replace('_', ' ') }}</span>
+                    <span>{{ item.getStatus() }}</span>
                   </v-chip>
-                </template>
-                <template v-slot:item.question.topics="{ item }">
+                </td>
+                <td>
                   <edit-question-submission-topics
                     :questionSubmission="item"
                     :topics="topics"
                     :readOnly="true"
                   />
-                </template>
-                <template v-slot:item.action="{ item }">
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-icon
-                        class="mr-2"
-                        v-on="on"
-                        @click="showQuestionSubmissionDialog(item)"
-                        data-cy="ViewSubmission"
-                        >visibility</v-icon
-                      >
-                    </template>
-                    <span>Show Question Submission</span>
-                  </v-tooltip>
-                </template>
-              </v-data-table>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
+                </td>
+                <td>{{ item.question.creationDate }}</td>
+              </tr>
+            </template>
+          </v-data-table>
+        </td>
       </template>
-    </v-data-iterator>
+    </v-data-table>
     <show-question-submission-dialog
       v-if="currentQuestionSubmission"
       v-model="questionSubmissionDialog"
@@ -133,7 +153,45 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
   currentQuestionSubmission: QuestionSubmission | null = null;
   questionSubmissionDialog: boolean = false;
   search: string = '';
-  headers = QuestionSubmission.questionSubmissionHeader.slice();
+  studentHeaders = QuestionSubmission.questionSubmissionHeader.slice();
+  headers = [
+    {
+      text: 'Student',
+      value: 'name',
+      align: 'center',
+      width: '50%'
+    },
+    {
+      text: 'Approved',
+      value: 'numApprovedQuestionSubmissions',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Rejected',
+      value: 'numRejectedQuestionSubmissions',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'In Review',
+      value: 'numInReviewQuestionSubmissions',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'In Revision',
+      value: 'numInRevisionQuestionSubmissions',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Total',
+      value: 'totalQuestionSubmissions',
+      align: 'center',
+      width: '10%'
+    }
+  ];
 
   async created() {
     await this.getUserQuestionSubmissionsInfo();
@@ -154,24 +212,6 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
 
   async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
     this.currentQuestionSubmission = questionSubmission;
-
-    await this.$store.dispatch('loading');
-    try {
-      if (this.currentQuestionSubmission.isInDiscussion()) {
-        try {
-          await RemoteServices.toggleInReviewStatus(
-            questionSubmission!.id!,
-            true
-          );
-        } catch (error) {
-          await this.$store.dispatch('error', error);
-        }
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-
     this.questionSubmissionDialog = true;
   }
 
@@ -183,3 +223,11 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
   }
 }
 </script>
+<style lang="scss">
+.clickableRow {
+  cursor: pointer;
+}
+.studentSubmissions {
+  border: 1px lightgrey solid;
+}
+</style>

@@ -1,7 +1,12 @@
 <template>
-    <v-alert v-model="dialog" type="error" close-text="Close Notification" dismissible>
-      {{ messageList.join(", ") }}
-    </v-alert>
+  <v-alert
+    v-model="dialog"
+    type="error"
+    close-text="Close Notification"
+    dismissible
+  >
+    {{ messageList.join(', ') }}
+  </v-alert>
 </template>
 
 <script lang="ts">
@@ -19,10 +24,10 @@ export default class Notification extends Vue {
       (state, getters) => getters.getNotification,
       () => {
         this.dialog = this.$store.getters.getNotification;
-				this.messageList = this.$store.getters.getNotificationMessageList;
+        this.messageList = this.$store.getters.getNotificationMessageList;
       }
     );
-	}
+  }
 
   @Watch('dialog')
   closeNotification() {

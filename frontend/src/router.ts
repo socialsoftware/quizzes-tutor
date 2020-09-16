@@ -22,6 +22,8 @@ import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
 import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
+import CodeView from '@/views/student/CodeView.vue';
+
 import AllTournamentView from './views/student/tournament/AllTournamentView.vue';
 import OpenTournamentView from '@/views/student/tournament/OpenTournamentView.vue';
 import ClosedTournamentView from '@/views/student/tournament/ClosedTournamentView.vue';
@@ -241,6 +243,15 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'code',
+          name: 'code',
+          component: CodeView,
+          meta: {
+            title: APP_NAME + ' - Code',
             requiredAuth: 'Student'
           }
         },
