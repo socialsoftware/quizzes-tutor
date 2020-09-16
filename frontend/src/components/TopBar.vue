@@ -61,7 +61,10 @@
                 <v-list-item-title>Questions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/topics" data-cy="manageTopicsMenuButton">
+            <v-list-item
+              to="/management/topics"
+              data-cy="manageTopicsMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>category</v-icon>
               </v-list-item-action>
@@ -134,6 +137,14 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Scan</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/code">
+              <v-list-item-action>
+                <v-icon>fas fa-terminal</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Code</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/student/solved">
