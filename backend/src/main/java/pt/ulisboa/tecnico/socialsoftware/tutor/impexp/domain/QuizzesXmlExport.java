@@ -22,6 +22,16 @@ public class QuizzesXmlExport {
 
 		return xml.outputString(element);
 	}
+	public String exportQuiz(Quiz quiz, Set<QuizQuestion> quizQuestions) {
+		Element element = createHeader();
+
+		exportQuiz(element,quiz, quizQuestions);
+
+		XMLOutputter xml = new XMLOutputter();
+		xml.setFormat(Format.getPrettyFormat());
+
+		return xml.outputString(element);
+	}
 
 	public Element createHeader() {
 		Document jdomDoc = new Document();
@@ -33,11 +43,12 @@ public class QuizzesXmlExport {
 
 	private void exportQuizzes(Element element, List<Quiz> quizzes) {
 		for (Quiz quiz : quizzes) {
-			exportQuiz(element, quiz);
+			exportQuiz(element, quiz, quiz.getQuizQuestions());
 		}
 	}
 
-	private void exportQuiz(Element element, Quiz quiz) {
+
+	private void exportQuiz(Element element, Quiz quiz, Set<QuizQuestion> quizQuestions) {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("courseName",quiz.getCourseExecution().getCourse().getName());
 		quizElement.setAttribute("courseType",quiz.getCourseExecution().getCourse().getType().name());
@@ -62,7 +73,7 @@ public class QuizzesXmlExport {
 		if (quiz.getVersion() != null)
 			quizElement.setAttribute("version", quiz.getVersion());
 
-		exportQuizQuestions(quizElement, quiz.getQuizQuestions());
+		exportQuizQuestions(quizElement, quizQuestions);
 
 		element.addContent(quizElement);
 	}

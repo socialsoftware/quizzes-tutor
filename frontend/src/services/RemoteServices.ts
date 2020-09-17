@@ -697,6 +697,21 @@ export default class RemoteServices {
       });
   }
 
+  static async exportCourseExecutionInfo(executionId: number): Promise<Blob> {
+    return httpClient
+      .get(`/executions/${executionId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/tar.gz, application/octet-stream'
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
 
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {

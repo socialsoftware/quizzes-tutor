@@ -39,10 +39,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
@@ -50,8 +47,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+
+
 
 @Service
 public class QuizService {
@@ -86,6 +84,7 @@ public class QuizService {
 
     @Autowired
     private CourseService courseService;
+
 
     @Retryable(
       value = { SQLException.class },
@@ -331,6 +330,27 @@ public class QuizService {
         }
         in.close();
     }
+
+    public void createQuizDirectory(int quizId, String path) throws IOException {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        Set<QuizQuestion> quizQuestions = quizQuestionRepository.findQuizQuestionsByQuizId(quizId);
+        String name = quiz.getTitle();
+        String directoryPath = path + "/" + name;
+        File file = new File(directoryPath);
+        //Creating the directory
+        file.mkdir();
+
+        QuizzesXmlExport xmlExport = new QuizzesXmlExport();
+        String xmlQuiz = xmlExport.exportQuiz(quiz, quizQuestions);
+
+        File myObj = new File(directoryPath + "/" + name + ".xml");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(xmlQuiz);
+            myWriter.close();
+        }
+    }
+
 
     @Retryable(
             value = { SQLException.class },
