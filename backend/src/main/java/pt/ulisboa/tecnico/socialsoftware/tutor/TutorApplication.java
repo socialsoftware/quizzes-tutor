@@ -11,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;

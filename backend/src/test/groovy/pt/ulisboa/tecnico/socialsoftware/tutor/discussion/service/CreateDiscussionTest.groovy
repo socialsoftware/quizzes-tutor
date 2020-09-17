@@ -135,7 +135,7 @@ class CreateDiscussionTest extends SpockTest {
     }
 
 
-    def "user can't create two discusions for the same question"(){
+    def "user can't create two discussions for the same question"(){
         given: "a student"
         def studentId = student.getId()
 

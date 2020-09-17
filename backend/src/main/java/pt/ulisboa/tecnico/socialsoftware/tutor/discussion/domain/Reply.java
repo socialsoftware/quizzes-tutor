@@ -77,10 +77,6 @@ public class Reply {
         this.date = date;
     }
 
-    public void addReply(Reply reply){
-        this.user.addReply(reply);
-    }
-
     public User getUser() {
         return user;
     }

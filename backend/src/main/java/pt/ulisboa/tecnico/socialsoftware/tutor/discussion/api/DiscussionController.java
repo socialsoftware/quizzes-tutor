@@ -89,8 +89,6 @@ public class DiscussionController {
     @PutMapping(value = "/discussions/availability")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public DiscussionDto changeAvailability(Principal principal, @Valid @RequestParam int discussionId) {
-        logger.warn("Change Availability: " + discussionId);
-
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -103,8 +101,6 @@ public class DiscussionController {
     @PostMapping(value = "/discussions/replies")
     @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
     public ReplyDto createReply(Principal principal, @Valid @RequestParam String message, @Valid @RequestBody DiscussionDto discussion){
-        logger.warn("CreateReply:\n Message: " + message + "\n Discussion: " + discussion.toString());
-
         User user = (User) ((Authentication) principal).getPrincipal();
 
         ReplyDto reply = new ReplyDto();

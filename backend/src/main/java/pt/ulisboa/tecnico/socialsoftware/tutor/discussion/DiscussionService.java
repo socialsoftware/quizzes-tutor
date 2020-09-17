@@ -6,8 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
@@ -69,7 +67,6 @@ public class DiscussionService {
                         .orElseThrow(() -> new TutorException(USER_NOT_FOUND, reply.getUserId()));
 
                 this.entityManager.persist(new Reply(student, reply, discussion));
-                this.entityManager.persist(discussion);
             }
         }
 
@@ -83,7 +80,7 @@ public class DiscussionService {
                 .findById(discussionId)
                 .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionId));
         discussion.changeAvailability();
-        return  new DiscussionDto(discussion);
+        return new DiscussionDto(discussion);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -105,10 +102,7 @@ public class DiscussionService {
         checkMessage(discussionDto.getMessage());
 
         Reply reply = new Reply(user, replyDto, discussion);
-        //discussion.addReply(reply);
-
         this.entityManager.persist(reply);
-        //this.entityManager.merge(discussion);
 
         return new ReplyDto(reply);
     }
@@ -142,7 +136,7 @@ public class DiscussionService {
             throw new TutorException(DISCUSSION_NOT_STUDENT_CREATOR);
         }
 
-        if (!discussionRepository.findByUserIdQuestionId(user.getId(), question.getId()).isEmpty()) {
+        if (discussionRepository.findByUserIdQuestionId(user.getId(), question.getId()).isPresent()) {
             throw new TutorException(DUPLICATE_DISCUSSION, user.getId(), question.getId());
         }
 
