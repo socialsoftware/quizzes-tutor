@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
@@ -24,6 +24,7 @@ class ConfirmRegistrationTest extends SpockTest {
     def course
     def courseExecution
     def externalUserDto
+    def authUser
 
     @Autowired
     Mailer mailerMock
@@ -44,7 +45,7 @@ class ConfirmRegistrationTest extends SpockTest {
 
         userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
-        AuthUser authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
+         authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
         authUser.setConfirmationToken(USER_1_TOKEN)
     }
 
@@ -66,7 +67,8 @@ class ConfirmRegistrationTest extends SpockTest {
     def "user is already active" () {
         given: "an active user"
         externalUserDto.setPassword(USER_1_PASSWORD)
-        authUserServiceApplicational.confirmRegistration(externalUserDto)
+        //authUserServiceApplicational.confirmRegistration(externalUserDto)
+        authUser.setActive(true)
 
         when:
         authUserServiceApplicational.confirmRegistration(externalUserDto)

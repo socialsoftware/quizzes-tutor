@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user;
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
@@ -452,12 +451,15 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (getAuthUser().isActive()) {
-            throw new TutorException(USER_IS_ACTIVE, getUsername());
+        if (getAuthUser() != null) {
+            if (getAuthUser().isActive()) {
+                throw new TutorException(USER_IS_ACTIVE, getUsername());
+            }
+
+            courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+            questionSubmissions.forEach(QuestionSubmission::remove);
+            getAuthUser().setUser(null);
+            setAuthUser(null);
         }
-
-        courseExecutions.forEach(ce -> ce.getUsers().remove(this));
-        questionSubmissions.forEach(QuestionSubmission::remove);
     }
-
 }

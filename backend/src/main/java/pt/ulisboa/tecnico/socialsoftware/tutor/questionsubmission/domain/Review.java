@@ -3,14 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
 
 @Entity

@@ -2,16 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CourseDto implements Serializable {
     private Course.Type courseExecutionType;
@@ -56,15 +52,13 @@ public class CourseDto implements Serializable {
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
         if (courseExecution.getType().equals(Course.Type.EXTERNAL)) {
             this.courseExecutionUsers = new ArrayList<>();
-            this.courseExecutionUsers
-                    .addAll(courseExecution.getStudents().stream()
-                            .map(StudentDto::new)
-                            .collect(Collectors.toList()));
-
-            this.courseExecutionUsers
-                    .addAll(courseExecution.getTeachers().stream()
-                            .map(UserDto::new)
-                            .collect(Collectors.toList()));
+            courseExecution.getUsers().stream().forEach(user -> {
+                if(user.isStudent()) {
+                    courseExecutionUsers.add(new StudentDto(user));
+                } else {
+                    courseExecutionUsers.add(new UserDto(user));
+                }
+            });
         }
     }
 

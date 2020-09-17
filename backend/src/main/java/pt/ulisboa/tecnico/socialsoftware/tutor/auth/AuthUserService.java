@@ -17,7 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser;
@@ -211,7 +211,7 @@ public class AuthUserService {
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                userService.generateConfirmationToken(authUser);
+                authUser.generateConfirmationToken();
             }
             else throw new TutorException(e.getErrorMessage());
         }

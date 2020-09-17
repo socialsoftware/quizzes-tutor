@@ -27,6 +27,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
 
@@ -230,15 +231,8 @@ public class UserService {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         AuthExternalUser authUser = getOrCreateUser(externalUserDto);
         associateUserWithExecution(courseExecution, authUser.getUser());
-        generateConfirmationToken(authUser);
+        authUser.generateConfirmationToken();
         return new ExternalUserDto(authUser);
-    }
-
-    public String generateConfirmationToken(AuthExternalUser authUser) {
-        String token = KeyGenerators.string().generateKey();
-        authUser.setTokenGenerationDate(LocalDateTime.now());
-        authUser.setConfirmationToken(token);
-        return token;
     }
 
     private void associateUserWithExecution(CourseExecution courseExecution, User user) {
