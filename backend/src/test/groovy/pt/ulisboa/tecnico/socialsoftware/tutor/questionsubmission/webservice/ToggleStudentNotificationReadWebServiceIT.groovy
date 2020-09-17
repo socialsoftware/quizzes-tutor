@@ -35,14 +35,15 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
-        (student.authUser).setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+                User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.TEACHER, true, false)
-        teacher.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
+        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.EXTERNAL)
+        teacher.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)
