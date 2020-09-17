@@ -84,7 +84,7 @@ public class  QuestionSubmissionService {
 
         Review review = new Review(user, questionSubmission, reviewDto);
 
-        updateQuestionSubmissionStatus(reviewDto.getSubmissionStatus(), questionSubmission);
+        updateQuestionSubmissionStatus(reviewDto.getType(), questionSubmission);
 
         reviewRepository.save(review);
         return new ReviewDto(review);
@@ -140,14 +140,6 @@ public class  QuestionSubmissionService {
         questionSubmissionRepository.delete(questionSubmission);
     }
 
-    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void toggleInReviewStatus(int questionSubmissionId, boolean inReview) {
-        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
-        QuestionSubmission.Status status = inReview ? QuestionSubmission.Status.IN_REVIEW : QuestionSubmission.Status.IN_REVISION;
-        updateQuestionSubmissionStatus(status.name(), questionSubmission);
-    }
-
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {
@@ -184,6 +176,22 @@ public class  QuestionSubmissionService {
         userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
 
         return userQuestionSubmissionInfoDtos;
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void toggleStudentNotificationRead(Integer questionSubmissionId, boolean hasRead) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
+
+        questionSubmission.setStudentRead(hasRead);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void toggleTeacherNotificationRead(Integer questionSubmissionId, boolean hasRead) {
+        QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
+
+        questionSubmission.setTeacherRead(hasRead);
     }
 
     @Retryable(
@@ -231,11 +239,9 @@ public class  QuestionSubmissionService {
         return questionRepository.findById(newQuestionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, newQuestionDto.getId()));
     }
 
-    private void updateQuestionSubmissionStatus(String status, QuestionSubmission questionSubmission) {
+    private void updateQuestionSubmissionStatus(String reviewType, QuestionSubmission questionSubmission) {
         if (questionSubmission.getStatus() == QuestionSubmission.Status.IN_REVISION || questionSubmission.getStatus() == QuestionSubmission.Status.IN_REVIEW) {
-            if (status != null) {
-                questionSubmission.setStatus(status);
-            }
+            questionSubmission.setStatus(reviewType);
         } else
             throw new TutorException(CANNOT_REVIEW_QUESTION_SUBMISSION);
     }

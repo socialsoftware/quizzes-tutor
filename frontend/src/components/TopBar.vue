@@ -150,6 +150,14 @@
                 <v-list-item-title>Scan</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/student/code">
+              <v-list-item-action>
+                <v-icon>fas fa-terminal</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Code</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/student/solved">
               <v-list-item-action>
                 <v-icon>done</v-icon>
@@ -169,7 +177,7 @@
           data-cy="submissionStudentMenuButton"
         >
           Submissions
-          <v-icon>question_answer</v-icon>
+          <v-icon>fa-user-edit</v-icon>
         </v-btn>
 
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
@@ -336,42 +344,42 @@
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Available Quizzes</v-list-item-content>
+            <v-list-item-title>Available Quizzes</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/create">
             <v-list-item-action>
               <v-icon>create</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Create Quiz</v-list-item-content>
+            <v-list-item-title>Create Quiz</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/scan">
             <v-list-item-action>
               <v-icon>fas fa-qrcode</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Scan</v-list-item-content>
+            <v-list-item-title>Scan</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/solved">
             <v-list-item-action>
               <v-icon>done</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Solved Quizzes</v-list-item-content>
+            <v-list-item-title>Solved Quizzes</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/submissions">
             <v-list-item-action>
               <v-icon>fas fa-user-edit</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Submissions</v-list-item-content>
+            <v-list-item-title>Submissions</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/stats">
             <v-list-item-action>
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Stats</v-list-item-content>
+            <v-list-item-title>Stats</v-list-item-title>
           </v-list-item>
         </v-list-group>
 

@@ -10,18 +10,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ToggleInReviewStatusWebServiceIT extends SpockTest {
+class ToggleTeacherNotificationReadWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     def course
     def courseExecution
     def student
-    def teacher
+    def questionDto
     def questionSubmission
     def response
 
@@ -30,16 +29,16 @@ class ToggleInReviewStatusWebServiceIT extends SpockTest {
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        student.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
 
-        def questionDto = new QuestionDto()
+        questionDto = new QuestionDto()
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.SUBMITTED.name())
@@ -58,21 +57,14 @@ class ToggleInReviewStatusWebServiceIT extends SpockTest {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
-        teacher.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
-        teacher.addCourse(courseExecution)
-        courseExecution.addUser(teacher)
-        userRepository.save(teacher)
-
-        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
     }
 
-    def "get student's question submission"() {
+    def "notify teacher on question submission"() {
         when:
         response = restClient.put(
-                path: '/submissions/'+questionSubmission.getId()+'/reviews',
-                query: ['inReview': true, 'executionId': courseExecution.getId()],
+                path: '/submissions/'+questionSubmission.getId()+'/toggle-notification-teacher',
+                query: ['hasRead': true],
                 requestContentType: 'application/json'
         )
 
@@ -84,11 +76,12 @@ class ToggleInReviewStatusWebServiceIT extends SpockTest {
     def cleanup() {
         persistentCourseCleanup()
 
-        userRepository.deleteById(teacher.getId())
         userRepository.deleteById(student.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
 
         courseRepository.deleteById(course.getId())
     }
 }
+
+
 

@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
@@ -44,13 +45,13 @@ class CreateReviewTest extends SpockTest{
     }
 
     @Unroll
-    def "create review with submission status '#submissionStatus'"() {
+    def "create review with type '#type'"() {
         given: "a reviewDto"
         def reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setSubmissionStatus(submissionStatus)
+        reviewDto.setType(type)
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -60,17 +61,19 @@ class CreateReviewTest extends SpockTest{
         def question = questionRepository.findAll().get(0)
         result.getId() != null
         result.getComment() == REVIEW_1_COMMENT
-        result.getQuestionSubmission() == questionSubmission
         result.getUser() == teacher
+        result.getQuestionSubmission() == questionSubmission
+        result.getType().name() == type
+        result.getQuestionSubmission().getStatus() == submissionStatus
         question.getStatus() == questionStatus
 
         where:
-        submissionStatus || questionStatus
-        'APPROVED'       || Question.Status.AVAILABLE
-        'REJECTED'       || Question.Status.SUBMITTED
-        'IN_REVIEW'      || Question.Status.SUBMITTED
-        'IN_REVISION'    || Question.Status.SUBMITTED
-        null             || Question.Status.SUBMITTED
+        type                               || submissionStatus                       || questionStatus
+        Review.Type.APPROVE.name()         || QuestionSubmission.Status.APPROVED     || Question.Status.AVAILABLE
+        Review.Type.REJECT.name()          || QuestionSubmission.Status.REJECTED     || Question.Status.SUBMITTED
+        Review.Type.REQUEST_CHANGES.name() || QuestionSubmission.Status.IN_REVISION  || Question.Status.SUBMITTED
+        Review.Type.REQUEST_REVIEW.name()  || QuestionSubmission.Status.IN_REVIEW    || Question.Status.SUBMITTED
+        Review.Type.COMMENT.name()         || QuestionSubmission.Status.IN_REVIEW    || Question.Status.SUBMITTED
     }
 
     def "create review for question submission that has already been reviewed"() {
@@ -83,7 +86,7 @@ class CreateReviewTest extends SpockTest{
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setSubmissionStatus('REJECTED')
+        reviewDto.setType(Review.Type.REJECT.name())
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -94,7 +97,7 @@ class CreateReviewTest extends SpockTest{
     }
 
     @Unroll
-    def "invalid arguments: comment=#comment | hasQuestionSubmission=#hasQuestionSubmission | hasUser=#hasUser | status=#status || errorMessage"(){
+    def "invalid arguments: comment=#comment | hasQuestionSubmission=#hasQuestionSubmission | hasUser=#hasUser | type=#type || errorMessage"(){
         given: "a questionSubmission"
         def submission = new QuestionSubmission()
         submission.setQuestion(question)
@@ -107,7 +110,7 @@ class CreateReviewTest extends SpockTest{
         reviewDto.setQuestionSubmissionId(hasQuestionSubmission ? submission.getId() : null)
         reviewDto.setUserId(hasUser ? submission.getSubmitter().getId() : null)
         reviewDto.setComment(comment)
-        reviewDto.setSubmissionStatus(status)
+        reviewDto.setType(type)
 
         when:
         questionSubmissionService.createReview(reviewDto)
@@ -117,13 +120,13 @@ class CreateReviewTest extends SpockTest{
         exception.errorMessage == errorMessage
 
         where:
-        comment           | hasQuestionSubmission  | hasUser  | status        || errorMessage
-        null              | true                   | true     | 'AVAILABLE'   || REVIEW_MISSING_COMMENT
-        ' '               | true                   | true     | 'AVAILABLE'   || REVIEW_MISSING_COMMENT
-        REVIEW_1_COMMENT  | false                  | true     | 'AVAILABLE'   || REVIEW_MISSING_QUESTION_SUBMISSION
-        REVIEW_1_COMMENT  | true                   | false    | 'AVAILABLE'   || REVIEW_MISSING_USER
-        REVIEW_1_COMMENT  | true                   | true     | ' '           || INVALID_STATUS_FOR_QUESTION
-        REVIEW_1_COMMENT  | true                   | true     | 'INVALID'     || INVALID_STATUS_FOR_QUESTION
+        comment           | hasQuestionSubmission  | hasUser  | type                       || errorMessage
+        null              | true                   | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
+        ' '               | true                   | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
+        REVIEW_1_COMMENT  | false                  | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_QUESTION_SUBMISSION
+        REVIEW_1_COMMENT  | true                   | false    | Review.Type.APPROVE.name() || REVIEW_MISSING_USER
+        REVIEW_1_COMMENT  | true                   | true     | null                       || INVALID_TYPE_FOR_REVIEW
+        REVIEW_1_COMMENT  | true                   | true     | 'INVALID'                  || INVALID_TYPE_FOR_REVIEW
     }
 
     @TestConfiguration

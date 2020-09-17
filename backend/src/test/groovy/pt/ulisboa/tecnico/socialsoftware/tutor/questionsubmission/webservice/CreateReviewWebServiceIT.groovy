@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -17,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
+class CreateReviewWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -26,6 +27,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
     def teacher
     def student
     def questionSubmission
+    def reviewDto
     def response
 
     def setup() {
@@ -36,7 +38,14 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+        teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        (teacher.authUser).setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        teacher.addCourse(courseExecution)
+        courseExecution.addUser(teacher)
+        userRepository.save(teacher)
+
+        student = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
@@ -61,28 +70,21 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
-        (teacher.authUser).setPassword(passwordEncoder.encode(USER_2_PASSWORD))
-        teacher.addCourse(courseExecution)
-        courseExecution.addUser(teacher)
-        userRepository.save(teacher)
-
-        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
     }
 
-    def "get question submission review"() {
-        given: "a review"
-        def reviewDto = new ReviewDto()
+    def "create review for question submission"() {
+        given: "a reviewDto"
+        reviewDto = new ReviewDto()
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setSubmissionStatus(QuestionSubmission.Status.APPROVED.name())
-        questionSubmissionService.createReview(reviewDto)
+        reviewDto.setType(Review.Type.APPROVE.name())
 
         when:
-        response = restClient.get(
+        response = restClient.post(
                 path: '/submissions/'+questionSubmission.getId()+'/reviews',
+                body: reviewDto,
                 query: ['executionId': courseExecution.getId()],
                 requestContentType: 'application/json'
         )
@@ -90,14 +92,13 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         then: "check the response status"
         response != null
         response.status == 200
-        and: "if it responds with the correct question submissions"
-        def reviews = response.data
-        reviews.get(0).id != null
-        reviews.get(0).userId == teacher.getId()
-        reviews.get(0).questionSubmissionId == questionSubmission.getId()
-        reviews.get(0).comment == REVIEW_1_COMMENT
-        reviews.get(0).name == teacher.getName()
-        reviews.get(0).username == teacher.getUsername()
+        and: "if it responds with the correct review"
+        def review = response.data
+        review.id != null
+        review.comment == REVIEW_1_COMMENT
+        review.questionSubmissionId == questionSubmission.getId()
+        review.userId == teacher.getId()
+        review.type == Review.Type.APPROVE.name()
     }
 
     def cleanup() {
@@ -110,10 +111,4 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
         courseRepository.deleteById(course.getId())
     }
 }
-
-
-
-
-
-
 

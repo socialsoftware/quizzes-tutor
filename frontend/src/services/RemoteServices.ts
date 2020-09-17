@@ -736,17 +736,6 @@ export default class RemoteServices {
       });
   }
 
-  static async toggleInReviewStatus(
-    questionSubmissionId: number,
-    inReview: boolean
-  ) {
-    return httpClient
-      .put(`/submissions/${questionSubmissionId}/reviews?inReview=${inReview}`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(
@@ -802,6 +791,32 @@ export default class RemoteServices {
           return new UserQuestionSubmissionInfo(userSubmissionsInfo);
         });
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async toggleStudentNotificationRead(
+    questionSubmissionId: number,
+    hasRead: boolean
+  ) {
+    return httpClient
+      .put(
+        `/submissions/${questionSubmissionId}/toggle-notification-student?hasRead=${hasRead}`
+      )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async toggleTeacherNotificationRead(
+    questionSubmissionId: number,
+    hasRead: boolean
+  ) {
+    return httpClient
+      .put(
+        `/submissions/${questionSubmissionId}/toggle-notification-teacher?hasRead=${hasRead}`
+      )
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

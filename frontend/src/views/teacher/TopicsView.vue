@@ -21,14 +21,24 @@
             hide-details
           />
           <v-spacer />
-          <v-btn color="primary" dark @click="newTopic" data-cy="topicsNewTopicBtn">New Topic</v-btn>
+          <v-btn
+            color="primary"
+            dark
+            @click="newTopic"
+            data-cy="topicsNewTopicBtn"
+            >New Topic</v-btn
+          >
         </v-card-title>
       </template>
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editTopic(item)"
-              data-cy="topicsGridEditButton">edit</v-icon
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="editTopic(item)"
+              data-cy="topicsGridEditButton"
+              >edit</v-icon
             >
           </template>
           <span>Edit Topic</span>
@@ -40,7 +50,8 @@
               v-on="on"
               @click="deleteTopic(item)"
               color="red"
-              data-cy="topicsGridDeleteButton">delete</v-icon
+              data-cy="topicsGridDeleteButton"
+              >delete</v-icon
             >
           </template>
           <span>Delete Topic</span>
@@ -63,7 +74,11 @@
         </v-card-title>
 
         <v-card-text v-if="editedTopic">
-          <v-text-field v-model="editedTopic.name" label="Topic" data-cy="topicsFormTopicNameInput"/>
+          <v-text-field
+            v-model="editedTopic.name"
+            label="Topic"
+            data-cy="topicsFormTopicNameInput"
+          />
         </v-card-text>
 
         <v-card-actions>

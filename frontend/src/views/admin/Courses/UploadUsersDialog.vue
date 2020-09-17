@@ -13,18 +13,17 @@
         </span>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
-            <v-icon
-              color="blue darken-1"
-              dark
-              v-bind="attrs"
-              v-on="on"
-            >info</v-icon>
+            <v-icon color="blue darken-1" dark v-bind="attrs" v-on="on"
+              >info</v-icon
+            >
           </template>
           <v-card-text>
-            <div>The file to upload must follow the rule: </div>
+            <div>The file to upload must follow the rule:</div>
             <div>email,name,['student'|'teacher']</div>
-            <div>When omitted the third column, by default is considered a student</div>
-         </v-card-text>
+            <div>
+              When omitted the third column, by default is considered a student
+            </div>
+          </v-card-text>
         </v-tooltip>
       </v-card-title>
 
@@ -45,7 +44,10 @@
           data-cy="cancelButton"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="uploadUsers(course)" data-cy="uploadFileButton"
+        <v-btn
+          color="blue darken-1"
+          @click="uploadUsers(course)"
+          data-cy="uploadFileButton"
           >Upload File</v-btn
         >
       </v-card-actions>
@@ -68,18 +70,22 @@ export default class UploadUsersDialog extends Vue {
   async uploadUsers(course: Course) {
     try {
       if (course.courseExecutionId != null && this.chosenFile != null) {
-        let updatedCourse = await RemoteServices.uploadCSVFile(this.chosenFile, course.courseExecutionId);
+        let updatedCourse = await RemoteServices.uploadCSVFile(
+          this.chosenFile,
+          course.courseExecutionId
+        );
         confirm('File was uploaded!');
 
         this.$emit('users-uploaded', updatedCourse);
-      }
-      else {
-        await this.$store.dispatch('error', 'In order to upload users, it must be selected a file');
+      } else {
+        await this.$store.dispatch(
+          'error',
+          'In order to upload users, it must be selected a file'
+        );
       }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-
   }
 }
 </script>

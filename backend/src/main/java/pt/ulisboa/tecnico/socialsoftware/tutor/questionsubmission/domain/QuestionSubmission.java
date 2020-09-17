@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_STATUS_FOR_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
 
 @Entity
 @Table(name = "question_submissions")
@@ -36,6 +37,12 @@ public class QuestionSubmission {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean studentRead;
+
+    @Column(columnDefinition = "boolean default true", nullable = false)
+    private boolean teacherRead;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionSubmission", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Review> reviews = new HashSet<>();
 
@@ -47,6 +54,8 @@ public class QuestionSubmission {
         setQuestion(question);
         setSubmitter(submitter);
         setStatus(Status.IN_REVISION);
+        setStudentRead(true);
+        setTeacherRead(true);
         submitter.addQuestionSubmission(this);
         courseExecution.addQuestionSubmission(this);
     }
@@ -73,6 +82,16 @@ public class QuestionSubmission {
 
     public void addReview(Review review) { this.reviews.add(review); }
 
+    public boolean hasStudentRead() { return studentRead; }
+
+    public void setStudentRead(boolean studentRead) { this.studentRead = studentRead; }
+
+    public boolean hasTeacherRead() { return teacherRead; }
+
+    public void setTeacherRead(boolean teacherRead) {
+        this.teacherRead = teacherRead;
+    }
+
     public Status getStatus() { return status; }
 
     public void setStatus(Status status) {
@@ -82,17 +101,28 @@ public class QuestionSubmission {
         }
     }
 
-    public void setStatus(String status) {
-        if (status == null || status.isBlank()) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
-        }
+    public void setStatus(String reviewType) {
         try {
-            this.status = Status.valueOf(status);
-            if (status.equals(Status.APPROVED.name())) {
-                this.question.setStatus(Question.Status.AVAILABLE);
+            switch (Review.Type.valueOf(reviewType)) {
+                case APPROVE:
+                    setStatus(Status.APPROVED);
+                    break;
+                case REJECT:
+                    setStatus(Status.REJECTED);
+                    break;
+                case REQUEST_CHANGES:
+                    setStatus(Status.IN_REVISION);
+                    break;
+                case REQUEST_REVIEW:
+                    setStatus(Status.IN_REVIEW);
+                    break;
+                case COMMENT:
+                    break;
+                default:
+                    throw new TutorException(INVALID_TYPE_FOR_REVIEW);
             }
         } catch (IllegalArgumentException e) {
-            throw new TutorException(INVALID_STATUS_FOR_QUESTION);
+            throw new TutorException(INVALID_TYPE_FOR_REVIEW);
         }
     }
 

@@ -4,27 +4,24 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
-
+import spock.lang.Unroll
 
 @DataJpaTest
-class GetQuestionSubmissionReviewsTest extends SpockTest{
+class ToggleNotificationReadTest extends SpockTest{
     def student
-    def teacher
     def question
+    def optionOK
     def questionSubmission
 
     def setup() {
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
-        userRepository.save(teacher)
         question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
@@ -32,48 +29,54 @@ class GetQuestionSubmissionReviewsTest extends SpockTest{
         question.setCourse(externalCourse)
         question.setStatus(Question.Status.SUBMITTED)
         questionRepository.save(question)
+        optionOK = new Option()
+        optionOK.setContent(OPTION_1_CONTENT)
+        optionOK.setCorrect(true)
+        optionOK.setSequence(0)
+        optionOK.setQuestion(question)
+        optionRepository.save(optionOK)
         questionSubmission = new QuestionSubmission()
         questionSubmission.setQuestion(question)
         questionSubmission.setSubmitter(student)
         questionSubmission.setCourseExecution(externalCourseExecution)
-        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVISION)
+        externalCourseExecution.addQuestionSubmission(questionSubmission)
+        student.addQuestionSubmission(questionSubmission)
         questionSubmissionRepository.save(questionSubmission)
     }
 
-    def "get question submission reviews with 1 review"(){
-        given: "a review"
-        def review = new Review()
-        review.setComment(REVIEW_1_COMMENT)
-        review.setUser(teacher)
-        review.setQuestionSubmission(questionSubmission)
-        questionSubmission.addReview(review)
-
+    @Unroll
+    def "set submission visibility"() {
         when:
-        def result = questionSubmissionService.getQuestionSubmissionReviews(questionSubmission.getId())
+        if (forTeacher) {
+            questionSubmissionService.toggleTeacherNotificationRead(questionSubmission.getId(), hasRead)
+        } else {
+            questionSubmissionService.toggleStudentNotificationRead(questionSubmission.getId(), hasRead)
+        }
 
-        then: "returned data is correct"
-        result.size() == 1
-        def rev = result.get(0)
+        then: "the question submission visibility is changed"
+        questionSubmissionRepository.count() == 1L
+        def result = questionSubmissionRepository.findAll().get(0)
+        if (forTeacher) {
+            result.hasTeacherRead() == hasRead
+        } else {
+            result.hasStudentRead() == hasRead
+        }
 
-        rev.getId() != null
-        rev.getUserId() == teacher.getId()
-        rev.getQuestionSubmissionId() == questionSubmission.getId()
-        rev.getComment() == REVIEW_1_COMMENT
-        rev.getName() == teacher.getName()
-        rev.getUsername() == teacher.getUsername()
-    }
+        where:
+        forTeacher | hasRead
+        true       | false
+        false      | false
+        true       | true
+        false      | true
 
-    def "get question submission reviews with no review"(){
-        when:
-        def result = questionSubmissionService.getQuestionSubmissionReviews(questionSubmission.getId())
-
-        then:"returned data is correct"
-        result.size() == 0
     }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
+
+
 
 
 
