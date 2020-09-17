@@ -104,7 +104,7 @@ export default class ReplyComponent extends Vue {
   replyMessages: Map<number, string> = new Map();
   user: User = this.$store.getters.getUser;
 
-  @Emit('submit')
+  @Emit()
   async submitReply() {
     try {
       if (this.replyMessages.get(this.discussion.userId!) === undefined) {
@@ -123,7 +123,6 @@ export default class ReplyComponent extends Vue {
 
       this.replyMessages.set(this.discussion.userId!, '');
     } catch (error) {
-      console.log('ERROR');
       await this.$store.dispatch('error', error);
 
       return false;

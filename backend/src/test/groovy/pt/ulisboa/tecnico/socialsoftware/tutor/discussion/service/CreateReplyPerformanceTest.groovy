@@ -96,7 +96,7 @@ class CreateReplyPerformanceTest extends SpockTest {
 
         when: "a reply is given"
         1.upto(10000,{
-            discussionService.giveReply(discussionDto, replyDto)
+            discussionService.createReply(discussionDto, replyDto)
         })
 
         then: "the correct reply was given"

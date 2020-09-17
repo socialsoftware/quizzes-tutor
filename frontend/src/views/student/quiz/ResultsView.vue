@@ -75,8 +75,6 @@ import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
 import DiscussionComponent from '@/views/student/discussions/DiscussionComponent.vue';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
-import Question from '@/models/management/Question';
-import Store from '@/store';
 
 @Component({
   components: {
@@ -163,7 +161,7 @@ export default class ResultsView extends Vue {
 
   updateDiscussion() {
     if (
-      !this.statementManager.statementQuiz!.questions[this.questionOrder]
+      this.statementManager.statementQuiz!.questions[this.questionOrder]
         .hasUserDiscussion
     ) {
       this.discussion = new Discussion();

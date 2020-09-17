@@ -10,19 +10,12 @@
               <v-list-item-content>
                 <div class="overline mb-4"></div>
                 <v-list-item-title class="headline mb-1">{{
-                  info !== null ? info.name.substring(0, 25) : 'Unknown user'
+                  info !== null ? info.name : 'Unknown user'
                 }}</v-list-item-title>
                 <v-list-item-subtitle>{{
-                  info !== null
-                    ? info.username.substring(0, 20)
-                    : 'Unknown user'
+                  info !== null ? info.username : 'Unknown user'
                 }}</v-list-item-subtitle>
               </v-list-item-content>
-            </v-col>
-            <v-col>
-              <v-list-item-avatar tile size="80" color="grey"
-                ><img src="https://cdn.vuetifyjs.com/images/john.jpg" alt="John"
-              /></v-list-item-avatar>
             </v-col>
           </v-list-item>
 

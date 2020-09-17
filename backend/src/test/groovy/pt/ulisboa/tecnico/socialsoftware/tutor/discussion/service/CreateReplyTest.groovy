@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -23,6 +25,7 @@ class CreateReplyTest extends SpockTest {
 
     @Shared
     def student
+    def student2
     def teacher
     @Shared
     def question1
@@ -33,6 +36,9 @@ class CreateReplyTest extends SpockTest {
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
+
+        student2 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.STUDENT, true, false)
+        userRepository.save(student2)
 
         teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, false)
         userRepository.save(teacher)
@@ -95,7 +101,7 @@ class CreateReplyTest extends SpockTest {
 
 
         when: "a reply is given"
-        discussionService.giveReply(discussionDto, replyDto)
+        discussionService.createReply(discussionDto, replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
@@ -115,7 +121,7 @@ class CreateReplyTest extends SpockTest {
         replyDto.setDate(LocalDateTime.now())
 
         when: "the student creates a reply"
-        discussionService.giveReply(discussionDto, replyDto)
+        discussionService.createReply(discussionDto, replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
@@ -125,6 +131,21 @@ class CreateReplyTest extends SpockTest {
         discussionRepository.findAll().get(0).getReplies().size() == 1
         discussionRepository.findAll().get(0).getReplies().get(0).getMessage() == replyDto.getMessage()
         discussionRepository.findAll().get(0).getReplies().get(0).getUser().getId() == replyDto.getUserId()
+    }
+
+    def "student can't reply a discussion of other student"(){
+        given: "a response created by a student"
+        def replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(student2.getId())
+        replyDto.setDate(LocalDateTime.now())
+
+        when: "the student tries to create a reply"
+        discussionService.createReply(discussionDto, replyDto)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.REPLY_UNAUTHORIZED_USER
     }
 
     @TestConfiguration

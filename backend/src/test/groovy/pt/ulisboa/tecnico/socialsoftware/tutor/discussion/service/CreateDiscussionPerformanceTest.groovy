@@ -22,27 +22,17 @@ class CreateDiscussionPerformanceTest extends SpockTest {
     def student
     @Shared
     def question1
-    def question2
     def quiz
     def quizAnswer
+    def iter = 0
 
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
         userRepository.save(student)
 
-        question1 = new Question()
-        question1.setCourse(externalCourse)
-        question1.setTitle("Question title")
-        question1.setContent("Question Content")
-        questionRepository.save(question1)
 
-        question2 = new Question()
-        question2.setCourse(externalCourse)
-        question2.setTitle("Question title")
-        question2.setContent("Question Content")
-        questionRepository.save(question2)
 
-        def quiz = new Quiz()
+        /*def quiz = new Quiz()
         quiz.setKey(1)
         quiz.setType("TEST")
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
@@ -74,14 +64,14 @@ class CreateDiscussionPerformanceTest extends SpockTest {
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
 
 
-        student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
+        student.addQuizAnswer(quizAnswerRepository.findAll().get(0))*/
     }
 
     def "create discussion"(){
         given:"a discussion dto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
+        //discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         and: "a student"
         discussionDto.setUserId(student.getId())
@@ -89,7 +79,49 @@ class CreateDiscussionPerformanceTest extends SpockTest {
 
         when:
         1.upto(10000, {
+
+            question1 = new Question()
+            question1.setCourse(externalCourse)
+            question1.setTitle("Question title" + iter)
+            question1.setContent("Question Content" + iter)
+            questionRepository.save(question1)
+
+            def quiz = new Quiz()
+            quiz.setKey(iter)
+            quiz.setType("TEST")
+            quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
+            quizRepository.save(quiz)
+
+            def quizanswer = new QuizAnswer()
+            quizanswer.setUser(student)
+            quizanswer.setQuiz(quiz)
+            quizanswer.setQuiz(quiz)
+            quizAnswerRepository.save(quizanswer)
+
+            def quizquestion = new QuizQuestion(quiz, question1, 3)
+            quizQuestionRepository.save(quizquestion)
+
+            def questionanswer = new QuestionAnswer()
+            questionanswer.setTimeTaken(1)
+            questionanswer.setQuizAnswer(quizanswer)
+            questionanswer.setQuizQuestion(quizquestion)
+            questionAnswerRepository.save(questionanswer)
+
+
+            quizquestion.addQuestionAnswer(questionanswer)
+
+            quizanswer.addQuestionAnswer(questionanswer)
+
+
+            quiz.addQuizAnswer(quizanswer)
+            quiz.addQuizQuestion(quizquestion)
+            quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
+
+
+            student.addQuizAnswer(quizanswer)
+            discussionDto.setQuestion(new QuestionDto(question1))
             discussionService.createDiscussion(discussionDto)
+            iter = iter + 1
         })
 
         then: "the correct discussion is inside the repository"

@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
 import spock.lang.Shared
 
 @DataJpaTest
-class CreateDiscussionPerformanceTest extends SpockTest {
+class GetQuestionDiscussionsTest extends SpockTest {
 
     @Shared
     def student

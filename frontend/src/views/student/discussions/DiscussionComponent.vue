@@ -43,8 +43,8 @@ import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 })
 export default class DiscussionComponent extends Vue {
   @Prop(Boolean) readonly hasDiscussion!: boolean;
-  @Prop() readonly question?: Question;
-  @Prop() readonly discussions?: Discussion[];
+  @Prop() readonly question!: Question;
+  @Prop() readonly discussions!: Discussion[];
   @Prop(Boolean) readonly answered!: boolean;
   discussionMessage: string = '';
 

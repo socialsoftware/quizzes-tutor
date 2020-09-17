@@ -118,7 +118,7 @@ class CreateDiscussionTest extends SpockTest {
         resultQuestion.getQuestion().getId() == question1.getId()
     }
 
-    def "student answered the question in discussion"(){
+    def "student can't create a discussion in a non answered question"(){
         given: "a discussionDto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
