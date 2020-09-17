@@ -20,9 +20,12 @@ class CreateAuthUserTest  extends SpockTest {
     }
 
     @Unroll
-    def "create auth user type=#type | active=#active" () {
+    def "create auth user type=#type | active=#active | type=#type" () {
+        given:
         authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, type)
         authUserRepository.save(authUser)
+        and: "the type"
+        def objType = createClassAutUser(type).getClass()
 
         when:
         authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
@@ -35,27 +38,21 @@ class CreateAuthUserTest  extends SpockTest {
         authUser.user != null
         authUser.user.equals(user)
 
-        and:" is if the correct type"
-        switch (type) {
-            case AuthUser.Type.TECNICO:
-                authUser instanceof AuthTecnicoUser
-                break
-            case AuthUser.Type.EXTERNAL:
-                authUser instanceof AuthExternalUser
-                break
-            case AuthUser.Type.DEMO:
-                authUser instanceof AuthDemoUser
-                break
-        }
+        objType.isInstance(authUser)
 
         where:
         type                    | active
         AuthUser.Type.TECNICO   | true
         AuthUser.Type.EXTERNAL  | false
         AuthUser.Type.DEMO      | true
+    }
 
-
-
+    def createClassAutUser(AuthUser.Type type) {
+        switch (type) {
+            case AuthUser.Type.TECNICO: return new AuthTecnicoUser()
+            case AuthUser.Type.EXTERNAL: return new AuthExternalUser()
+            case AuthUser.Type.DEMO: return new AuthDemoUser()
+        }
     }
 
     @TestConfiguration

@@ -45,7 +45,7 @@ class ConfirmRegistrationTest extends SpockTest {
 
         userServiceApplicational.createExternalUser(executionId, externalUserDto)
 
-         authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
+        authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
         authUser.setConfirmationToken(USER_1_TOKEN)
     }
 
@@ -67,7 +67,6 @@ class ConfirmRegistrationTest extends SpockTest {
     def "user is already active" () {
         given: "an active user"
         externalUserDto.setPassword(USER_1_PASSWORD)
-        //authUserServiceApplicational.confirmRegistration(externalUserDto)
         authUser.setActive(true)
 
         when:
