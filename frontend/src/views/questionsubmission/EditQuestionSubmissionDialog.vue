@@ -54,20 +54,14 @@
             />
           </v-row>
         </div>
+        <v-textarea
+          outline
+          rows="1"
+          v-model="comment"
+          label="Comment"
+          data-cy="Comment"
+        ></v-textarea>
       </v-card-text>
-      <div v-if="editMode(questionSubmission)" class="text-left">
-        <v-card-title>
-          <span class="headline">{{ 'New Comment' }}</span>
-        </v-card-title>
-        <v-card-text class="text-left">
-          <v-textarea
-            rows="1"
-            v-model="comment"
-            label="Comment"
-            data-cy="Comment"
-          ></v-textarea>
-        </v-card-text>
-      </div>
 
       <v-card-actions>
         <v-spacer />
@@ -79,10 +73,15 @@
         >
         <v-btn
           color="blue darken-1"
-          @click="saveQuestionSubmission"
-          data-cy="SubmitButton"
+          @click="createQuestionSubmission(false)"
+          data-cy="SaveButton"
+          >Save</v-btn
         >
-          {{ editMode(editQuestionSubmission) ? 'Save' : 'Submit' }}</v-btn
+        <v-btn
+          color="blue darken-1"
+          @click="createQuestionSubmission(true)"
+          data-cy="RequestReviewButton"
+          >Request Review</v-btn
         >
       </v-card-actions>
     </v-card>
@@ -106,6 +105,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
 
   created() {
     this.updateQuestionSubmission();
+    this.comment = '';
   }
 
   @Watch('questionSubmission', { immediate: true, deep: true })
@@ -115,7 +115,7 @@ export default class EditQuestionSubmissionDialog extends Vue {
     );
   }
 
-  async saveQuestionSubmission() {
+  async createQuestionSubmission(requestReview: boolean) {
     if (
       this.editQuestionSubmission &&
       (!this.editQuestionSubmission.question.title ||
@@ -123,31 +123,38 @@ export default class EditQuestionSubmissionDialog extends Vue {
     ) {
       await this.$store.dispatch(
         'error',
-        'Question must have title and content'
+        'Error: Question must have title and content'
       );
       return;
+    } else if (requestReview && this.comment.trim().length == 0) {
+      await this.$store.dispatch(
+        'error',
+        'Error: Please insert a short comment to justify your submission'
+      );
+      return;
+    } else if (
+      !requestReview &&
+      this.comment.trim().length > 0 &&
+      !confirm('Comment will not be saved. Do you wish to proceed?')
+    ) {
+      return;
     }
-
     try {
       let result;
       if (this.editQuestionSubmission.question.id != null) {
         result = await RemoteServices.updateQuestionSubmission(
           this.editQuestionSubmission
         );
-        let review = new Review();
-        review.questionSubmissionId = this.editQuestionSubmission.id!;
-        review.submissionStatus = 'IN_REVISION';
-        review.userId = this.$store.getters.getUser.id;
-        review.comment =
-          this.comment === '' ? '' : 'QUESTION EDITED: ' + this.comment;
-        await RemoteServices.createReview(review);
       } else {
         result = await RemoteServices.createQuestionSubmission(
           this.editQuestionSubmission
         );
       }
-
-      this.$emit('save-submission', result);
+      if (requestReview) {
+        this.$emit('submit-submission', this.comment, result);
+      } else {
+        this.$emit('save-submission', result);
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

@@ -12,6 +12,8 @@ public class QuestionSubmissionDto implements Serializable {
     private Integer submitterId;
     private String status;
     private String name;
+    private boolean studentRead;
+    private boolean teacherRead;
 
     public QuestionSubmissionDto(){}
 
@@ -23,6 +25,8 @@ public class QuestionSubmissionDto implements Serializable {
         setStatus(questionSubmission.getStatus().name());
         setSubmitterId(questionSubmission.getSubmitter().getId());
         setName(questionSubmission.getSubmitter().getName());
+        setStudentRead(questionSubmission.hasStudentRead());
+        setTeacherRead(questionSubmission.hasTeacherRead());
     }
 
     public Integer getId() { return id; }
@@ -48,6 +52,14 @@ public class QuestionSubmissionDto implements Serializable {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
+
+    public boolean isStudentRead() { return studentRead; }
+
+    public void setStudentRead(boolean studentRead) { this.studentRead = studentRead; }
+
+    public boolean isTeacherRead() { return teacherRead; }
+
+    public void setTeacherRead(boolean teacherRead) { this.teacherRead = teacherRead; }
 
     @Override
     public String toString() {

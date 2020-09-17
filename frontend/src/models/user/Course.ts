@@ -33,9 +33,10 @@ export default class Course {
       this.numberOfActiveTeachers = jsonObj.numberOfActiveTeachers;
       this.numberOfInactiveTeachers = jsonObj.numberOfInactiveTeachers;
       this.status = jsonObj.status;
-      if(jsonObj.courseExecutionUsers){
-        this.courseExecutionUsers = jsonObj.courseExecutionUsers
-          .map((externalUser: ExternalUser) => new ExternalUser(externalUser));
+      if (jsonObj.courseExecutionUsers) {
+        this.courseExecutionUsers = jsonObj.courseExecutionUsers.map(
+          (externalUser: ExternalUser) => new ExternalUser(externalUser)
+        );
       }
     }
   }

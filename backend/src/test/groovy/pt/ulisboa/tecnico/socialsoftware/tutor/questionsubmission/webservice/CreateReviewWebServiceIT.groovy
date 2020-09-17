@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
@@ -76,7 +77,7 @@ class CreateReviewWebServiceIT extends SpockTest {
         reviewDto.setQuestionSubmissionId(questionSubmission.getId())
         reviewDto.setUserId(teacher.getId())
         reviewDto.setComment(REVIEW_1_COMMENT)
-        reviewDto.setSubmissionStatus(QuestionSubmission.Status.APPROVED.name())
+        reviewDto.setType(Review.Type.APPROVE.name())
 
         when:
         response = restClient.post(
@@ -95,6 +96,7 @@ class CreateReviewWebServiceIT extends SpockTest {
         review.comment == REVIEW_1_COMMENT
         review.questionSubmissionId == questionSubmission.getId()
         review.userId == teacher.getId()
+        review.type == Review.Type.APPROVE.name()
     }
 
     def cleanup() {

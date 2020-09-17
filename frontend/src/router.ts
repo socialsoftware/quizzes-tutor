@@ -20,6 +20,7 @@ import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
 import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
+import CodeView from '@/views/student/CodeView.vue';
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -255,6 +256,15 @@ let router = new Router({
           component: DiscussionView,
           meta: {
             title: APP_NAME + ' - Discussion',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'code',
+          name: 'code',
+          component: CodeView,
+          meta: {
+            title: APP_NAME + ' - Code',
             requiredAuth: 'Student'
           }
         },
