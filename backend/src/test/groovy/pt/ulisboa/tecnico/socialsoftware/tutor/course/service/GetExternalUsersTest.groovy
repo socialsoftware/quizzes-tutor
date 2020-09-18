@@ -8,8 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
 
 @DataJpaTest
 class GetExternalUsersTest extends SpockTest {
@@ -23,20 +24,20 @@ class GetExternalUsersTest extends SpockTest {
     def setup() {
         course1 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course1)
-        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution1)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user1)
         user1.addCourse(courseExecution1)
         courseExecution1.addUser(user1)
 
         course2 = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course2)
-        courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution2 = new CourseExecution(course2, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution2)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user2)
         user2.addCourse(courseExecution2)
         courseExecution2.addUser(user2)

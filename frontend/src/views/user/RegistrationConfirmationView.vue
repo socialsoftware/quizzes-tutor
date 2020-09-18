@@ -14,7 +14,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import PasswordCard from '@/components/auth/PasswordCard.vue';
 import ExternalUser from '@/models/user/ExternalUser';
-import RemoteServices from '../services/RemoteServices';
+import RemoteServices from '../../services/RemoteServices';
 
 @Component({
   components: { PasswordCard }

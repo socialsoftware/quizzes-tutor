@@ -1,7 +1,7 @@
-export class Student {
+import User from '@/models/user/User';
+
+export class Student extends User {
   number!: number;
-  username: string | null = null;
-  name: string | null = null;
   numberOfTeacherQuizzes!: number;
   numberOfStudentQuizzes!: number;
   numberOfAnswers!: number;
@@ -10,10 +10,9 @@ export class Student {
   percentageOfCorrectTeacherAnswers!: number;
 
   constructor(jsonObj?: Student) {
+    super(jsonObj);
     if (jsonObj) {
       this.number = jsonObj.number;
-      this.username = jsonObj.username;
-      this.name = jsonObj.name;
       this.numberOfTeacherQuizzes = jsonObj.numberOfTeacherQuizzes;
       this.numberOfStudentQuizzes = jsonObj.numberOfStudentQuizzes;
       this.numberOfAnswers = jsonObj.numberOfAnswers;

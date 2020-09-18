@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -11,8 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
@@ -23,6 +24,7 @@ class ConfirmRegistrationTest extends SpockTest {
     def course
     def courseExecution
     def externalUserDto
+    def authUser
 
     @Autowired
     Mailer mailerMock
@@ -30,7 +32,7 @@ class ConfirmRegistrationTest extends SpockTest {
     def setup(){
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         def executionId = courseExecution.getId()
@@ -41,10 +43,10 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setConfirmationToken(USER_1_TOKEN)
         externalUserDto.setRole(User.Role.STUDENT)
 
-        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
-        User user = userService.findByUsername(USER_1_EMAIL)
-        user.setConfirmationToken(USER_1_TOKEN)
+        authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).get()
+        authUser.setConfirmationToken(USER_1_TOKEN)
     }
 
 	def "user confirms registration successfully" () {
@@ -52,7 +54,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(USER_1_PASSWORD)
 
         when:
-        def result = authServiceApplicational.confirmRegistration(externalUserDto)
+        def result = authUserServiceApplicational.confirmRegistration(externalUserDto)
 
         then:"the user has a new password and matches"
         passwordEncoder.matches(USER_1_PASSWORD, result.getPassword())
@@ -65,10 +67,10 @@ class ConfirmRegistrationTest extends SpockTest {
     def "user is already active" () {
         given: "an active user"
         externalUserDto.setPassword(USER_1_PASSWORD)
-        authServiceApplicational.confirmRegistration(externalUserDto)
+        authUser.setActive(true)
 
         when:
-        authServiceApplicational.confirmRegistration(externalUserDto)
+        authUserServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
@@ -81,14 +83,14 @@ class ConfirmRegistrationTest extends SpockTest {
         given: "a new password"
         externalUserDto.setPassword(USER_1_PASSWORD)
         and: "and an expired token generation date"
-        User user = userService.findByUsername(USER_1_EMAIL)
-        user.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
+        AuthUser authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).get()
+        authUser.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
 
         when:
-        def result = authServiceApplicational.confirmRegistration(externalUserDto)
+        def result = authUserServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
-        result.active == false
+        !result.active
         and: "a new token is created"
         result.confirmationToken != USER_1_TOKEN
         and: "a new confirmation mail is sent"
@@ -105,7 +107,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(password)
 
         when:
-        authServiceApplicational.confirmRegistration(externalUserDto)
+        authUserServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)

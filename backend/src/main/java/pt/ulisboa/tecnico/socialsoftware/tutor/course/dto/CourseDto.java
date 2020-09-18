@@ -2,18 +2,18 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.course.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 
 import java.io.Serializable;
-import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CourseDto implements Serializable {
     private Course.Type courseExecutionType;
     private Course.Type courseType;
     private CourseExecution.Status status;
+    private String endDate;
     private String academicTerm;
     private String acronym;
     private String name;
@@ -25,7 +25,7 @@ public class CourseDto implements Serializable {
     private int numberOfInactiveStudents;
     private int numberOfActiveTeachers;
     private int numberOfInactiveTeachers;
-    private List<ExternalUserDto> courseExecutionUsers;
+    private List<UserDto> courseExecutionUsers;
 
     public CourseDto() {}
 
@@ -51,10 +51,14 @@ public class CourseDto implements Serializable {
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();
         this.numberOfQuestions = courseExecution.getNumberOfQuestions();
         if (courseExecution.getType().equals(Course.Type.EXTERNAL)) {
-            this.courseExecutionUsers = courseExecution.getUsers().stream()
-                    .map(ExternalUserDto::new)
-                    .sorted(Comparator.comparing(ExternalUserDto::getName))
-                    .collect(Collectors.toList());
+            this.courseExecutionUsers = new ArrayList<>();
+            courseExecution.getUsers().stream().forEach(user -> {
+                if(user.isStudent()) {
+                    courseExecutionUsers.add(new StudentDto(user));
+                } else {
+                    courseExecutionUsers.add(new UserDto(user));
+                }
+            });
         }
     }
 
@@ -86,6 +90,14 @@ public class CourseDto implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
     public int getCourseExecutionId() {
@@ -176,11 +188,11 @@ public class CourseDto implements Serializable {
         this.status = status;
     }
 
-    public List<ExternalUserDto> getCourseExecutionUsers() {
+    public List<UserDto> getCourseExecutionUsers() {
         return courseExecutionUsers;
     }
 
-    public void setCourseExecutionUsers(List<ExternalUserDto> courseExecutionUsers) {
+    public void setCourseExecutionUsers(List<UserDto> courseExecutionUsers) {
         this.courseExecutionUsers = courseExecutionUsers;
     }
 

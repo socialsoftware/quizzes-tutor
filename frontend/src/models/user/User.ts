@@ -1,17 +1,15 @@
 import Course from '@/models/user/Course';
 
-interface CourseMap {
-  [key: string]: Course[];
-}
-
 export default class User {
   id: number | null = null;
   name!: string;
   username!: string;
+  email!: string;
   role!: string;
   admin!: boolean;
-  courses: CourseMap = {};
-  coursesNumber: number = 0;
+  active!: boolean;
+  creationDate!: string;
+  lastAccess!: string;
 
   constructor(jsonObj?: User) {
     if (jsonObj) {
@@ -20,11 +18,9 @@ export default class User {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.admin = jsonObj.admin;
-
-      for (let [name, courses] of Object.entries(jsonObj.courses)) {
-        this.courses[name] = courses.map(course => new Course(course));
-        this.coursesNumber += this.courses[name].length;
-      }
+      this.active = jsonObj.active;
+      this.creationDate = jsonObj.creationDate;
+      this.lastAccess = jsonObj.lastAccess;
     }
   }
 }

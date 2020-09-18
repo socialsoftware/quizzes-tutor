@@ -1,13 +1,13 @@
-import User from '@/models/user/User';
+import AuthUser from '@/models/user/AuthUser';
 
 export default class AuthDto {
   token!: string;
-  user!: User;
+  user!: AuthUser;
 
   constructor(jsonObj?: AuthDto) {
     if (jsonObj) {
       this.token = jsonObj.token;
-      this.user = new User(jsonObj.user);
+      this.user = new AuthUser(jsonObj.user);
     }
   }
 }

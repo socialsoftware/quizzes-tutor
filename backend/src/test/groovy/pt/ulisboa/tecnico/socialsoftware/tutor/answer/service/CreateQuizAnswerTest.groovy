@@ -6,14 +6,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class CreateQuizAnswerTest extends SpockTest {
 
 
     def setup() {
-        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
+        User user = new User(USER_1_NAME, User.Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())

@@ -38,7 +38,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
