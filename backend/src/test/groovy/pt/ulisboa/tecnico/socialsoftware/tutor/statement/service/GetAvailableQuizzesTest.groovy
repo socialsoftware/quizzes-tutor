@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 @DataJpaTest

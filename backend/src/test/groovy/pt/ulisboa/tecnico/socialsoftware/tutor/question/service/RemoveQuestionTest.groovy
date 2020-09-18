@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest

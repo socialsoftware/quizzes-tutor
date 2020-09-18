@@ -24,7 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

@@ -7,7 +7,7 @@ export default class User {
   email!: string;
   role!: string;
   admin!: boolean;
-  active!: boolean
+  active!: boolean;
   creationDate!: string;
   lastAccess!: string;
 

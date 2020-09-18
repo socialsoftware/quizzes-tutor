@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -12,8 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
@@ -43,9 +43,9 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setConfirmationToken(USER_1_TOKEN)
         externalUserDto.setRole(User.Role.STUDENT)
 
-        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
-        authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
+        authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).get()
         authUser.setConfirmationToken(USER_1_TOKEN)
     }
 
@@ -83,7 +83,7 @@ class ConfirmRegistrationTest extends SpockTest {
         given: "a new password"
         externalUserDto.setPassword(USER_1_PASSWORD)
         and: "and an expired token generation date"
-        AuthUser authUser = authUserService.findAuthUserByUsername(USER_1_EMAIL)
+        AuthUser authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).get()
         authUser.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
 
         when:

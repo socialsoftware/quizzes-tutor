@@ -1,8 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

@@ -1,9 +1,13 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthDemoUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
@@ -24,13 +28,12 @@ class CreateAuthUserTest  extends SpockTest {
         given:
         authUser = AuthUser.createAuthUser(user, USER_1_USERNAME, USER_1_EMAIL, type)
         authUserRepository.save(authUser)
-        and: "the type"
-        def objType = createClassAutUser(type).getClass()
 
         when:
-        authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
+        def objType = createClassAutUser(type).getClass()
 
         then:
+        def authUser = authUserRepository.findAuthUserByUsername(USER_1_USERNAME).get()
         authUser.username == USER_1_USERNAME
         authUser.email == USER_1_EMAIL
         authUser.isActive().equals(active)

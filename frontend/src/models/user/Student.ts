@@ -1,6 +1,6 @@
 import User from '@/models/user/User';
 
-export class Student extends User{
+export class Student extends User {
   number!: number;
   numberOfTeacherQuizzes!: number;
   numberOfStudentQuizzes!: number;

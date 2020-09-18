@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ToggleStudentNotificationReadWebServiceIT extends SpockTest {

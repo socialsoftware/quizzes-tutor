@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -12,9 +12,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
@@ -43,14 +43,20 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setEmail(USER_1_EMAIL)
         externalUserDto.setRole(User.Role.STUDENT)
         and: "an already created user"
-        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        ((AuthExternalUser)user.authUser).setActive(true)
+        userRepository.save(user)
+        and: 'enrolled'
+        user.addCourse(externalCourseExecution)
 
         when:
-        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
-        then: "an exception is thrown"
-        def error = thrown(TutorException)
-        error.getErrorMessage() == ErrorMessage.DUPLICATE_USER
+        then: "the user exists"
+        def authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).orElse(null)
+        authUser != null
+        and: 'it is not enrolled twice'
+        externalCourseExecution.getUsers().contains(authUser.getUser())
         and: "no mail is sent"
         0 * mailerMock.sendSimpleMail(mailerUsername,_,_,_)
     }
@@ -64,7 +70,7 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        def result = userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
         then: "the user is saved in the database"
         userRepository.findAll().size() == previousNumberUser + 1
@@ -94,7 +100,7 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(User.Role.STUDENT)
 
         when:
-        def result = userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        def result = userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
         then:"the user is saved in the database"
         userRepository.count() == previousNumberUser + 1
@@ -122,7 +128,7 @@ class CreateExternalUserTest extends SpockTest {
         externalUserDto.setRole(role)
 
         when:
-        userServiceApplicational.createExternalUser(executionId, externalUserDto)
+        userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
         then:
         def error = thrown(TutorException)

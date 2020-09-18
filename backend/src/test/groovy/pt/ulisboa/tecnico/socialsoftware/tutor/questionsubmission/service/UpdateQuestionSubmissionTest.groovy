@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*

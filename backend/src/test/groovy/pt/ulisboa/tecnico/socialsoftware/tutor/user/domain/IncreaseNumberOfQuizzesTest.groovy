@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto

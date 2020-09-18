@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @DataJpaTest
 class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{

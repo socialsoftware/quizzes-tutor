@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user;
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.repository;
 
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;

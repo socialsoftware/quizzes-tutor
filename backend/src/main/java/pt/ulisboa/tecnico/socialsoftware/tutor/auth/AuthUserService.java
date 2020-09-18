@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
@@ -19,16 +20,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.AuthUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -66,7 +68,7 @@ public class AuthUserService {
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         AuthTecnicoUser authUser;
         try {
-            authUser = (AuthTecnicoUser) findAuthUserByUsername(username);
+            authUser = (AuthTecnicoUser) authUserRepository.findAuthUserByUsername(username).orElse(null);;
         } catch (ClassCastException e) {
             throw new TutorException(INVALID_AUTH_USERNAME, username);
         }
@@ -130,10 +132,13 @@ public class AuthUserService {
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto externalUserAuth(String email, String password) {
-        AuthUser authUser = findAuthUserByUsername(email);
-        if (authUser == null) {
+        Optional<AuthUser> optionalAuthUser = authUserRepository.findAuthUserByUsername(email);
+        if (optionalAuthUser.isEmpty()) {
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
         }
+
+        AuthUser authUser = optionalAuthUser.get();
+
         if (password == null ||
                 !passwordEncoder.matches(password, authUser.getPassword())) {
             throw new TutorException(INVALID_PASSWORD, password);
@@ -195,7 +200,7 @@ public class AuthUserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        AuthExternalUser authUser = (AuthExternalUser) findAuthUserByUsername(externalUserDto.getUsername());
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);
 
         if (authUser == null) {
             throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
@@ -243,7 +248,4 @@ public class AuthUserService {
         });
     }
 
-    public AuthUser findAuthUserByUsername(String username) {
-        return authUserRepository.findAuthUserByUsername(username).orElse(null);
-    }
 }

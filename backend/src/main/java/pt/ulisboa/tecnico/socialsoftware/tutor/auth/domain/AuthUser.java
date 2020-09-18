@@ -1,13 +1,13 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 import java.time.LocalDateTime
 

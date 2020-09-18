@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DeleteExternalInactiveUsersWebServiceIT extends SpockTest {

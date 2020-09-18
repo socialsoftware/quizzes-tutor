@@ -29,11 +29,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime

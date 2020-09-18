@@ -12,8 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.io.*;
 import java.nio.charset.Charset;

@@ -1,9 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -54,7 +54,8 @@
               v-on="on"
               @click="uploadUsersHandler(item)"
               data-cy="uploadUsersHandler"
-            >attach_file</v-icon>
+              >attach_file</v-icon
+            >
           </template>
           <span>Upload External Users</span>
         </v-tooltip>
@@ -91,11 +92,11 @@
               @click="deleteCourse(item)"
               color="red"
               data-cy="deleteCourse"
-              >delete</v-icon>
+              >delete</v-icon
+            >
           </template>
           <span>Delete Course</span>
         </v-tooltip>
-
       </template>
     </v-data-table>
 
@@ -140,7 +141,6 @@ import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
 import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
 import User from '../../../models/user/User';
-
 
 @Component({
   components: {
@@ -328,21 +328,27 @@ export default class CoursesView extends Vue {
     }
   }
 
-  hasCourseSemesterFinished(course: Course):boolean {
-    if(course.endDate) {
+  hasCourseSemesterFinished(course: Course): boolean {
+    if (course.endDate) {
       return new Date(course.endDate) < new Date();
-    } else if (course.academicTerm
-               && RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)) {
+    } else if (
+      course.academicTerm &&
+      RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)
+    ) {
       const termTokens = course.academicTerm.split(/º|\s|\//);
-      const month = termTokens[0] ===  "1" ? 3 : 9; // march : september
-      const year = termTokens[termTokens.length-1]
+      const month = termTokens[0] === '1' ? 3 : 9; // march : september
+      const year = termTokens[termTokens.length - 1];
       return new Date(`${year}-${month}-${1}`) < new Date();
     }
     return false;
   }
 
   async anonymizeCourse(courseToDelete: Course) {
-    if (confirm('Are you sure you want to anonymize this course execution\'s users?')) {
+    if (
+      confirm(
+        "Are you sure you want to anonymize this course execution's users?"
+      )
+    ) {
       try {
         await RemoteServices.anonymizeCourse(courseToDelete.courseExecutionId);
       } catch (error) {
@@ -369,15 +375,23 @@ export default class CoursesView extends Vue {
   async onDeleteUsers(users: User[]) {
     var course: Course;
     await this.$store.dispatch('loading');
-    if(!!this.currentCourse){
+    if (!!this.currentCourse) {
       try {
-        course = await RemoteServices.deleteExternalInactiveUsers(this.currentCourse, users.map(user => user.id));
-        let index: number = this.courses
-          .indexOf(this.courses
-            .filter(course => course.courseExecutionId == this.currentCourse.courseExecutionId)[0]);
+        course = await RemoteServices.deleteExternalInactiveUsers(
+          this.currentCourse,
+          users.map(user => user.id)
+        );
+        let index: number = this.courses.indexOf(
+          this.courses.filter(
+            course =>
+              course.courseExecutionId == this.currentCourse.courseExecutionId
+          )[0]
+        );
 
         this.currentCourse = course;
-        this.courses[index].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+        this.courses[
+          index
+        ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
         this.updateUserNumbers(this.courses[index]);
       } catch (error) {
         await this.$store.dispatch('error', error);

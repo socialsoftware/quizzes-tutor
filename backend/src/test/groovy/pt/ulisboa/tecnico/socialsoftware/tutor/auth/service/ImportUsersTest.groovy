@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -35,7 +35,7 @@ class ImportUsersTest extends SpockTest {
         InputStream csvFile = new FileInputStream(CSVFILE)
 
         when:
-        userServiceApplicational.importListOfUsers(csvFile, courseExecution.getId())
+        userServiceApplicational.registerListOfUsers(csvFile, courseExecution.getId())
 
         then:
         userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
@@ -50,7 +50,7 @@ class ImportUsersTest extends SpockTest {
         InputStream csvBadFormatFile = new FileInputStream(CSVBADFORMATFILE)
 
         when:
-        def result  = userServiceApplicational.importListOfUsers(csvBadFormatFile, courseExecution.getId())
+        def result  = userServiceApplicational.registerListOfUsers(csvBadFormatFile, courseExecution.getId())
 
         then:
         result.response.name == COURSE_1_NAME
@@ -73,7 +73,7 @@ class ImportUsersTest extends SpockTest {
         InputStream csvFile = new FileInputStream(CSVFILE)
 
         when:
-        userServiceApplicational.importListOfUsers(csvFile, executionId)
+        userServiceApplicational.registerListOfUsers(csvFile, executionId)
 
         then:
         def error = thrown(TutorException)
@@ -91,7 +91,7 @@ class ImportUsersTest extends SpockTest {
         InputStream csvImportUsersBadRoleFormat = new FileInputStream(CSVIMPORTUSERSBADROLEFORMAT)
 
         when:
-        def result = userServiceApplicational.importListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
+        def result = userServiceApplicational.registerListOfUsers(csvImportUsersBadRoleFormat, courseExecution.getId())
 
         then:
         result.response.name == COURSE_1_NAME

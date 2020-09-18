@@ -1,4 +1,3 @@
-
 import Course from '@/models/user/Course';
 
 interface CourseMap {

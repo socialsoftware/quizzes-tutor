@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 
 import javax.validation.Valid;
 import java.io.IOException;
@@ -23,13 +23,13 @@ public class UserController {
 
     @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
-    public ExternalUserDto createExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
-        return userServiceApplicational.createExternalUser(executionId,externalUserDto);
+    public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
+        return userServiceApplicational.registerExternalUser(executionId,externalUserDto);
     }
 
     @PostMapping("/courses/executions/{executionId}/csv")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public NotificationResponse<CourseDto> uploadCSVFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
-        return userService.importListOfUsersTransactional(file.getInputStream(), executionId);
+        return userService.registerListOfUsersTransactional(file.getInputStream(), executionId);
     }
 }

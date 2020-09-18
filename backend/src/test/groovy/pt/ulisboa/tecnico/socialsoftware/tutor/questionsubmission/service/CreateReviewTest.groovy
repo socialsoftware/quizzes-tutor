@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*

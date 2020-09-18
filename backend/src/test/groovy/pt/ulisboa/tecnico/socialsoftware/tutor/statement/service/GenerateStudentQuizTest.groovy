@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 import java.util.stream.Collectors
 

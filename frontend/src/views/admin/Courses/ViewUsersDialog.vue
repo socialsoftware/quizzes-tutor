@@ -63,7 +63,6 @@ import Course from '@/models/user/Course';
 import ExternalUser from '@/models/user/ExternalUser';
 import User from '@/models/user/User';
 
-
 @Component
 export default class ViewUsersDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
@@ -73,19 +72,19 @@ export default class ViewUsersDialog extends Vue {
   search: string = '';
   items: object = [];
   headers: object = [
-      { text: 'Username', value: 'username', align: 'left', width: '65%' },
-      {
+    { text: 'Username', value: 'username', align: 'left', width: '65%' },
+    {
       text: 'Role',
       value: 'role',
       align: 'left',
       width: '15%'
-      },
-      {
+    },
+    {
       text: 'Active',
       value: 'active',
       align: 'left',
       width: '15%'
-      },
+    }
   ];
 
   async created() {}

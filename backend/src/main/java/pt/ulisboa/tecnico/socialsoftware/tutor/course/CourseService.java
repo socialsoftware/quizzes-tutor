@@ -16,11 +16,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 
 import java.sql.SQLException;
 import java.util.*;

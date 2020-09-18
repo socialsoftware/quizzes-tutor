@@ -18,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmis
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
 
 @PropertySource({ "classpath:application.properties" })
 @EnableJpaRepositories

@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;

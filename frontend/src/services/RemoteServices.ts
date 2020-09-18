@@ -751,7 +751,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseExecutionQuestionSubmissions(): Promise<QuestionSubmission[]> {
+  static async getCourseExecutionQuestionSubmissions(): Promise<
+    QuestionSubmission[]
+  > {
     return httpClient
       .get(
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/execution`
@@ -781,7 +783,9 @@ export default class RemoteServices {
       });
   }
 
-  static async getAllStudentsSubmissionsInfo(): Promise<UserQuestionSubmissionInfo[]> {
+  static async getAllStudentsSubmissionsInfo(): Promise<
+    UserQuestionSubmissionInfo[]
+  > {
     return httpClient
       .get(
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/all`
