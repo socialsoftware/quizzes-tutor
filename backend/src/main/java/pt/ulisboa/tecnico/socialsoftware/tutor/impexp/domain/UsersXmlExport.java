@@ -50,9 +50,14 @@ public class UsersXmlExport {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
+		userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
+
+		userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+
 		if (user.getAuthUser() != null) {
 			exportAuthUsers(userElement, user.getAuthUser());
 		}
+
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);

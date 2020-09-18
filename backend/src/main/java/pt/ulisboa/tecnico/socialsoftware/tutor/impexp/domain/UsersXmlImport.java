@@ -80,10 +80,14 @@ public class UsersXmlImport {
 	private User importUser(Element userElement) {
 		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
 		String name = userElement.getAttributeValue("name");
+		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
+		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
 		User.Role role = getUserRole(userElement);
 
 		User user = userService.createUser(name, role);
 		user.setKey(key);
+		user.setAdmin(admin);
+		user.setCreationDate(creationDate);
 		return user;
 	}
 

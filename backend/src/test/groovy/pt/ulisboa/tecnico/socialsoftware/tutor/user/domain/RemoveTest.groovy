@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 
 @DataJpaTest
-class RemoveTest extends SpockTest{
+class RemoveTest extends SpockTest {
     def user
 
     def setup() {

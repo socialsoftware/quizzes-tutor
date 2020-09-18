@@ -452,15 +452,11 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (getAuthUser() != null) {
-            if (getAuthUser().isActive()) {
+        if (getAuthUser() != null && getAuthUser().isActive()) {
                 throw new TutorException(USER_IS_ACTIVE, getUsername());
-            }
-
-            courseExecutions.forEach(ce -> ce.getUsers().remove(this));
-            questionSubmissions.forEach(QuestionSubmission::remove);
-            getAuthUser().setUser(null);
-            setAuthUser(null);
         }
+
+        courseExecutions.forEach(ce -> ce.getUsers().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 }
