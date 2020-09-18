@@ -148,7 +148,6 @@ public class AuthUserService {
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
-
     @Retryable(
             value = { SQLException.class },
             maxAttempts = 2,

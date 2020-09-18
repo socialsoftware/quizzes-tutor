@@ -2,7 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.utils;
 
 public class LinkHandler {
 
-	private final static String BASE = "https://quizzes-tutor.tecnico.ulisboa.pt";
+//	private final static String BASE = "https://quizzes-tutor.tecnico.ulisboa.pt";
+	private final static String BASE = "http://localhost:8081";
 
 	private LinkHandler() {}
 

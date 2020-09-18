@@ -87,7 +87,7 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = username.toLowerCase();
     }
 
     public String getEmail() {

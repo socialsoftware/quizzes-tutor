@@ -47,7 +47,7 @@
           </template>
           <span>View Users</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
