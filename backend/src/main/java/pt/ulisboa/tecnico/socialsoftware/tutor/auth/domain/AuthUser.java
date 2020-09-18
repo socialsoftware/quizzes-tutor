@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -87,7 +88,7 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     }
 
     public void setUsername(String username) {
-        this.username = username.toLowerCase();
+        this.username = username != null ? username.toLowerCase() : null;
     }
 
     public String getEmail() {

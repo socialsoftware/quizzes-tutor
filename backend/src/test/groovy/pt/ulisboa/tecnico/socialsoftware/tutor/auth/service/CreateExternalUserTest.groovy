@@ -52,7 +52,9 @@ class CreateExternalUserTest extends SpockTest {
         when:
         userServiceApplicational.registerExternalUser(executionId, externalUserDto)
 
-        then: "the user exists"
+        then: "an exception"
+        thrown(TutorException)
+        and: 'a user in the database'
         def authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).orElse(null)
         authUser != null
         and: 'it is not enrolled twice'
@@ -118,7 +120,7 @@ class CreateExternalUserTest extends SpockTest {
     }
 
     @Unroll
-    def "invalid arguments: executionId=#executionId | executionType=#executionType | email=#email | role=#role"() {
+    def "invalid arguments: executionType=#executionType | email=#email | role=#role"() {
         given: "a course execution id"
         externalCourseExecution.setType(executionType)
         def executionId = externalCourseExecution.getId()

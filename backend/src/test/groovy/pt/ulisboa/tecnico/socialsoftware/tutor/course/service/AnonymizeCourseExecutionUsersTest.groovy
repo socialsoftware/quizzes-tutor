@@ -47,7 +47,7 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
         user.authUser == null
         authUserRepository.findById(authUserId).orElse(null) == null
         user.name == "Student " + user.id
-        user.getUsername() == "Student-" + user.id
+        user.getUsername() == "student-" + user.id
         answerItemsIds.equals(
                 questionAnswerItemRepository.findQuestionAnswerItemsByUsername(user.getUsername())
                 .stream().map({ answerItem -> answerItem.getId() })

@@ -226,6 +226,11 @@ public class UserService {
     public ExternalUserDto registerExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         AuthExternalUser authUser = getOrCreateUser(externalUserDto);
+
+        if (authUser.getUser().getCourseExecutions().contains(courseExecution)) {
+            throw new TutorException(DUPLICATE_USER, authUser.getEmail());
+        }
+
         authUser.getUser().addCourse(courseExecution);
         authUser.generateConfirmationToken();
         return new ExternalUserDto(authUser);

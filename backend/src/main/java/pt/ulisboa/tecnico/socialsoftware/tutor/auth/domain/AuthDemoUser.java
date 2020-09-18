@@ -20,6 +20,6 @@ public class AuthDemoUser extends AuthUser {
 
     @Override
     public boolean isDemoStudent() {
-        return getUsername().startsWith("Demo-Student-");
+        return getUsername().startsWith("demo-student-");
     }
 }
