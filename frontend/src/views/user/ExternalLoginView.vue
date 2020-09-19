@@ -8,7 +8,7 @@
 import { Component, Vue } from 'vue-property-decorator';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import ExternalUser from '@/models/user/ExternalUser';
-import RemoteServices from '../services/RemoteServices';
+import RemoteServices from '../../services/RemoteServices';
 
 @Component({
   components: { LoginCard }

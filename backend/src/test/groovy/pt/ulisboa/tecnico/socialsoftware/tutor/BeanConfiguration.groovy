@@ -1,18 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.PropertySource
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
@@ -40,7 +38,7 @@ class BeanConfiguration {
     private String username
 
     @Value('${spring.mail.password}')
-    private String passowrd
+    private String password
 
     @Value('${spring.mail.properties.mail.smtp.auth}')
     private String auth;
@@ -100,13 +98,13 @@ class BeanConfiguration {
     }
 
     @Bean
-    AuthService authService() {
-        return new AuthService()
+    AuthUserService authUserService() {
+        return new AuthUserService()
     }
 
     @Bean
-    AuthServiceApplicational authServiceApplicational() {
-        return new AuthServiceApplicational()
+    AuthUserServiceApplicational authUserServiceApplicational() {
+        return new AuthUserServiceApplicational()
     }
 
     @Bean
@@ -141,7 +139,7 @@ class BeanConfiguration {
         mailSender.setPort(port);
 
         mailSender.setUsername(username);
-        mailSender.setPassword(passowrd);
+        mailSender.setPassword(password);
 
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", Boolean.parseBoolean(protocol));

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -22,7 +22,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         restClient = new RESTClient("http://localhost:" + port)
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
-        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution1)
         demoAdminLogin()
     }
@@ -53,7 +53,8 @@ class CreateExternalUserWebServiceIT extends SpockTest {
         courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution1.getId())
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
-        userRepository.delete(userRepository.findById(response.data.id).get())
+        authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(response.data.key).get())
     }
 
     def cleanup() {

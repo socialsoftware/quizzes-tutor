@@ -2,9 +2,9 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Store from '@/store';
 
-import LoginView from '@/views/LoginView.vue';
-import ExternalLoginView from '@/views/ExternalLoginView.vue';
-import RegistrationConfirmationView from '@/views/RegistrationConfirmationView.vue';
+import LoginView from '@/views/user/LoginView.vue';
+import ExternalLoginView from '@/views/user/ExternalLoginView.vue';
+import RegistrationConfirmationView from '@/views/user/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';

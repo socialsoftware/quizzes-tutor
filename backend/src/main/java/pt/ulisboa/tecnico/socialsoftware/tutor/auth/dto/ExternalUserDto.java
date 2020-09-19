@@ -1,12 +1,14 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class ExternalUserDto implements Serializable {
+    private Integer key;
     private Integer id;
     private String name;
     private String username;
@@ -18,20 +20,40 @@ public class ExternalUserDto implements Serializable {
     private List<CourseDto> courseExecutions;
     private String confirmationToken;
 
-    public ExternalUserDto(){
-
-    }
+    public ExternalUserDto(){ }
 
     public ExternalUserDto(User user){
+        this.key = user.getKey();
         this.id = user.getId();
         this.name = user.getName();
         this.username = user.getUsername();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
+        this.email = user.getAuthUser().getEmail();
+        this.password = user.getAuthUser().getPassword();
         this.role = user.getRole();
-        this.active = user.isActive();
+        this.active = user.getAuthUser().isActive();
         this.isAdmin = user.isAdmin();
-        this.confirmationToken = user.getConfirmationToken();
+        this.confirmationToken = ((AuthExternalUser)user.getAuthUser()).getConfirmationToken();
+    }
+
+    public ExternalUserDto(AuthExternalUser authUser){
+        this.key = authUser.getUser().getKey();
+        this.id = authUser.getId();
+        this.name = authUser.getUser().getName();
+        this.username = authUser.getUsername();
+        this.email = authUser.getEmail();
+        this.password = authUser.getPassword();
+        this.role = authUser.getUser().getRole();
+        this.active = authUser.isActive();
+        this.isAdmin = authUser.getUser().isAdmin();
+        this.confirmationToken = authUser.getConfirmationToken();
+    }
+
+    public Integer getKey() {
+        return key;
+    }
+
+    public void setKey(Integer key) {
+        this.key = key;
     }
 
     public Integer getId() {

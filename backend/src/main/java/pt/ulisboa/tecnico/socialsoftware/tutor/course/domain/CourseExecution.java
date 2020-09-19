@@ -9,10 +9,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import java.util.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -35,6 +38,9 @@ public class CourseExecution implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column(name = "end_date")
+    private LocalDateTime endDate;
+
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
@@ -54,7 +60,7 @@ public class CourseExecution implements DomainEntity {
     public CourseExecution() {
     }
 
-    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type) {
+    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type, LocalDateTime endDate) {
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
@@ -64,6 +70,8 @@ public class CourseExecution implements DomainEntity {
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
         setStatus(Status.ACTIVE);
+        setEndDate(endDate);
+
     }
 
     @Override
@@ -113,6 +121,14 @@ public class CourseExecution implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public LocalDateTime getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+        this.endDate = endDate;
     }
 
     public Course getCourse() {
@@ -189,7 +205,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.TEACHER) &&
-                        user.isActive())
+                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -197,7 +213,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.TEACHER) &&
-                        !user.isActive())
+                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -205,7 +221,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.STUDENT) &&
-                        user.isActive())
+                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -213,7 +229,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.STUDENT) &&
-                        !user.isActive())
+                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -242,5 +258,11 @@ public class CourseExecution implements DomainEntity {
         return questions.stream()
                 .filter(question -> question.hasTopics(topicsIds))
                 .collect(Collectors.toList());
+    }
+
+    public Set<User> getTeachers() {
+        return getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .collect(Collectors.toSet());
     }
 }

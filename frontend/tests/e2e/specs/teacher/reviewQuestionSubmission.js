@@ -2,7 +2,7 @@ describe('Teacher walkthrough', () => {
   beforeEach(() => {
     cy.demoTeacherLogin();
     cy.log('student submits a question');
-    cy.addQuestionSubmission('Test', 'IN_REVIEW', 2);
+    cy.addQuestionSubmission('Test', 'IN_REVIEW');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="submissionTeacherMenuButton"]').click();
   });

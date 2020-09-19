@@ -8,7 +8,7 @@ import StudentStats from '@/models/statement/StudentStats';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import Topic from '@/models/management/Topic';
-import { Student } from '@/models/management/Student';
+import { Student } from '@/models/user/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
 import ExternalUser from '@/models/user/ExternalUser';
@@ -699,6 +699,14 @@ export default class RemoteServices {
   static async deleteCourse(courseExecutionId: number | undefined) {
     return httpClient
       .delete(`/executions/${courseExecutionId}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async anonymizeCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .get(`/executions/${courseExecutionId}/anonymize`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

@@ -52,7 +52,7 @@
             color="blue darken-1"
             @click="$emit('close-dialog')"
             data-cy="cancelButton"
-            >Cancel</v-btn
+            >Close</v-btn
           >
           <v-btn color="blue darken-1" @click="addUser" data-cy="saveButton"
             >Add</v-btn
