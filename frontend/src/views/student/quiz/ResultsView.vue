@@ -85,7 +85,7 @@ import RemoteServices from '@/services/RemoteServices';
 export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   questionOrder: number = 0;
-  discussion!: Discussion;
+  discussion: Discussion = new Discussion();
 
   async created() {
     if (this.statementManager.isEmpty()) {
@@ -160,12 +160,7 @@ export default class ResultsView extends Vue {
   }
 
   updateDiscussion() {
-    if (
-      this.statementManager.statementQuiz!.questions[this.questionOrder]
-        .hasUserDiscussion
-    ) {
-      this.discussion = new Discussion();
-    }
+    this.discussion = new Discussion();
   }
 
   updateMessage(discussionMessage: string) {

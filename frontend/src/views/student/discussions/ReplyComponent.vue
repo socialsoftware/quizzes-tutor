@@ -3,6 +3,7 @@
     <div class="discussion">
       <ul>
         <li
+          style="margin-bottom: 25px !important;"
           v-for="discussion in discussions"
           :key="discussion.message"
           @focus="setDiscussion(discussion)"
