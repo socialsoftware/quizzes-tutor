@@ -35,27 +35,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (activeProfile.equals("dev")) {
+        if (!activeProfile.equals("prod")) {
             http
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                .antMatchers( "/auth/**").permitAll()
-                .antMatchers( "/images/**").permitAll()
-                .antMatchers( "/swagger-ui.html").permitAll()
-                .antMatchers( "/favicon.ico").permitAll()
-                .antMatchers( "/webjars/*").permitAll()
-                .antMatchers( "/webjars/**").permitAll()
-                .antMatchers( "/swagger-resources/*").permitAll()
-                .antMatchers( "/swagger-resources/**").permitAll()
-                .antMatchers( "/v2/*").permitAll()
-                .antMatchers( "/v2/**").permitAll()
-                .antMatchers( "/csrf").permitAll()
-                .antMatchers( "/").permitAll()
-                .anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));
         } else {

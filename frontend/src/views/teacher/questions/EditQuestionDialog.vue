@@ -93,7 +93,7 @@ export default class EditQuestionDialog extends Vue {
   // };
 
   async saveQuestion() {
-    this.$refs.form.validate();
+    (this.$refs.form as Vue & { validate: () => boolean }).validate();
 
     try {
       const result =
