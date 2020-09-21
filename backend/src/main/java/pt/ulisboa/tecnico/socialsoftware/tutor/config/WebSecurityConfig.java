@@ -35,7 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        if (activeProfile.equals("dev")) {
+        if (!activeProfile.equals("prod")) {
             http
                 .httpBasic().disable()
                 .csrf().disable()
