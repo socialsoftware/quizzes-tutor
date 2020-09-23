@@ -6,16 +6,16 @@ import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ExternalUserAuthWebServiceIT extends SpockTest {
+class GetExternalUserAuthWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     User user
-
     Course course
     CourseExecution courseExecution
 
@@ -23,17 +23,18 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
         restClient = new RESTClient("http://localhost:" + port)
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
     }
 
-    def "user confirms registration"() {
+    def "external user makes a login"() {
         given: "one inactive user with an expired "
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, false)
-        user.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
-        courseExecution.addUser(user)
+        user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        user.setKey(userRepository.getMaxUserNumber()+1)
         userRepository.save(user)
+        courseExecution.addUser(user)
 
         when:
         def response = restClient.get(
@@ -45,16 +46,16 @@ class ExternalUserAuthWebServiceIT extends SpockTest {
                 requestContentType: 'application/json'
         )
 
-
         then: "check response status"
         response.status == 200
         response.data.token != ""
+        response.data.user.key != null
         response.data.user.username == USER_1_EMAIL
         
         cleanup:
-
-        courseExecution.getUsers().remove(userRepository.findByUsername(response.data.user.username).get())
-        userRepository.delete(userRepository.findByUsername(response.data.user.username).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(response.data.user.key).get())
+        authUserRepository.delete(userRepository.findByKey(response.data.user.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(response.data.user.key).get())
     }
 
     def cleanup() {

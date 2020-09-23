@@ -40,12 +40,49 @@
             <v-icon
               class="mr-2"
               v-on="on"
+              @click="viewCourseExecutionUsers(item)"
+              data-cy="viewUsersButton"
+              >fas fa-user</v-icon
+            >
+          </template>
+          <span>View Users</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="uploadUsersHandler(item)"
+              data-cy="uploadUsersHandler"
+              >attach_file</v-icon
+            >
+          </template>
+          <span>Upload External Users</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
               @click="addExternalUser(item)"
               data-cy="addExternalUser"
               >person_add</v-icon
             >
           </template>
           <span>Add Student/Teacher</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="anonymizeCourse(item)"
+              color="red"
+              data-cy="anonymizeCourse"
+              >lock</v-icon
+            >
+          </template>
+          <span>Anonymize Course's Users</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -59,30 +96,6 @@
             >
           </template>
           <span>Delete Course</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="isExternalCourse(item)">
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="viewCourseExecutionUsers(item)"
-              data-cy="viewUsersButton"
-              >fas fa-user</v-icon
-            >
-          </template>
-          <span>View Users</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2"
-              v-on="on"
-              @click="uploadUsersHandler(item)"
-              data-cy="uploadUsersHandler"
-              >attach_file</v-icon
-            >
-          </template>
-          <span>Upload External Users</span>
         </v-tooltip>
       </template>
     </v-data-table>
@@ -127,6 +140,7 @@ import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
 import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
 import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
 import ExternalUser from '../../../models/user/ExternalUser';
+import User from '../../../models/user/User';
 
 @Component({
   components: {
@@ -314,6 +328,35 @@ export default class CoursesView extends Vue {
     }
   }
 
+  hasCourseSemesterFinished(course: Course): boolean {
+    if (course.endDate) {
+      return new Date(course.endDate) < new Date();
+    } else if (
+      course.academicTerm &&
+      RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)
+    ) {
+      const termTokens = course.academicTerm.split(/º|\s|\//);
+      const month = termTokens[0] === '1' ? 3 : 9; // march : september
+      const year = termTokens[termTokens.length - 1];
+      return new Date(`${year}-${month}-${1}`) < new Date();
+    }
+    return false;
+  }
+
+  async anonymizeCourse(courseToDelete: Course) {
+    if (
+      confirm(
+        "Are you sure you want to anonymize this course execution's users?"
+      )
+    ) {
+      try {
+        await RemoteServices.anonymizeCourse(courseToDelete.courseExecutionId);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
   uploadUsersHandler(course: Course) {
     this.uploadUsersCourse = course;
     this.uploadUsersDialog = true;
@@ -329,7 +372,7 @@ export default class CoursesView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async onDeleteUsers(users: ExternalUser[]) {
+  async onDeleteUsers(users: User[]) {
     var course: Course;
     await this.$store.dispatch('loading');
     if (!!this.currentCourse) {
@@ -341,7 +384,7 @@ export default class CoursesView extends Vue {
         let index: number = this.courses.indexOf(
           this.courses.filter(
             course =>
-              course.courseExecutionId == this.currentCourse?.courseExecutionId
+              course.courseExecutionId == this.currentCourse.courseExecutionId
           )[0]
         );
 

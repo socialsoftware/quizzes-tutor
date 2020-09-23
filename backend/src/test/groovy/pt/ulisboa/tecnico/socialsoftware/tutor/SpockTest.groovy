@@ -7,8 +7,8 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
@@ -27,14 +27,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.Que
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -52,9 +54,9 @@ class SpockTest extends Specification {
     public static final String DEMO_TEACHER_NAME = "Demo Teacher"
     public static final String DEMO_ADMIN_NAME = "Demo Admin"
 
-    public static final String USER_1_USERNAME = "User 1 Username"
-    public static final String USER_2_USERNAME = "User 2 Username"
-    public static final String USER_3_USERNAME = "User 3 Username"
+    public static final String USER_1_USERNAME = "a@a.a"
+    public static final String USER_2_USERNAME = "a@a.b"
+    public static final String USER_3_USERNAME = "user3username"
     public static final String USER_1_EMAIL = "user1@mail.com"
     public static final String USER_2_EMAIL = "user2@mail.com"
     public static final String USER_3_EMAIL = "user3@mail.com"
@@ -122,10 +124,10 @@ class SpockTest extends Specification {
     public static final String DISCUSSION_REPLY = "Discussion Reply"
 
     @Autowired
-    AuthService authService
+    AuthUserService authUserService
 
     @Autowired
-    AuthServiceApplicational authServiceApplicational
+    AuthUserServiceApplicational authUserServiceApplicational
 
     @Autowired
     AnswerService answerService
@@ -153,6 +155,9 @@ class SpockTest extends Specification {
 
     @Autowired
     QuestionAnswerRepository questionAnswerRepository
+
+    @Autowired
+    QuestionAnswerItemRepository questionAnswerItemRepository
 
     @Autowired
     QuestionRepository questionRepository
@@ -194,6 +199,9 @@ class SpockTest extends Specification {
     UserService userService
 
     @Autowired
+    AuthUserRepository authUserRepository
+
+    @Autowired
     QuestionSubmissionService questionSubmissionService
 
     @Autowired
@@ -230,7 +238,7 @@ class SpockTest extends Specification {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
 
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(externalCourseExecution)
     }
 

@@ -1,4 +1,4 @@
-import ExternalUser from './ExternalUser';
+import User from './User';
 
 export default class Course {
   academicTerm: string | undefined;
@@ -8,6 +8,7 @@ export default class Course {
   courseId: number | undefined;
   courseType: string = 'EXTERNAL';
   name: string | undefined;
+  endDate: string | undefined;
   numberOfQuestions: number | undefined;
   numberOfQuizzes: number | undefined;
   numberOfActiveStudents: number | undefined;
@@ -15,7 +16,7 @@ export default class Course {
   numberOfActiveTeachers: number | undefined;
   numberOfInactiveTeachers: number | undefined;
   status: string | undefined;
-  courseExecutionUsers: ExternalUser[] | undefined;
+  courseExecutionUsers: User[] | undefined;
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
@@ -26,6 +27,7 @@ export default class Course {
       this.courseId = jsonObj.courseId;
       this.courseType = jsonObj.courseType;
       this.name = jsonObj.name;
+      this.endDate = jsonObj.endDate;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfQuizzes = jsonObj.numberOfQuizzes;
       this.numberOfActiveStudents = jsonObj.numberOfActiveStudents;
@@ -35,7 +37,7 @@ export default class Course {
       this.status = jsonObj.status;
       if (jsonObj.courseExecutionUsers) {
         this.courseExecutionUsers = jsonObj.courseExecutionUsers.map(
-          (externalUser: ExternalUser) => new ExternalUser(externalUser)
+          (externalUser: User) => new User(externalUser)
         );
       }
     }

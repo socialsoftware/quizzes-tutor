@@ -1,9 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user;
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
@@ -25,12 +23,8 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(name = "users",
-        indexes = {
-                @Index(name = "users_indx_0", columnList = "username")
-        })
-public class User implements UserDetails, DomainEntity {
-
+@Table(name = "users")
+public class User implements DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
@@ -43,21 +37,7 @@ public class User implements UserDetails, DomainEntity {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    private boolean active;
-    
-    @Column(unique=true)
-    private String username;
-
     private String name;
-
-    @Column(columnDefinition = "TEXT")
-    private String enrolledCoursesAcronyms;
-    private String password;
-
-    private String confirmationToken = "";
-    private LocalDateTime tokenGenerationDate;
-
-    private String email;
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
@@ -86,8 +66,8 @@ public class User implements UserDetails, DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Column(name = "last_access")
-    private LocalDateTime lastAccess;
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval=true)
+    public AuthUser authUser;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
@@ -104,16 +84,19 @@ public class User implements UserDetails, DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, String email, User.Role role, boolean isActive, boolean isAdmin){
+    public User(String name, String username, String email, Role role, boolean isAdmin, AuthUser.Type type){
         setName(name);
-        setUsername(username);
         setRole(role);
-        checkRole(role, isActive);
-        setEmail(email);
-        setActive(isActive);
+        setAdmin(isAdmin);
+        setAuthUser(AuthUser.createAuthUser(this, username, email, type));
+        setCreationDate(DateHandler.now());
+    }
+
+    public User(String name, User.Role role, boolean isAdmin){
+        setName(name);
+        setRole(role);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
-
     }
 
     @Override
@@ -167,13 +150,12 @@ public class User implements UserDetails, DomainEntity {
         this.quizAnswers = quizAnswers;
     }
 
-    @Override
     public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+        if (authUser == null) {
+            String role = getRole().toString().toLowerCase();
+            return String.format("%s-%s", role, getId());
+        }
+        return authUser.getUsername();
     }
 
     public String getName() {
@@ -192,14 +174,6 @@ public class User implements UserDetails, DomainEntity {
         this.admin = admin;
     }
 
-    public String getEnrolledCoursesAcronyms() {
-        return enrolledCoursesAcronyms;
-    }
-
-    public void setEnrolledCoursesAcronyms(String enrolledCoursesAcronyms) {
-        this.enrolledCoursesAcronyms = enrolledCoursesAcronyms;
-    }
-
     public Role getRole() {
         return role;
     }
@@ -215,25 +189,12 @@ public class User implements UserDetails, DomainEntity {
         this.role = role;
     }
 
-    public void checkRole(Role role, boolean isActive) {
-        if (!isActive && (!(role.equals(User.Role.STUDENT) || role.equals(User.Role.TEACHER))))
-            throw new TutorException(INVALID_ROLE, role.toString());
-    }
-
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
-    }
-
-    public LocalDateTime getLastAccess() {
-        return lastAccess;
-    }
-
-    public void setLastAccess(LocalDateTime lastAccess) {
-        this.lastAccess = lastAccess;
     }
 
     public Set<QuizAnswer> getQuizAnswers() {
@@ -252,55 +213,16 @@ public class User implements UserDetails, DomainEntity {
         this.questionSubmissions = questionSubmissions; 
     }
     
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public String getEmail() {
-        return email;
+        return authUser.getEmail();
     }
 
-    public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
-            throw new TutorException(INVALID_EMAIL, email);
-
-        this.email = email;
+    public AuthUser getAuthUser() {
+        return authUser;
     }
 
-    public LocalDateTime getTokenGenerationDate() {
-        return tokenGenerationDate;
-    }
-
-    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
-        this.tokenGenerationDate = tokenGenerationDate;
-    }
-
-    public void setConfirmationToken(String confirmationToken) {
-        this.confirmationToken = confirmationToken;
-    }
-
-    public String getConfirmationToken() {
-        return confirmationToken;
-    }
-
-    public void checkConfirmationToken(String token) {
-        if (!token.equals(getConfirmationToken()))
-            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
-            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
+    public void setAuthUser(AuthUser authUser) {
+        this.authUser = authUser;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -467,15 +389,8 @@ public class User implements UserDetails, DomainEntity {
                 "id=" + id +
                 ", key=" + key +
                 ", role=" + role +
-                ", active=" + active +
-                ", username='" + username + '\'' +
+                ", username='" + getUsername() + '\'' +
                 ", name='" + name + '\'' +
-                ", enrolledCoursesAcronyms='" + enrolledCoursesAcronyms + '\'' +
-                ", password='" + password + '\'' +
-                ", confirmationToken='" + confirmationToken + '\'' +
-                ", tokenGenerationDate=" + tokenGenerationDate +
-                ", email='" + email + '\'' +
-                ", admin=" + admin +
                 ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
                 ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
                 ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
@@ -485,15 +400,8 @@ public class User implements UserDetails, DomainEntity {
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", numAnsweredDiscussions=" + numAnsweredDiscussions +
-                ", discussions=" + discussions +
-                ", replies=" + replies +
                 ", creationDate=" + creationDate +
-                ", lastAccess=" + lastAccess +
-                ", quizAnswers=" + quizAnswers +
-                ", questionSubmissions=" + questionSubmissions +
-                ", reviews=" + reviews +
-                ", courseExecutions=" + courseExecutions +
+                ", lastAccess=" + authUser.getLastAccess() +
                 '}';
     }
 
@@ -566,38 +474,6 @@ public class User implements UserDetails, DomainEntity {
 
     public boolean isTeacher() { return this.role == User.Role.TEACHER; }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        List<GrantedAuthority> list = new ArrayList<>();
-
-        list.add(new SimpleGrantedAuthority("ROLE_" + role));
-
-        if (isAdmin())
-            list.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-
-        return list;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
     public List<Question> filterQuestionsByStudentModel(Integer numberOfQuestions, List<Question> availableQuestions) {
         List<Question> studentAnsweredQuestions = getQuizAnswers().stream()
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
@@ -647,8 +523,8 @@ public class User implements UserDetails, DomainEntity {
     }
 
     public void remove() {
-        if (active) {
-            throw new TutorException(USER_IS_ACTIVE, getUsername());
+        if (getAuthUser() != null && getAuthUser().isActive()) {
+                throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
@@ -656,5 +532,4 @@ public class User implements UserDetails, DomainEntity {
         discussions.forEach(Discussion::remove);
         replies.forEach(Reply::remove);
     }
-
 }

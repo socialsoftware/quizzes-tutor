@@ -7,7 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 public interface Visitor {
     default void visitQuestion(Question question) {}
@@ -21,6 +22,8 @@ public interface Visitor {
     default void visitQuizQuestion(QuizQuestion quizQuestion) {}
 
     default void visitUser(User user) {}
+
+    default void visitAuthUser(AuthUser authUser) {}
 
     default void visitQuizAnswer(QuizAnswer quizAnswer) {}
 
