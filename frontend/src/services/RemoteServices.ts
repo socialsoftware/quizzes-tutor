@@ -536,7 +536,7 @@ export default class RemoteServices {
     courseExecutionId: number
   ): Promise<ExternalUser[]> {
     return httpClient
-      .get('/executions/' + courseExecutionId + '/users/external')
+      .get(`/executions/${courseExecutionId}/users/external`)
       .then(response => {
         return response.data.map((user: any) => {
           return new ExternalUser(user);
@@ -553,7 +553,7 @@ export default class RemoteServices {
   ): Promise<Course> {
     return httpClient
       .post(
-        '/executions/' + courseExecution.courseExecutionId + '/users/delete/',
+        `/executions/${courseExecution.courseExecutionId}/users/delete/`,
         userIdList
       )
       .then(response => {

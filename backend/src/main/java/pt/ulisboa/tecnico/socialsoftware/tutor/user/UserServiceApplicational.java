@@ -3,14 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
-import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
+import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
 
 import java.io.InputStream;
@@ -21,23 +19,20 @@ public class UserServiceApplicational {
     private UserService userService;
 
     @Autowired
-    private AuthUserService authUserService;
-
-    @Autowired
     private Mailer mailer;
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
     private AuthUserRepository authUserRepository;
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     @Value("${spring.mail.username}")
     private String mailUsername;
 
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
-        if (!user.isActive()) {
+        if (!user.isActive() && !activeProfile.equals("dev")) {
             sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
 

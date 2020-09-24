@@ -24,21 +24,18 @@ Cypress.Commands.add('cleanTestTopics', () => {
     `);
 });
 
-Cypress.Commands.add(
-  'addQuestionSubmission',
-  (title, submissionStatus) => {
-    dbCommand(`WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES ('${title}', 'Question?', 'SUBMITTED', 1, current_timestamp) RETURNING id)
+Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
+  dbCommand(`WITH quest AS (INSERT INTO questions (title, content, status, course_id, creation_date) VALUES ('${title}', 'Question?', 'SUBMITTED', 1, current_timestamp) RETURNING id)
     INSERT INTO question_submissions (status, question_id, submitter_id, course_execution_id) VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), 1);`);
 
-    //add options
-    for (let content in [0, 1, 2, 3]) {
-      let correct = content === '0' ? 't' : 'f';
-      dbCommand(
-        `WITH quest AS (SELECT * FROM questions WHERE title='${title}') INSERT INTO options(content, correct, question_id, sequence) VALUES ('${content}', '${correct}', (SELECT id FROM quest), ${content});`
-      );
-    }
+  //add options
+  for (let content in [0, 1, 2, 3]) {
+    let correct = content === '0' ? 't' : 'f';
+    dbCommand(
+      `WITH quest AS (SELECT * FROM questions WHERE title='${title}') INSERT INTO options(content, correct, question_id, sequence) VALUES ('${content}', '${correct}', (SELECT id FROM quest), ${content});`
+    );
   }
-);
+});
 
 Cypress.Commands.add('removeQuestionSubmission', (hasReviews = false) => {
   if (hasReviews) {
