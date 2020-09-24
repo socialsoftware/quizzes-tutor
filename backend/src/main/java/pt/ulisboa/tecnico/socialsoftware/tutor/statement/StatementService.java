@@ -163,10 +163,8 @@ public class StatementService {
         LocalDateTime now = DateHandler.now();
         Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId, now);
 
-        Stream<Quiz> availableQuizzes = quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
-                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()));
-
-        return Stream.concat(availableQuizzes, quizAnswerRepository.findOpenQRCodeQuizzes(userId, executionId))
+        return quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
+                .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
