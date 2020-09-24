@@ -361,6 +361,13 @@
             <v-list-item-title>Scan</v-list-item-title>
           </v-list-item>
 
+          <v-list-item to="/student/code">
+            <v-list-item-action>
+              <v-icon>fas fa-terminal</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>Code</v-list-item-content>
+          </v-list-item>
+
           <v-list-item to="/student/solved">
             <v-list-item-action>
               <v-icon>done</v-icon>
