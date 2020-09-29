@@ -48,7 +48,7 @@
               <template v-slot:activator="{ on }">
                 <v-icon
                   v-if="hasUnreadReviews(item)"
-                  class="unread-icon"
+                  class="unread-icon action-button"
                   v-on="on"
                   @click="showQuestionSubmissionDialog(item)"
                   data-cy="ViewSubmission"
@@ -56,7 +56,7 @@
                   >fa-comment-dots</v-icon
                 ><v-icon
                   v-else
-                  class="mr-2"
+                  class="mr-2 action-button"
                   v-on="on"
                   @click="showQuestionSubmissionDialog(item)"
                   data-cy="ViewSubmission"
@@ -71,7 +71,10 @@
             >
               <template v-slot:activator="{ on }">
                 <v-icon
-                  v-bind:class="{ 'unread-icon': hasUnreadReviews(item) }"
+                  :class="[
+                    'action-button',
+                    { 'unread-icon': hasUnreadReviews(item) }
+                  ]"
                   v-on="on"
                   @click="editQuestionSubmission(item)"
                   data-cy="EditSubmission"
@@ -87,7 +90,10 @@
             >
               <template v-slot:activator="{ on }">
                 <v-icon
-                  v-bind:class="{ 'unread-icon': hasUnreadReviews(item) }"
+                  v-bind:class="[
+                    'action-button',
+                    { 'unread-icon': hasUnreadReviews(item) }
+                  ]"
                   v-on="on"
                   color="red"
                   @click="deleteQuestionSubmission(item)"
@@ -140,8 +146,8 @@
       v-on:close-show-question-dialog="onCloseShowQuestionSubmissionDialog"
     />
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on question's title to view
-      submitted question and submission status.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on question's
+      title to view submitted question and submission status.
     </footer>
   </v-card>
 </template>

@@ -26,25 +26,56 @@
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down" hide-details>
-        <v-menu offset-y v-if="isAdmin" open-on-hover>
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark data-cy="administrationMenuButton">
-              Administration
+            <v-btn v-on="on" text dark>
+              Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/admin/courses" data-cy="manageCoursesMenuButton">
+            <v-list-item to="/student/available">
               <v-list-item-action>
-                <v-icon>fas fa-school</v-icon>
+                <v-icon>assignment</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Manage Courses</v-list-item-title>
+                <v-list-item-title>Available</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/create">
+              <v-list-item-action>
+                <v-icon>create</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Create</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/scan">
+              <v-list-item-action>
+                <v-icon>fas fa-qrcode</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Scan</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/code">
+              <v-list-item-action>
+                <v-icon>fas fa-terminal</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Code</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/solved">
+              <v-list-item-action>
+                <v-icon>done</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Solved</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
-
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark data-cy="managementMenuButton">
@@ -117,58 +148,9 @@
             </v-list-item>
           </v-list>
         </v-menu>
+      </v-toolbar-items>
 
-        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
-              Quizzes
-              <v-icon>fas fa-file-alt</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item to="/student/available">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Available</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/create">
-              <v-list-item-action>
-                <v-icon>create</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Create</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/scan">
-              <v-list-item-action>
-                <v-icon>fas fa-qrcode</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Scan</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/code">
-              <v-list-item-action>
-                <v-icon>fas fa-terminal</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Code</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/solved">
-              <v-list-item-action>
-                <v-icon>done</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Solved</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-
+      <v-toolbar-items class="hidden-sm-and-down" hide-details>
         <v-btn
           to="/student/submissions"
           v-if="isStudent && currentCourse"
@@ -184,6 +166,25 @@
           Stats
           <v-icon>fas fa-user</v-icon>
         </v-btn>
+
+        <v-menu offset-y v-if="isAdmin" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark data-cy="administrationMenuButton">
+              Administration
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/admin/courses" data-cy="manageCoursesMenuButton">
+              <v-list-item-action>
+                <v-icon>fas fa-school</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Courses</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
 
         <v-btn
           v-if="isLoggedIn && moreThanOneCourse"
