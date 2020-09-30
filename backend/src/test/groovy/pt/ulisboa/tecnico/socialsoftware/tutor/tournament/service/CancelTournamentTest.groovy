@@ -25,7 +25,7 @@ class CancelTournamentTest extends TournamentTest {
         def tournamentDto = createTournament(user1, STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
-        tournamentService.cancelTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.cancelTournament(tournamentDto.getId())
 
         then:
         tournamentRepository.count() == 1L
@@ -38,7 +38,7 @@ class CancelTournamentTest extends TournamentTest {
         def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
-        tournamentService.cancelTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.cancelTournament(tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -51,7 +51,7 @@ class CancelTournamentTest extends TournamentTest {
         def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
 
         when:
-        tournamentService.cancelTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.cancelTournament(tournamentDto.getId())
 
         then:
         tournamentRepository.count() == 1L
@@ -70,30 +70,12 @@ class CancelTournamentTest extends TournamentTest {
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 
         when:
-        tournamentService.cancelTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.cancelTournament(tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == TOURNAMENT_IS_OPEN
         tournamentRepository.count() == 1L
-    }
-
-    def "user that did not created tournament cancels it"() {
-        given:
-        def tournamentDto = createTournament(user1, STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
-        and: "a new user"
-        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
-
-        when:
-        tournamentService.cancelTournament(user2.getId(), tournamentDto.getId())
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        and:
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        !result.isCanceled()
     }
 
     @TestConfiguration

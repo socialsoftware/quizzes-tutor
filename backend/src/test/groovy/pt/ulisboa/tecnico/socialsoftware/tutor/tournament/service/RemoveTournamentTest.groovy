@@ -34,7 +34,7 @@ class RemoveTournamentTest extends TournamentTest {
         tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.removeTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.removeTournament(tournamentDto.getId())
 
         then:
         tournamentRepository.count() == 0L
@@ -46,7 +46,7 @@ class RemoveTournamentTest extends TournamentTest {
         tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.removeTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.removeTournament(tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
@@ -61,7 +61,7 @@ class RemoveTournamentTest extends TournamentTest {
         tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.removeTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.removeTournament(tournamentDto.getId())
 
         then:
         tournamentRepository.count() == 0L
@@ -79,28 +79,11 @@ class RemoveTournamentTest extends TournamentTest {
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 
         when:
-        tournamentService.removeTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.removeTournament(tournamentDto.getId())
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == TOURNAMENT_IS_OPEN
-        tournamentRepository.count() == 1L
-    }
-
-    def "user that did not created tournament removes it"() {
-        given: "a tournament"
-        tournamentDto.setStartTime(STRING_DATE_TOMORROW)
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "a new user"
-        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
-
-        when:
-        tournamentService.removeTournament(user2.getId(), tournamentDto.getId())
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        and:
         tournamentRepository.count() == 1L
     }
 

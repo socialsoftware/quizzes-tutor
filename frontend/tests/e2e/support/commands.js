@@ -120,14 +120,20 @@ Cypress.Commands.add('time', (date, day, type) => {
 
   cy.get('label')
     .contains(date)
-    .click({force: true});
+    .click({ force: true });
 
-  cy.get(get + ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path')
-    .click({force: true});
+  cy.get(
+    get +
+      ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
+  ).click({ force: true });
 
   cy.wait(500);
-  cy.get(get + ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' + day + ') > .datepicker-day-text')
-    .click({force: true});
+  cy.get(
+    get +
+      ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
+      day +
+      ') > .datepicker-day-text'
+  ).click({ force: true });
 });
 
 Cypress.Commands.add('selectTopic', topic => {
@@ -145,7 +151,7 @@ Cypress.Commands.add('selectTopic', topic => {
 });
 
 Cypress.Commands.add('joinTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "JoinTournament");
+  cy.selectTournamentWithAction(tournament, 'JoinTournament');
 });
 
 Cypress.Commands.add('joinPrivateTournament', tournament => {
@@ -155,15 +161,15 @@ Cypress.Commands.add('joinPrivateTournament', tournament => {
 });
 
 Cypress.Commands.add('solveTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "SolveQuiz");
+  cy.selectTournamentWithAction(tournament, 'SolveQuiz');
 });
 
 Cypress.Commands.add('leaveTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "LeaveTournament");
+  cy.selectTournamentWithAction(tournament, 'LeaveTournament');
 });
 
 Cypress.Commands.add('editTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "EditTournament");
+  cy.selectTournamentWithAction(tournament, 'EditTournament');
 
   cy.time('End Time', 24, 1);
   cy.get('[data-cy="NumberOfQuestions"]')
@@ -178,16 +184,17 @@ Cypress.Commands.add('editTournament', tournament => {
 });
 
 Cypress.Commands.add('cancelTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "CancelTournament");
+  cy.selectTournamentWithAction(tournament, 'CancelTournament');
 });
 
 Cypress.Commands.add('removeTournament', tournament => {
-  cy.selectTournamentWithAction(tournament, "RemoveTournament");
+  cy.selectTournamentWithAction(tournament, 'RemoveTournament');
 });
 
 Cypress.Commands.add('selectTournamentWithAction', (tournament, action) => {
-  cy.get(`:nth-child(${tournament}) > :nth-child(1) > [data-cy="${action}"]`)
-    .click({ force: true });
+  cy.get(
+    `:nth-child(${tournament}) > :nth-child(1) > [data-cy="${action}"]`
+  ).click({ force: true });
 });
 
 Cypress.Commands.add(

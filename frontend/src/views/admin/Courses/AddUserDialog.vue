@@ -75,7 +75,7 @@ export default class AddUserDialog extends Vue {
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
   roles = ['TEACHER', 'STUDENT'];
-  user!: ExternalUser;
+  user: ExternalUser = new ExternalUser();
   valid = true;
   success = false;
 

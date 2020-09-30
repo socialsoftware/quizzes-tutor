@@ -379,12 +379,12 @@ export default class CoursesView extends Vue {
       try {
         course = await RemoteServices.deleteExternalInactiveUsers(
           this.currentCourse,
-          users.map(user => user.id)
+          users.flatMap(user => (user.id ? [user.id] : []))
         );
         let index: number = this.courses.indexOf(
           this.courses.filter(
             course =>
-              course.courseExecutionId == this.currentCourse.courseExecutionId
+              course.courseExecutionId == this.currentCourse?.courseExecutionId
           )[0]
         );
 

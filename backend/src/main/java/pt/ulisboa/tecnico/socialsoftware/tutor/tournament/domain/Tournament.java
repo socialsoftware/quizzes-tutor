@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
@@ -36,7 +37,7 @@ public class Tournament  {
     @Column(name = "is_canceled")
     private boolean isCanceled;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private Set<User> participants = new HashSet<>();
 
     @ManyToOne
@@ -46,8 +47,9 @@ public class Tournament  {
     @ManyToMany(fetch = FetchType.EAGER)
     private Set<Topic> topics = new HashSet<>();
 
-    @Column(name = "quizID")
-    private Integer quizId;
+    @OneToOne
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
     @Column(name = "privateTournament")
     private boolean privateTournament;
@@ -118,15 +120,19 @@ public class Tournament  {
         this.isCanceled = true;
     }
 
+    public Quiz getQuiz() {
+        return quiz;
+    }
+
+    public void setQuiz(Quiz quiz) {
+        this.quiz = quiz;
+    }
+
     public Set<User> getParticipants() { return participants; }
 
     public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
 
     public CourseExecution getCourseExecution() { return courseExecution; }
-
-    public Integer getQuizId() { return quizId; }
-
-    public void setQuizId(Integer quizId) { this.quizId = quizId; }
 
     public Set<Topic> getTopics() { return topics; }
 
@@ -152,6 +158,10 @@ public class Tournament  {
         if (topic.getCourse() != courseExecution.getCourse()) {
             throw new TutorException(TOURNAMENT_TOPIC_COURSE);
         }
+    }
+
+    public boolean isParticipant(User user) {
+        return getParticipants().contains(user);
     }
 
     public void checkIsParticipant(User user) {
@@ -191,7 +201,7 @@ public class Tournament  {
         user.removeTournament(this);
     }
 
-    public boolean hasQuiz() { return this.getQuizId() != null; }
+    public boolean hasQuiz() { return getQuiz() != null; }
 
     public void remove(Integer numberOfAnswers) {
         checkCanChange(numberOfAnswers);

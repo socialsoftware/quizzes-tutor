@@ -110,10 +110,12 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                         return userHasThisExecution(userId, courseExecutionId);
                     }
                     return false;
+                case "TOURNAMENT.PARTICIPANT":
+                        return userParticipatesInTournament(userId,id);
                 case "TOURNAMENT.OWNER":
                     Tournament tournament = tournamentRepository.findById(id).orElse(null);
-                     if (tournament != null) {
-                         return tournament.isCreator(user);
+                    if (tournament != null) {
+                        return tournament.isCreator(user);
                     }
                     return false;
                 case "SUBMISSION.ACCESS":
@@ -136,6 +138,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     private boolean userHasThisExecution(int userId, int courseExecutionId) {
         return userRepository.countUserCourseExecutionsPairById(userId, courseExecutionId) == 1;
+    }
+
+    private boolean userParticipatesInTournament(int userId, int tournamentId) {
+        return userRepository.countUserTournamentPairById(userId, tournamentId) == 1;
     }
 
     @Override

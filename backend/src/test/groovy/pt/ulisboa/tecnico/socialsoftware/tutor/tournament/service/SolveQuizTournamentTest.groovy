@@ -49,15 +49,6 @@ class SolveQuizTournamentTest extends TournamentTest {
         result2 != null
     }
 
-    def "Non participant student tries to solve tournament" () {
-        when:
-        def result = tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
-
-        then:
-        def error = thrown(TutorException)
-        error.errorMessage == USER_NOT_JOINED
-    }
-
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }

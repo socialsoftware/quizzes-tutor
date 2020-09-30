@@ -31,25 +31,19 @@ public class TournamentController {
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getTournamentsForCourseExecution(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
+    public List<TournamentDto> getTournamentsForCourseExecution(@PathVariable int executionId) {
         return tournamentService.getTournamentsForCourseExecution(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getOpenTournaments")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getOpenedTournamentsForCourseExecution(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
+    public List<TournamentDto> getOpenedTournamentsForCourseExecution(@PathVariable int executionId) {
         return tournamentService.getOpenedTournamentsForCourseExecution(executionId);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getClosedTournaments")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getClosedTournamentsForCourseExecution(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
+    public List<TournamentDto> getClosedTournamentsForCourseExecution(@PathVariable int executionId) {
         return tournamentService.getClosedTournamentsForCourseExecution(executionId);
     }
 
@@ -70,7 +64,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")
     public StatementQuizDto solveQuiz(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -78,7 +72,7 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/{executionId}/leaveTournament/{tournamentId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")
     public void leaveTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
@@ -87,26 +81,20 @@ public class TournamentController {
 
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')")
-    public void updateTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        tournamentService.updateTournament(user.getId(), topicsId, tournamentDto);
+    public void updateTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
+        tournamentService.updateTournament(topicsId, tournamentDto);
     }
 
     @PutMapping(value = "/tournaments/{executionId}/cancelTournament/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.OWNER')")
-    public void cancelTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        tournamentService.cancelTournament(user.getId(), tournamentId);
+    public void cancelTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
+        tournamentService.cancelTournament(tournamentId);
     }
 
     @DeleteMapping(value = "/tournaments/{executionId}/removeTournament/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.OWNER')")
-    public void removeTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        tournamentService.removeTournament(user.getId(), tournamentId);
+    public void removeTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
+        tournamentService.removeTournament(tournamentId);
     }
 
     private void formatDates(TournamentDto tournamentDto) {

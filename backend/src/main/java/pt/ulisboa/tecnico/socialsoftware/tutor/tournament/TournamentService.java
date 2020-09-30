@@ -122,15 +122,13 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentId);
-        tournament.checkIsParticipant(user);
 
         if (!tournament.hasQuiz()) {
             createQuiz(tournament);
         }
 
-        return statementService.startQuiz(userId, tournament.getQuizId());
+        return statementService.startQuiz(userId, tournament.getQuiz().getId());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -146,11 +144,8 @@ public class TournamentService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public TournamentDto updateTournament(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
-
-        tournament.checkCreator(user);
 
         Set<Topic> topics = new HashSet<>();
         for (Integer topicId : topicsId) {
@@ -179,11 +174,8 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public TournamentDto cancelTournament(Integer userId, Integer tournamentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    public TournamentDto cancelTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-
-        tournament.checkCreator(user);
 
         Integer numberOfAnswers = getQuizAnswers(tournament);
 
@@ -194,11 +186,8 @@ public class TournamentService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeTournament(Integer userId, Integer tournamentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+    public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-
-        tournament.checkCreator(user);
 
         Integer numberOfAnswers = getQuizAnswers(tournament);
 
@@ -239,7 +228,7 @@ public class TournamentService {
     }
 
     private Integer getQuizAnswers(Tournament tournament) {
-        return tournament.hasQuiz() ? quizService.getQuizAnswers(tournament.getQuizId()).getQuizAnswers().size() : 0;
+        return tournament.hasQuiz() ? quizService.getQuizAnswers(tournament.getQuiz().getId()).getQuizAnswers().size() : 0;
     }
 
     private void createQuiz(Tournament tournament) {
@@ -248,6 +237,8 @@ public class TournamentService {
         StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm, tournament);
 
-        tournament.setQuizId(statementQuizDto.getId());
+        Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
+
+        tournament.setQuiz(quiz);
     }
 }

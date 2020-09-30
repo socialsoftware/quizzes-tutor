@@ -26,4 +26,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select count(*) from users_course_executions uc where uc.users_id = :userId and uc.course_executions_id = :courseExecutionId", nativeQuery = true)
     Integer countUserCourseExecutionsPairById(int userId, int courseExecutionId);
+
+    @Query(value = "select count(*) from tournaments_participants tp where tp.participants_id = :userId and tp.tournaments_id = :tournamentId", nativeQuery = true)
+    Integer countUserTournamentPairById(int userId, int tournamentId);
 }

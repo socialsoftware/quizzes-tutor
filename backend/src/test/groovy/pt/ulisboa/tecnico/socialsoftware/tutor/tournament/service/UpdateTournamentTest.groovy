@@ -50,7 +50,7 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto.setStartTime(newStartTime)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -66,7 +66,7 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto.setEndTime(newEndTime)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -82,7 +82,7 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto.setNumberOfQuestions(newNumberOfQuestions)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -97,7 +97,7 @@ class UpdateTournamentTest extends TournamentTest {
         topics.add(topic3.getId())
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -116,7 +116,7 @@ class UpdateTournamentTest extends TournamentTest {
         topics.add(topic3.getId())
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         def exception = thrown(TutorException)
@@ -133,7 +133,7 @@ class UpdateTournamentTest extends TournamentTest {
         topics.remove(topic2.getId())
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -147,7 +147,7 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         def exception = thrown(TutorException)
@@ -165,7 +165,7 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto.setNumberOfQuestions(newNumberOfQuestions)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         tournamentRepository.count() == 1L
@@ -185,102 +185,12 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 
         when:
-        tournamentService.updateTournament(user1.getId(), topics, tournamentDto)
+        tournamentService.updateTournament(topics, tournamentDto)
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == TOURNAMENT_IS_OPEN
         tournamentRepository.count() == 1L
-    }
-
-    def "user that not created tournament changes start time"() {
-        given: "a tournament"
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "new startTime"
-        def oldStartTime = tournamentDto.getStartTime()
-        def newStartTime = STRING_DATE_TOMORROW_PLUS_10_MINUTES
-        tournamentDto.setStartTime(newStartTime)
-
-        when:
-        tournamentService.updateTournament(user2.getId(), topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        DateHandler.toISOString(result.getStartTime()) == oldStartTime
-    }
-
-    def "user that not created tournament changes end time"() {
-        given: "a tournament"
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "new endTime"
-        def oldEndTime = tournamentDto.getEndTime()
-        def newEndTime = STRING_DATE_LATER_PLUS_10_MINUTES
-        tournamentDto.setEndTime(newEndTime)
-
-        when:
-        tournamentService.updateTournament(user2.getId(), topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        DateHandler.toISOString(result.getEndTime()) == oldEndTime
-    }
-
-    def "user that not created tournament changes number of questions"() {
-        given: "a tournament"
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "a new number of questions"
-        def newNumberOfQuestions = 10
-        tournamentDto.setNumberOfQuestions(newNumberOfQuestions)
-
-        when:
-        tournamentService.updateTournament(user2.getId(), topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
-    }
-
-    def "user that not created tournament adds topic"() {
-        given: "a tournament"
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "a new topics list"
-        topics.add(topic3.getId())
-
-        when:
-        tournamentService.updateTournament(user2.getId(), topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic1]  as Set
-    }
-
-    def "user that not created tournament removes topic"() {
-        given: "a tournament"
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
-        and: "a new topics list"
-        topics.remove(topic2.getId())
-
-        when:
-        tournamentService.updateTournament(user2.getId(), topics, tournamentDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_CREATOR
-        tournamentRepository.count() == 1L
-        def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic1] as Set
     }
 
     @TestConfiguration
