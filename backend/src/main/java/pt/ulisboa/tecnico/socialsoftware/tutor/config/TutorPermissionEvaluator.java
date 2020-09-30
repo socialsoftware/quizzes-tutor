@@ -53,7 +53,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        int userId = ((User) authentication.getPrincipal()).getId();
+        User user = ((User) authentication.getPrincipal());
+        int userId = user.getId();
 
         if (targetDomainObject instanceof CourseDto) {
             CourseDto courseDto = (CourseDto) targetDomainObject;
@@ -111,14 +112,12 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return false;
                 case "TOURNAMENT.OWNER":
                     Tournament tournament = tournamentRepository.findById(id).orElse(null);
-                    User user = ((User) authentication.getPrincipal());
-                    if (tournament != null) {
-                        return tournament.isCreator(user);
+                     if (tournament != null) {
+                         return tournament.isCreator(user);
                     }
                     return false;
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
-                    user = (User) authentication.getPrincipal();
                     if (questionSubmission != null) {
                         boolean hasCourseExecutionAccess = userHasThisExecution(userId, questionSubmission.getCourseExecution().getId());
                         if (user.getRole() == User.Role.STUDENT) {

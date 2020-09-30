@@ -59,17 +59,10 @@ public class TopicService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<TopicDto> findTournamentTopics(int courseExecutionId) {
+    public List<TopicDto> findAvailableTopicsByCourseExecution(int courseExecutionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-        Course course = courseRepository.findById(courseExecution.getCourse().getId()).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseExecution.getCourse().getId()));
 
-        Set<Integer> availableTopicsId = courseExecution.findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
-
-        List<TopicDto> topics = topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
-
-        return topics.stream()
-                .filter(topic -> availableTopicsId.contains(topic.getId()))
-                .collect(Collectors.toList());
+        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
     @Retryable(

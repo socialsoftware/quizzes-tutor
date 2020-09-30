@@ -28,7 +28,7 @@ public class TopicController {
     @GetMapping("/courses/{courseId}/{courseExecutionId}/available")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<TopicDto> getAvailableTopicsByCourseExecution(@PathVariable int courseId, @PathVariable int courseExecutionId) {
-        return this.topicService.findTournamentTopics(courseExecutionId);
+        return this.topicService.findAvailableTopicsByCourseExecution(courseExecutionId);
     }
 
     @PostMapping(value = "/courses/{courseId}/topics")
