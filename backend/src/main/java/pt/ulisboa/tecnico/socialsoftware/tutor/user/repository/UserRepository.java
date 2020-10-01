@@ -15,9 +15,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"quizAnswers.questionAnswers"})
     Optional<User> findUserWithQuizAnswersAndQuestionAnswersById(int userId);
 
-    @EntityGraph(attributePaths = {"courseExecutions"})
-    Optional<User> findUserWithCourseExecutionsById(int userId);
-
     @Query(value = "select * from users u where u.key = :key", nativeQuery = true)
     Optional<User> findByKey(Integer key);
 

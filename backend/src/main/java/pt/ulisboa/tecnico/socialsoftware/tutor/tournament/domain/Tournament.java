@@ -77,9 +77,10 @@ public class Tournament  {
     public LocalDateTime getStartTime() { return startTime; }
 
     public void setStartTime(LocalDateTime startTime) {
-        // Added 1 minute as a buffer to take latency into consideration
+        // Added 2 minute as a buffer to take latency into consideration
         if (startTime == null || (this.endTime != null && this.endTime.isBefore(startTime) ||
-                startTime.plusMinutes(1).isBefore(DateHandler.now()))) {
+                !DateHandler.now().isBefore(startTime.plusMinutes(2))))
+        {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "startTime");
         }
 
@@ -115,8 +116,8 @@ public class Tournament  {
 
     public boolean isCanceled() { return isCanceled; }
 
-    public void cancel(Integer numberOfAnswers) {
-        checkCanChange(numberOfAnswers);
+    public void cancel() {
+        checkCanChange();
         this.isCanceled = true;
     }
 
@@ -160,13 +161,13 @@ public class Tournament  {
         }
     }
 
-    public boolean isParticipant(User user) {
-        return getParticipants().contains(user);
-    }
-
     public void checkIsParticipant(User user) {
         if (!getParticipants().contains(user)) {
             throw new TutorException(USER_NOT_JOINED, user.getId());
+        }
+
+        if (user.getQuizAnswer(getQuiz()) != null) {
+            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, user.getId());
         }
     }
 
@@ -203,8 +204,8 @@ public class Tournament  {
 
     public boolean hasQuiz() { return getQuiz() != null; }
 
-    public void remove(Integer numberOfAnswers) {
-        checkCanChange(numberOfAnswers);
+    public void remove() {
+        checkCanChange();
 
         creator = null;
         courseExecution = null;
@@ -214,28 +215,31 @@ public class Tournament  {
 
         getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
-    }
 
-    public void checkCreator(User user) {
-        if (!getCreator().getId().equals(user.getId())) {
-            throw new TutorException(TOURNAMENT_CREATOR, user.getId());
+        if (this.quiz != null) {
+            this.quiz.remove();
         }
     }
 
-    public void checkCanChange(Integer numberOfAnswers) {
-        if (getStartTime().isBefore(DateHandler.now())) {
-            if (getEndTime().isBefore(DateHandler.now())) {
-                if (numberOfAnswers == 0) {
-                    return;
-                }
-                throw new TutorException(TOURNAMENT_ALREADY_CLOSED, getId());
-            }
+    public void checkCanChange() {
+        int numberOfAnswers = 0;
+        if (this.quiz != null) {
+            numberOfAnswers = this.quiz.getQuizAnswers() != null ? this.quiz.getQuizAnswers().size() : 0;
+        }
+
+        LocalDateTime now = DateHandler.now();
+
+        if (now.isAfter(getEndTime()) && numberOfAnswers != 0) {
+            throw new TutorException(TOURNAMENT_ALREADY_CLOSED, getId());
+        }
+
+        if (now.isAfter(getStartTime()) && now.isBefore(getEndTime())) {
             throw new TutorException(TOURNAMENT_IS_OPEN, getId());
         }
     }
 
-    public void updateTournament(TournamentDto tournamentDto, Set<Topic> topics, Integer numberOfAnswers) {
-        checkCanChange(numberOfAnswers);
+    public void updateTournament(TournamentDto tournamentDto, Set<Topic> topics) {
+        checkCanChange();
 
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
             DateHandler.toISOString(getStartTime());
@@ -259,4 +263,5 @@ public class Tournament  {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
+
 }

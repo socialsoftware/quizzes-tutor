@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -26,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,12 +38,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class TournamentService {
-
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private CourseService courseService;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -92,14 +97,16 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getOpenedTournamentsForCourseExecution(Integer executionId) {
-        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId).stream().map(TournamentDto::new)
+        LocalDateTime now = DateHandler.now();
+        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getClosedTournamentsForCourseExecution(Integer executionId) {
-        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId).stream().map(TournamentDto::new)
+        LocalDateTime now = DateHandler.now();
+        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -154,10 +161,7 @@ public class TournamentService {
             topics.add(topic);
         }
 
-        // change
-        Integer numberOfAnswers = getQuizAnswers(tournament);
-
-        tournament.updateTournament(tournamentDto, topics, numberOfAnswers);
+        tournament.updateTournament(tournamentDto, topics);
 
         if (tournament.hasQuiz()) { // update current Quiz
             Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
@@ -177,9 +181,7 @@ public class TournamentService {
     public TournamentDto cancelTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        Integer numberOfAnswers = getQuizAnswers(tournament);
-
-        tournament.cancel(numberOfAnswers);
+        tournament.cancel();
 
         return new TournamentDto(tournament);
     }
@@ -189,9 +191,7 @@ public class TournamentService {
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        Integer numberOfAnswers = getQuizAnswers(tournament);
-
-        tournament.remove(numberOfAnswers);
+        tournament.remove();
 
         tournamentRepository.delete(tournament);
     }
@@ -227,10 +227,6 @@ public class TournamentService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    private Integer getQuizAnswers(Tournament tournament) {
-        return tournament.hasQuiz() ? quizService.getQuizAnswers(tournament.getQuiz().getId()).getQuizAnswers().size() : 0;
-    }
-
     private void createQuiz(Tournament tournament) {
         StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
 
@@ -240,5 +236,21 @@ public class TournamentService {
         Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
 
         tournament.setQuiz(quiz);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoTournaments() {
+        tournamentRepository.getTournamentsForCourseExecution(courseService.getDemoCourse().getCourseExecutionId())
+            .forEach(tournament -> {
+                tournament.getParticipants().forEach(user -> user.removeTournament(tournament));
+                if (tournament.getQuiz() != null) {
+                    tournament.getQuiz().setTournament(null);
+                }
+
+                tournamentRepository.delete(tournament);
+            });
     }
 }

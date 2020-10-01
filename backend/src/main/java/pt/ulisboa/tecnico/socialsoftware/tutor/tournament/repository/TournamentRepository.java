@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -15,11 +16,11 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<Tournament> getTournamentsForCourseExecution(Integer courseExecutionId);
 
-    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < CURRENT_TIMESTAMP AND t.end_time > CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<Tournament> getOpenedTournamentsForCourseExecution(Integer courseExecutionId);
+    @Query(value = "SELECT * FROM tournaments t WHERE t.start_time < :now AND t.end_time > :now AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
+    List<Tournament> getOpenedTournamentsForCourseExecution(Integer courseExecutionId, LocalDateTime now);
     
-    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < CURRENT_TIMESTAMP AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
-    List<Tournament> getClosedTournamentsForCourseExecution(Integer courseExecutionId);
+    @Query(value = "SELECT * FROM tournaments t WHERE t.end_time < :now AND t.is_canceled = 'false' AND t.course_execution_id = :courseExecutionId", nativeQuery = true)
+    List<Tournament> getClosedTournamentsForCourseExecution(Integer courseExecutionId, LocalDateTime now);
     
     @Query(value = "SELECT * FROM tournaments t WHERE t.user_id = :user_id", nativeQuery = true)
     List<Tournament> getTournamentsByUserId(Integer user_id);

@@ -90,7 +90,7 @@ public class AnswerService {
         if (!quizAnswer.isCompleted()) {
             quizAnswer.setCompleted(true);
 
-            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT)) {
+            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
                 QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
                 quizAnswerItemRepository.save(quizAnswerItem);
             } else {

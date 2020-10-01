@@ -233,7 +233,7 @@ public class StatementService {
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(SolvedQuizDto::new)
-                .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
+                .sorted(Comparator.nullsFirst(Comparator.comparing(SolvedQuizDto::getAnswerDate)))
                 .collect(Collectors.toList());
     }
 
