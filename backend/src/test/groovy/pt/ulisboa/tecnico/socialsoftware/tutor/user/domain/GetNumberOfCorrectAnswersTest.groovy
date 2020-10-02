@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
@@ -64,7 +65,8 @@ class GetNumberOfCorrectAnswersTest extends SpockTest {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setCompleted(true)
 
-        new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
+        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 1)
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
     }
 
     @Unroll
