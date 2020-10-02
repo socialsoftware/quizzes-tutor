@@ -26,7 +26,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="createFromCourse(item)"
               data-cy="createFromCourse"
@@ -38,7 +38,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="viewCourseExecutionUsers(item)"
               data-cy="viewUsersButton"
@@ -50,7 +50,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="uploadUsersHandler(item)"
               data-cy="uploadUsersHandler"
@@ -62,7 +62,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="addExternalUser(item)"
               data-cy="addExternalUser"
@@ -74,7 +74,7 @@
         <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="anonymizeCourse(item)"
               color="red"
@@ -87,7 +87,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteCourse(item)"
               color="red"

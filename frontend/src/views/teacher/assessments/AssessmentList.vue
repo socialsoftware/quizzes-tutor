@@ -41,7 +41,10 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editAssessment(item.id)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="editAssessment(item.id)"
               >edit</v-icon
             >
           </template>
@@ -50,7 +53,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteAssessment(item.id)"
               color="red"
@@ -70,8 +73,8 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Right-click on assessment's title to
-      edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
+      assessment's title to edit it.
     </footer>
 
     <v-dialog

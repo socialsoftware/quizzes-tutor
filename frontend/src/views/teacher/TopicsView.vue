@@ -34,7 +34,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="editTopic(item)"
               data-cy="topicsGridEditButton"
@@ -46,7 +46,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteTopic(item)"
               color="red"
@@ -64,7 +64,8 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Right-click on topic's name to edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on topic's
+      name to edit it.
     </footer>
 
     <v-dialog v-model="topicDialog" max-width="75%">
@@ -83,8 +84,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
-          <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
+          <v-btn color="red darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="green darken-1" @click="saveTopic">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

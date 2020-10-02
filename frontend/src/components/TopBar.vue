@@ -219,6 +219,7 @@
             </v-list-item>
           </v-list>
         </v-menu>
+
         <v-btn
           to="/student/submissions"
           v-if="isStudent && currentCourse"
@@ -245,7 +246,9 @@
           Change course
           <v-icon>fa fa-book</v-icon>
         </v-btn>
+      </v-toolbar-items>
 
+      <v-toolbar-items class="hidden-sm-and-down" hide-details>
         <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>

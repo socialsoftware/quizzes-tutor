@@ -83,7 +83,10 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showQuestionDialog(item)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showQuestionDialog(item)"
               >visibility</v-icon
             >
           </template>
@@ -91,7 +94,10 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="duplicateQuestion(item)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="duplicateQuestion(item)"
               >cached</v-icon
             >
           </template>
@@ -99,7 +105,10 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editQuestion(item)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="editQuestion(item)"
               >edit</v-icon
             >
           </template>
@@ -109,7 +118,7 @@
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteQuestion(item)"
               color="red"
@@ -121,9 +130,10 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on question's title to view
-      it. <v-icon class="mr-2">mouse</v-icon>Right-click on question's title to
-      edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on question's
+      title to view it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on question's
+      title to edit it.
     </footer>
     <edit-question-dialog
       v-if="currentQuestion"

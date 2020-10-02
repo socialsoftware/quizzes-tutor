@@ -39,13 +39,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="red darken-1"
           @click="$emit('close-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="green darken-1"
           @click="uploadUsers(course)"
           data-cy="uploadFileButton"
           >Upload File</v-btn

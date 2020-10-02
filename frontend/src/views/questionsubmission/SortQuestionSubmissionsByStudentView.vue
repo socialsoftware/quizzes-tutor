@@ -83,7 +83,7 @@
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }"
                       ><v-icon
-                        class="mr-2"
+                        class="mr-2 action-button"
                         v-on="on"
                         @click="showQuestionSubmissionDialog(item)"
                         data-cy="ViewSubmission"
@@ -126,8 +126,8 @@
       :questionSubmission="currentQuestionSubmission"
     />
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on student to see their
-      question submissions
+      <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on student to
+      see their question submissions
     </footer>
   </v-card>
 </template>

@@ -7,7 +7,7 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="primary" dark @click="saveAssessment">Save</v-btn>
+      <v-btn color="green darken-1" @click="saveAssessment">Save</v-btn>
     </v-card-title>
     <v-card-text>
       <v-container fluid>
@@ -76,7 +76,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="removeTopicConjunction(item)"
                     >
@@ -89,7 +89,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
                     >
@@ -151,7 +151,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="addTopicConjunction(item)"
                     >
@@ -163,7 +163,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
                     >

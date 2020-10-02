@@ -32,7 +32,7 @@
         ]"
         @click="selectOption(question.options[index].optionId)"
       >
-        <span class="option-letter">{{ optionLetters[index] }}</span>
+        <span class="option-letter">{{ String.fromCharCode(65 + index) }}</span>
         <span
           class="option-content"
           v-html="convertMarkDown(question.options[index].content)"
@@ -56,7 +56,6 @@ export default class QuestionComponent extends Vue {
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {
