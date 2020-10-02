@@ -41,7 +41,7 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
-    @OneToOne(optional=true)
+    @OneToOne(fetch = FetchType.EAGER, optional=true)
     @JoinColumn(name="discussion_id")
     private Discussion discussion;
 

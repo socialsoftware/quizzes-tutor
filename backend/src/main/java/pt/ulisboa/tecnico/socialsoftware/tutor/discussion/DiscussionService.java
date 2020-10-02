@@ -216,6 +216,13 @@ public class DiscussionService {
                 .collect(Collectors.toList());
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<DiscussionDto> findDiscussionByUserIdAndQuestionId(Integer userId, Integer questionId) {
+        return discussionRepository.findByUserIdQuestionId(userId, questionId).stream().map(DiscussionDto::new)
+                .collect(Collectors.toList());
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))

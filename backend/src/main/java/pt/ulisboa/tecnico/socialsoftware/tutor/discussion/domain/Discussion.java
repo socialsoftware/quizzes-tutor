@@ -29,7 +29,7 @@ public class Discussion implements DomainEntity {
     private Integer id;
 
     @NotNull
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.EAGER, optional=false)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional=false)
     private QuestionAnswer questionAnswer;
 
     @ManyToOne(cascade = CascadeType.ALL)
