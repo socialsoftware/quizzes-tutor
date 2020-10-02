@@ -24,6 +24,13 @@
                   : 'Unknown tournament'
               }}</span
               ><br />
+              <b style="color: #1976d2">Creator: </b>
+              <span>{{
+                selectedTournament !== null
+                  ? selectedTournament.creator.name
+                  : 'Unknown tournament'
+              }}</span
+              ><br />
               <b style="color: #1976d2">Topics: </b>
               <span data-cy="Topics"
                 >{{ selectedTournament !== null ? '' : 'Unknown tournament' }}
@@ -83,7 +90,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getStateName(selectedTournament.state)
+                          ? getStateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -93,7 +100,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getPrivateName(selectedTournament)
+                          ? getPrivateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -134,12 +141,10 @@ import TournamentParticipant from '@/models/user/TournamentParticipant';
   components: { AnimatedNumber }
 })
 export default class TournamentResultsView extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: String, required: true }) id!: number;
 
   selectedTournament: Tournament | null = null;
   participants: TournamentParticipant[] = [];
-  currentUsername: string | null = null;
 
   headers: object = [
     { text: 'Name', value: 'name', align: 'center' },
@@ -165,14 +170,12 @@ export default class TournamentResultsView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  getStateName(state: string) {
-    if (state === 'NOT_CANCELED') return 'AVAILABLE';
-    else return 'CLOSED';
+  getStateName() {
+    return this.selectedTournament?.getStateName();
   }
 
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
+  getPrivateName() {
+    return this.selectedTournament?.getPrivateName();
   }
 }
 </script>

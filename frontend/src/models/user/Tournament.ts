@@ -58,15 +58,15 @@ export default class Tournament {
     else return 0;
   }
 
-  getStateColor(closedTournamentsId: number[]) {
-    if (this.id && closedTournamentsId.includes(this.id)) return 'orange';
+  getStateColor() {
+    if (this.isClosed) return 'orange';
     else if (!this.canceled) return 'green';
     else return 'red';
   }
 
-  getStateName(closedTournamentsId: number[]) {
-    if (this.id && closedTournamentsId.includes(this.id)) return 'FINISHED';
-    else if (!this.canceled) return 'AVAILABLE';
+  getStateName() {
+    if (this.isClosed) return 'CLOSED';
+    else if (!this.canceled) return 'OPEN';
     else return 'CANCELLED';
   }
 
