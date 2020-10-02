@@ -4,11 +4,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
+import java.util.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -156,6 +160,12 @@ public class CourseExecution implements DomainEntity {
         return assessments;
     }
 
+    public List<Assessment> getAvailableAssessments() {
+        return getAssessments().stream()
+                .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
+                .collect(Collectors.toList());
+    }
+
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
     }
@@ -235,6 +245,19 @@ public class CourseExecution implements DomainEntity {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Topic> findAvailableTopics() {
+        return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).collect(Collectors.toSet());
+    }
+
+    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
+        Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
+        Set<Integer> topicsIds = topics.stream().map(TopicDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
+
+        return questions.stream()
+                .filter(question -> question.hasTopics(topicsIds))
+                .collect(Collectors.toList());
     }
 
     public Set<User> getTeachers() {
