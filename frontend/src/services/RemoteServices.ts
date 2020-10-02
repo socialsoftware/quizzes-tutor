@@ -250,9 +250,13 @@ export default class RemoteServices {
       });
   }
 
-  static async createDiscussion(discussion: Discussion): Promise<Discussion> {
+  static async createDiscussion(
+    discussion: Discussion,
+    questionOrder: number,
+    quizAnswerId: number
+  ): Promise<Discussion> {
     return httpClient
-      .post('/discussions', discussion)
+      .post(`/discussions/${quizAnswerId}/${questionOrder}`, discussion)
       .then(response => {
         return new Discussion(response.data);
       })

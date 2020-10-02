@@ -118,7 +118,11 @@ export default class ResultsView extends Vue {
       this.discussion!.userName = this.$store.getters.getUser.username;
       this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
 
-      const result = await RemoteServices.createDiscussion(this.discussion!);
+      const result = await RemoteServices.createDiscussion(
+        this.discussion!,
+        this.questionOrder,
+        this.statementManager.statementQuiz!.quizAnswerId
+      );
       this.statementManager.statementQuiz!.questions[
         this.questionOrder
       ].discussions!.push(result);
