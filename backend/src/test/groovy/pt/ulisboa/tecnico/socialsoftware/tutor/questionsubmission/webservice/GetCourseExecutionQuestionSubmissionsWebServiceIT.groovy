@@ -11,7 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuesti
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,14 +33,16 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTest {
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student1 = new User(USER_3_NAME, USER_3_EMAIL, USER_3_EMAIL, User.Role.STUDENT, true, false)
+        student1 = new User(USER_3_NAME, USER_3_EMAIL, USER_3_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         student1.addCourse(courseExecution)
         courseExecution.addUser(student1)
         userRepository.save(student1)
-        student2 = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, User.Role.STUDENT, true, false)
+        student2 = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         student2.addCourse(courseExecution)
         courseExecution.addUser(student2)
         userRepository.save(student2)
@@ -56,8 +59,9 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTest {
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         questionDto.getQuestionDetailsDto().setOptions(options)
 
-        teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.TEACHER, true, false)
-        teacher.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        teacher.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)

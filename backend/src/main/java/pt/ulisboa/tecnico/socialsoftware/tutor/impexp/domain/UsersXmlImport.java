@@ -8,12 +8,16 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.io.*;
 import java.nio.charset.Charset;
+import java.time.LocalDateTime;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
@@ -62,25 +66,84 @@ public class UsersXmlImport {
 			Integer key = Integer.valueOf(element.getAttributeValue("key"));
 
 			if (userService.findByKey(key) == null) {
-				String name = element.getAttributeValue("name");
-				String username = element.getAttributeValue("username");
-
-				User.Role role = null;
-				if (element.getAttributeValue("role") != null) {
-					role = User.Role.valueOf(element.getAttributeValue("role"));
+				User user;
+				if (element.getChild("authUsers") != null) {
+					user = importUserWithAuth(element);
+				} else {
+					user = importUser(element);
 				}
-
-				String email = null;
-				if (element.getAttributeValue("email") != null) {
-					email = element.getAttributeValue("email");
-				}
-
-				User user = userService.createUser(name, username, email, role);
-				user.setKey(key);
-
 				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
 		}
+	}
+
+	private User importUser(Element userElement) {
+		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+		String name = userElement.getAttributeValue("name");
+		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
+		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
+		User.Role role = getUserRole(userElement);
+
+		User user = userService.createUser(name, role);
+		user.setKey(key);
+		user.setAdmin(admin);
+		user.setCreationDate(creationDate);
+		return user;
+	}
+
+	private User importUserWithAuth(Element userElement) {
+		Element authUserElement = userElement.getChild("authUsers").getChild("authUser");
+		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+		String name = userElement.getAttributeValue("name");
+		User.Role role = getUserRole(userElement);
+
+		String username = authUserElement.getAttributeValue("username");
+		String email = authUserElement.getAttributeValue("email");
+		if (email.trim().isEmpty()) {
+			email = null;
+		}
+		AuthUser.Type type = AuthUser.Type.EXTERNAL;
+		String password = null;
+		Boolean isActive = null;
+		LocalDateTime lastAccess = null;
+		String confirmationDate = null;
+		LocalDateTime tokenGenerationDate = null;
+
+		if (authUserElement.getAttributeValue("type") != null) {
+			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
+		}
+		if (authUserElement.getAttributeValue("password") != null) {
+			 password = authUserElement.getAttributeValue("password");
+		}
+		if (authUserElement.getAttributeValue("lastAccess") != null) {
+			lastAccess = DateHandler.toLocalDateTime(
+					authUserElement.getAttributeValue("lastAccess"));
+		}
+
+		if (authUserElement.getAttributeValue("confirmationToken") != null) {
+			confirmationDate = authUserElement.getAttributeValue("confirmationToken");
+		}
+
+		if (authUserElement.getAttributeValue("tokenGenerationDate") != null) {
+			tokenGenerationDate = DateHandler.toLocalDateTime(
+					authUserElement.getAttributeValue("tokenGenerationDate"));
+
+		}
+		if (authUserElement.getAttributeValue("isActive") != null) {
+			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
+		}
+
+		AuthUser authUser = userService.createUserWithAuth(name, username, email, role, type);
+		authUser.getUser().setKey(key);
+		authUser.setPassword(password);
+		if (type == AuthUser.Type.EXTERNAL) {
+			((AuthExternalUser)authUser).setActive(isActive);
+			((AuthExternalUser)authUser).setConfirmationToken(confirmationDate);
+			((AuthExternalUser)authUser).setTokenGenerationDate(tokenGenerationDate);
+		}
+		authUser.setLastAccess(lastAccess);
+
+		return authUser.getUser();
 	}
 
 	private void importCourseExecutions(Element courseExecutions, User user) {
@@ -89,5 +152,13 @@ public class UsersXmlImport {
 
 			userService.addCourseExecution(user.getId(), executionId);
 		}
+	}
+
+	private User.Role getUserRole(Element userElement) {
+		User.Role role = null;
+		if (userElement.getAttributeValue("role") != null) {
+			role = User.Role.valueOf(userElement.getAttributeValue("role"));
+		}
+		return role;
 	}
 }

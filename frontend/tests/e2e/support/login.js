@@ -14,5 +14,5 @@ Cypress.Commands.add('demoStudentLogin', () => {
 });
 
 Cypress.Commands.add('logout', () => {
-  cy.get('[data-cy="logoutButton"]').click();
+  cy.get('[data-cy="logoutButton"]').click({ force: true });
 });

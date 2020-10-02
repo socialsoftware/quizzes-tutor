@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -28,6 +29,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseDto.setName(COURSE_1_NAME)
         courseDto.setAcronym(COURSE_1_ACRONYM)
         courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when:
         def result = courseService.createTecnicoCourseExecution(courseDto)
@@ -44,6 +46,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseExecution.acronym == COURSE_1_ACRONYM
         courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
         courseExecution.getCourse() == externalCourse
+        courseExecution.endDate == LOCAL_DATE_TODAY
     }
 
     def "the course does not exist and create both, course and execution course"() {
@@ -56,6 +59,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseDto.setName(COURSE_1_NAME)
         courseDto.setAcronym(COURSE_1_ACRONYM)
         courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when:
         def result = courseService.createTecnicoCourseExecution(courseDto)
@@ -77,6 +81,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseExecution.acronym == COURSE_1_ACRONYM
         courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
         courseExecution.getCourse() == course
+        courseExecution.endDate == LOCAL_DATE_TODAY
     }
 
     def "the course and course execution exist"() {
@@ -101,6 +106,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseDto.setName("  ")
         courseDto.setAcronym(COURSE_1_ACRONYM)
         courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when:
         courseService.createTecnicoCourseExecution(courseDto)
@@ -116,6 +122,7 @@ class CreateTecnicoCourseExecutionTest extends SpockTest {
         courseDto.setName(COURSE_1_NAME)
         courseDto.setAcronym("   ")
         courseDto.setAcademicTerm(COURSE_1_ACADEMIC_TERM)
+        courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when:
         courseService.createTecnicoCourseExecution(courseDto)

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.repository;
 
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -13,4 +14,7 @@ import java.util.Optional;
 public interface CourseRepository extends JpaRepository<Course, Integer> {
     @Query(value = "select * from courses c where c.name = :name and c.type = :type", nativeQuery = true)
     Optional<Course> findByNameType(String name, String type);
+
+    @EntityGraph(attributePaths = {"courseExecutions"})
+    Optional<Course> findCourseWithCourseExecutionsById(int courseId);
 }

@@ -11,7 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -25,10 +26,11 @@ class UpdateQuestionSubmissionTest extends SpockTest{
     def questionSubmission
 
     def setup() {
-        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, false)
-        student.setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.TEACHER, true, false)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)

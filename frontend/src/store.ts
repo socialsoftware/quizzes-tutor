@@ -3,12 +3,12 @@ import Vuex from 'vuex';
 import RemoteServices from '@/services/RemoteServices';
 import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
-import User from '@/models/user/User';
+import AuthUser from '@/models/user/AuthUser';
 import ExternalUser from '@/models/user/ExternalUser';
 
 interface State {
   token: string;
-  user: User | null;
+  user: AuthUser | null;
   currentCourse: Course | null;
   error: boolean;
   errorMessage: string;
@@ -94,8 +94,11 @@ export default new Vuex.Store({
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
     },
-    async externalLogin({ commit }, user : ExternalUser) {
-      const authResponse = await RemoteServices.externalLogin(user.email, user.password);
+    async externalLogin({ commit }, user: ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(
+        user.email,
+        user.password
+      );
       commit('login', authResponse);
       // localStorage.setItem("token", authResponse.token);
       // localStorage.setItem("userRole", authResponse.user.role);
@@ -172,7 +175,7 @@ export default new Vuex.Store({
     getToken(state): string {
       return state.token;
     },
-    getUser(state): User | null {
+    getUser(state): AuthUser | null {
       return state.user;
     },
     getCurrentCourse(state): Course | null {

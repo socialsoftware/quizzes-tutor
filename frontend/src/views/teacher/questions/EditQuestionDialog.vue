@@ -33,10 +33,21 @@
             required
             rows="5"
           ></v-textarea>
-          <component
-            :is="editQuestion.questionDetailsDto.type"
-            :questionDetails.sync="editQuestion.questionDetailsDto"
-          />
+          <div v-for="index in editQuestion.options.length" :key="index">
+            <v-row>
+              <v-textarea
+                v-model="editQuestion.options[index - 1].content"
+                :label="`Option ${index}`"
+                rows="2"
+                auto-grow
+              ></v-textarea>
+              <v-switch
+                v-model="editQuestion.options[index - 1].correct"
+                class="ma-4"
+                :label="`Correct ${index}`"
+              />
+            </v-row>
+          </div>
         </v-form>
       </v-card-text>
 
@@ -55,13 +66,8 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
-import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 
-@Component({
-  components: {
-    multiple_choice: MultipleChoiceCreate
-  }
-})
+@Component
 export default class EditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
@@ -86,14 +92,8 @@ export default class EditQuestionDialog extends Vue {
   //   }
   // };
 
-  get questionForm(): Vue & { validate: () => boolean } {
-    return this.$refs.form as Vue & { validate: () => boolean };
-  }
-
   async saveQuestion() {
-    if (!this.questionForm.validate()) {
-      return;
-    }
+    (this.$refs.form as Vue & { validate: () => boolean }).validate();
 
     try {
       const result =

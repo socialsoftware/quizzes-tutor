@@ -1,9 +1,14 @@
 <template>
   <v-card v-if="error == ''">
-    <v-card-title>{{title}}</v-card-title>
+    <v-card-title>{{ title }}</v-card-title>
     <v-card-text v-if="!success">
       <form>
-        <v-text-field v-model="email" label="Email" disabled required></v-text-field>
+        <v-text-field
+          v-model="email"
+          label="Email"
+          disabled
+          required
+        ></v-text-field>
         <v-text-field
           v-model="password"
           :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
@@ -26,7 +31,8 @@
           class="white--text"
           :disabled="!(password === confirmPassword && password != '')"
           @click="submit"
-        >submit</v-btn>
+          >submit</v-btn
+        >
       </form>
     </v-card-text>
     <v-card-text v-if="success">
@@ -34,7 +40,7 @@
     </v-card-text>
   </v-card>
   <v-card v-else>
-    <v-card-title>{{error}}</v-card-title>
+    <v-card-title>{{ error }}</v-card-title>
   </v-card>
 </template>
 

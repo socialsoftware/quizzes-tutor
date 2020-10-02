@@ -4,8 +4,11 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.util.List;
 import java.util.Set;
@@ -41,18 +44,18 @@ public class UsersXmlExport {
 
 		userElement.setAttribute("key", String.valueOf(user.getKey()));
 
-		if (user.getUsername() != null) {
-			userElement.setAttribute("username", user.getUsername());
-		}
-
 		userElement.setAttribute("name", user.getName());
 
 		if (user.getRole() != null) {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
-		if (user.getEmail() != null) {
-			userElement.setAttribute("email", user.getEmail());
+		userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
+
+		userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+
+		if (user.getAuthUser() != null) {
+			exportAuthUsers(userElement, user.getAuthUser());
 		}
 
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
@@ -71,4 +74,43 @@ public class UsersXmlExport {
 		}
 		userElement.addContent(courseExecutionsElement);
 	}
+
+	private void exportAuthUsers(Element userElement, AuthUser authUser) {
+		Element authUsersElement = new Element("authUsers");
+		Element authUserElement = new Element("authUser");
+
+		authUserElement.setAttribute("username", authUser.getUsername());
+
+		authUserElement.setAttribute("email", authUser.getEmail() != null ? authUser.getEmail() : "");
+
+		authUserElement.setAttribute("type", authUser.getType().toString());
+
+		if (authUser.getPassword() != null) {
+			authUserElement.setAttribute("password", authUser.getPassword());
+		}
+
+		if (authUser.getLastAccess() != null) {
+			authUserElement.setAttribute("lastAccess",
+					DateHandler.toISOString(authUser.getLastAccess()));
+		}
+
+		if (authUser.getType() == AuthUser.Type.EXTERNAL) {
+			if (((AuthExternalUser)authUser).getConfirmationToken() != null) {
+				authUserElement.setAttribute("confirmationToken",
+						((AuthExternalUser)authUser).getConfirmationToken());
+			}
+
+			if (((AuthExternalUser)authUser).getTokenGenerationDate() != null) {
+				authUserElement.setAttribute("tokenGenerationDate",
+						DateHandler.toISOString(((AuthExternalUser)authUser).getTokenGenerationDate()));
+			}
+		}
+
+		authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));
+
+
+		authUsersElement.addContent(authUserElement);
+		userElement.addContent(authUsersElement);
+	}
+
 }
