@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,6 +23,7 @@ public class TournamentDto implements Serializable {
     private Integer quizId = null;
     private boolean privateTournament = false;
     private String password = "";
+    private boolean isClosed = false;
 
     public TournamentDto() {
     }
@@ -38,6 +40,7 @@ public class TournamentDto implements Serializable {
         if (tournament.hasQuiz()) this.quizId = tournament.getQuiz().getId();
         this.privateTournament = tournament.isPrivateTournament();
         this.password = tournament.getPassword();
+        this.isClosed = tournament.getEndTime().isBefore(DateHandler.now());
     }
 
     public Integer getId() { return id; }
@@ -79,4 +82,12 @@ public class TournamentDto implements Serializable {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public void setClosed(boolean closed) {
+        isClosed = closed;
+    }
 }

@@ -60,10 +60,7 @@ import RemoteServices from '@/services/RemoteServices';
 export default class ParticipantsTournament extends Vue {
   @Prop({ type: String, required: true }) id!: number;
 
-  tournaments: Tournament[] = [];
-  closedTournaments: Tournament[] = [];
   selectedTournament: Tournament | undefined;
-  isClosed: Boolean = false;
   tournamentScores: TournamentScore[] = [];
   correctAnswers: number = 0;
 
@@ -77,19 +74,11 @@ export default class ParticipantsTournament extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
-      this.closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
-      this.selectedTournament = this.tournaments.find(
-        tournament => tournament.id === this.id
-      );
+      this.selectedTournament = await RemoteServices.getTournament(this.id);
       if (this.selectedTournament) {
-        this.isClosed = this.closedTournaments.includes(
-          this.selectedTournament
-        );
-
         this.selectedTournament.participants.map(async participant => {
           let score;
-          if (this.isClosed && this.selectedTournament)
+          if (this.selectedTournament?.isClosed)
             score = await TournamentScore.getScore(
               this.selectedTournament,
               this.correctAnswers
@@ -100,7 +89,7 @@ export default class ParticipantsTournament extends Vue {
           );
         });
       }
-      if (this.isClosed)
+      if (this.selectedTournament.isClosed)
         this.tournamentScores.sort((a, b) => TournamentScore.sortByScore(a, b));
       this.tournamentScores = TournamentScore.setRankings(
         this.tournamentScores

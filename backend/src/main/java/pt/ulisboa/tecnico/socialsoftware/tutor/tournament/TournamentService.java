@@ -116,6 +116,13 @@ public class TournamentService {
         return tournamentRepository.getTournamentsByUserId(userId).stream().map(TournamentDto::new)
                 .collect(Collectors.toList());
     }
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto getTournament(Integer tournamentId) {
+        return tournamentRepository.findById(tournamentId)
+                .map(TournamentDto::new)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+    }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -253,4 +260,5 @@ public class TournamentService {
                 tournamentRepository.delete(tournament);
             });
     }
+
 }

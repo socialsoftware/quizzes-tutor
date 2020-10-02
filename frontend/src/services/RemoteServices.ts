@@ -976,6 +976,19 @@ export default class RemoteServices {
       });
   }
 
+  static getTournament(tournamentId: number): Promise<Tournament> {
+    return httpClient
+      .get(
+        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/tournament/${tournamentId}`
+      )
+      .then(response => {
+        return new Tournament(response.data, Store.getters.getUser);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static joinTournament(tournamentId: number, password: String) {
     return httpClient
       .put(

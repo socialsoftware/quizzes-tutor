@@ -16,6 +16,7 @@ export default class Tournament {
   quizId!: number;
   privateTournament!: boolean;
   password!: string;
+  isClosed!: boolean;
 
   constructor(jsonObj?: Tournament, user?: User) {
     if (jsonObj) {
@@ -39,6 +40,7 @@ export default class Tournament {
       this.quizId = jsonObj.quizId;
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
+      this.isClosed = jsonObj.isClosed;
 
       if (user) {
         this.enrolled = this.participants.some(
@@ -95,9 +97,5 @@ export default class Tournament {
 
   isPrivate() {
     return this.privateTournament;
-  }
-
-  isClosed(closedTournamentsId: number[]) {
-    return closedTournamentsId.includes(this.id);
   }
 }

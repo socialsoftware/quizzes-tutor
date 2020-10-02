@@ -71,11 +71,7 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip
           bottom
-          v-if="
-            item.isNotEnrolled() &&
-              !item.isPrivate() &&
-              !item.isClosed(closedTournamentsId)
-          "
+          v-if="item.isNotEnrolled() && !item.isPrivate() && !item.isClosed"
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -91,11 +87,7 @@
         </v-tooltip>
         <v-tooltip
           bottom
-          v-if="
-            item.isNotEnrolled() &&
-              item.isPrivate() &&
-              !item.isClosed(closedTournamentsId)
-          "
+          v-if="item.isNotEnrolled() && item.isPrivate() && !item.isClosed"
         >
           <template v-slot:activator="{ on }">
             <v-icon
@@ -109,10 +101,7 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="!item.isNotEnrolled() && !item.isClosed(closedTournamentsId)"
-        >
+        <v-tooltip bottom v-if="!item.isNotEnrolled() && !item.isClosed">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -125,10 +114,7 @@
           </template>
           <span>Leave Tournament</span>
         </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="!item.isNotEnrolled() && item.isClosed(closedTournamentsId)"
-        >
+        <v-tooltip bottom v-if="!item.isNotEnrolled() && item.isClosed">
           <template v-slot:activator="{ on }">
             <v-icon
               large
