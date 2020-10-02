@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -108,7 +109,7 @@ class TournamentTest extends SpockTest {
         assessment.addTopicConjunction(topicConjunction)
     }
 
-    def createQuestion(LocalDateTime creationDate, String content, String title, Question.Status status, Course course) {
+    def createMultipleChoiceQuestion(LocalDateTime creationDate, String content, String title, Question.Status status, Course course) {
         def question = new Question()
         question.setKey(1)
         question.setCreationDate(creationDate)
@@ -118,6 +119,11 @@ class TournamentTest extends SpockTest {
         question.setCourse(course)
         question.addTopic(topic1)
         question.addTopic(topic2)
+
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         return question
@@ -129,7 +135,7 @@ class TournamentTest extends SpockTest {
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        question.setOptions(options)
+        question.getQuestionDetails().setOptions(options)
         questionRepository.save(question)
     }
 
