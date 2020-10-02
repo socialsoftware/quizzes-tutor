@@ -7,7 +7,7 @@
         aria-label="Menu"
       />
 
-      <v-toolbar-title>
+      <v-toolbar-title data-cy="homeLink">
         <v-btn
           dark
           active-class="no-active"
@@ -62,6 +62,17 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
+              to="/management/submissions"
+              data-cy="submissionTeacherMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-user-edit</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Submissions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
               to="/management/topics"
               data-cy="manageTopicsMenuButton"
             >
@@ -94,6 +105,14 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Students</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/tournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-trophy</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/impexp">
@@ -158,6 +177,60 @@
           </v-list>
         </v-menu>
 
+        <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark data-cy="Tournament">
+              Tournaments
+              <v-icon>fas fa-trophy</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/student/myTournaments" data-cy="My">
+              <v-list-item-action>
+                <v-icon>fas fa-user-check</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>My Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/all" data-cy="All">
+              <v-list-item-action>
+                <v-icon>fas fa-calendar</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>All</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/open" data-cy="Open">
+              <v-list-item-action>
+                <v-icon>fas fa-medal</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Open</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/closed" data-cy="Closed">
+              <v-list-item-action>
+                <v-icon>fas fa-award</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Closed</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-btn
+          to="/student/submissions"
+          v-if="isStudent && currentCourse"
+          text
+          dark
+          data-cy="submissionStudentMenuButton"
+        >
+          Submissions
+          <v-icon>fa-user-edit</v-icon>
+        </v-btn>
+
         <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
           Stats
           <v-icon>fas fa-user</v-icon>
@@ -173,6 +246,29 @@
           Change course
           <v-icon>fa fa-book</v-icon>
         </v-btn>
+      </v-toolbar-items>
+
+      <v-toolbar-items class="hidden-sm-and-down" hide-details>
+        <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark>
+              Login
+              <v-icon>fas fa-sign-in-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item :href="fenixUrl">
+              <v-list-item-content>
+                <v-list-item-title>Fenix Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/login/external">
+              <v-list-item-content>
+                <v-list-item-title>External Login</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
 
         <v-btn
           v-if="isLoggedIn"
@@ -183,10 +279,6 @@
         >
           Logout
           <v-icon>fas fa-sign-out-alt</v-icon>
-        </v-btn>
-
-        <v-btn v-else :href="fenixUrl" text dark>
-          Login <v-icon>fas fa-sign-in-alt</v-icon>
         </v-btn>
       </v-toolbar-items>
     </v-app-bar>
@@ -238,6 +330,14 @@
               <v-list-item-title>Questions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Submissions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/topics">
             <v-list-item-action>
               <v-icon>category</v-icon>
@@ -270,6 +370,14 @@
               <v-list-item-title>Students</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/tournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-trophy</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Tournaments</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -297,21 +405,21 @@
             <v-list-item-action>
               <v-icon>assignment</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Available Quizzes</v-list-item-content>
+            <v-list-item-title>Available Quizzes</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/create">
             <v-list-item-action>
               <v-icon>create</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Create Quiz</v-list-item-content>
+            <v-list-item-title>Create Quiz</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/scan">
             <v-list-item-action>
               <v-icon>fas fa-qrcode</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Scan</v-list-item-content>
+            <v-list-item-title>Scan</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/code">
@@ -325,14 +433,45 @@
             <v-list-item-action>
               <v-icon>done</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Solved Quizzes</v-list-item-content>
+            <v-list-item-title>Solved Quizzes</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/student/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Submissions</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/stats">
             <v-list-item-action>
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Stats</v-list-item-content>
+            <v-list-item-title>Stats</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/all">
+            <v-list-item-action>
+              <v-icon>fas fa-calendar</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>All Tournaments</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/open">
+            <v-list-item-action>
+              <v-icon>fas fa-medal</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Open Tournaments</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/closed">
+            <v-list-item-action>
+              <v-icon>fas fa-award</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Closed Tournaments</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/myTournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-medal</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>My Tournaments</v-list-item-title>
           </v-list-item>
         </v-list-group>
 

@@ -5,7 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -159,8 +159,8 @@ public class QuizAnswer implements DomainEntity {
     public boolean canResultsBePublic(Integer courseExecutionId) {
         return isCompleted() &&
                 getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
-                (!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || getQuiz().getResultsDate().isBefore(DateHandler.now())
-                );
+                ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
+                        || getQuiz().getResultsDate().isBefore(DateHandler.now()));
     }
 
     public void calculateStatistics() {
@@ -193,6 +193,14 @@ public class QuizAnswer implements DomainEntity {
 
     public boolean openToAnswer() {
         return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
+    }
+
+    public long getNumberOfAnsweredQuestions() {
+        return getQuestionAnswers().stream().filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getOption() != null).count();
+    }
+
+    public long getNumberOfCorrectAnswers() {
+        return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
     }
 
 }

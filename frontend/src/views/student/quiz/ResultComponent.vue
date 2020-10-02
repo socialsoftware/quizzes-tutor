@@ -53,7 +53,9 @@
           v-else-if="answer.optionId === question.options[index].optionId"
           class="fas fa-times option-letter"
         />
-        <span v-else class="option-letter">{{ optionLetters[index] }}</span>
+        <span v-else class="option-letter">{{
+          String.fromCharCode(65 + index)
+        }}</span>
         <span
           class="option-content"
           v-html="convertMarkDown(question.options[index].content)"
@@ -79,7 +81,6 @@ export default class ResultComponent extends Vue {
   @Prop(StatementAnswer) readonly answer!: StatementAnswer;
   @Prop() readonly questionNumber!: number;
   hover: boolean = false;
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
 
   @Emit()
   increaseOrder() {

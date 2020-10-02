@@ -11,7 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 import java.util.stream.Collectors
 
@@ -23,14 +24,14 @@ class GenerateStudentQuizTest extends SpockTest {
     def assessment
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
 
         def topic = new Topic()
         topic.setName("TOPIC")
-        topic.setCourse(course)
+        topic.setCourse(externalCourse)
         topicRepository.save(topic)
 
         questionOne = new Question()
@@ -38,7 +39,7 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.setContent("Question Content")
         questionOne.setTitle("Question Title")
         questionOne.setStatus(Question.Status.AVAILABLE)
-        questionOne.setCourse(course)
+        questionOne.setCourse(externalCourse)
         questionOne.addTopic(topic)
         questionRepository.save(questionOne)
 
@@ -47,14 +48,14 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.setContent("Question Content")
         questionTwo.setTitle("Question Title")
         questionTwo.setStatus(Question.Status.AVAILABLE)
-        questionTwo.setCourse(course)
+        questionTwo.setCourse(externalCourse)
         questionTwo.addTopic(topic)
         questionRepository.save(questionTwo)
 
         assessment = new Assessment()
         assessment.setTitle("Assessment title")
         assessment.setStatus(Assessment.Status.AVAILABLE)
-        assessment.setCourseExecution(courseExecution)
+        assessment.setCourseExecution(externalCourseExecution)
         assessmentRepository.save(assessment)
 
         def topicConjunction = new TopicConjunction()
@@ -70,7 +71,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -95,7 +96,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -118,7 +119,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()
@@ -132,7 +133,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setNumberOfQuestions(1)
 
         when:
-        statementService.generateStudentQuiz(user.getId(), courseExecution.getId(), quizForm)
+        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()

@@ -5,10 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 @DataJpaTest
@@ -18,10 +18,10 @@ class GetAvailableQuizzesTest extends SpockTest {
     def quiz
 
     def setup() {
-        courseDto = new CourseDto(courseExecution)
+        courseDto = new CourseDto(externalCourseExecution)
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
-        user.addCourse(courseExecution)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user.addCourse(externalCourseExecution)
         userRepository.save(user)
         user.setKey(user.getId())
     }
@@ -32,7 +32,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -42,7 +42,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'the return statement contains one quiz'
         quizDtos.size() == 1
@@ -69,7 +69,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -79,7 +79,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'no quiz is returned'
         quizDtos.size() == 0
@@ -106,7 +106,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -120,7 +120,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'the return statement contains one quiz'
         quizDtos.size() == 1
@@ -147,7 +147,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(oneWay)
         quiz.setQrCodeOnly(qRCodeOnly)
         quiz.setType(quizType.toString())
@@ -160,7 +160,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswer.setCreationDate(creationDate)
         quizAnswerRepository.save(quizAnswer)
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), courseExecution.getId())
+        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'no quiz is returned'
         quizDtos.size() == 0

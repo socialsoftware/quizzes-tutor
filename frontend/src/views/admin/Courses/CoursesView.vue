@@ -22,12 +22,11 @@
           >
         </v-card-title>
       </template>
-
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="createFromCourse(item)"
               data-cy="createFromCourse"
@@ -36,10 +35,59 @@
           </template>
           <span>Create from Course</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="viewCourseExecutionUsers(item)"
+              data-cy="viewUsersButton"
+              >fas fa-user</v-icon
+            >
+          </template>
+          <span>View Users</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="uploadUsersHandler(item)"
+              data-cy="uploadUsersHandler"
+              >attach_file</v-icon
+            >
+          </template>
+          <span>Upload External Users</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="isExternalCourse(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="addExternalUser(item)"
+              data-cy="addExternalUser"
+              >person_add</v-icon
+            >
+          </template>
+          <span>Add Student/Teacher</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="anonymizeCourse(item)"
+              color="red"
+              data-cy="anonymizeCourse"
+              >lock</v-icon
+            >
+          </template>
+          <span>Anonymize Course's Users</span>
+        </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteCourse(item)"
               color="red"
@@ -59,6 +107,27 @@
       v-on:new-course="onCreateCourse"
       v-on:close-dialog="onCloseDialog"
     />
+    <upload-users-dialog
+      v-if="uploadUsersCourse"
+      v-model="uploadUsersDialog"
+      :course="uploadUsersCourse"
+      v-on:users-uploaded="closeUploadUsersDialog"
+      v-on:close-dialog="onCloseDialog"
+    />
+    <add-user-dialog
+      v-if="currentCourse"
+      v-model="addUserDialog"
+      :course="currentCourse"
+      v-on:user-created="onCreateUser"
+      v-on:close-dialog="onCloseDialog"
+    />
+    <view-users-dialog
+      v-if="currentCourse"
+      v-model="viewUsersDialog"
+      :course="currentCourse"
+      v-on:delete-users="onDeleteUsers"
+      v-on:close-dialog="onCloseDialog"
+    />
   </v-card>
 </template>
 
@@ -67,16 +136,28 @@ import { Component, Vue } from 'vue-property-decorator';
 import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
 import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
+import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
+import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
+import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
+import ExternalUser from '../../../models/user/ExternalUser';
+import User from '../../../models/user/User';
 
 @Component({
   components: {
-    'edit-course-dialog': EditCourseDialog
+    'upload-users-dialog': UploadUsersDialog,
+    'edit-course-dialog': EditCourseDialog,
+    'add-user-dialog': AddUserDialog,
+    'view-users-dialog': ViewUsersDialog
   }
 })
 export default class CoursesView extends Vue {
   courses: Course[] = [];
+  uploadUsersCourse: Course | null = null;
   currentCourse: Course | null = null;
   editCourseDialog: boolean = false;
+  uploadUsersDialog: boolean = false;
+  addUserDialog: boolean = false;
+  viewUsersDialog: boolean = false;
   search: string = '';
   headers: object = [
     {
@@ -84,7 +165,7 @@ export default class CoursesView extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '5px'
+      width: '25%'
     },
     {
       text: 'Course Type',
@@ -92,7 +173,7 @@ export default class CoursesView extends Vue {
       align: 'center',
       width: '10%'
     },
-    { text: 'Name', value: 'name', align: 'left', width: '30%' },
+    { text: 'Name', value: 'name', align: 'left', width: '25%' },
     {
       text: 'Execution Type',
       value: 'courseExecutionType',
@@ -112,34 +193,46 @@ export default class CoursesView extends Vue {
       width: '10%'
     },
     {
-      text: 'Number of Teachers',
-      value: 'numberOfTeachers',
+      text: 'Number of Active Teachers',
+      value: 'numberOfActiveTeachers',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
-      text: 'Number of Students',
-      value: 'numberOfStudents',
+      text: 'Number of Inactive Teachers',
+      value: 'numberOfInactiveTeachers',
       align: 'center',
-      width: '10%'
+      width: '5%'
+    },
+    {
+      text: 'Number of Active Students',
+      value: 'numberOfActiveStudents',
+      align: 'center',
+      width: '5%'
+    },
+    {
+      text: 'Number of Inactive Students',
+      value: 'numberOfInactiveStudents',
+      align: 'center',
+      width: '5%'
     },
     {
       text: 'Number of Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Number of Quizzes',
       value: 'numberOfQuizzes',
       align: 'center',
-      width: '10%'
+      width: '5%'
     },
     {
       text: 'Status',
       value: 'status',
       align: 'center',
-      width: '10%'
+      width: '5%'
     }
   ];
 
@@ -167,15 +260,59 @@ export default class CoursesView extends Vue {
     this.editCourseDialog = true;
   }
 
+  viewCourseExecutionUsers(course: Course) {
+    this.currentCourse = course;
+    this.viewUsersDialog = true;
+  }
+
   async onCreateCourse(course: Course) {
     this.courses.unshift(course);
     this.editCourseDialog = false;
     this.currentCourse = null;
   }
 
+  updateUserNumbers(course: Course) {
+    if (!!course && !!course.courseExecutionUsers) {
+      course.numberOfInactiveTeachers = course.courseExecutionUsers.filter(
+        user => user.role === 'TEACHER' && !user.active
+      ).length;
+      course.numberOfInactiveStudents = course.courseExecutionUsers.filter(
+        user => user.role === 'STUDENT' && !user.active
+      ).length;
+    }
+  }
+
   onCloseDialog() {
     this.editCourseDialog = false;
     this.currentCourse = null;
+    this.uploadUsersCourse = null;
+    this.addUserDialog = false;
+    this.viewUsersDialog = false;
+  }
+
+  addExternalUser(course: Course) {
+    this.addUserDialog = true;
+    this.currentCourse = course;
+  }
+
+  onCreateUser(user: ExternalUser) {
+    if (!!this.currentCourse && !!this.currentCourse.courseExecutionUsers) {
+      this.currentCourse.courseExecutionUsers.unshift(user);
+      let index: number = this.courses.indexOf(
+        this.courses.filter(
+          course =>
+            course.courseExecutionId == this.currentCourse?.courseExecutionId
+        )[0]
+      );
+      this.courses[
+        index
+      ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+      this.updateUserNumbers(this.courses[index]);
+    }
+  }
+
+  isExternalCourse(course: Course) {
+    return course.courseExecutionType === 'EXTERNAL';
   }
 
   async deleteCourse(courseToDelete: Course) {
@@ -189,6 +326,78 @@ export default class CoursesView extends Vue {
         await this.$store.dispatch('error', error);
       }
     }
+  }
+
+  hasCourseSemesterFinished(course: Course): boolean {
+    if (course.endDate) {
+      return new Date(course.endDate) < new Date();
+    } else if (
+      course.academicTerm &&
+      RegExp(/[1-2]º?\s?\w+\s[0-9]+\/[0-9]+/).test(course.academicTerm)
+    ) {
+      const termTokens = course.academicTerm.split(/º|\s|\//);
+      const month = termTokens[0] === '1' ? 3 : 9; // march : september
+      const year = termTokens[termTokens.length - 1];
+      return new Date(`${year}-${month}-${1}`) < new Date();
+    }
+    return false;
+  }
+
+  async anonymizeCourse(courseToDelete: Course) {
+    if (
+      confirm(
+        'Are you sure you want to anonymize the users of this course execution?'
+      )
+    ) {
+      try {
+        await RemoteServices.anonymizeCourse(courseToDelete.courseExecutionId);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
+  uploadUsersHandler(course: Course) {
+    this.uploadUsersCourse = course;
+    this.uploadUsersDialog = true;
+  }
+
+  async closeUploadUsersDialog(updatedCourse: Course) {
+    this.uploadUsersDialog = false;
+    await this.$store.dispatch('loading');
+    this.courses = this.courses.filter(
+      course => course.courseExecutionId !== updatedCourse.courseExecutionId
+    );
+    this.courses.unshift(updatedCourse);
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async onDeleteUsers(users: User[]) {
+    var course: Course;
+    await this.$store.dispatch('loading');
+    if (!!this.currentCourse) {
+      try {
+        course = await RemoteServices.deleteExternalInactiveUsers(
+          this.currentCourse,
+          users.flatMap(user => (user.id ? [user.id] : []))
+        );
+        let index: number = this.courses.indexOf(
+          this.courses.filter(
+            course =>
+              course.courseExecutionId == this.currentCourse?.courseExecutionId
+          )[0]
+        );
+
+        this.currentCourse = course;
+        this.courses[
+          index
+        ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+        this.updateUserNumbers(this.courses[index]);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

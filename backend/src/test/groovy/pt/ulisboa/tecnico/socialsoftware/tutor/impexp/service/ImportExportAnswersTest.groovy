@@ -6,12 +6,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class ImportExportAnswersTest extends SpockTest {
@@ -20,7 +21,7 @@ class ImportExportAnswersTest extends SpockTest {
 
     def setup() {
         Question question = new Question()
-        question.setCourse(course)
+        question.setCourse(externalCourse)
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
@@ -38,7 +39,7 @@ class ImportExportAnswersTest extends SpockTest {
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
         quiz.setType(Quiz.QuizType.GENERATED.toString())
-        quiz.setCourseExecution(courseExecution)
+        quiz.setCourseExecution(externalCourseExecution)
 
         quiz.setCreationDate(DateHandler.now())
         quiz.setAvailableDate(DateHandler.now())
@@ -52,7 +53,7 @@ class ImportExportAnswersTest extends SpockTest {
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)
 
-        User user = userService.createUser(USER_1_NAME, USER_1_USERNAME, User.Role.STUDENT)
+        User user = userService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, AuthUser.Type.EXTERNAL).getUser()
 
         quizAnswer = new QuizAnswer()
         quizAnswer.setQuiz(quiz)

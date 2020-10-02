@@ -7,9 +7,12 @@ import org.fenixedu.sdk.ApplicationConfiguration;
 import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -20,6 +23,23 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FE
 
 
 public class FenixEduInterface {
+
+    private static final String API_TEACHING = "teaching";
+    private static final String API_ATTENDING = "attending";
+
+    private static final String API_PERSON_EMAIL = "email";
+    private static final String API_PERSON_USERNAME = "username";
+    private static final String API_PERSON_NAME = "name";
+    private static final String API_PERSON_CURRENT_TERM = "currentAcademicTerm";
+
+    private static final String API_COURSE_ID = "id";
+    private static final String API_COURSE_NAME = "name";
+    private static final String API_COURSE_ACADEMIC_TERM = "academicTerm";
+    private static final String API_COURSE_ACRONYM = "acronym";
+
+    private static final String API_EVALUATION_PERIOD = "evaluationPeriod";
+    private static final String API_EVALUATION_END = "end";
+
     private FenixEduClientImpl client;
     private FenixEduUserDetails userDetails;
     private JsonObject person;
@@ -46,15 +66,15 @@ public class FenixEduInterface {
     }
 
     public String getPersonName() {
-        return String.valueOf(person.get("name")).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get(API_PERSON_NAME)).replaceAll("^\"|\"$", "");
     }
 
     public String getPersonUsername() {
-        return String.valueOf(person.get("username")).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get(API_PERSON_USERNAME)).replaceAll("^\"|\"$", "");
     }
 
     private JsonObject getPersonCourses() {
-        String academicTerm = client.getAbout().get("currentAcademicTerm").getAsString();
+        String academicTerm = client.getAbout().get(API_PERSON_CURRENT_TERM).getAsString();
         Matcher currentYearMatcher = Pattern.compile("([0-9]+/[0-9]+)").matcher(academicTerm);
         currentYearMatcher.find();
         String currentYear = currentYearMatcher.group(1);
@@ -65,23 +85,52 @@ public class FenixEduInterface {
         if (courses == null) {
             courses = getPersonCourses();
         }
-        return getCourses(courses.get("attending").getAsJsonArray());
+        return getCourses(API_ATTENDING);
     }
 
     public List<CourseDto> getPersonTeachingCourses() {
         if (courses == null) {
             courses = getPersonCourses();
         }
-        return getCourses(courses.get("teaching").getAsJsonArray());
+        return getCourses(API_TEACHING);
     }
 
-    private List<CourseDto> getCourses(JsonArray coursesJson) {
+    public String getPersonEmail() {
+        return String.valueOf(person.get(API_PERSON_EMAIL)).replaceAll("^\"|\"$", "");
+    }
+
+    private String getCourseEndDate(JsonElement courseJson) {
+        String id = courseJson.getAsJsonObject().get(API_COURSE_ID).getAsString();
+        JsonArray evaluations = client.getCourseEvaluations(id).getAsJsonArray();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        LocalDateTime lastDate = null;
+        for (JsonElement evaluation : evaluations) {
+            String endDate = evaluation.getAsJsonObject()
+                                        .get(API_EVALUATION_PERIOD).getAsJsonObject()
+                                        .get(API_EVALUATION_END).getAsString();
+            if (!endDate.isEmpty()) {
+                LocalDateTime evaluationEnd = LocalDateTime.parse(endDate, formatter);
+                if (lastDate == null || evaluationEnd.isAfter(lastDate)) {
+                    lastDate = evaluationEnd;
+                }
+            }             
+        }
+        return DateHandler.toISOString(lastDate);
+    }
+
+    private List<CourseDto> getCourses(String type) {
+        JsonArray coursesJson = courses.get(type).getAsJsonArray();
         List<CourseDto> result = new ArrayList<>();
         for (JsonElement courseJson : coursesJson) {
-            result.add(new CourseDto(courseJson.getAsJsonObject().get("name").getAsString(),
-                    courseJson.getAsJsonObject().get("acronym").getAsString(),
-                    courseJson.getAsJsonObject().get("academicTerm").getAsString()));
+            CourseDto course = new CourseDto(courseJson.getAsJsonObject().get(API_COURSE_NAME).getAsString(),
+                    courseJson.getAsJsonObject().get(API_COURSE_ACRONYM).getAsString(),
+                    courseJson.getAsJsonObject().get(API_COURSE_ACADEMIC_TERM).getAsString());
+            if (type.equals(API_TEACHING)) {
+                course.setEndDate(getCourseEndDate(courseJson));
+            }
+            result.add(course);
         }
         return result;
     }
+
 }

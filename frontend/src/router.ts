@@ -2,13 +2,17 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Store from '@/store';
 
-import LoginView from '@/views/LoginView.vue';
+import LoginView from '@/views/user/LoginView.vue';
+import ExternalLoginView from '@/views/user/ExternalLoginView.vue';
+import RegistrationConfirmationView from '@/views/user/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
+import TournamentsView from '@/views/teacher/tournaments/TournamentsView.vue';
+import SelectedTournamentView from '@/views/teacher/tournaments/SelectedTournamentView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
@@ -20,12 +24,22 @@ import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import CodeView from '@/views/student/CodeView.vue';
 
+import AllTournamentView from './views/student/tournament/AllTournamentView.vue';
+import OpenTournamentView from '@/views/student/tournament/OpenTournamentView.vue';
+import ClosedTournamentView from '@/views/student/tournament/ClosedTournamentView.vue';
+import MyTournamentsView from '@/views/student/tournament/MyTournamentsView.vue';
+import ParticipantsTournamentView from '@/views/student/tournament/ParticipantsTournamentView.vue';
+
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
 import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+
+import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
+import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 
 Vue.use(Router);
 
@@ -46,7 +60,25 @@ let router = new Router({
       name: 'login',
       component: LoginView,
       meta: {
-        title: APP_NAME + ' - Login',
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login Fenix'
+      }
+    },
+    {
+      path: '/login/external',
+      name: 'external-login',
+      component: ExternalLoginView,
+      meta: {
+        requiredAuth: 'None',
+        title: APP_NAME + ' - Login External'
+      }
+    },
+    {
+      path: '/registration/confirmation',
+      name: 'registration-confirmation',
+      component: RegistrationConfirmationView,
+      meta: {
+        title: APP_NAME + ' - Registration Confirmation',
         requiredAuth: 'None'
       }
     },
@@ -83,6 +115,15 @@ let router = new Router({
           }
         },
         {
+          path: 'tournaments',
+          name: 'tournaments-management',
+          component: TournamentsView,
+          meta: {
+            title: APP_NAME + ' - Tournaments',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
           path: 'quizzes',
           name: 'quizzes-management',
           component: QuizzesView,
@@ -115,6 +156,24 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions/students',
+          name: 'sort-by-student-submissions',
+          component: SortQuestionSubmissionsByStudentView,
+          meta: {
+            title: APP_NAME + ' - Sort by Student Submissions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Teacher'
           }
         }
@@ -193,11 +252,76 @@ let router = new Router({
           name: 'code',
           component: CodeView,
           meta: {
-            title: APP_NAME + ' - Scan',
+            title: APP_NAME + ' - Code',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'all',
+          name: 'all-tournament',
+          component: AllTournamentView,
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'open',
+          name: 'open-tournament',
+          component: OpenTournamentView,
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'closed',
+          name: 'closed-tournament',
+          component: ClosedTournamentView,
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'myTournaments',
+          name: 'my-tournaments',
+          component: MyTournamentsView,
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournament',
+          name: 'tournament-participants',
+          component: TournamentResultsView,
+          props: route => ({ id: route.query.id }),
+          meta: {
+            title: APP_NAME + ' - Tournament Participants',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'student-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Student'
           }
         }
       ]
+    },
+    {
+      path: '/teacher/tournament',
+      name: 'tournament-dashboard',
+      component: TournamentResultsView,
+      props: route => ({ id: route.query.id }),
+      meta: {
+        title: APP_NAME + ' - Tournament Dashboard',
+        requiredAuth: 'Teacher'
+      }
     },
     {
       path: '/admin',

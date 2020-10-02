@@ -4,8 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 
@@ -27,10 +27,10 @@ class CreateExternalCourseExecutionTest extends SpockTest {
         courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
 
-        course = new Course(COURSE_1_NAME, Course.Type.TECNICO)
-        courseRepository.save(course)
+        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(externalCourse)
 
-        def courseDto = new CourseDto(course)
+        def courseDto = new CourseDto(externalCourse)
         courseDto.setCourseType(Course.Type.TECNICO)
         courseDto.setCourseExecutionType(Course.Type.EXTERNAL)
         courseDto.setName(COURSE_1_NAME)
@@ -48,15 +48,15 @@ class CreateExternalCourseExecutionTest extends SpockTest {
         result.academicTerm == COURSE_1_ACADEMIC_TERM
 
         and: "course execution is created"
-        course.getCourseExecutions().size() == 1
-        def courseExecution = new ArrayList<>(course.getCourseExecutions()).get(0)
+        externalCourse.getCourseExecutions().size() == 1
+        def courseExecution = new ArrayList<>(externalCourse.getCourseExecutions()).get(0)
         courseExecution != null
 
         and: "has the correct value"
         courseExecution.type == Course.Type.EXTERNAL
         courseExecution.acronym == COURSE_1_ACRONYM
         courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
-        courseExecution.getCourse() == course
+        courseExecution.getCourse() == externalCourse
     }
 
     def "the external course does not exist and create both, course and execution course"() {

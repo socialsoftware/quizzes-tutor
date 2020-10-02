@@ -12,7 +12,7 @@
               ></v-text-field>
             </v-col>
           </v-row>
-          <v-btn color="blue darken-1" @click="setQuizId">Save</v-btn>
+          <v-btn color="green darken-1" @click="setQuizId">Save</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
