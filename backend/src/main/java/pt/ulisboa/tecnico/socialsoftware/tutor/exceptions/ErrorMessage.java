@@ -112,7 +112,7 @@ public enum ErrorMessage {
     REPLY_MISSING_DATA("Missing information for reply"),
     DISCUSSION_MISSING_USER("Missing user for discussion"),
     DISCUSSION_NOT_STUDENT_CREATOR("Teacher cannot create discussion"),
-    DUPLICATE_DISCUSSION("Duplicate discussion for user id %d and question id %d"),
+    DUPLICATE_DISCUSSION("Duplicate discussion"),
     QUESTION_NOT_ANSWERED("Question not answered with id %d"),
     DISCUSSION_MISSING_MESSAGE("Missing message for discussion"),
     DISCUSSION_DATE_MISSING("Date is missing!"),

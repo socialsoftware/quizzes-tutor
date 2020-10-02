@@ -6,6 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
@@ -42,6 +44,9 @@ public class DiscussionService {
     @Autowired
     public ReplyRepository replyRepository;
 
+    @Autowired
+    public QuizAnswerRepository quizAnswerRepository;
+
     @PersistenceContext
     EntityManager entityManager;
 
@@ -49,16 +54,18 @@ public class DiscussionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DiscussionDto createDiscussion(DiscussionDto discussionDto) {
+    public DiscussionDto createDiscussion(int quizAnswerId, int questionOrder, DiscussionDto discussionDto) {
         checkDiscussionDto(discussionDto);
         User user = userRepository.findById(discussionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, discussionDto.getUserId()));
-        Question question = questionRepository.findById(discussionDto.getQuestionId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, discussionDto.getQuestionId()));
+        Question question = questionRepository.findById(discussionDto.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, discussionDto.getQuestion().getId()));
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId).orElse(null);
 
         checkUserAndQuestion(user, question);
-
         checkMessage(discussionDto.getMessage());
+        checkQuizAnswer(quizAnswer, questionOrder);
+        checkExistingDiscussion(quizAnswer, questionOrder);
 
-        Discussion discussion = new Discussion(user, question, discussionDto);
+        Discussion discussion = new Discussion(user, quizAnswer.getQuestionAnswers().get(questionOrder), discussionDto);
         this.entityManager.persist(discussion);
         List<ReplyDto> replies = discussionDto.getReplies();
         if (replies != null && !replies.isEmpty()) {
@@ -71,6 +78,12 @@ public class DiscussionService {
         }
 
         return new DiscussionDto(discussion);
+    }
+
+    private void checkExistingDiscussion(QuizAnswer quizAnswer, int questionOrder) {
+        if (quizAnswer.getQuestionAnswers().get(questionOrder).getDiscussion() != null) {
+            throw new TutorException(DUPLICATE_DISCUSSION);
+        }
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -119,6 +132,16 @@ public class DiscussionService {
         }
     }
 
+    private void checkQuizAnswer(QuizAnswer quizAnswer, int questionOrder) {
+        if(quizAnswer == null || quizAnswer.getQuestionAnswers() == null) {
+            throw new TutorException(QUIZ_ANSWER_NOT_FOUND);
+        }
+
+        if(questionOrder >= quizAnswer.getQuestionAnswers().size() || questionOrder < 0) {
+            throw new TutorException(QUESTION_ANSWER_NOT_FOUND);
+        }
+    }
+
     private void checkDiscussionDto(DiscussionDto discussion) {
         if (discussion.getQuestion() == null ) {
             throw new TutorException(DISCUSSION_MISSING_QUESTION);
@@ -134,10 +157,6 @@ public class DiscussionService {
     private void checkUserAndQuestion(User user, Question question) {
         if (user.getRole() == User.Role.TEACHER) {
             throw new TutorException(DISCUSSION_NOT_STUDENT_CREATOR);
-        }
-
-        if (discussionRepository.findByUserIdQuestionId(user.getId(), question.getId()).isPresent()) {
-            throw new TutorException(DUPLICATE_DISCUSSION, user.getId(), question.getId());
         }
 
         checkUserAnswered(user, question);
@@ -165,9 +184,8 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<DiscussionDto> findDiscussionByUserIdAndQuestionId(Integer userId, Integer questionId) {
-        return discussionRepository.findByUserIdQuestionId(userId, questionId).stream().map(DiscussionDto::new)
-                .collect(Collectors.toList());
+    public DiscussionDto findDiscussionsById(Integer discussionId) {
+        return discussionRepository.findById(discussionId).stream().map(DiscussionDto::new).findFirst().orElse(null);
     }
 
 

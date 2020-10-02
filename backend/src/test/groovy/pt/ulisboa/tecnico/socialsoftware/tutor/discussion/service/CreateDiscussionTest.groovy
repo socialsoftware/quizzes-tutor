@@ -27,7 +27,6 @@ class CreateDiscussionTest extends SpockTest {
     @Shared
     def question1
     def question2
-    def quiz
     def quizAnswer
 
     def setup(){
@@ -52,25 +51,27 @@ class CreateDiscussionTest extends SpockTest {
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
         quizRepository.save(quiz)
 
-        def quizanswer = new QuizAnswer()
-        quizanswer.setUser(student)
-        quizanswer.setQuiz(quiz)
-        quizanswer.setQuiz(quizRepository.findAll().get(0))
-        quizAnswerRepository.save(quizanswer)
+        quizAnswer = new QuizAnswer()
+        quizAnswer.setUser(student)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setQuiz(quizRepository.findAll().get(0))
+        quizAnswerRepository.save(quizAnswer)
 
-        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 3)
+        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 0)
+        def quizquestion2 = new QuizQuestion(quizRepository.findAll().get(0), question2, 1)
         quizQuestionRepository.save(quizquestion)
+        quizQuestionRepository.save(quizquestion2)
 
         def questionanswer = new QuestionAnswer()
         questionanswer.setTimeTaken(1)
-        questionanswer.setQuizAnswer(quizanswer)
+        questionanswer.setQuizAnswer(quizAnswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
 
 
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
 
-        quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
+        quizAnswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
 
 
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
@@ -92,17 +93,10 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
 
         when:
-        discussionService.createDiscussion(discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
 
         then: "the correct discussion is inside the repository"
         discussionRepository.count() == 1L
-
-        def resultRepo = discussionService.findDiscussionByUserIdAndQuestionId(student.getId(), question1.getId())
-        resultRepo.size() == 1
-        def resultQuestion2 = resultRepo.get(0)
-        resultQuestion2.getMessage() == DISCUSSION_MESSAGE
-        resultQuestion2.getUserId() == student.getId()
-        resultQuestion2.getQuestion().getId() == question1.getId()
 
         def resultUserList = discussionService.findDiscussionsByUserId(student.getId())
         resultUserList.size() == 1
@@ -110,13 +104,6 @@ class CreateDiscussionTest extends SpockTest {
         resultUser.getMessage() == DISCUSSION_MESSAGE
         resultUser.getUserId() == student.getId()
         resultUser.getQuestion().getId() == question1.getId()
-
-        def resultDiscussionList = discussionService.findDiscussionsByQuestionId(question1.getId())
-        resultDiscussionList.size() == 1
-        def resultQuestion = resultDiscussionList.get(0)
-        resultQuestion.getMessage() == DISCUSSION_MESSAGE
-        resultQuestion.getUserId() == student.getId()
-        resultQuestion.getQuestion().getId() == question1.getId()
     }
 
     def "student can't create a discussion in a non answered question"(){
@@ -128,7 +115,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "creating a discussion on a non answered question"
-        discussionService.createDiscussion(discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), 1, discussionDto)
 
         then:
         def exception = thrown(TutorException)
@@ -157,8 +144,8 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto2.setUserName(student.getUsername())
 
         when: "creating two discussions on the same question"
-        discussionService.createDiscussion(discussionDto1)
-        discussionService.createDiscussion(discussionDto2)
+        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto1)
+        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto2)
 
         then:
         def exception = thrown(TutorException)
@@ -176,7 +163,7 @@ class CreateDiscussionTest extends SpockTest {
         userRepository.save(student)
 
         when: "creating discussion"
-        discussionService.createDiscussion(discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
 
         then:
         def exception = thrown(TutorException)

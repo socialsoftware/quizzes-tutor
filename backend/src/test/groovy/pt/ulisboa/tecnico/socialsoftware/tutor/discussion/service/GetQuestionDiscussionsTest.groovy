@@ -23,7 +23,6 @@ class GetQuestionDiscussionsTest extends SpockTest {
     def student
     @Shared
     def question1
-    def quiz
     def quizAnswer
 
     def setup(){
@@ -42,25 +41,25 @@ class GetQuestionDiscussionsTest extends SpockTest {
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
         quizRepository.save(quiz)
 
-        def quizanswer = new QuizAnswer()
-        quizanswer.setUser(student)
-        quizanswer.setQuiz(quiz)
-        quizanswer.setQuiz(quizRepository.findAll().get(0))
-        quizAnswerRepository.save(quizanswer)
+        quizAnswer = new QuizAnswer()
+        quizAnswer.setUser(student)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setQuiz(quizRepository.findAll().get(0))
+        quizAnswerRepository.save(quizAnswer)
 
-        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 3)
+        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 0)
         quizQuestionRepository.save(quizquestion)
 
         def questionanswer = new QuestionAnswer()
         questionanswer.setTimeTaken(1)
-        questionanswer.setQuizAnswer(quizanswer)
+        questionanswer.setQuizAnswer(quizAnswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
 
 
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
 
-        quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
+        quizAnswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
 
 
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
@@ -81,10 +80,10 @@ class GetQuestionDiscussionsTest extends SpockTest {
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
         and: "created discussion"
-        discussionService.createDiscussion(discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
 
         when:
-        def discussionsResult = discussionService.findDiscussionsByQuestionId(question1.getId())
+        def discussionsResult = discussionService.findDiscussionsByUserId(student.getId())
 
         then: "the correct discussion is retrieved"
         discussionsResult.size() == 1
@@ -92,7 +91,6 @@ class GetQuestionDiscussionsTest extends SpockTest {
         discussion.getUserId() == discussionDto.getUserId()
         discussion.getQuestionId() == discussionDto.getQuestionId()
         discussion.getMessage() == discussionDto.getMessage()
-
     }
 
     def "get discussion of invalid question"(){

@@ -195,4 +195,7 @@ public class QuizAnswer implements DomainEntity {
         return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
 }

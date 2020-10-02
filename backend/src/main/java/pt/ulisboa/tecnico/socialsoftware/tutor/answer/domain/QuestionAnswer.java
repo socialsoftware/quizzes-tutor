@@ -1,9 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -38,6 +40,10 @@ public class QuestionAnswer implements DomainEntity {
     private Option option;
 
     private Integer sequence;
+
+    @OneToOne(optional=true)
+    @JoinColumn(name="discussion_id")
+    private Discussion discussion;
 
     public QuestionAnswer() {
     }
@@ -140,5 +146,13 @@ public class QuestionAnswer implements DomainEntity {
             option.getQuestionAnswers().remove(this);
             option = null;
         }
+    }
+
+    public Discussion getDiscussion() {
+        return discussion;
+    }
+
+    public void setDiscussion(Discussion discussion) {
+        this.discussion = discussion;
     }
 }

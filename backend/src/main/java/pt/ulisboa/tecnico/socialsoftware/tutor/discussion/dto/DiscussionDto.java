@@ -30,10 +30,10 @@ public class DiscussionDto implements Serializable {
         this.questionId = discussion.getQuestionId();
         this.userName = discussion.getUser().getName();
         this.message = discussion.getMessage();
-        this.question = new QuestionDto(discussion.getQuestion());
+        this.question = new QuestionDto(discussion.getQuestionAnswer().getQuizQuestion().getQuestion());
         this.available = discussion.isAvailable();
         this.date = DateHandler.toISOString(discussion.getDate());
-        this.courseExecutionId = discussion.getCourseExecutionId();
+        this.courseExecutionId = discussion.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getId();
 
         List<Reply> discussionReplies = discussion.getReplies();
         if(discussionReplies != null && !discussionReplies.isEmpty()){

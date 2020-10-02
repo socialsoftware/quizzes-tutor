@@ -1,8 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
@@ -18,15 +22,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "discussions")
-public class Discussion implements Serializable {
+public class Discussion implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="question_id", insertable = false, updatable = false)
-    private Question question;
+    @NotNull
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.EAGER, optional=false)
+    private QuestionAnswer questionAnswer;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id", insertable = false, updatable = false)
@@ -37,16 +41,12 @@ public class Discussion implements Serializable {
     private String message;
 
     @NotNull
-    @Column(name="question_id")
-    private Integer questionId;
-
-    @NotNull
     @Column(name="user_id")
     private Integer userId;
 
     @NotNull
-    @Column(name="course_execution_id")
-    private Integer courseExecutionId;
+    @Column(name="question_id")
+    private Integer questionId;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
@@ -62,18 +62,18 @@ public class Discussion implements Serializable {
 
     public Discussion(){}
 
-    public Discussion(User user, Question question, DiscussionDto discussionDto) {
+    public Discussion(User user, QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
-        this.question = question;
-        this.question.addDiscussion(this);
+        this.questionAnswer = questionAnswer;
+        this.questionAnswer.setDiscussion(this);
         this.user = user;
+        this.userId = user.getId();
         this.user.addDiscussion(this);
         this.message = discussionDto.getMessage();
-        this.setQuestionId(question.getId());
         this.setUserId(user.getId());
         this.setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
         this.available = discussionDto.isAvailable();
-        this.courseExecutionId = discussionDto.getCourseExecutionId();
+        this.setQuestionId(questionAnswer.getQuizQuestion().getQuestion().getId());
     }
 
     public List<Reply> getReplies() {
@@ -106,14 +106,6 @@ public class Discussion implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Question getQuestion() {
-        return question;
-    }
-
-    public void setQuestion(Question question) {
-        this.question = question;
     }
 
     public User getUser() {
@@ -157,14 +149,6 @@ public class Discussion implements Serializable {
         }
     }
 
-    public Integer getCourseExecutionId() {
-        return courseExecutionId;
-    }
-
-    public void setCourseExecutionId(Integer courseExecutionId) {
-        this.courseExecutionId = courseExecutionId;
-    }
-
     public void changeAvailability() {
         this.available = !this.available;
     }
@@ -178,5 +162,18 @@ public class Discussion implements Serializable {
         user = null;
 
         replies.clear();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitDiscussion(this);
+    }
+
+    public QuestionAnswer getQuestionAnswer() {
+        return questionAnswer;
+    }
+
+    public void setQuestionAnswer(QuestionAnswer questionAnswer) {
+        this.questionAnswer = questionAnswer;
     }
 }

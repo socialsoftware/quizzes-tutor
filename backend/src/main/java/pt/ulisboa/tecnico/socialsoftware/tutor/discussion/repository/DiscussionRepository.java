@@ -7,7 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 

@@ -30,8 +30,6 @@ class CreateReplyTest extends SpockTest {
     def teacher
     @Shared
     def question1
-    def quiz
-    def quizAnswer
     def discussionDto
 
     def setup(){
@@ -62,7 +60,7 @@ class CreateReplyTest extends SpockTest {
         quizanswer.setQuiz(quizRepository.findAll().get(0))
         quizAnswerRepository.save(quizanswer)
 
-        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 3)
+        def quizquestion = new QuizQuestion(quizRepository.findAll().get(0), question1, 0)
         quizQuestionRepository.save(quizquestion)
 
         def questionanswer = new QuestionAnswer()
@@ -90,7 +88,7 @@ class CreateReplyTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
     }
 
     def "teacher replies to discussion"(){

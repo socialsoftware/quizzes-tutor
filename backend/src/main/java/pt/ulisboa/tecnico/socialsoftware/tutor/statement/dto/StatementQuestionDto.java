@@ -28,18 +28,17 @@ public class StatementQuestionDto implements Serializable {
         this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
         this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
         this.sequence = questionAnswer.getSequence();
-        int userId = questionAnswer.getQuizAnswer().getUser().getId();
-        this.discussions = questionAnswer.getQuizQuestion().getQuestion().getDiscussions().stream().map(DiscussionDto::new)
+        /*this.discussions = questionAnswer.getQuizQuestion().getQuestion().getDiscussions().stream().map(DiscussionDto::new)
                 .filter(discussion -> {
             if (discussion.isAvailable()) {
                 return true;
-            } else if (discussion.getUserId() == userId) {
+            } else if (questionAnswer.getDiscussion() != null) {
                 this.hasUserDiscussion = true;
                 return true;
             } else {
                 return false;
             }
-        }).collect(Collectors.toList());
+        }).collect(Collectors.toList());*/
     }
 
     public String getContent() {

@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
@@ -13,7 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.RE
 
 @Entity
 @Table(name = "replies")
-public class Reply {
+public class Reply implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -97,5 +99,10 @@ public class Reply {
 
         discussion.getReplies().remove(this);
         discussion = null;
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitReply(this);
     }
 }
