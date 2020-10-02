@@ -346,7 +346,7 @@ export default class CoursesView extends Vue {
   async anonymizeCourse(courseToDelete: Course) {
     if (
       confirm(
-        "Are you sure you want to anonymize this course execution's users?"
+        'Are you sure you want to anonymize the users of this course execution?'
       )
     ) {
       try {
@@ -379,12 +379,12 @@ export default class CoursesView extends Vue {
       try {
         course = await RemoteServices.deleteExternalInactiveUsers(
           this.currentCourse,
-          users.map(user => user.id)
+          users.flatMap(user => (user.id ? [user.id] : []))
         );
         let index: number = this.courses.indexOf(
           this.courses.filter(
             course =>
-              course.courseExecutionId == this.currentCourse.courseExecutionId
+              course.courseExecutionId == this.currentCourse?.courseExecutionId
           )[0]
         );
 

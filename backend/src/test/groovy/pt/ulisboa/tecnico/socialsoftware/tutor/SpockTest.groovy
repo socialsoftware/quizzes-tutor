@@ -22,6 +22,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -87,9 +89,14 @@ class SpockTest extends Specification {
     public static final LocalDateTime LOCAL_DATE_TOMORROW = DateHandler.now().plusDays(1)
     public static final LocalDateTime LOCAL_DATE_LATER = DateHandler.now().plusDays(2)
 
-    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_BEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2))
+    public static final String STRING_DATE_YESTERDAY = DateHandler.toISOString(DateHandler.now().minusDays(1))
     public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+    public static final String STRING_DATE_TODAY_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusMinutes(10))
     public static final String STRING_DATE_TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    public static final String STRING_DATE_TOMORROW_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(1).plusMinutes(10))
+    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_LATER_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(2).plusMinutes(10))
 
     public static final String QUESTION_1_CONTENT = "Question 1 Content\n ![image][image]\n question content"
     public static final String QUESTION_2_CONTENT = "Question 2 Content\n ![image][image]\n question content"
@@ -115,6 +122,8 @@ class SpockTest extends Specification {
     public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
     public static final String CSVIMPORTUSERSBADROLEFORMAT = System.getProperty("user.dir") + "/src/test/resources/csvImportUsersBadRoleFormat.csv"
     public static final int NUMBER_OF_USERS_IN_FILE = 5
+
+    public static final int NUMBER_OF_QUESTIONS = 1
 
     public static final String REVIEW_1_COMMENT = "Review Comment 1"
     public static final String REVIEW_2_COMMENT = "Review Comment 2"
@@ -191,6 +200,12 @@ class SpockTest extends Specification {
 
     @Autowired
     TopicService topicService
+
+    @Autowired
+    TournamentRepository tournamentRepository
+
+    @Autowired
+    TournamentService tournamentService
 
     @Autowired
     UserRepository userRepository

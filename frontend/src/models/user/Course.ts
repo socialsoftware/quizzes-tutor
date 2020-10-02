@@ -16,7 +16,7 @@ export default class Course {
   numberOfActiveTeachers: number | undefined;
   numberOfInactiveTeachers: number | undefined;
   status: string | undefined;
-  courseExecutionUsers: User[] | undefined;
+  courseExecutionUsers: User[] = [];
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
@@ -37,7 +37,7 @@ export default class Course {
       this.status = jsonObj.status;
       if (jsonObj.courseExecutionUsers) {
         this.courseExecutionUsers = jsonObj.courseExecutionUsers.map(
-          (externalUser: User) => new User(externalUser)
+          (user: User) => new User(user)
         );
       }
     }

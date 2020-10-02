@@ -294,6 +294,13 @@ public class Question implements DomainEntity {
         return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
     }
 
+    public boolean hasTopics(Set<Integer> chosenTopicsIds) {
+        return !getTopics().isEmpty()
+                && chosenTopicsIds.containsAll(getTopics().stream()
+                .map(topic -> topic.getId())
+                .collect(Collectors.toList()));
+    }
+
     public void update(QuestionDto questionDto) {
         if (getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).findAny().isPresent()) {
             throw new TutorException(CANNOT_CHANGE_ANSWERED_QUESTION);

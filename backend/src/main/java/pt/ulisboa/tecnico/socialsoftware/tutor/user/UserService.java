@@ -11,16 +11,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
@@ -56,6 +54,9 @@ public class UserService {
 
     @Autowired
     private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -118,10 +119,10 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
-        return userRepository.findUserWithCourseExecutionsById(userId)
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId))
-                .getCourseExecutions().stream()
-                .anyMatch(courseExecution -> courseExecution.getCourse().getId().equals(courseId));
+        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
+                .getCourseExecutions()
+                .stream()
+                .anyMatch(courseExecution ->  userRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

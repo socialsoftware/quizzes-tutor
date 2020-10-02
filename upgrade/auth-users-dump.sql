@@ -1,3 +1,5 @@
+SELECT lo_unlink(l.oid) FROM pg_largeobject_metadata l;
+
 CREATE TABLE auth_users (
 	id integer NOT NULL,
 	user_id integer,

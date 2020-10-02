@@ -99,6 +99,9 @@ public class UsersXmlImport {
 
 		String username = authUserElement.getAttributeValue("username");
 		String email = authUserElement.getAttributeValue("email");
+		if (email.trim().isEmpty()) {
+			email = null;
+		}
 		AuthUser.Type type = AuthUser.Type.EXTERNAL;
 		String password = null;
 		Boolean isActive = null;

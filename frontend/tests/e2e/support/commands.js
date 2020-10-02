@@ -67,6 +67,136 @@ Cypress.Commands.add(
   }
 );
 
+Cypress.Commands.add('seeTournamentsLists', type => {
+  cy.get('[data-cy="Tournament"]').click();
+  cy.get(`[data-cy="${type}"]`).click();
+  cy.wait(100);
+});
+
+Cypress.Commands.add('createTournament', numberOfQuestions => {
+  cy.get('[data-cy="createButton"]')
+    .should('be.visible')
+    .click();
+  cy.tournamentCreation(numberOfQuestions);
+  cy.get('[data-cy="saveButton"]').click();
+  cy.wait(100);
+});
+
+Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
+  cy.get('[data-cy="createButton"]')
+    .should('be.visible')
+    .click({ force: true });
+
+  cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
+  cy.wait(500);
+  cy.get('[data-cy="Password"]').type('123', { force: true });
+  cy.tournamentCreation(numberOfQuestions);
+  cy.get('[data-cy="saveButton"]').click();
+  cy.wait(100);
+});
+
+Cypress.Commands.add('tournamentCreation', numberOfQuestions => {
+  cy.time('Start Time', 22, 0);
+  cy.wait(100);
+  cy.time('End Time', 25, 1);
+  cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
+    force: true
+  });
+  cy.selectTopic('Software Architecture');
+});
+
+Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
+  cy.createTournament(numberOfQuestions);
+  cy.updateTournamentStartTime();
+});
+
+Cypress.Commands.add('time', (date, day, type) => {
+  let get = '';
+  if (type === 0) {
+    get = '#startTimeInput-picker-container-DatePicker';
+  } else {
+    get = '#endTimeInput-picker-container-DatePicker';
+  }
+
+  cy.get('label')
+    .contains(date)
+    .click({ force: true });
+
+  cy.get(
+    get +
+      ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
+  ).click({ force: true });
+
+  cy.wait(500);
+  cy.get(
+    get +
+      ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
+      day +
+      ') > .datepicker-day-text'
+  ).click({ force: true });
+});
+
+Cypress.Commands.add('selectTopic', topic => {
+  cy.get('[data-cy="Topics"]')
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 4)
+    .contains(topic)
+    .parent()
+    .should('have.length', 1)
+    .children()
+    .should('have.length', 2)
+    .find('[data-cy="addTopic"]')
+    .click();
+});
+
+Cypress.Commands.add('joinTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'JoinTournament');
+});
+
+Cypress.Commands.add('joinPrivateTournament', tournament => {
+  cy.joinTournament(tournament);
+  cy.get('[data-cy="Password"]').type('123');
+  cy.get('[data-cy="joinPrivateTournament"]').click();
+});
+
+Cypress.Commands.add('solveTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'SolveQuiz');
+});
+
+Cypress.Commands.add('leaveTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'LeaveTournament');
+});
+
+Cypress.Commands.add('editTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'EditTournament');
+
+  cy.time('End Time', 24, 1);
+  cy.get('[data-cy="NumberOfQuestions"]')
+    .clear({
+      force: true
+    })
+    .type(5, {
+      force: true
+    });
+  cy.selectTopic('Web Application');
+  cy.get('[data-cy="saveButton"]').click();
+});
+
+Cypress.Commands.add('cancelTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'CancelTournament');
+});
+
+Cypress.Commands.add('removeTournament', tournament => {
+  cy.selectTournamentWithAction(tournament, 'RemoveTournament');
+});
+
+Cypress.Commands.add('selectTournamentWithAction', (tournament, action) => {
+  cy.get(
+    `:nth-child(${tournament}) > :nth-child(1) > [data-cy="${action}"]`
+  ).click({ force: true });
+});
+
 Cypress.Commands.add(
   'submitQuestion',
   (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
