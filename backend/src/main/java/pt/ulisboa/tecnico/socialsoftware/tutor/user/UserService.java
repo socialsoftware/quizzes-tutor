@@ -168,9 +168,9 @@ public class UserService {
                         answerService.deleteQuizAnswer(quizAnswer);
                     }
 
-                    for (Discussion discussion : new ArrayList<>(user.getDiscussions())) {
+                    /*for (Discussion discussion : new ArrayList<>(user.getDiscussions())) {
                         discussionService.deleteDiscussion(discussion);
-                    }
+                    }*/
 
                     this.userRepository.delete(user);
                 });

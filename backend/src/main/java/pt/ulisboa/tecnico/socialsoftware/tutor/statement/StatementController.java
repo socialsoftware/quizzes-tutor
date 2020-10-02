@@ -31,7 +31,6 @@ public class StatementController {
     @GetMapping("/executions/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
-        logger.warn("Available: " + executionId);
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
