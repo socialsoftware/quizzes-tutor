@@ -23,6 +23,7 @@
             <v-text-field
               v-model="editQuestionSubmission.question.title"
               :rules="[v => !!v || 'Question title is required']"
+              data-cy="QuestionTitle"
               label="Title"
               required
             />
@@ -31,9 +32,10 @@
           <v-row>
             <v-textarea
               v-model="editQuestionSubmission.question.content"
-              label="Question"
               :rules="[v => !!v || 'Question content is required']"
               auto-grow
+              data-cy="QuestionContent"
+              label="Question"
               required
               rows="4"
             ></v-textarea>
@@ -53,13 +55,18 @@
               <v-textarea
                 v-model="option.content"
                 :label="`Option ${index + 1}`"
+                :data-cy="`Option${index + 1}`"
                 rows="1"
                 auto-grow
               ></v-textarea>
             </v-col>
 
             <v-col cols="1">
-              <v-switch v-model="option.correct" inset />
+              <v-switch
+                v-model="option.correct"
+                inset
+                :data-cy="'Switch' + index"
+              />
             </v-col>
 
             <v-col v-if="editQuestionSubmission.question.options.length > 2">
