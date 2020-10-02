@@ -39,6 +39,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 
 Vue.use(Router);
 
@@ -294,7 +295,7 @@ let router = new Router({
         {
           path: 'tournament',
           name: 'tournament-participants',
-          component: ParticipantsTournamentView,
+          component: TournamentResultsView,
           props: route => ({ id: route.query.id }),
           meta: {
             title: APP_NAME + ' - Tournament Participants',
@@ -315,7 +316,7 @@ let router = new Router({
     {
       path: '/teacher/tournament',
       name: 'tournament-dashboard',
-      component: SelectedTournamentView,
+      component: TournamentResultsView,
       props: route => ({ id: route.query.id }),
       meta: {
         title: APP_NAME + ' - Tournament Dashboard',

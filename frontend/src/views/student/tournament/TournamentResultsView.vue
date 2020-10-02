@@ -126,35 +126,37 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
-import User from '@/models/user/User';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
+import TournamentParticipant from '@/models/user/TournamentParticipant';
 
 @Component({
   components: { AnimatedNumber }
 })
-export default class SelectedTournamentView extends Vue {
+export default class TournamentResultsView extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: String, required: true }) id!: number;
 
-  tournaments: Tournament[] = [];
   selectedTournament: Tournament | null = null;
-  participants: User[] = [];
+  participants: TournamentParticipant[] = [];
   currentUsername: string | null = null;
-  dashboardDialog: boolean = false;
 
   headers: object = [
     { text: 'Name', value: 'name', align: 'center' },
-    { text: 'Username', value: 'username', align: 'center' }
+    { text: 'Username', value: 'username', align: 'center' },
+    { text: 'Number of Answers', value: 'numberOfAnswered', align: 'center' },
+    {
+      text: 'Number of Correct Answers',
+      value: 'numberOfCorrect',
+      align: 'center'
+    },
+    { text: 'Score', value: 'score', align: 'center' }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
-      this.tournaments.map(tournament => {
-        if (tournament.id == this.id) this.selectedTournament = tournament;
-      });
+      this.selectedTournament = await RemoteServices.getTournament(this.id);
       if (this.selectedTournament)
         this.participants = this.selectedTournament.participants;
     } catch (error) {

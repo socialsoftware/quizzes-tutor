@@ -1,5 +1,4 @@
 describe('Student walkthrough', () => {
-
   beforeEach(() => {
     cy.demoStudentLogin();
     cy.beforeEachTournament();

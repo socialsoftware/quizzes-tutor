@@ -1,19 +1,21 @@
 import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
+import TournamentParticipant from '@/models/user/TournamentParticipant';
 
 export default class Tournament {
   id!: number;
+  courseAcronym!: string;
+  quizId!: number;
   startTime!: string;
   endTime!: string;
   numberOfQuestions!: number;
   canceled!: boolean;
-  courseAcronym!: string;
   enrolled!: boolean;
   topics!: String[];
   topicsDto!: Topic[];
-  participants!: User[];
-  quizId!: number;
+  creator!: User;
+  participants!: TournamentParticipant[];
   privateTournament!: boolean;
   password!: string;
   isClosed!: boolean;
@@ -21,11 +23,12 @@ export default class Tournament {
   constructor(jsonObj?: Tournament, user?: User) {
     if (jsonObj) {
       this.id = jsonObj.id;
+      this.courseAcronym = jsonObj.courseAcronym;
+      this.quizId = jsonObj.quizId;
       this.startTime = ISOtoString(jsonObj.startTime);
       this.endTime = ISOtoString(jsonObj.endTime);
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.canceled = jsonObj.canceled;
-      this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 
       if (jsonObj.topicsDto) {
@@ -36,8 +39,8 @@ export default class Tournament {
         });
       }
 
+      this.creator = jsonObj.creator;
       this.participants = jsonObj.participants;
-      this.quizId = jsonObj.quizId;
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
       this.isClosed = jsonObj.isClosed;
