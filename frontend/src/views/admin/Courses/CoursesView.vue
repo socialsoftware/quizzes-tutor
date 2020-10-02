@@ -346,7 +346,7 @@ export default class CoursesView extends Vue {
   async anonymizeCourse(courseToDelete: Course) {
     if (
       confirm(
-        "Are you sure you want to anonymize this course execution's users?"
+        'Are you sure you want to anonymize the users of this course execution?'
       )
     ) {
       try {

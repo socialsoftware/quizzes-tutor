@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
@@ -22,12 +23,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -69,6 +72,9 @@ public class StatementService {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private TopicService topicService;
 
     @Retryable(
       value = { SQLException.class },
@@ -114,6 +120,54 @@ public class StatementService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails, Tournament tournament) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        Quiz quiz = new Quiz();
+        quiz.setKey(quizService.getMaxQuizKey() + 1);
+        quiz.setType(Quiz.QuizType.GENERATED.toString());
+        quiz.setCreationDate(DateHandler.now());
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        if (quizDetails.getTopics() != null) {
+            availableQuestions = courseExecution.filterQuestionsByTopics(availableQuestions, quizDetails.getTopics());
+        } else {
+            availableQuestions = new ArrayList<>();
+        }
+
+        if (availableQuestions.size() < quizDetails.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);
+        }
+
+        availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
+
+        quiz.generate(availableQuestions);
+
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+
+        quiz.setCourseExecution(courseExecution);
+
+        if (DateHandler.now().isBefore(tournament.getStartTime())) {
+            quiz.setAvailableDate(tournament.getStartTime());
+        }
+        quiz.setConclusionDate(tournament.getEndTime());
+        quiz.setResultsDate(tournament.getEndTime());
+        quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
+        quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
+
+        quizRepository.save(quiz);
+        quizAnswerRepository.save(quizAnswer);
+
+        return new StatementQuizDto(quizAnswer);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto getQuizByQRCode(int userId, int quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -146,7 +200,7 @@ public class StatementService {
             }
             return new StatementQuizDto(quizAnswer);
 
-        // Send timer
+            // Send timer
         } else {
             StatementQuizDto quizDto = new StatementQuizDto();
             quizDto.setTimeToAvailability(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getAvailableDate()));
@@ -178,6 +232,7 @@ public class StatementService {
 
         return user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getAnswerDate() != null)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());

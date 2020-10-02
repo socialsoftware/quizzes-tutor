@@ -16,6 +16,8 @@ public class StudentDto extends UserDto implements Serializable {
     private int percentageOfCorrectInClassAnswers = 0;
     private int percentageOfCorrectStudentAnswers = 0;
 
+    public StudentDto() {}
+
     public StudentDto(User user) {
         super(user);
         this.numberOfInClassQuizzes = user.getNumberOfInClassQuizzes();

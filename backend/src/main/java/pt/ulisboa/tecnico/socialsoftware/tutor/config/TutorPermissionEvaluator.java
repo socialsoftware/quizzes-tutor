@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -14,6 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -46,9 +49,13 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        int userId = ((User) authentication.getPrincipal()).getId();
+        User user = ((User) authentication.getPrincipal());
+        int userId = user.getId();
 
         if (targetDomainObject instanceof CourseDto) {
             CourseDto courseDto = (CourseDto) targetDomainObject;
@@ -98,9 +105,22 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                         return userHasThisExecution(userId, courseExecutionId);
                     }
                     return false;
+                case "TOURNAMENT.ACCESS":
+                    courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
+                    if (courseExecutionId != null) {
+                        return userHasThisExecution(userId, courseExecutionId);
+                    }
+                    return false;
+                case "TOURNAMENT.PARTICIPANT":
+                        return userParticipatesInTournament(userId, id);
+                case "TOURNAMENT.OWNER":
+                    Tournament tournament = tournamentRepository.findById(id).orElse(null);
+                    if (tournament != null) {
+                        return tournament.isCreator(user);
+                    }
+                    return false;
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
-                    User user = (User) authentication.getPrincipal();
                     if (questionSubmission != null) {
                         boolean hasCourseExecutionAccess = userHasThisExecution(userId, questionSubmission.getCourseExecution().getId());
                         if (user.getRole() == User.Role.STUDENT) {
@@ -119,6 +139,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     private boolean userHasThisExecution(int userId, int courseExecutionId) {
         return userRepository.countUserCourseExecutionsPairById(userId, courseExecutionId) == 1;
+    }
+
+    private boolean userParticipatesInTournament(int userId, int tournamentId) {
+        return userRepository.countUserTournamentPairById(userId, tournamentId) == 1;
     }
 
     @Override
