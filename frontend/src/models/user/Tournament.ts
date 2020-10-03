@@ -2,6 +2,7 @@ import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
 import TournamentParticipant from '@/models/user/TournamentParticipant';
+import Store from '@/store';
 
 export default class Tournament {
   id!: number;
@@ -18,7 +19,8 @@ export default class Tournament {
   participants!: TournamentParticipant[];
   privateTournament!: boolean;
   password!: string;
-  isClosed!: boolean;
+  opened!: boolean;
+  closed!: boolean;
 
   constructor(jsonObj?: Tournament, user?: User) {
     if (jsonObj) {
@@ -43,7 +45,8 @@ export default class Tournament {
       this.participants = jsonObj.participants;
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
-      this.isClosed = jsonObj.isClosed;
+      this.opened = jsonObj.opened;
+      this.closed = jsonObj.closed;
 
       if (user) {
         this.enrolled = this.participants.some(
@@ -59,13 +62,13 @@ export default class Tournament {
   }
 
   getStateColor() {
-    if (this.isClosed) return 'orange';
+    if (this.closed) return 'orange';
     else if (!this.canceled) return 'green';
     else return 'red';
   }
 
   getStateName() {
-    if (this.isClosed) return 'CLOSED';
+    if (this.closed) return 'CLOSED';
     else if (!this.canceled) return 'OPEN';
     else return 'CANCELLED';
   }
@@ -77,7 +80,7 @@ export default class Tournament {
 
   getEnrolledName() {
     if (this.enrolled) return 'YOU ARE IN';
-    else return 'YOU NEED TO JOIN';
+    else return 'NOT JOINED';
   }
 
   getPrivateColor() {
@@ -90,15 +93,44 @@ export default class Tournament {
     else return 'PUBLIC';
   }
 
-  isNotEnrolled() {
-    return !this.enrolled;
+  isAnswered() {
+    return this.participants.find(
+      participant => participant.userId === Store.getters.getUser.id
+    )?.answered;
   }
 
-  isNotCanceled() {
-    return !this.canceled;
+  isOwner() {
+    return this.creator.id === Store.getters.getUser.id;
   }
 
-  isPrivate() {
-    return this.privateTournament;
+  canJoinPublic() {
+    return (
+      !this.enrolled &&
+      !this.privateTournament &&
+      !this.closed &&
+      !this.canceled
+    );
+  }
+
+  canJoinPrivate() {
+    return (
+      !this.enrolled && this.privateTournament && !this.closed && !this.canceled
+    );
+  }
+
+  canLeave() {
+    return this.enrolled && !this.isAnswered();
+  }
+
+  canSeeResults() {
+    return this.enrolled && this.isAnswered();
+  }
+
+  canSolveQuiz() {
+    return this.enrolled && this.opened && !this.canceled && !this.isAnswered();
+  }
+
+  canChange() {
+    return this.isOwner() && !this.opened && !this.closed && !this.canceled;
   }
 }

@@ -12,7 +12,6 @@ import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import TournamentsView from '@/views/teacher/tournaments/TournamentsView.vue';
-import SelectedTournamentView from '@/views/teacher/tournaments/SelectedTournamentView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
@@ -25,10 +24,6 @@ import ScanView from '@/views/student/ScanView.vue';
 import CodeView from '@/views/student/CodeView.vue';
 
 import AllTournamentView from './views/student/tournament/AllTournamentView.vue';
-import OpenTournamentView from '@/views/student/tournament/OpenTournamentView.vue';
-import ClosedTournamentView from '@/views/student/tournament/ClosedTournamentView.vue';
-import MyTournamentsView from '@/views/student/tournament/MyTournamentsView.vue';
-import ParticipantsTournamentView from '@/views/student/tournament/ParticipantsTournamentView.vue';
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -260,33 +255,6 @@ let router = new Router({
           path: 'all',
           name: 'all-tournament',
           component: AllTournamentView,
-          meta: {
-            title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'open',
-          name: 'open-tournament',
-          component: OpenTournamentView,
-          meta: {
-            title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'closed',
-          name: 'closed-tournament',
-          component: ClosedTournamentView,
-          meta: {
-            title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'myTournaments',
-          name: 'my-tournaments',
-          component: MyTournamentsView,
           meta: {
             title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'

@@ -90,7 +90,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getStateName()
+                          ? selectedTournament.getStateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -100,7 +100,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getPrivateName()
+                          ? selectedTournament.getPrivateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -168,14 +168,6 @@ export default class TournamentResultsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  getStateName() {
-    return this.selectedTournament?.getStateName();
-  }
-
-  getPrivateName() {
-    return this.selectedTournament?.getPrivateName();
   }
 }
 </script>

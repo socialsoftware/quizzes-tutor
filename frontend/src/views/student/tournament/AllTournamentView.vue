@@ -20,9 +20,6 @@
             class="mx-2"
           />
           <v-spacer />
-          <v-btn to="/student/open" color="primary" dark data-cy="changeButton"
-            >See Open Tournaments
-          </v-btn>
           <v-btn
             color="primary"
             dark
@@ -32,47 +29,23 @@
           </v-btn>
         </v-card-title>
       </template>
-      <template v-slot:item.topics="{ item }">
-        <view-tournament-topics :tournament="item" />
-      </template>
-      <template v-slot:item.times="{ item }">
-        <v-chip x-small>
-          {{ item.startTime }}
-        </v-chip>
-        <v-chip x-small>
-          {{ item.endTime }}
-        </v-chip>
-      </template>
-      <template v-slot:item.id="{ item }">
-        <v-chip color="primary">
-          {{ item.id }}
-        </v-chip>
-      </template>
-      <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="item.getStateColor(closedTournamentsId)">
-          {{ item.getStateName(closedTournamentsId) }}
-        </v-chip>
-      </template>
-      <template v-slot:item.enrolled="{ item }">
-        <v-chip :color="item.getEnrolledColor()">
-          {{ item.getEnrolledName() }}
-        </v-chip>
-      </template>
-      <template v-slot:item.privateTournament="{ item }">
-        <v-chip :color="item.getPrivateColor()">
-          {{ item.getPrivateName() }}
-        </v-chip>
-      </template>
-      <template v-slot:item.id="{ item }">
-        <v-chip color="primary" small @click="openTournamentDashboard(item)">
-          <span> {{ item.id }} </span>
-        </v-chip>
-      </template>
-      <template v-slot:item.action="{ item }">
-        <v-tooltip
-          bottom
-          v-if="item.isNotEnrolled() && !item.isPrivate() && !item.isClosed"
-        >
+
+      <template v-slot:item.actions="{ item }">
+        <v-tooltip bottom v-if="item.canChange()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="editTournament(item)"
+              data-cy="EditTournament"
+              >create</v-icon
+            >
+          </template>
+          <span>Edit Tournament</span>
+        </v-tooltip>
+
+        <v-tooltip bottom v-if="item.canJoinPublic()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -85,10 +58,7 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip
-          bottom
-          v-if="item.isNotEnrolled() && item.isPrivate() && !item.isClosed"
-        >
+        <v-tooltip bottom v-if="item.canJoinPrivate()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -101,7 +71,7 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="!item.isNotEnrolled() && !item.isClosed">
+        <v-tooltip bottom v-if="item.canLeave()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -114,7 +84,20 @@
           </template>
           <span>Leave Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="!item.isNotEnrolled() && item.isClosed">
+        <v-tooltip bottom v-if="item.canSolveQuiz()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="solveQuiz(item)"
+              data-cy="SolveQuiz"
+              >fa-file-signature</v-icon
+            >
+          </template>
+          <span>Solve Quiz</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.canSeeResults()">
           <template v-slot:activator="{ on }">
             <v-icon
               large
@@ -127,6 +110,77 @@
           </template>
           <span>See Solved Quiz</span>
         </v-tooltip>
+
+        <v-tooltip bottom v-if="item.canChange()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="cancelTournament(item)"
+              data-cy="CancelTournament"
+              >cancel</v-icon
+            >
+          </template>
+          <span>Cancel Tournament</span>
+        </v-tooltip>
+        <v-tooltip bottom v-if="item.canChange()">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              large
+              class="mr-2"
+              v-on="on"
+              @click="removeTournament(item)"
+              color="red"
+              data-cy="RemoveTournament"
+              >delete</v-icon
+            >
+          </template>
+          <span>Remove Tournament</span>
+        </v-tooltip>
+      </template>
+
+      <template v-slot:item.id="{ item }">
+        <v-chip color="primary" small @click="openTournamentDashboard(item)">
+          <span> {{ item.id }} </span>
+        </v-chip>
+      </template>
+
+      <template v-slot:item.creator="{ item }">
+        <v-chip small>
+          <span> {{ item.creator.name }} </span>
+        </v-chip>
+      </template>
+
+      <template v-slot:item.topics="{ item }">
+        <view-tournament-topics :tournament="item" />
+      </template>
+
+      <template v-slot:item.state="{ item }">
+        <v-chip :color="item.getStateColor()">
+          {{ item.getStateName() }}
+        </v-chip>
+      </template>
+
+      <template v-slot:item.privateTournament="{ item }">
+        <v-chip :color="item.getPrivateColor()">
+          {{ item.getPrivateName() }}
+        </v-chip>
+      </template>
+
+      <template v-slot:item.times="{ item }">
+        <v-chip x-small>
+          {{ item.startTime }}
+        </v-chip>
+        <v-chip x-small>
+          {{ item.endTime }}
+        </v-chip>
+      </template>
+
+      <template v-slot:item.enrolled="{ item }">
+        <v-chip :color="item.getEnrolledColor()">
+          {{ item.getEnrolledName() }}
+        </v-chip>
       </template>
     </v-data-table>
     <footer>
@@ -149,6 +203,14 @@
       v-on:enter-password="joinPrivateTournament"
       v-on:close-password-dialog="onClosePasswordDialog"
     />
+    <edit-tournament-dialog
+      v-if="currentTournament"
+      v-model="editTournamentDialog"
+      :tournament="currentTournament"
+      :edit-mode="true"
+      v-on:edit-tournament="onEditTournament"
+      v-on:close-edit-dialog="onCloseEditDialog"
+    />
   </v-card>
 </template>
 
@@ -159,39 +221,42 @@ import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vu
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import Tournament from '@/models/user/Tournament';
+import StatementManager from '@/models/statement/StatementManager';
+import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 
 @Component({
   components: {
     'create-tournament-dialog': CreateTournamentDialog,
     'edit-password-dialog': EditPasswordDialog,
+    'edit-tournament-dialog': EditTournamentDialog,
     'view-tournament-topics': ViewTournamentTopics
   }
 })
 export default class AllTournamentView extends Vue {
   tournaments: Tournament[] = [];
-  closedTournamentsId: number[] = [];
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
   editPasswordDialog: boolean = false;
+  editTournamentDialog: boolean = false;
   search: string = '';
   password: string = '';
   headers: object = [
     {
       text: 'Actions',
-      value: 'action',
+      value: 'actions',
       align: 'center',
       sortable: false,
-      width: '20%'
-    },
-    {
-      text: 'Course Acronym',
-      value: 'courseAcronym',
-      align: 'center',
-      width: '10%'
+      width: '40%'
     },
     {
       text: 'Tournament Number',
       value: 'id',
+      align: 'center',
+      width: '10%'
+    },
+    {
+      text: 'Creator',
+      value: 'creator',
       align: 'center',
       width: '10%'
     },
@@ -203,7 +268,7 @@ export default class AllTournamentView extends Vue {
     },
     {
       text: 'State',
-      value: 'isCanceled',
+      value: 'state',
       align: 'center',
       width: '10%'
     },
@@ -229,7 +294,6 @@ export default class AllTournamentView extends Vue {
       text: 'Enrolled',
       value: 'enrolled',
       align: 'center',
-      sortable: false,
       width: '10%'
     }
   ];
@@ -238,10 +302,6 @@ export default class AllTournamentView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
-      let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
-      closedTournaments.map(t => {
-        if (t.id) this.closedTournamentsId.push(t.id);
-      });
       this.tournaments.sort((a, b) => Tournament.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -288,6 +348,27 @@ export default class AllTournamentView extends Vue {
     this.currentTournament = null;
   }
 
+  async onEditTournament(tournament: Tournament) {
+    this.currentTournament = tournament;
+    try {
+      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    this.editTournamentDialog = false;
+    this.currentTournament = null;
+  }
+
+  onCloseEditDialog() {
+    this.editTournamentDialog = false;
+    this.currentTournament = null;
+  }
+
+  editTournament(tournamentToEdit: Tournament) {
+    this.currentTournament = tournamentToEdit;
+    this.editTournamentDialog = true;
+  }
+
   async joinPrivateTournament(password: string) {
     this.password = password;
     if (this.currentTournament)
@@ -300,21 +381,61 @@ export default class AllTournamentView extends Vue {
   async joinPublicTournament(tournamentToJoin: Tournament) {
     try {
       await RemoteServices.joinTournament(tournamentToJoin.id, this.password);
+      tournamentToJoin.enrolled = true;
     } catch (error) {
       await this.$store.dispatch('error', error);
       return;
     }
-    tournamentToJoin.enrolled = true;
   }
 
   async leaveTournament(tournamentToLeave: Tournament) {
     try {
       await RemoteServices.leaveTournament(tournamentToLeave.id);
+      tournamentToLeave.enrolled = false;
     } catch (error) {
       await this.$store.dispatch('error', error);
       return;
     }
-    tournamentToLeave.enrolled = false;
+  }
+
+  async solveQuiz(tournament: Tournament) {
+    let statementManager: StatementManager = StatementManager.getInstance;
+    try {
+      statementManager.statementQuiz = await RemoteServices.solveTournament(
+        tournament.id
+      );
+      await this.$router.push({ name: 'solve-quiz' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+  }
+
+  async cancelTournament(tournamentToCancel: Tournament) {
+    if (confirm('Are you sure you want to cancel this tournament?')) {
+      try {
+        await RemoteServices.cancelTournament(tournamentToCancel.id);
+        tournamentToCancel.canceled = true;
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        return;
+      }
+      tournamentToCancel.canceled = true;
+    }
+  }
+
+  async removeTournament(tournamentToRemove: Tournament) {
+    if (confirm('Are you sure you want to delete this tournament?')) {
+      try {
+        if (tournamentToRemove.id)
+          await RemoteServices.removeTournament(tournamentToRemove.id);
+        this.tournaments = this.tournaments.filter(
+          tournament => tournament.id !== tournamentToRemove.id
+        );
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        return;
+      }
+    }
   }
 }
 </script>

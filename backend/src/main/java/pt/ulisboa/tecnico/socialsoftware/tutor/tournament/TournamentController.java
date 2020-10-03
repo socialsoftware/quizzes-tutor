@@ -35,30 +35,10 @@ public class TournamentController {
         return tournamentService.getTournamentsForCourseExecution(executionId);
     }
 
-    @GetMapping(value = "/tournaments/{executionId}/getOpenTournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getOpenedTournamentsForCourseExecution(@PathVariable int executionId) {
-        return tournamentService.getOpenedTournamentsForCourseExecution(executionId);
-    }
-
-    @GetMapping(value = "/tournaments/{executionId}/getClosedTournaments")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getClosedTournamentsForCourseExecution(@PathVariable int executionId) {
-        return tournamentService.getClosedTournamentsForCourseExecution(executionId);
-    }
-
     @GetMapping(value = "/tournaments/{executionId}/tournament/{tournamentId}")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto getTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
         return tournamentService.getTournament(tournamentId);
-    }
-
-    @GetMapping(value = "/tournaments/{executionId}/getUserTournaments")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<TournamentDto> getTournamentsByUserId(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        return tournamentService.getTournamentsByUserId(user.getId());
     }
 
     @PutMapping(value = "/tournaments/{executionId}/joinTournament/{tournamentId}")
