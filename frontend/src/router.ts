@@ -23,7 +23,7 @@ import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import CodeView from '@/views/student/CodeView.vue';
 
-import AllTournamentView from './views/student/tournament/AllTournamentView.vue';
+import TournamentsListView from './views/student/tournament/TournamentsListView.vue';
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -252,9 +252,20 @@ let router = new Router({
           }
         },
         {
-          path: 'all',
-          name: 'all-tournament',
-          component: AllTournamentView,
+          path: 'tournaments/open',
+          name: 'open-tournaments',
+          component: TournamentsListView,
+          props: { type: 'OPEN' },
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournaments/closed',
+          name: 'closed-tournaments',
+          component: TournamentsListView,
+          props: { type: 'CLOSED' },
           meta: {
             title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'

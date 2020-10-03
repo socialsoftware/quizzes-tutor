@@ -185,12 +185,20 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/all" data-cy="All">
+            <v-list-item to="/student/tournaments/open" data-cy="Open">
               <v-list-item-action>
-                <v-icon>fas fa-calendar</v-icon>
+                <v-icon>fas fa-medal</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Tournaments</v-list-item-title>
+                <v-list-item-title>Open Tournaments</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/student/tournaments/closed" data-cy="Closed">
+              <v-list-item-action>
+                <v-icon>fas fa-award</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Closed Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -425,11 +433,18 @@
             </v-list-item-action>
             <v-list-item-title>Stats</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/student/all">
+
+          <v-list-item to="/student/tournaments/open">
             <v-list-item-action>
-              <v-icon>fas fa-calendar</v-icon>
+              <v-icon>fas fa-medal</v-icon>
             </v-list-item-action>
-            <v-list-item-title>Tournaments</v-list-item-title>
+            <v-list-item-title>Open Tournaments</v-list-item-title>
+          </v-list-item>
+          <v-list-item to="/student/tournaments/closed">
+            <v-list-item-action>
+              <v-icon>fas fa-award</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Closed Tournaments</v-list-item-title>
           </v-list-item>
         </v-list-group>
 
