@@ -45,6 +45,8 @@ describe('Student walkthrough', () => {
     cy.createOpenTournament('1');
     cy.joinTournament('1');
     cy.wait(100);
+    cy.seeTournamentsLists('Closed');
+    cy.seeTournamentsLists('Open');
     cy.solveTournament('1');
   });
 
