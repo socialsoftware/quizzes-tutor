@@ -8,7 +8,7 @@
       :hide-default-footer="true"
       :mobile-breakpoint="0"
       multi-sort
-      data-cy="allTournaments"
+      data-cy="TournamentsList"
       item-key="item.id"
     >
       <template v-slot:top>
@@ -215,7 +215,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
@@ -232,7 +232,9 @@ import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue'
     'view-tournament-topics': ViewTournamentTopics
   }
 })
-export default class AllTournamentView extends Vue {
+export default class TournamentsListView extends Vue {
+  @Prop({ type: String, required: true }) type!: string;
+
   tournaments: Tournament[] = [];
   currentTournament: Tournament | null = null;
   createTournamentDialog: boolean = false;
@@ -299,9 +301,21 @@ export default class AllTournamentView extends Vue {
   ];
 
   async created() {
+    await this.getTournamentsList();
+  }
+
+  @Watch('type')
+  async typeChanges() {
+    await this.getTournamentsList();
+  }
+
+  async getTournamentsList() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
+      if (this.type === 'OPEN')
+        this.tournaments = await RemoteServices.getOpenedTournamentsForCourseExecution();
+      else
+        this.tournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
       this.tournaments.sort((a, b) => Tournament.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -313,9 +327,14 @@ export default class AllTournamentView extends Vue {
     this.$emit('close-show-dashboard-dialog', false);
     if (tournament)
       await this.$router.push({
-        path: 'tournament',
+        path: '/student/tournament',
         query: { id: tournament.id.toString() }
       });
+  }
+
+  printType() {
+    if (this.type === 'OPEN') return 'Open Tournaments';
+    else return 'Closed Tournaments';
   }
 
   async openSolvedQuiz() {
