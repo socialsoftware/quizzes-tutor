@@ -15,7 +15,7 @@ import java.util.Optional;
 public interface TournamentRepository extends JpaRepository<Tournament, Integer> {
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<Tournament> getTournamentsForCourseExecution(Integer courseExecutionId);
-    
+
     @Query(value = "SELECT * FROM tournaments t WHERE t.course_execution_id = :execution_id", nativeQuery = true)
     List<Tournament> getTournamentsByExecutionId(Integer execution_id);
     
