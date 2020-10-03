@@ -931,51 +931,6 @@ export default class RemoteServices {
       });
   }
 
-  static getOpenedTournamentsForCourseExecution(): Promise<Tournament[]> {
-    return httpClient
-      .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getOpenTournaments`
-      )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getClosedTournamentsForCourseExecution(): Promise<Tournament[]> {
-    return httpClient
-      .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
-      )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getTournamentsByUserId(): Promise<Tournament[]> {
-    return httpClient
-      .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getUserTournaments`
-      )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static getTournament(tournamentId: number): Promise<Tournament> {
     return httpClient
       .get(

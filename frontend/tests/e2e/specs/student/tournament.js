@@ -14,18 +14,6 @@ describe('Student walkthrough', () => {
     cy.seeTournamentsLists('All');
   });
 
-  it('login sees open tournaments', () => {
-    cy.seeTournamentsLists('Open');
-  });
-
-  it('login sees closed tournaments', () => {
-    cy.seeTournamentsLists('Closed');
-  });
-
-  it('login sees my tournaments', () => {
-    cy.seeTournamentsLists('My');
-  });
-
   it('login creates a tournament', () => {
     cy.seeTournamentsLists('All');
     cy.createTournament('1');
@@ -49,7 +37,7 @@ describe('Student walkthrough', () => {
   });
 
   it('login creates, joins and solves tournament', () => {
-    cy.seeTournamentsLists('Open');
+    cy.seeTournamentsLists('All');
     cy.createOpenTournament('1');
     cy.joinTournament('1');
     cy.wait(100);
@@ -65,19 +53,19 @@ describe('Student walkthrough', () => {
   });
 
   it('login creates and edits tournament', () => {
-    cy.seeTournamentsLists('My');
+    cy.seeTournamentsLists('All');
     cy.createTournament('1');
     cy.editTournament('1');
   });
 
   it('login creates and cancel tournament', () => {
-    cy.seeTournamentsLists('My');
+    cy.seeTournamentsLists('All');
     cy.createTournament('1');
     cy.cancelTournament('1');
   });
 
   it('login creates and remove tournament', () => {
-    cy.seeTournamentsLists('My');
+    cy.seeTournamentsLists('All');
     cy.createTournament('1');
     cy.removeTournament('1');
   });

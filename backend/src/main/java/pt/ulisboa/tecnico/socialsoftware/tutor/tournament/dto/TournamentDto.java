@@ -23,6 +23,7 @@ public class TournamentDto implements Serializable {
     private List<TournamentParticipantDto> participants = new ArrayList<>();
     private boolean privateTournament = false;
     private String password = "";
+    private boolean isOpened = false;
     private boolean isClosed = false;
 
     public TournamentDto() {
@@ -46,6 +47,7 @@ public class TournamentDto implements Serializable {
                 .collect(Collectors.toList());
         this.privateTournament = tournament.isPrivateTournament();
         this.password = tournament.getPassword();
+        this.isOpened = tournament.getStartTime().isBefore(DateHandler.now()) && tournament.getEndTime().isAfter(DateHandler.now());
         this.isClosed = tournament.getEndTime().isBefore(DateHandler.now());
     }
 
@@ -143,6 +145,14 @@ public class TournamentDto implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
     }
 
     public boolean isClosed() {
