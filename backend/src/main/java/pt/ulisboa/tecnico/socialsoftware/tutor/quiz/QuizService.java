@@ -336,7 +336,6 @@ public class QuizService {
 
     public void createQuizDirectory(int quizId, String path) throws IOException {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-        Set<QuizQuestion> quizQuestions = quizQuestionRepository.findQuizQuestionsByQuizId(quizId);
         String name = quiz.getTitle();
         String directoryPath = path + "/" + name;
         File file = new File(directoryPath);
@@ -344,7 +343,9 @@ public class QuizService {
         file.mkdir();
 
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();
-        String xmlQuiz = xmlExport.exportQuiz(quiz, quizQuestions);
+        List<Quiz> quizzes = new ArrayList<>();
+        quizzes.add(quiz);
+        String xmlQuiz = xmlExport.export(quizzes);
 
         File myObj = new File(directoryPath + "/" + name + ".xml");
         if (myObj.createNewFile()) {

@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZIP;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -123,7 +123,7 @@ public class CourseController {
     }
 
     @GetMapping(value = "/executions/{executionId}/export")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS')) or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public void exportCourseExecutionInfo(HttpServletResponse response, @PathVariable Integer executionId) throws IOException {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         List<Quiz> courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);
@@ -134,9 +134,9 @@ public class CourseController {
         file.mkdir();
         for (Quiz quiz : courseExecutionQuizzes) {
             answerService.writeQuizAnswers(quiz.getId());
-            this.quizService.createQuizDirectory(quiz.getId(),sourceFolder);
+            this.quizService.createQuizDirectory(quiz.getId(), sourceFolder);
         }
-        TarGZIP tGzipDemo = new TarGZIP(sourceFolder);
+        TarGZip tGzipDemo = new TarGZip(sourceFolder);
         tGzipDemo.createTarFile();
         response.getOutputStream().write(Files.readAllBytes(Paths.get(sourceFolder + ".tar.gz")));
         response.flushBuffer();

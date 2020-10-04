@@ -10,11 +10,11 @@ import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 
-public class TarGZIP {
+public class TarGZip {
     //this class will create a tar.gz zip of source_folder
     private String sourceFolder;
 
-    public TarGZIP(String source_folder) {
+    public TarGZip(String source_folder) {
         sourceFolder = source_folder;
     }
 

@@ -14,6 +14,4 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface QuizQuestionRepository extends JpaRepository<QuizQuestion, Integer> {
-    @Query(value = "SELECT * FROM quiz_questions q WHERE q.quiz_id = :quizId", nativeQuery = true)
-    Set<QuizQuestion> findQuizQuestionsByQuizId(int quizId);
 }

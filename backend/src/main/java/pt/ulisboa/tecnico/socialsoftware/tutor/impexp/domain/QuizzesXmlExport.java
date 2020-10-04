@@ -22,16 +22,6 @@ public class QuizzesXmlExport {
 
 		return xml.outputString(element);
 	}
-	public String exportQuiz(Quiz quiz, Set<QuizQuestion> quizQuestions) {
-		Element element = createHeader();
-
-		exportQuiz(element,quiz, quizQuestions);
-
-		XMLOutputter xml = new XMLOutputter();
-		xml.setFormat(Format.getPrettyFormat());
-
-		return xml.outputString(element);
-	}
 
 	public Element createHeader() {
 		Document jdomDoc = new Document();
