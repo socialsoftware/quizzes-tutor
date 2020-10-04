@@ -27,7 +27,7 @@ import TournamentsListView from './views/student/tournament/TournamentsListView.
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
-import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
+import ExportCourseView from '@/views/teacher/impexp/ExportCourseView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
@@ -35,6 +35,7 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
+import ExportAllView from '@/views/admin/ExportAllView.vue';
 
 Vue.use(Router);
 
@@ -146,11 +147,11 @@ let router = new Router({
           }
         },
         {
-          path: 'impexp',
-          name: 'impexp-management',
-          component: ImpExpView,
+          path: 'export',
+          name: 'export-management',
+          component: ExportCourseView,
           meta: {
-            title: APP_NAME + ' - ImpExp',
+            title: APP_NAME + ' - Export',
             requiredAuth: 'Teacher'
           }
         },
@@ -311,6 +312,15 @@ let router = new Router({
           path: 'courses',
           name: 'courseAdmin',
           component: CoursesView,
+          meta: {
+            title: APP_NAME + ' - Manage Courses',
+            requiredAuth: 'Admin'
+          }
+        },
+        {
+          path: 'export',
+          name: 'exportAll',
+          component: ExportAllView,
           meta: {
             title: APP_NAME + ' - Manage Courses',
             requiredAuth: 'Admin'

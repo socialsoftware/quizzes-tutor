@@ -42,6 +42,14 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/admin/export">
+              <v-list-item-action>
+                <v-icon>fas fa-download</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Export</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -115,12 +123,12 @@
                 <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/impexp">
+            <v-list-item to="/management/export">
               <v-list-item-action>
-                <v-icon>cloud</v-icon>
+                <v-icon>fas fa-download</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>ImpExp</v-list-item-title>
+                <v-list-item-title>Export</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -295,6 +303,14 @@
               <v-list-item-title>Manage Courses</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/admin/export">
+            <v-list-item-action>
+              <v-icon>fas fa-download</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Export</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list-group>
 
         <!-- Management Group-->
@@ -362,12 +378,12 @@
               <v-list-item-title>Tournaments</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/management/impexp">
+          <v-list-item to="/management/export">
             <v-list-item-action>
-              <v-icon>cloud</v-icon>
+              <v-icon>fas fa-download</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>ImpExp</v-list-item-title>
+              <v-list-item-title>Export</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
