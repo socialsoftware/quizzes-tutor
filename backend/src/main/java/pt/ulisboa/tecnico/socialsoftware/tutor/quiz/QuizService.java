@@ -334,6 +334,10 @@ public class QuizService {
         in.close();
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void createQuizDirectory(int quizId, String path) throws IOException {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         String name = quiz.getTitle();
