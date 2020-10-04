@@ -9,7 +9,7 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="primary" dark v-if="editMode && canSave" @click="save"
+      <v-btn color="green darken-1" v-if="editMode && canSave" @click="save"
         >Save</v-btn
       >
     </v-card-title>
@@ -137,7 +137,11 @@
         <template v-slot:item.action="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
-              <v-icon class="mr-2" v-on="on" @click="showQuestionDialog(item)">
+              <v-icon
+                class="mr-2 action-button"
+                v-on="on"
+                @click="showQuestionDialog(item)"
+              >
                 visibility</v-icon
               >
             </template>
@@ -145,7 +149,11 @@
           </v-tooltip>
           <v-tooltip bottom v-if="!item.sequence">
             <template v-slot:activator="{ on }">
-              <v-icon class="mr-2" v-on="on" @click="addToQuiz(item)">
+              <v-icon
+                class="mr-2 action-button"
+                v-on="on"
+                @click="addToQuiz(item)"
+              >
                 add</v-icon
               >
             </template>
@@ -154,7 +162,11 @@
           <div v-if="item.sequence" :key="item.sequence">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-icon class="mr-2" v-on="on" @click="removeFromQuiz(item)">
+                <v-icon
+                  class="mr-2 action-button"
+                  v-on="on"
+                  @click="removeFromQuiz(item)"
+                >
                   remove</v-icon
                 >
               </template>
@@ -163,7 +175,7 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  class="mr-2"
+                  class="mr-2 action-button"
                   v-on="on"
                   @click="changeQuestionPosition(item, 0)"
                 >
@@ -175,7 +187,7 @@
             <v-tooltip bottom v-if="item.sequence !== 1">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  class="mr-2"
+                  class="mr-2 action-button"
                   v-on="on"
                   @click="
                     changeQuestionPosition(
@@ -191,7 +203,11 @@
             </v-tooltip>
             <v-tooltip bottom v-if="quizQuestions.length > 1">
               <template v-slot:activator="{ on }">
-                <v-icon class="mr-2" v-on="on" @click="openSetPosition(item)">
+                <v-icon
+                  class="mr-2 action-button"
+                  v-on="on"
+                  @click="openSetPosition(item)"
+                >
                   mdi-weather-sunny</v-icon
                 >
               </template>
@@ -200,7 +216,7 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  class="mr-2"
+                  class="mr-2 action-button"
                   v-on="on"
                   @click="
                     changeQuestionPosition(
@@ -217,7 +233,7 @@
             <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
               <template v-slot:activator="{ on }">
                 <v-icon
-                  class="mr-2"
+                  class="mr-2 action-button"
                   v-on="on"
                   @click="
                     changeQuestionPosition(item, quizQuestions.length - 1)
@@ -233,9 +249,9 @@
       </v-data-table>
 
       <footer>
-        <v-icon class="mr-2">mouse</v-icon> Left-click on title to view
-        question. <v-icon class="mr-2">mouse</v-icon>Right -click on title to
-        edit question.
+        <v-icon class="mr-2 action-button">mouse</v-icon> Left-click on title to
+        view question. <v-icon class="mr-2 action-button">mouse</v-icon>Right
+        -click on title to edit question.
       </footer>
     </v-card-text>
 
@@ -253,8 +269,8 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn color="blue darken-1" @click="closeSetPosition">Close</v-btn>
-          <v-btn color="blue darken-1" @click="saveSetPosition">Save</v-btn>
+          <v-btn color="red darken-1" @click="closeSetPosition">Close</v-btn>
+          <v-btn color="green darken-1" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

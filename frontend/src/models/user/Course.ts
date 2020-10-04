@@ -8,6 +8,7 @@ export default class Course {
   courseId: number | undefined;
   courseType: string = 'EXTERNAL';
   name: string | undefined;
+  endDate: string | undefined;
   numberOfQuestions: number | undefined;
   numberOfQuizzes: number | undefined;
   numberOfActiveStudents: number | undefined;
@@ -15,7 +16,7 @@ export default class Course {
   numberOfActiveTeachers: number | undefined;
   numberOfInactiveTeachers: number | undefined;
   status: string | undefined;
-  courseExecutionUsers: User[] | undefined;
+  courseExecutionUsers: User[] = [];
 
   constructor(jsonObj?: Course) {
     if (jsonObj) {
@@ -26,6 +27,7 @@ export default class Course {
       this.courseId = jsonObj.courseId;
       this.courseType = jsonObj.courseType;
       this.name = jsonObj.name;
+      this.endDate = jsonObj.endDate;
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.numberOfQuizzes = jsonObj.numberOfQuizzes;
       this.numberOfActiveStudents = jsonObj.numberOfActiveStudents;
@@ -33,9 +35,10 @@ export default class Course {
       this.numberOfActiveTeachers = jsonObj.numberOfActiveTeachers;
       this.numberOfInactiveTeachers = jsonObj.numberOfInactiveTeachers;
       this.status = jsonObj.status;
-      if(jsonObj.courseExecutionUsers){
-        this.courseExecutionUsers = jsonObj.courseExecutionUsers
-          .map((externalUser: User) => new User(externalUser));
+      if (jsonObj.courseExecutionUsers) {
+        this.courseExecutionUsers = jsonObj.courseExecutionUsers.map(
+          (user: User) => new User(user)
+        );
       }
     }
   }

@@ -27,9 +27,9 @@
             label="Email"
             data-cy="userEmailInput"
             :rules="[
-							value => !!value || 'E-mail is required', 
-							value => validateEmail(value) || 'E-mail must be valid'
-						]"
+              value => !!value || 'E-mail is required',
+              value => validateEmail(value) || 'E-mail must be valid'
+            ]"
             required
           />
           <v-select
@@ -40,14 +40,23 @@
             label="Role"
           ></v-select>
           <div class="add-user-feedback-container">
-            <span class="add-user-feedback" v-if="success">{{user.role}} {{user.name}} added</span>
+            <span class="add-user-feedback" v-if="success"
+              >{{ user.role }} {{ user.name }} added</span
+            >
           </div>
         </v-card-text>
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" @click="$emit('close-dialog')" data-cy="cancelButton">Cancel</v-btn>
-          <v-btn color="blue darken-1" @click="addUser" data-cy="saveButton">Add</v-btn>
+          <v-btn
+            color="blue darken-1"
+            @click="$emit('close-dialog')"
+            data-cy="cancelButton"
+            >Close</v-btn
+          >
+          <v-btn color="blue darken-1" @click="addUser" data-cy="saveButton"
+            >Add</v-btn
+          >
         </v-card-actions>
       </v-form>
     </v-card>
@@ -66,7 +75,7 @@ export default class AddUserDialog extends Vue {
   @Prop({ type: Course, required: true }) readonly course!: Course;
 
   roles = ['TEACHER', 'STUDENT'];
-  user!: ExternalUser;
+  user: ExternalUser = new ExternalUser();
   valid = true;
   success = false;
 

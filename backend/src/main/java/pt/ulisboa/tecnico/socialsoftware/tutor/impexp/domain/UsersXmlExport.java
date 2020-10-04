@@ -6,8 +6,9 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.util.List;
 import java.util.Set;
@@ -49,9 +50,14 @@ public class UsersXmlExport {
 			userElement.setAttribute("role", user.getRole().name());
 		}
 
+		userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
+
+		userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+
 		if (user.getAuthUser() != null) {
 			exportAuthUsers(userElement, user.getAuthUser());
 		}
+
 		exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
 		element.addContent(userElement);
@@ -74,11 +80,10 @@ public class UsersXmlExport {
 		Element authUserElement = new Element("authUser");
 
 		authUserElement.setAttribute("username", authUser.getUsername());
-		authUserElement.setAttribute("email", authUser.getEmail());
 
-		if (authUser.getType() != null) {
-			authUserElement.setAttribute("type", authUser.getType().toString());
-		}
+		authUserElement.setAttribute("email", authUser.getEmail() != null ? authUser.getEmail() : "");
+
+		authUserElement.setAttribute("type", authUser.getType().toString());
 
 		if (authUser.getPassword() != null) {
 			authUserElement.setAttribute("password", authUser.getPassword());
@@ -89,14 +94,16 @@ public class UsersXmlExport {
 					DateHandler.toISOString(authUser.getLastAccess()));
 		}
 
-		if (authUser.getConfirmationToken() != null) {
-			authUserElement.setAttribute("confirmationToken",
-					authUser.getConfirmationToken());
-		}
+		if (authUser.getType() == AuthUser.Type.EXTERNAL) {
+			if (((AuthExternalUser)authUser).getConfirmationToken() != null) {
+				authUserElement.setAttribute("confirmationToken",
+						((AuthExternalUser)authUser).getConfirmationToken());
+			}
 
-		if (authUser.getTokenGenerationDate() != null) {
-			authUserElement.setAttribute("tokenGenerationDate",
-					DateHandler.toISOString(authUser.getTokenGenerationDate()));
+			if (((AuthExternalUser)authUser).getTokenGenerationDate() != null) {
+				authUserElement.setAttribute("tokenGenerationDate",
+						DateHandler.toISOString(((AuthExternalUser)authUser).getTokenGenerationDate()));
+			}
 		}
 
 		authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));

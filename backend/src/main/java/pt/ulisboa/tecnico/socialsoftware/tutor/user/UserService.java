@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
-import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -18,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
@@ -25,11 +25,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthDemoUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthTecnicoUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +39,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -49,6 +49,9 @@ public class UserService {
 
     @Autowired
     private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -79,11 +82,7 @@ public class UserService {
         return this.userRepository.findByKey(key).orElse(null);
     }
 
-    public Integer getMaxUserNumber() {
-        Integer result = userRepository.getMaxUserNumber();
-        return result != null ? result : 0;
-    }
-
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public User createUser(String name, User.Role role) {
         User user = new User(name, role, false);
         userRepository.save(user);
@@ -91,8 +90,9 @@ public class UserService {
         return user;
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser createUserWithAuth(String name, String username, String email, User.Role role, AuthUser.Type type) {
-        if (authUserService.findAuthUserByUsername(username) != null) {
+        if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
@@ -106,18 +106,15 @@ public class UserService {
     public String getEnrolledCoursesAcronyms(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         AuthUser authUser = user.getAuthUser();
-        if (authUser.getType() == AuthUser.Type.TECNICO) {
-            return ((AuthTecnicoUser)authUser).getEnrolledCoursesAcronyms();
-        }
-        return "";
+        return authUser.getEnrolledCoursesAcronyms();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
-        return userRepository.findUserWithCourseExecutionsById(userId)
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId))
-                .getCourseExecutions().stream()
-                .anyMatch(courseExecution -> courseExecution.getCourse().getId().equals(courseId));
+        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
+                .getCourseExecutions()
+                .stream()
+                .anyMatch(courseExecution ->  userRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -158,7 +155,7 @@ public class UserService {
     public void resetDemoStudents() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> user.getAuthUser().isGenerated())
+                .filter(user -> user.getAuthUser().isDemoStudent())
                 .forEach(user -> {
                     for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
                         answerService.deleteQuizAnswer(quizAnswer);
@@ -170,13 +167,13 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public NotificationResponse<CourseDto> importListOfUsersTransactional(InputStream stream, int courseExecutionId) {
+    public NotificationResponse<CourseDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
-        extractUserDtos(stream, notification).forEach(userDto -> createExternalUserTransactional(courseExecutionId, userDto));
+        extractUserDtos(stream, notification).forEach(userDto -> registerExternalUserTransactional(courseExecutionId, userDto));
 
         CourseDto courseDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseDto::new)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+                .get();
 
         return new NotificationResponse<>(notification, courseDto);
     }
@@ -230,31 +227,21 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public ExternalUserDto createExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+    public ExternalUserDto registerExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
-        User user = getOrCreateUser(externalUserDto).getUser();
-        associateUserWithExecution(courseExecution, user);
-        generateConfirmationToken(user.getAuthUser());
-        return new ExternalUserDto(user.getAuthUser());
+        AuthExternalUser authUser = getOrCreateUser(externalUserDto);
+
+        if (authUser.getUser().getCourseExecutions().contains(courseExecution)) {
+            throw new TutorException(DUPLICATE_USER, authUser.getEmail());
+        }
+
+        authUser.getUser().addCourse(courseExecution);
+        authUser.generateConfirmationToken();
+        return new ExternalUserDto(authUser);
     }
 
-    public String generateConfirmationToken(AuthUser authUser) {
-        String token = KeyGenerators.string().generateKey();
-        authUser.setTokenGenerationDate(LocalDateTime.now());
-        authUser.setConfirmationToken(token);
-        return token;
-    }
-
-    private void associateUserWithExecution(CourseExecution courseExecution, User user) {
-        if(courseExecution.getUsers().stream().map(User::getId).collect(Collectors.toList()).contains(user.getId()))
-            throw new TutorException(DUPLICATE_USER, user.getUsername());
-
-        courseExecution.addUser(user);
-        user.addCourse(courseExecution);
-    }
-
-    private AuthUser getOrCreateUser(ExternalUserDto externalUserDto) {
-        return authUserRepository.findAuthUserByUsername(externalUserDto.getEmail())
+    private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {
+        return (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getEmail())
                 .orElseGet(() -> {
                     User user = new User(externalUserDto.getName(),
                             externalUserDto.getEmail(), externalUserDto.getEmail(),

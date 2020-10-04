@@ -2,15 +2,16 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Store from '@/store';
 
-import LoginView from '@/views/LoginView.vue';
-import ExternalLoginView from '@/views/ExternalLoginView.vue';
-import RegistrationConfirmationView from '@/views/RegistrationConfirmationView.vue';
+import LoginView from '@/views/user/LoginView.vue';
+import ExternalLoginView from '@/views/user/ExternalLoginView.vue';
+import RegistrationConfirmationView from '@/views/user/RegistrationConfirmationView.vue';
 import CourseSelectionView from '@/views/CourseSelectionView.vue';
 
 import HomeView from '@/views/HomeView.vue';
 import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
+import TournamentsView from '@/views/teacher/tournaments/TournamentsView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
@@ -20,6 +21,9 @@ import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
 import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
+import CodeView from '@/views/student/CodeView.vue';
+
+import TournamentsListView from './views/student/tournament/TournamentsListView.vue';
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
@@ -27,6 +31,10 @@ import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
+
+import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
+import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 
 Vue.use(Router);
 
@@ -48,7 +56,7 @@ let router = new Router({
       component: LoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login Fenix',
+        title: APP_NAME + ' - Login Fenix'
       }
     },
     {
@@ -57,7 +65,7 @@ let router = new Router({
       component: ExternalLoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login External',
+        title: APP_NAME + ' - Login External'
       }
     },
     {
@@ -102,6 +110,15 @@ let router = new Router({
           }
         },
         {
+          path: 'tournaments',
+          name: 'tournaments-management',
+          component: TournamentsView,
+          meta: {
+            title: APP_NAME + ' - Tournaments',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
           path: 'quizzes',
           name: 'quizzes-management',
           component: QuizzesView,
@@ -134,6 +151,24 @@ let router = new Router({
           component: ImpExpView,
           meta: {
             title: APP_NAME + ' - ImpExp',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions/students',
+          name: 'sort-by-student-submissions',
+          component: SortQuestionSubmissionsByStudentView,
+          meta: {
+            title: APP_NAME + ' - Sort by Student Submissions',
+            requiredAuth: 'Teacher'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'teacher-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
             requiredAuth: 'Teacher'
           }
         }
@@ -206,8 +241,66 @@ let router = new Router({
             title: APP_NAME + ' - Scan',
             requiredAuth: 'Student'
           }
+        },
+        {
+          path: 'code',
+          name: 'code',
+          component: CodeView,
+          meta: {
+            title: APP_NAME + ' - Code',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournaments/open',
+          name: 'open-tournaments',
+          component: TournamentsListView,
+          props: { type: 'OPEN' },
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournaments/closed',
+          name: 'closed-tournaments',
+          component: TournamentsListView,
+          props: { type: 'CLOSED' },
+          meta: {
+            title: APP_NAME + ' - Tournament',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'tournament',
+          name: 'tournament-participants',
+          component: TournamentResultsView,
+          props: route => ({ id: route.query.id }),
+          meta: {
+            title: APP_NAME + ' - Tournament Participants',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'submissions',
+          name: 'student-submissions',
+          component: QuestionSubmissionView,
+          meta: {
+            title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Student'
+          }
         }
       ]
+    },
+    {
+      path: '/teacher/tournament',
+      name: 'tournament-dashboard',
+      component: TournamentResultsView,
+      props: route => ({ id: route.query.id }),
+      meta: {
+        title: APP_NAME + ' - Tournament Dashboard',
+        requiredAuth: 'Teacher'
+      }
     },
     {
       path: '/admin',

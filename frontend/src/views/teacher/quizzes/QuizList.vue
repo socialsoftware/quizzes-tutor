@@ -27,7 +27,10 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showQuizDialog(item.id)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showQuizDialog(item.id)"
               >visibility</v-icon
             >
           </template>
@@ -35,7 +38,10 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showQuizAnswers(item)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showQuizAnswers(item)"
               >mdi-table</v-icon
             >
           </template>
@@ -43,7 +49,10 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="exportQuiz(item.id)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="exportQuiz(item.id)"
               >fas fa-download</v-icon
             >
           </template>
@@ -51,7 +60,10 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.qrCodeOnly">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showQrCode(item.id)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showQrCode(item.id)"
               >fas fa-qrcode</v-icon
             >
           </template>
@@ -59,14 +71,16 @@
         </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editQuiz(item)">edit</v-icon>
+            <v-icon class="mr-2 action-button" v-on="on" @click="editQuiz(item)"
+              >edit</v-icon
+            >
           </template>
           <span>Edit Quiz</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="populateWithQuizAnswers(item.id)"
               >people</v-icon
@@ -77,7 +91,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="removeNonAnsweredQuizAnswers(item.id)"
               >people_outline</v-icon
@@ -88,7 +102,7 @@
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteQuiz(item.id)"
               color="red"
@@ -108,31 +122,38 @@
           {{ item.title }}
         </div>
       </template>
+      <template v-slot:item.id="{ item }">
+        <div v-if="item.qrCodeOnly">
+          {{ item.id }}
+        </div>
+      </template>
 
       <template v-slot:item.options="{ item }">
         <v-tooltip bottom v-if="item.timed">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">timer</v-icon>
+            <v-icon class="mr-2 action-button" v-on="on">timer</v-icon>
           </template>
           <span>Displays a timer to conclusion and to show results</span>
         </v-tooltip>
         <v-tooltip bottom v-if="item.scramble">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">shuffle</v-icon>
+            <v-icon class="mr-2 action-button" v-on="on">shuffle</v-icon>
           </template>
           <span>Question order is scrambled</span>
         </v-tooltip>
         <v-tooltip bottom v-if="item.oneWay">
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on">forward</v-icon>
+            <v-icon class="mr-2 action-button" v-on="on">forward</v-icon>
           </template>
           <span>Students cannot go to previous question</span>
         </v-tooltip>
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Left-click on quiz's title to view it.
-      <v-icon class="mr-2">mouse</v-icon>Right-click on quiz's title to edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on quiz's
+      title to view it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on quiz's
+      title to edit it.
     </footer>
 
     <show-quiz-dialog v-if="quiz" v-model="quizDialog" :quiz="quiz" />
@@ -200,6 +221,12 @@ export default class QuizList extends Vue {
       sortable: false
     },
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
+    {
+      text: 'Code',
+      value: 'id',
+      align: 'center',
+      width: '150px'
+    },
     {
       text: 'Available Date',
       value: 'availableDate',

@@ -38,8 +38,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
@@ -382,7 +385,7 @@ public class QuizService {
                 .stream()
                 .filter(question -> question.getQuizQuestions().isEmpty())
                 .collect(Collectors.toList())) {
-            questionService.deleteQuestion(question);
+            questionService.removeQuestion(question.getId());
         }
     }
 

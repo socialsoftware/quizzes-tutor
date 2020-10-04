@@ -10,10 +10,10 @@ import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -80,10 +80,14 @@ public class UsersXmlImport {
 	private User importUser(Element userElement) {
 		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
 		String name = userElement.getAttributeValue("name");
+		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
+		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
 		User.Role role = getUserRole(userElement);
 
 		User user = userService.createUser(name, role);
 		user.setKey(key);
+		user.setAdmin(admin);
+		user.setCreationDate(creationDate);
 		return user;
 	}
 
@@ -95,6 +99,9 @@ public class UsersXmlImport {
 
 		String username = authUserElement.getAttributeValue("username");
 		String email = authUserElement.getAttributeValue("email");
+		if (email.trim().isEmpty()) {
+			email = null;
+		}
 		AuthUser.Type type = AuthUser.Type.EXTERNAL;
 		String password = null;
 		Boolean isActive = null;
@@ -131,10 +138,10 @@ public class UsersXmlImport {
 		authUser.setPassword(password);
 		if (type == AuthUser.Type.EXTERNAL) {
 			((AuthExternalUser)authUser).setActive(isActive);
+			((AuthExternalUser)authUser).setConfirmationToken(confirmationDate);
+			((AuthExternalUser)authUser).setTokenGenerationDate(tokenGenerationDate);
 		}
 		authUser.setLastAccess(lastAccess);
-		authUser.setConfirmationToken(confirmationDate);
-		authUser.setTokenGenerationDate(tokenGenerationDate);
 
 		return authUser.getUser();
 	}

@@ -19,17 +19,23 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -42,14 +48,17 @@ class SpockTest extends Specification {
 
     public static final String USER_1_NAME = "User 1 Name"
     public static final String USER_2_NAME = "User 2 Name"
+    public static final String USER_3_NAME = "User 3 Name"
     public static final String DEMO_STUDENT_NAME = "Demo Student"
     public static final String DEMO_TEACHER_NAME = "Demo Teacher"
     public static final String DEMO_ADMIN_NAME = "Demo Admin"
 
-    public static final String USER_1_USERNAME = "User 1 Username"
-    public static final String USER_2_USERNAME = "User 2 Username"
+    public static final String USER_1_USERNAME = "a@a.a"
+    public static final String USER_2_USERNAME = "a@a.b"
+    public static final String USER_3_USERNAME = "user3username"
     public static final String USER_1_EMAIL = "user1@mail.com"
     public static final String USER_2_EMAIL = "user2@mail.com"
+    public static final String USER_3_EMAIL = "user3@mail.com"
     public final static String USER_1_PASSWORD = "1234"
     public final static String USER_2_PASSWORD = "4321"
     public static final String USER_1_TOKEN = "1a2b3c"
@@ -77,9 +86,14 @@ class SpockTest extends Specification {
     public static final LocalDateTime LOCAL_DATE_TOMORROW = DateHandler.now().plusDays(1)
     public static final LocalDateTime LOCAL_DATE_LATER = DateHandler.now().plusDays(2)
 
-    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_BEFORE = DateHandler.toISOString(DateHandler.now().minusDays(2))
+    public static final String STRING_DATE_YESTERDAY = DateHandler.toISOString(DateHandler.now().minusDays(1))
     public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+    public static final String STRING_DATE_TODAY_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusMinutes(10))
     public static final String STRING_DATE_TOMORROW = DateHandler.toISOString(DateHandler.now().plusDays(1))
+    public static final String STRING_DATE_TOMORROW_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(1).plusMinutes(10))
+    public static final String STRING_DATE_LATER = DateHandler.toISOString(DateHandler.now().plusDays(2))
+    public static final String STRING_DATE_LATER_PLUS_10_MINUTES = DateHandler.toISOString(DateHandler.now().plusDays(2).plusMinutes(10))
 
     public static final String QUESTION_1_CONTENT = "Question 1 Content\n ![image][image]\n question content"
     public static final String QUESTION_2_CONTENT = "Question 2 Content\n ![image][image]\n question content"
@@ -105,6 +119,12 @@ class SpockTest extends Specification {
     public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
     public static final String CSVIMPORTUSERSBADROLEFORMAT = System.getProperty("user.dir") + "/src/test/resources/csvImportUsersBadRoleFormat.csv"
     public static final int NUMBER_OF_USERS_IN_FILE = 5
+
+    public static final int NUMBER_OF_QUESTIONS = 1
+
+    public static final String REVIEW_1_COMMENT = "Review Comment 1"
+    public static final String REVIEW_2_COMMENT = "Review Comment 2"
+    public static final String REVIEW_3_COMMENT = "Review Comment 3"
 
     @Autowired
     AuthUserService authUserService
@@ -176,6 +196,12 @@ class SpockTest extends Specification {
     TopicService topicService
 
     @Autowired
+    TournamentRepository tournamentRepository
+
+    @Autowired
+    TournamentService tournamentService
+
+    @Autowired
     UserRepository userRepository
 
     @Autowired
@@ -185,15 +211,25 @@ class SpockTest extends Specification {
     AuthUserRepository authUserRepository
 
     @Autowired
+    QuestionSubmissionService questionSubmissionService
+
+    @Autowired
+    QuestionSubmissionRepository questionSubmissionRepository
+
+    @Autowired
+    ReviewRepository reviewRepository
+
+    @Autowired
     UserServiceApplicational userServiceApplicational
 
     @Autowired
     Mailer mailer
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder
 
     Course externalCourse
+    @Shared
     CourseExecution externalCourseExecution
 
     RESTClient restClient
@@ -202,8 +238,7 @@ class SpockTest extends Specification {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
 
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO)
-        externalCourseExecution.setEndDate(LOCAL_DATE_TODAY)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(externalCourseExecution)
     }
 
@@ -240,5 +275,17 @@ class SpockTest extends Specification {
                 path: '/auth/demo/teacher'
         )
         restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+    }
+
+    def createdUserLogin(email, password) {
+        def loggedUser = restClient.get(
+                path: '/auth/external',
+                query: [
+                        email: email,
+                        password: password,
+                ],
+                requestContentType: 'application/json'
+        )
+        restClient.headers['Authorization']  = "Bearer " + loggedUser.data.token
     }
 }

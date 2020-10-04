@@ -15,12 +15,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
@@ -131,14 +131,17 @@ public class CourseService {
     public void anonymizeCourseExecutionUsers(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
-            String oldUsername = user.getUsername();
-            authUserRepository.delete(user.getAuthUser());
-            user.setAuthUser(null);
-            String newUsername = user.getUsername();
-            questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
-            String role = user.getRole().toString();
-            String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
-            user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+            if (user.getAuthUser() != null) {
+                String oldUsername = user.getUsername();
+                AuthUser authUser = user.getAuthUser();
+                authUser.remove();
+                authUserRepository.delete(authUser);
+                String newUsername = user.getUsername();
+                questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
+                String role = user.getRole().toString();
+                String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
+                user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+            }
         }
     }
 
@@ -167,8 +170,7 @@ public class CourseService {
     }
 
     private CourseExecution createCourseExecution(Course existingCourse, CourseDto courseDto) {
-        CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType());
-        courseExecution.setEndDate(DateHandler.toLocalDateTime(courseDto.getEndDate()));
+        CourseExecution courseExecution = new CourseExecution(existingCourse, courseDto.getAcronym(), courseDto.getAcademicTerm(), courseDto.getCourseExecutionType(), DateHandler.toLocalDateTime(courseDto.getEndDate()));
         courseExecutionRepository.save(courseExecution);
         return courseExecution;
     }
@@ -189,8 +191,7 @@ public class CourseService {
     public CourseExecution getDemoCourseExecution() {
         return this.courseExecutionRepository.findByFields(Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElseGet(() -> {
             Course course = getCourse(Demo.COURSE_NAME, Course.Type.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO);
-            courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+            CourseExecution courseExecution = new CourseExecution(course, Demo.COURSE_ACRONYM, Demo.COURSE_ACADEMIC_TERM, Course.Type.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }
@@ -202,8 +203,8 @@ public class CourseService {
     public List<ExternalUserDto> getExternalUsers(Integer courseExecutionId){
         CourseExecution execution = getExternalCourseExecution(courseExecutionId);
         return execution.getStudents().stream()
-                .sorted(Comparator.comparing(User::getName))
                 .map(ExternalUserDto::new)
+                .sorted(Comparator.comparing(ExternalUserDto::getUsername))
                 .collect(Collectors.toList());
     }
 

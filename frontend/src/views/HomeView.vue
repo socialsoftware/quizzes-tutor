@@ -106,10 +106,8 @@ export default class HomeView extends Vue {
   async demoStudent(createNew: boolean) {
     await this.$store.dispatch('loading');
     try {
-      if (createNew)
-        await this.$store.dispatch('demoNewStudentLogin');
-      else  
-        await this.$store.dispatch('demoStudentLogin');
+      if (createNew) await this.$store.dispatch('demoNewStudentLogin');
+      else await this.$store.dispatch('demoStudentLogin');
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -173,7 +171,8 @@ export default class HomeView extends Vue {
     margin-top: 40px;
     padding-bottom: 30px;
 
-    button, a {
+    button,
+    a {
       margin: 0 10px;
     }
   }

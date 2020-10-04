@@ -4,10 +4,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
+import java.util.*;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -49,10 +54,13 @@ public class CourseExecution implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
     private final Set<Assessment> assessments = new HashSet<>();
 
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
+    private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
     public CourseExecution() {
     }
 
-    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type) {
+    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type, LocalDateTime endDate) {
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
@@ -62,6 +70,8 @@ public class CourseExecution implements DomainEntity {
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
         setStatus(Status.ACTIVE);
+        setEndDate(endDate);
+
     }
 
     @Override
@@ -150,9 +160,21 @@ public class CourseExecution implements DomainEntity {
         return assessments;
     }
 
+    public List<Assessment> getAvailableAssessments() {
+        return getAssessments().stream()
+                .filter(assessment -> assessment.getStatus() == Assessment.Status.AVAILABLE)
+                .collect(Collectors.toList());
+    }
+
     public void addAssessment(Assessment assessment) {
         assessments.add(assessment);
     }
+
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+        questionSubmissions.add(questionSubmission);
+    }
+
+    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
 
     @Override
     public String toString() {
@@ -176,13 +198,14 @@ public class CourseExecution implements DomainEntity {
 
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
+        questionSubmissions.forEach(QuestionSubmission::remove);
     }
 
     public int getNumberOfActiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.TEACHER) &&
-                        user.getAuthUser().isActive())
+                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -190,7 +213,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.TEACHER) &&
-                        !user.getAuthUser().isActive())
+                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -198,7 +221,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.STUDENT) &&
-                        user.getAuthUser().isActive())
+                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -206,7 +229,7 @@ public class CourseExecution implements DomainEntity {
         return (int) this.users.stream()
                 .filter(user ->
                         user.getRole().equals(User.Role.STUDENT) &&
-                        !user.getAuthUser().isActive())
+                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
 
@@ -222,6 +245,19 @@ public class CourseExecution implements DomainEntity {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .collect(Collectors.toSet());
+    }
+
+    public Set<Topic> findAvailableTopics() {
+        return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).collect(Collectors.toSet());
+    }
+
+    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
+        Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
+        Set<Integer> topicsIds = topics.stream().map(TopicDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
+
+        return questions.stream()
+                .filter(question -> question.hasTopics(topicsIds))
+                .collect(Collectors.toList());
     }
 
     public Set<User> getTeachers() {

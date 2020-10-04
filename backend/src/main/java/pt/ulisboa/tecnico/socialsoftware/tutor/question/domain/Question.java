@@ -21,7 +21,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Table(name = "questions")
 public class Question implements DomainEntity {
     public enum Status {
-        DISABLED, REMOVED, AVAILABLE
+        DISABLED, REMOVED, AVAILABLE, SUBMITTED
     }
 
     @Id
@@ -130,7 +130,7 @@ public class Question implements DomainEntity {
 
         int index = 0;
         for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
+            if (optionDto.getId() == null || optionDto.getId() == 0) { // null option id might be converted to zero during testing
                 optionDto.setSequence(index++);
                 new Option(optionDto).setQuestion(this);
             } else {
@@ -282,6 +282,13 @@ public class Question implements DomainEntity {
         return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
     }
 
+    public boolean hasTopics(Set<Integer> chosenTopicsIds) {
+        return !getTopics().isEmpty()
+                && chosenTopicsIds.containsAll(getTopics().stream()
+                .map(topic -> topic.getId())
+                .collect(Collectors.toList()));
+    }
+
     public void update(QuestionDto questionDto) {
         if (getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).findAny().isPresent()) {
             throw new TutorException(CANNOT_CHANGE_ANSWERED_QUESTION);
@@ -313,5 +320,9 @@ public class Question implements DomainEntity {
 
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
+    }
+
+    public boolean isInSubmission() {
+        return status == Status.SUBMITTED;
     }
 }

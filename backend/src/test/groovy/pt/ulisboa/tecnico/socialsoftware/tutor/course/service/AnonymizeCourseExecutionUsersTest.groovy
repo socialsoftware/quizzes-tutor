@@ -6,8 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 import java.util.stream.Collectors
 
@@ -25,7 +25,7 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
     def setup() {
         tecnicoCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(tecnicoCourse)
-        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO)
+        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
@@ -47,15 +47,13 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
         user.authUser == null
         authUserRepository.findById(authUserId).orElse(null) == null
         user.name == "Student " + user.id
-        user.getUsername() == "Student-" + user.id
+        user.getUsername() == "student-" + user.id
         answerItemsIds.equals(
                 questionAnswerItemRepository.findQuestionAnswerItemsByUsername(user.getUsername())
                 .stream().map({ answerItem -> answerItem.getId() })
                 .collect(Collectors.toList())
         )
     }
-
-
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

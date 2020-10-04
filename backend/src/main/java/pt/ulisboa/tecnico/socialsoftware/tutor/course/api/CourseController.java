@@ -13,10 +13,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZIP;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -87,7 +87,7 @@ public class CourseController {
     }
 
     @GetMapping("/executions/{executionId}/anonymize")
-    @PreAuthorize("(hasRole('ROLE_ADMIN') and hasPermission(#executionId, 'EXECUTION.ACCESS')) or (hasRole('ROLE_DEMO_ADMIN')  and hasPermission(#executionId, 'DEMO.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public void anonymizeCourseExecutionUsers(@PathVariable int executionId) {
         courseService.anonymizeCourseExecutionUsers(executionId);
     }
