@@ -5,30 +5,19 @@
         <li style="margin-bottom: 25px !important;" :key="discussion.message">
           <div style="display: inline-flex; width: 100%">
             <div style="width: 88%" class="text-left">
-              <b v-if="user.id !== discussion.userId"
+              <b
                 >{{ user.username }} opened a discussion on
                 {{ discussion.date }} :
               </b>
-              <b v-else>You opened a discussion on {{ discussion.date }} :</b>
               <span v-html="convertMarkDown(discussion.message)" />
             </div>
             <v-switch
-              v-if="discussion.replies !== null && discussion.closed"
+              v-if="discussion.replies !== null"
               style="width: 12%"
               v-model="discussion.closed"
-              :label="discussion.closed ? 'Closed' : 'Reopen'"
+              :label="discussion.closed ? 'Closed' : 'Open'"
               @change="changeDiscussionStatus(discussion.id)"
             />
-
-            <!--<v-btn
-              v-if="discussion.replies !== null && discussion.closed"
-              style="width: 12%"
-              color="primary"
-              v-model="discussion.closed"
-              dark
-              @change="changeDiscussionStatus(discussion.id)"
-              >Reopen</v-btn
-            >-->
           </div>
           <v-expansion-panels v-if="discussion.replies !== null" :inset="true">
             <v-expansion-panel>
@@ -41,20 +30,23 @@
                   :key="reply.id"
                   class="text-left reply"
                 >
-                  <div style="width: 100%">
-                    <div>
+                  <div style="display: inline-flex; width: 100%">
+                    <div style="width: 88%">
                       <b v-if="user.id !== reply.userId"
                         >{{ reply.userName }} replied on {{ reply.date }} :
                       </b>
                       <b v-else>You replied on {{ reply.date }} :</b>
                       <span v-html="convertMarkDown(reply.message)" />
                     </div>
+                    <v-switch
+                      style="width: 12%"
+                      v-model="reply.available"
+                      :label="reply.available ? 'Public' : 'Private'"
+                      @change="changeReplyAvailability(reply.id)"
+                    />
                   </div>
                 </div>
-                <div
-                  class="reply-message"
-                  v-if="!discussion.closed && discussion.userId === user.id"
-                >
+                <div class="reply-message" v-if="discussion.closed === false">
                   <v-textarea
                     data-cy="replyTextArea"
                     class="textarea-reply"
@@ -111,7 +103,7 @@ import RemoteServices from '../../../services/RemoteServices';
 import User from '@/models/user/User';
 
 @Component
-export default class ReplyComponent extends Vue {
+export default class ShowReplies extends Vue {
   @Prop() readonly discussion!: Discussion;
   replyMessages: Map<number, string> = new Map();
   user: User = this.$store.getters.getUser;

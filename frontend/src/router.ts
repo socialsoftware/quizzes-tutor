@@ -383,7 +383,6 @@ router.beforeEach(async (to, from, next) => {
   } else if (to.meta.requiredAuth == 'Admin' && Store.getters.isAdmin) {
     next();
   } else if (to.meta.requiredAuth == 'Teacher' && Store.getters.isTeacher) {
-    await Store.dispatch('countUnansweredDiscussions');
     next();
   } else if (to.meta.requiredAuth == 'Student' && Store.getters.isStudent) {
     next();

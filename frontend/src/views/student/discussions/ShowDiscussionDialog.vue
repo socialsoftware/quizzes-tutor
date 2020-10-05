@@ -17,7 +17,7 @@
 
       <v-card-text class="text-left">
         <v-card>
-          <reply-component
+          <show-replies
             v-if="this.discussion != null"
             :discussion="this.discussion"
           />
@@ -35,13 +35,13 @@
 <script lang="ts">
 import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import Discussion from '@/models/management/Discussion';
-import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
+import ShowReplies from '@/views/teacher/discussions/ShowReplies.vue';
 
 @Component({
   components: {
     'show-question': ShowQuestion,
-    'reply-component': ReplyComponent
+    'show-replies': ShowReplies
   }
 })
 export default class ShowDiscussionDialog extends Vue {
