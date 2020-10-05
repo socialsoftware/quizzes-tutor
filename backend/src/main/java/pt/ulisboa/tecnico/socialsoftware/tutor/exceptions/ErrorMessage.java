@@ -120,8 +120,8 @@ public enum ErrorMessage {
     DISCUSSION_NOT_FOUND("Discussion not found: %d"),
     REPLY_NOT_FOUND("Reply not found: %d"),
     REPLY_UNAUTHORIZED_USER("Reply is not authorized!"),
-    DISCUSSION_NOT_SUBMITTED_BY_REQUESTER("Discussion not submitted by requester"),
     USER_NOT_STUDENT("This user is not a student"),
+    CLOSE_NOT_POSSIBLE("Impossible to close discussion with no replies"),
 
     QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
     QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),

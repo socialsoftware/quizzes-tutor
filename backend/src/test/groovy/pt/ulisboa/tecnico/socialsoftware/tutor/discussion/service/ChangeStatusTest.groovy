@@ -20,8 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Shared
 
 @DataJpaTest
-class CreateReplyTest extends SpockTest {
-
+class ChangeStatusTest extends SpockTest {
     @Shared
     def student
     def student2
@@ -29,6 +28,7 @@ class CreateReplyTest extends SpockTest {
     @Shared
     def question1
     def discussionDto
+    def replyDto
 
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
@@ -67,16 +67,11 @@ class CreateReplyTest extends SpockTest {
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
 
-
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
-
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
         quiz.addQuizQuestion(quizQuestionRepository.findAll().get(0))
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
-
 
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
 
@@ -88,62 +83,92 @@ class CreateReplyTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
         discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
-    }
 
-    def "teacher replies to discussion"(){
-        given: "a reply"
-        def replyDto = new ReplyDto()
+        replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-
-        when: "a reply is given"
         discussionService.createReply(discussionDto, replyDto)
-
-        then: "the correct reply was given"
-        replyRepository.count() == 1L
-        def result = replyRepository.findAll().get(0)
-        result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == teacher
-        discussionRepository.findAll().get(0).getReplies().size() == 1
-        discussionRepository.findAll().get(0).getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussionRepository.findAll().get(0).getReplies().get(0).getUser().getId() == replyDto.getUserId()
+        replyDto.setId(replyRepository.findAll().get(0).getId())
     }
 
-    def "student replies to his discussion"(){
-        given: "a response created by a student"
-        def replyDto = new ReplyDto()
-        replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student.getId())
-        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+    def "changes discussion with replies status to closed"(){
+        when: "change open discussion with replies status"
+        discussionService.changeStatus(discussionDto.getId())
 
-        when: "the student creates a reply"
-        discussionService.createReply(discussionDto, replyDto)
-
-        then: "the correct reply was given"
-        replyRepository.count() == 1L
-        def result = replyRepository.findAll().get(0)
-        result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == student
-        discussionRepository.findAll().get(0).getReplies().size() == 1
-        discussionRepository.findAll().get(0).getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussionRepository.findAll().get(0).getReplies().get(0).getUser().getId() == replyDto.getUserId()
+        then: "the status has changed"
+        def resultDiscussionList = discussionService.findDiscussionsByUserId(student.getId())
+        resultDiscussionList.size() == 1
+        def discussion = resultDiscussionList.get(0)
+        discussion.getMessage() == DISCUSSION_MESSAGE
+        discussion.getUserId() == student.getId()
+        discussion.getQuestion().getId() == question1.getId()
+        discussion.isClosed() == true
     }
 
-    def "student can't reply a discussion of other student"(){
-        given: "a response created by a student"
-        def replyDto = new ReplyDto()
-        replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student2.getId())
-        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+    def "changes discussion with no replies status to closed"(){
+        given:
+        def quiz = new Quiz()
+        quiz.setKey(2)
+        quiz.setType("TEST")
+        quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
+        quizRepository.save(quiz)
 
-        when: "the student tries to create a reply"
-        discussionService.createReply(discussionDto, replyDto)
+        def quizanswer = new QuizAnswer()
+        quizanswer.setUser(student)
+        quizanswer.setQuiz(quiz)
+        quizanswer.setQuiz(quizRepository.findAll().get(1))
+        quizAnswerRepository.save(quizanswer)
 
-        then:
+        def quizquestion = new QuizQuestion(quizRepository.findAll().get(1), question1, 0)
+        quizQuestionRepository.save(quizquestion)
+
+        def questionanswer = new QuestionAnswer()
+        questionanswer.setTimeTaken(1)
+        questionanswer.setQuizAnswer(quizanswer)
+        questionanswer.setQuizQuestion(quizquestion)
+        questionAnswerRepository.save(questionanswer)
+
+        quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(1))
+        quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(1))
+        quiz.addQuizAnswer(quizAnswerRepository.findAll().get(1))
+        quiz.addQuizQuestion(quizQuestionRepository.findAll().get(1))
+        quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
+
+        student.addQuizAnswer(quizAnswerRepository.findAll().get(1))
+
+        def discussionDto2 = new DiscussionDto()
+        discussionDto2.setMessage(DISCUSSION_MESSAGE)
+        discussionDto2.setQuestion(new QuestionDto(question1))
+        discussionDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        discussionDto2.setUserId(student.getId())
+        discussionDto2.setUserName(student.getUsername())
+        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto2)
+        discussionDto2.setId(discussionRepository.findAll().get(1).getId())
+
+        when: "change open discussion with no replies status"
+        discussionService.changeStatus(discussionDto2.getId())
+
+        then: "exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.REPLY_UNAUTHORIZED_USER
+        exception.getErrorMessage() == ErrorMessage.CLOSE_NOT_POSSIBLE
     }
+
+    def "changes discussion with replies status twice"(){
+        when: "change open discussion with replies status"
+        discussionService.changeStatus(discussionDto.getId())
+        discussionService.changeStatus(discussionDto.getId())
+
+        then: "the status has changed"
+        def resultDiscussionList = discussionService.findDiscussionsByUserId(student.getId())
+        resultDiscussionList.size() == 1
+        def discussion = resultDiscussionList.get(0)
+        discussion.getMessage() == DISCUSSION_MESSAGE
+        discussion.getUserId() == student.getId()
+        discussion.getQuestion().getId() == question1.getId()
+        discussion.isClosed() == false
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

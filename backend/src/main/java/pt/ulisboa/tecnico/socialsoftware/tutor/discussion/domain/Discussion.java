@@ -77,7 +77,7 @@ public class Discussion implements DomainEntity {
         this.user.addDiscussion(this);
         this.message = discussionDto.getMessage();
         this.setUserId(user.getId());
-        this.setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
+        this.date = DateHandler.toLocalDateTime(discussionDto.getDate());
         this.available = discussionDto.isAvailable();
         this.setQuestionId(questionAnswer.getQuizQuestion().getQuestion().getId());
         this.courseExecutionId = discussionDto.getCourseExecutionId();

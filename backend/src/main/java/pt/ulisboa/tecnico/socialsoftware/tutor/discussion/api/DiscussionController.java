@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.UnansweredDiscussionsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
@@ -62,12 +61,6 @@ public class DiscussionController {
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public List<DiscussionDto> getOpenCourseExecutionDiscussions(@PathVariable int courseExecutionId) {
         return this.discussionService.findOpenDiscussionsByCourseExecutionId(courseExecutionId);
-    }
-
-    @GetMapping("/{courseExecutionId}/discussions/unanswered")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(@PathVariable int courseExecutionId) {
-        return this.discussionService.getUnansweredDiscussionsNumber(courseExecutionId);
     }
 
     @GetMapping("/discussions/{courseExecutionId}/answered")

@@ -21,7 +21,6 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
-import UnansweredDiscussionsInfo from '@/models/management/UnansweredDiscussionsInfo';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;

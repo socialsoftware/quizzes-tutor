@@ -10,8 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -20,8 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Shared
 
 @DataJpaTest
-class CreateReplyTest extends SpockTest {
-
+class ChangeReplyAvailabilityTest extends SpockTest {
     @Shared
     def student
     def student2
@@ -29,6 +26,8 @@ class CreateReplyTest extends SpockTest {
     @Shared
     def question1
     def discussionDto
+    def replyDto
+    def replyDto2
 
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
@@ -88,61 +87,56 @@ class CreateReplyTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
         discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
-    }
 
-    def "teacher replies to discussion"(){
-        given: "a reply"
-        def replyDto = new ReplyDto()
+        replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-
-        when: "a reply is given"
         discussionService.createReply(discussionDto, replyDto)
+        replyDto.setId(replyRepository.findAll().get(0).getId())
 
-        then: "the correct reply was given"
-        replyRepository.count() == 1L
+        replyDto2 = new ReplyDto()
+        replyDto2.setMessage(DISCUSSION_REPLY)
+        replyDto2.setUserId(teacher.getId())
+        replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        discussionService.createReply(discussionDto, replyDto2)
+        replyDto2.setId(replyRepository.findAll().get(1).getId())
+    }
+
+    def "changes reply availability to available"(){
+        given: "reply not available"
+        def reply = replyRepository.findAll().get(0)
+        reply.getMessage() == DISCUSSION_REPLY
+        reply.getUser() == teacher
+        reply.isAvailable() == false
+
+        when: "change reply availability"
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        then: "the availability has changed"
+        replyRepository.count() == 2L
         def result = replyRepository.findAll().get(0)
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
-        discussionRepository.findAll().get(0).getReplies().size() == 1
-        discussionRepository.findAll().get(0).getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussionRepository.findAll().get(0).getReplies().get(0).getUser().getId() == replyDto.getUserId()
+        result.isAvailable() == true
     }
 
-    def "student replies to his discussion"(){
-        given: "a response created by a student"
-        def replyDto = new ReplyDto()
-        replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student.getId())
-        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+    def "changes reply availability to not available"(){
+        given: "reply available"
+        def reply = replyRepository.findAll().get(1)
+        reply.getMessage() == DISCUSSION_REPLY
+        reply.getUser() == teacher
+        reply.isAvailable() == true
 
-        when: "the student creates a reply"
-        discussionService.createReply(discussionDto, replyDto)
+        when: "change reply availability"
+        discussionService.changeReplyAvailability(replyDto.getId())
 
-        then: "the correct reply was given"
-        replyRepository.count() == 1L
-        def result = replyRepository.findAll().get(0)
+        then: "the availability has changed"
+        replyRepository.count() == 2L
+        def result = replyRepository.findAll().get(1)
         result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == student
-        discussionRepository.findAll().get(0).getReplies().size() == 1
-        discussionRepository.findAll().get(0).getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussionRepository.findAll().get(0).getReplies().get(0).getUser().getId() == replyDto.getUserId()
-    }
-
-    def "student can't reply a discussion of other student"(){
-        given: "a response created by a student"
-        def replyDto = new ReplyDto()
-        replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student2.getId())
-        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-
-        when: "the student tries to create a reply"
-        discussionService.createReply(discussionDto, replyDto)
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.REPLY_UNAUTHORIZED_USER
+        result.getUser() == teacher
+        result.isAvailable() == false
     }
 
     @TestConfiguration

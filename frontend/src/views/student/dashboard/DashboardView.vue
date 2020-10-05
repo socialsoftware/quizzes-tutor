@@ -46,8 +46,8 @@
                 :headers="headers"
                 :items="discussions"
                 :mobile-breakpoint="0"
-                :items-per-page="10"
-                :footer-props="{ itemsPerPageOptions: [10, 15] }"
+                :items-per-page="5"
+                :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
               >
                 <template v-slot:item.available="{ item }">
                   <v-chip v-if="item.available === true" :color="'green'" dark
