@@ -22,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 
+import java.io.ByteArrayOutputStream;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -251,4 +252,5 @@ public class CourseService {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);
         }
     }
+
 }

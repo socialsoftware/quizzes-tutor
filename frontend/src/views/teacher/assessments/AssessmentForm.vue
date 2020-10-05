@@ -7,7 +7,7 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="primary" dark @click="saveAssessment">Save</v-btn>
+      <v-btn color="green darken-1" @click="saveAssessment">Save</v-btn>
     </v-card-title>
     <v-card-text>
       <v-container fluid>
@@ -76,7 +76,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="removeTopicConjunction(item)"
                     >
@@ -89,7 +89,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
                     >
@@ -151,7 +151,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="addTopicConjunction(item)"
                     >
@@ -163,7 +163,7 @@
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
-                      class="mr-2"
+                      class="mr-2 action-button"
                       v-on="on"
                       @click="showQuestionsDialog(item)"
                     >
@@ -186,43 +186,11 @@
       >
     </v-card-text>
 
-    <v-dialog
-      v-model="questionsDialog"
-      @keydown.esc="closeQuestionsDialog"
-      max-width="75%"
-    >
-      <v-card v-if="questionsToShow">
-        <v-card-text>
-          <ol>
-            <li
-              v-for="question in questionsToShow"
-              :key="question.id"
-              class="text-left"
-            >
-              <span
-                v-html="convertMarkDown(question.content, question.image)"
-              ></span>
-              <ul>
-                <li v-for="option in question.options" :key="option.number">
-                  <span
-                    v-html="convertMarkDown(option.content)"
-                    v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  ></span>
-                </li>
-              </ul>
-              <br />
-            </li>
-          </ol>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn dark color="primary" @click="closeQuestionsDialog"
-            >close</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-question-list-dialog
+      :dialog="questionsDialog"
+      :questions="selectedQuestions"
+      v-on:close="onCloseQuestionsDialog"
+    ></show-question-list-dialog>
   </v-card>
 </template>
 
@@ -236,10 +204,13 @@ import Image from '@/models/management/Image';
 import TopicConjunction from '@/models/management/TopicConjunction';
 import { _ } from 'vue-underscore';
 import Topic from '@/models/management/Topic';
+import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 
-@Component
+@Component({
+  components: { ShowQuestionListDialog }
+})
 export default class AssessmentForm extends Vue {
-  @Prop(Assessment) readonly assessment!: Assessment;
+  @Prop({ type: Assessment, required: true }) readonly assessment!: Assessment;
   @Prop(Boolean) readonly editMode!: boolean;
   currentTopicsSearch: string = '';
   currentTopicsSearchText: string = '';
@@ -370,7 +341,7 @@ export default class AssessmentForm extends Vue {
     this.questionsDialog = true;
   }
 
-  closeQuestionsDialog() {
+  onCloseQuestionsDialog() {
     this.questionsDialog = false;
     this.questionsToShow = [];
   }

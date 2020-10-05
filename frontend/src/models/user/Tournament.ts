@@ -1,31 +1,36 @@
 import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
+import TournamentParticipant from '@/models/user/TournamentParticipant';
+import Store from '@/store';
 
 export default class Tournament {
   id!: number;
+  courseAcronym!: string;
+  quizId!: number;
   startTime!: string;
   endTime!: string;
   numberOfQuestions!: number;
   canceled!: boolean;
-  courseAcronym!: string;
   enrolled!: boolean;
   topics!: String[];
   topicsDto!: Topic[];
-  participants!: User[];
-  quizId!: number;
+  creator!: User;
+  participants!: TournamentParticipant[];
   privateTournament!: boolean;
   password!: string;
-  isClosed!: boolean;
+  opened!: boolean;
+  closed!: boolean;
 
   constructor(jsonObj?: Tournament, user?: User) {
     if (jsonObj) {
       this.id = jsonObj.id;
+      this.courseAcronym = jsonObj.courseAcronym;
+      this.quizId = jsonObj.quizId;
       this.startTime = ISOtoString(jsonObj.startTime);
       this.endTime = ISOtoString(jsonObj.endTime);
       this.numberOfQuestions = jsonObj.numberOfQuestions;
       this.canceled = jsonObj.canceled;
-      this.courseAcronym = jsonObj.courseAcronym;
       this.topics = [];
 
       if (jsonObj.topicsDto) {
@@ -36,11 +41,12 @@ export default class Tournament {
         });
       }
 
+      this.creator = jsonObj.creator;
       this.participants = jsonObj.participants;
-      this.quizId = jsonObj.quizId;
       this.privateTournament = jsonObj.privateTournament;
       this.password = jsonObj.password;
-      this.isClosed = jsonObj.isClosed;
+      this.opened = jsonObj.opened;
+      this.closed = jsonObj.closed;
 
       if (user) {
         this.enrolled = this.participants.some(
@@ -55,15 +61,15 @@ export default class Tournament {
     else return 0;
   }
 
-  getStateColor(closedTournamentsId: number[]) {
-    if (this.id && closedTournamentsId.includes(this.id)) return 'orange';
+  getStateColor() {
+    if (this.closed) return 'orange';
     else if (!this.canceled) return 'green';
     else return 'red';
   }
 
-  getStateName(closedTournamentsId: number[]) {
-    if (this.id && closedTournamentsId.includes(this.id)) return 'FINISHED';
-    else if (!this.canceled) return 'AVAILABLE';
+  getStateName() {
+    if (this.closed) return 'CLOSED';
+    else if (!this.canceled) return 'OPEN';
     else return 'CANCELLED';
   }
 
@@ -74,7 +80,7 @@ export default class Tournament {
 
   getEnrolledName() {
     if (this.enrolled) return 'YOU ARE IN';
-    else return 'YOU NEED TO JOIN';
+    else return 'NOT JOINED';
   }
 
   getPrivateColor() {
@@ -87,15 +93,44 @@ export default class Tournament {
     else return 'PUBLIC';
   }
 
-  isNotEnrolled() {
-    return !this.enrolled;
+  isAnswered() {
+    return this.participants.find(
+      participant => participant.userId === Store.getters.getUser.id
+    )?.answered;
   }
 
-  isNotCanceled() {
-    return !this.canceled;
+  isOwner() {
+    return this.creator.id === Store.getters.getUser.id;
   }
 
-  isPrivate() {
-    return this.privateTournament;
+  canJoinPublic() {
+    return (
+      !this.enrolled &&
+      !this.privateTournament &&
+      !this.closed &&
+      !this.canceled
+    );
+  }
+
+  canJoinPrivate() {
+    return (
+      !this.enrolled && this.privateTournament && !this.closed && !this.canceled
+    );
+  }
+
+  canLeave() {
+    return this.enrolled && !this.isAnswered();
+  }
+
+  canSeeResults() {
+    return this.enrolled && this.isAnswered();
+  }
+
+  canSolveQuiz() {
+    return this.enrolled && this.opened && !this.canceled && !this.isAnswered();
+  }
+
+  canChange() {
+    return this.isOwner() && !this.opened && !this.closed && !this.canceled;
   }
 }

@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TITLE_FOR_ASSESSMENT;
@@ -126,10 +127,10 @@ public class Assessment implements DomainEntity {
                 '}';
     }
 
-    public List<Question> getQuestions() {
+    public Set<Question> getQuestions() {
         return this.topicConjunctions.stream()
                 .flatMap(topicConjunction -> topicConjunction.getQuestions().stream())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
     }
 
     public void remove() {

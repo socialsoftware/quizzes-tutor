@@ -6,7 +6,7 @@
     max-width="75%"
     max-height="80%"
   >
-    <v-card>
+    <v-card class="px-5">
       <v-card-title>
         <span class="headline">
           {{
@@ -17,62 +17,103 @@
         </span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="editQuestionSubmission">
-        <v-text-field
-          v-model="editQuestionSubmission.question.title"
-          label="Title"
-          data-cy="QuestionTitle"
-        />
-        <v-textarea
-          outline
-          rows="5"
-          v-model="editQuestionSubmission.question.content"
-          label="Question"
-          data-cy="QuestionContent"
-        ></v-textarea>
-        <div
-          v-for="index in editQuestionSubmission.question.options.length"
-          :key="index"
-        >
+      <v-card-text class="pa-4 text-left" v-if="editQuestionSubmission">
+        <v-form ref="form" lazy-validation>
           <v-row>
-            <v-textarea
-              auto-grow
-              rows="2"
-              v-model="
-                editQuestionSubmission.question.options[index - 1].content
-              "
-              :label="`Option ${index}`"
-              v-bind:data-cy="'Option' + index"
-            ></v-textarea>
-            <v-switch
-              v-model="
-                editQuestionSubmission.question.options[index - 1].correct
-              "
-              class="ma-4"
-              label="Correct"
-              v-bind:data-cy="'Switch' + index"
+            <v-text-field
+              v-model="editQuestionSubmission.question.title"
+              :rules="[v => !!v || 'Question title is required']"
+              data-cy="QuestionTitle"
+              label="Title"
+              required
             />
           </v-row>
-        </div>
-        <v-textarea
-          outline
-          rows="1"
-          v-model="comment"
-          label="Comment"
-          data-cy="Comment"
-        ></v-textarea>
+
+          <v-row>
+            <v-textarea
+              v-model="editQuestionSubmission.question.content"
+              :rules="[v => !!v || 'Question content is required']"
+              auto-grow
+              data-cy="QuestionContent"
+              label="Question"
+              required
+              rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row>
+            <v-col cols="1" offset="10">
+              Correct
+            </v-col>
+          </v-row>
+
+          <v-row
+            v-for="(option, index) in editQuestionSubmission.question.options"
+            :key="index"
+          >
+            <v-col cols="10">
+              <v-textarea
+                v-model="option.content"
+                :label="`Option ${index + 1}`"
+                :data-cy="`Option${index + 1}`"
+                rows="1"
+                auto-grow
+              ></v-textarea>
+            </v-col>
+
+            <v-col cols="1">
+              <v-switch
+                v-model="option.correct"
+                inset
+                :data-cy="'Switch' + index"
+              />
+            </v-col>
+
+            <v-col v-if="editQuestionSubmission.question.options.length > 2">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="ma-1 action-button"
+                    v-on="on"
+                    @click="removeOption(index)"
+                    color="red"
+                    >close</v-icon
+                  >
+                </template>
+                <span>Remove Option</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
+              >Add Option</v-btn
+            >
+          </v-row>
+
+          <v-row>
+            <v-textarea
+              outline
+              rows="1"
+              v-model="comment"
+              label="Comment"
+              data-cy="Comment"
+            ></v-textarea>
+          </v-row>
+        </v-form>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="red darken-1"
           @click="$emit('dialog', false)"
           data-cy="CancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="green darken-1"
           @click="createQuestionSubmission(false)"
           data-cy="SaveButton"
           >Save</v-btn
@@ -93,6 +134,7 @@ import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
+import Option from '@/models/management/Option';
 
 @Component
 export default class EditQuestionSubmissionDialog extends Vue {
@@ -100,13 +142,10 @@ export default class EditQuestionSubmissionDialog extends Vue {
   @Prop({ type: QuestionSubmission, required: true })
   readonly questionSubmission!: QuestionSubmission;
 
-  editQuestionSubmission!: QuestionSubmission;
+  editQuestionSubmission: QuestionSubmission = new QuestionSubmission(
+    this.questionSubmission
+  );
   comment: string = '';
-
-  created() {
-    this.updateQuestionSubmission();
-    this.comment = '';
-  }
 
   @Watch('questionSubmission', { immediate: true, deep: true })
   updateQuestionSubmission() {
@@ -165,6 +204,14 @@ export default class EditQuestionSubmissionDialog extends Vue {
       editQuestionSubmission.question &&
       editQuestionSubmission.question.id !== null
     );
+  }
+
+  addOption() {
+    this.editQuestionSubmission.question.options.push(new Option());
+  }
+
+  removeOption(index: number) {
+    this.editQuestionSubmission.question.options.splice(index, 1);
   }
 }
 </script>

@@ -41,7 +41,10 @@
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="editAssessment(item.id)"
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="editAssessment(item.id)"
               >edit</v-icon
             >
           </template>
@@ -50,7 +53,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteAssessment(item.id)"
               color="red"
@@ -62,6 +65,7 @@
       </template>
       <template v-slot:item.title="{ item }">
         <div
+          @click="showQuestionsDialog(item.id)"
           @contextmenu="editAssessment(item.id, $event)"
           class="clickableTitle"
         >
@@ -70,55 +74,15 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Right-click on assessment's title to
-      edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
+      assessment's title to edit it.
     </footer>
 
-    <v-dialog
-      v-model="dialog"
-      @keydown.esc="closeAssessment"
-      fullscreen
-      hide-overlay
-      max-width="1000px"
-    >
-      <v-card v-if="assessment">
-        <v-toolbar dark color="primary">
-          <v-toolbar-title>{{ assessment.title }}</v-toolbar-title>
-          <div class="flex-grow-1"></div>
-          <v-toolbar-items>
-            <v-btn dark color="primary" @click="closeAssessment">Close</v-btn>
-          </v-toolbar-items>
-        </v-toolbar>
-
-        <v-card-text>
-          <ol>
-            <li
-              v-for="question in assessment.questions"
-              :key="question.sequence"
-              class="text-left"
-            >
-              <span
-                v-html="convertMarkDown(question.content, question.image)"
-              />
-              <ul>
-                <li v-for="option in question.options" :key="option.number">
-                  <span
-                    v-html="convertMarkDown(option.content)"
-                    v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-                  />
-                </li>
-              </ul>
-              <br />
-            </li>
-          </ol>
-        </v-card-text>
-
-        <v-card-actions>
-          <v-spacer />
-          <v-btn dark color="primary" @click="closeAssessment">close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <show-question-list-dialog
+      :dialog="questionsDialog"
+      :questions="questionsToShow"
+      v-on:close="onCloseQuestionsDialog"
+    ></show-question-list-dialog>
   </v-card>
 </template>
 
@@ -128,14 +92,21 @@ import RemoteServices from '@/services/RemoteServices';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Assessment from '@/models/management/Assessment';
+import TopicConjunction from '@/models/management/TopicConjunction';
+import { _ } from 'vue-underscore';
+import Question from '@/models/management/Question';
+import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 
-@Component
+@Component({
+  components: { ShowQuestionListDialog }
+})
 export default class AssessmentList extends Vue {
   @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
   assessment: Assessment | null = null;
   search: string = '';
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
-  dialog: boolean = false;
+  questionsDialog: boolean = false;
+  questionsToShow: Question[] = [];
   headers: object = [
     {
       text: 'Actions',
@@ -154,11 +125,6 @@ export default class AssessmentList extends Vue {
     },
     { text: 'Status', value: 'status', align: 'center', width: '5px' }
   ];
-
-  closeAssessment() {
-    this.dialog = false;
-    this.assessment = null;
-  }
 
   async setStatus(assessmentId: number, status: string) {
     try {
@@ -198,6 +164,22 @@ export default class AssessmentList extends Vue {
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
+  }
+
+  async showQuestionsDialog(assessmentId: number) {
+    try {
+      this.questionsToShow = await RemoteServices.getAssessmentQuestions(
+        assessmentId
+      );
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    this.questionsDialog = true;
+  }
+
+  onCloseQuestionsDialog() {
+    this.questionsDialog = false;
+    this.questionsToShow = [];
   }
 }
 </script>

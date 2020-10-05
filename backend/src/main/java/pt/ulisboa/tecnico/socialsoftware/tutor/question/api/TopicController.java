@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.validation.Valid;
@@ -29,6 +30,12 @@ public class TopicController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<TopicDto> getAvailableTopicsByCourseExecution(@PathVariable int courseId, @PathVariable int courseExecutionId) {
         return this.topicService.findAvailableTopicsByCourseExecution(courseExecutionId);
+    }
+
+    @GetMapping("/topics/{topicId}/questions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
+    public List<QuestionDto> getTopicQuestions(@PathVariable Integer topicId) {
+        return this.topicService.getTopicQuestions(topicId);
     }
 
     @PostMapping(value = "/courses/{courseId}/topics")

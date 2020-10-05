@@ -34,7 +34,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="editTopic(item)"
               data-cy="topicsGridEditButton"
@@ -46,7 +46,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteTopic(item)"
               color="red"
@@ -58,13 +58,18 @@
         </v-tooltip>
       </template>
       <template v-slot:item.name="{ item }" style="background: rebeccapurple">
-        <div @contextmenu="editTopic(item, $event)" class="clickableTitle">
+        <div
+          @click="showQuestionsDialog(item.id)"
+          @contextmenu="editTopic(item, $event)"
+          class="clickableTitle"
+        >
           {{ item.name }}
         </div>
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2">mouse</v-icon>Right-click on topic's name to edit it.
+      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on topic's
+      name to edit it.
     </footer>
 
     <v-dialog v-model="topicDialog" max-width="75%">
@@ -83,11 +88,17 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="blue darken-1" @click="closeDialogue">Cancel</v-btn>
-          <v-btn color="blue darken-1" @click="saveTopic">Save</v-btn>
+          <v-btn color="red darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="green darken-1" @click="saveTopic">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <show-question-list-dialog
+      :dialog="questionsDialog"
+      :questions="questionsToShow"
+      v-on:close="onCloseQuestionsDialog"
+    ></show-question-list-dialog>
   </v-card>
 </template>
 
@@ -95,13 +106,19 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
+import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
+import Question from '@/models/management/Question';
 
-@Component
+@Component({
+  components: { ShowQuestionListDialog }
+})
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
   editedTopic: Topic = new Topic();
   topicDialog: boolean = false;
   search: string = '';
+  questionsDialog: boolean = false;
+  questionsToShow: Question[] = [];
   headers: object = [
     {
       text: 'Actions',
@@ -186,6 +203,20 @@ export default class TopicsView extends Vue {
       await this.$store.dispatch('error', error);
     }
     this.closeDialogue();
+  }
+
+  async showQuestionsDialog(topicId: number) {
+    try {
+      this.questionsToShow = await RemoteServices.getTopicQuestions(topicId);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    this.questionsDialog = true;
+  }
+
+  onCloseQuestionsDialog() {
+    this.questionsDialog = false;
+    this.questionsToShow = [];
   }
 }
 </script>

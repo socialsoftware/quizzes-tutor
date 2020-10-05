@@ -198,4 +198,12 @@ public class QuizAnswer implements DomainEntity {
     public void setId(Integer id) {
         this.id = id;
     }
+
+    public long getNumberOfAnsweredQuestions() {
+        return getQuestionAnswers().stream().filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getOption() != null).count();
+    }
+
+    public long getNumberOfCorrectAnswers() {
+        return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
 }

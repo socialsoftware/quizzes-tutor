@@ -89,7 +89,7 @@ public class TopicConjunction {
     public List<Question> getQuestions() {
         return this.topics.stream()
                 .flatMap(topic -> topic.getQuestions().stream())
-                .filter(question -> question.getTopics().equals(this.topics))
+                .filter(question -> this.topics.containsAll(question.getTopics()))
                 .collect(Collectors.toList());
     }
 }

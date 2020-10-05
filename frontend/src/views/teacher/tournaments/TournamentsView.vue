@@ -39,8 +39,8 @@
         </v-chip>
       </template>
       <template v-slot:item.isCanceled="{ item }">
-        <v-chip :color="item.getStateColor(closedTournamentsId)">
-          {{ item.getStateName(closedTournamentsId) }}
+        <v-chip :color="item.getStateColor()">
+          {{ item.getStateName() }}
         </v-chip>
       </template>
       <template v-slot:item.privateTournament="{ item }">
@@ -59,7 +59,7 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
-import ViewTournamentTopics from '@/views/teacher/tournaments/ViewTournamentTopics.vue';
+import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import RemoteServices from '@/services/RemoteServices';
 
 @Component({
@@ -69,7 +69,6 @@ import RemoteServices from '@/services/RemoteServices';
 })
 export default class TournamentsView extends Vue {
   tournaments: Tournament[] = [];
-  closedTournamentsId: number[] = [];
   search: string = '';
   headers: object = [
     {
@@ -120,10 +119,6 @@ export default class TournamentsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
-      let closedTournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
-      closedTournaments.map(t => {
-        if (t.id) this.closedTournamentsId.push(t.id);
-      });
       this.tournaments.sort((a, b) => this.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);

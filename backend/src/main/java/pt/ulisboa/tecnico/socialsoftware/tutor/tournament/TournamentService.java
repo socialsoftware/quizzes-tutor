@@ -110,12 +110,7 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentDto> getTournamentsByUserId(Integer userId) {
-        return tournamentRepository.getTournamentsByUserId(userId).stream().map(TournamentDto::new)
-                .collect(Collectors.toList());
-    }
+
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto getTournament(Integer tournamentId) {
