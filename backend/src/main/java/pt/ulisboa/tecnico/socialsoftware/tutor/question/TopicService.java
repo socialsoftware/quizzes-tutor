@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
@@ -82,6 +83,15 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<QuestionDto> getTopicQuestions(Integer topicId) {
+        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+
+        return topic.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
+    }
 
     @Retryable(
       value = { SQLException.class },
@@ -137,5 +147,6 @@ public class TopicService {
                 .skip(5)
                 .forEach(topic -> this.topicRepository.delete(topic));
     }
+
 }
 

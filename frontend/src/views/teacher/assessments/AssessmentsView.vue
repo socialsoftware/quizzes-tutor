@@ -1,6 +1,7 @@
 <template>
   <div>
     <assessment-form
+      v-if="editMode"
       @switchMode="changeMode"
       @updateAssessment="updateAssessment"
       :edit-mode="editMode"
@@ -55,10 +56,13 @@ export default class AssessmentsView extends Vue {
 
   async editAssessment(assessmentId: number) {
     try {
-      this.assessment = {
-        ...this.assessments.find(assessment => assessment.id === assessmentId)!
-      };
-      this.editMode = true;
+      let assessment = this.assessments.find(
+        assessment => assessment.id === assessmentId
+      );
+      if (assessment) {
+        this.assessment = assessment;
+        this.editMode = true;
+      }
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

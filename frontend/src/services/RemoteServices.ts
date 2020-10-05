@@ -428,6 +428,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getTopicQuestions(topicId: number): Promise<Question[]> {
+    return httpClient
+      .get(`/topics/${topicId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .put(`/topics/${topic.id}`, topic)
@@ -633,6 +646,19 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
     }
+  }
+
+  static async getAssessmentQuestions(assessmentId: number) {
+    return httpClient
+      .get(`/assessments/${assessmentId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async deleteAssessment(assessmentId: number) {
