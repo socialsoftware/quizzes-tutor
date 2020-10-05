@@ -16,7 +16,12 @@
       </v-card-text>
 
       <v-card-text class="text-left">
-        <show-discussion :discussion="discussion" />
+        <v-card>
+          <reply-component
+            v-if="this.discussion != null"
+            :discussion="this.discussion"
+          />
+        </v-card>
       </v-card-text>
 
       <v-card-actions>
@@ -29,14 +34,14 @@
 
 <script lang="ts">
 import { Component, Vue, Prop, Model } from 'vue-property-decorator';
-import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 import Discussion from '@/models/management/Discussion';
-import ShowDiscussion from './ShowDiscussion.vue';
+import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
+import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
   components: {
-    'show-discussion': ShowDiscussion,
-    'show-question': ShowQuestion
+    'show-question': ShowQuestion,
+    'reply-component': ReplyComponent
   }
 })
 export default class ShowDiscussionDialog extends Vue {
@@ -45,6 +50,4 @@ export default class ShowDiscussionDialog extends Vue {
 }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

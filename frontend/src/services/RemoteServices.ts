@@ -1137,19 +1137,52 @@ export default class RemoteServices {
       });
   }
 
-  static async changeAvailability(id: number): Promise<Discussion> {
+  static async changeDiscussionStatus(id: number): Promise<Discussion> {
     return httpClient
-      .put('/discussions/availability?discussionId=' + id)
+      .put('/discussions/status?discussionId=' + id)
       .then(response => {
         return new Discussion(response.data);
       });
   }
 
-  static async getDiscussions(id: number): Promise<Discussion[]> {
-    return httpClient.get('/discussions?userId=' + id).then(response => {
-      return response.data.map((discussion: any) => {
-        return new Discussion(discussion);
+  static getDiscussionsByQuestionId(id: number): any {
+    return httpClient
+      .get('/discussions/question?questionId=' + id)
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
       });
-    });
+  }
+
+  static getAvailableDiscussionsByQuestionId(id: number): any {
+    return httpClient
+      .get('/discussions/question/available?questionId=' + id)
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      });
+  }
+
+  static getDiscussionsByUserId(userId: number): any {
+    return httpClient
+      .get(
+        `/discussions/${Store.getters.getCurrentCourse.courseExecutionId}/user?userId=` +
+          userId
+      )
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      });
+  }
+
+  static async changeReplyAvailability(id: number): Promise<Discussion> {
+    return httpClient
+      .put('/discussions/reply/availability?replyId=' + id)
+      .then(response => {
+        return new Discussion(response.data);
+      });
   }
 }

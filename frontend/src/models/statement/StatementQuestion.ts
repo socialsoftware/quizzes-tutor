@@ -8,9 +8,8 @@ export default class StatementQuestion {
   quizQuestionId!: number;
   content!: string;
   image: Image | null = null;
-  hasUserDiscussion!: boolean;
   question!: Question;
-  discussions: Discussion[] = [];
+  userDiscussion?: Discussion;
   options: StatementOption[] = [];
 
   constructor(jsonObj?: StatementQuestion) {
@@ -18,14 +17,8 @@ export default class StatementQuestion {
       this.quizQuestionId = jsonObj.quizQuestionId;
       this.content = jsonObj.content;
       this.image = jsonObj.image;
-      this.hasUserDiscussion = jsonObj.hasUserDiscussion;
       this.question = jsonObj.question;
-
-      if (jsonObj.discussions) {
-        for (let i = 0; i < jsonObj.discussions.length; i++) {
-          this.discussions.push(new Discussion(jsonObj.discussions![i]));
-        }
-      }
+      this.userDiscussion = jsonObj.userDiscussion;
 
       if (jsonObj.options) {
         this.options = _.shuffle(

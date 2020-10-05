@@ -48,6 +48,10 @@ public class Discussion implements DomainEntity {
     @Column(name="question_id")
     private Integer questionId;
 
+    @NotNull
+    @Column(name="course_execution_id")
+    private Integer courseExecutionId;
+
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
@@ -55,6 +59,9 @@ public class Discussion implements DomainEntity {
 
     @Column(columnDefinition = "boolean default false")
     private boolean available;
+
+    @Column(columnDefinition = "boolean default false")
+    private boolean isClosed;
 
     public Integer getId() {
         return id;
@@ -74,6 +81,8 @@ public class Discussion implements DomainEntity {
         this.setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
         this.available = discussionDto.isAvailable();
         this.setQuestionId(questionAnswer.getQuizQuestion().getQuestion().getId());
+        this.courseExecutionId = discussionDto.getCourseExecutionId();
+        this.isClosed = discussionDto.isClosed();
     }
 
     public List<Reply> getReplies() {
@@ -149,8 +158,8 @@ public class Discussion implements DomainEntity {
         }
     }
 
-    public void changeAvailability() {
-        this.available = !this.available;
+    public void changeStatus() {
+        this.isClosed = !this.isClosed;
     }
 
     public boolean teacherAnswered() {
@@ -175,5 +184,21 @@ public class Discussion implements DomainEntity {
 
     public void setQuestionAnswer(QuestionAnswer questionAnswer) {
         this.questionAnswer = questionAnswer;
+    }
+
+    public Integer getCourseExecutionId() {
+        return courseExecutionId;
+    }
+
+    public void setCourseExecutionId(Integer courseExecutionId) {
+        this.courseExecutionId = courseExecutionId;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
+    }
+
+    public boolean hasPublicReplies() {
+        return this.replies.stream().anyMatch(Reply::isAvailable);
     }
 }

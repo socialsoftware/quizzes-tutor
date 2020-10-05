@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class DiscussionController {
@@ -27,18 +28,28 @@ public class DiscussionController {
     @Autowired
     private DiscussionService discussionService;
 
-    @GetMapping("/discussions")
+    @GetMapping("/discussions/{courseExecutionId}/user")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public List<DiscussionDto> getDiscussions(Principal principal, @Valid @RequestParam Integer userId) {
-        User user = (User)((Authentication) principal).getPrincipal();
+    public List<DiscussionDto> getDiscussionsByUserId(Principal principal, @PathVariable int courseExecutionId, @Valid @RequestParam Integer userId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
 
-        if (user == null){
+        if(user == null){
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
-        }else if(!user.getId().equals(userId)){
-            throw new TutorException(ErrorMessage.DISCUSSION_NOT_SUBMITTED_BY_REQUESTER, user.getId());
         }
 
-        return discussionService.findDiscussionsByUserId(userId);
+        return this.discussionService.findByCourseExecutionIdAndUserId(courseExecutionId, userId);
+    }
+
+    @GetMapping(value = "/discussions/question")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public List<DiscussionDto> getDiscussionsByQuestionId(Principal principal, @Valid @RequestParam Integer questionId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if(user == null){
+            throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
+        }
+
+        return discussionService.findDiscussionsByQuestionId(questionId);
     }
 
     @GetMapping("/{courseExecutionId}/discussions")
@@ -59,16 +70,16 @@ public class DiscussionController {
         return this.discussionService.getAnsweredDiscussions(courseExecutionId, userId);
     }
 
-    @GetMapping(value = "/discussions/question")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public List<DiscussionDto> getDiscussionsByQuestions(Principal principal, @Valid @RequestParam Integer questionId) {
+    @GetMapping(value = "/discussions/question/available")
+    @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
+    public List<DiscussionDto> getAvailableDiscussionsByQuestionId(Principal principal, @Valid @RequestParam Integer questionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
         }
 
-        return discussionService.findDiscussionsByQuestionId(questionId);
+        return discussionService.findDiscussionsByQuestionId(questionId).stream().filter(DiscussionDto::isAvailable).collect(Collectors.toList());
     }
 
     @PostMapping(value = "/discussions/{quizAnswerId}/{questionOrder}")
@@ -86,16 +97,28 @@ public class DiscussionController {
         return discussionService.createDiscussion(quizAnswerId, questionOrder, discussion);
     }
 
-    @PutMapping(value = "/discussions/availability")
-    @PreAuthorize("hasRole('ROLE_TEACHER')")
-    public DiscussionDto changeAvailability(Principal principal, @Valid @RequestParam int discussionId) {
+    @PutMapping(value = "/discussions/status")
+    @PreAuthorize("hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')")
+    public DiscussionDto changeDiscussionStatus(Principal principal, @Valid @RequestParam int discussionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
         }
 
-        return discussionService.changeAvailability(discussionId);
+        return discussionService.changeStatus(discussionId);
+    }
+
+    @PutMapping(value = "/discussions/reply/availability")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public DiscussionDto changeReplyAvailability(Principal principal, @Valid @RequestParam int replyId) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        if (user == null) {
+            throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
+        }
+
+        return discussionService.changeReplyAvailability(replyId);
     }
 
     @PostMapping(value = "/discussions/replies")
@@ -103,15 +126,16 @@ public class DiscussionController {
     public ReplyDto createReply(Principal principal, @Valid @RequestParam String message, @Valid @RequestBody DiscussionDto discussion){
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        ReplyDto reply = new ReplyDto();
-        reply.setMessage(message);
-
         if(user == null){
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
         }
 
+        ReplyDto reply = new ReplyDto();
+        reply.setMessage(message);
         reply.setUserId(user.getId());
-        reply.setDate(DateHandler.now());
+        reply.setUserName(user.getUsername());
+        reply.setDate(DateHandler.toISOString(DateHandler.now()));
+        reply.setAvailable(false);
 
         return discussionService.createReply(discussion, reply);
     }

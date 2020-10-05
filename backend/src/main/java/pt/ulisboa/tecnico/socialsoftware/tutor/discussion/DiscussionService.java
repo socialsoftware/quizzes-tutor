@@ -88,12 +88,29 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public DiscussionDto changeAvailability(int discussionId) {
+    public DiscussionDto changeStatus(int discussionId) {
         Discussion discussion = discussionRepository
                 .findById(discussionId)
                 .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionId));
-        discussion.changeAvailability();
+        discussion.changeStatus();
         return new DiscussionDto(discussion);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public DiscussionDto changeReplyAvailability(int replyId) {
+        Reply reply = replyRepository
+                .findById(replyId)
+                .orElseThrow(() -> new TutorException(REPLY_NOT_FOUND, replyId));
+
+        reply.changeAvailability();
+        if(reply.isAvailable() && !reply.getDiscussion().isAvailable()){
+            reply.getDiscussion().setAvailable(true);
+        }
+        else if(!reply.isAvailable() && reply.getDiscussion().isAvailable() && !reply.getDiscussion().hasPublicReplies()){
+            reply.getDiscussion().setAvailable(false);
+        }
+        return new DiscussionDto(reply.getDiscussion());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -105,9 +122,8 @@ public class DiscussionService {
 
         checkUserAndDiscussion(user, discussionDto);
 
-
         Discussion discussion = discussionRepository
-                .findByUserIdQuestionId(discussionDto.getUserId(), discussionDto.getQuestionId())
+                .findById(discussionDto.getId())
                 .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionDto.getUserId(),
                         discussionDto.getQuestionId()));
 
@@ -220,6 +236,13 @@ public class DiscussionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<DiscussionDto> findDiscussionByUserIdAndQuestionId(Integer userId, Integer questionId) {
         return discussionRepository.findByUserIdQuestionId(userId, questionId).stream().map(DiscussionDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<DiscussionDto> findByCourseExecutionIdAndUserId(Integer courseExecutionId, Integer userId) {
+        return discussionRepository.findByCourseExecutionIdAndUserId(courseExecutionId, userId).stream().map(DiscussionDto::new)
                 .collect(Collectors.toList());
     }
 

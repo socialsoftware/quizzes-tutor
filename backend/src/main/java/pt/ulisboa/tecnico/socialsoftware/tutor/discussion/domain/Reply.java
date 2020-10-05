@@ -35,6 +35,9 @@ public class Reply implements DomainEntity {
     @Column(name="date")
     private LocalDateTime date;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean available;
+
     public Reply(){}
 
     public Reply(User user, ReplyDto replyDto, Discussion discussion){
@@ -44,6 +47,7 @@ public class Reply implements DomainEntity {
         this.date = DateHandler.toLocalDateTime(replyDto.getDate());
         this.message = replyDto.getMessage();
         this.discussion = discussion;
+        this.available = replyDto.isAvailable();
         discussion.addReply(this);
     }
 
@@ -104,5 +108,13 @@ public class Reply implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitReply(this);
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void changeAvailability(){
+        this.available = !this.available;
     }
 }

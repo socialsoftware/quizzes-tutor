@@ -6,6 +6,8 @@ export default class Reply {
   userId!: number;
   date!: string | null;
   message!: string;
+  available!: boolean;
+
 
   constructor(jsonObj?: Reply) {
     if (jsonObj) {
@@ -14,6 +16,7 @@ export default class Reply {
       this.userId = jsonObj.userId;
       this.date = ISOtoString(jsonObj.date);
       this.message = jsonObj.message;
+      this.available = jsonObj.available;
     }
   }
 }

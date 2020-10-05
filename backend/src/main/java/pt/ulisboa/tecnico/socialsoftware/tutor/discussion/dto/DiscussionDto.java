@@ -20,6 +20,7 @@ public class DiscussionDto implements Serializable {
     private String date;
     private Integer questionId;
     private Integer courseExecutionId;
+    private boolean isClosed;
 
     public DiscussionDto() {
     }
@@ -34,6 +35,7 @@ public class DiscussionDto implements Serializable {
         this.available = discussion.isAvailable();
         this.date = DateHandler.toISOString(discussion.getDate());
         this.courseExecutionId = discussion.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getId();
+        this.isClosed = discussion.isClosed();
 
         List<Reply> discussionReplies = discussion.getReplies();
         if(discussionReplies != null && !discussionReplies.isEmpty()){
@@ -122,6 +124,10 @@ public class DiscussionDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public boolean isClosed() {
+        return isClosed;
     }
 
     @Override

@@ -1,33 +1,38 @@
 <template>
-  <div class="discussion-container" v-if="answered || hasDiscussion">
-    <v-card>
-      <v-card-title
-        class="justify-center headline"
-        style="background-color: #1976d2; color: white"
-      >
-        Discussions
-      </v-card-title>
-      <div v-if="answered && !hasDiscussion" class="discussion-message">
-        <v-textarea
-          solo
-          data-cy="discussionTextArea"
-          v-model="discussionMessage"
-          v-on:input="onInput"
-          name="input-7-4"
-          label="Enter discussion message here"
-        ></v-textarea>
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            data-cy="submitDiscussionButton"
-            class="submit-button"
-            @click="submitDiscussion"
-            >Submit</v-btn
-          >
-        </v-card-actions>
-      </div>
-      <reply-component v-if="discussions != null" :discussions="discussions" />
-    </v-card>
+  <div class="discussions-clarifications-container">
+
+        <clarification-component :discussions="otherDiscussions">
+        </clarification-component>
+    <div class="discussion-container" v-if="answered">
+      <v-card>
+        <v-card-title
+          class="justify-center headline"
+          style="background-color: #1976d2; color: white"
+        >
+          Discussions
+        </v-card-title>
+        <div v-if="userDiscussion == null" class="discussion-message">
+          <v-textarea
+            solo
+            data-cy="discussionTextArea"
+            v-model="discussionMessage"
+            v-on:input="onInput"
+            name="input-7-4"
+            label="Enter discussion message here"
+          ></v-textarea>
+          <v-card-actions>
+            <v-spacer />
+            <v-btn
+              data-cy="submitDiscussionButton"
+              class="submit-button"
+              @click="submitDiscussion"
+              >Submit</v-btn
+            >
+          </v-card-actions>
+        </div>
+        <reply-component v-else :discussion="userDiscussion" />
+      </v-card>
+    </div>
   </div>
 </template>
 
@@ -37,16 +42,34 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Discussion from '@/models/management/Discussion';
 import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
+import RemoteServices from '@/services/RemoteServices';
+import ClarificationComponent from './ClarificationComponent.vue';
 
 @Component({
-  components: { 'reply-component': ReplyComponent }
+  components: {
+    'reply-component': ReplyComponent,
+    'clarification-component': ClarificationComponent
+  }
 })
 export default class DiscussionComponent extends Vue {
   @Prop(Boolean) readonly hasDiscussion!: boolean;
   @Prop() readonly question!: Question;
-  @Prop() readonly discussions!: Discussion[];
+  otherDiscussions: Discussion[] = [];
+  @Prop() readonly userDiscussion?: Discussion;
   @Prop(Boolean) readonly answered!: boolean;
   discussionMessage: string = '';
+
+  async created() {
+    await this.$store.dispatch('loading');
+    try {
+      [this.otherDiscussions] = await Promise.all([
+        RemoteServices.getAvailableDiscussionsByQuestionId(this.question.id!)
+      ]);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
 
   @Emit()
   submitDiscussion() {
@@ -82,10 +105,6 @@ export default class DiscussionComponent extends Vue {
   margin: -100px auto 100px;
   border-radius: 0;
 
-  .comp-title {
-    padding: 5px !important;
-  }
-
   .discussion-message {
     width: 95%;
     margin: 20px auto auto;
@@ -104,4 +123,5 @@ export default class DiscussionComponent extends Vue {
     color: white;
   }
 }
+
 </style>

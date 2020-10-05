@@ -60,8 +60,11 @@
                 <template v-slot:item.action="{ item }">
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
-                      <v-icon class="mr-2" v-on="on" @click="showDiscussionDialog(item)"
-                      >visibility</v-icon
+                      <v-icon
+                        class="mr-2"
+                        v-on="on"
+                        @click="showDiscussionDialog(item)"
+                        >fas fa-comment-dots</v-icon
                       >
                     </template>
                     <span>Show Discussion</span>
@@ -93,7 +96,7 @@ import DashboardInfo from '@/models/management/DashboardInfo';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import User from '@/models/user/User';
-import ShowDiscussionDialog from '@/views/teacher/discussions/ShowDiscussionDialog.vue';
+import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 @Component({
   components: {
     'show-discussion-dialog': ShowDiscussionDialog

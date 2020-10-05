@@ -49,15 +49,11 @@
       @decrease-order="decreaseOrder"
     />
     <discussion-component
-      :has-discussion="
-        statementManager.statementQuiz.questions[questionOrder]
-          .hasUserDiscussion
-      "
       :answered="
         statementManager.statementQuiz.answers[questionOrder].optionId != null
       "
-      :discussions="
-        statementManager.statementQuiz.questions[questionOrder].discussions
+      :userDiscussion="
+        statementManager.statementQuiz.questions[questionOrder].userDiscussion
       "
       :question="
         statementManager.statementQuiz.questions[questionOrder].question
@@ -125,10 +121,7 @@ export default class ResultsView extends Vue {
       );
       this.statementManager.statementQuiz!.questions[
         this.questionOrder
-      ].discussions!.push(result);
-      this.statementManager.statementQuiz!.questions[
-        this.questionOrder
-      ].hasUserDiscussion = true;
+      ].userDiscussion = result;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

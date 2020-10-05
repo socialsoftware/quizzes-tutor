@@ -41,7 +41,7 @@ import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissio
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
 import DashboardView from '@/views/student/dashboard/DashboardView.vue';
 import DiscussionView from '@/views/student/discussions/DiscussionView.vue';
-import ForumView from '@/views/teacher/ForumView.vue';
+import ForumView from '@/views/teacher/discussions/ForumView.vue';
 
 Vue.use(Router);
 

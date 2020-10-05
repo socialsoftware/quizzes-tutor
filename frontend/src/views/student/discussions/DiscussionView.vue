@@ -26,7 +26,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon class="mr-2" v-on="on" @click="showDiscussionDialog(item)"
-              >visibility</v-icon
+              >fas fa-comment-dots</v-icon
             >
           </template>
           <span>Show Discussion</span>
@@ -47,7 +47,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import User from '@/models/user/User';
-import ShowDiscussionDialog from '@/views/teacher/discussions/ShowDiscussionDialog.vue';
+import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
 @Component({
   components: {
@@ -86,7 +86,7 @@ export default class DiscussionView extends Vue {
     await this.$store.dispatch('loading');
     try {
       [this.discussions] = await Promise.all([
-        RemoteServices.getDiscussions(this.user.id!)
+        RemoteServices.getDiscussionsByUserId(this.user.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);

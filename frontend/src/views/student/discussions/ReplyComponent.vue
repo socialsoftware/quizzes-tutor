@@ -1,20 +1,23 @@
 <template>
-  <div class="reply-container" v-if="discussions[0] !== null">
+  <div class="reply-container" v-if="discussion !== null">
     <div class="discussion">
       <ul>
-        <li
-          style="margin-bottom: 25px !important;"
-          v-for="discussion in discussions"
-          :key="discussion.message"
-          @focus="setDiscussion(discussion)"
-        >
-          <div class="text-left">
-            <b v-if="discussion.userId !== user.id"
-              >{{ discussion.userName }} opened a discussion on
-              {{ discussion.date }} :</b
-            >
-            <b v-else>You opened a discussion on {{ discussion.date }} :</b>
-            <span v-html="convertMarkDown(discussion.message)" />
+        <li style="margin-bottom: 25px !important;" :key="discussion.message">
+          <div style="display: inline-flex; width: 100%">
+            <div style="width: 88%" class="text-left">
+              <b v-if="user.id !== discussion.userId"
+                >{{ user.username }} opened a discussion on
+                {{ discussion.date }} :
+              </b>
+              <b v-else>You opened a discussion on {{ discussion.date }} :</b>
+              <span v-html="convertMarkDown(discussion.message)" />
+            </div>
+            <v-switch
+              style="width: 12%"
+              v-model="discussion.isClosed"
+              :label="discussion.isClosed ? 'Closed' : 'Open'"
+              @change="changeDiscussionStatus(discussion.id)"
+            />
           </div>
           <v-expansion-panels v-if="discussion.replies !== null" :inset="true">
             <v-expansion-panel>
@@ -27,16 +30,39 @@
                   :key="reply.id"
                   class="text-left reply"
                 >
-                  <b v-if="user.id !== reply.userId"
-                    >{{ reply.userName }} replied on {{ reply.date }} :
-                  </b>
-                  <b v-else>You replied on {{ reply.date }} :</b>
-                  <span v-html="convertMarkDown(reply.message)" />
+                  <div
+                    style="display: inline-flex; width: 100%"
+                    v-if="user.role === 'TEACHER'"
+                  >
+                    <div style="width: 88%">
+                      <b v-if="user.id !== reply.userId"
+                        >{{ reply.userName }} replied on {{ reply.date }} :
+                      </b>
+                      <b v-else>You replied on {{ reply.date }} :</b>
+                      <span v-html="convertMarkDown(reply.message)" />
+                    </div>
+                    <v-switch
+                      style="width: 12%"
+                      v-model="reply.available"
+                      :label="reply.available ? 'Public' : 'Private'"
+                      @change="changeReplyAvailability(reply.id)"
+                    />
+                  </div>
+                  <div style="width: 100%" v-else>
+                    <div>
+                      <b v-if="user.id !== reply.userId"
+                        >{{ reply.userName }} replied on {{ reply.date }} :
+                      </b>
+                      <b v-else>You replied on {{ reply.date }} :</b>
+                      <span v-html="convertMarkDown(reply.message)" />
+                    </div>
+                  </div>
                 </div>
                 <div
                   class="reply-message"
                   v-if="
-                    discussion.userId === user.id || user.role === 'TEACHER'
+                    !discussion.isClosed &&
+                      (discussion.userId === user.id || user.role === 'TEACHER')
                   "
                 >
                   <v-textarea
@@ -45,7 +71,6 @@
                     solo
                     :id="'reply' + discussion.userId"
                     label="Type a reply..."
-                    v-on:focus="setDiscussion(discussion)"
                     @input="setReplyMessage"
                   ></v-textarea>
                   <v-card-actions>
@@ -53,7 +78,6 @@
                       data-cy="submitReplyButton"
                       class="submit-button"
                       @click="
-                        setDiscussion(discussion);
                         submitReply();
                         clearTextarea('#reply' + discussion.userId);
                       "
@@ -70,14 +94,12 @@
               solo
               :id="'reply' + discussion.userId"
               label="Type a reply..."
-              v-on:focus="setDiscussion(discussion)"
               @input="setReplyMessage"
             ></v-textarea>
             <v-card-actions>
               <v-btn
                 class="submit-button"
                 @click="
-                  setDiscussion(discussion);
                   submitReply();
                   clearTextarea('#reply' + discussion.userId);
                 "
@@ -100,8 +122,7 @@ import User from '@/models/user/User';
 
 @Component
 export default class ReplyComponent extends Vue {
-  @Prop() readonly discussions!: Discussion[];
-  discussion: Discussion = this.discussions[0];
+  @Prop() readonly discussion!: Discussion;
   replyMessages: Map<number, string> = new Map();
   user: User = this.$store.getters.getUser;
 
@@ -129,12 +150,6 @@ export default class ReplyComponent extends Vue {
       return false;
     }
 
-    for (let i = 0; i < this.discussions.length; i++) {
-      if (this.discussions[i].replies === []) {
-        return false;
-      }
-    }
-
     return true;
   }
 
@@ -142,21 +157,35 @@ export default class ReplyComponent extends Vue {
     this.replyMessages.set(this.discussion.userId!, message);
   }
 
-  setDiscussion(discussion: Discussion) {
-    this.discussion = discussion;
-  }
-
   convertMarkDown(text: string) {
     return convertMarkDown(text, null);
   }
 
   clearTextarea(name: string) {
-    console.log('clear');
-    console.log(name);
     let textArea: HTMLTextAreaElement;
     let val = document.querySelector(name)!;
     textArea = val as HTMLTextAreaElement;
     textArea.value = '';
+  }
+
+  async changeReplyAvailability(id: number) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.changeReplyAvailability(id);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async changeDiscussionStatus(id: number) {
+    await this.$store.dispatch('loading');
+    try {
+      await RemoteServices.changeDiscussionStatus(id);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
@@ -175,7 +204,7 @@ export default class ReplyComponent extends Vue {
   .discussion {
     width: 100%;
     margin: 5px;
-    padding: 25px;
+    padding: 25px 25px 2px;
   }
 
   .reply {

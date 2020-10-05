@@ -13,6 +13,7 @@ export default class Discussion {
   date!: string | null;
   available!: boolean;
   courseExecutionId!: number;
+  isClosed!: boolean;
 
   constructor(jsonObj?: Discussion) {
     if (jsonObj) {
@@ -25,6 +26,7 @@ export default class Discussion {
       this.date = ISOtoString(jsonObj.date);
       this.available = jsonObj.available;
       this.courseExecutionId = jsonObj.courseExecutionId;
+      this.isClosed = jsonObj.isClosed;
 
       if (jsonObj.replies !== null) {
         this.replies = jsonObj.replies.map((reply: any) => {

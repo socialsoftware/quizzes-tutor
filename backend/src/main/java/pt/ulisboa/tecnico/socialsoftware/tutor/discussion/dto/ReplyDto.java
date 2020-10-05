@@ -13,24 +13,22 @@ public class ReplyDto implements Serializable {
     private Integer userId;
     private String message;
     private String date;
+    private boolean available;
 
     public ReplyDto() {
     }
 
     public ReplyDto(Reply reply) {
-        this.setUserName(reply.getUser().getUsername());
-        this.setId(reply.getId());
-        this.setUserId(reply.getUser().getId());
-        this.setMessage(reply.getMessage());
-        this.setDate(reply.getDate());
+        this.userName = reply.getUser().getUsername();
+        this.id = reply.getId();
+        this.userId = reply.getUser().getId();
+        this.message = reply.getMessage();
+        this.date = DateHandler.toISOString(reply.getDate());
+        this.available = reply.isAvailable();
     }
 
     public String getDate() {
         return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = DateHandler.toISOString(date);
     }
 
     public String getMessage() {
@@ -75,5 +73,13 @@ public class ReplyDto implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

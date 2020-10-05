@@ -19,12 +19,14 @@
       :search="search"
     >
       <template v-slot:item.available="{ item }">
-        <v-switch
-          style="flex: 1"
-          v-model="item.available"
-          :label="item.available ? 'Public' : 'Private'"
-          @change="changeAvailability(item.id)"
-        />
+        <v-chip v-if="item.available === true" :color="'green'" dark
+          >Yes</v-chip
+        >
+        <v-chip v-else :color="'red'" dark>No</v-chip>
+      </template>
+      <template v-slot:item.isClosed="{ item }">
+        <v-chip v-if="item.isClosed === true" :color="'green'" dark>Yes</v-chip>
+        <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
       <template v-slot:item.replies.length="{ item }">
         <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
@@ -39,7 +41,7 @@
               class="mr-2"
               v-on="on"
               @click="showDiscussionDialog(item)"
-              >visibility</v-icon
+              >fas fa-comment-dots</v-icon
             >
           </template>
           <span>Show Discussion</span>
@@ -56,10 +58,10 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch, Prop } from 'vue-property-decorator';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
-import ShowDiscussionDialog from './discussions/ShowDiscussionDialog.vue';
+import ShowDiscussionDialog from '../../student/discussions/ShowDiscussionDialog.vue';
 
 @Component({
   components: {
@@ -87,8 +89,9 @@ export default class ForumView extends Vue {
     },
     { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
-    { text: 'Creation Date', value: 'date' },
+    { text: 'Last Reply Date', value: 'replies.date' },
     { text: 'Public', value: 'available' },
+    { text: 'Closed', value: 'isClosed' },
     { text: 'Replies', value: 'replies.length' }
   ];
 
@@ -119,17 +122,6 @@ export default class ForumView extends Vue {
     if (!this.discussionDialog) {
       this.currentDiscussion = null;
     }
-  }
-
-  async changeAvailability(id: number) {
-    await this.$store.dispatch('loading');
-    try {
-      //needs to update discussion after this
-      await RemoteServices.changeAvailability(id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

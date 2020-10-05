@@ -12,8 +12,7 @@ import java.util.stream.Collectors;
 public class StatementQuestionDto implements Serializable {
     private String content;
     private List<StatementOptionDto> options;
-    private List<DiscussionDto> discussions;
-    private boolean hasUserDiscussion = false;
+    private DiscussionDto userDiscussion;
     private ImageDto image;
     private Integer sequence;
     private QuestionDto question;
@@ -28,17 +27,9 @@ public class StatementQuestionDto implements Serializable {
         this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
         this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
         this.sequence = questionAnswer.getSequence();
-        /*this.discussions = questionAnswer.getQuizQuestion().getQuestion().getDiscussions().stream().map(DiscussionDto::new)
-                .filter(discussion -> {
-            if (discussion.isAvailable()) {
-                return true;
-            } else if (questionAnswer.getDiscussion() != null) {
-                this.hasUserDiscussion = true;
-                return true;
-            } else {
-                return false;
-            }
-        }).collect(Collectors.toList());*/
+        if(questionAnswer.getDiscussion() != null){
+            this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion());
+        }
     }
 
     public String getContent() {
@@ -83,27 +74,19 @@ public class StatementQuestionDto implements Serializable {
                 '}';
     }
 
-    public List<DiscussionDto> getDiscussions() {
-        return discussions;
-    }
-
-    public void setDiscussions(List<DiscussionDto> discussions) {
-        this.discussions = discussions;
-    }
-
-    public boolean isHasUserDiscussion() {
-        return hasUserDiscussion;
-    }
-
-    public void setHasUserDiscussion(boolean hasUserDiscussion) {
-        this.hasUserDiscussion = hasUserDiscussion;
-    }
-
     public QuestionDto getQuestion() {
         return question;
     }
 
     public void setQuestion(QuestionDto question) {
         this.question = question;
+    }
+
+    public DiscussionDto getUserDiscussion() {
+        return userDiscussion;
+    }
+
+    public void setUserDiscussion(DiscussionDto userDiscussion) {
+        this.userDiscussion = userDiscussion;
     }
 }
