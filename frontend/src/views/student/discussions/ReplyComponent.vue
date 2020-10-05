@@ -13,9 +13,10 @@
               <span v-html="convertMarkDown(discussion.message)" />
             </div>
             <v-switch
+              v-if="discussion.replies !== null"
               style="width: 12%"
-              v-model="discussion.isClosed"
-              :label="discussion.isClosed ? 'Closed' : 'Open'"
+              v-model="discussion.closed"
+              :label="discussion.closed ? 'Closed' : 'Open'"
               @change="changeDiscussionStatus(discussion.id)"
             />
           </div>
@@ -61,7 +62,7 @@
                 <div
                   class="reply-message"
                   v-if="
-                    !discussion.isClosed &&
+                    !discussion.closed &&
                       (discussion.userId === user.id || user.role === 'TEACHER')
                   "
                 >

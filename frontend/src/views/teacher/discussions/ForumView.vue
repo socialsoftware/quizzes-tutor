@@ -1,31 +1,46 @@
 <template>
   <v-card max-width="1200" class="mx-auto my-7">
-    <v-card-title>
-      <b>Forum</b>
-      <v-spacer></v-spacer>
-      <v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
     <v-data-table
       :headers="headers"
       :items="discussions"
-      :sort-by="'date'"
-      :sort-desc="false"
+      :sort-by="'lastReplyDate'"
+      :sort-desc="true"
       :search="search"
+      :mobile-breakpoint="0"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
+      <template v-slot:top>
+        <v-card-title>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          />
+
+          <v-spacer />
+          <v-btn
+            v-if="!showClosedDiscussions"
+            color="primary"
+            dark
+            @click="toggleClosedDiscussions"
+            >Show Closed Discussions</v-btn
+          >
+          <v-btn v-else color="primary" dark @click="toggleClosedDiscussions"
+            >Hide Closed Discussions</v-btn
+          >
+        </v-card-title>
+      </template>
       <template v-slot:item.available="{ item }">
         <v-chip v-if="item.available === true" :color="'green'" dark
           >Yes</v-chip
         >
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
-      <template v-slot:item.isClosed="{ item }">
-        <v-chip v-if="item.isClosed === true" :color="'green'" dark>Yes</v-chip>
+      <template v-slot:item.closed="{ item }">
+        <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
       <template v-slot:item.replies.length="{ item }">
@@ -74,6 +89,7 @@ export default class ForumView extends Vue {
   executionId: number = this.$store.getters.getCurrentCourse.courseExecutionId;
   currentDiscussion: Discussion | null = null;
   discussionDialog: boolean = false;
+  showClosedDiscussions: boolean = false;
 
   headers: object = [
     {
@@ -89,9 +105,9 @@ export default class ForumView extends Vue {
     },
     { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
-    { text: 'Last Reply Date', value: 'replies.date' },
+    { text: 'Last Reply Date', value: 'lastReplyDate' },
     { text: 'Public', value: 'available' },
-    { text: 'Closed', value: 'isClosed' },
+    { text: 'Closed', value: 'closed' },
     { text: 'Replies', value: 'replies.length' }
   ];
 
@@ -99,7 +115,7 @@ export default class ForumView extends Vue {
     await this.$store.dispatch('loading');
     try {
       [this.discussions] = await Promise.all([
-        RemoteServices.getCourseExecutionDiscussions(this.executionId)
+        RemoteServices.getOpenCourseExecutionDiscussions(this.executionId)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -122,6 +138,25 @@ export default class ForumView extends Vue {
     if (!this.discussionDialog) {
       this.currentDiscussion = null;
     }
+  }
+
+  async toggleClosedDiscussions() {
+    await this.$store.dispatch('loading');
+    this.showClosedDiscussions = !this.showClosedDiscussions;
+    try {
+      if (this.showClosedDiscussions) {
+        [this.discussions] = await Promise.all([
+          RemoteServices.getCourseExecutionDiscussions(this.executionId)
+        ]);
+      } else {
+        [this.discussions] = await Promise.all([
+          RemoteServices.getOpenCourseExecutionDiscussions(this.executionId)
+        ]);
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

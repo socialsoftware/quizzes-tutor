@@ -16,7 +16,6 @@ interface State {
   notification: boolean;
   notificationMessageList: string[];
   loading: boolean;
-  unansweredDiscussionsNumber: number;
 }
 
 const state: State = {
@@ -27,8 +26,7 @@ const state: State = {
   errorMessage: '',
   notification: false,
   notificationMessageList: [],
-  loading: false,
-  unansweredDiscussionsNumber: -1
+  loading: false
 };
 
 Vue.use(Vuex);
@@ -70,9 +68,6 @@ export default new Vuex.Store({
     },
     currentCourse(state, currentCourse: Course) {
       state.currentCourse = currentCourse;
-    },
-    countUnansweredDiscussions(state, count: number) {
-      state.unansweredDiscussionsNumber = count;
     }
   },
   actions: {
@@ -155,22 +150,6 @@ export default new Vuex.Store({
     },
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
-    },
-    async countUnansweredDiscussions({ commit }) {
-      if (this.state.currentCourse != null) {
-        let count;
-        try {
-          const answer = await RemoteServices.getUnansweredDiscussionsNumber(
-            this.state.currentCourse.courseExecutionId!
-          );
-          count = answer.quantity == null ? 0 : answer.quantity;
-        } catch (error) {
-          count = 0;
-        }
-        commit('countUnansweredDiscussions', count);
-      } else {
-        commit('countUnansweredDiscussions', 0);
-      }
     }
   },
   getters: {
@@ -217,9 +196,6 @@ export default new Vuex.Store({
     },
     getLoading(state): boolean {
       return state.loading;
-    },
-    getUnansweredDiscussionsNumber(state): number {
-      return state.unansweredDiscussionsNumber;
     }
   }
 });

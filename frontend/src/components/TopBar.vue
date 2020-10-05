@@ -119,17 +119,7 @@
               to="/management/forum"
               data-cy="forumTeacherMenuButton"
             >
-              <v-badge
-                v-if="this.$store.getters.getUnansweredDiscussionsNumber !== 0"
-                overlap
-                color="red"
-                :content="this.$store.getters.getUnansweredDiscussionsNumber"
-              >
-                <v-list-item-action>
-                  <v-icon>fas fa-comment-dots</v-icon>
-                </v-list-item-action>
-              </v-badge>
-              <v-list-item-action v-else>
+              <v-list-item-action>
                 <v-icon>fas fa-comment-dots</v-icon>
               </v-list-item-action>
               <v-list-item-content>
@@ -418,6 +408,14 @@
               <v-list-item-title>Tournaments</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/forum" data-cy="forumTeacherMenuButton">
+            <v-list-item-action>
+              <v-icon>fas fa-comment-dots</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Forum</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/management/impexp">
             <v-list-item-action>
               <v-icon>cloud</v-icon>
@@ -494,7 +492,7 @@
             <v-list-item-action>
               <v-icon>fas fa-columns</v-icon>
             </v-list-item-action>
-            <v-list-item-content>Dashboard</v-list-item-content>
+            <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/discussions">
@@ -565,10 +563,6 @@ export default class TopBar extends Vue {
   fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
   drawer: boolean = false;
 
-  async mounted() {
-    await this.countUnansweredDiscussions();
-  }
-
   get currentCourse() {
     return this.$store.getters.getCurrentCourse;
   }
@@ -599,10 +593,6 @@ export default class TopBar extends Vue {
   async logout() {
     await this.$store.dispatch('logout');
     await this.$router.push({ name: 'home' }).catch(() => {});
-  }
-
-  async countUnansweredDiscussions() {
-    await this.$store.dispatch('countUnansweredDiscussions');
   }
 }
 </script>

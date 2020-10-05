@@ -11,7 +11,14 @@
         hide-details
       ></v-text-field>
     </v-card-title>
-    <v-data-table :headers="headers" :items="discussions" :search="search">
+    <v-data-table
+      :headers="headers"
+      :items="discussions"
+      :search="search"
+      :mobile-breakpoint="0"
+      :items-per-page="15"
+      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+    >
       <template v-slot:item.available="{ item }">
         <v-chip v-if="item.available === true" :color="'green'" dark
           >Yes</v-chip

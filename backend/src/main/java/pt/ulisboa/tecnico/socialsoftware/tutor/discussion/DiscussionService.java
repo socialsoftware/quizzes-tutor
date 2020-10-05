@@ -214,6 +214,14 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<DiscussionDto> findOpenDiscussionsByCourseExecutionId(int courseExecutionId)  {
+        return discussionRepository.findByCourseExecutionId(courseExecutionId).stream().filter(discussion -> !discussion.isClosed())
+                .map(DiscussionDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(int courseExecutionId)  {
         List<DiscussionDto> list = discussionRepository.findByCourseExecutionId(courseExecutionId).stream()
                 .filter(discussion -> (discussion.getReplies() == null || discussion.getReplies().isEmpty()))

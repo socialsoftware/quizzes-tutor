@@ -58,6 +58,12 @@ public class DiscussionController {
         return this.discussionService.findDiscussionsByCourseExecutionId(courseExecutionId);
     }
 
+    @GetMapping("/{courseExecutionId}/discussions/open")
+    @PreAuthorize("hasRole('ROLE_TEACHER')")
+    public List<DiscussionDto> getOpenCourseExecutionDiscussions(@PathVariable int courseExecutionId) {
+        return this.discussionService.findOpenDiscussionsByCourseExecutionId(courseExecutionId);
+    }
+
     @GetMapping("/{courseExecutionId}/discussions/unanswered")
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public UnansweredDiscussionsDto getUnansweredDiscussionsNumber(@PathVariable int courseExecutionId) {

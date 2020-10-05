@@ -7,46 +7,49 @@
       >
         Clarifications
       </v-card-title>
-    <div class="discussion">
-      <ul>
-        <li
-          style="margin-bottom: 25px !important;"
-          v-for="discussion in discussions"
-          :key="discussion.message"
-        >
-          <div class="text-left">
-            <b v-if="discussion.userId !== user.id"
-              >{{ discussion.userName }} opened a discussion on
-              {{ discussion.date }} :</b
+      <div class="discussion">
+        <ul>
+          <li
+            style="margin-bottom: 25px !important;"
+            v-for="discussion in discussions"
+            :key="discussion.message"
+          >
+            <div class="text-left">
+              <b v-if="discussion.userId !== user.id"
+                >{{ discussion.userName }} opened a discussion on
+                {{ discussion.date }} :</b
+              >
+              <b v-else>You opened a discussion on {{ discussion.date }} :</b>
+              <span v-html="convertMarkDown(discussion.message)" />
+            </div>
+            <v-expansion-panels
+              v-if="discussion.replies !== null"
+              :inset="true"
             >
-            <b v-else>You opened a discussion on {{ discussion.date }} :</b>
-            <span v-html="convertMarkDown(discussion.message)" />
-          </div>
-          <v-expansion-panels v-if="discussion.replies !== null" :inset="true">
-            <v-expansion-panel>
-              <v-expansion-panel-header style="background-color: #d5d5d5"
-                >Show replies
-              </v-expansion-panel-header>
-              <v-expansion-panel-content>
-                <div
-                  v-for="reply in discussion.replies"
-                  :key="reply.id"
-                  class="text-left reply"
-                >
-                  <div v-if="reply.available === true">
-                    <b v-if="user.id !== reply.userId"
-                      >{{ reply.userName }} replied on {{ reply.date }} :
-                    </b>
-                    <b v-else>You replied on {{ reply.date }} :</b>
-                    <span v-html="convertMarkDown(reply.message)" />
+              <v-expansion-panel>
+                <v-expansion-panel-header style="background-color: #d5d5d5"
+                  >Show replies
+                </v-expansion-panel-header>
+                <v-expansion-panel-content>
+                  <div
+                    v-for="reply in discussion.replies"
+                    :key="reply.id"
+                    class="text-left reply"
+                  >
+                    <div v-if="reply.available === true">
+                      <b v-if="user.id !== reply.userId"
+                        >{{ reply.userName }} replied on {{ reply.date }} :
+                      </b>
+                      <b v-else>You replied on {{ reply.date }} :</b>
+                      <span v-html="convertMarkDown(reply.message)" />
+                    </div>
                   </div>
-                </div>
-              </v-expansion-panel-content>
-            </v-expansion-panel>
-          </v-expansion-panels>
-        </li>
-      </ul>
-    </div>
+                </v-expansion-panel-content>
+              </v-expansion-panel>
+            </v-expansion-panels>
+          </li>
+        </ul>
+      </div>
     </v-card>
   </div>
   <div v-else>

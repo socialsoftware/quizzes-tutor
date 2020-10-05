@@ -1,8 +1,7 @@
 <template>
   <div class="discussions-clarifications-container">
-
-        <clarification-component :discussions="otherDiscussions">
-        </clarification-component>
+    <clarification-component :discussions="otherDiscussions">
+    </clarification-component>
     <div class="discussion-container" v-if="answered">
       <v-card>
         <v-card-title
@@ -83,8 +82,17 @@ export default class DiscussionComponent extends Vue {
   }
 
   @Watch('question')
-  onQuestionChange() {
+  async onQuestionChange() {
     this.discussionMessage = '';
+    await this.$store.dispatch('loading');
+    try {
+      [this.otherDiscussions] = await Promise.all([
+        RemoteServices.getAvailableDiscussionsByQuestionId(this.question.id!)
+      ]);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
   }
 
   convertMarkDown(text: string) {

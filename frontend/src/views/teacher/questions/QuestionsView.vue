@@ -107,7 +107,10 @@
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
-            <v-icon class="mr-2" v-on="on" @click="showClarificationDialog(item)"
+            <v-icon
+              class="mr-2"
+              v-on="on"
+              @click="showClarificationDialog(item)"
               >fas fa-comments</v-icon
             >
           </template>

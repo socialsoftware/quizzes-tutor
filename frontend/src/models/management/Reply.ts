@@ -8,7 +8,6 @@ export default class Reply {
   message!: string;
   available!: boolean;
 
-
   constructor(jsonObj?: Reply) {
     if (jsonObj) {
       this.id = jsonObj.id;

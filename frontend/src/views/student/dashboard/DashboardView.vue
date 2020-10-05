@@ -42,7 +42,13 @@
             <v-list-item-content
               v-if="info !== null && info.numDiscussions !== 0"
             >
-              <v-data-table :headers="headers" :items="discussions">
+              <v-data-table
+                :headers="headers"
+                :items="discussions"
+                :mobile-breakpoint="0"
+                :items-per-page="10"
+                :footer-props="{ itemsPerPageOptions: [10, 15] }"
+              >
                 <template v-slot:item.available="{ item }">
                   <v-chip v-if="item.available === true" :color="'green'" dark
                     >Yes</v-chip

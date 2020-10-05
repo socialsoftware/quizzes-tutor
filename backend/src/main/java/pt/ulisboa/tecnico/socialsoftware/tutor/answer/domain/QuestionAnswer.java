@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
@@ -41,6 +40,7 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
+    //@OneToOne(mappedBy = "questionAnswer", optional=true)
     @OneToOne(fetch = FetchType.EAGER, optional=true)
     @JoinColumn(name="discussion_id")
     private Discussion discussion;

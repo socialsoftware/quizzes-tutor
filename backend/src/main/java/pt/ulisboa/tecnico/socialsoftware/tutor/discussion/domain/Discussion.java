@@ -6,13 +6,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +23,12 @@ public class Discussion implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    //@Column(name = "id")
     private Integer id;
 
+    /*@NotNull
+    @OneToOne(cascade = CascadeType.ALL, optional=false)
+    @JoinColumn(name="questionAnswer_id", referencedColumnName = "id")*/
     @NotNull
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional=false)
     private QuestionAnswer questionAnswer;
@@ -61,7 +62,7 @@ public class Discussion implements DomainEntity {
     private boolean available;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean isClosed;
+    private boolean closed;
 
     public Integer getId() {
         return id;
@@ -71,8 +72,6 @@ public class Discussion implements DomainEntity {
 
     public Discussion(User user, QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
-        this.questionAnswer = questionAnswer;
-        this.questionAnswer.setDiscussion(this);
         this.user = user;
         this.userId = user.getId();
         this.user.addDiscussion(this);
@@ -82,7 +81,9 @@ public class Discussion implements DomainEntity {
         this.available = discussionDto.isAvailable();
         this.setQuestionId(questionAnswer.getQuizQuestion().getQuestion().getId());
         this.courseExecutionId = discussionDto.getCourseExecutionId();
-        this.isClosed = discussionDto.isClosed();
+        this.closed = discussionDto.isClosed();
+        this.questionAnswer = questionAnswer;
+        this.questionAnswer.setDiscussion(this);
     }
 
     public List<Reply> getReplies() {
@@ -159,7 +160,7 @@ public class Discussion implements DomainEntity {
     }
 
     public void changeStatus() {
-        this.isClosed = !this.isClosed;
+        this.closed = !this.closed;
     }
 
     public boolean teacherAnswered() {
@@ -195,7 +196,7 @@ public class Discussion implements DomainEntity {
     }
 
     public boolean isClosed() {
-        return isClosed;
+        return closed;
     }
 
     public boolean hasPublicReplies() {

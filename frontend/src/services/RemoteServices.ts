@@ -1102,21 +1102,23 @@ export default class RemoteServices {
       });
   }
 
-  static async getUnansweredDiscussionsNumber(
-    courseExecutionId: number
-  ): Promise<UnansweredDiscussionsInfo> {
-    return httpClient
-      .get(`/${courseExecutionId}/discussions/unanswered`)
-      .then(response => {
-        return new UnansweredDiscussionsInfo(response.data);
-      });
-  }
-
   static async getCourseExecutionDiscussions(
     courseExecutionId: number
   ): Promise<Discussion[]> {
     return httpClient
       .get(`/${courseExecutionId}/discussions`)
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      });
+  }
+
+  static async getOpenCourseExecutionDiscussions(
+    courseExecutionId: number
+  ): Promise<Discussion[]> {
+    return httpClient
+      .get(`/${courseExecutionId}/discussions/open`)
       .then(response => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
