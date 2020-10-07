@@ -128,7 +128,7 @@ public class CourseController {
         List<Quiz> courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);
         response.setHeader("Content-Disposition", "attachment; filename=file.tar.gz");
         response.setContentType("application/tar.gz");
-        String sourceFolder = exportDir + "/quizzes";
+        String sourceFolder = exportDir + "/quizzes-" + executionId;
         File file = new File(sourceFolder);
         file.mkdir();
         for (Quiz quiz : courseExecutionQuizzes) {
@@ -139,26 +139,19 @@ public class CourseController {
         tGzipDemo.createTarFile();
         response.getOutputStream().write(Files.readAllBytes(Paths.get(sourceFolder + ".tar.gz")));
         response.flushBuffer();
-        deleteDirectoryJava7(sourceFolder);
-        deleteDirectoryJava7(sourceFolder + ".tar.gz");
+
+        deleteDirectory(file);
+        deleteDirectory(new File(sourceFolder + ".tar.gz"));
     }
 
-    private static void deleteDirectoryJava7(String filePath) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.walkFileTree(path, new SimpleFileVisitor<>() {
-            // delete directories or folders
-            @Override
-            public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-                Files.delete(dir);
-                return FileVisitResult.CONTINUE;
+    boolean deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
             }
-            // delete files
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-                Files.delete(file);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        }
+        return directoryToBeDeleted.delete();
     }
 
 }
