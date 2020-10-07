@@ -18,7 +18,7 @@ public class TarGZip {
         sourceFolder = source_folder;
     }
 
-    public void createTarFile(){
+    public void createTarFile() {
         TarArchiveOutputStream tarOs = null;
         try {
             File source = new File(sourceFolder);
@@ -29,7 +29,7 @@ public class TarGZip {
             addFilesToTarGZ(sourceFolder, "", tarOs);
         } catch (IOException e) {
             e.printStackTrace();
-        }finally{
+        } finally{
             try {
                 tarOs.close();
             } catch (IOException e) {
@@ -44,19 +44,19 @@ public class TarGZip {
         String entryName = parent + file.getName();
         // add tar ArchiveEntry
         tarArchive.putArchiveEntry(new TarArchiveEntry(file, entryName));
-        if(file.isFile()){
+        if (file.isFile()) {
             FileInputStream fis = new FileInputStream(file);
             BufferedInputStream bis = new BufferedInputStream(fis);
             // Write file content to archive
             IOUtils.copy(bis, tarArchive);
             tarArchive.closeArchiveEntry();
             bis.close();
-        }else if(file.isDirectory()){
+        } else if (file.isDirectory()) {
             // no need to copy any content since it is
             // a directory, just close the outputstream
             tarArchive.closeArchiveEntry();
             // for files in the directories
-            for(File f : file.listFiles()){
+            for (File f : file.listFiles()) {
                 // recursively call the method for all the subdirectories
                 addFilesToTarGZ(f.getAbsolutePath(), entryName+File.separator, tarArchive);
             }

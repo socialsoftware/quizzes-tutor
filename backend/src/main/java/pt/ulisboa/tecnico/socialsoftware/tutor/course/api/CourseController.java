@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.course.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -43,11 +44,10 @@ public class CourseController {
     private QuizService quizService;
 
     @Autowired
-    private CourseExecutionRepository courseExecutionRepository;
-
-    @Autowired
     private QuizRepository quizRepository;
 
+    @Value("${export.dir}")
+    private String exportDir;
 
     @GetMapping("/courses/executions")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
@@ -125,16 +125,15 @@ public class CourseController {
     @GetMapping(value = "/executions/{executionId}/export")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS')) or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public void exportCourseExecutionInfo(HttpServletResponse response, @PathVariable Integer executionId) throws IOException {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         List<Quiz> courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);
         response.setHeader("Content-Disposition", "attachment; filename=file.tar.gz");
         response.setContentType("application/tar.gz");
-        String sourceFolder = System.getProperty("user.dir") + "/quizzes";
+        String sourceFolder = exportDir + "/quizzes";
         File file = new File(sourceFolder);
         file.mkdir();
         for (Quiz quiz : courseExecutionQuizzes) {
             answerService.writeQuizAnswers(quiz.getId());
-            this.quizService.createQuizDirectory(quiz.getId(), sourceFolder);
+            this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);
         }
         TarGZip tGzipDemo = new TarGZip(sourceFolder);
         tGzipDemo.createTarFile();

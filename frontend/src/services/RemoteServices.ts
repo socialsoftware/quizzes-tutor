@@ -871,6 +871,7 @@ export default class RemoteServices {
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
+        timeout: 1000000,
         responseType: 'blob'
       })
       .then(response => {
