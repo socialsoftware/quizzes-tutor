@@ -20,7 +20,7 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="$emit('newQuiz')">New Quiz</v-btn>
+          <v-btn color="primary" dark data-cy="newQuizButton" @click="$emit('newQuiz')">New Quiz</v-btn>
         </v-card-title>
       </template>
 
@@ -104,6 +104,7 @@
             <v-icon
               class="mr-2 action-button"
               v-on="on"
+              data-cy="deleteQuizButton"
               @click="deleteQuiz(item.id)"
               color="red"
               >delete</v-icon

@@ -130,6 +130,10 @@ public class DiscussionDto implements Serializable {
         return closed;
     }
 
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
     @Override
     public String toString() {
         return "DiscussionDto{" +

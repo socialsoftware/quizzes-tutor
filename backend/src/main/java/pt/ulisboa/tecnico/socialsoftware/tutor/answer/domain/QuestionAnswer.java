@@ -40,9 +40,7 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
-    //@OneToOne(mappedBy = "questionAnswer", optional=true)
-    @OneToOne(fetch = FetchType.EAGER, optional=true)
-    @JoinColumn(name="discussion_id")
+    @OneToOne(mappedBy = "questionAnswer")
     private Discussion discussion;
 
     public QuestionAnswer() {
@@ -147,6 +145,7 @@ public class QuestionAnswer implements DomainEntity {
             option = null;
         }
 
+        discussion.getQuestionAnswer().remove();
         discussion = null;
     }
 

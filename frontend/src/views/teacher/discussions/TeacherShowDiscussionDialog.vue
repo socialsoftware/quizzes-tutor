@@ -1,10 +1,10 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
-    max-width="75%"
-    max-height="80%"
+      :value="dialog"
+      @input="$emit('dialog', false)"
+      @keydown.esc="$emit('dialog', false)"
+      max-width="75%"
+      max-height="80%"
   >
     <v-card>
       <v-card-title>
@@ -18,8 +18,8 @@
       <v-card-text class="text-left">
         <v-card>
           <show-replies
-            v-if="this.discussion != null"
-            :discussion="this.discussion"
+              v-if="this.discussion != null"
+              :discussion="this.discussion"
           />
         </v-card>
       </v-card-text>
@@ -44,7 +44,7 @@ import ShowReplies from '@/views/teacher/discussions/ShowReplies.vue';
     'show-replies': ShowReplies
   }
 })
-export default class ShowDiscussionDialog extends Vue {
+export default class TeacherShowDiscussionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Discussion, required: true }) readonly discussion!: Discussion;
 }

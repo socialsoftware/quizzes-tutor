@@ -21,7 +21,6 @@ import spock.lang.Shared
 class ChangeReplyAvailabilityTest extends SpockTest {
     @Shared
     def student
-    def student2
     def teacher
     @Shared
     def question1
@@ -32,9 +31,6 @@ class ChangeReplyAvailabilityTest extends SpockTest {
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
         userRepository.save(student)
-
-        student2 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
-        userRepository.save(student2)
 
         teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
@@ -85,58 +81,33 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
+        discussionDto.setAvailable(false)
+        discussionDto.setClosed(false)
         discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
-
-        replyDto = new ReplyDto()
-        replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(teacher.getId())
-        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionService.createReply(discussionDto, replyDto)
-        replyDto.setId(replyRepository.findAll().get(0).getId())
-
-        replyDto2 = new ReplyDto()
-        replyDto2.setMessage(DISCUSSION_REPLY)
-        replyDto2.setUserId(teacher.getId())
-        replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionService.createReply(discussionDto, replyDto2)
-        replyDto2.setId(replyRepository.findAll().get(1).getId())
     }
 
     def "changes reply availability to available"(){
         given: "reply not available"
-        def reply = replyRepository.findAll().get(0)
-        reply.getMessage() == DISCUSSION_REPLY
-        reply.getUser() == teacher
-        reply.isAvailable() == false
+        replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(teacher.getId())
+        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setId(replyRepository.findAll().get(0).getId())
 
         when: "change reply availability"
         discussionService.changeReplyAvailability(replyDto.getId())
 
         then: "the availability has changed"
-        replyRepository.count() == 2L
+        replyRepository.count() == 1L
         def result = replyRepository.findAll().get(0)
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
         result.isAvailable() == true
-    }
-
-    def "changes reply availability to not available"(){
-        given: "reply available"
-        def reply = replyRepository.findAll().get(1)
-        reply.getMessage() == DISCUSSION_REPLY
-        reply.getUser() == teacher
-        reply.isAvailable() == true
-
-        when: "change reply availability"
-        discussionService.changeReplyAvailability(replyDto.getId())
-
-        then: "the availability has changed"
-        replyRepository.count() == 2L
-        def result = replyRepository.findAll().get(1)
-        result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == teacher
-        result.isAvailable() == false
+        def resultDiscussion = discussionRepository.findAll().get(0)
+        resultDiscussion.available == true
     }
 
     @TestConfiguration

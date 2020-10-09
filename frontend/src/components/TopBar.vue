@@ -61,7 +61,10 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/management/questions">
+            <v-list-item
+              to="/management/questions"
+              data-cy="questionsTeacherMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
               </v-list-item-action>
@@ -91,7 +94,10 @@
                 <v-list-item-title>Topics</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/quizzes">
+            <v-list-item
+              to="/management/quizzes"
+              data-cy="quizzesTeacherMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>ballot</v-icon>
               </v-list-item-action>
@@ -124,14 +130,14 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              to="/management/forum"
-              data-cy="forumTeacherMenuButton"
+              to="/management/discussions"
+              data-cy="discussionsTeacherButton"
             >
               <v-list-item-action>
                 <v-icon>fas fa-comment-dots</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Forum</v-list-item-title>
+                <v-list-item-title>Discussions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/export">
@@ -193,30 +199,19 @@
                 <v-list-item-title>Solved</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item
+              to="/student/discussions"
+              data-cy="discussionsStudentMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-comment-dots</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
-
-        <v-btn
-          to="/student/dashboard"
-          v-if="isStudent && currentCourse"
-          text
-          dark
-          data-cy="dashboardStudentMenuButton"
-        >
-          Dashboard
-          <v-icon>fas fa-columns</v-icon>
-        </v-btn>
-
-        <v-btn
-          to="/student/discussions"
-          v-if="isStudent && currentCourse"
-          text
-          dark
-          data-cy="discussionsStudentMenuButton"
-        >
-          Discussions
-          <v-icon>fa fa-comment</v-icon>
-        </v-btn>
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
@@ -411,12 +406,12 @@
               <v-list-item-title>Tournaments</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/management/forum" data-cy="forumTeacherMenuButton">
+          <v-list-item to="/management/discussions">
             <v-list-item-action>
               <v-icon>fas fa-comment-dots</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>Forum</v-list-item-title>
+              <v-list-item-title>Discussions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/export">
@@ -491,16 +486,9 @@
             <v-list-item-title>Stats</v-list-item-title>
           </v-list-item>
 
-          <v-list-item to="/student/dashboard">
-            <v-list-item-action>
-              <v-icon>fas fa-columns</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>Dashboard</v-list-item-title>
-          </v-list-item>
-
           <v-list-item to="/student/discussions">
             <v-list-item-action>
-              <v-icon>fa fa-comment</v-icon>
+              <v-icon>fas fa-comment-dots</v-icon>
             </v-list-item-action>
             <v-list-item-title>Discussions</v-list-item-title>
           </v-list-item>

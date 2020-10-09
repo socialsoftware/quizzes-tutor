@@ -1,15 +1,19 @@
 describe('Student Walkthrough', () => {
   beforeEach(() => {
-    cy.demoStudentLogin();
-  });
-
-  afterEach(() => {
+    //create quiz
+    cy.demoTeacherLogin();
+    cy.createQuestion('Question Title','Question','Option','Option','Option','Correct');
+    cy.createQuestion('Question Title2','Question','Option','Option','Option','Correct');
+    cy.createQuizzWith2Questions('Quiz Title','Question Title', 'Question Title2');
     cy.contains('Logout').click();
   });
 
-  it('solves a quizz', () => {
-    cy.solveQuizz(5);
+
+  it('student creates discussion', () => {
+    cy.demoStudentLogin();
+    cy.solveQuizz('Quiz Title', 2);
     cy.createDiscussion('DISCUSSAO');
+    cy.contains('Logout').click();
   });
 
 });

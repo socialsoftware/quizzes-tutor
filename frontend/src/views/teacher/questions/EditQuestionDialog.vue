@@ -25,6 +25,7 @@
               :rules="[v => !!v || 'Question title is required']"
               label="Title"
               required
+              data-cy="questionTitleTextArea"
             />
           </v-row>
 
@@ -35,6 +36,7 @@
               :rules="[v => !!v || 'Question content is required']"
               auto-grow
               required
+              data-cy="questionQuestionTextArea"
               rows="4"
             ></v-textarea>
           </v-row>
@@ -50,12 +52,17 @@
               <v-textarea
                 v-model="option.content"
                 :label="`Option ${index + 1}`"
+                :data-cy="`OptionTextArea${index + 1}`"
                 rows="1"
                 auto-grow
               ></v-textarea>
             </v-col>
             <v-col cols="1">
-              <v-switch v-model="option.correct" inset />
+              <v-switch
+                v-model="option.correct"
+                inset
+                :data-cy="`CorrectSwitch${index + 1}`"
+              />
             </v-col>
             <v-col v-if="editQuestion.options.length > 2">
               <v-tooltip bottom>
@@ -87,7 +94,9 @@
         <v-btn color="red darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="green darken-1" @click="saveQuestion">Save</v-btn>
+        <v-btn color="green darken-1" @click="saveQuestion" data-cy="saveQuestionButton"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

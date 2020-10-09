@@ -23,7 +23,6 @@ import spock.lang.Shared
 class ChangeStatusTest extends SpockTest {
     @Shared
     def student
-    def student2
     def teacher
     @Shared
     def question1
@@ -33,9 +32,6 @@ class ChangeStatusTest extends SpockTest {
     def setup(){
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
         userRepository.save(student)
-
-        student2 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
-        userRepository.save(student2)
 
         teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
         userRepository.save(teacher)

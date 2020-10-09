@@ -107,12 +107,6 @@ public class DiscussionService {
                 .orElseThrow(() -> new TutorException(REPLY_NOT_FOUND, replyId));
 
         reply.changeAvailability();
-        if(reply.isAvailable() && !reply.getDiscussion().isAvailable()){
-            reply.getDiscussion().setAvailable(true);
-        }
-        else if(!reply.isAvailable() && reply.getDiscussion().isAvailable() && !reply.getDiscussion().hasPublicReplies()){
-            reply.getDiscussion().setAvailable(false);
-        }
         return new DiscussionDto(reply.getDiscussion());
     }
 

@@ -21,7 +21,7 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newQuestion">New Question</v-btn>
+          <v-btn color="primary" dark @click="newQuestion" data-cy="newQuestionButton">New Question</v-btn>
           <v-btn color="primary" dark @click="exportCourseQuestions"
             >Export Questions</v-btn
           >
@@ -92,7 +92,7 @@
           </template>
           <span>Show Question</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom data-cy="duplicateButton">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2 action-button"
@@ -117,19 +117,20 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="showClarificationDialog(item)"
               >fas fa-comments</v-icon
             >
           </template>
-          <span>See Clarifications</span>
+          <span>Show Clarifications</span>
         </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2 action-button"
               v-on="on"
+              data-cy="deleteQuestionButton"
               @click="deleteQuestion(item)"
               color="red"
               >delete</v-icon

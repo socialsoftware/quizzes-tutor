@@ -131,6 +131,7 @@ class SpockTest extends Specification {
 
     public static final String DISCUSSION_MESSAGE = "Discussion Message"
     public static final String DISCUSSION_REPLY = "Discussion Reply"
+    public static final String DISCUSSION_REPLY2 = "Discussion Reply 2"
 
     @Autowired
     AuthUserService authUserService

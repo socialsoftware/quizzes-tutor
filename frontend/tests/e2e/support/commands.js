@@ -387,7 +387,7 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains('No data available');
   cy.get('[data-cy="cancelButton"').click();
 });
-"quizzesStudentMenuButton"
+
 Cypress.Commands.add('checkStudentCount', (acronym, count) => {
   cy.contains(acronym)
     .parent()
@@ -408,13 +408,60 @@ Cypress.Commands.add('closeUserCreationDialog', () => {
   cy.get('[data-cy="cancelButton"]').click();
 });
 
-Cypress.Commands.add('solveQuizz', (numberOfQuizQuestions) => {
+
+Cypress.Commands.add('createQuestion', (title,question,option1,option2,option3,correct) => {
+  cy.get('[data-cy="managementMenuButton"]').click()
+  cy.get('[data-cy="questionsTeacherMenuButton"]').click()
+
+  //creates question1
+  cy.get('[data-cy="newQuestionButton"]').click()
+  cy.get('[data-cy="questionTitleTextArea"]').type(title)
+  cy.get('[data-cy="questionQuestionTextArea"]').type(question)
+  cy.get('[data-cy="OptionTextArea1"]').type(option1)
+  cy.get('[data-cy="OptionTextArea2"]').type(option2)
+  cy.get('[data-cy="OptionTextArea3"]').type(option3)
+  cy.get('[data-cy="OptionTextArea4"]').type(correct)
+  cy.get('[data-cy="CorrectSwitch4"]').click({ force: true })
+  cy.get('[data-cy="saveQuestionButton"]').click()
+});
+
+
+Cypress.Commands.add('createQuizzWith2Questions', (quizTitle, questionTitle, questionTitle2) => {
+  cy.get('[data-cy="managementMenuButton"]').click()
+  cy.get('[data-cy="quizzesTeacherMenuButton"]').click()
+
+  cy.get('[data-cy="newQuizButton"]').click()
+  cy.get('[data-cy="quizTitleTextArea"]').type(quizTitle)
+
+  cy.get('#availableDateInput-input').click()
+  cy.get('.datetimepicker > .datepicker > .datepicker-buttons-container > .datepicker-button > .datepicker-button-content').click()
+
+  cy.contains(questionTitle)
+    .parent()
+    .should('have.length',1)
+    .parent()
+    .children()
+    .should('have.length',5)
+    .find('[data-cy="addToQuizButton"]')
+    .click()
+
+  cy.contains(questionTitle2)
+    .parent()
+    .should('have.length',1)
+    .parent()
+    .children()
+    .should('have.length',5)
+    .find('[data-cy="addToQuizButton"]')
+    .click()
+
+  cy.get('[data-cy="saveQuizButton"]').click()
+});
+
+Cypress.Commands.add('solveQuizz', (quizTitle, numberOfQuizQuestions) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click()
   cy.contains('Available').click()
-  cy.wait(8000)
 
-  cy.get('[data-cy="availableQuizzesList"]').children().eq(1).click()
-  cy.wait(9000)
+  cy.contains(quizTitle).click();
 
   for(let i = 1; i < numberOfQuizQuestions; i++){
     cy.get('[data-cy="optionList"]').children().eq(1).click()
@@ -425,39 +472,61 @@ Cypress.Commands.add('solveQuizz', (numberOfQuizQuestions) => {
 
   cy.get('[data-cy="endQuizButton"]').click()
   cy.get('[data-cy="confirmationButton"]').click()
-
-  cy.wait(3000)
 });
 
 Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click()
   cy.contains('Solved').click()
 
-  cy.wait(3000)
-
-  cy.get('[data-cy="solvedQuizzesList"]').children().eq(1).click()
+ // cy.get('[data-cy="solvedQuizzesList"]').children().eq(1).click()
+  cy.contains('Quiz Title').click()
   cy.get('[data-cy="nextQuestionButton"]').click()
   cy.get('[data-cy="discussionTextArea"]').type(discussionContent)
   cy.get('[data-cy="submitDiscussionButton"]').click()
 
-  cy.wait(3000)
-
+  cy.get('[data-cy="quizzesStudentMenuButton"]').click()
   cy.get('[data-cy="discussionsStudentMenuButton"]').click()
 
   cy.contains(discussionContent).parent().should('have.length', 1).children()
-    .should('have.length', 7)
+    .should('have.length', 8)
 });
 
 Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
-  cy.wait(2000)
-  cy.get('[data-cy="forumTeacherMenuButton"]').click()
+  cy.get('[data-cy="managementMenuButton"]').click()
+  cy.get('[data-cy="discussionsTeacherButton"]').click()
   cy.contains(discussionContent).parent().should('have.length', 1).children()
-    .should('have.length', 7)
+    .should('have.length', 8)
 
   cy.get('[data-cy="showDiscussionButton"]').click()
 
   cy.get('[data-cy="replyTextArea"]').type(replyContent)
   cy.get('[data-cy="submitReplyButton"]').click()
+});
 
-  cy.wait(3000)
+Cypress.Commands.add('deleteQuiz',(quizTitle) => {
+  cy.get('[data-cy="managementMenuButton"]').click()
+  cy.get('[data-cy="quizzesTeacherMenuButton"]').click()
+
+  cy.contains(quizTitle)
+    .parent()
+    .should('have.length',1)
+    .parent()
+    .children()
+    .should('have.length',10)
+    .find('[data-cy="deleteQuizButton"]')
+    .click()
+});
+
+Cypress.Commands.add('deleteQuestion',(questionTitle) => {
+  cy.get('[data-cy="managementMenuButton"]').click()
+  cy.get('[data-cy="questionsTeacherMenuButton"]').click()
+
+  cy.contains(questionTitle)
+    .parent()
+    .should('have.length',1)
+    .parent()
+    .children()
+    .should('have.length',10)
+    .find('[data-cy="deleteQuestionButton"]')
+    .click()
 });

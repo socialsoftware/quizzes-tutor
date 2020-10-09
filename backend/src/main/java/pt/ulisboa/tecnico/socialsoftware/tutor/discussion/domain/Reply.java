@@ -114,7 +114,19 @@ public class Reply implements DomainEntity {
         return available;
     }
 
-    public void changeAvailability(){
-        this.available = !this.available;
+    public void changeAvailability() {
+        if (this.isAvailable()) {
+            this.available = false;
+            if (this.getDiscussion().isAvailable() && !this.getDiscussion().hasPublicReplies()) {
+                this.getDiscussion().setAvailable(false);
+            } else {
+                this.getDiscussion().setAvailable(true);
+            }
+        } else {
+            this.available = true;
+            if(!this.getDiscussion().isAvailable()){
+                this.getDiscussion().setAvailable(true);
+            }
+        }
     }
 }

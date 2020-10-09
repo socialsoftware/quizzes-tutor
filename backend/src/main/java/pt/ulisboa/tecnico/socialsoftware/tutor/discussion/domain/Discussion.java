@@ -23,14 +23,10 @@ public class Discussion implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    //@Column(name = "id")
     private Integer id;
 
-    /*@NotNull
-    @OneToOne(cascade = CascadeType.ALL, optional=false)
-    @JoinColumn(name="questionAnswer_id", referencedColumnName = "id")*/
-    @NotNull
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, optional=false)
+    @OneToOne(optional=false)
+    @JoinColumn(name="questionAnswer_id")
     private QuestionAnswer questionAnswer;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -168,6 +164,11 @@ public class Discussion implements DomainEntity {
     }
 
     public void remove() {
+        if(questionAnswer != null){
+            questionAnswer.getDiscussion().remove();
+            questionAnswer = null;
+        }
+
         user.getDiscussions().remove(this);
         user = null;
 

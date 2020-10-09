@@ -34,9 +34,8 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
-import DashboardView from '@/views/student/dashboard/DashboardView.vue';
-import DiscussionView from '@/views/student/discussions/DiscussionView.vue';
-import ForumView from '@/views/teacher/discussions/ForumView.vue';
+import StudentDiscussionsView from '@/views/student/discussions/StudentDiscussionsView.vue';
+import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussionsView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
 
@@ -177,11 +176,11 @@ let router = new Router({
           }
         },
         {
-          path: 'forum',
-          name: 'teacher-forum',
-          component: ForumView,
+          path: 'discussions',
+          name: 'teacher-discussions',
+          component: TeacherDiscussionsView,
           meta: {
-            title: APP_NAME + ' - Forum',
+            title: APP_NAME + ' - Discussions',
             requiredAuth: 'Teacher'
           }
         }
@@ -256,18 +255,9 @@ let router = new Router({
           }
         },
         {
-          path: 'dashboard',
-          name: 'dashboard',
-          component: DashboardView,
-          meta: {
-            title: APP_NAME + ' - Dashboard',
-            requiredAuth: 'Student'
-          }
-        },
-        {
           path: 'discussions',
           name: 'discussions',
-          component: DiscussionView,
+          component: StudentDiscussionsView,
           meta: {
             title: APP_NAME + ' - Discussion',
             requiredAuth: 'Student'

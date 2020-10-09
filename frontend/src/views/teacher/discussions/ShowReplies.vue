@@ -74,12 +74,14 @@
             <v-textarea
               class="textarea-reply"
               solo
+              data-cy="replyTextArea"
               :id="'reply' + discussion.userId"
               label="Type a reply..."
               @input="setReplyMessage"
             ></v-textarea>
             <v-card-actions>
               <v-btn
+                data-cy="submitReplyButton"
                 class="submit-button"
                 @click="
                   submitReply();

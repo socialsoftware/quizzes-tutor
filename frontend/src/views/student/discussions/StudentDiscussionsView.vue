@@ -6,12 +6,13 @@
       :sort-by="'lastReplyDate'"
       :sort-desc="true"
       :search="search"
+      multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
       <template v-slot:top>
-        <v-card-title>
+        <v-card-title style="width: 50%">
           <v-text-field
             v-model="search"
             append-icon="mdi-magnify"
@@ -19,18 +20,6 @@
             single-line
             hide-details
           />
-
-          <v-spacer />
-          <v-btn
-            v-if="!showClosedDiscussions"
-            color="primary"
-            dark
-            @click="toggleClosedDiscussions"
-            >Show Closed Discussions</v-btn
-          >
-          <v-btn v-else color="primary" dark @click="toggleClosedDiscussions"
-            >Hide Closed Discussions</v-btn
-          >
         </v-card-title>
       </template>
       <template v-slot:item.available="{ item }">
@@ -39,21 +28,15 @@
         >
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
-      <template v-slot:item.closed="{ item }">
-        <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
-        <v-chip v-else :color="'red'" dark>No</v-chip>
-      </template>
       <template v-slot:item.replies.length="{ item }">
         <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
         <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
       </template>
-
       <template v-slot:item.action="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              data-cy="showDiscussionButton"
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="showDiscussionDialog(item)"
               >fas fa-comment-dots</v-icon
@@ -73,23 +56,23 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Prop } from 'vue-property-decorator';
-import Discussion from '@/models/management/Discussion';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import ShowDiscussionDialog from '../../student/discussions/ShowDiscussionDialog.vue';
+import Discussion from '@/models/management/Discussion';
+import User from '@/models/user/User';
+import StudentShowDiscussionDialog from '@/views/student/discussions/StudentShowDiscussionDialog.vue';
 
 @Component({
   components: {
-    'show-discussion-dialog': ShowDiscussionDialog
+    'show-discussion-dialog': StudentShowDiscussionDialog
   }
 })
-export default class ForumView extends Vue {
+export default class StudentDiscussionsView extends Vue {
   discussions: Discussion[] = [];
   search: string = '';
-  executionId: number = this.$store.getters.getCurrentCourse.courseExecutionId;
+  user: User = this.$store.getters.getUser;
   currentDiscussion: Discussion | null = null;
   discussionDialog: boolean = false;
-  showClosedDiscussions: boolean = false;
 
   headers: object = [
     {
@@ -115,7 +98,7 @@ export default class ForumView extends Vue {
     await this.$store.dispatch('loading');
     try {
       [this.discussions] = await Promise.all([
-        RemoteServices.getOpenCourseExecutionDiscussions(this.executionId)
+        RemoteServices.getDiscussionsByUserId(this.user.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -138,25 +121,6 @@ export default class ForumView extends Vue {
     if (!this.discussionDialog) {
       this.currentDiscussion = null;
     }
-  }
-
-  async toggleClosedDiscussions() {
-    await this.$store.dispatch('loading');
-    this.showClosedDiscussions = !this.showClosedDiscussions;
-    try {
-      if (this.showClosedDiscussions) {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getCourseExecutionDiscussions(this.executionId)
-        ]);
-      } else {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getOpenCourseExecutionDiscussions(this.executionId)
-        ]);
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
