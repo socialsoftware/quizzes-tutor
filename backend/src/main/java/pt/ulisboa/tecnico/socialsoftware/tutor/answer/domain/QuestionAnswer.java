@@ -145,8 +145,10 @@ public class QuestionAnswer implements DomainEntity {
             option = null;
         }
 
-        discussion.getQuestionAnswer().remove();
-        discussion = null;
+        if(discussion != null) {
+            discussion.getQuestionAnswer().remove();
+            discussion = null;
+        }
     }
 
     public Discussion getDiscussion() {
