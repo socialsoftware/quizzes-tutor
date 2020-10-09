@@ -44,6 +44,17 @@
             <v-icon
               class="mr-2 action-button"
               v-on="on"
+              @click="showQuestionsDialog(item.id)"
+              >visibility</v-icon
+            >
+          </template>
+          <span>Show Questions</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
               @click="editAssessment(item.id)"
               >edit</v-icon
             >

@@ -13,7 +13,11 @@
             :key="question.id"
             class="text-left"
           >
-            <v-card-text class="text-left">
+            {{ question.status }}
+            <v-card-text
+              class="text-left"
+              :class="{ red: question.status !== 'AVAILABLE' }"
+            >
               <show-question :question="question" />
             </v-card-text>
           </li>
