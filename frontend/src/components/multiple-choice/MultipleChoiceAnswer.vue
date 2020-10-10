@@ -55,8 +55,6 @@ export default class MultipleChoiceAnswer extends Vue {
   @Prop(MultipleChoiceStatementCorrectAnswerDetails)
   readonly correctAnswerDetails?: MultipleChoiceStatementCorrectAnswerDetails;
 
-  optionLetters: string[] = ['A', 'B', 'C', 'D'];
-
   get isReadonly() {
     return !!this.correctAnswerDetails;
   }

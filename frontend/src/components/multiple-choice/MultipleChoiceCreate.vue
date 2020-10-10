@@ -1,32 +1,64 @@
 <template>
   <div class="multiple-choice-options">
-    <div v-for="index in sQuestionDetails.options.length" :key="index">
-      <v-row>
+    <v-row>
+      <v-col cols="1" offset="10">
+        Correct
+      </v-col>
+    </v-row>
+
+    <v-row v-for="(option, index) in sQuestionDetails.options" :key="index">
+      <v-col cols="10">
         <v-textarea
+          v-model="option.content"
+          :label="`Option ${index + 1}`"
+          rows="1"
           auto-grow
-          rows="2"
-          v-model="sQuestionDetails.options[index - 1].content"
-          :label="`Option ${index}`"
-          v-bind:data-cy="`Option${index}`"
         ></v-textarea>
-        <v-switch
-          v-model="sQuestionDetails.options[index - 1].correct"
-          class="ma-4"
-          :label="`Correct ${index}`"
-          v-bind:data-cy="`Switch${index}`"
-        />
-      </v-row>
-    </div>
+      </v-col>
+      <v-col cols="1">
+        <v-switch v-model="option.correct" inset />
+      </v-col>
+      <v-col v-if="sQuestionDetails.options.length > 2">
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              small
+              class="ma-1 action-button"
+              v-on="on"
+              @click="removeOption(index)"
+              color="red"
+              >close</v-icon
+            >
+          </template>
+          <span>Remove Option</span>
+        </v-tooltip>
+      </v-col>
+    </v-row>
+
+    <v-row>
+      <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
+        >Add Option</v-btn
+      >
+    </v-row>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Model, PropSync, Vue, Watch } from 'vue-property-decorator';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
+import Option from '@/models/management/Option';
 
 @Component
 export default class MultipleChoiceCreate extends Vue {
   @PropSync('questionDetails', { type: MultipleChoiceQuestionDetails })
   sQuestionDetails!: MultipleChoiceQuestionDetails;
+
+  addOption() {
+    this.sQuestionDetails.options.push(new Option());
+  }
+
+  removeOption(index: number) {
+    this.sQuestionDetails.options.splice(index, 1);
+  }
 }
 </script>
