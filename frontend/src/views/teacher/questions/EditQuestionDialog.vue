@@ -6,7 +6,7 @@
     max-width="75%"
     max-height="80%"
   >
-    <v-card>
+    <v-card class="px-5">
       <v-card-title>
         <span class="headline">
           {{
@@ -17,46 +17,77 @@
         </span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="editQuestion">
+      <v-card-text class="pa-4 text-left" v-if="editQuestion">
         <v-form ref="form" lazy-validation>
-          <v-text-field
-            v-model="editQuestion.title"
-            :rules="[v => !!v || 'Question title is required']"
-            label="Title"
-            required
-          />
-          <v-textarea
-            v-model="editQuestion.content"
-            label="Question"
-            :rules="[v => !!v || 'Question content is required']"
-            auto-grow
-            required
-            rows="5"
-          ></v-textarea>
-          <div v-for="index in editQuestion.options.length" :key="index">
-            <v-row>
+          <v-row>
+            <v-text-field
+              v-model="editQuestion.title"
+              :rules="[v => !!v || 'Question title is required']"
+              label="Title"
+              required
+            />
+          </v-row>
+
+          <v-row>
+            <v-textarea
+              v-model="editQuestion.content"
+              label="Question"
+              :rules="[v => !!v || 'Question content is required']"
+              auto-grow
+              required
+              rows="4"
+            ></v-textarea>
+          </v-row>
+
+          <v-row>
+            <v-col cols="1" offset="10">
+              Correct
+            </v-col>
+          </v-row>
+
+          <v-row v-for="(option, index) in editQuestion.questionDetailsDto.options" :key="index">
+            <v-col cols="10">
               <v-textarea
-                v-model="editQuestion.options[index - 1].content"
-                :label="`Option ${index}`"
-                rows="2"
+                v-model="option.content"
+                :label="`Option ${index + 1}`"
+                rows="1"
                 auto-grow
               ></v-textarea>
-              <v-switch
-                v-model="editQuestion.options[index - 1].correct"
-                class="ma-4"
-                :label="`Correct ${index}`"
-              />
-            </v-row>
-          </div>
+            </v-col>
+            <v-col cols="1">
+              <v-switch v-model="option.correct" inset />
+            </v-col>
+            <v-col v-if="editQuestion.questionDetailsDto.options.length > 2">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    small
+                    class="ma-1 action-button"
+                    v-on="on"
+                    @click="removeOption(index)"
+                    color="red"
+                    >close</v-icon
+                  >
+                </template>
+                <span>Remove Option</span>
+              </v-tooltip>
+            </v-col>
+          </v-row>
+
+          <v-row>
+            <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
+              >Add Option</v-btn
+            >
+          </v-row>
         </v-form>
       </v-card-text>
 
       <v-card-actions>
         <v-spacer />
-        <v-btn color="blue darken-1" @click="$emit('dialog', false)"
+        <v-btn color="red darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="blue darken-1" @click="saveQuestion">Save</v-btn>
+        <v-btn color="green darken-1" @click="saveQuestion">Save</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -66,17 +97,17 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
+import Option from '@/models/management/Option';
+import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
+
+// TODO: CLEAN EDIT QUESTION DIALOG
 
 @Component
 export default class EditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
 
-  editQuestion!: Question;
-
-  created() {
-    this.updateQuestion();
-  }
+  editQuestion: Question = new Question(this.question);
 
   @Watch('question', { immediate: true, deep: true })
   updateQuestion() {
@@ -105,6 +136,14 @@ export default class EditQuestionDialog extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+  }
+
+  addOption() {
+    (this.editQuestion.questionDetailsDto as MultipleChoiceQuestionDetails).options.push(new Option());
+  }
+
+  removeOption(index: number) {
+    (this.editQuestion.questionDetailsDto as MultipleChoiceQuestionDetails).options.splice(index, 1);
   }
 }
 </script>

@@ -38,7 +38,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-
+import java.io.*;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,8 +49,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+
+
 
 @Service
 public class QuizService {
@@ -85,6 +86,7 @@ public class QuizService {
 
     @Autowired
     private CourseService courseService;
+
 
     @Retryable(
             value = {SQLException.class},
@@ -285,7 +287,6 @@ public class QuizService {
 
         List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
 
-        String name = quiz.getTitle();
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
              ZipOutputStream zos = new ZipOutputStream(baos)) {
 
@@ -294,18 +295,18 @@ public class QuizService {
 
             QuizzesXmlExport xmlExport = new QuizzesXmlExport();
             InputStream in = IOUtils.toInputStream(xmlExport.export(quizzes), StandardCharsets.UTF_8);
-            zos.putNextEntry(new ZipEntry(name + ".xml"));
+            zos.putNextEntry(new ZipEntry(quizId + ".xml"));
             copyToZipStream(zos, in);
             zos.closeEntry();
 
             LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
-            zos.putNextEntry(new ZipEntry(name + ".tex"));
+            zos.putNextEntry(new ZipEntry(quizId + ".tex"));
             in = IOUtils.toInputStream(latexExport.export(quiz), StandardCharsets.UTF_8);
             copyToZipStream(zos, in);
             zos.closeEntry();
 
             CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
-            zos.putNextEntry(new ZipEntry(name + ".csv"));
+            zos.putNextEntry(new ZipEntry(quizId + ".csv"));
             in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);
             copyToZipStream(zos, in);
             zos.closeEntry();
@@ -329,6 +330,44 @@ public class QuizService {
 
     @Retryable(
             value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void createQuizXmlDirectory(int quizId, String path) throws IOException {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        String directoryPath = path + "/" + quiz.getId();
+        File file = new File(directoryPath);
+        file.mkdir();
+
+        QuizzesXmlExport xmlExport = new QuizzesXmlExport();
+        List<Quiz> quizzes = new ArrayList<>();
+        quizzes.add(quiz);
+        File myObj = new File(directoryPath + "/" + quiz.getId() + ".xml");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(xmlExport.export(quizzes));
+            myWriter.close();
+        }
+
+        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
+        myObj = new File(directoryPath + "/" + quiz.getId() + ".tex");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(latexExport.export(quiz));
+            myWriter.close();
+        }
+
+        List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
+        CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
+        myObj = new File(directoryPath + "/" + quiz.getId() + ".csv");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(csvExport.export(quiz, questionAnswerItems));
+            myWriter.close();
+        }
+    }
+
+    @Retryable(
+            value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {

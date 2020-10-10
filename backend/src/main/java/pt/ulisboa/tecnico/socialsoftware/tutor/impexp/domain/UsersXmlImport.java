@@ -98,6 +98,9 @@ public class UsersXmlImport {
 		User.Role role = getUserRole(userElement);
 
 		String username = authUserElement.getAttributeValue("username");
+		if (username.trim().isEmpty()) {
+			username = null;
+		}
 		String email = authUserElement.getAttributeValue("email");
 		if (email.trim().isEmpty()) {
 			email = null;

@@ -84,6 +84,11 @@ public class MultipleChoiceAnswer extends AnswerDetails {
     }
 
     @Override
+    public boolean isAnswered() {
+        return this.getOption() != null;
+    }
+
+    @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
         return new MultipleChoiceStatementAnswerDetailsDto(this);
     }

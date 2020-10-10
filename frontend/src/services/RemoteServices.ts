@@ -428,6 +428,19 @@ export default class RemoteServices {
       });
   }
 
+  static async getTopicQuestions(topicId: number): Promise<Question[]> {
+    return httpClient
+      .get(`/topics/${topicId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .put(`/topics/${topic.id}`, topic)
@@ -633,6 +646,19 @@ export default class RemoteServices {
           throw Error(await this.errorMessage(error));
         });
     }
+  }
+
+  static async getAssessmentQuestions(assessmentId: number) {
+    return httpClient
+      .get(`/assessments/${assessmentId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async deleteAssessment(assessmentId: number) {
@@ -845,6 +871,7 @@ export default class RemoteServices {
   static async exportAll() {
     return httpClient
       .get('/admin/export', {
+        timeout: 1000000,
         responseType: 'blob'
       })
       .then(response => {
@@ -875,6 +902,21 @@ export default class RemoteServices {
       })
       .then(response => {
         return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async exportCourseExecutionInfo(executionId: number): Promise<Blob> {
+    return httpClient
+      .get(`/executions/${executionId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/tar.gz, application/octet-stream'
+        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -950,21 +992,6 @@ export default class RemoteServices {
     return httpClient
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
-      )
-      .then(response => {
-        return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getTournamentsByUserId(): Promise<Tournament[]> {
-    return httpClient
-      .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getUserTournaments`
       )
       .then(response => {
         return response.data.map((tournament: any) => {

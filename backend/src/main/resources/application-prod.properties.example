@@ -17,11 +17,12 @@ oauth.consumer.secret=<FENIX SECRET>
 callback.url=<URL FENIX REDIRECTS TO>
 base.url=https://fenix.tecnico.ulisboa.pt
 
-spring.mail.host=a
-spring.mail.port=587
-spring.mail.username=a
-spring.mail.password=a
-spring.mail.properties.mail.transport.protocol="smpt"
-spring.mail.properties.mail.debug="true"
-spring.mail.properties.mail.smtp.auth=true
+# Send eamails
+spring.mail.host=smtp.tecnico.ulisboa.pt
+spring.mail.port=25
+spring.mail.username=no-reply@quizzes-tutor.tecnico.ulisboa.pt
+spring.mail.password=
+spring.mail.properties.mail.transport.protocol="smtp"
+spring.mail.properties.mail.smtp.auth=false
 spring.mail.properties.mail.smtp.starttls.enable=true
+

@@ -6,11 +6,11 @@
         <v-text-field v-model="email" label="Email" required></v-text-field>
         <v-text-field
           v-model="password"
-          :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-          :type="show1 ? 'text' : 'password'"
+          :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          :type="showPassword ? 'text' : 'password'"
           label="Password"
           required
-          @click:append="show1 = !show1"
+          @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-btn
           color="blue darken-1"
@@ -25,16 +25,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 
 @Component
 export default class LoginCard extends Vue {
-  email = '';
-  password = '';
-
-  show = false;
-
-  created() {}
+  email: string = '';
+  password: string = '';
+  showPassword: boolean = false;
 
   submit() {
     this.$emit('onSubmit', this.email, this.password);

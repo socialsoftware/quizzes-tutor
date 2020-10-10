@@ -12,7 +12,6 @@ import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import TournamentsView from '@/views/teacher/tournaments/TournamentsView.vue';
-import SelectedTournamentView from '@/views/teacher/tournaments/SelectedTournamentView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
@@ -24,21 +23,19 @@ import StatsView from '@/views/student/StatsView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import CodeView from '@/views/student/CodeView.vue';
 
-import AllTournamentView from './views/student/tournament/AllTournamentView.vue';
-import OpenTournamentView from '@/views/student/tournament/OpenTournamentView.vue';
-import ClosedTournamentView from '@/views/student/tournament/ClosedTournamentView.vue';
-import MyTournamentsView from '@/views/student/tournament/MyTournamentsView.vue';
-import ParticipantsTournamentView from '@/views/student/tournament/ParticipantsTournamentView.vue';
+import TournamentsListView from './views/student/tournament/TournamentsListView.vue';
 
 import AdminManagementView from '@/views/admin/AdminManagementView.vue';
 import NotFoundView from '@/views/NotFoundView.vue';
-import ImpExpView from '@/views/teacher/impexp/ImpExpView.vue';
+import ExportCourseView from '@/views/teacher/impexp/ExportCourseView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
 import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
+import ExportAllView from '@/views/admin/ExportAllView.vue';
 
 Vue.use(Router);
 
@@ -150,11 +147,11 @@ let router = new Router({
           }
         },
         {
-          path: 'impexp',
-          name: 'impexp-management',
-          component: ImpExpView,
+          path: 'export',
+          name: 'export-management',
+          component: ExportCourseView,
           meta: {
-            title: APP_NAME + ' - ImpExp',
+            title: APP_NAME + ' - Export',
             requiredAuth: 'Teacher'
           }
         },
@@ -256,36 +253,20 @@ let router = new Router({
           }
         },
         {
-          path: 'all',
-          name: 'all-tournament',
-          component: AllTournamentView,
+          path: 'tournaments/open',
+          name: 'open-tournaments',
+          component: TournamentsListView,
+          props: { type: 'OPEN' },
           meta: {
             title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
           }
         },
         {
-          path: 'open',
-          name: 'open-tournament',
-          component: OpenTournamentView,
-          meta: {
-            title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'closed',
-          name: 'closed-tournament',
-          component: ClosedTournamentView,
-          meta: {
-            title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
-        },
-        {
-          path: 'myTournaments',
-          name: 'my-tournaments',
-          component: MyTournamentsView,
+          path: 'tournaments/closed',
+          name: 'closed-tournaments',
+          component: TournamentsListView,
+          props: { type: 'CLOSED' },
           meta: {
             title: APP_NAME + ' - Tournament',
             requiredAuth: 'Student'
@@ -294,7 +275,7 @@ let router = new Router({
         {
           path: 'tournament',
           name: 'tournament-participants',
-          component: ParticipantsTournamentView,
+          component: TournamentResultsView,
           props: route => ({ id: route.query.id }),
           meta: {
             title: APP_NAME + ' - Tournament Participants',
@@ -315,7 +296,7 @@ let router = new Router({
     {
       path: '/teacher/tournament',
       name: 'tournament-dashboard',
-      component: SelectedTournamentView,
+      component: TournamentResultsView,
       props: route => ({ id: route.query.id }),
       meta: {
         title: APP_NAME + ' - Tournament Dashboard',
@@ -331,6 +312,15 @@ let router = new Router({
           path: 'courses',
           name: 'courseAdmin',
           component: CoursesView,
+          meta: {
+            title: APP_NAME + ' - Manage Courses',
+            requiredAuth: 'Admin'
+          }
+        },
+        {
+          path: 'export',
+          name: 'exportAll',
+          component: ExportAllView,
           meta: {
             title: APP_NAME + ' - Manage Courses',
             requiredAuth: 'Admin'

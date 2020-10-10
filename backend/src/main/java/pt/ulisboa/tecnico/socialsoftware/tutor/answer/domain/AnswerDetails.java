@@ -52,4 +52,6 @@ public abstract class AnswerDetails implements DomainEntity {
     public abstract AnswerDetailsDto getAnswerDetailsDto();
 
     public abstract StatementAnswerDetailsDto getStatementAnswerDetailsDto();
+
+    public abstract boolean isAnswered();
 }

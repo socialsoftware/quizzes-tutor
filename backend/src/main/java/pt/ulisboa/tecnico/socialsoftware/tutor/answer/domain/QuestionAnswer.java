@@ -148,4 +148,8 @@ public class QuestionAnswer implements DomainEntity {
             return this.getAnswerDetails().getStatementAnswerDetailsDto();
         }
     }
+
+    public boolean isAnswered() {
+        return this.getTimeTaken() != null && this.getAnswerDetails() != null && this.getAnswerDetails().isAnswered();
+    }
 }

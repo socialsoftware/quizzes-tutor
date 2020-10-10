@@ -29,7 +29,7 @@ Used on:
         "
         class="fas fa-times option-letter"
       />
-      <span v-else class="option-letter">{{ optionLetters[index] }}</span>
+      <span class="option-letter">{{ String.fromCharCode(65 + index) }}</span>
       <span
         class="option-content"
         v-html="convertMarkDown(questionDetails.options[index].content)"

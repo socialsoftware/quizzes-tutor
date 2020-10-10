@@ -42,6 +42,14 @@
                 <v-list-item-title>Manage Courses</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item to="/admin/export">
+              <v-list-item-action>
+                <v-icon>fas fa-download</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Export</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-menu>
 
@@ -115,12 +123,12 @@
                 <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/impexp">
+            <v-list-item to="/management/export">
               <v-list-item-action>
-                <v-icon>cloud</v-icon>
+                <v-icon>fas fa-download</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>ImpExp</v-list-item-title>
+                <v-list-item-title>Export</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -185,40 +193,25 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/student/myTournaments" data-cy="My">
-              <v-list-item-action>
-                <v-icon>fas fa-user-check</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>My Tournaments</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/all" data-cy="All">
-              <v-list-item-action>
-                <v-icon>fas fa-calendar</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>All</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/student/open" data-cy="Open">
+            <v-list-item to="/student/tournaments/open" data-cy="Open">
               <v-list-item-action>
                 <v-icon>fas fa-medal</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Open</v-list-item-title>
+                <v-list-item-title>Open Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/student/closed" data-cy="Closed">
+            <v-list-item to="/student/tournaments/closed" data-cy="Closed">
               <v-list-item-action>
                 <v-icon>fas fa-award</v-icon>
               </v-list-item-action>
               <v-list-item-content>
-                <v-list-item-title>Closed</v-list-item-title>
+                <v-list-item-title>Closed Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-menu>
+
         <v-btn
           to="/student/submissions"
           v-if="isStudent && currentCourse"
@@ -245,7 +238,9 @@
           Change course
           <v-icon>fa fa-book</v-icon>
         </v-btn>
+      </v-toolbar-items>
 
+      <v-toolbar-items class="hidden-sm-and-down" hide-details>
         <v-menu offset-y v-if="!isLoggedIn" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark>
@@ -306,6 +301,14 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Manage Courses</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/admin/export">
+            <v-list-item-action>
+              <v-icon>fas fa-download</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Export</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -375,12 +378,12 @@
               <v-list-item-title>Tournaments</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/management/impexp">
+          <v-list-item to="/management/export">
             <v-list-item-action>
-              <v-icon>cloud</v-icon>
+              <v-icon>fas fa-download</v-icon>
             </v-list-item-action>
             <v-list-item-content>
-              <v-list-item-title>ImpExp</v-list-item-title>
+              <v-list-item-title>Export</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
@@ -446,29 +449,18 @@
             </v-list-item-action>
             <v-list-item-title>Stats</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/student/all">
-            <v-list-item-action>
-              <v-icon>fas fa-calendar</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>All Tournaments</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/student/open">
+
+          <v-list-item to="/student/tournaments/open">
             <v-list-item-action>
               <v-icon>fas fa-medal</v-icon>
             </v-list-item-action>
             <v-list-item-title>Open Tournaments</v-list-item-title>
           </v-list-item>
-          <v-list-item to="/student/closed">
+          <v-list-item to="/student/tournaments/closed">
             <v-list-item-action>
               <v-icon>fas fa-award</v-icon>
             </v-list-item-action>
             <v-list-item-title>Closed Tournaments</v-list-item-title>
-          </v-list-item>
-          <v-list-item to="/student/myTournaments">
-            <v-list-item-action>
-              <v-icon>fas fa-medal</v-icon>
-            </v-list-item-action>
-            <v-list-item-title>My Tournaments</v-list-item-title>
           </v-list-item>
         </v-list-group>
 

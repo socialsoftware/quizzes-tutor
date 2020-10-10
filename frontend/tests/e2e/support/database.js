@@ -55,25 +55,24 @@ Cypress.Commands.add('updateTournamentStartTime', () => {
 
 Cypress.Commands.add('afterEachTournament', () => {
   dbCommand(`
-        DELETE FROM tournaments_topics WHERE topics_id = 82;
-        DELETE FROM tournaments_topics WHERE topics_id = 83;
-        DELETE FROM topics_topic_conjunctions WHERE topics_id = 82;
-        DELETE FROM topics_topic_conjunctions WHERE topics_id = 83;
-        DELETE FROM topic_conjunctions WHERE id = 100;
-        DELETE FROM topic_conjunctions WHERE id = 101;
-        DELETE FROM assessments WHERE id = 1;
-        DELETE FROM assessments WHERE id = 2;
-        DELETE FROM topics_questions WHERE questions_id = 1389;
-        DELETE FROM topics WHERE id = 82;
-        DELETE FROM topics WHERE id = 83;
-        DELETE FROM question_answers WHERE quiz_question_id = 1;
-        DELETE FROM question_answers WHERE quiz_question_id = 2;
-        DELETE FROM quiz_questions WHERE question_id = 1389;
-        DELETE FROM questions WHERE id = 1389;
-        DELETE FROM tournaments_participants;
-        DELETE FROM tournaments; 
-        ALTER SEQUENCE tournaments_id_seq RESTART WITH 1;
-        UPDATE tournaments SET id=nextval('tournaments_id_seq');
+         DELETE FROM tournaments_topics WHERE topics_id = 82;
+         DELETE FROM tournaments_topics WHERE topics_id = 83;
+         DELETE FROM topics_topic_conjunctions WHERE topics_id = 82;
+         DELETE FROM topics_topic_conjunctions WHERE topics_id = 83;
+         DELETE FROM topic_conjunctions WHERE id = 100;
+         DELETE FROM topic_conjunctions WHERE id = 101;
+         DELETE FROM assessments WHERE id = 1;
+         DELETE FROM assessments WHERE id = 2;
+         DELETE FROM topics_questions WHERE questions_id = 1389;
+         DELETE FROM topics WHERE id = 82;
+         DELETE FROM topics WHERE id = 83;
+         DELETE FROM question_answers USING quiz_questions WHERE quiz_questions.id = question_answers.quiz_question_id AND quiz_questions.question_id = 1389;
+         DELETE FROM quiz_questions WHERE question_id = 1389;
+         DELETE FROM questions WHERE id = 1389;
+         DELETE FROM tournaments_participants;
+         DELETE FROM tournaments; 
+         ALTER SEQUENCE tournaments_id_seq RESTART WITH 1;
+         UPDATE tournaments SET id=nextval('tournaments_id_seq');
     `);
 });
 

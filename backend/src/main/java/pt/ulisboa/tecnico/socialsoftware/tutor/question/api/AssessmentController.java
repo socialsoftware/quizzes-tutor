@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -34,6 +35,12 @@ public class AssessmentController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
         return this.assessmentService.createAssessment(executionId, assessment);
+    }
+
+    @GetMapping("/assessments/{assessmentId}/questions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')")
+    public List<QuestionDto> getAssessmentQuestions(@PathVariable Integer assessmentId) {
+        return this.assessmentService.getAssessmentQuestions(assessmentId);
     }
 
     @PutMapping("/assessments/{assessmentId}")

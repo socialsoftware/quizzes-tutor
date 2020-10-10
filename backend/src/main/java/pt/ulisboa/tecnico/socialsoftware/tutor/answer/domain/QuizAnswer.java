@@ -196,4 +196,12 @@ public class QuizAnswer implements DomainEntity {
         return !isCompleted() && !(getQuiz().isOneWay() && getCreationDate() != null);
     }
 
+    public long getNumberOfAnsweredQuestions() {
+        return getQuestionAnswers().stream().filter(questionAnswer -> questionAnswer.isAnswered()).count();
+    }
+
+    public long getNumberOfCorrectAnswers() {
+        return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
+
 }

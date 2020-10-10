@@ -20,11 +20,3 @@ base.url=https://fenix.tecnico.ulisboa.pt
 # Restart server
 spring.devtools.restart.enabled=true
 
-spring.mail.host=a
-spring.mail.port=587
-spring.mail.username=a
-spring.mail.password=a
-spring.mail.properties.mail.transport.protocol="smpt"
-spring.mail.properties.mail.debug="true"
-spring.mail.properties.mail.smtp.auth=true
-spring.mail.properties.mail.smtp.starttls.enable=true

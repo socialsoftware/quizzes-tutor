@@ -31,6 +31,7 @@ export default class TournamentScore {
     return tournamentScores;
   }
 
+  // TODO: Fix calculate score
   static calculateScore(quiz: SolvedQuiz, correctAnswers: number) {
     let correct = 0;
     for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {

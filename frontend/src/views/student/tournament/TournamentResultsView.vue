@@ -24,6 +24,13 @@
                   : 'Unknown tournament'
               }}</span
               ><br />
+              <b style="color: #1976d2">Creator: </b>
+              <span>{{
+                selectedTournament !== null
+                  ? selectedTournament.creator.name
+                  : 'Unknown tournament'
+              }}</span
+              ><br />
               <b style="color: #1976d2">Topics: </b>
               <span data-cy="Topics"
                 >{{ selectedTournament !== null ? '' : 'Unknown tournament' }}
@@ -83,7 +90,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getStateName(selectedTournament.state)
+                          ? selectedTournament.getStateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -93,7 +100,7 @@
                     <span data-cy="Id" class="num2"
                       ><b>{{
                         selectedTournament !== null
-                          ? getPrivateName(selectedTournament)
+                          ? selectedTournament.getPrivateName()
                           : 'Unknown tournament'
                       }}</b></span
                     >
@@ -126,51 +133,41 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
-import User from '@/models/user/User';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
+import TournamentParticipant from '@/models/user/TournamentParticipant';
 
 @Component({
   components: { AnimatedNumber }
 })
-export default class SelectedTournamentView extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
+export default class TournamentResultsView extends Vue {
   @Prop({ type: String, required: true }) id!: number;
 
-  tournaments: Tournament[] = [];
   selectedTournament: Tournament | null = null;
-  participants: User[] = [];
-  currentUsername: string | null = null;
-  dashboardDialog: boolean = false;
+  participants: TournamentParticipant[] = [];
 
   headers: object = [
     { text: 'Name', value: 'name', align: 'center' },
-    { text: 'Username', value: 'username', align: 'center' }
+    { text: 'Username', value: 'username', align: 'center' },
+    { text: 'Number of Answers', value: 'numberOfAnswered', align: 'center' },
+    {
+      text: 'Number of Correct Answers',
+      value: 'numberOfCorrect',
+      align: 'center'
+    },
+    { text: 'Score', value: 'score', align: 'center' }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
-      this.tournaments.map(tournament => {
-        if (tournament.id == this.id) this.selectedTournament = tournament;
-      });
+      this.selectedTournament = await RemoteServices.getTournament(this.id);
       if (this.selectedTournament)
         this.participants = this.selectedTournament.participants;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  getStateName(state: string) {
-    if (state === 'NOT_CANCELED') return 'AVAILABLE';
-    else return 'CLOSED';
-  }
-
-  getPrivateName(privateTournament: boolean) {
-    if (privateTournament) return 'PRIVATE';
-    else return 'PUBLIC';
   }
 }
 </script>

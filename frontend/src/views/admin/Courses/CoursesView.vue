@@ -26,7 +26,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="createFromCourse(item)"
               data-cy="createFromCourse"
@@ -38,7 +38,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="viewCourseExecutionUsers(item)"
               data-cy="viewUsersButton"
@@ -50,7 +50,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="uploadUsersHandler(item)"
               data-cy="uploadUsersHandler"
@@ -62,7 +62,7 @@
         <v-tooltip bottom v-if="isExternalCourse(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="addExternalUser(item)"
               data-cy="addExternalUser"
@@ -74,7 +74,7 @@
         <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
           <template v-slot:activator="{ on }">
             <v-icon
-              class="mr-2"
+              class="mr-2 action-button"
               v-on="on"
               @click="anonymizeCourse(item)"
               color="red"
@@ -88,6 +88,17 @@
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2"
+              v-on="on"
+              @click="exportCourseExecutionInfo(item)"
+              >fas fa-download</v-icon
+            >
+          </template>
+          <span>Export</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
               v-on="on"
               @click="deleteCourse(item)"
               color="red"
@@ -398,6 +409,25 @@ export default class CoursesView extends Vue {
       }
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  async exportCourseExecutionInfo(course: Course) {
+    let fileName = course.acronym + '.tar.gz';
+    try {
+      if (course.courseExecutionId != null) {
+        let result = await RemoteServices.exportCourseExecutionInfo(
+          course.courseExecutionId
+        );
+        const url = window.URL.createObjectURL(result);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
   }
 }
 </script>

@@ -52,7 +52,9 @@ public class UsersXmlExport {
 
 		userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
 
-		userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+		if (user.getCreationDate() != null) {
+			userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+		}
 
 		if (user.getAuthUser() != null) {
 			exportAuthUsers(userElement, user.getAuthUser());
@@ -79,7 +81,7 @@ public class UsersXmlExport {
 		Element authUsersElement = new Element("authUsers");
 		Element authUserElement = new Element("authUser");
 
-		authUserElement.setAttribute("username", authUser.getUsername());
+		authUserElement.setAttribute("username", authUser.getUsername() != null ? authUser.getUsername() : "");
 
 		authUserElement.setAttribute("email", authUser.getEmail() != null ? authUser.getEmail() : "");
 
