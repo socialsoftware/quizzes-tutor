@@ -19,16 +19,6 @@
               :label="discussion.closed ? 'Closed' : 'Reopen'"
               @change="changeDiscussionStatus(discussion.id)"
             />
-
-            <!--<v-btn
-              v-if="discussion.replies !== null && discussion.closed"
-              style="width: 12%"
-              color="primary"
-              v-model="discussion.closed"
-              dark
-              @change="changeDiscussionStatus(discussion.id)"
-              >Reopen</v-btn
-            >-->
           </div>
           <v-expansion-panels v-if="discussion.replies !== null" :inset="true">
             <v-expansion-panel>

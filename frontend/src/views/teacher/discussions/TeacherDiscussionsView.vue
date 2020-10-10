@@ -19,9 +19,17 @@
             label="Search"
             single-line
             hide-details
+            class="mx-2"
           />
 
           <v-spacer />
+          <v-btn
+            style="margin-right: 2% !important"
+            color="primary"
+            dark
+            @click="getDiscussions"
+            >Refresh List</v-btn
+          >
           <v-btn
             v-if="!showClosedDiscussions"
             color="primary"
@@ -87,7 +95,6 @@ import TeacherShowDiscussionDialog from './TeacherShowDiscussionDialog.vue';
 export default class TeacherDiscussionsView extends Vue {
   discussions: Discussion[] = [];
   search: string = '';
-  //executionId: number = this.$store.getters.getCurrentCourse.courseExecutionId;
   currentDiscussion: Discussion | null = null;
   discussionDialog: boolean = false;
   showClosedDiscussions: boolean = false;
@@ -159,7 +166,26 @@ export default class TeacherDiscussionsView extends Vue {
     }
     await this.$store.dispatch('clearLoading');
   }
+
+  async getDiscussions() {
+    await this.$store.dispatch('loading');
+    try {
+      if (this.showClosedDiscussions) {
+        [this.discussions] = await Promise.all([
+          RemoteServices.getCourseExecutionDiscussions()
+        ]);
+      } else {
+        [this.discussions] = await Promise.all([
+          RemoteServices.getOpenCourseExecutionDiscussions()
+        ]);
+      }
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

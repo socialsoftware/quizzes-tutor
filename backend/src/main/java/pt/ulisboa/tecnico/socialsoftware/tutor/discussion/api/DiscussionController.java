@@ -71,14 +71,14 @@ public class DiscussionController {
 
     @GetMapping(value = "/discussions/question/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')")
-    public List<DiscussionDto> getAvailableDiscussionsByQuestionId(Principal principal, @Valid @RequestParam Integer questionId) {
+    public List<ReplyDto> getClarificationsByQuestionId(Principal principal, @Valid @RequestParam Integer questionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if(user == null){
             throw new TutorException(ErrorMessage.AUTHENTICATION_ERROR);
         }
 
-        return discussionService.findDiscussionsByQuestionId(questionId).stream().filter(DiscussionDto::isAvailable).collect(Collectors.toList());
+        return discussionService.findClarificationsByQuestionId(questionId);
     }
 
     @PostMapping(value = "/discussions/{quizAnswerId}/{questionOrder}")

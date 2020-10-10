@@ -10,7 +10,7 @@
         <span class="headline">Clarifications</span>
       </v-card-title>
 
-      <show-clarifications :discussions="clarifications">
+      <show-clarifications :clarifications="clarifications">
       </show-clarifications>
 
       <v-card-actions>
@@ -27,6 +27,7 @@ import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import ShowClarifications from '@/views/teacher/discussions/ShowClarifications.vue';
+import Reply from '@/models/management/Reply';
 
 @Component({
   components: {
@@ -36,13 +37,13 @@ import ShowClarifications from '@/views/teacher/discussions/ShowClarifications.v
 export default class ShowClarificationDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
-  clarifications: Discussion[] = [];
+  clarifications: Reply[] = [];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
       [this.clarifications] = await Promise.all([
-        RemoteServices.getAvailableDiscussionsByQuestionId(this.question.id!)
+        RemoteServices.getClarificationsByQuestionId(this.question.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);

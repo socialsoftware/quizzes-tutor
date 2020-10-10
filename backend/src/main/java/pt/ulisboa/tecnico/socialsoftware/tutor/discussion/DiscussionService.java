@@ -26,6 +26,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -239,5 +240,18 @@ public class DiscussionService {
         });
         discussion.remove();
         discussionRepository.delete(discussion);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ReplyDto> findClarificationsByQuestionId(Integer questionId) {
+        List<ReplyDto> newList = new ArrayList<>();
+
+        discussionRepository.findByQuestionId(questionId).stream().filter(Discussion::isAvailable
+        ).forEach(discussion -> {
+            newList.addAll(discussion.getClarifications().stream().map(ReplyDto::new).collect(Collectors.toList()));
+        });
+
+        return newList;
     }
 }

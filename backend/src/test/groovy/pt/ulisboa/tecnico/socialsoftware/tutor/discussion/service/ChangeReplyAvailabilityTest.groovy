@@ -87,7 +87,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
     }
 
-    def "changes reply availability to available"(){
+    def "changes reply to available with discussion not available"(){
         given: "reply not available"
         replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
@@ -102,11 +102,106 @@ class ChangeReplyAvailabilityTest extends SpockTest {
 
         then: "the availability has changed"
         replyRepository.count() == 1L
-        def result = replyRepository.findAll().get(0)
+        def result = replyRepository.findById(replyDto.getId()).get()
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
         result.isAvailable() == true
-        def resultDiscussion = discussionRepository.findAll().get(0)
+        def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
+        resultDiscussion.available == true
+    }
+
+    def "changes reply to available with discussion available"(){
+        given: "an available discussion"
+        replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(teacher.getId())
+        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setId(replyRepository.findAll().get(0).getId())
+        //turns discussion to available
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        and: "a non available reply"
+        replyDto2 = new ReplyDto()
+        replyDto2.setMessage(DISCUSSION_REPLY)
+        replyDto2.setUserId(teacher.getId())
+        replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto2.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto2)
+        replyDto2.setId(replyRepository.findAll().get(1).getId())
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        when: "change reply availability"
+        discussionService.changeReplyAvailability(replyDto2.getId())
+
+        then: "the availability has changed"
+        replyRepository.count() == 2L
+        def result = replyRepository.findById(replyDto2.getId()).get()
+        result.getMessage() == DISCUSSION_REPLY
+        result.getUser() == teacher
+        result.isAvailable() == true
+        def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
+        resultDiscussion.available == true
+    }
+
+    def "changes reply to not available with discussion available and no public replies"(){
+        given: "an available discussion and available reply"
+        replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(teacher.getId())
+        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setId(replyRepository.findAll().get(0).getId())
+        //turns discussion to available
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        when: "change reply availability"
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        then: "the availability has changed"
+        replyRepository.count() == 1L
+        def result = replyRepository.findById(replyDto.getId()).get()
+        result.getMessage() == DISCUSSION_REPLY
+        result.getUser() == teacher
+        result.isAvailable() == false
+        def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
+        resultDiscussion.available == false
+    }
+
+    def "changes reply to not available with discussion available and public replies"(){
+        given: "an available discussion and available reply"
+        replyDto = new ReplyDto()
+        replyDto.setMessage(DISCUSSION_REPLY)
+        replyDto.setUserId(teacher.getId())
+        replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setId(replyRepository.findAll().get(0).getId())
+        //turns discussion to available
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        and: "a non available reply"
+        replyDto2 = new ReplyDto()
+        replyDto2.setMessage(DISCUSSION_REPLY)
+        replyDto2.setUserId(teacher.getId())
+        replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
+        replyDto2.setAvailable(false)
+        discussionService.createReply(discussionDto, replyDto2)
+        replyDto2.setId(replyRepository.findAll().get(1).getId())
+        discussionService.changeReplyAvailability(replyDto2.getId())
+
+        when: "change reply availability"
+        discussionService.changeReplyAvailability(replyDto.getId())
+
+        then: "the availability has changed"
+        replyRepository.count() == 2L
+        def result = replyRepository.findById(replyDto.getId()).get()
+        result.getMessage() == DISCUSSION_REPLY
+        result.getUser() == teacher
+        result.isAvailable() == false
+        def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
         resultDiscussion.available == true
     }
 

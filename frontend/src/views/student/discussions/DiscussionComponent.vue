@@ -1,6 +1,6 @@
 <template>
   <div class="discussions-clarifications-container">
-    <clarification-component :discussions="otherDiscussions">
+    <clarification-component :clarifications="clarifications">
     </clarification-component>
     <div class="discussion-container" v-if="answered">
       <v-card>
@@ -43,6 +43,7 @@ import Discussion from '@/models/management/Discussion';
 import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 import RemoteServices from '@/services/RemoteServices';
 import ClarificationComponent from './ClarificationComponent.vue';
+import Reply from '@/models/management/Reply';
 
 @Component({
   components: {
@@ -53,7 +54,7 @@ import ClarificationComponent from './ClarificationComponent.vue';
 export default class DiscussionComponent extends Vue {
   @Prop(Boolean) readonly hasDiscussion!: boolean;
   @Prop() readonly question!: Question;
-  otherDiscussions: Discussion[] = [];
+  clarifications: Reply[] = [];
   @Prop() readonly userDiscussion?: Discussion;
   @Prop(Boolean) readonly answered!: boolean;
   discussionMessage: string = '';
@@ -61,8 +62,8 @@ export default class DiscussionComponent extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      [this.otherDiscussions] = await Promise.all([
-        RemoteServices.getAvailableDiscussionsByQuestionId(this.question.id!)
+      [this.clarifications] = await Promise.all([
+        RemoteServices.getClarificationsByQuestionId(this.question.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -86,8 +87,8 @@ export default class DiscussionComponent extends Vue {
     this.discussionMessage = '';
     await this.$store.dispatch('loading');
     try {
-      [this.otherDiscussions] = await Promise.all([
-        RemoteServices.getAvailableDiscussionsByQuestionId(this.question.id!)
+      [this.clarifications] = await Promise.all([
+        RemoteServices.getClarificationsByQuestionId(this.question.id!)
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);

@@ -1153,12 +1153,12 @@ export default class RemoteServices {
       });
   }
 
-  static getAvailableDiscussionsByQuestionId(id: number): any {
+  static getClarificationsByQuestionId(id: number): any {
     return httpClient
       .get('/discussions/question/available?questionId=' + id)
       .then(response => {
-        return response.data.map((discussion: any) => {
-          return new Discussion(discussion);
+        return response.data.map((reply: any) => {
+          return new Reply(reply);
         });
       });
   }

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -173,6 +174,10 @@ public class Discussion implements DomainEntity {
         user = null;
 
         replies.clear();
+    }
+
+    public List<Reply> getClarifications() {
+        return this.getReplies().stream().filter(Reply::isAvailable).collect(Collectors.toList());
     }
 
     @Override

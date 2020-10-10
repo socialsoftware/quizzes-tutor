@@ -155,7 +155,7 @@ class ChangeStatusTest extends SpockTest {
         discussionService.changeStatus(discussionDto.getId())
         discussionService.changeStatus(discussionDto.getId())
 
-        then: "the status has changed"
+        then: "the status remains the same"
         def resultDiscussionList = discussionService.findDiscussionsByUserId(student.getId())
         resultDiscussionList.size() == 1
         def discussion = resultDiscussionList.get(0)
