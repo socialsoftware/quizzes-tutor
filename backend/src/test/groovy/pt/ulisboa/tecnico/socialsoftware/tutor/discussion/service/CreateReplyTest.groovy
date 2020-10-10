@@ -66,18 +66,13 @@ class CreateReplyTest extends SpockTest {
         questionanswer.setQuizAnswer(quizanswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-
-
+        quizquestion.getQuestionAnswers().clear()
+        quizanswer.getQuestionAnswers().clear()
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
-
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
         quiz.addQuizQuestion(quizQuestionRepository.findAll().get(0))
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
-
-
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
 
         discussionDto = new DiscussionDto()
@@ -86,7 +81,7 @@ class CreateReplyTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), questionRepository.findAll().get(0).getId(), discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
     }
 

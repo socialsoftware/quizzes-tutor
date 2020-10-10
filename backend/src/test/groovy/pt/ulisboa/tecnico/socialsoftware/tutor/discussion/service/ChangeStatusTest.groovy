@@ -62,7 +62,8 @@ class ChangeStatusTest extends SpockTest {
         questionanswer.setQuizAnswer(quizanswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-
+        quizquestion.getQuestionAnswers().clear()
+        quizanswer.getQuestionAnswers().clear()
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
@@ -77,7 +78,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), questionRepository.findAll().get(0).getId(), discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
 
         replyDto = new ReplyDto()
@@ -124,7 +125,8 @@ class ChangeStatusTest extends SpockTest {
         questionanswer.setQuizAnswer(quizanswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-
+        quizquestion.getQuestionAnswers().clear()
+        quizanswer.getQuestionAnswers().clear()
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(1))
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(1))
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(1))
@@ -139,7 +141,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto2.setUserId(student.getId())
         discussionDto2.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto2)
+        discussionService.createDiscussion(quizanswer.getId(), questionRepository.findAll().get(0).getId(), discussionDto2)
         discussionDto2.setId(discussionRepository.findAll().get(1).getId())
 
         when: "change open discussion with no replies status"

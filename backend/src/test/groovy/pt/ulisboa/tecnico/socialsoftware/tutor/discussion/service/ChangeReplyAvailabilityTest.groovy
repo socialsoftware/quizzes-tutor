@@ -61,18 +61,13 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         questionanswer.setQuizAnswer(quizanswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-
-
+        quizquestion.getQuestionAnswers().clear()
+        quizanswer.getQuestionAnswers().clear()
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
         quizanswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
-
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
         quiz.addQuizQuestion(quizQuestionRepository.findAll().get(0))
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
-
-
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
 
         discussionDto = new DiscussionDto()

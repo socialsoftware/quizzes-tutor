@@ -122,7 +122,7 @@ public enum ErrorMessage {
     REPLY_UNAUTHORIZED_USER("Reply is not authorized!"),
     USER_NOT_STUDENT("This user is not a student"),
     CLOSE_NOT_POSSIBLE("Impossible to close discussion with no replies"),
-    MORE_THAN_ONE_QUESTION_ANSWER("More than one question answer!"),
+    MORE_THAN_ONE_QUESTION_ANSWER("More than one question answer! QuestionId: %d"),
 
     QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
     QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),

@@ -79,7 +79,7 @@ public class DiscussionService {
         }).collect(Collectors.toList());
 
         if(questionAnswerList.size() != 1){
-            throw new TutorException(MORE_THAN_ONE_QUESTION_ANSWER);
+            throw new TutorException(MORE_THAN_ONE_QUESTION_ANSWER,questionId);
         }
 
         QuestionAnswer questionAnswer = questionAnswerList.get(0);

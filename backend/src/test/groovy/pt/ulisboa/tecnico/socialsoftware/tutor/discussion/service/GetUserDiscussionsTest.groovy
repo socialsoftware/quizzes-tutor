@@ -55,18 +55,13 @@ class GetUserDiscussionsTest extends SpockTest {
         questionanswer.setQuizAnswer(quizAnswer)
         questionanswer.setQuizQuestion(quizquestion)
         questionAnswerRepository.save(questionanswer)
-
-
+        quizquestion.getQuestionAnswers().clear()
+        quizAnswer.getQuestionAnswers().clear()
         quizquestion.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
         quizAnswer.addQuestionAnswer(questionAnswerRepository.findAll().get(0))
-
-
         quiz.addQuizAnswer(quizAnswerRepository.findAll().get(0))
         quiz.addQuizQuestion(quizQuestionRepository.findAll().get(0))
         quiz.setCourseExecution(courseExecutionRepository.findAll().get(0))
-
-
         student.addQuizAnswer(quizAnswerRepository.findAll().get(0))
     }
 
@@ -80,7 +75,7 @@ class GetUserDiscussionsTest extends SpockTest {
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
         and: "created discussion"
-        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), questionRepository.findAll().get(0).getId(), discussionDto)
 
         when:
         def discussionsResult = discussionService.findDiscussionsByUserId(student.getId())

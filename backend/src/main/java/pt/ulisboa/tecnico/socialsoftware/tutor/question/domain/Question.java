@@ -223,6 +223,10 @@ public class Question implements DomainEntity {
         course.addQuestion(this);
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
     @Override
     public String toString() {
         return "Question{" +
