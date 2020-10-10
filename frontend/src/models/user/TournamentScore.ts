@@ -3,6 +3,7 @@ import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import RemoteServices from '@/services/RemoteServices';
 import Tournament from '@/models/user/Tournament';
 
+// TODO: Is this needed? Probably can be deleted
 export default class TournamentScore {
   username: string;
   name: string;
