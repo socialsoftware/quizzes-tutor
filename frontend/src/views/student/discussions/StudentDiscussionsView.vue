@@ -28,6 +28,10 @@
         >
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
+      <template v-slot:item.closed="{ item }">
+        <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
+        <v-chip v-else :color="'red'" dark>No</v-chip>
+      </template>
       <template v-slot:item.replies.length="{ item }">
         <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
         <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>

@@ -86,7 +86,7 @@ class CreateReplyTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
     }
 

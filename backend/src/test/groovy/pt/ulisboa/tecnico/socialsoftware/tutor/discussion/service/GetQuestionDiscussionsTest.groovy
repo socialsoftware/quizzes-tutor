@@ -80,7 +80,7 @@ class GetQuestionDiscussionsTest extends SpockTest {
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
         and: "created discussion"
-        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto)
 
         when:
         def discussionsResult = discussionService.findDiscussionsByUserId(student.getId())

@@ -93,7 +93,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
 
         when:
-        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto)
 
         then: "the correct discussion is inside the repository"
         discussionRepository.count() == 1L
@@ -115,7 +115,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "creating a discussion on a non answered question"
-        discussionService.createDiscussion(quizAnswer.getId(), 1, discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), question2.getId(), discussionDto)
 
         then:
         def exception = thrown(TutorException)
@@ -144,8 +144,8 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto2.setUserName(student.getUsername())
 
         when: "creating two discussions on the same question"
-        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto1)
-        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto2)
+        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto1)
+        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto2)
 
         then:
         def exception = thrown(TutorException)
@@ -163,7 +163,7 @@ class CreateDiscussionTest extends SpockTest {
         userRepository.save(student)
 
         when: "creating discussion"
-        discussionService.createDiscussion(quizAnswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizAnswer.getId(), question1.getId(), discussionDto)
 
         then:
         def exception = thrown(TutorException)

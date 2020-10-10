@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -15,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -54,7 +58,7 @@ public class DiscussionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DiscussionDto createDiscussion(int quizAnswerId, int questionOrder, DiscussionDto discussionDto) {
+    public DiscussionDto createDiscussion(int quizAnswerId, int questionId, DiscussionDto discussionDto) {
         checkDiscussionDto(discussionDto);
         User user = userRepository.findById(discussionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, discussionDto.getUserId()));
         Question question = questionRepository.findById(discussionDto.getQuestion().getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, discussionDto.getQuestion().getId()));
@@ -62,10 +66,26 @@ public class DiscussionService {
 
         checkUserAndQuestion(user, question);
         checkMessage(discussionDto.getMessage());
-        checkQuizAnswer(quizAnswer, questionOrder);
-        checkExistingDiscussion(quizAnswer, questionOrder);
+        checkQuizAnswer(quizAnswer);
 
-        Discussion discussion = new Discussion(user, quizAnswer.getQuestionAnswers().get(questionOrder), discussionDto);
+
+        List<QuestionAnswer> questionAnswerList = quizAnswer.getQuestionAnswers().stream().filter(qAnswer -> {
+            if(qAnswer.getQuizQuestion().getQuestion().getId() == questionId) {
+                return true;
+            }
+            else{
+                return false;
+            }
+        }).collect(Collectors.toList());
+
+        if(questionAnswerList.size() != 1){
+            throw new TutorException(MORE_THAN_ONE_QUESTION_ANSWER);
+        }
+
+        QuestionAnswer questionAnswer = questionAnswerList.get(0);
+        checkExistingDiscussion(questionAnswer);
+
+        Discussion discussion = new Discussion(user, questionAnswer, discussionDto);
         this.entityManager.persist(discussion);
         List<ReplyDto> replies = discussionDto.getReplies();
         if (replies != null && !replies.isEmpty()) {
@@ -80,8 +100,8 @@ public class DiscussionService {
         return new DiscussionDto(discussion);
     }
 
-    private void checkExistingDiscussion(QuizAnswer quizAnswer, int questionOrder) {
-        if (quizAnswer.getQuestionAnswers().get(questionOrder).getDiscussion() != null) {
+    private void checkExistingDiscussion(QuestionAnswer questionAnswer) {
+        if (questionAnswer.getDiscussion() != null) {
             throw new TutorException(DUPLICATE_DISCUSSION);
         }
     }
@@ -146,13 +166,9 @@ public class DiscussionService {
         }
     }
 
-    private void checkQuizAnswer(QuizAnswer quizAnswer, int questionOrder) {
+    private void checkQuizAnswer(QuizAnswer quizAnswer) {
         if(quizAnswer == null || quizAnswer.getQuestionAnswers() == null) {
             throw new TutorException(QUIZ_ANSWER_NOT_FOUND);
-        }
-
-        if(questionOrder >= quizAnswer.getQuestionAnswers().size() || questionOrder < 0) {
-            throw new TutorException(QUESTION_ANSWER_NOT_FOUND);
         }
     }
 

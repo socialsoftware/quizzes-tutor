@@ -495,9 +495,7 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
   cy.get('[data-cy="managementMenuButton"]').click()
   cy.get('[data-cy="discussionsTeacherButton"]').click()
   cy.contains(discussionContent).parent().should('have.length', 1).children()
-    .should('have.length', 8)
-
-  cy.get('[data-cy="showDiscussionButton"]').click()
+    .should('have.length', 8).find('[data-cy="showDiscussionButton"]').click()
 
   cy.get('[data-cy="replyTextArea"]').type(replyContent)
   cy.get('[data-cy="submitReplyButton"]').click()

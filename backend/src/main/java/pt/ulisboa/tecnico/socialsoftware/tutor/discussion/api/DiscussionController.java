@@ -81,9 +81,9 @@ public class DiscussionController {
         return discussionService.findClarificationsByQuestionId(questionId);
     }
 
-    @PostMapping(value = "/discussions/{quizAnswerId}/{questionOrder}")
+    @PostMapping(value = "/discussions/{quizAnswerId}/{questionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public DiscussionDto createDiscussion(Principal principal, @PathVariable int quizAnswerId, @PathVariable int questionOrder, @Valid @RequestBody DiscussionDto discussion){
+    public DiscussionDto createDiscussion(Principal principal, @PathVariable int quizAnswerId, @PathVariable int questionId, @Valid @RequestBody DiscussionDto discussion){
         User user = (User) ((Authentication) principal).getPrincipal();
 
         if (user == null) {
@@ -93,7 +93,7 @@ public class DiscussionController {
         discussion.setUserId(user.getId());
         discussion.setDate(DateHandler.toISOString(DateHandler.now()));
 
-        return discussionService.createDiscussion(quizAnswerId, questionOrder, discussion);
+        return discussionService.createDiscussion(quizAnswerId, questionId, discussion);
     }
 
     @PutMapping(value = "/discussions/status")

@@ -77,7 +77,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
 
         replyDto = new ReplyDto()
@@ -139,7 +139,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto2.setUserId(student.getId())
         discussionDto2.setUserName(student.getUsername())
-        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto2)
+        discussionService.createDiscussion(quizanswer.getId(), question1.getId(), discussionDto2)
         discussionDto2.setId(discussionRepository.findAll().get(1).getId())
 
         when: "change open discussion with no replies status"

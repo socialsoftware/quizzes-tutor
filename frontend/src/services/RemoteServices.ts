@@ -1186,11 +1186,11 @@ export default class RemoteServices {
 
   static async createDiscussion(
     discussion: Discussion,
-    questionOrder: number,
+    questionId: number,
     quizAnswerId: number
   ): Promise<Discussion> {
     return httpClient
-      .post(`/discussions/${quizAnswerId}/${questionOrder}`, discussion)
+      .post(`/discussions/${quizAnswerId}/${questionId}`, discussion)
       .then(response => {
         return new Discussion(response.data);
       })

@@ -83,7 +83,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
         discussionDto.setAvailable(false)
         discussionDto.setClosed(false)
-        discussionService.createDiscussion(quizanswer.getId(), 0, discussionDto)
+        discussionService.createDiscussion(quizanswer.getId(), questionRepository.findAll().get(0).getId(), discussionDto)
         discussionDto.setId(discussionRepository.findAll().get(0).getId())
     }
 
