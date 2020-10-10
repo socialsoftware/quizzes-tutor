@@ -11,12 +11,13 @@
         <v-textarea
           v-model="option.content"
           :label="`Option ${index + 1}`"
+          :data-cy="`Option${index + 1}`"
           rows="1"
           auto-grow
         ></v-textarea>
       </v-col>
       <v-col cols="1">
-        <v-switch v-model="option.correct" inset />
+        <v-switch v-model="option.correct" inset :data-cy="'Switch' + index" />
       </v-col>
       <v-col v-if="sQuestionDetails.options.length > 2">
         <v-tooltip bottom>
