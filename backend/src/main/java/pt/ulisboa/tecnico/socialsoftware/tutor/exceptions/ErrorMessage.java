@@ -105,6 +105,7 @@ public enum ErrorMessage {
     CANNOT_CHANGE_ANSWERED_QUESTION("Can not change answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
+    QUIZ_ALREADY_STARTED("Quiz was already started"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
@@ -123,6 +124,7 @@ public enum ErrorMessage {
     USER_NOT_STUDENT("This user is not a student"),
     CLOSE_NOT_POSSIBLE("Impossible to close discussion with no replies"),
     MORE_THAN_ONE_QUESTION_ANSWER("More than one question answer! QuestionId: %d"),
+
 
     QUESTION_SUBMISSION_MISSING_QUESTION("Missing question for question submission"),
     QUESTION_SUBMISSION_MISSING_STUDENT("Missing student for question submission"),
