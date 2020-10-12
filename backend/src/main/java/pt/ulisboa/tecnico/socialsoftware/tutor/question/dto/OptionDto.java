@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 
 import java.io.Serializable;
@@ -14,6 +15,13 @@ public class OptionDto implements Serializable {
     }
 
     public OptionDto(Option option) {
+        this.id = option.getId();
+        this.sequence = option.getSequence();
+        this.content = option.getContent();
+        this.correct = option.isCorrect();
+    }
+
+    public OptionDto(FillInOption option) {
         this.id = option.getId();
         this.sequence = option.getSequence();
         this.content = option.getContent();
