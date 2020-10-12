@@ -90,21 +90,6 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return convertSequenceToLetter(this.getCorrectAnswer());
     }
 
-    public static String convertSequenceToLetter(Integer correctAnswer) {
-        switch (correctAnswer) {
-            case 0:
-                return "A";
-            case 1:
-                return "B";
-            case 2:
-                return "C";
-            case 3:
-                return "D";
-            default:
-                return "X";
-        }
-    }
-
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestionDetails(this);
@@ -165,4 +150,9 @@ public class MultipleChoiceQuestion extends QuestionDetails {
                 "options=" + options +
                 '}';
     }
+
+    public static String convertSequenceToLetter(Integer correctAnswer) {
+        return Character.toString('A' + correctAnswer);
+    }
+
 }

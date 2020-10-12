@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -44,19 +45,16 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public boolean isCorrect() {
-        // TODO: IMPLEMENT
-        return false;
+        return this.getFillInOptions().stream().allMatch(FillInOption::isCorrect);
     }
 
     @Override
     public AnswerDetailsDto getAnswerDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInAnswerDto(this);
     }
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        // TODO: IMPLEMENT
         return null;
     }
 
