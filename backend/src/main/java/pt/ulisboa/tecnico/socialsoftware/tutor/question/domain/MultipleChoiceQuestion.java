@@ -126,7 +126,6 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return new MultipleChoiceQuestionDto(this);
     }
 
-    @Override
     public Integer getCorrectAnswer() {
         return this.getOptions()
                 .stream()

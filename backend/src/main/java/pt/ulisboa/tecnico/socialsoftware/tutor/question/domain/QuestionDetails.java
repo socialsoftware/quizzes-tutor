@@ -44,7 +44,7 @@ public abstract class QuestionDetails implements DomainEntity {
         this.question = question;
     }
 
-    public abstract Integer getCorrectAnswer();
+    //public abstract Integer getCorrectAnswer();
 
     public abstract CorrectAnswerDetailsDto getCorrectAnswerDetailsDto();
 

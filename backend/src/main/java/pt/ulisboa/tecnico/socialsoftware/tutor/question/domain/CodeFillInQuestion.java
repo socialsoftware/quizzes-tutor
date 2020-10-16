@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -79,12 +80,6 @@ public class CodeFillInQuestion extends QuestionDetails {
     }
 
     @Override
-    public Integer getCorrectAnswer() {
-        // TODO: IMPLEMENT
-        return null;
-    }
-
-    @Override
     public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
         return new CodeFillInCorrectAnswerDto(this);
     }
@@ -120,8 +115,10 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerText() {
-        // TODO: IMPLEMENT
-        return null;
+        return this.getFillInSpots()
+                .stream()
+                .map(x -> x.getOptions().stream().filter(FillInOption::isCorrect).findFirst().get().getContent())
+                .collect(Collectors.joining("|"));
     }
 
     public void update(CodeFillInQuestionDto questionDetails) {

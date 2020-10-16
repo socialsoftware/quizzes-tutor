@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
@@ -14,8 +13,7 @@ import java.util.Map;
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
-    // TODO IMPLEMENTAR OPTIONS
-    //private List<Integer> optionId;
+    private List<Integer> optionIds;
 
     public CodeFillInAnswerItem() {
     }
@@ -26,7 +24,7 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
-        // TODO: IMPLEMENTAR
+        // TODO: Need to create a string representation for export
         return null;
     }
 }
