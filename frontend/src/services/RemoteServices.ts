@@ -14,7 +14,6 @@ import AuthDto from '@/models/user/AuthDto';
 import ExternalUser from '@/models/user/ExternalUser';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import DashboardInfo from '@/models/management/DashboardInfo';
 import Discussion from '@/models/management/Discussion';
 import Reply from '@/models/management/Reply';
 import Tournament from '@/models/user/Tournament';
@@ -67,16 +66,6 @@ export default class RemoteServices {
       });
   }
 
-  static async getDashboardInfo(): Promise<DashboardInfo> {
-    return httpClient
-      .get('/dashboard')
-      .then(response => {
-        return new DashboardInfo(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
   static async externalLogin(
     email: string,
     password: string
@@ -1102,36 +1091,42 @@ export default class RemoteServices {
       });
   }
 
-  static async createReply(
-    message: string,
-    discussion: Discussion
-  ): Promise<Reply> {
+  static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
     return httpClient
-      .post('/discussions/replies?message=' + message, discussion)
+      .post('/discussions/reply/add?discussionId=' + discussionId, reply)
       .then(response => {
         return new Reply(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
   static async getCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
-      .get(`/${Store.getters.getCurrentCourse.courseExecutionId}/discussions`)
+      .get(`/discussions/${Store.getters.getCurrentCourse.courseExecutionId}`)
       .then(response => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
   static async getOpenCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/${Store.getters.getCurrentCourse.courseExecutionId}/discussions/open`
+        `/discussions/open/${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -1140,30 +1135,26 @@ export default class RemoteServices {
       .put('/discussions/status?discussionId=' + id)
       .then(response => {
         return new Discussion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
-  static getDiscussionsByQuestionId(id: number): any {
+  static async getClarificationsByQuestionId(id: number): Promise<Reply[]> {
     return httpClient
-      .get('/discussions/question?questionId=' + id)
-      .then(response => {
-        return response.data.map((discussion: any) => {
-          return new Discussion(discussion);
-        });
-      });
-  }
-
-  static getClarificationsByQuestionId(id: number): any {
-    return httpClient
-      .get('/discussions/question/available?questionId=' + id)
+      .get('/discussions/clarifications?questionId=' + id)
       .then(response => {
         return response.data.map((reply: any) => {
           return new Reply(reply);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
-  static getDiscussionsByUserId(userId: number): any {
+  static async getDiscussionsByUserId(userId: number): Promise<Discussion[]> {
     return httpClient
       .get(
         `/discussions/${Store.getters.getCurrentCourse.courseExecutionId}/user?userId=` +
@@ -1173,6 +1164,9 @@ export default class RemoteServices {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
@@ -1181,16 +1175,18 @@ export default class RemoteServices {
       .put('/discussions/reply/availability?replyId=' + id)
       .then(response => {
         return new Discussion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
       });
   }
 
   static async createDiscussion(
     discussion: Discussion,
-    questionId: number,
-    quizAnswerId: number
+    questionAnswerId: number
   ): Promise<Discussion> {
     return httpClient
-      .post(`/discussions/${quizAnswerId}/${questionId}`, discussion)
+      .post(`/discussions/create/${questionAnswerId}`, discussion)
       .then(response => {
         return new Discussion(response.data);
       })

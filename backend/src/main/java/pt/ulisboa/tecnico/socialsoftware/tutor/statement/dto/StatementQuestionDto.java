@@ -1,9 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,10 +10,9 @@ import java.util.stream.Collectors;
 public class StatementQuestionDto implements Serializable {
     private String content;
     private List<StatementOptionDto> options;
-    private DiscussionDto userDiscussion;
     private ImageDto image;
     private Integer sequence;
-    private QuestionDto question;
+    private Integer questionId;
 
     public StatementQuestionDto() {}
 
@@ -24,12 +21,9 @@ public class StatementQuestionDto implements Serializable {
         if (questionAnswer.getQuizQuestion().getQuestion().getImage() != null) {
             this.image = new ImageDto(questionAnswer.getQuizQuestion().getQuestion().getImage());
         }
-        this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
+        this.questionId = questionAnswer.getQuizQuestion().getQuestion().getId();
         this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
         this.sequence = questionAnswer.getSequence();
-        if(questionAnswer.getDiscussion() != null){
-            this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion());
-        }
     }
 
     public String getContent() {
@@ -74,19 +68,11 @@ public class StatementQuestionDto implements Serializable {
                 '}';
     }
 
-    public QuestionDto getQuestion() {
-        return question;
+    public Integer getQuestionId() {
+        return questionId;
     }
 
-    public void setQuestion(QuestionDto question) {
-        this.question = question;
-    }
-
-    public DiscussionDto getUserDiscussion() {
-        return userDiscussion;
-    }
-
-    public void setUserDiscussion(DiscussionDto userDiscussion) {
-        this.userDiscussion = userDiscussion;
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 }

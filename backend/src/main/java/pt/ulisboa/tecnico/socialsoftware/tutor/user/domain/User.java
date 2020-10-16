@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
@@ -52,11 +51,6 @@ public class User implements DomainEntity {
     private Integer numberOfCorrectTeacherAnswers = 0;
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
-    private Integer numAnsweredDiscussions = 0;
-
-    public DashboardDto getDashboardInfo() {
-        return new DashboardDto(this);
-    }
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     private Set<Discussion> discussions = new HashSet<>();
@@ -185,6 +179,8 @@ public class User implements DomainEntity {
     public void addReply(Reply reply) {
         this.replies.add(reply);
     }
+
+    public void removeReply(Reply reply) {this.replies.remove(reply);}
 
     public void setRole(Role role) {
         if (role == null)
@@ -379,10 +375,6 @@ public class User implements DomainEntity {
 
     public Integer getNumAnsweredDiscussions() {
         return (int) this.getDiscussions().stream().filter(Discussion::teacherAnswered).count();
-    }
-
-    public void setNumAnsweredDiscussions(Integer numAnsweredDiscussions) {
-        this.numAnsweredDiscussions = numAnsweredDiscussions;
     }
 
     public void setReviews(Set<Review> reviews) {

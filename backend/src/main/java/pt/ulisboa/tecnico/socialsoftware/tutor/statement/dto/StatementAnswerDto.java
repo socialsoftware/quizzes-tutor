@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 
 import java.io.Serializable;
 
@@ -8,6 +9,7 @@ public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer sequence;
     private Integer questionAnswerId;
+    private DiscussionDto userDiscussion;
     private Integer optionId;
     private Integer quizQuestionId;
     private Integer timeToSubmission;
@@ -22,6 +24,10 @@ public class StatementAnswerDto implements Serializable {
 
         if (questionAnswer.getOption() != null) {
             this.optionId = questionAnswer.getOption().getId();
+        }
+
+        if(questionAnswer.getDiscussion() != null){
+            this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion(),false);
         }
     }
 
@@ -71,6 +77,14 @@ public class StatementAnswerDto implements Serializable {
 
     public void setTimeToSubmission(Integer timeToSubmission) {
         this.timeToSubmission = timeToSubmission;
+    }
+
+    public DiscussionDto getUserDiscussion() {
+        return userDiscussion;
+    }
+
+    public void setUserDiscussion(DiscussionDto userDiscussion) {
+        this.userDiscussion = userDiscussion;
     }
 
     @Override

@@ -1,9 +1,12 @@
+import Discussion from '@/models/management/Discussion';
+
 export default class StatementAnswer {
   public optionId: number | null = null;
   public timeTaken: number = 0;
   public sequence!: number;
   public questionAnswerId!: number;
   public quizQuestionId!: number;
+  public userDiscussion?: Discussion;
   public timeToSubmission: number | null = null;
 
   constructor(jsonObj?: StatementAnswer) {
@@ -13,6 +16,7 @@ export default class StatementAnswer {
       this.sequence = jsonObj.sequence;
       this.questionAnswerId = jsonObj.questionAnswerId;
       this.quizQuestionId = jsonObj.quizQuestionId;
+      this.userDiscussion = jsonObj.userDiscussion;
     }
   }
 }

@@ -13,14 +13,21 @@
               <span v-html="convertMarkDown(discussion.message)" />
             </div>
             <v-switch
-              v-if="discussion.replies !== null && discussion.closed"
+              v-if="
+                discussion.replies !== null &&
+                  discussion.replies.length > 0 &&
+                  discussion.closed
+              "
               style="width: 12%"
               v-model="discussion.closed"
               :label="discussion.closed ? 'Closed' : 'Reopen'"
               @change="changeDiscussionStatus(discussion.id)"
             />
           </div>
-          <v-expansion-panels v-if="discussion.replies !== null" :inset="true">
+          <v-expansion-panels
+            v-if="discussion.replies !== null && discussion.replies.length > 0"
+            :inset="true"
+          >
             <v-expansion-panel>
               <v-expansion-panel-header style="background-color: #d5d5d5"
                 >Show replies
@@ -49,7 +56,7 @@
                     data-cy="replyTextArea"
                     class="textarea-reply"
                     solo
-                    :id="'reply' + discussion.userId"
+                    :id="'reply' + discussion.id"
                     label="Type a reply..."
                     @input="setReplyMessage"
                   ></v-textarea>
@@ -59,7 +66,7 @@
                       class="submit-button"
                       @click="
                         submitReply();
-                        clearTextarea('#reply' + discussion.userId);
+                        clearTextarea('#reply' + discussion.id);
                       "
                       >Submit</v-btn
                     >
@@ -72,7 +79,7 @@
             <v-textarea
               class="textarea-reply"
               solo
-              :id="'reply' + discussion.userId"
+              :id="'reply' + discussion.id"
               label="Type a reply..."
               @input="setReplyMessage"
             ></v-textarea>
@@ -81,7 +88,7 @@
                 class="submit-button"
                 @click="
                   submitReply();
-                  clearTextarea('#reply' + discussion.userId);
+                  clearTextarea('#reply' + discussion.id);
                 "
                 >Submit</v-btn
               >
@@ -94,47 +101,47 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '../../../services/RemoteServices';
 import User from '@/models/user/User';
+import Reply from '@/models/management/Reply';
+import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component
 export default class ReplyComponent extends Vue {
   @Prop() readonly discussion!: Discussion;
-  replyMessages: Map<number, string> = new Map();
+  replyMessage: string = '';
   user: User = this.$store.getters.getUser;
 
-  @Emit()
   async submitReply() {
-    try {
-      if (this.replyMessages.get(this.discussion.userId!) === undefined) {
-        this.replyMessages.set(this.discussion.userId!, '');
-      }
-      const reply = await RemoteServices.createReply(
-        this.replyMessages.get(this.discussion.userId!)!,
-        this.discussion!
-      );
-
-      if (this.discussion.replies === null) {
-        this.discussion.replies = [];
-      }
-
-      this.discussion.replies.push(reply);
-
-      this.replyMessages.set(this.discussion.userId!, '');
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-
-      return false;
+    if (this.replyMessage.trim() === '') {
+      await this.$store.dispatch('error', 'Reply must have content');
+      return;
     }
 
-    return true;
+    let reply = new Reply();
+    reply.message = this.replyMessage;
+    reply.userId = this.user.id!;
+    reply.userName = this.user.username;
+    reply.date = new Date().toISOString();
+    reply.isPublic = false;
+
+    let replyResponse = await RemoteServices.addReply(
+      reply,
+      this.discussion!.id
+    );
+
+    if (this.discussion.replies === null) {
+      this.discussion.replies = [];
+    }
+    this.discussion.replies.push(replyResponse);
+    this.discussion.lastReplyDate = replyResponse.date;
   }
 
   setReplyMessage(message: string) {
-    this.replyMessages.set(this.discussion.userId!, message);
+    this.replyMessage = message;
   }
 
   convertMarkDown(text: string) {
@@ -142,29 +149,19 @@ export default class ReplyComponent extends Vue {
   }
 
   clearTextarea(name: string) {
-    let textArea: HTMLTextAreaElement;
-    let val = document.querySelector(name)!;
-    textArea = val as HTMLTextAreaElement;
-    textArea.value = '';
+    let textArea = document.querySelector(name);
+    (textArea as HTMLTextAreaElement).value = ' ';
   }
 
   async changeReplyAvailability(id: number) {
     await this.$store.dispatch('loading');
-    try {
-      await RemoteServices.changeReplyAvailability(id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    await RemoteServices.changeReplyAvailability(id);
     await this.$store.dispatch('clearLoading');
   }
 
   async changeDiscussionStatus(id: number) {
     await this.$store.dispatch('loading');
-    try {
-      await RemoteServices.changeDiscussionStatus(id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    await RemoteServices.changeDiscussionStatus(id);
     await this.$store.dispatch('clearLoading');
   }
 }

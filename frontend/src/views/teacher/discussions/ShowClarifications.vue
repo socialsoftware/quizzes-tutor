@@ -26,15 +26,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
-import Discussion from '@/models/management/Discussion';
-import User from '@/models/user/User';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Reply from '@/models/management/Reply';
 @Component
 export default class ClarificationComponent extends Vue {
   @Prop() readonly clarifications!: Reply[];
-  user: User = this.$store.getters.getUser;
 
   convertMarkDown(text: string) {
     return convertMarkDown(text, null);

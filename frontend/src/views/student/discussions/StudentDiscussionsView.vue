@@ -22,12 +22,6 @@
           />
         </v-card-title>
       </template>
-      <template v-slot:item.available="{ item }">
-        <v-chip v-if="item.available === true" :color="'green'" dark
-          >Yes</v-chip
-        >
-        <v-chip v-else :color="'red'" dark>No</v-chip>
-      </template>
       <template v-slot:item.closed="{ item }">
         <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
         <v-chip v-else :color="'red'" dark>No</v-chip>
@@ -93,20 +87,15 @@ export default class StudentDiscussionsView extends Vue {
     { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
     { text: 'Last Reply Date', value: 'lastReplyDate' },
-    { text: 'Public', value: 'available' },
     { text: 'Closed', value: 'closed' },
     { text: 'Replies', value: 'replies.length' }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
-    try {
-      [this.discussions] = await Promise.all([
-        RemoteServices.getDiscussionsByUserId(this.user.id!)
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    this.discussions = await RemoteServices.getDiscussionsByUserId(
+      this.user.id!
+    );
     await this.$store.dispatch('clearLoading');
   }
 
@@ -118,13 +107,6 @@ export default class StudentDiscussionsView extends Vue {
   onCloseShowDiscussionDialog() {
     this.currentDiscussion = null;
     this.discussionDialog = false;
-  }
-
-  @Watch('discussionDialog')
-  closeError() {
-    if (!this.discussionDialog) {
-      this.currentDiscussion = null;
-    }
   }
 }
 </script>

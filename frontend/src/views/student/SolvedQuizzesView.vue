@@ -38,7 +38,7 @@ import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import StatementManager from '@/models/statement/StatementManager';
 
 @Component
-export default class AvailableQuizzesView extends Vue {
+export default class SolvedQuizzesView extends Vue {
   quizzes: SolvedQuiz[] = [];
 
   async created() {

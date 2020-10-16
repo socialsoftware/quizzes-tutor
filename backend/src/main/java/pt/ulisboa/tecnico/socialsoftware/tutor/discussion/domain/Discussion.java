@@ -2,10 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
@@ -26,93 +28,61 @@ public class Discussion implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(optional=false)
+    @OneToOne(optional=false, fetch = FetchType.EAGER)
     @JoinColumn(name="questionAnswer_id")
     private QuestionAnswer questionAnswer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="user_id", insertable = false, updatable = false)
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="user_id")
     private User user;
 
     @NotNull
     @Column(name="message", columnDefinition="text")
     private String message;
 
-    @NotNull
-    @Column(name="user_id")
-    private Integer userId;
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="question_id")
+    private Question question;
 
-    @NotNull
-    @Column(name="question_id")
-    private Integer questionId;
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name="course_execution_id")
+    private CourseExecution courseExecution;
 
-    @NotNull
-    @Column(name="course_execution_id")
-    private Integer courseExecutionId;
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", fetch = FetchType.LAZY, orphanRemoval = true)
+    //fetch=FetchType.EAGER
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
     private LocalDateTime date;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean available;
-
-    @Column(columnDefinition = "boolean default false")
     private boolean closed;
-
-    public Integer getId() {
-        return id;
-    }
 
     public Discussion(){}
 
     public Discussion(User user, QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
-        this.user = user;
-        this.userId = user.getId();
-        this.user.addDiscussion(this);
-        this.message = discussionDto.getMessage();
-        this.setUserId(user.getId());
-        this.date = DateHandler.toLocalDateTime(discussionDto.getDate());
-        this.available = discussionDto.isAvailable();
-        this.setQuestionId(questionAnswer.getQuizQuestion().getQuestion().getId());
-        this.courseExecutionId = discussionDto.getCourseExecutionId();
-        this.closed = discussionDto.isClosed();
+        checkUserAndQuestion(user, questionAnswer.getQuizQuestion().getQuestion());
+        checkExistingDiscussion(questionAnswer);
+        setUser(user);
+        setMessage(discussionDto.getMessage());
+        setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
+        setQuestion(questionAnswer.getQuizQuestion().getQuestion());
+        setCourseExecution(questionAnswer.getQuizAnswer().getQuiz().getCourseExecution());
+        setClosed(discussionDto.isClosed());
+        setQuestionAnswer(questionAnswer);
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public QuestionAnswer getQuestionAnswer() {
+        return questionAnswer;
+    }
+
+    public void setQuestionAnswer(QuestionAnswer questionAnswer) {
         this.questionAnswer = questionAnswer;
         this.questionAnswer.setDiscussion(this);
-    }
-
-    public List<Reply> getReplies() {
-        return replies;
-    }
-
-    public void setReplies(List<Reply> replies) {
-        this.replies = replies;
-    }
-
-    public void addReply(Reply reply){
-        this.replies.add(reply);
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public boolean isAvailable() {
-        return available;
-    }
-
-    public void setAvailable(boolean available) {
-        this.available = available;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public User getUser() {
@@ -121,6 +91,7 @@ public class Discussion implements DomainEntity {
 
     public void setUser(User user) {
         this.user = user;
+        this.user.addDiscussion(this);
     }
 
     public String getMessage() {
@@ -131,20 +102,54 @@ public class Discussion implements DomainEntity {
         this.message = message;
     }
 
-    public Integer getQuestionId() {
-        return questionId;
+    public Question getQuestion() {
+        return question;
     }
 
-    public void setQuestionId(Integer questionId) {
-        this.questionId = questionId;
+    public void setQuestion(Question question) {
+        this.question = question;
+        this.question.addDiscussion(this);
     }
 
-    public Integer getUserId() {
-        return userId;
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+        this.courseExecution.addDiscussion(this);
+    }
+
+    public List<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(List<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void addReply(Reply reply){
+        this.replies.add(reply);
+    }
+
+    public void removeReply(Reply reply){
+        this.replies.remove(reply);
     }
 
     private void checkConsistentDiscussion(DiscussionDto discussionDto) {
@@ -157,55 +162,51 @@ public class Discussion implements DomainEntity {
     }
 
     public void changeStatus() {
-        this.closed = !this.closed;
+        if ((getReplies().isEmpty() || getReplies() == null) && !isClosed()){
+            throw new TutorException(CLOSE_NOT_POSSIBLE);
+        }
+        else{
+            this.closed = !this.closed;
+        }
     }
 
     public boolean teacherAnswered() {
         return this.getReplies().stream().anyMatch(reply -> reply.getUser().isTeacher());
     }
 
-    public void remove() {
-        if(questionAnswer != null){
-            questionAnswer.getDiscussion().remove();
-            questionAnswer = null;
+    private void checkUserAndQuestion(User user, Question question) {
+        if (user.getRole() == User.Role.TEACHER) {
+            throw new TutorException(DISCUSSION_NOT_STUDENT_CREATOR);
         }
+
+        checkUserAnswered(user, question);
+    }
+
+
+    private void checkUserAnswered(User user, Question question) {
+        if (!user.checkQuestionAnswered(question)) {
+            throw new TutorException(QUESTION_NOT_ANSWERED, question.getId());
+        }
+    }
+
+    public void remove() {
+        questionAnswer.getDiscussion().remove();
+        questionAnswer = null;
 
         user.getDiscussions().remove(this);
         user = null;
 
-        replies.clear();
+        replies.stream().forEach(Reply::remove);
     }
 
-    public List<Reply> getClarifications() {
-        return this.getReplies().stream().filter(Reply::isAvailable).collect(Collectors.toList());
+    private void checkExistingDiscussion(QuestionAnswer questionAnswer) {
+        if (questionAnswer.getDiscussion() != null) {
+            throw new TutorException(DUPLICATE_DISCUSSION);
+        }
     }
 
     @Override
     public void accept(Visitor visitor) {
         visitor.visitDiscussion(this);
-    }
-
-    public QuestionAnswer getQuestionAnswer() {
-        return questionAnswer;
-    }
-
-    public void setQuestionAnswer(QuestionAnswer questionAnswer) {
-        this.questionAnswer = questionAnswer;
-    }
-
-    public Integer getCourseExecutionId() {
-        return courseExecutionId;
-    }
-
-    public void setCourseExecutionId(Integer courseExecutionId) {
-        this.courseExecutionId = courseExecutionId;
-    }
-
-    public boolean isClosed() {
-        return closed;
-    }
-
-    public boolean hasPublicReplies() {
-        return this.replies.stream().anyMatch(Reply::isAvailable);
     }
 }

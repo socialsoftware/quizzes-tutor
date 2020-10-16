@@ -11,7 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_MISSING_DATA;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
 
 @Entity
 @Table(name = "replies")
@@ -21,11 +21,10 @@ public class Reply implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     private Discussion discussion;
 
-    @NotNull
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
     private User user;
 
     @NotNull
@@ -36,19 +35,17 @@ public class Reply implements DomainEntity {
     private LocalDateTime date;
 
     @Column(columnDefinition = "boolean default false")
-    private boolean available;
+    private boolean isPublic;
 
     public Reply(){}
 
     public Reply(User user, ReplyDto replyDto, Discussion discussion){
-        checkEmptyMessage(replyDto);
-        this.user = user;
-        user.addReply(this);
-        this.date = DateHandler.toLocalDateTime(replyDto.getDate());
-        this.message = replyDto.getMessage();
-        this.discussion = discussion;
-        this.available = replyDto.isAvailable();
-        discussion.addReply(this);
+        checkReplyAuthorization(user, discussion);
+        setUser(user);
+        setDate(DateHandler.toLocalDateTime(replyDto.getDate()));
+        setMessage(replyDto.getMessage());
+        setDiscussion(discussion);
+        setPublic(replyDto.isPublic());
     }
 
     public int getId() {
@@ -65,6 +62,7 @@ public class Reply implements DomainEntity {
 
     public void setDiscussion(Discussion discussion) {
         this.discussion = discussion;
+        discussion.addReply(this);
     }
 
     public String getMessage() {
@@ -89,19 +87,14 @@ public class Reply implements DomainEntity {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    private void checkEmptyMessage(ReplyDto reply) {
-        if(reply.getMessage().trim().length() == 0){
-            throw new TutorException(REPLY_MISSING_DATA);
-        }
+        user.addReply(this);
     }
 
     public void remove() {
-        user.getReplies().remove(this);
+        user.removeReply(this);
         user = null;
 
-        discussion.getReplies().remove(this);
+        discussion.removeReply(this);
         discussion = null;
     }
 
@@ -110,23 +103,21 @@ public class Reply implements DomainEntity {
         visitor.visitReply(this);
     }
 
-    public boolean isAvailable() {
-        return available;
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 
     public void changeAvailability() {
-        if (this.isAvailable()) {
-            this.available = false;
-            if (this.getDiscussion().isAvailable() && !this.getDiscussion().hasPublicReplies()) {
-                this.getDiscussion().setAvailable(false);
-            } else {
-                this.getDiscussion().setAvailable(true);
-            }
-        } else {
-            this.available = true;
-            if(!this.getDiscussion().isAvailable()){
-                this.getDiscussion().setAvailable(true);
-            }
+        this.isPublic = !this.isPublic;
+    }
+
+    private void checkReplyAuthorization(User user, Discussion discussion) {
+        if (user.getRole() != User.Role.TEACHER && !user.getId().equals(discussion.getUser().getId())) {
+            throw new TutorException(REPLY_UNAUTHORIZED_USER);
         }
     }
 }

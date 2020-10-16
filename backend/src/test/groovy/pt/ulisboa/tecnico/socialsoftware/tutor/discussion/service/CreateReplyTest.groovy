@@ -93,7 +93,7 @@ class CreateReplyTest extends SpockTest {
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "a reply is given"
-        discussionService.createReply(discussionDto, replyDto)
+        discussionService.addReply(discussionDto, replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
@@ -113,7 +113,7 @@ class CreateReplyTest extends SpockTest {
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "the student creates a reply"
-        discussionService.createReply(discussionDto, replyDto)
+        discussionService.addReply(discussionDto, replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
@@ -133,7 +133,7 @@ class CreateReplyTest extends SpockTest {
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "the student tries to create a reply"
-        discussionService.createReply(discussionDto, replyDto)
+        discussionService.addReply(discussionDto, replyDto)
 
         then:
         def exception = thrown(TutorException)

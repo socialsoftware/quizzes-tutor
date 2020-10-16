@@ -5,7 +5,6 @@ import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
 import AuthUser from '@/models/user/AuthUser';
 import ExternalUser from '@/models/user/ExternalUser';
-import enumerate = Reflect.enumerate;
 
 interface State {
   token: string;

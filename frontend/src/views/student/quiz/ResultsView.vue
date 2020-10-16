@@ -53,11 +53,9 @@
         statementManager.statementQuiz.answers[questionOrder].optionId != null
       "
       :userDiscussion="
-        statementManager.statementQuiz.questions[questionOrder].userDiscussion
+        statementManager.statementQuiz.answers[questionOrder].userDiscussion
       "
-      :question="
-        statementManager.statementQuiz.questions[questionOrder].question
-      "
+      :question="statementManager.statementQuiz.questions[questionOrder]"
       v-on:discussionMessage="updateMessage"
       @submit-discussion="submitDiscussion"
     />
@@ -71,6 +69,7 @@ import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
 import DiscussionComponent from '@/views/student/discussions/DiscussionComponent.vue';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
+import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {
@@ -104,29 +103,16 @@ export default class ResultsView extends Vue {
       return;
     }
 
-    try {
-      const question = this.statementManager.statementQuiz!.questions[
-        this.questionOrder
-      ].question;
-      this.discussion!.question = question;
-      this.discussion!.questionId = question.id!;
-      this.discussion!.userId = this.$store.getters.getUser.id;
-      this.discussion!.userName = this.$store.getters.getUser.username;
-      this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
-
-      const result = await RemoteServices.createDiscussion(
-        this.discussion!,
-        this.discussion!.question.id!,
-        this.statementManager.statementQuiz!.quizAnswerId
-      );
-      this.statementManager.statementQuiz!.questions[
-        this.questionOrder
-      ].userDiscussion = result;
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-
-    this.updateDiscussion();
+    this.discussion!.userId = this.$store.getters.getUser.id;
+    this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
+    this.discussion!.date = new Date().toISOString();
+    this.statementManager.statementQuiz!.answers[
+      this.questionOrder
+    ].userDiscussion = await RemoteServices.createDiscussion(
+      this.discussion!,
+      this.statementManager.statementQuiz!.answers[this.questionOrder]
+        .questionAnswerId
+    );
   }
 
   increaseOrder(): void {

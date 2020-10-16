@@ -101,7 +101,6 @@ public class StatsService {
         }
 
         statsDto.setCreatedDiscussions(user.getDiscussions().size());
-        statsDto.setAnsweredDiscussions(user.getNumAnsweredDiscussions());
         return statsDto;
     }
 }

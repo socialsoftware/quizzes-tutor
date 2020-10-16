@@ -85,7 +85,7 @@ class ChangeStatusTest extends SpockTest {
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionService.createReply(discussionDto, replyDto)
+        discussionService.addReply(discussionDto, replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
     }
 

@@ -38,12 +38,12 @@
 <script lang="ts">
 import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Question from '@/models/management/Question';
 import Discussion from '@/models/management/Discussion';
 import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 import RemoteServices from '@/services/RemoteServices';
 import ClarificationComponent from './ClarificationComponent.vue';
 import Reply from '@/models/management/Reply';
+import StatementQuestion from '@/models/statement/StatementQuestion';
 
 @Component({
   components: {
@@ -52,8 +52,7 @@ import Reply from '@/models/management/Reply';
   }
 })
 export default class DiscussionComponent extends Vue {
-  @Prop(Boolean) readonly hasDiscussion!: boolean;
-  @Prop() readonly question!: Question;
+  @Prop() readonly question!: StatementQuestion;
   clarifications: Reply[] = [];
   @Prop() readonly userDiscussion?: Discussion;
   @Prop(Boolean) readonly answered!: boolean;
@@ -61,13 +60,9 @@ export default class DiscussionComponent extends Vue {
 
   async created() {
     await this.$store.dispatch('loading');
-    try {
-      [this.clarifications] = await Promise.all([
-        RemoteServices.getClarificationsByQuestionId(this.question.id!)
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    this.clarifications = await RemoteServices.getClarificationsByQuestionId(
+      this.question.questionId!
+    );
     await this.$store.dispatch('clearLoading');
   }
 
@@ -86,13 +81,9 @@ export default class DiscussionComponent extends Vue {
   async onQuestionChange() {
     this.discussionMessage = '';
     await this.$store.dispatch('loading');
-    try {
-      [this.clarifications] = await Promise.all([
-        RemoteServices.getClarificationsByQuestionId(this.question.id!)
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    this.clarifications = await RemoteServices.getClarificationsByQuestionId(
+      this.question.questionId!
+    );
     await this.$store.dispatch('clearLoading');
   }
 
@@ -132,5 +123,4 @@ export default class DiscussionComponent extends Vue {
     color: white;
   }
 }
-
 </style>

@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.DashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -176,22 +175,6 @@ public class UserService {
 
                     this.userRepository.delete(user);
                 });
-    }
-
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public DashboardDto getDashboardInfo(Integer id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
-
-        checkStudent(user);
-
-        return user.getDashboardInfo();
-    }
-
-    private void checkStudent(User user) {
-        if (user.getRole() != User.Role.STUDENT) {
-            throw new TutorException(USER_NOT_STUDENT, user.getId());
-        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED,

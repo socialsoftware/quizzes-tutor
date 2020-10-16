@@ -40,8 +40,8 @@
                     </div>
                     <v-switch
                       style="width: 12%"
-                      v-model="reply.available"
-                      :label="reply.available ? 'Public' : 'Private'"
+                      v-model="reply.isPublic"
+                      :label="reply.isPublic ? 'Public' : 'Private'"
                       @change="changeReplyAvailability(reply.id)"
                     />
                   </div>
@@ -116,7 +116,7 @@ export default class ShowReplies extends Vue {
       if (this.replyMessages.get(this.discussion.userId!) === undefined) {
         this.replyMessages.set(this.discussion.userId!, '');
       }
-      const reply = await RemoteServices.createReply(
+      const reply = await RemoteServices.addReply(
         this.replyMessages.get(this.discussion.userId!)!,
         this.discussion!
       );
@@ -154,21 +154,13 @@ export default class ShowReplies extends Vue {
 
   async changeReplyAvailability(id: number) {
     await this.$store.dispatch('loading');
-    try {
-      await RemoteServices.changeReplyAvailability(id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    await RemoteServices.changeReplyAvailability(id);
     await this.$store.dispatch('clearLoading');
   }
 
   async changeDiscussionStatus(id: number) {
     await this.$store.dispatch('loading');
-    try {
-      await RemoteServices.changeDiscussionStatus(id);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    await RemoteServices.changeDiscussionStatus(id);
     await this.$store.dispatch('clearLoading');
   }
 }

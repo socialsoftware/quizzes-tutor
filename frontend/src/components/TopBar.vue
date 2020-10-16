@@ -539,8 +539,6 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import Discussion from '@/models/management/Discussion';
-import RemoteServices from '@/services/RemoteServices';
 
 @Component
 export default class TopBar extends Vue {

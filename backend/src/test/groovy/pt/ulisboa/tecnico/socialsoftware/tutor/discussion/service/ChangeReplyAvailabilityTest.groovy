@@ -88,8 +88,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
 
         when: "change reply availability"
@@ -100,7 +100,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         def result = replyRepository.findById(replyDto.getId()).get()
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
-        result.isAvailable() == true
+        result.isPublic() == true
         def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
         resultDiscussion.available == true
     }
@@ -111,8 +111,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
         //turns discussion to available
         discussionService.changeReplyAvailability(replyDto.getId())
@@ -122,8 +122,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto2.setMessage(DISCUSSION_REPLY)
         replyDto2.setUserId(teacher.getId())
         replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto2.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto2)
+        replyDto2.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto2)
         replyDto2.setId(replyRepository.findAll().get(1).getId())
         discussionService.changeReplyAvailability(replyDto.getId())
 
@@ -135,7 +135,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         def result = replyRepository.findById(replyDto2.getId()).get()
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
-        result.isAvailable() == true
+        result.isPublic() == true
         def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
         resultDiscussion.available == true
     }
@@ -146,8 +146,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
         //turns discussion to available
         discussionService.changeReplyAvailability(replyDto.getId())
@@ -160,7 +160,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         def result = replyRepository.findById(replyDto.getId()).get()
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
-        result.isAvailable() == false
+        result.isPublic() == false
         def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
         resultDiscussion.available == false
     }
@@ -171,8 +171,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto.setMessage(DISCUSSION_REPLY)
         replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto)
+        replyDto.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
         //turns discussion to available
         discussionService.changeReplyAvailability(replyDto.getId())
@@ -182,8 +182,8 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         replyDto2.setMessage(DISCUSSION_REPLY)
         replyDto2.setUserId(teacher.getId())
         replyDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        replyDto2.setAvailable(false)
-        discussionService.createReply(discussionDto, replyDto2)
+        replyDto2.setPublic(false)
+        discussionService.addReply(discussionDto, replyDto2)
         replyDto2.setId(replyRepository.findAll().get(1).getId())
         discussionService.changeReplyAvailability(replyDto2.getId())
 
@@ -195,7 +195,7 @@ class ChangeReplyAvailabilityTest extends SpockTest {
         def result = replyRepository.findById(replyDto.getId()).get()
         result.getMessage() == DISCUSSION_REPLY
         result.getUser() == teacher
-        result.isAvailable() == false
+        result.isPublic() == false
         def resultDiscussion = discussionRepository.findById(discussionDto.getId()).get()
         resultDiscussion.available == true
     }

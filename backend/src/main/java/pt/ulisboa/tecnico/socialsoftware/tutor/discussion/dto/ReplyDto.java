@@ -2,10 +2,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
 import java.io.Serializable;
 
-import java.time.LocalDateTime;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_MISSING_DATA;
 
 public class ReplyDto implements Serializable {
     private Integer id;
@@ -13,7 +14,7 @@ public class ReplyDto implements Serializable {
     private Integer userId;
     private String message;
     private String date;
-    private boolean available;
+    private boolean isPublic;
 
     public ReplyDto() {
     }
@@ -22,9 +23,10 @@ public class ReplyDto implements Serializable {
         this.userName = reply.getUser().getUsername();
         this.id = reply.getId();
         this.userId = reply.getUser().getId();
+        checkEmptyMessage(reply.getMessage());
         this.message = reply.getMessage();
         this.date = DateHandler.toISOString(reply.getDate());
-        this.available = reply.isAvailable();
+        this.isPublic = reply.isPublic();
     }
 
     public String getDate() {
@@ -75,11 +77,17 @@ public class ReplyDto implements Serializable {
         this.date = date;
     }
 
-    public boolean isAvailable() {
-        return available;
+    public boolean isPublic() {
+        return isPublic;
     }
 
-    public void setAvailable(boolean available) {
-        this.available = available;
+    public void setPublic(boolean aPublic) {
+        this.isPublic = aPublic;
+    }
+
+    private void checkEmptyMessage(String message) {
+        if (message.trim().length() == 0){
+            throw new TutorException(REPLY_MISSING_DATA);
+        }
     }
 }
