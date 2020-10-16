@@ -53,6 +53,6 @@ public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsD
 
     @Override
     public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
-        return new CodeFillInAnswerItem(username, quizId, statementAnswerDto);
+        return new CodeFillInAnswerItem(username, quizId, statementAnswerDto, this);
     }
 }
