@@ -28,7 +28,7 @@ public class FillInSpot implements DomainEntity {
 
     @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "question_id")
-    private CodeFillInQuestion question;
+    private CodeFillInQuestion questionDetails;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInSpot",fetch = FetchType.EAGER, orphanRemoval=true)
     private final List<FillInOption> options = new ArrayList<>();
@@ -48,12 +48,12 @@ public class FillInSpot implements DomainEntity {
         this.id = id;
     }
 
-    public CodeFillInQuestion getQuestion() {
-        return question;
+    public CodeFillInQuestion getQuestionDetails() {
+        return questionDetails;
     }
 
-    public void setQuestion(CodeFillInQuestion question) {
-        this.question = question;
+    public void setQuestionDetails(CodeFillInQuestion question) {
+        this.questionDetails = question;
     }
 
     public Integer getSequence() {
@@ -105,5 +105,13 @@ public class FillInSpot implements DomainEntity {
         for (FillInOption option : this.getOptions()) {
             option.accept(visitor);
         }
+    }
+
+    public void delete() {
+        this.questionDetails = null;
+        for (FillInOption option : this.options) {
+            option.delete();
+        }
+        this.options.clear();
     }
 }

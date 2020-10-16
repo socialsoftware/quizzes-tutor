@@ -92,10 +92,10 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
         questionSubmission.id != null
         questionSubmission.submitterId == student.getId()
         questionSubmission.status == QuestionSubmission.Status.IN_REVISION.name()
-        questionSubmission.question != null
-        questionSubmission.question.title == questionDto.getTitle()
-        questionSubmission.question.content == questionDto.getContent()
-        questionSubmission.question.status == Question.Status.SUBMITTED.name()
+        questionSubmission.setQuestionDetails != null
+        questionSubmission.setQuestionDetails.title == questionDto.getTitle()
+        questionSubmission.setQuestionDetails.content == questionDto.getContent()
+        questionSubmission.setQuestionDetails.status == Question.Status.SUBMITTED.name()
         questionSubmission.courseExecutionId == courseExecution.getId()
     }
 

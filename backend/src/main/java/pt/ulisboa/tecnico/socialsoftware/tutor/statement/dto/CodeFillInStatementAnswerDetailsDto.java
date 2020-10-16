@@ -2,10 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.MultipleChoiceAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.CodeFillInAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 
 import java.util.List;
@@ -39,26 +37,22 @@ public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsD
                 '}';
     }
 
+    private CodeFillInAnswer codeFillInAnswer;
+
     @Override
     public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
-        // TODO: IMPLEMENT
-        return null;
+        codeFillInAnswer = new CodeFillInAnswer(questionAnswer);
+        questionAnswer.getQuestion().getQuestionDetails().update(this);
+        return codeFillInAnswer;
     }
 
     @Override
     public boolean emptyAnswer() {
-        // TODO: IMPLEMENT
-        return false;
+        return selectedOptions != null && !selectedOptions.isEmpty();
     }
 
     @Override
     public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
-        // TODO: IMPLEMENT
-        return null;
-    }
-
-    @Override
-    public void update(MultipleChoiceQuestion question) {
-        // TODO: IMPLEMENT
+        return new CodeFillInAnswerItem(username, quizId, statementAnswerDto);
     }
 }

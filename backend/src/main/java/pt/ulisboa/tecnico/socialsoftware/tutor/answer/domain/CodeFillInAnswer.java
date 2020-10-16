@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
@@ -24,7 +25,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 public class CodeFillInAnswer extends AnswerDetails {
 
     @ManyToMany
-    @JoinColumn(name = "option_id")
     private List<FillInOption> fillInOptions = new ArrayList<>();
 
     public CodeFillInAnswer() {
@@ -55,17 +55,16 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return null;
+        return new CodeFillInStatementAnswerDetailsDto(this);
     }
 
     @Override
     public boolean isAnswered() {
-        // TODO: IMPLEMENT
-        return false;
+        return fillInOptions != null && !fillInOptions.isEmpty();
     }
 
     @Override
     public void accept(Visitor visitor) {
-        // TODO: IMPLEMENT
+        visitor.visitAnswerDetails(this);
     }
 }

@@ -66,7 +66,7 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
     }
 
     @Override
-    public void update(MultipleChoiceQuestion question) {
-        // TODO: IMPLEMENT
+    public void update(CodeFillInQuestion question) {
+        question.update(this);
     }
 }

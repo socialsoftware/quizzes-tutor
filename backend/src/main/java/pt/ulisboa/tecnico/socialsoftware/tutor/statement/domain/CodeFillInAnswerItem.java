@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
+@DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
     // TODO IMPLEMENTAR OPTIONS

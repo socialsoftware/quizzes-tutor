@@ -30,7 +30,7 @@ public class FillInOption implements DomainEntity {
     @JoinColumn(name = "fill_in_id")
     private FillInSpot fillInSpot;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInOptions", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<CodeFillInAnswer> questionAnswers = new HashSet<>();
 
     public FillInOption() {}
@@ -87,4 +87,8 @@ public class FillInOption implements DomainEntity {
     }
 
 
+    public void delete() {
+        this.fillInSpot = null;
+        this.questionAnswers.clear();
+    }
 }

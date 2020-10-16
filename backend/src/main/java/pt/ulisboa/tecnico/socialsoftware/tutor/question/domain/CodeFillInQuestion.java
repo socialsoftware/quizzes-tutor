@@ -1,17 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementQuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -20,7 +14,7 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
+@DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInQuestion extends QuestionDetails {
 
     private String language;
@@ -29,7 +23,7 @@ public class CodeFillInQuestion extends QuestionDetails {
     private String code;
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question",fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails",fetch = FetchType.LAZY, orphanRemoval=true)
     private final List<FillInSpot> fillInSpots = new ArrayList<>();
 
 
@@ -62,17 +56,15 @@ public class CodeFillInQuestion extends QuestionDetails {
         return fillInSpots;
     }
 
-    // TODO: Add missing DTOs
     public void setFillInSpots(List<FillInSpotDto> fillInSpots){
         if (fillInSpots.isEmpty()) {
             throw new TutorException(AT_LEAST_ONE_OPTION_NEEDED);
         }
 
-        int index = 0;
         for (FillInSpotDto fillInSpotDto : fillInSpots) {
             if (fillInSpotDto.getId() == null) {
                 FillInSpot fillInSpot = new FillInSpot(fillInSpotDto);
-                fillInSpot.setQuestion(this);
+                fillInSpot.setQuestionDetails(this);
                 this.fillInSpots.add(fillInSpot);
             } else {
                 FillInSpot option = getFillInSpots()
@@ -94,37 +86,36 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInCorrectAnswerDto(this);
     }
 
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInStatementQuestionDetailsDto(this);
     }
 
     @Override
     public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInStatementAnswerDetailsDto();
     }
 
     @Override
     public AnswerDetailsDto getEmptyAnswerDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInAnswerDto();
     }
 
     @Override
     public QuestionDetailsDto getQuestionDetailsDto() {
-        // TODO: IMPLEMENT
-        return null;
+        return new CodeFillInQuestionDto(this);
     }
 
     @Override
-    public void update(Updator updator) {
-        // TODO: IMPLEMENT
+    public void delete() {
+        super.delete();
+        for (var spot : this.fillInSpots) {
+            spot.delete();
+        }
+        this.fillInSpots.clear();
     }
 
     @Override
@@ -133,8 +124,17 @@ public class CodeFillInQuestion extends QuestionDetails {
         return null;
     }
 
+    public void update(CodeFillInQuestionDto questionDetails) {
+        setFillInSpots(questionDetails.getFillInSpots());
+    }
+
+    @Override
+    public void update(Updator updator) {
+        updator.update(this);
+    }
+
     @Override
     public void accept(Visitor visitor) {
-        // TODO: IMPLEMENT
+        visitor.visitQuestionDetails(this);
     }
 }

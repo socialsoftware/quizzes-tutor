@@ -76,7 +76,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
         and: "if it responds with the correct question submissions"
         def submissions = response.data
         submissions.get(0).id != null
-        submissions.get(0).question.id == question.getId()
+        submissions.get(0).setQuestionDetails.id == question.getId()
         submissions.get(0).submitterId == student.getId()
         submissions.get(0).courseExecutionId == courseExecution.getId()
     }
