@@ -43,7 +43,7 @@ public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDeta
 
     @Override
     public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
-        return new MultipleChoiceAnswerItem(username, quizId, statementAnswerDto);
+        return new MultipleChoiceAnswerItem(username, quizId, statementAnswerDto, this);
     }
 
     @Override

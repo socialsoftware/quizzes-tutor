@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 
 import javax.persistence.DiscriminatorValue;
@@ -19,8 +21,9 @@ public class MultipleChoiceAnswerItem extends QuestionAnswerItem {
     public MultipleChoiceAnswerItem() {
     }
 
-    public MultipleChoiceAnswerItem(String username, int quizId, StatementAnswerDto answer) {
+    public MultipleChoiceAnswerItem(String username, int quizId, StatementAnswerDto answer, MultipleChoiceStatementAnswerDetailsDto detailsDto) {
         super(username, quizId, answer);
+        this.optionId = detailsDto.getOptionId();
     }
 
     @Override
