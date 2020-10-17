@@ -24,7 +24,11 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
     @Query(value = "SELECT qa.quiz.id FROM QuizAnswer qa JOIN qa.quiz q WHERE qa.user.id = :userId AND q.courseExecution.id = :executionId AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate > :now) AND (qa.completed = true OR (q.oneWay = true AND qa.creationDate IS NOT NULL))")
     Set<Integer> findClosedQuizAnswersQuizIds(int userId, int executionId, LocalDateTime now);
 
+    @Query(value = "SELECT qa.quiz FROM QuizAnswer qa JOIN qa.quiz q WHERE qa.user.id = :userId AND q.courseExecution.id = :executionId AND q.qrCodeOnly = false AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate < :now) AND (qa.completed = false OR (q.oneWay = true AND qa.creationDate IS NULL))")
+    Set<Quiz> findOpenNonQRCodeQuizAnswers(int userId, int executionId, LocalDateTime now);
+
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.id = :quizId AND qa.creationDate IS NULL")
     Set<QuizAnswer> findNotAnsweredQuizAnswers(int quizId);
+
 }
 
