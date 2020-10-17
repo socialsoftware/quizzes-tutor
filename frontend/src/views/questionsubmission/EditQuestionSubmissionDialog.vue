@@ -89,11 +89,13 @@ import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
+import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceCreate
+    multiple_choice: MultipleChoiceCreate,
+    code_fill_in: CodeFillInCreate
   }
 })
 export default class EditQuestionSubmissionDialog extends Vue {

@@ -48,10 +48,12 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
+import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceAnswer
+    multiple_choice: MultipleChoiceAnswer,
+    code_fill_in: CodeFillInAnswer
   }
 })
 export default class ResultComponent extends Vue {

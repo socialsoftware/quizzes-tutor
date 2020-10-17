@@ -1,0 +1,108 @@
+<template>
+  <div class="base-code-editor" style="position:relative">
+    <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
+      <v-progress-circular indeterminate size="40" color="primary" />
+    </v-overlay>
+    <codemirror ref="myCm" v-model="syncedCode" :options="cmOptions" />
+  </div>
+</template>
+
+<script lang="ts">
+import {
+  Component, Vue, Watch, Prop, PropSync, Emit
+} from 'vue-property-decorator';
+
+import { codemirror } from 'vue-codemirror';
+import CodeMirror from 'codemirror';
+
+// codemirror plugins - check more @ https://codemirror.net/
+import 'codemirror/mode/clike/clike.js';
+import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/addon/mode/overlay.js';
+
+CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
+  const mustacheOverlay = {
+    token: function(stream: any) {
+      let ch;
+      if (stream.match('{{slot-')) {
+        while ((ch = stream.next()) != null) {
+          if (ch === '}' && stream.next() === '}') {
+            stream.eat('}');
+            return 'custom-drop-down';
+          }
+        }
+      }
+      while (stream.next() != null && !stream.match('{{', false)) {}
+      return null;
+    }
+  };
+  return CodeMirror.overlayMode(
+    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
+    mustacheOverlay
+  );
+});
+@Component({
+  components: {
+    codemirror
+  }
+})
+export default class BaseCodeEditor extends Vue {
+  @PropSync('code', { type: String, required: true }) syncedCode!: string;
+  @PropSync('language', { type: String, default: 'Java' })
+  syncedLanguage!: string;
+  languages: Array<string> = ['Java', 'Javascript'];
+  counter: number = 1;
+  CodemirrorUpdated: boolean = false;
+  @Watch('language')
+  onLanguageUpdate() {
+    console.log('ok', CodeMirror.modes);
+  }
+  get codemirror(): CodeMirror.Editor {
+    return this.$refs.myCm.codemirror;
+  }
+  get cmOptions(): CodeMirror.EditorConfiguration {
+    return {
+      tabSize: 4,
+      mode: { name: 'mustache', backdrop: this.languageCode },
+      theme: 'eclipse',
+      lineNumbers: true
+    };
+  }
+  get languageCode() {
+    return this.syncedLanguage === 'Java' ? 'text/x-java' : 'text/javascript';
+  }
+  created() {
+    this.updateQuestion();
+  }
+  onCmCodeChange(newCode: string) {
+    this.syncedCode = newCode;
+  }
+  updateQuestion() {
+    this.CodemirrorUpdated = false;
+    setTimeout(() => {
+      this.codemirror.refresh();
+      this.CodemirrorUpdated = true;
+    }, 1000);
+  }
+}
+</script>
+
+<style>
+@import '~codemirror/lib/codemirror.css';
+@import '~codemirror/theme/eclipse.css';
+.cm-custom-drop-down {
+  background: #ffa014;
+  color: white;
+  font-size: x-small;
+  padding: 4px 2px 4px 2px;
+  border-radius: 5px;
+  font-weight: bolder;
+  height: 16px;
+}
+.code-create {
+  text-align: left;
+}
+.CodeMirror-linenumber.CodeMirror-gutter-elt {
+  left: 0;
+}
+</style>

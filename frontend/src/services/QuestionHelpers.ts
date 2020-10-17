@@ -1,6 +1,9 @@
 import QuestionDetails from '@/models/management/questions/QuestionDetails';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import MultipleChoiceAnswerDetails from '@/models/management/questions/MultipleChoiceAnswerDetails';
+import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
+import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAnswerDetails';
+
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
@@ -8,13 +11,16 @@ import StatementAnswerDetails from '@/models/statement/questions/StatementAnswer
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 import StatementCorrectAnswerDetails from '@/models/statement/questions/StatementCorrectAnswerDetails';
+import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
+import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
+import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 
 export const enum QuestionTypes {
-  MultipleChoice = 'multiple_choice'
+  MultipleChoice = 'multiple_choice',
+  CodeFillIn = 'code_fill_in'
 }
 
 export function convertToLetter(number: number | null) {
-  console.log(number);
   if (number === null) {
     return 'X';
   } else {
@@ -27,6 +33,8 @@ export abstract class QuestionFactory {
     switch (type) {
       case QuestionTypes.MultipleChoice:
         return new MultipleChoiceQuestionFactory();
+      case QuestionTypes.CodeFillIn:
+        return new CodeFillInQuestionFactory();
       default:
         throw new Error('Unknown question type.');
     }
@@ -34,13 +42,9 @@ export abstract class QuestionFactory {
 
   abstract createQuestionDetails(question: any): QuestionDetails;
   abstract createAnswerDetails(question: any): AnswerDetails;
-  abstract createStatementQuestionDetails(
-    question: any
-  ): StatementQuestionDetails;
+  abstract createStatementQuestionDetails(question: any): StatementQuestionDetails;
   abstract createStatementAnswerDetails(details: any): StatementAnswerDetails;
-  abstract createStatementCorrectAnswerDetails(
-    details: any
-  ): StatementCorrectAnswerDetails;
+  abstract createStatementCorrectAnswerDetails(details: any): StatementCorrectAnswerDetails;
 }
 
 class MultipleChoiceQuestionFactory extends QuestionFactory {
@@ -60,5 +64,23 @@ class MultipleChoiceQuestionFactory extends QuestionFactory {
     details: any
   ): StatementCorrectAnswerDetails {
     return new MultipleChoiceStatementCorrectAnswerDetails(details);
+  }
+}
+
+class CodeFillInQuestionFactory extends QuestionFactory {
+  createQuestionDetails(details: any): QuestionDetails {
+    return new CodeFillInQuestionDetails(details);
+  }
+  createAnswerDetails(details: any): AnswerDetails {
+    return new CodeFillInAnswerDetails(details);
+  }
+  createStatementQuestionDetails(details: any): StatementQuestionDetails {
+    return new CodeFillInStatementQuestionDetails(details);
+  }
+  createStatementAnswerDetails(details: any): StatementAnswerDetails {
+    return new CodeFillInStatementAnswerDetails(details);
+  }
+  createStatementCorrectAnswerDetails(details: any): StatementCorrectAnswerDetails {
+    return new CodeFillInStatementCorrectAnswerDetails(details);
   }
 }

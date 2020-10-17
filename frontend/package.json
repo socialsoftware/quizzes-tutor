@@ -23,6 +23,7 @@
     "typeface-roboto": "0.0.75",
     "vue": "^2.6.12",
     "vue-class-component": "^7.2.6",
+    "vue-codemirror": "^4.0.6",
     "vue-ctk-date-time-picker": "^2.5.0",
     "vue-property-decorator": "^8.5.1",
     "vue-qrcode": "^0.3.3",

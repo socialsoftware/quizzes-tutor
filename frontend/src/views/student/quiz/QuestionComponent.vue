@@ -39,10 +39,12 @@ import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import StatementAnswer from '@/models/statement/StatementAnswer';
+import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceAnswer
+    multiple_choice: MultipleChoiceAnswer,
+    code_fill_in: CodeFillInAnswer
   }
 })
 export default class QuestionComponent extends Vue {

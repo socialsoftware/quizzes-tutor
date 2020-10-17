@@ -16,10 +16,12 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import MultipleChoiceView from '@/components/multiple-choice/MultipleChoiceView.vue';
+import CodeFillInView from '@/components/code-fill-in/CodeFillInView.vue';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceView
+    multiple_choice: MultipleChoiceView,
+    code_fill_in: CodeFillInView
   }
 })
 export default class ShowQuestion extends Vue {

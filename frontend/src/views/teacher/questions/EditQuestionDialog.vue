@@ -64,10 +64,12 @@ import RemoteServices from '@/services/RemoteServices';
 import Option from '@/models/management/Option';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
+import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceCreate
+    multiple_choice: MultipleChoiceCreate,
+    code_fill_in: CodeFillInCreate
   }
 })
 export default class EditQuestionDialog extends Vue {
