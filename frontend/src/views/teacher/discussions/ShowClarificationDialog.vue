@@ -10,8 +10,8 @@
         <span class="headline">Clarifications</span>
       </v-card-title>
 
-      <show-clarifications :clarifications="clarifications">
-      </show-clarifications>
+      <clarification-component :clarifications="clarifications">
+      </clarification-component>
 
       <v-card-actions>
         <v-spacer />
@@ -25,13 +25,12 @@
 import { Component, Vue, Prop, Model } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
-import Discussion from '@/models/management/Discussion';
-import ShowClarifications from '@/views/teacher/discussions/ShowClarifications.vue';
 import Reply from '@/models/management/Reply';
+import ClarificationComponent from '@/views/student/discussions/ClarificationComponent.vue';
 
 @Component({
   components: {
-    'show-clarifications': ShowClarifications
+    'clarification-component': ClarificationComponent
   }
 })
 export default class ShowClarificationDialog extends Vue {
@@ -52,3 +51,29 @@ export default class ShowClarificationDialog extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.clarification-container {
+  color: rgb(51, 51, 51);
+  user-select: none;
+  caret-color: rgb(51, 51, 51);
+
+  .discussion {
+    margin: 5px;
+    padding: 25px;
+  }
+
+  ul {
+    list-style-type: none;
+  }
+
+  .reply {
+    margin: 5px;
+    padding: 15px 15px 0 30px;
+  }
+
+  .textarea-reply {
+    margin-bottom: -18px;
+  }
+}
+</style>

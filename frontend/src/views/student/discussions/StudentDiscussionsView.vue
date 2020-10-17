@@ -54,15 +54,15 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import User from '@/models/user/User';
-import StudentShowDiscussionDialog from '@/views/student/discussions/StudentShowDiscussionDialog.vue';
+import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
 @Component({
   components: {
-    'show-discussion-dialog': StudentShowDiscussionDialog
+    'show-discussion-dialog': ShowDiscussionDialog
   }
 })
 export default class StudentDiscussionsView extends Vue {

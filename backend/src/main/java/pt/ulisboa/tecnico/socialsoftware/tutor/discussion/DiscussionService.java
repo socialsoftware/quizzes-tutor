@@ -126,7 +126,7 @@ public class DiscussionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<DiscussionDto> findDiscussionsByCourseExecutionId(int courseExecutionId)  {
-        return discussionRepository.findDiscussionsByCourseExecution(courseExecutionId).stream().map(discussion -> new DiscussionDto(discussion, false))
+        return discussionRepository.findDiscussionsByCourseExecution(courseExecutionId).stream().map(discussion -> new DiscussionDto(discussion, true))
                 .collect(Collectors.toList());
     }
 
@@ -135,7 +135,7 @@ public class DiscussionService {
     public List<DiscussionDto> findOpenDiscussionsByCourseExecutionId(int courseExecutionId)  {
         return discussionRepository.
                 findOpenDiscussionsByCourseExecutionId(courseExecutionId).
-                stream().map(discussion -> new DiscussionDto(discussion, false)).collect(Collectors.toList());
+                stream().map(discussion -> new DiscussionDto(discussion, true)).collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

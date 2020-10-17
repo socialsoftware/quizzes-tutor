@@ -42,12 +42,6 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.available="{ item }">
-        <v-chip v-if="item.available === true" :color="'green'" dark
-          >Yes</v-chip
-        >
-        <v-chip v-else :color="'red'" dark>No</v-chip>
-      </template>
       <template v-slot:item.closed="{ item }">
         <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
         <v-chip v-else :color="'red'" dark>No</v-chip>
@@ -82,14 +76,14 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch, Prop } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
-import TeacherShowDiscussionDialog from './TeacherShowDiscussionDialog.vue';
+import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
 @Component({
   components: {
-    'show-discussion-dialog': TeacherShowDiscussionDialog
+    'show-discussion-dialog': ShowDiscussionDialog
   }
 })
 export default class TeacherDiscussionsView extends Vue {
@@ -114,20 +108,13 @@ export default class TeacherDiscussionsView extends Vue {
     { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
     { text: 'Last Reply Date', value: 'lastReplyDate' },
-    { text: 'Public', value: 'available' },
     { text: 'Closed', value: 'closed' },
     { text: 'Replies', value: 'replies.length' }
   ];
 
   async created() {
     await this.$store.dispatch('loading');
-    try {
-      [this.discussions] = await Promise.all([
-        RemoteServices.getOpenCourseExecutionDiscussions()
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
+    this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
     await this.$store.dispatch('clearLoading');
   }
 
@@ -151,41 +138,24 @@ export default class TeacherDiscussionsView extends Vue {
   async toggleClosedDiscussions() {
     await this.$store.dispatch('loading');
     this.showClosedDiscussions = !this.showClosedDiscussions;
-    try {
-      if (this.showClosedDiscussions) {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getCourseExecutionDiscussions()
-        ]);
-      } else {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getOpenCourseExecutionDiscussions()
-        ]);
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+    if (this.showClosedDiscussions) {
+      this.discussions = await RemoteServices.getCourseExecutionDiscussions();
+    } else {
+      this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
     }
     await this.$store.dispatch('clearLoading');
   }
 
   async getDiscussions() {
     await this.$store.dispatch('loading');
-    try {
-      if (this.showClosedDiscussions) {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getCourseExecutionDiscussions()
-        ]);
-      } else {
-        [this.discussions] = await Promise.all([
-          RemoteServices.getOpenCourseExecutionDiscussions()
-        ]);
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+    if (this.showClosedDiscussions) {
+      this.discussions = await RemoteServices.getCourseExecutionDiscussions();
+    } else {
+      this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
     }
     await this.$store.dispatch('clearLoading');
   }
 }
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
