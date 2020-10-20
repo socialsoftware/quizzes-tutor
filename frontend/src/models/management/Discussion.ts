@@ -4,11 +4,10 @@ import Question from '@/models/management/Question';
 
 export default class Discussion {
   id!: number;
-  userId!: number;
   question?: Question;
   userName!: string;
   message!: string;
-  replies!: Reply[] | null;
+  replies!: Reply[];
   date!: string | null;
   courseExecutionId!: number;
   closed!: boolean;
@@ -17,7 +16,6 @@ export default class Discussion {
   constructor(jsonObj?: Discussion) {
     if (jsonObj) {
       this.id = jsonObj.id;
-      this.userId = jsonObj.userId;
       this.question = new Question(jsonObj.question);
       this.userName = jsonObj.userName;
       this.message = jsonObj.message;
@@ -30,7 +28,7 @@ export default class Discussion {
         });
         this.lastReplyDate = this.replies[this.replies.length - 1].date;
       } else {
-        this.replies = null;
+        this.replies = [];
         this.lastReplyDate = '-';
       }
     }

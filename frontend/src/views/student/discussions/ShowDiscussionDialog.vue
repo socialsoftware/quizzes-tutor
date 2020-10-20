@@ -26,7 +26,7 @@
                 >
                   <div style="display: inline-flex; width: 100%">
                     <div style="width: 88%" class="text-left">
-                      <b v-if="user.id === discussion.userId"
+                      <b v-if="user.role !== 'TEACHER'"
                         >You opened a discussion on {{ discussion.date }} :
                       </b>
                       <b v-else
@@ -37,25 +37,13 @@
                     </div>
                     <v-switch
                       v-if="
-                        user.role === 'STUDENT' &&
-                          discussion.replies !== null &&
-                          discussion.replies.length > 0 &&
-                          discussion.closed
+                        discussion.replies.length > 0 &&
+                          ((user.role === 'STUDENT' && discussion.closed) ||
+                            user.role === 'TEACHER')
                       "
                       style="width: 12%"
                       v-model="discussion.closed"
                       :label="discussion.closed ? 'Closed' : 'Reopen'"
-                      @change="changeDiscussionStatus(discussion.id)"
-                    />
-                    <v-switch
-                      v-else-if="
-                        user.role === 'TEACHER' &&
-                          discussion.replies !== null &&
-                          discussion.replies.length > 0
-                      "
-                      style="width: 12%"
-                      v-model="discussion.closed"
-                      :label="discussion.closed ? 'Closed' : 'Open'"
                       @change="changeDiscussionStatus(discussion.id)"
                     />
                   </div>

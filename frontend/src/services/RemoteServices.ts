@@ -1154,11 +1154,10 @@ export default class RemoteServices {
       });
   }
 
-  static async getDiscussionsByUserId(userId: number): Promise<Discussion[]> {
+  static async getUserDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/${Store.getters.getCurrentCourse.courseExecutionId}/user?userId=` +
-          userId
+        `/discussions/${Store.getters.getCurrentCourse.courseExecutionId}/user`
       )
       .then(response => {
         return response.data.map((discussion: any) => {

@@ -6,7 +6,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
-import User from '@/models/user/User';
 import DiscussionListComponent from '@/views/student/discussions/DiscussionListComponent.vue';
 
 @Component({
@@ -16,13 +15,10 @@ import DiscussionListComponent from '@/views/student/discussions/DiscussionListC
 })
 export default class StudentDiscussionsView extends Vue {
   discussions: Discussion[] = [];
-  user: User = this.$store.getters.getUser;
 
   async created() {
     await this.$store.dispatch('loading');
-    this.discussions = await RemoteServices.getDiscussionsByUserId(
-      this.user.id!
-    );
+    this.discussions = await RemoteServices.getUserDiscussions();
     await this.$store.dispatch('clearLoading');
   }
 }

@@ -14,11 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import spock.lang.Shared
 import spock.lang.Unroll
 
 @DataJpaTest
@@ -95,11 +93,9 @@ class CreateReplyTest extends SpockTest {
 
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(),questionAnswer.getId(), discussionDto)
         discussion = discussionRepository.findAll().get(0)
     }
 
@@ -107,51 +103,48 @@ class CreateReplyTest extends SpockTest {
         given: "a reply"
         def replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "a reply is given"
-        discussionService.addReply(discussion.getId(), replyDto)
+        discussionService.addReply(teacher.getId(), discussion.getId(), replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
         def result = replyRepository.findAll().get(0)
         result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == teacher
+        result.getUser().getId() == teacher.getId()
         discussion.getReplies().size() == 1
         discussion.getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussion.getReplies().get(0).getUser().getId() == replyDto.getUserId()
+        discussion.getReplies().get(0).getUser().getId() == teacher.getId()
     }
 
     def "student replies to his discussion"(){
         given: "a response created by a student"
         def replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "the student creates a reply"
-        discussionService.addReply(discussion.getId(), replyDto)
+        discussionService.addReply(student.getId(), discussion.getId(), replyDto)
 
         then: "the correct reply was given"
         replyRepository.count() == 1L
         def result = replyRepository.findAll().get(0)
         result.getMessage() == DISCUSSION_REPLY
-        result.getUser() == student
+        result.getUser().getId() == student.getId()
         discussion.getReplies().size() == 1
         discussion.getReplies().get(0).getMessage() == replyDto.getMessage()
-        discussion.getReplies().get(0).getUser().getId() == replyDto.getUserId()
+        discussion.getReplies().get(0).getUser().getId() == student.getId()
     }
 
     def "student can't reply a discussion of other student"(){
         given: "a response created by a student"
         def replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(student2.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "the student tries to create a reply"
-        discussionService.addReply(discussion.getId(), replyDto)
+        discussionService.addReply(student2.getId(), discussion.getId(), replyDto)
 
         then:
         def exception = thrown(TutorException)
@@ -163,11 +156,10 @@ class CreateReplyTest extends SpockTest {
         given: "a response created by a student"
         def replyDto = new ReplyDto()
         replyDto.setMessage(message)
-        replyDto.setUserId(student.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "the student tries to create a reply"
-        discussionService.addReply(discussion.getId(), replyDto)
+        discussionService.addReply(student.getId(), discussion.getId(), replyDto)
 
         then:
         def exception = thrown(TutorException)

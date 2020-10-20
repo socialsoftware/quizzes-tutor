@@ -48,7 +48,7 @@
               >
                 <div style="display: inline-flex; width: 100%">
                   <div style="width: 88%" class="text-left">
-                    <b v-if="user.id !== userDiscussion.userId"
+                    <b v-if="user.role === 'TEACHER'"
                       >{{ user.username }} opened a discussion on
                       {{ discussion.date }} :
                     </b>
@@ -59,9 +59,7 @@
                   </div>
                   <v-switch
                     v-if="
-                      userDiscussion.replies !== null &&
-                        userDiscussion.replies.length > 0 &&
-                        userDiscussion.closed
+                      userDiscussion.replies.length > 0 && userDiscussion.closed
                     "
                     style="width: 12%"
                     v-model="userDiscussion.closed"

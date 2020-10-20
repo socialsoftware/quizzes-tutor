@@ -11,11 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DISCUSSION_MISSING_QUESTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DISCUSSION_MISSING_USER;
 
 public class DiscussionDto implements Serializable {
     private Integer id;
-    private Integer userId;
     private String userName;
     private String message;
     private List<ReplyDto> replies;
@@ -40,12 +38,6 @@ public class DiscussionDto implements Serializable {
             }
         }
 
-        if (discussion.getUser().getId() == null){
-            throw new TutorException(DISCUSSION_MISSING_USER);
-        }
-        else{
-            this.userId = discussion.getUser().getId();
-        }
         this.userName = discussion.getUser().getName();
         this.message = discussion.getMessage();
         this.date = DateHandler.toISOString(discussion.getDate());
@@ -67,14 +59,6 @@ public class DiscussionDto implements Serializable {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public Integer getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Integer id) {
-        this.userId = id;
     }
 
     public String getUserName() {
@@ -140,7 +124,6 @@ public class DiscussionDto implements Serializable {
     public String toString() {
         return "DiscussionDto{" +
                 "id=" + id +
-                ", userId=" + userId +
                 ", userName='" + userName + '\'' +
                 ", message='" + message + '\'' +
                 ", replies=" + replies +

@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -114,13 +113,11 @@ class CreateDiscussionTest extends SpockTest {
         given:"a discussion dto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
 
         when: "discussion is created"
-        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
 
         then: "the correct discussion is inside the repository"
         discussionRepository.count() == 1L
@@ -128,7 +125,6 @@ class CreateDiscussionTest extends SpockTest {
         resultUserList.size() == 1
         def resultUser = resultUserList.get(0)
         resultUser.getMessage() == DISCUSSION_MESSAGE
-        resultUser.getUserId() == student.getId()
         resultUser.getQuestion().getId() == question1.getId()
     }
 
@@ -136,12 +132,10 @@ class CreateDiscussionTest extends SpockTest {
         given: "a discussionDto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setUserId(student.getId())
-        discussionDto.setQuestion(new QuestionDto(question2))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
 
         when: "creating a discussion on a non answered question"
-        discussionService.createDiscussion(questionAnswer2.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer2.getId(), discussionDto)
 
         then: "exception is thrown"
         def exception = thrown(TutorException)
@@ -153,51 +147,44 @@ class CreateDiscussionTest extends SpockTest {
        given: "a discussion dto"
        def discussionDto1 = new DiscussionDto()
        discussionDto1.setMessage(DISCUSSION_MESSAGE)
-       discussionDto1.setUserId(student.getId())
-       discussionDto1.setQuestion(new QuestionDto(question1))
        discussionDto1.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
        discussionDto1.setUserName(student.getUsername())
 
        and: "another discussion dto"
        def discussionDto2 = new DiscussionDto()
        discussionDto2.setMessage(DISCUSSION_MESSAGE)
-       discussionDto2.setUserId(student.getId())
-       discussionDto2.setQuestion(new QuestionDto(question1))
        discussionDto2.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
        discussionDto2.setUserName(student.getUsername())
 
        when: "creating two discussions on the same question"
-       discussionService.createDiscussion(questionAnswer.getId(), discussionDto1)
-       discussionService.createDiscussion(questionAnswer.getId(), discussionDto2)
+       discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto1)
+       discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto2)
 
        then: "exception is thrown"
        def exception = thrown(TutorException)
        exception.getErrorMessage() == ErrorMessage.DUPLICATE_DISCUSSION
    }
 
-    /*@Unroll
-    def "invalid arguments: question=#question | userId=#userId | message=#message | date=#date"(){
+    @Unroll
+    def "invalid arguments:  message=#message | date=#date"(){
         given: "a discusssionDto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(message)
-        discussionDto.setUserId(userId)
-        discussionDto.setQuestion(question)
         discussionDto.setDate(date)
 
         when: "creating discussion"
-        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
 
         where:
-        question                   | userId          | message          | date                                      || errorMessage
-        null                       | student.getId() | DISCUSSION_MESSAGE | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_QUESTION
-        new QuestionDto(question1) | null            | DISCUSSION_MESSAGE | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_USER
-        new QuestionDto(question1) | student.getId() | null               | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
-        new QuestionDto(question1) | student.getId() | "          "       | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
-    }*/
+        message            | date                                      || errorMessage
+        null               | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
+        "          "       | DateHandler.toISOString(LOCAL_DATE_TODAY) || ErrorMessage.DISCUSSION_MISSING_MESSAGE
+
+    }
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

@@ -11,11 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import spock.lang.Shared
 
 @DataJpaTest
 class GetUserDiscussionsTest extends SpockTest {
@@ -89,12 +87,10 @@ class GetUserDiscussionsTest extends SpockTest {
         given: "a discussion dto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
         and: "created discussion"
-        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
 
         when: "tries to get the discussion"
         def discussionsResult = discussionService.findByCourseExecutionIdAndUserId(courseExecution.getId(),student.getId())
@@ -102,7 +98,6 @@ class GetUserDiscussionsTest extends SpockTest {
         then: "the correct discussion is retrieved"
         discussionsResult.size() == 1
         def discussion = discussionsResult.get(0)
-        discussion.getUserId() == discussionDto.getUserId()
         discussion.getMessage() == discussionDto.getMessage()
 
     }
@@ -122,9 +117,7 @@ class GetUserDiscussionsTest extends SpockTest {
         given:"a discussion dto"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
 
         when: "tries to get the discussion"

@@ -55,8 +55,8 @@ public class DiscussionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DiscussionDto createDiscussion(int questionAnswerId, DiscussionDto discussionDto) {
-        User user = userRepository.findById(discussionDto.getUserId()).orElseThrow(() -> new TutorException(USER_NOT_FOUND, discussionDto.getUserId()));
+    public DiscussionDto createDiscussion(int userId, int questionAnswerId, DiscussionDto discussionDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(questionAnswerId).orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
         Discussion discussion = new Discussion(user, questionAnswer, discussionDto);
 
@@ -95,8 +95,8 @@ public class DiscussionService {
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public ReplyDto addReply(int discussionId, ReplyDto replyDto) {
-        User user = userRepository.findById(replyDto.getUserId()).orElseThrow(()->new TutorException(USER_NOT_FOUND, replyDto.getUserId()));
+    public ReplyDto addReply(int userId, int discussionId, ReplyDto replyDto) {
+        User user = userRepository.findById(userId).orElseThrow(()->new TutorException(USER_NOT_FOUND, userId));
 
         Discussion discussion = discussionRepository
                 .findById(discussionId)

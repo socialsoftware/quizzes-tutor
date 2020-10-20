@@ -102,7 +102,6 @@ export default class ResultsView extends Vue {
       return;
     }
 
-    this.discussion!.userId = this.$store.getters.getUser.id;
     this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
     this.discussion!.date = new Date().toISOString();
     this.statementManager.statementQuiz!.answers[

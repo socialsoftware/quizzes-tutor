@@ -14,11 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import spock.lang.Shared
 
 @DataJpaTest
 class ChangeStatusTest extends SpockTest {
@@ -117,18 +115,15 @@ class ChangeStatusTest extends SpockTest {
 
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question1))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
         discussion = discussionRepository.findAll().get(0)
 
         replyDto = new ReplyDto()
         replyDto.setMessage(DISCUSSION_REPLY)
-        replyDto.setUserId(teacher.getId())
         replyDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionService.addReply(discussion.getId(), replyDto)
+        discussionService.addReply(student.getId(), discussion.getId(), replyDto)
         replyDto.setId(replyRepository.findAll().get(0).getId())
     }
 
@@ -141,7 +136,6 @@ class ChangeStatusTest extends SpockTest {
         resultDiscussionList.size() == 1
         def discussion = resultDiscussionList.get(0)
         discussion.getMessage() == DISCUSSION_MESSAGE
-        discussion.getUserId() == student.getId()
         discussion.getQuestion().getId() == question1.getId()
         discussion.isClosed() == true
     }
@@ -150,11 +144,9 @@ class ChangeStatusTest extends SpockTest {
         given: "a discussion with no replies"
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setQuestion(new QuestionDto(question2))
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserId(student.getId())
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(questionAnswer2.getId(), discussionDto)
+        discussionService.createDiscussion(student.getId(), questionAnswer2.getId(), discussionDto)
 
         when: "change open discussion status"
         discussionService.changeStatus(discussionRepository.findAll().get(1).getId())
@@ -174,7 +166,6 @@ class ChangeStatusTest extends SpockTest {
         resultDiscussionList.size() == 1
         def discussion = resultDiscussionList.get(0)
         discussion.getMessage() == DISCUSSION_MESSAGE
-        discussion.getUserId() == student.getId()
         discussion.getQuestion().getId() == question1.getId()
         discussion.isClosed() == false
     }

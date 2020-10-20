@@ -1,8 +1,5 @@
 <template>
-  <v-expansion-panels
-    v-if="discussion.replies !== null && discussion.replies.length > 0"
-    :inset="true"
-  >
+  <v-expansion-panels v-if="discussion.replies.length > 0" :inset="true">
     <v-expansion-panel>
       <v-expansion-panel-header style="background-color: #d5d5d5"
         >Show replies
@@ -38,13 +35,7 @@
             />
           </div>
         </div>
-        <div
-          class="reply-message"
-          v-if="
-            !discussion.closed &&
-              (discussion.userId === user.id || user.role === 'TEACHER')
-          "
-        >
+        <div class="reply-message" v-if="!discussion.closed">
           <v-textarea
             data-cy="replyTextArea"
             class="textarea-reply"
@@ -113,7 +104,6 @@ export default class ReplyComponent extends Vue {
 
     let reply = new Reply();
     reply.message = this.replyMessage;
-    reply.userId = this.user.id!;
     reply.userName = this.user.username;
     reply.date = new Date().toISOString();
 
