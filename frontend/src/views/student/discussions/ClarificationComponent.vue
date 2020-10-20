@@ -36,3 +36,9 @@ export default class ClarificationComponent extends Vue {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+ul {
+  list-style-type: none;
+}
+</style>

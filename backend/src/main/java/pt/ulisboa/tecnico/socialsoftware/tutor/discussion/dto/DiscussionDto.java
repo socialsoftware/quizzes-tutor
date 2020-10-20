@@ -31,7 +31,7 @@ public class DiscussionDto implements Serializable {
     public DiscussionDto(Discussion discussion, boolean deep) {
         this.id = discussion.getId();
 
-        if (discussion.getQuestion() == null ) {
+        if (discussion.getQuestion() == null) {
             throw new TutorException(DISCUSSION_MISSING_QUESTION);
         }
         else{

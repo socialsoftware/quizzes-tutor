@@ -121,6 +121,7 @@ public enum ErrorMessage {
     DISCUSSION_NOT_FOUND("Discussion not found: %d"),
     REPLY_NOT_FOUND("Reply not found: %d"),
     REPLY_UNAUTHORIZED_USER("Reply is not authorized!"),
+    REPLY_MISSING_MESSAGE("Reply missing message"),
     USER_NOT_STUDENT("This user is not a student"),
     CLOSE_NOT_POSSIBLE("Impossible to close discussion with no replies"),
     MORE_THAN_ONE_QUESTION_ANSWER("More than one question answer! QuestionId: %d"),

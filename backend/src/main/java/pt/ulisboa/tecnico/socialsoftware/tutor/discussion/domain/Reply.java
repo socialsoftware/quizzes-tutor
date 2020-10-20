@@ -120,4 +120,16 @@ public class Reply implements DomainEntity {
             throw new TutorException(REPLY_UNAUTHORIZED_USER);
         }
     }
+
+    @Override
+    public String toString() {
+        return "Reply{" +
+                "id=" + id +
+                ", discussion=" + discussion +
+                ", user=" + user +
+                ", message='" + message + '\'' +
+                ", date=" + date +
+                ", isPublic=" + isPublic +
+                '}';
+    }
 }

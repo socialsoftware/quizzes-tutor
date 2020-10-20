@@ -63,15 +63,12 @@ public class DiscussionService {
         QuestionAnswer questionAnswer = questionAnswerRepository.findById(questionAnswerId).orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswerId));
         Discussion discussion = new Discussion(user, questionAnswer, discussionDto);
 
-        logger.warn("HI");
-        logger.warn(""+discussionDto.getReplies());
         for (ReplyDto reply : discussionDto.getReplies()) {
             User student = userRepository.findById(reply.getUserId())
                     .orElseThrow(() -> new TutorException(USER_NOT_FOUND, reply.getUserId()));
 
             replyRepository.save(new Reply(student, reply, discussion));
         }
-        logger.warn("HI2");
         discussionRepository.save(discussion);
 
         return new DiscussionDto(discussion, false);
@@ -102,7 +99,6 @@ public class DiscussionService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public ReplyDto addReply(int discussionId, ReplyDto replyDto) {
-        logger.warn("Adds reply");
         User user = userRepository.findById(replyDto.getUserId()).orElseThrow(()->new TutorException(USER_NOT_FOUND, replyDto.getUserId()));
 
         Discussion discussion = discussionRepository
@@ -119,7 +115,7 @@ public class DiscussionService {
 
     private void checkMessage(String message) {
         if (message == null || message.trim().length() == 0) {
-            throw new TutorException(DISCUSSION_MISSING_MESSAGE);
+            throw new TutorException(REPLY_MISSING_MESSAGE);
         }
     }
 

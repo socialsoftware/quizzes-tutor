@@ -25,22 +25,25 @@
           <div v-else style="display: inline-flex; width: 100%">
             <div style="width: 88%">
               <b v-if="user.id !== reply.userId"
-                >{{ reply.userName }} replied on {{ reply.date }} :
+                >{{ reply.userName }} replied on {{ reply.date }}:
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
               <span v-html="convertMarkDown(reply.message)" />
             </div>
             <v-switch
               style="width: 12%"
-              v-model="reply.isPublic"
-              :label="reply.isPublic ? 'Public' : 'Private'"
+              v-model="reply.public"
+              :label="reply.public ? 'Public' : 'Private'"
               @change="changeReplyAvailability(reply.id)"
             />
           </div>
         </div>
         <div
           class="reply-message"
-          v-if="!discussion.closed && discussion.userId === user.id"
+          v-if="
+            !discussion.closed &&
+              (discussion.userId === user.id || user.role === 'TEACHER')
+          "
         >
           <v-textarea
             data-cy="replyTextArea"
@@ -67,6 +70,7 @@
   </v-expansion-panels>
   <div v-else class="reply-message">
     <v-textarea
+      data-cy="replyTextArea"
       class="textarea-reply"
       solo
       :id="'reply' + discussion.id"
@@ -75,6 +79,7 @@
     ></v-textarea>
     <v-card-actions>
       <v-btn
+        data-cy="submitReplyButton"
         class="submit-button"
         @click="
           submitReply();
@@ -111,7 +116,6 @@ export default class ReplyComponent extends Vue {
     reply.userId = this.user.id!;
     reply.userName = this.user.username;
     reply.date = new Date().toISOString();
-    reply.isPublic = false;
 
     let replyResponse = await RemoteServices.addReply(
       reply,

@@ -6,7 +6,7 @@ export default class Reply {
   userId!: number;
   date!: string | null;
   message!: string;
-  isPublic!: boolean;
+  public!: boolean;
 
   constructor(jsonObj?: Reply) {
     if (jsonObj) {
@@ -15,7 +15,7 @@ export default class Reply {
       this.userId = jsonObj.userId;
       this.date = ISOtoString(jsonObj.date);
       this.message = jsonObj.message;
-      this.isPublic = jsonObj.isPublic;
+      this.public = jsonObj.public;
     }
   }
 }

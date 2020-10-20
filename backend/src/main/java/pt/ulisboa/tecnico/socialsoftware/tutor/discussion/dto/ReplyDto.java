@@ -90,4 +90,16 @@ public class ReplyDto implements Serializable {
             throw new TutorException(REPLY_MISSING_DATA);
         }
     }
+
+    @Override
+    public String toString() {
+        return "ReplyDto{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", userId=" + userId +
+                ", message='" + message + '\'' +
+                ", date='" + date + '\'' +
+                ", isPublic=" + isPublic +
+                '}';
+    }
 }

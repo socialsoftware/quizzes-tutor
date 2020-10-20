@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -48,7 +47,6 @@ public class Discussion implements DomainEntity {
     @JoinColumn(name="course_execution_id")
     private CourseExecution courseExecution;
 
-    //fetch=FetchType.EAGER
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
 
@@ -61,7 +59,8 @@ public class Discussion implements DomainEntity {
 
     public Discussion(User user, QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
-        checkUserAndQuestion(user, questionAnswer.getQuizQuestion().getQuestion());
+        checkUser(user);
+        checkUserAnswered(questionAnswer);
         checkExistingDiscussion(questionAnswer);
         setUser(user);
         setMessage(discussionDto.getMessage());
@@ -174,18 +173,15 @@ public class Discussion implements DomainEntity {
         return this.getReplies().stream().anyMatch(reply -> reply.getUser().isTeacher());
     }
 
-    private void checkUserAndQuestion(User user, Question question) {
+    private void checkUser(User user) {
         if (user.getRole() == User.Role.TEACHER) {
             throw new TutorException(DISCUSSION_NOT_STUDENT_CREATOR);
         }
-
-        checkUserAnswered(user, question);
     }
 
-
-    private void checkUserAnswered(User user, Question question) {
-        if (!user.checkQuestionAnswered(question)) {
-            throw new TutorException(QUESTION_NOT_ANSWERED, question.getId());
+    private void checkUserAnswered(QuestionAnswer questionAnswer) {
+        if (questionAnswer.getOption() == null || questionAnswer.getTimeTaken() == 0) {
+            throw new TutorException(QUESTION_NOT_ANSWERED, questionAnswer.getQuizQuestion().getQuestion().getId());
         }
     }
 

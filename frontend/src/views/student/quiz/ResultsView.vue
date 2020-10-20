@@ -69,7 +69,6 @@ import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
 import DiscussionComponent from '@/views/student/discussions/DiscussionComponent.vue';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
-import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {

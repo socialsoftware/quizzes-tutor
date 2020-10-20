@@ -348,13 +348,6 @@ public class User implements DomainEntity {
         this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
     }
 
-    public boolean checkQuestionAnswered(Question question) {
-        return getQuizAnswers().stream().flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getTimeTaken() != null && questionAnswer.getTimeTaken() != 0)
-                .map(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion()).collect(Collectors.toList())
-                .contains(question);
-    }
-
 
     public Integer getNumberOfCorrectStudentAnswers() {
         if (this.numberOfCorrectStudentAnswers == null)

@@ -91,11 +91,6 @@ public class AnswersXmlExport {
 			questionAnswerElement.addContent(optionElement);
 		}
 
-		if (questionAnswer.getDiscussion() != null) {
-			Element discussionElement = new Element("discussion");
-			//discussionElement.setAttribute();
-			questionAnswerElement.addContent(discussionElement);
-		}
 		questionAnswersElement.addContent(questionAnswerElement);
 	}
 }

@@ -478,7 +478,6 @@ Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click()
   cy.contains('Solved').click()
 
- // cy.get('[data-cy="solvedQuizzesList"]').children().eq(1).click()
   cy.contains('Quiz Title').click()
   cy.get('[data-cy="nextQuestionButton"]').click()
   cy.get('[data-cy="discussionTextArea"]').type(discussionContent)
@@ -488,14 +487,14 @@ Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="discussionsStudentMenuButton"]').click()
 
   cy.contains(discussionContent).parent().should('have.length', 1).children()
-    .should('have.length', 8)
+    .should('have.length', 7)
 });
 
 Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
   cy.get('[data-cy="managementMenuButton"]').click()
   cy.get('[data-cy="discussionsTeacherButton"]').click()
   cy.contains(discussionContent).parent().should('have.length', 1).children()
-    .should('have.length', 8).find('[data-cy="showDiscussionButton"]').click()
+    .should('have.length', 7).find('[data-cy="showDiscussionButton"]').click()
 
   cy.get('[data-cy="replyTextArea"]').type(replyContent)
   cy.get('[data-cy="submitReplyButton"]').click()
