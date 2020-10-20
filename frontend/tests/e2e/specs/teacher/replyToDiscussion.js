@@ -25,11 +25,4 @@ describe('Teacher Walkthrough', () => {
     cy.contains('Logout').click();
   });
 
-  /*it('change reply to available', () => {
-    cy.demoTeacherLogin();
-    cy.replyToDiscussion('DISCUSSAO REPLY TEST', 'Respota Available Test');
-    cy.changeReplyToPublic('Respota Available Test');
-    cy.contains('Logout').click();
-  });*/
-
 });
