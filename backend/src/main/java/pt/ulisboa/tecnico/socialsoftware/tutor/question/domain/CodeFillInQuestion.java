@@ -34,9 +34,7 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     public CodeFillInQuestion(Question question, CodeFillInQuestionDto codeFillInQuestionDto) {
         super(question);
-        setCode(codeFillInQuestionDto.getCode());
-        setLanguage(codeFillInQuestionDto.getLanguage());
-        setFillInSpots(codeFillInQuestionDto.getFillInSpots());
+        update(codeFillInQuestionDto);
     }
 
     public String getLanguage() {
@@ -124,6 +122,8 @@ public class CodeFillInQuestion extends QuestionDetails {
     }
 
     public void update(CodeFillInQuestionDto questionDetails) {
+        setCode(questionDetails.getCode());
+        setLanguage(questionDetails.getLanguage());
         setFillInSpots(questionDetails.getFillInSpots());
     }
 

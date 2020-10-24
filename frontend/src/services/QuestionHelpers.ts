@@ -15,7 +15,7 @@ import CodeFillInStatementQuestionDetails from '@/models/statement/questions/Cod
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 
-export const enum QuestionTypes {
+export enum QuestionTypes {
   MultipleChoice = 'multiple_choice',
   CodeFillIn = 'code_fill_in'
 }

@@ -27,6 +27,7 @@
               required
               :items="questionTypesOptions"
               @change="updateQuestionType"
+              :readonly="editQuestion.id != null"
             />
           </v-row>
           <v-row>
@@ -89,16 +90,14 @@ export default class EditQuestionDialog extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;
 
   editQuestion: Question = new Question(this.question);
-  questionType: QuestionTypes = QuestionTypes.MultipleChoice;
+  questionType: string = this.question.questionDetailsDto.type;
 
   get questionTypesOptions(){
     return Object.values(QuestionTypes).map(qt => ({text: qt.replace(/_/g,' '), value: qt}));;
   }
 
   updateQuestionType(){
-    console.log(`Changing: ${this.questionType} | ${this.editQuestion.questionDetailsDto.type}`)
     this.editQuestion.questionDetailsDto = QuestionFactory.getFactory(this.questionType).createEmptyQuestionDetails();
-    console.log(this.editQuestion.questionDetailsDto.type)
   }
 
   @Watch('question', { immediate: true, deep: true })
@@ -117,7 +116,7 @@ export default class EditQuestionDialog extends Vue {
 
   async saveQuestion() {
     (this.$refs.form as Vue & { validate: () => boolean }).validate();
-
+    console.log(this.editQuestion);
     try {
       const result =
         this.editQuestion.id != null
