@@ -1,10 +1,10 @@
 <template>
-  <v-card-text>
+  <div>
     <v-select
       :items="languages"
-      v-model="question.language"
+      v-model="sQuestionDetails.language"
       label="Language"
-      :disabled="syncedQuestion.id != null"
+      :disabled="readonlyEdit"
     />
     <div class="code-create">
       <v-card-actions>
@@ -20,40 +20,42 @@
           </span>
         </v-tooltip>
       </v-card-actions>
-      <BaseCodeComponent
+      <BaseCodeEditor
         ref='codeEditor'
-        :code.sync="question.code"
-        :language.sync="question.language"
+        :code.sync="sQuestionDetails.code"
+        :language.sync="sQuestionDetails.language"
       />
 
       <FillInOptions
-        v-for="(item, index) in question.fillInSpots"
+        v-for="(item, index) in sQuestionDetails.fillInSpots"
         :key="index"
         :option="item"
-        v-model="question.fillInSpots[index]"
+        v-model="sQuestionDetails.fillInSpots[index]"
       />
       <!-- v-on:change="handleInput" -->
     </div>
-  </v-card-text>
+  </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 import Question from '@/models/management/Question';
-import FillInOptions from '@/components/questions/CodeFillInOptions.vue';
+import FillInOptions from '@/components/code-fill-in/CodeFillInOptions.vue';
 import Option from '@/models/management/Option';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
-import BaseCodeComponent from '@/components/questions/BaseCodeEditor.vue';
-import BaseCodeEditor from '@/components/questions/BaseCodeEditor.vue';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
+
 @Component({
   components: {
-    BaseCodeComponent,
+    BaseCodeEditor,
     FillInOptions
   }
 })
 export default class CodeFillInQuestionEdit extends Vue {
-  @PropSync('question', { type: CodeFillInQuestionDetails }) syncedQuestion!: CodeFillInQuestionDetails;
+  @PropSync('questionDetails', { type: CodeFillInQuestionDetails }) sQuestionDetails!: CodeFillInQuestionDetails;
+  @Prop({default: true}) readonly readonlyEdit!: boolean;
+
   languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
  
@@ -64,10 +66,10 @@ export default class CodeFillInQuestionEdit extends Vue {
     this.counter = this.getMaxDropdown()
   }
   getMaxDropdown() {
-      return (Math.max.apply(Math, this.syncedQuestion.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
+      return (Math.max.apply(Math, this.sQuestionDetails.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
   }
   onCmCodeChange(newCode: string) {
-    this.syncedQuestion.code = newCode;
+    this.sQuestionDetails.code = newCode;
   }
   Dropdownify() {
     const content = this.baseCodeEditorRef.codemirror.getSelection();
@@ -78,7 +80,7 @@ export default class CodeFillInQuestionEdit extends Vue {
       const item = new CodeFillInSpot();
       item.options = [option];
       item.sequence = this.counter;
-      this.syncedQuestion.fillInSpots.push(item);
+      this.sQuestionDetails.fillInSpots.push(item);
       this.baseCodeEditorRef.codemirror.replaceSelection(
         '{{slot-' + this.counter + '}}'
       );

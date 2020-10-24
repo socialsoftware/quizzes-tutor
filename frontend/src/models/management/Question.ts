@@ -44,4 +44,6 @@ export default class Question {
       this.topics = jsonObj.topics.map((topic: Topic) => new Topic(topic));
     }
   }
+
+  
 }

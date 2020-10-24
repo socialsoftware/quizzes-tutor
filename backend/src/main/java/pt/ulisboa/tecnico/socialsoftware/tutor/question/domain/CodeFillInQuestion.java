@@ -34,6 +34,8 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     public CodeFillInQuestion(Question question, CodeFillInQuestionDto codeFillInQuestionDto) {
         super(question);
+        setCode(codeFillInQuestionDto.getCode());
+        setLanguage(codeFillInQuestionDto.getLanguage());
         setFillInSpots(codeFillInQuestionDto.getFillInSpots());
     }
 

@@ -44,6 +44,7 @@
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import Option from '@/models/management/Option';
+
 @Component
 export default class CodeFillInOptions extends Vue {
   @PropSync('value', { type: CodeFillInSpot }) spot!: CodeFillInSpot;

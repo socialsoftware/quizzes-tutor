@@ -8,7 +8,7 @@ export default class CodeFillInQuestionDetails extends QuestionDetails {
   fillInSpots: CodeFillInSpot[] = [];
 
   constructor(jsonObj?: CodeFillInQuestionDetails) {
-    super(QuestionTypes.MultipleChoice);
+    super(QuestionTypes.CodeFillIn);
     if (jsonObj) {
       this.language = jsonObj.language || this.language;
       this.code = jsonObj.code || this.code;

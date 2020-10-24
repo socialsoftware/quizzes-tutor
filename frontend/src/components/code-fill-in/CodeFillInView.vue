@@ -1,12 +1,10 @@
 <template>
   <div id="ViewCodeMirror">
-    <span v-html="convertMarkDown(question.content, question.image)" />
-    <br />
     <div style="position:relative">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror ref="myCmView" :value="question.code" :options="cmOptions">
+      <codemirror ref="myCmView" :value="questionDetails.code" :options="cmOptions">
       </codemirror>
     </div>
     <br />
@@ -56,7 +54,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 })
 export default class ShowCodeFillInQuestion extends Vue {
   @Prop({ type: CodeFillInQuestionDetails, required: true })
-  readonly question!: CodeFillInQuestionDetails;
+  readonly questionDetails!: CodeFillInQuestionDetails;
   cmOptions: any = {
     // codemirror options
     tabSize: 4,
@@ -115,10 +113,10 @@ export default class ShowCodeFillInQuestion extends Vue {
       console.log(d);
       e.parentNode.replaceChild(d, e);
       var num = e.innerHTML.match(/\d+/)[0];
-      addOptions(d, getOptions(Number(num) ,this.question.fillInSpots));
+      addOptions(d, getOptions(Number(num) ,this.questionDetails.fillInSpots));
     });
   }
-  @Watch('question', { immediate: true, deep: true })
+  @Watch('questionDetails', { immediate: true, deep: true })
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
