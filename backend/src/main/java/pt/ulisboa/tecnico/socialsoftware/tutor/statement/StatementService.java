@@ -219,11 +219,16 @@ public class StatementService {
         LocalDateTime now = DateHandler.now();
         Set<Integer> answeredQuizIds = quizAnswerRepository.findClosedQuizAnswersQuizIds(userId, executionId, now);
 
-        return quizRepository.findAvailableNonQRCodeQuizzes(executionId, DateHandler.now()).stream()
+        Set<Quiz> openQuizzes = quizAnswerRepository.findOpenNonQRCodeQuizAnswers(userId, executionId, now);
+
+        return Stream.concat(quizRepository.findAvailableNonQRCodeNonGeneratedNonTournamentQuizzes(executionId, DateHandler.now()).stream(),
+                openQuizzes.stream())
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
+                .distinct()
                 .map(quiz -> new QuizDto(quiz, false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
+
     }
 
     @Retryable(
