@@ -1093,7 +1093,7 @@ export default class RemoteServices {
 
   static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
     return httpClient
-      .post('/discussions/reply/add?discussionId=' + discussionId, reply)
+      .post('/discussions/' + discussionId + '/replies/add', reply)
       .then(response => {
         return new Reply(response.data);
       })
@@ -1104,7 +1104,9 @@ export default class RemoteServices {
 
   static async getCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
-      .get(`/discussions/${Store.getters.getCurrentCourse.courseExecutionId}`)
+      .get(
+        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
       .then(response => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
@@ -1118,7 +1120,7 @@ export default class RemoteServices {
   static async getOpenCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/open/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/discussions/open/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then(response => {
         return response.data.map((discussion: any) => {
@@ -1132,7 +1134,7 @@ export default class RemoteServices {
 
   static async changeDiscussionStatus(id: number): Promise<Discussion> {
     return httpClient
-      .put('/discussions/status?discussionId=' + id)
+      .put('/discussions/' + id + '/status')
       .then(response => {
         return new Discussion(response.data);
       })
@@ -1143,7 +1145,7 @@ export default class RemoteServices {
 
   static async getClarificationsByQuestionId(id: number): Promise<Reply[]> {
     return httpClient
-      .get('/discussions/clarifications?questionId=' + id)
+      .get('/discussions/clarifications/questions/' + id)
       .then(response => {
         return response.data.map((reply: any) => {
           return new Reply(reply);
@@ -1157,7 +1159,7 @@ export default class RemoteServices {
   static async getUserDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/${Store.getters.getCurrentCourse.courseExecutionId}/user`
+        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}/users`
       )
       .then(response => {
         return response.data.map((discussion: any) => {
@@ -1171,7 +1173,7 @@ export default class RemoteServices {
 
   static async changeReplyAvailability(id: number): Promise<Discussion> {
     return httpClient
-      .put('/discussions/reply/availability?replyId=' + id)
+      .put('/discussions/replies/' + id + '/availability')
       .then(response => {
         return new Discussion(response.data);
       })
@@ -1185,7 +1187,10 @@ export default class RemoteServices {
     questionAnswerId: number
   ): Promise<Discussion> {
     return httpClient
-      .post(`/discussions/create/${questionAnswerId}`, discussion)
+      .post(
+        `/discussions/create?questionAnswerId=${questionAnswerId}`,
+        discussion
+      )
       .then(response => {
         return new Discussion(response.data);
       })

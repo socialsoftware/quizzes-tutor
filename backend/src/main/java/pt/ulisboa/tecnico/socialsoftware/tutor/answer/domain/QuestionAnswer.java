@@ -147,6 +147,7 @@ public class QuestionAnswer implements DomainEntity {
 
         if (discussion != null) {
             discussion.setQuestionAnswer(null);
+            discussion.remove();
             discussion = null;
         }
     }

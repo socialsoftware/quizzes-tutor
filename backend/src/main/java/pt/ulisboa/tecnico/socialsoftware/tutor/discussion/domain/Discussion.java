@@ -186,11 +186,14 @@ public class Discussion implements DomainEntity {
     }
 
     public void remove() {
-        questionAnswer.getDiscussion().remove();
+        questionAnswer.setDiscussion(null);
         questionAnswer = null;
 
         user.getDiscussions().remove(this);
         user = null;
+
+        courseExecution.getDiscussions().remove(this);
+        courseExecution = null;
 
         replies.stream().forEach(Reply::remove);
     }
