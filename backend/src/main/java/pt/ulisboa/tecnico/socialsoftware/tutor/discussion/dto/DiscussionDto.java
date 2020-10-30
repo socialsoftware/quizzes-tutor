@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -16,7 +17,7 @@ public class DiscussionDto implements Serializable {
     private Integer id;
     private String userName;
     private String message;
-    private List<ReplyDto> replies;
+    private List<ReplyDto> replies = new ArrayList<>();
     private String date;
     private Integer courseExecutionId;
     private boolean closed;
@@ -32,24 +33,19 @@ public class DiscussionDto implements Serializable {
         if (discussion.getQuestion() == null) {
             throw new TutorException(DISCUSSION_MISSING_QUESTION);
         }
-        else{
-            if (deep) {
-                this.question = new QuestionDto(discussion.getQuestion());
-            }
+
+        if (deep) {
+            this.question = new QuestionDto(discussion.getQuestion());
         }
 
         this.userName = discussion.getUser().getName();
         this.message = discussion.getMessage();
         this.date = DateHandler.toISOString(discussion.getDate());
-        this.courseExecutionId = discussion.getQuestionAnswer().getQuizAnswer().getQuiz().getCourseExecution().getId();
+        this.courseExecutionId = discussion.getCourseExecution().getId();
         this.closed = discussion.isClosed();
-        this.replies = new ArrayList<>();
 
-        List<Reply> discussionReplies = discussion.getReplies();
-        if(discussionReplies != null && !discussionReplies.isEmpty()){
-            for(Reply rep : discussionReplies){
-                this.replies.add(new ReplyDto(rep));
-            }
+        if (discussion.getReplies() != null) {
+            this.replies = discussion.getReplies().stream().map(ReplyDto::new).collect(Collectors.toList());
         }
     }
 
@@ -70,9 +66,6 @@ public class DiscussionDto implements Serializable {
     }
 
     public List<ReplyDto> getReplies() {
-        if(this.replies == null){
-            this.replies = new ArrayList<>();
-        }
         return replies;
     }
 

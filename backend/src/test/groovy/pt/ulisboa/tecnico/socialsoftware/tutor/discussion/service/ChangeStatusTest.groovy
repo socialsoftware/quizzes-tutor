@@ -117,7 +117,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
         discussion = discussionRepository.findAll().get(0)
 
         replyDto = new ReplyDto()
@@ -146,7 +146,7 @@ class ChangeStatusTest extends SpockTest {
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserName(student.getUsername())
-        discussionService.createDiscussion(student.getId(), questionAnswer2.getId(), discussionDto)
+        discussionService.createDiscussion(questionAnswer2.getId(), discussionDto)
 
         when: "change open discussion status"
         discussionService.changeStatus(discussionRepository.findAll().get(1).getId())

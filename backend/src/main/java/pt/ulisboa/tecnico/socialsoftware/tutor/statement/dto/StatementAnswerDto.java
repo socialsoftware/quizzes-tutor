@@ -26,7 +26,7 @@ public class StatementAnswerDto implements Serializable {
             this.optionId = questionAnswer.getOption().getId();
         }
 
-        if(questionAnswer.getDiscussion() != null){
+        if (questionAnswer.getDiscussion() != null){
             this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion(),false);
         }
     }

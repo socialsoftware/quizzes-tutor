@@ -40,7 +40,7 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
-    @OneToOne(mappedBy = "questionAnswer")
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionAnswer")
     private Discussion discussion;
 
     public QuestionAnswer() {
@@ -146,9 +146,7 @@ public class QuestionAnswer implements DomainEntity {
         }
 
         if (discussion != null) {
-            discussion.setQuestionAnswer(null);
             discussion.remove();
-            discussion = null;
         }
     }
 

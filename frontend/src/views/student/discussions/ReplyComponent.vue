@@ -13,7 +13,7 @@
           <div v-if="user.role === 'STUDENT'" style="width: 100%">
             <div>
               <b v-if="user.id !== reply.userId"
-                >{{ reply.userName }} replied on {{ reply.date }} :
+                >{{ reply.username }} replied on {{ reply.date }} :
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
               <span v-html="convertMarkDown(reply.message)" />
@@ -22,7 +22,7 @@
           <div v-else style="display: inline-flex; width: 100%">
             <div style="width: 88%">
               <b v-if="user.id !== reply.userId"
-                >{{ reply.userName }} replied on {{ reply.date }}:
+                >{{ reply.username }} replied on {{ reply.date }}:
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
               <span v-html="convertMarkDown(reply.message)" />
@@ -104,7 +104,7 @@ export default class ReplyComponent extends Vue {
 
     let reply = new Reply();
     reply.message = this.replyMessage;
-    reply.userName = this.user.username;
+    reply.username = this.user.username;
     reply.date = new Date().toISOString();
 
     let replyResponse = await RemoteServices.addReply(

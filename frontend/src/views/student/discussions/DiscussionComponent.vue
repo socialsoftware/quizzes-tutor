@@ -12,7 +12,7 @@
         </clarification-component>
       </v-card>
     </div>
-    <div class="discussion-container" v-if="answered">
+    <div class="discussion-container">
       <v-card>
         <v-card-title
           class="justify-center headline"
@@ -98,7 +98,6 @@ export default class DiscussionComponent extends Vue {
   @Prop() readonly question!: StatementQuestion;
   clarifications: Reply[] = [];
   @Prop() readonly userDiscussion?: Discussion;
-  @Prop(Boolean) readonly answered!: boolean;
   discussionMessage: string = '';
   user: User = this.$store.getters.getUser;
 

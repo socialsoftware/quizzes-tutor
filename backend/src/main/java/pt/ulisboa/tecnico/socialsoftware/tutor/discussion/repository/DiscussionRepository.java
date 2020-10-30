@@ -23,7 +23,7 @@ public interface DiscussionRepository extends JpaRepository<Discussion, Integer>
     List<Discussion> findDiscussionsByCourseExecution(int courseExecutionId);
 
     @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.user_id = :userId", nativeQuery = true)
-    List<Discussion> findByCourseExecutionIdAndUserId(int courseExecutionId, int userId);
+    List<Discussion> findDiscussionsByCourseExecutionIdAndUserId(int courseExecutionId, int userId);
 
     @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.closed = false", nativeQuery = true)
     List<Discussion> findOpenDiscussionsByCourseExecutionId(int courseExecutionId);

@@ -2,7 +2,7 @@ import { ISOtoString } from '@/services/ConvertDateService';
 
 export default class Reply {
   id!: number;
-  userName!: string;
+  username!: string;
   userId!: number;
   date!: string | null;
   message!: string;
@@ -11,7 +11,7 @@ export default class Reply {
   constructor(jsonObj?: Reply) {
     if (jsonObj) {
       this.id = jsonObj.id;
-      this.userName = jsonObj.userName;
+      this.username = jsonObj.username;
       this.userId = jsonObj.userId;
       this.date = ISOtoString(jsonObj.date);
       this.message = jsonObj.message;

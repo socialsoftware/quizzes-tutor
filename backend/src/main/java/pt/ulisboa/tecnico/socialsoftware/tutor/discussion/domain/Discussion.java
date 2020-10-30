@@ -57,12 +57,10 @@ public class Discussion implements DomainEntity {
 
     public Discussion(){}
 
-    public Discussion(User user, QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
+    public Discussion(QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
-        checkUser(user);
-        checkUserAnswered(questionAnswer);
         checkExistingDiscussion(questionAnswer);
-        setUser(user);
+        setUser(questionAnswer.getQuizAnswer().getUser());
         setMessage(discussionDto.getMessage());
         setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
         setQuestion(questionAnswer.getQuizQuestion().getQuestion());
@@ -164,38 +162,24 @@ public class Discussion implements DomainEntity {
         if ((getReplies().isEmpty() || getReplies() == null) && !isClosed()){
             throw new TutorException(CLOSE_NOT_POSSIBLE);
         }
-        else{
-            this.closed = !this.closed;
-        }
+
+        this.closed = !this.closed;
     }
 
     public boolean teacherAnswered() {
         return this.getReplies().stream().anyMatch(reply -> reply.getUser().isTeacher());
     }
 
-    private void checkUser(User user) {
-        if (user.getRole() == User.Role.TEACHER) {
-            throw new TutorException(DISCUSSION_NOT_STUDENT_CREATOR);
-        }
-    }
-
-    private void checkUserAnswered(QuestionAnswer questionAnswer) {
-        if (questionAnswer.getOption() == null || questionAnswer.getTimeTaken() == 0) {
-            throw new TutorException(QUESTION_NOT_ANSWERED, questionAnswer.getQuizQuestion().getQuestion().getId());
-        }
-    }
-
     public void remove() {
-        questionAnswer.setDiscussion(null);
-        questionAnswer = null;
-
         user.getDiscussions().remove(this);
         user = null;
 
         courseExecution.getDiscussions().remove(this);
         courseExecution = null;
 
-        replies.stream().forEach(Reply::remove);
+        for (Reply reply: new ArrayList<>(this.replies)) {
+            reply.remove();
+        }
     }
 
     private void checkExistingDiscussion(QuestionAnswer questionAnswer) {

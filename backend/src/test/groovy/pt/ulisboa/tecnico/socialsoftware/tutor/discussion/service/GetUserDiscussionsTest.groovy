@@ -90,7 +90,7 @@ class GetUserDiscussionsTest extends SpockTest {
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         discussionDto.setUserName(student.getUsername())
         and: "created discussion"
-        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
 
         when: "tries to get the discussion"
         def discussionsResult = discussionService.findByCourseExecutionIdAndUserId(courseExecution.getId(),student.getId())

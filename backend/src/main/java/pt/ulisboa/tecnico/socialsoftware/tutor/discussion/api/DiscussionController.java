@@ -48,9 +48,8 @@ public class DiscussionController {
 
     @PostMapping(value = "/discussions/create")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
-    public DiscussionDto createDiscussion(Principal principal, @RequestParam int questionAnswerId, @Valid @RequestBody DiscussionDto discussion){
-        User user = (User) ((Authentication) principal).getPrincipal();
-        return discussionService.createDiscussion(user.getId(), questionAnswerId, discussion);
+    public DiscussionDto createDiscussion(@RequestParam int questionAnswerId, @Valid @RequestBody DiscussionDto discussion){
+        return discussionService.createDiscussion(questionAnswerId, discussion);
     }
 
     @PutMapping(value = "/discussions/{discussionId}/status")

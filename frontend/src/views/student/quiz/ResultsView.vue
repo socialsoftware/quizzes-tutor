@@ -49,9 +49,6 @@
       @decrease-order="decreaseOrder"
     />
     <discussion-component
-      :answered="
-        statementManager.statementQuiz.answers[questionOrder].optionId != null
-      "
       :userDiscussion="
         statementManager.statementQuiz.answers[questionOrder].userDiscussion
       "

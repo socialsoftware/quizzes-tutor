@@ -11,6 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_MISSING_MESSAGE;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
 
 @Entity
@@ -70,6 +71,10 @@ public class Reply implements DomainEntity {
     }
 
     public void setMessage(String message) {
+        if (message == null || message.trim().length() == 0) {
+            throw new TutorException(REPLY_MISSING_MESSAGE);
+        }
+
         this.message = message;
     }
 
@@ -93,9 +98,6 @@ public class Reply implements DomainEntity {
     public void remove() {
         user.removeReply(this);
         user = null;
-
-        discussion.removeReply(this);
-        discussion = null;
     }
 
     @Override

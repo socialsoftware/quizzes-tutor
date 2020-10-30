@@ -8,7 +8,7 @@
       >
         <div class="text-left">
           <b
-            >{{ clarification.userName }} replied on
+            >{{ clarification.username }} replied on
             {{ clarification.date }} :</b
           >
           <span v-html="convertMarkDown(clarification.message)" />

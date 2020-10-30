@@ -44,7 +44,8 @@ public class ScheduledTasks {
 		statementService.writeQuizAnswersAndCalculateStatistics();
 	}
 
-    @Scheduled(cron = "0 0 1 * * *")
+	@Scheduled(cron = "0/30 * * * * *")
+//	@Scheduled(cron = "0 0 1 * * *")
     public void resetDemoInfo() {
 		userService.resetDemoStudents();
 		questionSubmissionService.resetDemoQuestionSubmissions();

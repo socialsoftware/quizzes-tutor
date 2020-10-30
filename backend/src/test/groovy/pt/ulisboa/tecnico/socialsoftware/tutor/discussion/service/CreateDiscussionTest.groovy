@@ -117,7 +117,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setUserName(student.getUsername())
 
         when: "discussion is created"
-        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
 
         then: "the correct discussion is inside the repository"
         discussionRepository.count() == 1L
@@ -127,21 +127,6 @@ class CreateDiscussionTest extends SpockTest {
         resultUser.getMessage() == DISCUSSION_MESSAGE
         resultUser.getQuestion().getId() == question1.getId()
     }
-
-    def "student can't create a discussion in a non answered question"(){
-        given: "a discussionDto"
-        def discussionDto = new DiscussionDto()
-        discussionDto.setMessage(DISCUSSION_MESSAGE)
-        discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-
-        when: "creating a discussion on a non answered question"
-        discussionService.createDiscussion(student.getId(), questionAnswer2.getId(), discussionDto)
-
-        then: "exception is thrown"
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.QUESTION_NOT_ANSWERED
-    }
-
 
    def "user can't create two discussions for the same question"(){
        given: "a discussion dto"
@@ -157,8 +142,8 @@ class CreateDiscussionTest extends SpockTest {
        discussionDto2.setUserName(student.getUsername())
 
        when: "creating two discussions on the same question"
-       discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto1)
-       discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto2)
+       discussionService.createDiscussion(questionAnswer.getId(), discussionDto1)
+       discussionService.createDiscussion(questionAnswer.getId(), discussionDto2)
 
        then: "exception is thrown"
        def exception = thrown(TutorException)
@@ -173,7 +158,7 @@ class CreateDiscussionTest extends SpockTest {
         discussionDto.setDate(date)
 
         when: "creating discussion"
-        discussionService.createDiscussion(student.getId(), questionAnswer.getId(), discussionDto)
+        discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
 
         then:
         def exception = thrown(TutorException)
