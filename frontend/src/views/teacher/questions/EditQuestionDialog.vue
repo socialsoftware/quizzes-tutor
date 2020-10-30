@@ -94,7 +94,10 @@
         <v-btn color="red darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="green darken-1" @click="saveQuestion" data-cy="saveQuestionButton"
+        <v-btn
+          color="green darken-1"
+          @click="saveQuestion"
+          data-cy="saveQuestionButton"
           >Save</v-btn
         >
       </v-card-actions>

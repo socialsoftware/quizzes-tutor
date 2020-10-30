@@ -9,12 +9,20 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="green darken-1" v-if="editMode && canSave" data-cy="saveQuizButton" @click="save"
+      <v-btn
+        color="green darken-1"
+        v-if="editMode && canSave"
+        data-cy="saveQuizButton"
+        @click="save"
         >Save</v-btn
       >
     </v-card-title>
     <v-card-text>
-      <v-text-field v-model="quiz.title" label="*Title" data-cy="quizTitleTextArea"/>
+      <v-text-field
+        v-model="quiz.title"
+        label="*Title"
+        data-cy="quizTitleTextArea"
+      />
       <v-container fluid>
         <v-row>
           <v-col>

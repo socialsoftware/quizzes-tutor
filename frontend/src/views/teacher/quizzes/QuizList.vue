@@ -20,7 +20,13 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark data-cy="newQuizButton" @click="$emit('newQuiz')">New Quiz</v-btn>
+          <v-btn
+            color="primary"
+            dark
+            data-cy="newQuizButton"
+            @click="$emit('newQuiz')"
+            >New Quiz</v-btn
+          >
         </v-card-title>
       </template>
 

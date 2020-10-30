@@ -21,7 +21,13 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="newQuestion" data-cy="newQuestionButton">New Question</v-btn>
+          <v-btn
+            color="primary"
+            dark
+            @click="newQuestion"
+            data-cy="newQuestionButton"
+            >New Question</v-btn
+          >
           <v-btn color="primary" dark @click="exportCourseQuestions"
             >Export Questions</v-btn
           >
