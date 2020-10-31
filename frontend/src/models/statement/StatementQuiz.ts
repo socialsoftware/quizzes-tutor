@@ -21,6 +21,7 @@ export default class StatementQuiz {
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {
+      console.log("Quiz",jsonObj);
       this.id = jsonObj.id;
       this.courseName = jsonObj.courseName;
       this.quizAnswerId = jsonObj.quizAnswerId;

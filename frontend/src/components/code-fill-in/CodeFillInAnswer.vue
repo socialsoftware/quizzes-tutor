@@ -1,32 +1,10 @@
 <template>
-  <div class="question-container" v-if="question">
-    <div class="question">
-      <span
-        v-if="backsies"
-        class="square"
-        @click="decreaseOrder"
-        @mouseover="hover = true"
-        @mouseleave="hover = false"
-      >
-        <i v-if="hover && questionOrder !== 0" class="fas fa-chevron-left" />
-        <span v-else>{{ questionOrder + 1 }}</span>
-      </span>
-      <div
-        class="question-content"
-        v-html="convertMarkDown(question.content, question.image)"
-      ></div>
-      <div class="square" @click="increaseOrder">
-        <i
-          v-if="questionOrder !== questionNumber - 1"
-          class="fas fa-chevron-right"
-        />
-      </div>
-    </div>
+  <div class="questionDetails-container" v-if="questionDetails">
     <div class="code-container" style="position:relative; text-align:left">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror ref="myCmStudent" :value="question.code" :options="cmOptions">
+      <codemirror ref="myCmStudent" :value="questionDetails.code" :options="cmOptions">
       </codemirror>
     </div>
   </div>
@@ -55,7 +33,8 @@ import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
-import StatementAnswerCodeFillInOption from '@/models/statement/code-fill-in/StatementAnswerCodeFillInOption';
+import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
+
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
     token: function(stream: any) {
@@ -79,17 +58,17 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
     mustacheOverlay
   );
 });
+
 @Component({
   components: {
     codemirror
   }
 })
-export default class QuestionComponent extends Vue {
+export default class CodeFillInAnswer extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails) readonly question:
-    | CodeFillInStatementQuestionDetails
-    | undefined;
-  @PropSync('answer', CodeFillInStatementAnswerDetails) answerData: CodeFillInStatementAnswerDetails | undefined;
+  @Prop(CodeFillInStatementQuestionDetails) readonly questionDetails!:
+    | CodeFillInStatementQuestionDetails;
+  @PropSync('answerDetails', CodeFillInStatementAnswerDetails) answerDetailsSynced!: CodeFillInStatementAnswerDetails;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
@@ -115,10 +94,13 @@ export default class QuestionComponent extends Vue {
   // selectOption(optionId: number) {
   //   return optionId;
   // }
-  @Watch('question', { immediate: true, deep: true })
+  @Watch('questionDetails', { immediate: true, deep: true })
   updateQuestion() {
     this.CodemirrorUpdated = false;
+    console.log("qd",this.questionDetails)
+    console.log("ad",this.answerDetailsSynced)
     setTimeout(() => {
+      console.log(this.$refs.myCmStudent)
       this.$refs.myCmStudent.codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
@@ -170,13 +152,13 @@ export default class QuestionComponent extends Vue {
       return o;
     }
     function addOptions(select: any, options: any) {
-      const data = that.answerData.selectedOptions.find(el => el.sequence === options.sequence);
+      const data = that.answerDetailsSynced.selectedOptions?.find(el => el.sequence === options.sequence);
       select.appendChild(creatBlankOptionChild(!data))
       options.options.forEach((opt: any, i: any) => {
         select.appendChild(createOptionChild(opt, i, data && data.optionId == opt.optionId));
       });
     }
-    function getOptions(name: number, options: StatementFillInSpot[]) {
+    function getOptions(name: number, options: CodeFillInSpotStatement[]) {
       const result = options.find(el => el.sequence === name);
       return result;
     }
@@ -187,7 +169,7 @@ export default class QuestionComponent extends Vue {
       d.name = e.innerHTML;
       e.parentNode.replaceChild(d, e);
       var num = e.innerHTML.match(/\d+/)[0];
-      var something = getOptions(Number(num), this.question.fillInSpots);
+      var something = getOptions(Number(num), this.questionDetails.fillInSpots);
       addOptions(d, something);
     });
   }
@@ -197,15 +179,15 @@ export default class QuestionComponent extends Vue {
   selectedANewOption(event: Event){
     var num = Number(event.target.name.match(/\d+/)[0]);
     var selectIndex = event.target.selectedIndex - 1;
-    var dataQuestion = this.question.fillInSpots.find(el => el.sequence === num);
-    var data = this.answerData.selectedOptions.find(el => el.sequence === num);
+    var dataQuestion = this.questionDetails.fillInSpots.find(el => el.sequence === num);
+    var data = this.answerDetailsSynced.selectedOptions?.find(el => el.sequence === num);
     if(data){
-      data.optionId = dataQuestion.options[selectIndex].optionId;
+      data.optionId = dataQuestion?.options[selectIndex].optionId;
     }else{
-      var newData = new StatementAnswerCodeFillInOption();
-      newData.optionId = dataQuestion.options[selectIndex].optionId;
+      var newData = new CodeFillInSpotAnswerStatement();
+      newData.optionId = dataQuestion?.options[selectIndex].optionId;
       newData.sequence = num;
-      this.answerData.selectedOptions.push(newData);
+      this.answerDetailsSynced.selectedOptions.push(newData);
     }
     this.$emit("select-option");
   }
